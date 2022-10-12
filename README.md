@@ -3,7 +3,6 @@ Artificial Neural Network Driven Emulsion Analysis.
 This README just serves as a very short user guide, the documentation will be written much later.
 
 ## Hints and Tips
-
 1) It is recommended to run those processes on lxplus in the tmux shell as some scripts can take up to several hours to execute.
 2) The first letter of the script name prefixes indicate what kind of operations this script perform: R is for actual reconstruction routines, E for evaluation and M for model creation and training. I for Classification tasks.
 3) The second letter of the script name prefixes indicates the subject of the reconstruction. H - hits, S - Track Segments, T- tracks, V - Vertices and E - events.
@@ -29,20 +28,22 @@ All modules
 ### Installation steps
 1) go to your home directory in afs where you would like to install the package
 2) git clone https://github.com/FilipsFedotovs/ANNADEA/
-3) cd ANNADEA/
-4) python setup.py
+3) *cd ANNADEA/*
+4) *python setup.py*
 5) The installation will require an EOS directory, please enter the location on EOS where you would like to keep data and the models. An example of the input is /eos/experiment/ship/user/username (but create the directory there first).
 6) The installation will ask whether you want to copy default training and validation files (that were prepared earlier). Unless you have your own, please enter Y.     The installer will copy and analyse existing data, it might take 5-10 minutes
 7) if the message 'ANNADEA setup is successfully completed' is displayed, it means that the package is ready for work
 
 ### Creating training files -------
 1) Go to ANNADEA directory on AFS
-2) cd Code
-3) tmux
+2) *cd Code*
+3) *tmux*
 4) *kinit username@CERN.CH -l 24h00m*
 5) Enter your lxplus password
-3) python3 MH1_GenerateTrainClusters.py --TrainSampleID Test_Sample_1 --Xmin 50000 --Xmax 55000 --Ymin 50000 --Ymax 55000
-4) After few minutes the script will ask for the user option (Warning, there are still x HTCondor jobs remaining). Type 600 and press Enter.
+6) *python3 MH1_GenerateTrainClusters.py --TrainSampleID Test_Sample_1 --Xmin 50000 --Xmax 55000 --Ymin 50000 --Ymax 55000*
+7) After few minutes the script will ask for the user option (Warning, there are still x HTCondor jobs remaining). Type *600* and press *Enter*. The script will go to the autopilot mode.
+8) Exit tmux (by using *ctrl + b* and then typing  *d*). It will take around an hour for a script to finish.
+
 [//]: # (4&#41; The script will ask which samples to use. Please type D and press ENTER.The script will send HTCondor jobs and exit.)
 
 [//]: # (5&#41; After a day or so please run: python Model_Training.py --MODE C)

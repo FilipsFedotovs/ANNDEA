@@ -208,7 +208,7 @@ elif os.path.isfile(TrainSampleOutputMeta)==True:
     Y_overlap=Meta.Y_overlap
     X_overlap=Meta.X_overlap
     Z_overlap=Meta.Z_overlap
-print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 0 has successfully completed'+bcolors.ENDC)
+print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 1 has successfully completed'+bcolors.ENDC)
 def AutoPilot(wait_min, interval_min, max_interval_tolerance):
     print(UF.TimeStamp(),'Going on an autopilot mode for ',wait_min, 'minutes while checking HTCondor every',interval_min,'min',bcolors.ENDC)
     wait_sec=wait_min*60
@@ -241,7 +241,8 @@ def AutoPilot(wait_min, interval_min, max_interval_tolerance):
 
 def Success(Finished):
         if Finished:
-            print(UF.TimeStamp(),bcolors.OKGREEN+'All HTCondor Seed Creation jobs have finished'+bcolors.ENDC)
+            print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
+            print(UF.TimeStamp(),bcolors.BOLD+'Stage 3:'+bcolors.ENDC+' All HTCondor jobs have completed.')
             count=0
             SampleCount=0
             NodeFeatures=PM.num_node_features
@@ -275,7 +276,8 @@ if Mode=='RESET':
    print(UF.TimeStamp(),'Performing the cleanup... ',bcolors.ENDC)
 bad_pop=[]
 Status=False
-print(UF.TimeStamp(),'Checking HTCondor jobs... ',bcolors.ENDC)
+print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
+print(UF.TimeStamp(),bcolors.BOLD+'Stage 2:'+bcolors.ENDC+' Checking HTCondor jobs and preparing the job submission')
 
 
 for k in range(0,Zsteps):
