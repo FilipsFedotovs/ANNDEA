@@ -31,15 +31,13 @@ for c in config:
 csv_reader.close()
 
 #Loading Data configurations
-EOSsubDIR=EOS_DIR+'/'+'EDER-GNN'
+EOSsubDIR=EOS_DIR+'/'+'ANNADEA'
 EOSsubModelDIR=EOSsubDIR+'/'+'Models'
 import sys
 sys.path.insert(1, AFS_DIR+'/Code/Utilities/')
 import UtilityFunctions as UF
-import Parameters as PM
-import datetime
 print(bcolors.HEADER+"####################################################################################################"+bcolors.ENDC)
-print(bcolors.HEADER+"#########################  Initialising EDER-GNN model training module     #########################"+bcolors.ENDC)
+print(bcolors.HEADER+"#########################  Initialising ANNADEA model training module      #########################"+bcolors.ENDC)
 print(bcolors.HEADER+"#########################            Written by Filips Fedotovs            #########################"+bcolors.ENDC)
 print(bcolors.HEADER+"#########################               PhD Student at UCL                 #########################"+bcolors.ENDC)
 print(bcolors.HEADER+"###################### For troubleshooting please contact filips.fedotovs@cern.ch ##################"+bcolors.ENDC)

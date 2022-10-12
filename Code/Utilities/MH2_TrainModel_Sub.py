@@ -48,14 +48,14 @@ import sys
 sys.path.insert(1, AFS_DIR+'/Code/Utilities/')
 import UtilityFunctions as UF
 #Load data configuration
-EOSsubDIR=EOS_DIR+'/'+'EDER-GNN'
+EOSsubDIR=EOS_DIR+'/'+'ANNADEA'
 EOSsubModelDIR=EOSsubDIR+'/'+'Models'
 
 
 ##############################################################################################################################
 ######################################### Starting the program ################################################################
 print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
-print(bcolors.HEADER+"#########################  Initialising     EDER-GNN   model creation module   #########################"+bcolors.ENDC)
+print(bcolors.HEADER+"#########################  Initialising     ANNADEA   model creation module   #########################"+bcolors.ENDC)
 print(bcolors.HEADER+"#########################              Written by Filips Fedotovs              #########################"+bcolors.ENDC)
 print(bcolors.HEADER+"#########################                 PhD Student at UCL                   #########################"+bcolors.ENDC)
 print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
@@ -156,7 +156,7 @@ def test(model, device, sample, thld):
     return np.nanmean(losses), np.nanmean(accs)
 
 
-TrainSampleInputMeta=EOS_DIR+'/EDER-GNN/Data/TRAIN_SET/'+TrainSampleID+'_info.pkl'
+TrainSampleInputMeta=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/'+TrainSampleID+'_info.pkl'
 print(UF.TimeStamp(),'Loading the data file ',bcolors.OKBLUE+TrainSampleInputMeta+bcolors.ENDC)
 MetaInput=UF.PickleOperations(TrainSampleInputMeta,'r', 'N/A')
 print(MetaInput[1])
@@ -165,7 +165,7 @@ TrainSamples=[]
 ValSamples=[]
 TestSamples=[]
 for i in range(1,Meta.no_sets+1):
-        flocation=EOS_DIR+'/EDER-GNN/Data/TRAIN_SET/'+TrainSampleID+'_TH_OUTPUT_'+str(i)+'.pkl'
+        flocation=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/'+TrainSampleID+'_TH_OUTPUT_'+str(i)+'.pkl'
         print(UF.TimeStamp(),'Loading data from ',bcolors.OKBLUE+flocation+bcolors.ENDC)
         TrainClusters=UF.PickleOperations(flocation,'r', 'N/A')
         TrainClusters=TrainClusters[0]

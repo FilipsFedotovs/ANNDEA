@@ -37,7 +37,7 @@ import UtilityFunctions as UF #This is where we keep routine utility functions
 import Parameters as PM #This is where we keep framework global parameters
 
 #Setting the parser
-parser = argparse.ArgumentParser(description='This script compares the ouput of the previous step with the output of EDER-GNN reconstructed data to calculate reconstruction performance.')
+parser = argparse.ArgumentParser(description='This script compares the ouput of the previous step with the output of ANNADEA reconstructed data to calculate reconstruction performance.')
 parser.add_argument('--f',help="Please enter the full path to the file with track reconstruction", default='/eos/user/a/aiuliano/public/sims_fedra/CH1_pot_03_02_20/b000001/b000001_withvertices.csv')
 parser.add_argument('--TrackID',help="Name of the control track", default="[['quarter','FEDRA_Track_ID']]")
 parser.add_argument('--MCCategories',help="What MC categories present in the MC data would you like to split by?", default="[]")
@@ -50,7 +50,7 @@ args = parser.parse_args()
 
 ######################################## Welcome message  #############################################################
 print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
-print(bcolors.HEADER+"######################     Initialising Track Reconstructrion Evaluation module ########################"+bcolors.ENDC)
+print(bcolors.HEADER+"######################     Initialising Tracking  Quality     Evaluation module ########################"+bcolors.ENDC)
 print(bcolors.HEADER+"#########################              Written by Filips Fedotovs              #########################"+bcolors.ENDC)
 print(bcolors.HEADER+"#########################                 PhD Student at UCL                   #########################"+bcolors.ENDC)
 print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
@@ -185,13 +185,9 @@ for RN in RecNames:
   print(UF.TimeStamp(),'Average track reconstruction efficiency:',bcolors.BOLD+str(round(Recall,2)*100), '%'+bcolors.ENDC)
   print(UF.TimeStamp(),'Average track reconstruction purity:',bcolors.BOLD+str(round(Precision,2)*100), '%'+bcolors.ENDC)
   print(UF.TimeStamp(),'Average track segmentation:',bcolors.BOLD+str(round(Segmentation,2))+bcolors.ENDC)
-  #viz_data_mc=raw_data_mc.groupby(MCCategories).agg({"MC_Mother_Track_Size":'sum',RN+'_Size':'sum',RN+'_Overlap':'sum',RN+'_Segmentation':'mean'}).reset_index()
-  # viz_data_mc[RN+'Recall']=viz_data_mc[RN+'_Overlap']/viz_data_mc[RN+'_Overlap']
-  # # raw_data_temp_mc.drop(raw_data_temp_mc.index[(raw_data_temp_mc[PM.Hit_ID] < 2)],inplace=True).rename(columns={PM.Hit_ID: "MC_Mother_Track_Size"})
-  # # print(raw_data_temp_mc)
 print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
 print(UF.TimeStamp(),bcolors.BOLD+'Stage 4:'+bcolors.ENDC+' Writing the output...')
-output_file_location=EOS_DIR+'/EDER-GNN/Data/TEST_SET/EH_TRACK_REC_STATS.csv'
+output_file_location=EOS_DIR+'/ANNADEA/Data/TEST_SET/EH_TRACK_REC_STATS.csv'
 raw_data_mc.to_csv(output_file_location,index=False)
 print(UF.TimeStamp(), bcolors.OKGREEN+"The track reconstruction stats for further analysis are written there:"+bcolors.ENDC, bcolors.OKBLUE+output_file_location+bcolors.ENDC)
 print(bcolors.HEADER+"############################################# End of the program ################################################"+bcolors.ENDC)

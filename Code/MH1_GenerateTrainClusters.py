@@ -23,7 +23,7 @@ class bcolors:   #We use it for the interface
 print('                                                                                                                                    ')
 print('                                                                                                                                    ')
 print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
-print(bcolors.HEADER+"######################     Initialising EDER-GNN Train Cluster Generation module   #####################"+bcolors.ENDC)
+print(bcolors.HEADER+"######################     Initialising ANNADEA Train Cluster Generation module   #####################"+bcolors.ENDC)
 print(bcolors.HEADER+"#########################              Written by Filips Fedotovs              #########################"+bcolors.ENDC)
 print(bcolors.HEADER+"#########################                 PhD Student at UCL                   #########################"+bcolors.ENDC)
 print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
@@ -72,15 +72,15 @@ cut_dt=PM.cut_dt
 cut_dr=PM.cut_dr
 testRatio=PM.testRatio
 valRatio=PM.valRatio
-TrainSampleOutputMeta=EOS_DIR+'/EDER-GNN/Data/TRAIN_SET/'+TrainSampleID+'_info.pkl'
-destination_output_file_location=EOS_DIR+'/EDER-GNN/Data/TRAIN_SET/'+TrainSampleID+'_TH_OUTPUT_1.pkl'
+TrainSampleOutputMeta=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/'+TrainSampleID+'_info.pkl'
+destination_output_file_location=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/'+TrainSampleID+'_TH_OUTPUT_1.pkl'
 if os.path.isfile(destination_output_file_location) and Mode!='RESET':
     print(UF.TimeStamp(),bcolors.FAIL+'The training files seem to be generated with previous job. Please rerun with --Mode Restart.'+bcolors.ENDC)
     exit()
 
 
 ########################################     Phase 1 - Create compact source file    #########################################
-output_file_location=EOS_DIR+'/EDER-GNN/Data/TRAIN_SET/MH1_'+TrainSampleID+'_hits.csv'
+output_file_location=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/MH1_'+TrainSampleID+'_hits.csv'
 if os.path.isfile(output_file_location)==False or Mode=='RESET':
         print(UF.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
         data=pd.read_csv(input_file_location,
@@ -111,7 +111,7 @@ if os.path.isfile(output_file_location)==False or Mode=='RESET':
 
 
 ###################### Phase 2 - Eval Data ######################################################
-output_file_location=EOS_DIR+'/EDER-GNN/Data/TRAIN_SET/EH1_'+TrainSampleID+'_hits.csv'
+output_file_location=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/EH1_'+TrainSampleID+'_hits.csv'
 if os.path.isfile(output_file_location)==False or Mode=='RESET':
     print(UF.TimeStamp(),'Creating Evaluation file...')
     print(UF.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
@@ -159,7 +159,7 @@ if os.path.isfile(output_file_location)==False or Mode=='RESET':
 ########################################     Preset framework parameters    #########################################
 
 if os.path.isfile(TrainSampleOutputMeta)==False or Mode=='RESET':
-    input_file_location=EOS_DIR+'/EDER-GNN/Data/TRAIN_SET/MH1_'+TrainSampleID+'_hits.csv'
+    input_file_location=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/MH1_'+TrainSampleID+'_hits.csv'
     print(UF.TimeStamp(),'Loading preselected data from ',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
     data=pd.read_csv(input_file_location,header=0,usecols=['z','x','y'])
     print(UF.TimeStamp(),'Analysing data... ',bcolors.ENDC)
@@ -218,13 +218,13 @@ def AutoPilot(wait_min, interval_min, max_interval_tolerance):
          for i in range(0,Xsteps):
               OptionHeader = [' --Z_ID ', ' --stepX ',' --stepY ',' --stepZ ', ' --EOS ', " --AFS ", " --zOffset ", " --xOffset ", " --yOffset ", ' --cut_dt ', ' --cut_dr ', ' --testRatio ', ' --valRatio ', ' --X_ID ',' --TrainSampleID ',' --Y_overlap ',' --X_overlap ',' --Z_overlap ']
               OptionLine = [k, stepX,stepY,stepZ, EOS_DIR, AFS_DIR, z_offset, x_offset, y_offset, cut_dt,cut_dr,testRatio,valRatio, i,TrainSampleID,Y_overlap,X_overlap,Z_overlap]
-              required_output_file_location=EOS_DIR+'/EDER-GNN/Data/TRAIN_SET/MH1a_'+TrainSampleID+'_SelectedTrainClusters_'+str(k)+'_'+str(i)+'.pkl'
+              required_output_file_location=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/MH1a_'+TrainSampleID+'_SelectedTrainClusters_'+str(k)+'_'+str(i)+'.pkl'
               SHName = AFS_DIR + '/HTCondor/SH/SH_MH1_'+ TrainSampleID+'_' + str(k) + '_' + str(i) + '.sh'
               SUBName = AFS_DIR + '/HTCondor/SUB/SUB_MH1_'+ TrainSampleID+'_'+ str(k) + '_' + str(i) + '.sub'
               MSGName = AFS_DIR + '/HTCondor/MSG/MSG_MH1_' + TrainSampleID+'_' + str(k) + '_' + str(i)
               ScriptName = AFS_DIR + '/Code/Utilities/MH1_GenerateTrainClusters_Sub.py '
               if os.path.isfile(required_output_file_location)!=True:
-                 bad_pop.append([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, 1, 'EDER-GNN-MH-'+TrainSampleID, False,False])
+                 bad_pop.append([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, 1, 'ANNADEA-MH-'+TrainSampleID, False,False])
         if len(bad_pop)>0:
               print(UF.TimeStamp(),bcolors.WARNING+'Autopilot status update: There are still', len(bad_pop), 'HTCondor jobs remaining'+bcolors.ENDC)
               if interval%max_interval_tolerance==0:
@@ -248,8 +248,8 @@ def Success(Finished):
                 for i in range(0,Xsteps):
                      if Sampling>=random.random():
                         count+=1
-                        source_output_file_location=EOS_DIR+'/EDER-GNN/Data/TRAIN_SET/MH1a_'+TrainSampleID+'_SelectedTrainClusters_'+str(k)+'_'+str(i)+'.pkl'
-                        destination_output_file_location=EOS_DIR+'/EDER-GNN/Data/TRAIN_SET/'+TrainSampleID+'_TH_OUTPUT_'+str(count)+'.pkl'
+                        source_output_file_location=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/MH1a_'+TrainSampleID+'_SelectedTrainClusters_'+str(k)+'_'+str(i)+'.pkl'
+                        destination_output_file_location=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/'+TrainSampleID+'_TH_OUTPUT_'+str(count)+'.pkl'
                         os.rename(source_output_file_location, destination_output_file_location)
                         TrainingSample=UF.PickleOperations(destination_output_file_location,'r', 'N/A')[0]
                         SampleCount+=len(TrainingSample)
@@ -257,7 +257,7 @@ def Success(Finished):
             MetaInput=UF.PickleOperations(TrainSampleOutputMeta,'r', 'N/A')
             MetaInput[0].UpdateHitClusterMetaData(SampleCount,NodeFeatures,EdgeFeatures,count)
             print(UF.PickleOperations(TrainSampleOutputMeta,'w', MetaInput[0])[1])
-            HTCondorTag="SoftUsed == \"EDER-GNN-MH-"+TrainSampleID+"\""
+            HTCondorTag="SoftUsed == \"ANNADEA-MH-"+TrainSampleID+"\""
             UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MH1_'+TrainSampleID, ['MH1a_'+TrainSampleID,'EH1_'+TrainSampleID,'MH1_'+TrainSampleID], HTCondorTag)
             print(UF.TimeStamp(),bcolors.OKGREEN+'Files are ready for the model training'+bcolors.ENDC)
             print(bcolors.HEADER+"############################################# End of the program ################################################"+bcolors.ENDC)
@@ -266,7 +266,7 @@ def Success(Finished):
             exit()
 
 if Mode=='RESET':
-   HTCondorTag="SoftUsed == \"EDER-GNN-MH-"+TrainSampleID+"\""
+   HTCondorTag="SoftUsed == \"ANNADEA-MH-"+TrainSampleID+"\""
    UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MH1_'+TrainSampleID, ['MH1a_'+TrainSampleID,TrainSampleID+'_TH_OUTPUT_'], HTCondorTag)
    print(UF.TimeStamp(),'Performing the cleanup... ',bcolors.ENDC)
 bad_pop=[]
@@ -280,13 +280,13 @@ for k in range(0,Zsteps):
         for i in range(0,Xsteps):
              OptionHeader = [' --Z_ID ', ' --stepX ',' --stepY ',' --stepZ ', ' --EOS ', " --AFS ", " --zOffset ", " --xOffset ", " --yOffset ", ' --cut_dt ', ' --cut_dr ', ' --testRatio ', ' --valRatio ', ' --X_ID ',' --TrainSampleID ',' --Y_overlap ',' --X_overlap ',' --Z_overlap ']
              OptionLine = [k, stepX,stepY,stepZ, EOS_DIR, AFS_DIR, z_offset, x_offset, y_offset, cut_dt,cut_dr,testRatio,valRatio, i,TrainSampleID,Y_overlap,X_overlap,Z_overlap]
-             required_output_file_location=EOS_DIR+'/EDER-GNN/Data/TRAIN_SET/MH1a_'+TrainSampleID+'_SelectedTrainClusters_'+str(k)+'_'+str(i)+'.pkl'
+             required_output_file_location=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/MH1a_'+TrainSampleID+'_SelectedTrainClusters_'+str(k)+'_'+str(i)+'.pkl'
              SHName = AFS_DIR + '/HTCondor/SH/SH_MH1_'+ TrainSampleID+'_' + str(k) + '_' + str(i) + '.sh'
              SUBName = AFS_DIR + '/HTCondor/SUB/SUB_MH1_'+ TrainSampleID+'_'+ str(k) + '_' + str(i) + '.sub'
              MSGName = AFS_DIR + '/HTCondor/MSG/MSG_MH1_' + TrainSampleID+'_' + str(k) + '_' + str(i)
              ScriptName = AFS_DIR + '/Code/Utilities/MH1_GenerateTrainClusters_Sub.py '
              if os.path.isfile(required_output_file_location)!=True:
-                bad_pop.append([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, 1, 'EDER-GNN-MH-'+TrainSampleID, False,False])
+                bad_pop.append([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, 1, 'ANNADEA-MH-'+TrainSampleID, False,False])
 if len(bad_pop)==0:
     Success(True)
 
@@ -309,7 +309,7 @@ if (Zsteps*Xsteps)==len(bad_pop):
                   SUBName = AFS_DIR + '/HTCondor/SUB/SUB_MH1_'+ TrainSampleID+'_'+ str(k) + '.sub'
                   MSGName = AFS_DIR + '/HTCondor/MSG/MSG_MH1_' + TrainSampleID+'_' + str(k)
                   ScriptName = AFS_DIR + '/Code/Utilities/MH1_GenerateTrainClusters_Sub.py '
-                  UF.SubmitJobs2Condor([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, Xsteps, 'EDER-GNN-MH-'+TrainSampleID, False,False])
+                  UF.SubmitJobs2Condor([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, Xsteps, 'ANNADEA-MH-'+TrainSampleID, False,False])
                   print(UF.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
         Success(AutoPilot(120,10,Patience))
     else:

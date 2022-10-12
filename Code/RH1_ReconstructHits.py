@@ -1,5 +1,5 @@
 #This simple connects hits in the data to produce tracks
-#Part of <Project ANN> package
+#Tracking Module of the ANNADEA package
 #Made by Filips Fedotovs
 
 
@@ -27,7 +27,7 @@ class bcolors:   #We use it for the interface
 print('                                                                                                                                    ')
 print('                                                                                                                                    ')
 print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
-print(bcolors.HEADER+"######################     Initialising EDER-GNN Hit Tracking module               #####################"+bcolors.ENDC)
+print(bcolors.HEADER+"######################     Initialising ANNADEA Hit Tracking module               #####################"+bcolors.ENDC)
 print(bcolors.HEADER+"#########################              Written by Filips Fedotovs              #########################"+bcolors.ENDC)
 print(bcolors.HEADER+"#########################                 PhD Student at UCL                   #########################"+bcolors.ENDC)
 print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
@@ -74,7 +74,7 @@ import UtilityFunctions as UF #This is where we keep routine utility functions
 import Parameters as PM #This is where we keep framework global parameters
 
 #Establishing paths
-EOSsubDIR=EOS_DIR+'/'+'EDER-GNN'
+EOSsubDIR=EOS_DIR+'/'+'ANNADEA'
 EOSsubModelDIR=EOSsubDIR+'/'+'Models'
 Model_Meta_Path=EOSsubModelDIR+'/'+args.ModelName+'_Meta'
 
@@ -93,7 +93,7 @@ else:
        print(UF.TimeStamp(),bcolors.WARNING+'Fail! No existing model meta files have been found, exiting now'+bcolors.ENDC)
 
 ########################################     Phase 1 - Create compact source file    #########################################
-required_file_location=EOS_DIR+'/EDER-GNN/Data/REC_SET/RH1_'+RecBatchID+'_hits.csv'
+required_file_location=EOS_DIR+'/ANNADEA/Data/REC_SET/RH1_'+RecBatchID+'_hits.csv'
 if os.path.isfile(required_file_location)==False or Mode=='RESET':
          print(UF.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
          data=pd.read_csv(input_file_location,
@@ -123,7 +123,7 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
          print(UF.TimeStamp(), bcolors.OKGREEN+"The segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+required_file_location+bcolors.ENDC)
 
 if Log!='NO':
-  required_file_location=EOS_DIR+'/EDER-GNN/Data/TEST_SET/EH1_'+RecBatchID+'_hits.csv'
+  required_file_location=EOS_DIR+'/ANNADEA/Data/TEST_SET/EH1_'+RecBatchID+'_hits.csv'
   if os.path.isfile(required_file_location)==False or Mode=='RESET':
      print(UF.TimeStamp(),'Creating Evaluation file...')
      print(UF.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
@@ -169,7 +169,7 @@ if Log!='NO':
      print(UF.TimeStamp(), bcolors.OKGREEN+"The track segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+required_file_location+bcolors.ENDC)
 
 if Log=='KALMAN':
-   required_file_location=EOS_DIR+'/EDER-GNN/Data/TEST_SET/KH1_'+RecBatchID+'_hits.csv'
+   required_file_location=EOS_DIR+'/ANNADEA/Data/TEST_SET/KH1_'+RecBatchID+'_hits.csv'
    if os.path.isfile(required_file_location)==False or Mode=='RESET':
         print(UF.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
         data=pd.read_csv(input_file_location,
@@ -214,7 +214,7 @@ if Log=='KALMAN':
         print(UF.TimeStamp(), bcolors.OKGREEN+"The track segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+required_file_location+bcolors.ENDC)
 
 # ########################################     Preset framework parameters    #########################################
-input_file_location=EOS_DIR+'/EDER-GNN/Data/REC_SET/RH1_'+RecBatchID+'_hits.csv'
+input_file_location=EOS_DIR+'/ANNADEA/Data/REC_SET/RH1_'+RecBatchID+'_hits.csv'
 print(UF.TimeStamp(),'Loading preselected data from ',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
 data=pd.read_csv(input_file_location,header=0,usecols=['z','x','y'])
 print(UF.TimeStamp(),'Analysing data... ',bcolors.ENDC)
@@ -250,19 +250,19 @@ def CheckStatus():
     print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
     print(UF.TimeStamp(),' Working out at which stage are we...')
     #First of all lets check that the output of reconstruction is completed
-    required_output_file_location=EOS_DIR+'/EDER-GNN/Data/REC_SET/'+RecBatchID+'_RH_OUTPUT.pkl'
+    required_output_file_location=EOS_DIR+'/ANNADEA/Data/REC_SET/'+RecBatchID+'_RH_OUTPUT.pkl'
     if os.path.isfile(required_output_file_location):
         return 5
     else:
         #Reconstruction output hasn't been produced - lets check the previous step result and so on
-        required_output_file_location=EOS_DIR+'/EDER-GNN/Data/REC_SET/RH1d_'+RecBatchID+'_hit_cluster_rec_x_set.pkl'
+        required_output_file_location=EOS_DIR+'/ANNADEA/Data/REC_SET/RH1d_'+RecBatchID+'_hit_cluster_rec_x_set.pkl'
         if os.path.isfile(required_output_file_location):
            return 4
         else:
            bad_pop=0
            with alive_bar(Xsteps,force_tty=True, title='Checking the Y-shift results from HTCondor') as bar:
              for i in range(0,Xsteps):
-                  required_output_file_location=EOS_DIR+'/EDER-GNN/Data/REC_SET/RH1c_'+RecBatchID+'_hit_cluster_rec_y_set_' +str(i)+'.pkl'
+                  required_output_file_location=EOS_DIR+'/ANNADEA/Data/REC_SET/RH1c_'+RecBatchID+'_hit_cluster_rec_y_set_' +str(i)+'.pkl'
                   bar.text = f'-> Checking whether the file : {required_output_file_location}, exists...'
                   bar()
                   if os.path.isfile(required_output_file_location)!=True:
@@ -274,7 +274,7 @@ def CheckStatus():
                 with alive_bar(Ysteps*Xsteps,force_tty=True, title='Checking the Z-shift results from HTCondor') as bar:
                         for j in range(0,Ysteps):
                              for i in range(0,Xsteps):
-                                  required_output_file_location=EOS_DIR+'/EDER-GNN/Data/REC_SET/RH1b_'+RecBatchID+'_hit_cluster_rec_z_set_'+str(j)+'_' +str(i)+'.pkl'
+                                  required_output_file_location=EOS_DIR+'/ANNADEA/Data/REC_SET/RH1b_'+RecBatchID+'_hit_cluster_rec_z_set_'+str(j)+'_' +str(i)+'.pkl'
                                   bar.text = f'-> Checking whether the file : {required_output_file_location}, exists...'
                                   bar()
                                   if os.path.isfile(required_output_file_location)!=True:
@@ -287,7 +287,7 @@ def CheckStatus():
                         for k in range(0,Zsteps):
                             for j in range(0,Ysteps):
                                  for i in range(0,Xsteps):
-                                      required_output_file_location=EOS_DIR+'/EDER-GNN/Data/REC_SET/RH1a_'+RecBatchID+'_hit_cluster_rec_set_'+str(k)+'_' +str(j)+'_' +str(i)+'.pkl'
+                                      required_output_file_location=EOS_DIR+'/ANNADEA/Data/REC_SET/RH1a_'+RecBatchID+'_hit_cluster_rec_set_'+str(k)+'_' +str(j)+'_' +str(i)+'.pkl'
                                       bar.text = f'-> Checking whether the file : {required_output_file_location}, exists...'
                                       bar()
                                       if os.path.isfile(required_output_file_location)!=True:
@@ -309,7 +309,7 @@ def AutoPilot0(wait_min, interval_min, max_interval_tolerance):
              for k in range(0,Zsteps):
                for j in range(0,Ysteps):
                    for i in range(0,Xsteps):
-                      required_output_file_location=EOS_DIR+'/EDER-GNN/Data/REC_SET/RH1a_'+RecBatchID+'_hit_cluster_rec_set_'+str(k)+'_' +str(j)+'_' +str(i)+'.pkl'
+                      required_output_file_location=EOS_DIR+'/ANNADEA/Data/REC_SET/RH1a_'+RecBatchID+'_hit_cluster_rec_set_'+str(k)+'_' +str(j)+'_' +str(i)+'.pkl'
                       bar.text = f'-> Checking whether the file : {required_output_file_location}, exists...'
                       bar()
                       OptionHeader = [' --Z_ID ',' --Y_ID ', ' --X_ID ', ' --stepZ ', ' --stepY ', ' --stepX ', ' --EOS ', " --AFS ", " --zOffset ", " --yOffset ", " --xOffset ", ' --cut_dt ', ' --cut_dr ', ' --ModelName ', ' --Log ',' --RecBatchID ',' --Z_overlap ',' --Y_overlap ',' --X_overlap ']
@@ -319,7 +319,7 @@ def AutoPilot0(wait_min, interval_min, max_interval_tolerance):
                       MSGName = AFS_DIR + '/HTCondor/MSG/MSG_RH1a_' + RecBatchID+'_' + str(k) + '_' + str(j) + '_' + str(i)
                       ScriptName = AFS_DIR + '/Code/Utilities/RH1a_ReconstructHits_Sub.py '
                       if os.path.isfile(required_output_file_location)!=True:
-                         bad_pop.append([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, 1, 'EDER-GNN-RH-'+RecBatchID, False,False])
+                         bad_pop.append([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, 1, 'ANNADEA-RH-'+RecBatchID, False,False])
          if len(bad_pop)>0:
                print(UF.TimeStamp(),bcolors.WARNING+'Autopilot status update: There are still', len(bad_pop), 'HTCondor jobs remaining'+bcolors.ENDC)
                if interval%max_interval_tolerance==0:
@@ -341,7 +341,7 @@ def AutoPilot1(wait_min, interval_min, max_interval_tolerance):
          with alive_bar(Ysteps*Xsteps,force_tty=True, title='Checking the Z-shift results from HTCondor') as bar:
             for j in range(0,Ysteps):
                  for i in range(0,Xsteps):
-                      required_output_file_location=EOS_DIR+'/EDER-GNN/Data/REC_SET/RH1b_'+RecBatchID+'_hit_cluster_rec_z_set_'+str(j)+'_' +str(i)+'.pkl'
+                      required_output_file_location=EOS_DIR+'/ANNADEA/Data/REC_SET/RH1b_'+RecBatchID+'_hit_cluster_rec_z_set_'+str(j)+'_' +str(i)+'.pkl'
                       bar.text = f'-> Checking whether the file : {required_output_file_location}, exists...'
                       bar()
                       OptionHeader = [' --Z_ID_Max ',' --Y_ID ', ' --X_ID ', ' --EOS ', " --AFS ", ' --RecBatchID ']
@@ -351,7 +351,7 @@ def AutoPilot1(wait_min, interval_min, max_interval_tolerance):
                       MSGName = AFS_DIR + '/HTCondor/MSG/MSG_RH1b_' + RecBatchID+ '_' + str(j) + '_' + str(i)
                       ScriptName = AFS_DIR + '/Code/Utilities/RH1b_LinkSegmentsZ_Sub.py '
                       if os.path.isfile(required_output_file_location)!=True:
-                         bad_pop.append([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, 1, 'EDER-GNN-RH-'+RecBatchID, False,False])
+                         bad_pop.append([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, 1, 'ANNADEA-RH-'+RecBatchID, False,False])
          if len(bad_pop)>0:
                print(UF.TimeStamp(),bcolors.WARNING+'Autopilot status update: There are still', len(bad_pop), 'HTCondor jobs remaining'+bcolors.ENDC)
                if interval%max_interval_tolerance==0:
@@ -372,7 +372,7 @@ def AutoPilot2(wait_min, interval_min, max_interval_tolerance):
          print(UF.TimeStamp(),"Scheduled job checkup...") #Progress display
          with alive_bar(Ysteps*Xsteps,force_tty=True, title='Checking the Y-shift results from HTCondor') as bar:
                    for i in range(0,Xsteps):
-                      required_output_file_location=EOS_DIR+'/EDER-GNN/Data/REC_SET/RH1c_'+RecBatchID+'_hit_cluster_rec_y_set_' +str(i)+'.pkl'
+                      required_output_file_location=EOS_DIR+'/ANNADEA/Data/REC_SET/RH1c_'+RecBatchID+'_hit_cluster_rec_y_set_' +str(i)+'.pkl'
                       bar.text = f'-> Checking whether the file : {required_output_file_location}, exists...'
                       bar()
                       OptionHeader = [' --Y_ID_Max ', ' --X_ID ', ' --EOS ', " --AFS ", ' --RecBatchID ']
@@ -382,7 +382,7 @@ def AutoPilot2(wait_min, interval_min, max_interval_tolerance):
                       MSGName = AFS_DIR + '/HTCondor/MSG/MSG_RH1c_' + RecBatchID+ '_' + str(i)
                       ScriptName = AFS_DIR + '/Code/Utilities/RH1c_LinkSegmentsY_Sub.py '
                       if os.path.isfile(required_output_file_location)!=True:
-                         bad_pop.append([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, 1, 'EDER-GNN-RH-'+RecBatchID, False,False])
+                         bad_pop.append([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, 1, 'ANNADEA-RH-'+RecBatchID, False,False])
          if len(bad_pop)>0:
                print(UF.TimeStamp(),bcolors.WARNING+'Autopilot status update: There are still', len(bad_pop), 'HTCondor jobs remaining'+bcolors.ENDC)
                if interval%max_interval_tolerance==0:
@@ -401,7 +401,7 @@ def AutoPilot3(wait_min, interval_min, max_interval_tolerance):
          time.sleep(interval_sec)
          bad_pop=[]
          print(UF.TimeStamp(),"Scheduled job checkup...") #Progress display
-         required_output_file_location=EOS_DIR+'/EDER-GNN/Data/REC_SET/RH1d_'+RecBatchID+'_hit_cluster_rec_x_set.pkl'
+         required_output_file_location=EOS_DIR+'/ANNADEA/Data/REC_SET/RH1d_'+RecBatchID+'_hit_cluster_rec_x_set.pkl'
          OptionHeader = [' --X_ID_Max ', ' --EOS ', " --AFS ", ' --RecBatchID ']
          OptionLine = [Xsteps, EOS_DIR, AFS_DIR, RecBatchID]
          SHName = AFS_DIR + '/HTCondor/SH/SH_RH1d_'+RecBatchID+'.sh'
@@ -409,7 +409,7 @@ def AutoPilot3(wait_min, interval_min, max_interval_tolerance):
          MSGName = AFS_DIR + '/HTCondor/MSG/MSG_RH1d_' + RecBatchID
          ScriptName = AFS_DIR + '/Code/Utilities/RH1d_LinkSegmentsX_Sub.py '
          if os.path.isfile(required_output_file_location)!=True:
-            bad_pop.append([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, 1, 'EDER-GNN-RH-'+RecBatchID, False,False])
+            bad_pop.append([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, 1, 'ANNADEA-RH-'+RecBatchID, False,False])
          if len(bad_pop)>0:
                print(UF.TimeStamp(),bcolors.WARNING+'Autopilot status update: There are still', len(bad_pop), 'HTCondor jobs remaining'+bcolors.ENDC)
                if interval%max_interval_tolerance==0:
@@ -422,7 +422,7 @@ def AutoPilot3(wait_min, interval_min, max_interval_tolerance):
 
 if Mode=='RESET':
     print(UF.TimeStamp(),'Performing the cleanup... ',bcolors.ENDC)
-    HTCondorTag="SoftUsed == \"EDER-GNN-RH-"+RecBatchID+"\""
+    HTCondorTag="SoftUsed == \"ANNADEA-RH-"+RecBatchID+"\""
     UF.RecCleanUp(AFS_DIR, EOS_DIR, 'RH1_'+RecBatchID, ['RH1a','RH1b','RH1c','RH1d',RecBatchID+'_RH_OUTPUT.pkl'], HTCondorTag)
     status=0
     FreshStart=False
@@ -442,7 +442,7 @@ while status<5:
             for k in range(0,Zsteps):
                 for j in range(0,Ysteps):
                      for i in range(0,Xsteps):
-                          required_output_file_location=EOS_DIR+'/EDER-GNN/Data/REC_SET/RH1a_'+RecBatchID+'_hit_cluster_rec_set_'+str(k)+'_' +str(j)+'_' +str(i)+'.pkl'
+                          required_output_file_location=EOS_DIR+'/ANNADEA/Data/REC_SET/RH1a_'+RecBatchID+'_hit_cluster_rec_set_'+str(k)+'_' +str(j)+'_' +str(i)+'.pkl'
                           bar.text = f'-> Checking whether the file : {required_output_file_location}, exists...'
                           bar()
                           OptionHeader = [' --Z_ID ',' --Y_ID ', ' --X_ID ', ' --stepZ ', ' --stepY ', ' --stepX ', ' --EOS ', " --AFS ", " --zOffset ", " --yOffset ", " --xOffset ", ' --cut_dt ', ' --cut_dr ', ' --ModelName ', ' --Log ',' --RecBatchID ',' --Z_overlap ',' --Y_overlap ',' --X_overlap ']
@@ -452,7 +452,7 @@ while status<5:
                           MSGName = AFS_DIR + '/HTCondor/MSG/MSG_RH1a_' + RecBatchID+'_' + str(k) + '_' + str(j) + '_' + str(i)
                           ScriptName = AFS_DIR + '/Code/Utilities/RH1a_ReconstructHits_Sub.py '
                           if os.path.isfile(required_output_file_location)!=True:
-                             bad_pop.append([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, 1, 'EDER-GNN-RH-'+RecBatchID, False,False])
+                             bad_pop.append([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, 1, 'ANNADEA-RH-'+RecBatchID, False,False])
         if len(bad_pop)==0:
              FreshStart=False
              print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 0 has successfully completed'+bcolors.ENDC)
@@ -479,7 +479,7 @@ while status<5:
                                SUBName = AFS_DIR + '/HTCondor/SUB/SUB_RH1a_'+ RecBatchID+'_'+ str(k) + '_' + str(j) + '.sub'
                                MSGName = AFS_DIR + '/HTCondor/MSG/MSG_RH1a_' + RecBatchID+'_' + str(k) + '_' + str(j)
                                ScriptName = AFS_DIR + '/Code/Utilities/RH1a_ReconstructHits_Sub.py '
-                               UF.SubmitJobs2Condor([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, Xsteps, 'EDER-GNN-RH-'+RecBatchID, False,False])
+                               UF.SubmitJobs2Condor([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, Xsteps, 'ANNADEA-RH-'+RecBatchID, False,False])
                  else:
                     if AutoPilot0(600,10,Patience):
                         FreshStart=False
@@ -531,7 +531,7 @@ while status<5:
                                SUBName = AFS_DIR + '/HTCondor/SUB/SUB_RH1a_'+ RecBatchID+'_'+ str(k) + '_' + str(j) + '.sub'
                                MSGName = AFS_DIR + '/HTCondor/MSG/MSG_RH1a_' + RecBatchID+'_' + str(k) + '_' + str(j)
                                ScriptName = AFS_DIR + '/Code/Utilities/RH1a_ReconstructHits_Sub.py '
-                               UF.SubmitJobs2Condor([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, Xsteps, 'EDER-GNN-RH-'+RecBatchID, False,False])
+                               UF.SubmitJobs2Condor([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, Xsteps, 'ANNADEA-RH-'+RecBatchID, False,False])
 
                  if AutoPilot0(600,10,Patience):
                         FreshStart=False
@@ -561,7 +561,7 @@ while status<5:
         with alive_bar(Ysteps*Xsteps,force_tty=True, title='Checking the Z-shift results from HTCondor') as bar:
             for j in range(0,Ysteps):
                  for i in range(0,Xsteps):
-                      required_output_file_location=EOS_DIR+'/EDER-GNN/Data/REC_SET/RH1b_'+RecBatchID+'_hit_cluster_rec_z_set_'+str(j)+'_' +str(i)+'.pkl'
+                      required_output_file_location=EOS_DIR+'/ANNADEA/Data/REC_SET/RH1b_'+RecBatchID+'_hit_cluster_rec_z_set_'+str(j)+'_' +str(i)+'.pkl'
                       bar.text = f'-> Checking whether the file : {required_output_file_location}, exists...'
                       bar()
                       OptionHeader = [' --Z_ID_Max ',' --Y_ID ', ' --X_ID ', ' --EOS ', " --AFS ", ' --RecBatchID ']
@@ -571,7 +571,7 @@ while status<5:
                       MSGName = AFS_DIR + '/HTCondor/MSG/MSG_RH1b_' + RecBatchID+ '_' + str(j) + '_' + str(i)
                       ScriptName = AFS_DIR + '/Code/Utilities/RH1b_LinkSegmentsZ_Sub.py '
                       if os.path.isfile(required_output_file_location)!=True:
-                         bad_pop.append([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, 1, 'EDER-GNN-RH-'+RecBatchID, False,False])
+                         bad_pop.append([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, 1, 'ANNADEA-RH-'+RecBatchID, False,False])
 
         if FreshStart:
             if (Xsteps*Ysteps)==len(bad_pop):
@@ -593,7 +593,7 @@ while status<5:
                                SUBName = AFS_DIR + '/HTCondor/SUB/SUB_RH1b_'+ RecBatchID+'_' + str(j) + '.sub'
                                MSGName = AFS_DIR + '/HTCondor/MSG/MSG_RH1b_' + RecBatchID+ '_' + str(j)
                                ScriptName = AFS_DIR + '/Code/Utilities/RH1b_LinkSegmentsZ_Sub.py '
-                               UF.SubmitJobs2Condor([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, Xsteps, 'EDER-GNN-RH-'+RecBatchID, False,False])
+                               UF.SubmitJobs2Condor([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, Xsteps, 'ANNADEA-RH-'+RecBatchID, False,False])
                  else:
 
                     if AutoPilot1(120,10,Patience):
@@ -651,7 +651,7 @@ while status<5:
                                SUBName = AFS_DIR + '/HTCondor/SUB/SUB_RH1b_'+ RecBatchID+'_' + str(j) + '.sub'
                                MSGName = AFS_DIR + '/HTCondor/MSG/MSG_RH1b_' + RecBatchID+ '_' + str(j)
                                ScriptName = AFS_DIR + '/Code/Utilities/RH1b_LinkSegmentsZ_Sub.py '
-                               UF.SubmitJobs2Condor([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, Xsteps, 'EDER-GNN-RH-'+RecBatchID, False,False])
+                               UF.SubmitJobs2Condor([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, Xsteps, 'ANNADEA-RH-'+RecBatchID, False,False])
 
                  if AutoPilot1(600,10,Patience):
                        FreshStart=False
@@ -685,7 +685,7 @@ while status<5:
         bad_pop=[]
         with alive_bar(Xsteps,force_tty=True, title='Checking the Y-shift results from HTCondor') as bar:
             for i in range(0,Xsteps):
-                      required_output_file_location=EOS_DIR+'/EDER-GNN/Data/REC_SET/RH1c_'+RecBatchID+'_hit_cluster_rec_y_set_' +str(i)+'.pkl'
+                      required_output_file_location=EOS_DIR+'/ANNADEA/Data/REC_SET/RH1c_'+RecBatchID+'_hit_cluster_rec_y_set_' +str(i)+'.pkl'
                       bar.text = f'-> Checking whether the file : {required_output_file_location}, exists...'
                       bar()
                       OptionHeader = [' --Y_ID_Max ', ' --X_ID ', ' --EOS ', " --AFS ", ' --RecBatchID ']
@@ -695,7 +695,7 @@ while status<5:
                       MSGName = AFS_DIR + '/HTCondor/MSG/MSG_RH1c_' + RecBatchID+ '_' + str(i)
                       ScriptName = AFS_DIR + '/Code/Utilities/RH1c_LinkSegmentsY_Sub.py '
                       if os.path.isfile(required_output_file_location)!=True:
-                         bad_pop.append([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, 1, 'EDER-GNN-RH-'+RecBatchID, False,False])
+                         bad_pop.append([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, 1, 'ANNADEA-RH-'+RecBatchID, False,False])
 
         if FreshStart:
             if (Xsteps)==len(bad_pop):
@@ -716,7 +716,7 @@ while status<5:
                                SUBName = AFS_DIR + '/HTCondor/SUB/SUB_RH1c_'+ RecBatchID+'.sub'
                                MSGName = AFS_DIR + '/HTCondor/MSG/MSG_RH1c_' + RecBatchID
                                ScriptName = AFS_DIR + '/Code/Utilities/RH1c_LinkSegmentsY_Sub.py '
-                               UF.SubmitJobs2Condor([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, Xsteps, 'EDER-GNN-RH-'+RecBatchID, False,False])
+                               UF.SubmitJobs2Condor([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, Xsteps, 'ANNADEA-RH-'+RecBatchID, False,False])
                  else:
                     if AutoPilot2(600,10,Patience):
                         FreshStart=False
@@ -773,7 +773,7 @@ while status<5:
                                SUBName = AFS_DIR + '/HTCondor/SUB/SUB_RH1c_'+ RecBatchID+'.sub'
                                MSGName = AFS_DIR + '/HTCondor/MSG/MSG_RH1c_' + RecBatchID
                                ScriptName = AFS_DIR + '/Code/Utilities/RH1c_LinkSegmentsY_Sub.py '
-                               UF.SubmitJobs2Condor([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, Xsteps, 'EDER-GNN-RH-'+RecBatchID, False,False])
+                               UF.SubmitJobs2Condor([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, Xsteps, 'ANNADEA-RH-'+RecBatchID, False,False])
                  if AutoPilot2(600,10,Patience):
                         FreshStart=False
                         print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 2 has successfully completed'+bcolors.ENDC)
@@ -806,7 +806,7 @@ while status<5:
         print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
         print(UF.TimeStamp(),bcolors.BOLD+'Stage 3:'+bcolors.ENDC+' Sending hit cluster to the HTCondor, so the reconstructed clusters can be merged along x-axis')
         bad_pop=[]
-        required_output_file_location=EOS_DIR+'/EDER-GNN/Data/REC_SET/RH1d_'+RecBatchID+'_hit_cluster_rec_x_set.pkl'
+        required_output_file_location=EOS_DIR+'/ANNADEA/Data/REC_SET/RH1d_'+RecBatchID+'_hit_cluster_rec_x_set.pkl'
         OptionHeader = [' --X_ID_Max ', ' --EOS ', " --AFS ", ' --RecBatchID ']
         OptionLine = [Xsteps, EOS_DIR, AFS_DIR, RecBatchID]
         SHName = AFS_DIR + '/HTCondor/SH/SH_RH1d_'+RecBatchID+'.sh'
@@ -814,7 +814,7 @@ while status<5:
         MSGName = AFS_DIR + '/HTCondor/MSG/MSG_RH1d_' + RecBatchID
         ScriptName = AFS_DIR + '/Code/Utilities/RH1d_LinkSegmentsX_Sub.py '
         if os.path.isfile(required_output_file_location)!=True:
-            bad_pop.append([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, 1, 'EDER-GNN-RH-'+RecBatchID, False,False])
+            bad_pop.append([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, 1, 'ANNADEA-RH-'+RecBatchID, False,False])
         if FreshStart:
             if len(bad_pop)>0:
                    print(UF.TimeStamp(),bcolors.WARNING+'Warning, there are still', len(bad_pop), 'HTCondor job remaining'+bcolors.ENDC)
@@ -876,7 +876,7 @@ while status<5:
        print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
        print(UF.TimeStamp(),bcolors.BOLD+'Stage 4:'+bcolors.ENDC+' Using the results from previous steps to map merged trackIDs to the original reconstruction file')
        try:
-           FirstFile=EOS_DIR+'/EDER-GNN/Data/REC_SET/RH1d_'+RecBatchID+'_hit_cluster_rec_x_set.pkl'
+           FirstFile=EOS_DIR+'/ANNADEA/Data/REC_SET/RH1d_'+RecBatchID+'_hit_cluster_rec_x_set.pkl'
            print(UF.TimeStamp(),'Loading the object ',bcolors.OKBLUE+FirstFile+bcolors.ENDC)
            FirstFileRaw=UF.PickleOperations(FirstFile,'r', 'N/A')
            FirstFile=FirstFileRaw[0]
@@ -895,7 +895,7 @@ while status<5:
            CutData=pd.merge(CutData,TrackMap,how='left', left_on=[PM.Hit_ID], right_on=['HitID'])
            CutData.drop(['HitID'],axis=1,inplace=True)
            Data=pd.concat([CutData,OtherData])
-           output_file_location=EOS_DIR+'/EDER-GNN/Data/REC_SET/'+RecBatchID+'_RH_OUTPUT.csv'
+           output_file_location=EOS_DIR+'/ANNADEA/Data/REC_SET/'+RecBatchID+'_RH_OUTPUT.csv'
            Data.to_csv(output_file_location,index=False)
            print(UF.TimeStamp(), bcolors.OKGREEN+"The tracked data has been written to"+bcolors.ENDC, bcolors.OKBLUE+output_file_location+bcolors.ENDC)
 
@@ -934,7 +934,7 @@ while status<5:
                                 for j in range(0,Ysteps):
                                     for i in range(0,Xsteps):
                                         bar()
-                                        input_file_location=EOS_DIR+'/EDER-GNN/Data/REC_SET/RH1a_'+RecBatchID+'_hit_cluster_rec_set_'+str(k)+'_' +str(j)+'_' +str(i)+'.pkl'
+                                        input_file_location=EOS_DIR+'/ANNADEA/Data/REC_SET/RH1a_'+RecBatchID+'_hit_cluster_rec_set_'+str(k)+'_' +str(j)+'_' +str(i)+'.pkl'
                                         cluster_data_raw=UF.PickleOperations(input_file_location, 'r', 'N/A')
                                         cluster_data=cluster_data_raw[0]
                                         result_temp=cluster_data.RecStats
@@ -1005,7 +1005,7 @@ while status<5:
                                 for j in range(0,Ysteps):
                                     for i in range(0,Xsteps):
                                         bar()
-                                        input_file_location=EOS_DIR+'/EDER-GNN/Data/REC_SET/RH1a_'+RecBatchID+'_hit_cluster_rec_set_'+str(k)+'_' +str(j)+'_' +str(i)+'.pkl'
+                                        input_file_location=EOS_DIR+'/ANNADEA/Data/REC_SET/RH1a_'+RecBatchID+'_hit_cluster_rec_set_'+str(k)+'_' +str(j)+'_' +str(i)+'.pkl'
                                         cluster_data_raw=UF.PickleOperations(input_file_location, 'r', 'N/A')
                                         cluster_data=cluster_data_raw[0]
                                         result_temp=cluster_data.KalmanRecStats

@@ -1,5 +1,5 @@
-#This is the list of parameters that EDER-GNN uses for reconstruction, model training etc. There have been collated here in one place for the user convenience
-# Part of EDER-GNN package
+#This is the list of parameters that ANNADEA uses for reconstruction, model training etc. There have been collated here in one place for the user convenience
+# Part of ANNADEA package
 #Made by Filips Fedotovs
 #Current version 1.0
 

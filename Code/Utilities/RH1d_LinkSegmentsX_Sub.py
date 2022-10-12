@@ -35,7 +35,7 @@ import sys
 sys.path.insert(1, AFS_DIR+'/Code/Utilities/')
 import UtilityFunctions as UF
 #Load data configuration
-EOSsubDIR=EOS_DIR+'/'+'EDER-GNN'
+EOSsubDIR=EOS_DIR+'/'+'ANNADEA'
 EOSsubDataDIR=EOSsubDIR+'/'+'Data'
 X_ID_Max=int(args.X_ID_Max)
 ##############################################################################################################################
@@ -45,13 +45,13 @@ def zero_divide(a, b):
     if (b==0): return 0
     return a/b
 
-FirstFile=EOS_DIR+'/EDER-GNN/Data/REC_SET/RH1c_'+RecBatchID+'_hit_cluster_rec_y_set_' +str(0)+'.pkl'
+FirstFile=EOS_DIR+'/ANNADEA/Data/REC_SET/RH1c_'+RecBatchID+'_hit_cluster_rec_y_set_' +str(0)+'.pkl'
 FirstFileRaw=UF.PickleOperations(FirstFile,'r', 'N/A')
 FirstFile=FirstFileRaw[0]
 ZContractedTable=FirstFile.RecSegments
 #ZContractedTable.to_csv('FirstFile.csv',index=False)
 for i in range(1,X_ID_Max):
-    SecondFile=EOS_DIR+'/EDER-GNN/Data/REC_SET/RH1c_'+RecBatchID+'_hit_cluster_rec_y_set_'+str(i)+'.pkl'
+    SecondFile=EOS_DIR+'/ANNADEA/Data/REC_SET/RH1c_'+RecBatchID+'_hit_cluster_rec_y_set_'+str(i)+'.pkl'
     SecondFileRaw=UF.PickleOperations(SecondFile,'r', 'N/A')
     print(SecondFileRaw[1])
     SecondFile=SecondFileRaw[0]
@@ -115,7 +115,7 @@ ZContractedTable=pd.merge(ZContractedTable,ZContractedTableIDs,how='inner',on=["
 ZContractedTable.drop(['Master_z',"Master_Segment_ID"],axis=1,inplace=True)
 ZContractedTable['ANN_Brick_ID']=RecBatchID
 FirstFile.RecTracks=ZContractedTable
-OutputFile=EOS_DIR+'/EDER-GNN/Data/REC_SET/RH1d_'+RecBatchID+'_hit_cluster_rec_x_set.pkl'
+OutputFile=EOS_DIR+'/ANNADEA/Data/REC_SET/RH1d_'+RecBatchID+'_hit_cluster_rec_x_set.pkl'
 print(UF.PickleOperations(OutputFile, 'w', FirstFile)[1])
 exit()
 

@@ -58,7 +58,7 @@ TrainSampleID=args.TrainSampleID
 import UtilityFunctions as UF #This is where we keep routine utility functions
 
 #Specifying the full path to input/output files
-input_file_location=EOS_DIR+'/EDER-GNN/Data/TRAIN_SET/MH1_'+TrainSampleID+'_hits.csv'
+input_file_location=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/MH1_'+TrainSampleID+'_hits.csv'
 print(UF.TimeStamp(), "Modules Have been imported successfully...")
 print(UF.TimeStamp(),'Loading pre-selected data from ',input_file_location)
 
@@ -87,7 +87,7 @@ else:
 
 
 
-input_file_location=EOS_DIR+'/EDER-GNN/Data/TRAIN_SET/EH1_'+TrainSampleID+'_hits.csv'
+input_file_location=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/EH1_'+TrainSampleID+'_hits.csv'
 MCdata=pd.read_csv(input_file_location,header=0,
                             usecols=["Hit_ID","x","y","z","tx","ty",'MC_Mother_Track_ID'])
 MCdata["x"] = pd.to_numeric(MCdata["x"],downcast='float')
@@ -112,7 +112,7 @@ for j in range(0,Ysteps):
         if GraphStatus:
             LoadedClusters.append(HC)
 random.shuffle(LoadedClusters)
-output_file_location=EOS_DIR+'/EDER-GNN/Data/TRAIN_SET/MH1a_'+TrainSampleID+'_SelectedTrainClusters_'+str(Z_ID_n)+'_' +str(X_ID_n)+'.pkl'
+output_file_location=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/MH1a_'+TrainSampleID+'_SelectedTrainClusters_'+str(Z_ID_n)+'_' +str(X_ID_n)+'.pkl'
 UF.PickleOperations(output_file_location,'w', LoadedClusters)
 #End of the script
 
