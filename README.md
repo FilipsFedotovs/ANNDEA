@@ -1,2 +1,2 @@
 # ANNADEA
-Artificial Neural Network-Driven Emulsion Analysis
+Artificial Neural Network Driven Emulsion Analysis
