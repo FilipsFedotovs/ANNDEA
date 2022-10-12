@@ -80,6 +80,8 @@ if os.path.isfile(destination_output_file_location) and Mode!='RESET':
 
 
 ########################################     Phase 1 - Create compact source file    #########################################
+print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
+print(UF.TimeStamp(),bcolors.BOLD+'Stage 0:'+bcolors.ENDC+' Taking the file that has been supplied and creating the compact copies for the traing set generation...')
 output_file_location=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/MH1_'+TrainSampleID+'_hits.csv'
 if os.path.isfile(output_file_location)==False or Mode=='RESET':
         print(UF.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+input_file_location+bcolors.ENDC)

@@ -1,6 +1,7 @@
 # ANNADEA
-Artificial Neural Network Driven Emulsion Analysis
+Artificial Neural Network Driven Emulsion Analysis.
 This README just serves as a very short user guide, the documentation will be written much later.
+
 ## Hints and Tips
 
 1) It is recomended to run those processes on lxplus in the tmux shell as some scripts can take up to several hours to execute.
@@ -37,23 +38,40 @@ All modules
 ### Creating training files -------
 1) Go to ANNADEA directory on AFS
 2) cd Code
-3) python3 MH1_GenerateTrainClusters.py --TrainSampleID Test_Sample_1
-4) The script will ask which samples to use. Please type D and press ENTER.The script will send HTCondor jobs and exit.
-5) After a day or so please run: python Model_Training.py --MODE C
-6) This process is repeated multiple times until the model is sufficinetly trained
+3) python3 MH1_GenerateTrainClusters.py --TrainSampleID Test_Sample_1 --Xmin 50000 --Xmax 55000 --Ymin 50000 --Ymax 55000
 
-------- Track reconstruction --------
-1) Go to EDER_TRAN directory on AFS
-2) cd Code 
-3) tmux (please note the number of lxplus machine at which tmux session is logged in)
-4) kinit username@CERN.CH -l 24h00m
-5) python3 Track_Reconstructor.py 
-   The process can take many hours, log out of tmux by using ctrl+b
+[//]: # (4&#41; The script will ask which samples to use. Please type D and press ENTER.The script will send HTCondor jobs and exit.)
 
------- Hit utilisation Analysis -------
-1) Relogin to the same machine by using ssh -XY username@lxplus#.cern.ch where # is the recorded number.
-2) tmux a -t 0
-3) if the green message "The reconstruction has completed # tracks have been recognised' is displayed, it means that the reconstruction is finished.
-4) kinit username@CERN.CH
-5) cd Utilisation
-6) python Analyse_Hit_Utilisation.py --metric TRANN
+[//]: # (5&#41; After a day or so please run: python Model_Training.py --MODE C)
+
+[//]: # (6&#41; This process is repeated multiple times until the model is sufficinetly trained)
+
+[//]: # ()
+[//]: # (------- Track reconstruction --------)
+
+[//]: # (1&#41; Go to EDER_TRAN directory on AFS)
+
+[//]: # (2&#41; cd Code )
+
+[//]: # (3&#41; tmux &#40;please note the number of lxplus machine at which tmux session is logged in&#41;)
+
+[//]: # (4&#41; kinit username@CERN.CH -l 24h00m)
+
+[//]: # (5&#41; python3 Track_Reconstructor.py )
+
+[//]: # (   The process can take many hours, log out of tmux by using ctrl+b)
+
+[//]: # ()
+[//]: # (------ Hit utilisation Analysis -------)
+
+[//]: # (1&#41; Relogin to the same machine by using ssh -XY username@lxplus#.cern.ch where # is the recorded number.)
+
+[//]: # (2&#41; tmux a -t 0)
+
+[//]: # (3&#41; if the green message "The reconstruction has completed # tracks have been recognised' is displayed, it means that the reconstruction is finished.)
+
+[//]: # (4&#41; kinit username@CERN.CH)
+
+[//]: # (5&#41; cd Utilisation)
+
+[//]: # (6&#41; python Analyse_Hit_Utilisation.py --metric TRANN)
