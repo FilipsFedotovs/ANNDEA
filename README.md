@@ -41,8 +41,8 @@ All modules
 4) *kinit username@CERN.CH -l 24h00m*
 5) Enter your lxplus password
 6) *python3 MH1_GenerateTrainClusters.py --TrainSampleID Test_Sample_1 --Xmin 50000 --Xmax 55000 --Ymin 50000 --Ymax 55000*
-7) After few minutes the script will ask for the user option (Warning, there are still x HTCondor jobs remaining). Type *600* and press *Enter*. The script will go to the autopilot mode.
-8) Exit tmux (by using *ctrl + b* and then typing  *d*). It will take around an hour for a script to finish.
+7) After few minutes the script will ask for the user option (Warning, there are still x HTCondor jobs remaining). Type *R* and press *Enter*. The script will submit the subscript jobs and go to the autopilot mode.
+8) Exit tmux (by using *ctrl + b* and then typing  *d*). It can take up to few hours for HTCondor jobs to finish.
 
 [//]: # (4&#41; The script will ask which samples to use. Please type D and press ENTER.The script will send HTCondor jobs and exit.)
 
