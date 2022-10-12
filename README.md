@@ -39,7 +39,7 @@ All modules
 1) Go to ANNADEA directory on AFS
 2) cd Code
 3) tmux
-4) "kinit username@CERN.CH -l 24h00m"
+4) *kinit username@CERN.CH -l 24h00m*
 5) Enter your lxplus password
 3) python3 MH1_GenerateTrainClusters.py --TrainSampleID Test_Sample_1 --Xmin 50000 --Xmax 55000 --Ymin 50000 --Ymax 55000
 4) After few minutes the script will ask for the user option (Warning, there are still x HTCondor jobs remaining). Type 600 and press Enter.
