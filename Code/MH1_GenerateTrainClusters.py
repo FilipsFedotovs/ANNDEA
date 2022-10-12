@@ -157,9 +157,11 @@ if os.path.isfile(output_file_location)==False or Mode=='RESET':
     new_combined_data.to_csv(output_file_location,index=False)
     print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
     print(UF.TimeStamp(), bcolors.OKGREEN+"The track segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+output_file_location+bcolors.ENDC)
-
+print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 0 has successfully completed'+bcolors.ENDC)
 ########################################     Preset framework parameters    #########################################
 
+print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
+print(UF.TimeStamp(),bcolors.BOLD+'Stage 1:'+bcolors.ENDC+' Creating Training sample meta data...')
 if os.path.isfile(TrainSampleOutputMeta)==False or Mode=='RESET':
     input_file_location=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/MH1_'+TrainSampleID+'_hits.csv'
     print(UF.TimeStamp(),'Loading preselected data from ',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
@@ -206,7 +208,7 @@ elif os.path.isfile(TrainSampleOutputMeta)==True:
     Y_overlap=Meta.Y_overlap
     X_overlap=Meta.X_overlap
     Z_overlap=Meta.Z_overlap
-
+print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 0 has successfully completed'+bcolors.ENDC)
 def AutoPilot(wait_min, interval_min, max_interval_tolerance):
     print(UF.TimeStamp(),'Going on an autopilot mode for ',wait_min, 'minutes while checking HTCondor every',interval_min,'min',bcolors.ENDC)
     wait_sec=wait_min*60

@@ -4,7 +4,7 @@ This README just serves as a very short user guide, the documentation will be wr
 
 ## Hints and Tips
 
-1) It is recomended to run those processes on lxplus in the tmux shell as some scripts can take up to several hours to execute.
+1) It is recommended to run those processes on lxplus in the tmux shell as some scripts can take up to several hours to execute.
 2) The first letter of the script name prefixes indicate what kind of operations this script perform: R is for actual reconstruction routines, E for evaluation and M for model creation and training. I for Classification tasks.
 3) The second letter of the script name prefixes indicates the subject of the reconstruction. H - hits, S - Track Segments, T- tracks, V - Vertices and E - events.
 4) In general the numbers in prefixes reflect the order at which scripts have to be executed e.g: MH1, MH2,MH3. If there is no number then the script is independent or optional.
@@ -38,8 +38,11 @@ All modules
 ### Creating training files -------
 1) Go to ANNADEA directory on AFS
 2) cd Code
+3) tmux
+4) 'kinit username@CERN.CH -l 24h00m'
+5) Enter your lxplus password
 3) python3 MH1_GenerateTrainClusters.py --TrainSampleID Test_Sample_1 --Xmin 50000 --Xmax 55000 --Ymin 50000 --Ymax 55000
-
+4) After few minutes the script will ask for the user option (Warning, there are still x HTCondor jobs remaining). Type 600 and press Enter.
 [//]: # (4&#41; The script will ask which samples to use. Please type D and press ENTER.The script will send HTCondor jobs and exit.)
 
 [//]: # (5&#41; After a day or so please run: python Model_Training.py --MODE C)
