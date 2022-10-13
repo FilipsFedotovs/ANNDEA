@@ -983,8 +983,9 @@ def GenerateModel(ModelMeta):
 
                      if ModelMeta.ModelParameters[2]==1:
                          print(x,edge_index)
-                         exit()
+                         #exit()
                          x1, edge_attr_1 = self.in_w1(x, edge_index, edge_attr)
+                         x=input()
                          # combine all edge features, use to predict edge weights
                          initial_edge_attr = torch.cat([edge_attr, edge_attr_1], dim=1)
                      edge_weights = torch.sigmoid(self.W(initial_edge_attr))
