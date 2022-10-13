@@ -50,14 +50,12 @@ if os.path.isfile(Model_Meta_Path):
        Model_Meta_Raw=UF.PickleOperations(Model_Meta_Path, 'r', 'N/A')
        print(Model_Meta_Raw[1])
        Model_Meta=Model_Meta_Raw[0]
-       print(Model_Meta.__dict__)
        Header=Model_Meta.TrainSessionsData[0][0]+['Train Sample ID','LR','Batch Size','Normalised Epochs']
        New_Data=[Header]
        counter=0
        for TSD in range(len(Model_Meta.TrainSessionsData)):
            for Record in Model_Meta.TrainSessionsData[TSD][1:]:
                counter+=1
-               print(Record)
                New_Data.append(Record+[Model_Meta.TrainSessionsDataID[TSD],Model_Meta.TrainSessionsParameters[TSD][0],Model_Meta.TrainSessionsParameters[TSD][1],counter])
 
 else:
