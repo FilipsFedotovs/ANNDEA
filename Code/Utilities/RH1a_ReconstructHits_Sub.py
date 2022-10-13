@@ -48,8 +48,6 @@ cut_dr=float(args.cut_dr)
 Log=args.Log.upper()
 ModelName=args.ModelName
 RecBatchID=args.RecBatchID
-print(X_ID,Y_ID,Z_ID)
-
 #Loading Directory locations
 EOS_DIR=args.EOS
 AFS_DIR=args.AFS

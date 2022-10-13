@@ -97,7 +97,7 @@ def AutoPilot(wait_min, interval_min, max_interval_tolerance):
               print(UF.TimeStamp(),'Aborting the training...')
               exit()
            else:
-                 print(UF.TimeStamp(), bcolors.OKGREEN+"Training is finished, strarting another session..."+bcolors.ENDC)
+                 print(UF.TimeStamp(), bcolors.OKGREEN+"Training is finished, starting another session..."+bcolors.ENDC)
                  HTCondorTag="SoftUsed == \"ANNADEA-MH-"+ModelName+"\""
                  UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'M2', ['N/A'], HTCondorTag)
                  OptionHeader = [' --TrainParams ', ' --AFS ', ' --EOS ', " --TrainSampleID ", " --ModelName "]
@@ -272,7 +272,7 @@ else:
                  UF.SubmitJobs2Condor([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, 1, 'ANNADEA-MH-'+ModelName, True,False])
                  print(bcolors.BOLD+"The job has been submitted..."+bcolors.ENDC)
                  AutoPilot(600,30,5)
-print(UF.TimeStamp(),bcolors.OKGREEN+'Training is finished then, thank you and good bye'+bcolors.ENDC)
+print(UF.TimeStamp(),bcolors.OKGREEN+'Training is finished then, thank you and goodbye'+bcolors.ENDC)
 print(bcolors.HEADER+"############################################# End of the program ################################################"+bcolors.ENDC)
 exit()
 
