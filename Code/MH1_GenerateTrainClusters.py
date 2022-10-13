@@ -264,7 +264,8 @@ def Success(Finished):
             print(UF.PickleOperations(TrainSampleOutputMeta,'w', MetaInput[0])[1])
             HTCondorTag="SoftUsed == \"ANNADEA-MH-"+TrainSampleID+"\""
             UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MH1_'+TrainSampleID, ['MH1a_'+TrainSampleID,'EH1_'+TrainSampleID,'MH1_'+TrainSampleID], HTCondorTag)
-            print(UF.TimeStamp(),bcolors.OKGREEN+'Files are ready for the model training'+bcolors.ENDC)
+            print(UF.TimeStamp(),bcolors.OKGREEN+'Training samples are ready for the model creation/training'+bcolors.ENDC)
+            print(UF.TimeStamp(),bcolors.OKGREEN+'Please run MH2_TrainModel.py after this to create/train a model'+bcolors.ENDC)
             print(bcolors.HEADER+"############################################# End of the program ################################################"+bcolors.ENDC)
         else:
             print(UF.TimeStamp(),bcolors.FAIL+'Unfortunately no results have been yield. Please rerun the script, and if the problem persists, check that the HTCondor jobs run adequately.'+bcolors.ENDC)

@@ -28,22 +28,35 @@ All modules
 ### Installation steps
 1) go to your home directory in afs where you would like to install the package
 2) git clone https://github.com/FilipsFedotovs/ANNADEA/
-3) *cd ANNADEA/*
-4) *python setup.py*
+3) **cd ANNADEA/**
+4) **python setup.py**
 5) The installation will require an EOS directory, please enter the location on EOS where you would like to keep data and the models. An example of the input is /eos/experiment/ship/user/username (but create the directory there first).
 6) The installation will ask whether you want to copy default training and validation files (that were prepared earlier). Unless you have your own, please enter Y.     The installer will copy and analyse existing data, it might take 5-10 minutes
 7) if the message 'ANNADEA setup is successfully completed' is displayed, it means that the package is ready for work
 
-### Creating training files -------
+### Creating training files 
+*This part is only needed if a new model is required*
 1) Go to ANNADEA directory on AFS
-2) *cd Code*
-3) *tmux*
-4) *kinit username@CERN.CH -l 24h00m*
+2) **cd Code**
+3) **tmux**
+4) **kinit username@CERN.CH -l 24h00m**
 5) Enter your lxplus password
-6) *python3 MH1_GenerateTrainClusters.py --TrainSampleID Test_Sample_1 --Xmin 50000 --Xmax 55000 --Ymin 50000 --Ymax 55000*
-7) After few minutes the script will ask for the user option (Warning, there are still x HTCondor jobs remaining). Type *R* and press *Enter*. The script will submit the subscript jobs and go to the autopilot mode.
-8) Exit tmux (by using *ctrl + b* and then typing  *d*). It can take up to few hours for HTCondor jobs to finish.
+6) **python3 MH1_GenerateTrainClusters.py --TrainSampleID Test_Sample --Xmin 50000 --Xmax 55000 --Ymin 50000 --Ymax 55000**
+7) After few minutes the script will ask for the user option (Warning, there are still x HTCondor jobs remaining). Type **R** and press **Enter**. The script will submit the subscript jobs and go to the autopilot mode.
+8) Exit tmux (by using **ctrl + b** and then typing  **d**). It can take up to few hours for HTCondor jobs to finish.
+9) Enter the same tmux session (by logging to the same lxplus machine and then typing  **tmux a -t 0**). The program should finish with the message *'Training samples are ready for the model creation/training'*
 
+### Creating new model 
+*This part is only needed if a new model is required*
+1) Go to ANNADEA directory on AFS
+2) **cd Code**
+3) **tmux**
+4) **kinit username@CERN.CH -l 24h00m**
+5) Enter your lxplus password
+6) **python3 MH1_GenerateTrainClusters.py --TrainSampleID Test_Sample --Xmin 50000 --Xmax 55000 --Ymin 50000 --Ymax 55000**
+7) After few minutes the script will ask for the user option (Warning, there are still x HTCondor jobs remaining). Type **R** and press **Enter**. The script will submit the subscript jobs and go to the autopilot mode.
+8) Exit tmux (by using **ctrl + b** and then typing  **d**). It can take up to few hours for HTCondor jobs to finish.
+9) Enter the same tmux session (by logging to the same lxplus machine and then typing  **tmux a -t 0**). The program should finish with the message *'Training samples are ready for the model creation/training'*
 [//]: # (4&#41; The script will ask which samples to use. Please type D and press ENTER.The script will send HTCondor jobs and exit.)
 
 [//]: # (5&#41; After a day or so please run: python Model_Training.py --MODE C)
