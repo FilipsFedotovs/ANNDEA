@@ -60,7 +60,6 @@ All modules
 9) Enter the same tmux session (after overnight job for example) by logging to the same lxplus machine and then typing  **tmux a -t 0**. The program should finish with the message *'Training is finished then, thank you and goodbye'*
 
 ### 1.4 Reconstructing a hit data using the new model 
-*This part is only needed if a new model is required*
 1) Go to ANNADEA directory on AFS
 2) **cd Code**
 3) **tmux**
