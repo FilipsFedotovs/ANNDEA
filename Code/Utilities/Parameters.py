@@ -24,12 +24,11 @@ cut_dt=0.2
 cut_dr=60
 valRatio=0.1
 testRatio=0.05
-
 TST=0.0001
 
 MinHitsTrack=2
-num_node_features=3
-num_edge_features=3
+num_node_features=5
+num_edge_features=5
 
 Model_Name='Model_Identity'
 ModelArchitecture=[[2], [1], [],[], [], [], [], [], [], [], [5]]

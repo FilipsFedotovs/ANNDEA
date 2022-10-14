@@ -77,7 +77,7 @@ import Parameters as PM #This is where we keep framework global parameters
 EOSsubDIR=EOS_DIR+'/'+'ANNADEA'
 EOSsubModelDIR=EOSsubDIR+'/'+'Models'
 Model_Meta_Path=EOSsubModelDIR+'/'+args.ModelName+'_Meta'
-
+print(UF.TimeStamp(),bcolors.BOLD+'Preparation 1/3:'+bcolors.ENDC+' Setting up metafiles...')
 #Loading the model meta file
 print(UF.TimeStamp(),'Loading the data file ',bcolors.OKBLUE+Model_Meta_Path+bcolors.ENDC)
 if os.path.isfile(Model_Meta_Path):
@@ -93,6 +93,7 @@ else:
        print(UF.TimeStamp(),bcolors.WARNING+'Fail! No existing model meta files have been found, exiting now'+bcolors.ENDC)
 
 ########################################     Phase 1 - Create compact source file    #########################################
+print(UF.TimeStamp(),bcolors.BOLD+'Preparation 2/3:'+bcolors.ENDC+' Preparing the source data...')
 required_file_location=EOS_DIR+'/ANNADEA/Data/REC_SET/RH1_'+RecBatchID+'_hits.csv'
 if os.path.isfile(required_file_location)==False or Mode=='RESET':
          print(UF.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
@@ -248,7 +249,7 @@ else:
 def CheckStatus():
     #Let's check at what stage are we
     print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
-    print(UF.TimeStamp(),' Working out at which stage are we...')
+    print(UF.TimeStamp(),bcolors.BOLD+'Preparation 3/3:'+bcolors.ENDC+' Working out the scope of the upcoming work...')
     #First of all lets check that the output of reconstruction is completed
     required_output_file_location=EOS_DIR+'/ANNADEA/Data/REC_SET/'+RecBatchID+'_RH_OUTPUT.pkl'
     if os.path.isfile(required_output_file_location):
