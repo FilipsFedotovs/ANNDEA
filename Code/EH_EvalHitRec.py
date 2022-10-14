@@ -38,7 +38,7 @@ import Parameters as PM #This is where we keep framework global parameters
 
 #Setting the parser
 parser = argparse.ArgumentParser(description='This script compares the ouput of the previous step with the output of ANNADEA reconstructed data to calculate reconstruction performance.')
-parser.add_argument('--f',help="Please enter the full path to the file with track reconstruction", default='/eos/user/a/aiuliano/public/sims_fedra/CH1_pot_03_02_20/b000001/b000001_withvertices.csv')
+parser.add_argument('--f',help="Please enter the full path to the file with track reconstruction", default='/afs/cern.ch/work/f/ffedship/public/SHIP/Source_Data/SHIP_Emulsion_FEDRA_Raw_UR.csv')
 parser.add_argument('--TrackID',help="Name of the control track", default="[['quarter','FEDRA_Track_ID']]")
 parser.add_argument('--MCCategories',help="What MC categories present in the MC data would you like to split by?", default="[]")
 parser.add_argument('--RecNames',help="What Names would you like to assign to the reconstruction methods that generated the tracks?", default="[]")
