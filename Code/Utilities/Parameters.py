@@ -35,9 +35,9 @@ ModelArchitecture=[[2], [1], [],[], [], [], [], [], [], [], [5]]
 
 ######Track Union Module - list of parameters that are specific to this module
 
-MaxSegmentsPerJob=10000 #This parameter imposes the limit on the number of the tracks form the Start plate when forming the Seeds.
-MaxFitTracksPerJob=10000
-MaxTracksPerTrPool=20000
+MaxSeedsPerJob=10000 #This parameter imposes the limit on the number of the tracks form the Start plate when forming the Seeds.
+# MaxFitTracksPerJob=10000
+# MaxTracksPerTrPool=20000
 
 ######List of geometrical constain parameters
 MaxSLG=7000
@@ -48,29 +48,29 @@ MaxValSampleSize=100000
 MaxDOCA=50
 MaxAngle=1 #Seed Opening Angle (Magnitude) in radians
 
-MaxTracksPerJob=20000
-MaxEvalTracksPerJob=20000
-MaxSeedsPerJob=40000
-MaxVxPerJob=10000
-MaxSeedsPerVxPool=20000
-##Model parameters
-pre_acceptance=0.5
-post_acceptance=0.5
-bg_acceptance = 1.0
-#pre_vx_acceptance=0.662
-resolution=50
-MaxX=1000.0
-MaxY=1000.0
-MaxZ=3000.0
-GNNMaxX=100.0
-GNNMaxY=100.0
-GNNMaxZ=1315
-GNNMaxTX=0.01
-GNNMaxTY=0.01
-Pre_CNN_Model_Name='1T_50_SHIP_PREFIT_1_model'
-Post_CNN_Model_Name='1T_50_SHIP_POSTFIT_1_model'
-Classifier_Model_Name= 'SND_Reduced_3Class2'
-Post_GNN_Model_Name = 'SND_Glue_Post_GMM3_FullCo_Angle2'
-#ModelArchitecture=[[6, 4, 1, 2, 2, 2, 2], [], [],[], [], [1, 4, 2], [], [], [], [], [7, 1, 1, 4]]
-ModelArchitecture=[[1, 4, 1, 8, 2, 2, 2], [], [],[], [], [1, 4, 2], [], [], [], [], [7, 1, 1, 4]]
-ModelArchitecturePlus=[[1, 4, [2, 2, 2], [8, 8, 8], 2, 2, 2], [], [],[], [], [1, 4, 2], [], [], [], [], [7, 1, 1, 4]]
+# MaxTracksPerJob=20000
+# MaxEvalTracksPerJob=20000
+# MaxSeedsPerJob=40000
+# MaxVxPerJob=10000
+# MaxSeedsPerVxPool=20000
+# ##Model parameters
+# pre_acceptance=0.5
+# post_acceptance=0.5
+# bg_acceptance = 1.0
+# #pre_vx_acceptance=0.662
+# resolution=50
+# MaxX=1000.0
+# MaxY=1000.0
+# MaxZ=3000.0
+# GNNMaxX=100.0
+# GNNMaxY=100.0
+# GNNMaxZ=1315
+# GNNMaxTX=0.01
+# GNNMaxTY=0.01
+# Pre_CNN_Model_Name='1T_50_SHIP_PREFIT_1_model'
+# Post_CNN_Model_Name='1T_50_SHIP_POSTFIT_1_model'
+# Classifier_Model_Name= 'SND_Reduced_3Class2'
+# Post_GNN_Model_Name = 'SND_Glue_Post_GMM3_FullCo_Angle2'
+# #ModelArchitecture=[[6, 4, 1, 2, 2, 2, 2], [], [],[], [], [1, 4, 2], [], [], [], [], [7, 1, 1, 4]]
+# ModelArchitecture=[[1, 4, 1, 8, 2, 2, 2], [], [],[], [], [1, 4, 2], [], [], [], [], [7, 1, 1, 4]]
+# ModelArchitecturePlus=[[1, 4, [2, 2, 2], [8, 8, 8], 2, 2, 2], [], [],[], [], [1, 4, 2], [], [], [], [], [7, 1, 1, 4]]
