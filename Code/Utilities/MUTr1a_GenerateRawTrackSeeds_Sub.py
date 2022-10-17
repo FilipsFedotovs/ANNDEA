@@ -40,7 +40,7 @@ MaxSegments=int(args.MaxSegments)
 EOS_DIR=args.EOS
 AFS_DIR=args.AFS
 
-import Utility_Functions as UF #This is where we keep routine utility functions
+import UtilityFunctions as UF #This is where we keep routine utility functions
 
 #Specifying the full path to input/output files
 input_file_location=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/MUTr1_'+TrainSampleID+'_TRACK_SEGMENTS.csv'
