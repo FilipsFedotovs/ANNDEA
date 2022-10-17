@@ -176,7 +176,7 @@ elif os.path.isfile(TrainSampleOutputMeta)==True:
 ########################################     Preset framework parameters    #########################################
 print(UF.TimeStamp(),'Loading preselected data from ',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
 FreshStart=True
-
+status=0
 #
 # #Defining handy functions to make the code little cleaner
 #
@@ -357,7 +357,7 @@ def AutoPilot0(wait_min, interval_min, max_interval_tolerance):
 if Mode=='RESET':
     print(UF.TimeStamp(),'Performing the cleanup... ',bcolors.ENDC)
     HTCondorTag="SoftUsed == \"ANNADEA-MUTr-"+TrainSampleID+"\""
-    UF.RecCleanUp(AFS_DIR, EOS_DIR, 'MUTr1_'+TrainSampleID, ['MUTr1a','MUTr1b'], HTCondorTag)
+    UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MUTr1_'+TrainSampleID, ['MUTr1a','MUTr1b'], HTCondorTag)
     status=0
     FreshStart=False
 else:
