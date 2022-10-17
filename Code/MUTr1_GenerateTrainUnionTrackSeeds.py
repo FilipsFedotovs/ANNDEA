@@ -10,7 +10,6 @@ import pandas as pd #We use Panda for a routine data processing
 import math #We use it for data manipulation
 import numpy as np
 import os
-from tabulate import tabulate
 import time
 from alive_progress import alive_bar
 
