@@ -140,12 +140,12 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         data = data.groupby('z')['Rec_Seg_ID'].count()  #Keeping only starting hits for the each track record (we do not require the full information about track in this script)
         data=data.reset_index()
         data=data.sort_values(['z'],ascending=True)
-        data['Sub_Sets']=np.ceil(data['Rec_Seg_ID']/PM.MaxSeedsPerJob)
+        data['Sub_Sets']=np.ceil(data['Rec_Seg_ID']/PM.MaxSegments)
         data['Sub_Sets'] = data['Sub_Sets'].astype(int)
         data = data.values.tolist()
         print(UF.TimeStamp(), bcolors.OKGREEN+"The track segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+output_file_location+bcolors.ENDC)
         TrainDataMeta=UF.TrainingSampleMeta(TrainSampleID)
-        TrainDataMeta.IniTrackSeedMetaData(PM.MaxSLG,PM.MaxSTG,PM.MaxDOCA,PM.MaxAngle,data,PM.MaxSeedsPerJob)
+        TrainDataMeta.IniTrackSeedMetaData(PM.MaxSLG,PM.MaxSTG,PM.MaxDOCA,PM.MaxAngle,data,PM.MaxSegments)
         MaxSLG=PM.MaxSLG
         MaxSTG=PM.MaxSTG
         MaxDOCA=PM.MaxDOCA
