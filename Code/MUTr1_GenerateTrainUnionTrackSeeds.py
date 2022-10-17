@@ -489,8 +489,8 @@ while status<3:
         print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
         print(UF.TimeStamp(),bcolors.BOLD+'Stage 2:'+bcolors.ENDC+' Collecting and de-duplicating the results from stage 1')
         with alive_bar(TotJobs,force_tty=True, title='Checking the results from HTCondor') as bar:
-            for j in range(0,len(data)): #//Temporarily measure to save space
-                for sj in range(0,int(data[j][2])):
+            for j in range(0,len(JobSets)): #//Temporarily measure to save space
+                for sj in range(0,int(JobSets[j][2])):
                    output_file_location=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/MUTr1a_'+TrainSampleID+'_RawTrackSeeds_'+str(j)+'_'+str(sj)+'.csv'
                    bar.text = f'-> Collecting the file : {output_file_location}...'
                    bar()
