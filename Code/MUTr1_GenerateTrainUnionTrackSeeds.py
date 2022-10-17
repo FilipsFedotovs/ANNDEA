@@ -367,7 +367,7 @@ print(UF.TimeStamp(),'There are 5 stages (0-4) of this script',status,bcolors.EN
 print(UF.TimeStamp(),'Current status has a code',status,bcolors.ENDC)
 #
 status=1
-while status<2:
+while status<3:
       if status==1:
           print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
           print(UF.TimeStamp(),bcolors.BOLD+'Stage 1:'+bcolors.ENDC+' Sending hit cluster to the HTCondor, so tack segment combination pairs can be formed...')
@@ -485,7 +485,7 @@ while status<2:
                           status=6
                           break
 
-      if status==1:
+      if status==2:
         print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
         print(UF.TimeStamp(),bcolors.BOLD+'Stage 2:'+bcolors.ENDC+' Collecting and de-duplicating the results from stage 1')
         with alive_bar(TotJobs,force_tty=True, title='Checking the results from HTCondor') as bar:
