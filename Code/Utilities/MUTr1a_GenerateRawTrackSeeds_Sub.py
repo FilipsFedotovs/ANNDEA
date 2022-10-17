@@ -49,8 +49,7 @@ output_result_location=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/MUTr1a_'+TrainSampleID+'
 print(UF.TimeStamp(), "Modules Have been imported successfully...")
 print(UF.TimeStamp(),'Loading pre-selected data from ',input_file_location)
 data=pd.read_csv(input_file_location,header=0,
-                    usecols=['Rec_Seg_ID','MC_Mother_Track_ID'
-                            'x','y','z'])
+                    usecols=['x','y','z','Rec_Seg_ID','MC_Mother_Track_ID'])
 
 
 print(UF.TimeStamp(),'Creating segment combinations... ')
