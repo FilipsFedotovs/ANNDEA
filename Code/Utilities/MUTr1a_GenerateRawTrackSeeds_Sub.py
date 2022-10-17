@@ -156,7 +156,6 @@ for i in range(0,Steps):
       gc.collect()
 
 UF.LogOperations(output_file_location,'a',result_list) #Writing the remaining data into the csv
-print(output_result_location)
 UF.LogOperations(output_result_location,'w',[])
 print(UF.TimeStamp(), "Train seed generation is finished...")
 #End of the script
