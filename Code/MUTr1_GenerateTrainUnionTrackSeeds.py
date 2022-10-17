@@ -514,8 +514,7 @@ while status<4:
                     print(UF.TimeStamp(),'Set',str(j),'and subset', str(sj), 'compression ratio is ', Compression_Ratio, ' %',bcolors.ENDC)
                     fractions=int(math.ceil(Records_After_Compression/MaxSegments))
                     for f in range(0,fractions):
-                     new_output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MUTr1b_'+TrainSampleID+'_RawTrackSeeds_'+str(j)+'_'+str(sj)+'_'+str(f)+'.csv'
-                     print(result[(f*MaxSegments):min(Records_After_Compression,((f+1)*MaxSegments))])
+                     new_output_file_location=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/MUTr1b_'+TrainSampleID+'_RawTrackSeeds_'+str(j)+'_'+str(sj)+'_'+str(f)+'.csv'
                      result[(f*MaxSegments):min(Records_After_Compression,((f+1)*MaxSegments))].to_csv(new_output_file_location,index=False)
         FreshStart=False
         print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 2 has successfully completed'+bcolors.ENDC)
