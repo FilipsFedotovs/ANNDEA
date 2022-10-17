@@ -248,9 +248,9 @@ def AutoPilot0(wait_min, interval_min, max_interval_tolerance):
                            bar()
                            OptionHeader = [' --Set ', ' --Subset ', ' --EOS ', " --AFS ", " --PlateZ ", " --MaxSegments ", " --MaxSLG "," --MaxSTG ", " --TrainSampleID "]
                            OptionLine = [j, sj, EOS_DIR, AFS_DIR, int(JobSets[j][0]),  MaxSegments, MaxSLG, MaxSTG, TrainSampleID]
-                           SHName = AFS_DIR + '/HTCondor/SH/SH_MUTr1a_' + str(j) + '_' + str(sj) + '.sh'
-                           SUBName = AFS_DIR + '/HTCondor/SUB/SUB_MUTr1a_' + str(j) + '_' + str(sj) + '.sub'
-                           MSGName = AFS_DIR + '/HTCondor/MSG/MSG_MUTr1a_' + str(j) + '_' + str(sj)
+                           SHName = AFS_DIR + '/HTCondor/SH/SH_MUTr1_' + str(j) + '_' + str(sj) + '.sh'
+                           SUBName = AFS_DIR + '/HTCondor/SUB/SUB_MUTr1_' + str(j) + '_' + str(sj) + '.sub'
+                           MSGName = AFS_DIR + '/HTCondor/MSG/MSG_MUTr1_' + str(j) + '_' + str(sj)
                            ScriptName = AFS_DIR + '/Code/Utilities/MUTr1a_GenerateRawTrackSeeds_Sub.py '
                            if os.path.isfile(required_output_file_location)!=True:
                               bad_pop.append([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, 1, 'ANNADEA-MUTr-'+TrainSampleID, False,False])
@@ -485,131 +485,38 @@ while status<2:
                           status=6
                           break
 
-#     if status==1:
-#         print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
-#         print(UF.TimeStamp(),bcolors.BOLD+'Stage 1:'+bcolors.ENDC+' Sending hit cluster to the HTCondor, so the reconstructed clusters can be merged along z-axis')
-#         bad_pop=[]
-#         with alive_bar(Ysteps*Xsteps,force_tty=True, title='Checking the Z-shift results from HTCondor') as bar:
-#             for j in range(0,Ysteps):
-#                  for i in range(0,Xsteps):
-#                       required_output_file_location=EOS_DIR+'/ANNADEA/Data/REC_SET/RH1b_'+RecBatchID+'_hit_cluster_rec_z_set_'+str(j)+'_' +str(i)+'.pkl'
-#                       bar.text = f'-> Checking whether the file : {required_output_file_location}, exists...'
-#                       bar()
-#                       OptionHeader = [' --Z_ID_Max ',' --Y_ID ', ' --X_ID ', ' --EOS ', " --AFS ", ' --RecBatchID ']
-#                       OptionLine = [Zsteps, j, i, EOS_DIR, AFS_DIR, RecBatchID]
-#                       SHName = AFS_DIR + '/HTCondor/SH/SH_RH1b_'+ RecBatchID+ '_' + str(j) + '_' + str(i) +'.sh'
-#                       SUBName = AFS_DIR + '/HTCondor/SUB/SUB_RH1b_'+ RecBatchID+ '_' + str(j) + '_' + str(i) + '.sub'
-#                       MSGName = AFS_DIR + '/HTCondor/MSG/MSG_RH1b_' + RecBatchID+ '_' + str(j) + '_' + str(i)
-#                       ScriptName = AFS_DIR + '/Code/Utilities/RH1b_LinkSegmentsZ_Sub.py '
-#                       if os.path.isfile(required_output_file_location)!=True:
-#                          bad_pop.append([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, 1, 'ANNADEA-RH-'+RecBatchID, False,False])
-#
-#         if FreshStart:
-#             if (Xsteps*Ysteps)==len(bad_pop):
-#                  print(UF.TimeStamp(),bcolors.WARNING+'Warning, there are still', len(bad_pop), 'HTCondor jobs remaining'+bcolors.ENDC)
-#                  print(bcolors.BOLD+'If you would like to wait and exit please enter E'+bcolors.ENDC)
-#                  print(bcolors.BOLD+'If you would like to wait please enter enter the maximum wait time in minutes'+bcolors.ENDC)
-#                  print(bcolors.BOLD+'If you would like to resubmit please enter R'+bcolors.ENDC)
-#                  UserAnswer=input(bcolors.BOLD+"Please, enter your option\n"+bcolors.ENDC)
-#                  print(UF.TimeStamp(),'Submitting jobs to HTCondor... ',bcolors.ENDC)
-#                  if UserAnswer=='E':
-#                       print(UF.TimeStamp(),'OK, exiting now then')
-#                       exit()
-#                  if UserAnswer=='R':
-#                      for i in range(0,Xsteps):
-#                          for j in range(0,Ysteps):
-#                                ptionHeader = [' --Z_ID_Max ',' --Y_ID ', ' --X_ID ', ' --EOS ', " --AFS ", ' --RecBatchID ']
-#                                OptionLine = [Zsteps, j, '$1', EOS_DIR, AFS_DIR, RecBatchID]
-#                                SHName = AFS_DIR + '/HTCondor/SH/SH_RH1b_'+ RecBatchID+ '_' + str(j) + '.sh'
-#                                SUBName = AFS_DIR + '/HTCondor/SUB/SUB_RH1b_'+ RecBatchID+'_' + str(j) + '.sub'
-#                                MSGName = AFS_DIR + '/HTCondor/MSG/MSG_RH1b_' + RecBatchID+ '_' + str(j)
-#                                ScriptName = AFS_DIR + '/Code/Utilities/RH1b_LinkSegmentsZ_Sub.py '
-#                                UF.SubmitJobs2Condor([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, Xsteps, 'ANNADEA-RH-'+RecBatchID, False,False])
-#                  else:
-#
-#                     if AutoPilot1(120,10,Patience):
-#                        print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 1 has successfully completed'+bcolors.ENDC)
-#                        FreshStart=False
-#                        status=2
-#                     else:
-#                         print(UF.TimeStamp(),bcolors.FAIL+'Stage 1 is uncompleted...'+bcolors.ENDC)
-#                         status=6
-#                         break
-#
-#             elif len(bad_pop)>0:
-#                    print(UF.TimeStamp(),bcolors.WARNING+'Warning, there are still', len(bad_pop), 'HTCondor jobs remaining'+bcolors.ENDC)
-#                    print(bcolors.BOLD+'If you would like to wait and exit please enter E'+bcolors.ENDC)
-#                    print(bcolors.BOLD+'If you would like to wait please enter enter the maximum wait time in minutes'+bcolors.ENDC)
-#                    print(bcolors.BOLD+'If you would like to resubmit please enter R'+bcolors.ENDC)
-#                    UserAnswer=input(bcolors.BOLD+"Please, enter your option\n"+bcolors.ENDC)
-#                    if UserAnswer=='E':
-#                        print(UF.TimeStamp(),'OK, exiting now then')
-#                        exit()
-#                    if UserAnswer=='R':
-#                       for bp in bad_pop:
-#                            UF.SubmitJobs2Condor(bp)
-#                       print(UF.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
-#                       if AutoPilot1(600,10,Patience):
-#                           FreshStart=False
-#                           print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 1 has successfully completed'+bcolors.ENDC)
-#                           status=2
-#                       else:
-#                             print(UF.TimeStamp(),bcolors.FAIL+'Stage 1 is uncompleted...'+bcolors.ENDC)
-#                             status=6
-#                             break
-#                    else:
-#                       if AutoPilot1(int(UserAnswer),10,Patience):
-#                           FreshStart=False
-#                           print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 1 has successfully completed'+bcolors.ENDC)
-#                           status=2
-#                       else:
-#                           print(UF.TimeStamp(),bcolors.FAIL+'Stage 1 is uncompleted...'+bcolors.ENDC)
-#                           status=6
-#                           break
-#
-#             elif len(bad_pop)==0:
-#                 FreshStart=False
-#                 print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 1 has successfully completed'+bcolors.ENDC)
-#                 status=2
-#         else:
-#             if (Xsteps*Ysteps)==len(bad_pop):
-#                  print(UF.TimeStamp(),'Submitting jobs to HTCondor... ',bcolors.ENDC)
-#                  for i in range(0,Xsteps):
-#                          for j in range(0,Ysteps):
-#                                ptionHeader = [' --Z_ID_Max ',' --Y_ID ', ' --X_ID ', ' --EOS ', " --AFS ", ' --RecBatchID ']
-#                                OptionLine = [Zsteps, j, '$1', EOS_DIR, AFS_DIR, RecBatchID]
-#                                SHName = AFS_DIR + '/HTCondor/SH/SH_RH1b_'+ RecBatchID+ '_' + str(j) + '.sh'
-#                                SUBName = AFS_DIR + '/HTCondor/SUB/SUB_RH1b_'+ RecBatchID+'_' + str(j) + '.sub'
-#                                MSGName = AFS_DIR + '/HTCondor/MSG/MSG_RH1b_' + RecBatchID+ '_' + str(j)
-#                                ScriptName = AFS_DIR + '/Code/Utilities/RH1b_LinkSegmentsZ_Sub.py '
-#                                UF.SubmitJobs2Condor([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, Xsteps, 'ANNADEA-RH-'+RecBatchID, False,False])
-#
-#                  if AutoPilot1(600,10,Patience):
-#                        FreshStart=False
-#                        print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 1 has successfully completed'+bcolors.ENDC)
-#                        status=2
-#                  else:
-#                      print(UF.TimeStamp(),bcolors.FAIL+'Stage 1 is uncompleted...'+bcolors.ENDC)
-#                      status=6
-#                      break
-#
-#             elif len(bad_pop)>0:
-#                       for bp in bad_pop:
-#                            UF.SubmitJobs2Condor(bp)
-#                       if AutoPilot1(600,10,Patience):
-#                           FreshStart=False
-#                           print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 1 has successfully completed'+bcolors.ENDC)
-#                           status=2
-#                       else:
-#                           print(UF.TimeStamp(),bcolors.FAIL+'Stage 1 is uncompleted...'+bcolors.ENDC)
-#                           status=6
-#                           break
-#
-#             elif len(bad_pop)==0:
-#                 FreshStart=False
-#                 print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 1 has successfully completed'+bcolors.ENDC)
-#                 status=2
-#
+      if status==1:
+        print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
+        print(UF.TimeStamp(),bcolors.BOLD+'Stage 2:'+bcolors.ENDC+' Collecting and de-duplicating the results from stage 1')
+        with alive_bar(TotJobs,force_tty=True, title='Checking the results from HTCondor') as bar:
+            for j in range(0,len(data)): #//Temporarily measure to save space
+                for sj in range(0,int(data[j][2])):
+                   output_file_location=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/MUTr1a_'+TrainSampleID+'_RawTrackSeeds_'+str(j)+'_'+str(sj)+'.csv'
+                   bar.text = f'-> Collecting the file : {output_file_location}...'
+                   bar()
+                   if os.path.isfile(output_file_location)==False:
+                      continue #Skipping because not all jobs necesseraly produce the required file (if statistics are too low)
+                   else:
+                    result=pd.read_csv(output_file_location,names = ['Segment_1','Segment_2', 'Track_Type'])
+                    Records=len(result.axes[0])
+                    print(UF.TimeStamp(),'Set',str(j),'and subset', str(sj), 'contains', Records, 'seeds',bcolors.ENDC)
+                    result["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(result['Segment_1'], result['Segment_2'])]
+                    result.drop_duplicates(subset="Seed_ID",keep='first',inplace=True)
+                    result.drop(result.index[result['Segment_1'] == result['Segment_2']], inplace = True)
+                    result.drop(["Seed_ID"],axis=1,inplace=True)
+                    Records_After_Compression=len(result.axes[0])
+                    if Records>0:
+                      Compression_Ratio=int((Records_After_Compression/Records)*100)
+                    else:
+                      Compression_Ratio=0
+                    print(UF.TimeStamp(),'Set',str(j),'and subset', str(sj), 'compression ratio is ', Compression_Ratio, ' %',bcolors.ENDC)
+                    fractions=int(math.ceil(Records_After_Compression/MaxSegments))
+                    for f in range(0,fractions):
+                     new_output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MUTr1b_'+TrainSampleID+'_RawTrackSeeds_'+str(j)+'_'+str(sj)+'_'+str(f)+'.csv'
+                     result[(f*MaxSegments):min(Records_After_Compression,((f+1)*MaxSegments))].to_csv(new_output_file_location,index=False)
+        FreshStart=False
+        print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 2 has successfully completed'+bcolors.ENDC)
+        status=3
 #     if status==2:
 #         print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
 #         print(UF.TimeStamp(),bcolors.BOLD+'Stage 2:'+bcolors.ENDC+' Sending hit cluster to the HTCondor, so the reconstructed clusters can be merged along y-axis')
