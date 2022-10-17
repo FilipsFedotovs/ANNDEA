@@ -44,8 +44,8 @@ import UtilityFunctions as UF #This is where we keep routine utility functions
 
 #Specifying the full path to input/output files
 input_file_location=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/MUTr1_'+TrainSampleID+'_TRACK_SEGMENTS.csv'
-output_file_location=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/MUTr1a_RawTrackSeeds_'+str(Set)+'_'+str(Subset)+'.csv'
-output_result_location=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/MUTr1a_RawTrackSeeds_'+str(Set)+'_'+str(Subset)+'_RES.csv'
+output_file_location=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/MUTr1a_'+TrainSampleID+'_RawTrackSeeds_'+str(Set)+'_'+str(Subset)+'.csv'
+output_result_location=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/MUTr1a_'+TrainSampleID+'_RawTrackSeeds_'+str(Set)+'_'+str(Subset)+'_RES.csv'
 print(UF.TimeStamp(), "Modules Have been imported successfully...")
 print(UF.TimeStamp(),'Loading pre-selected data from ',input_file_location)
 data=pd.read_csv(input_file_location)

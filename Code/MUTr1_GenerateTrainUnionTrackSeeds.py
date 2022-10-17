@@ -243,7 +243,7 @@ def AutoPilot0(wait_min, interval_min, max_interval_tolerance):
          with alive_bar(TotJobs,force_tty=True, title='Checking the results from HTCondor') as bar:
              for j in range(0,len(JobSets)):
                  for sj in range(0,int(JobSets[j][2])):
-                           required_output_file_location=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/MUTr1a_RawTrackSeeds_'+str(j)+'_'+str(sj)+'_RES.csv'
+                           required_output_file_location=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/MUTr1a_'+TrainSampleID+'_RawTrackSeeds_'+str(j)+'_'+str(sj)+'_RES.csv'
                            bar.text = f'-> Checking whether the file : {required_output_file_location}, exists...'
                            bar()
                            OptionHeader = [' --Set ', ' --Subset ', ' --EOS ', " --AFS ", " --PlateZ ", " --MaxSegments ", " --MaxSLG "," --MaxSTG ", " --TrainSampleID "]
@@ -375,7 +375,7 @@ while status<2:
           with alive_bar(TotJobs,force_tty=True, title='Checking the results from HTCondor') as bar:
              for j in range(0,len(JobSets)):
                  for sj in range(0,int(JobSets[j][2])):
-                           required_output_file_location=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/MUTr1a_RawTrackSeeds_'+str(j)+'_'+str(sj)+'_RES.csv'
+                           required_output_file_location=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/MUTr1a_'+TrainSampleID+'_RawTrackSeeds_'+str(j)+'_'+str(sj)+'_RES.csv'
                            bar.text = f'-> Checking whether the file : {required_output_file_location}, exists...'
                            bar()
                            OptionHeader = [' --Set ', ' --Subset ', ' --EOS ', " --AFS ", " --PlateZ ", " --MaxSegments ", " --MaxSLG "," --MaxSTG "," --TrainSampleID "]
