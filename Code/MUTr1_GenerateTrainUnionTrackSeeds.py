@@ -139,7 +139,7 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         data = data.groupby('z')['Rec_Seg_ID'].count()  #Keeping only starting hits for the each track record (we do not require the full information about track in this script)
         data=data.reset_index()
         data=data.sort_values(['z'],ascending=True)
-        data['Sub_Sets']=np.ceil(data['Rec_Seg_ID']/PM.MaxSegments)
+        data['Sub_Sets']=np.ceil(data['Rec_Seg_ID']/PM.MaxSeedsPerJob)
         data['Sub_Sets'] = data['Sub_Sets'].astype(int)
         data = data.values.tolist()
         print(UF.TimeStamp(), bcolors.OKGREEN+"The track segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+output_file_location+bcolors.ENDC)
@@ -153,32 +153,8 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
 # ########################################     Preset framework parameters    #########################################
 # input_file_location=EOS_DIR+'/ANNADEA/Data/REC_SET/RH1_'+RecBatchID+'_hits.csv'
 # print(UF.TimeStamp(),'Loading preselected data from ',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
-# data=pd.read_csv(input_file_location,header=0,usecols=['z','x','y'])
-# print(UF.TimeStamp(),'Analysing data... ',bcolors.ENDC)
-# z_offset=data['z'].min()
-# data['z']=data['z']-z_offset
-# z_max=data['z'].max()
-# if Z_overlap==1:
-#     Zsteps=math.ceil((z_max)/stepZ)
-# else:
-#     Zsteps=(math.ceil((z_max)/stepZ)*(Z_overlap))-1
-# y_offset=data['y'].min()
-# x_offset=data['x'].min()
-# data['x']=data['x']-x_offset
-# data['y']=data['y']-y_offset
-# x_max=data['x'].max()
-# y_max=data['y'].max()
 # FreshStart=True
-#
-# if X_overlap==1:
-#     Xsteps=math.ceil((x_max)/stepX)
-# else:
-#     Xsteps=(math.ceil((x_max)/stepX)*(X_overlap))-1
-#
-# if Y_overlap==1:
-#     Ysteps=math.ceil((y_max)/stepY)
-# else:
-#     Ysteps=(math.ceil((y_max)/stepY)*(Y_overlap))-1
+
 #
 # #Defining handy functions to make the code little cleaner
 #
@@ -369,11 +345,11 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
 # print(UF.TimeStamp(),'There are 5 stages (0-4) of this script',status,bcolors.ENDC)
 # print(UF.TimeStamp(),'Current status has a code',status,bcolors.ENDC)
 #
-#
+# status=1
 # while status<5:
-#     if status==0:
-#         print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
-#         print(UF.TimeStamp(),bcolors.BOLD+'Stage 0:'+bcolors.ENDC+' Sending hit cluster to the HTCondor, so the model assigns weights between hits')
+#      if status==0:
+#          print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
+#          print(UF.TimeStamp(),bcolors.BOLD+'Stage 1:'+bcolors.ENDC+' Sending hit cluster to the HTCondor, so the model assigns weights between hits')
 #         bad_pop=[]
 #         with alive_bar(Zsteps*Ysteps*Xsteps,force_tty=True, title='Checking the results from HTCondor') as bar:
 #             for k in range(0,Zsteps):
