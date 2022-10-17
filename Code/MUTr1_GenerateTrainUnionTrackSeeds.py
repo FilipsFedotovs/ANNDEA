@@ -247,7 +247,7 @@ def AutoPilot0(wait_min, interval_min, max_interval_tolerance):
                            bar.text = f'-> Checking whether the file : {required_output_file_location}, exists...'
                            bar()
                            OptionHeader = [' --Set ', ' --Subset ', ' --EOS ', " --AFS ", " --PlateZ ", " --MaxSegments ", " --MaxSLG "," --MaxSTG ", " --TrainSampleID "]
-                           OptionLine = [j, sj, EOS_DIR, AFS_DIR, int(data[j][0]),  MaxSegments, MaxSLG, MaxSTG, TrainSampleID]
+                           OptionLine = [j, sj, EOS_DIR, AFS_DIR, int(JobSets[j][0]),  MaxSegments, MaxSLG, MaxSTG, TrainSampleID]
                            SHName = AFS_DIR + '/HTCondor/SH/SH_MUTr1a_' + str(j) + '_' + str(sj) + '.sh'
                            SUBName = AFS_DIR + '/HTCondor/SUB/SUB_MUTr1a_' + str(j) + '_' + str(sj) + '.sub'
                            MSGName = AFS_DIR + '/HTCondor/MSG/MSG_MUTr1a_' + str(j) + '_' + str(sj)
@@ -379,7 +379,7 @@ while status<2:
                            bar.text = f'-> Checking whether the file : {required_output_file_location}, exists...'
                            bar()
                            OptionHeader = [' --Set ', ' --Subset ', ' --EOS ', " --AFS ", " --PlateZ ", " --MaxSegments ", " --MaxSLG "," --MaxSTG "," --TrainSampleID "]
-                           OptionLine = [j, sj, EOS_DIR, AFS_DIR, int(data[j][0]),  MaxSegments, MaxSLG, MaxSTG,TrainSampleID]
+                           OptionLine = [j, sj, EOS_DIR, AFS_DIR, int(JobSets[j][0]),  MaxSegments, MaxSLG, MaxSTG,TrainSampleID]
                            SHName = AFS_DIR + '/HTCondor/SH/SH_MUTr1a_' + str(j) + '_' + str(sj) + '.sh'
                            SUBName = AFS_DIR + '/HTCondor/SUB/SUB_MUTr1a_' + str(j) + '_' + str(sj) + '.sub'
                            MSGName = AFS_DIR + '/HTCondor/MSG/MSG_MUTr1a_' + str(j) + '_' + str(sj)
@@ -457,7 +457,7 @@ while status<2:
                  print(UF.TimeStamp(),'Submitting jobs to HTCondor... ',bcolors.ENDC)
                  for j in range(0,len(JobSets)):
                                 OptionHeader = [' --Set ', ' --Subset ', ' --EOS ', " --AFS ", " --PlateZ ", " --MaxSegments ", " --MaxSLG "," --MaxSTG "," --TrainSampleID "]
-                                OptionLine = [j, '$1', EOS_DIR, AFS_DIR, int(data[j][0]), MaxSegments, MaxSLG, MaxSTG,TrainSampleID]
+                                OptionLine = [j, '$1', EOS_DIR, AFS_DIR, int(JobSets[j][0]), MaxSegments, MaxSLG, MaxSTG,TrainSampleID]
                                 SHName = AFS_DIR + '/HTCondor/SH/SH_MUTr1a_' + str(j) + '.sh'
                                 SUBName = AFS_DIR + '/HTCondor/SUB/SUB_MUTr1a_' + str(j) + '.sub'
                                 MSGName = AFS_DIR + '/HTCondor/MSG/MSG_MUTr1a_' + str(j)
