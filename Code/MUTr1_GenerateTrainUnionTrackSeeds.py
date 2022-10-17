@@ -369,7 +369,7 @@ print(UF.TimeStamp(),'There are 5 stages (0-4) of this script',status,bcolors.EN
 print(UF.TimeStamp(),'Current status has a code',status,bcolors.ENDC)
 #
 status=1
-while status<3:
+while status<4:
       if status==1:
           print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
           print(UF.TimeStamp(),bcolors.BOLD+'Stage 1:'+bcolors.ENDC+' Sending hit cluster to the HTCondor, so tack segment combination pairs can be formed...')
@@ -515,11 +515,14 @@ while status<3:
                     fractions=int(math.ceil(Records_After_Compression/MaxSegments))
                     for f in range(0,fractions):
                      new_output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MUTr1b_'+TrainSampleID+'_RawTrackSeeds_'+str(j)+'_'+str(sj)+'_'+str(f)+'.csv'
+                     print(result[(f*MaxSegments):min(Records_After_Compression,((f+1)*MaxSegments))])
                      result[(f*MaxSegments):min(Records_After_Compression,((f+1)*MaxSegments))].to_csv(new_output_file_location,index=False)
         FreshStart=False
         print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 2 has successfully completed'+bcolors.ENDC)
         status=3
-#     if status==2:
+      if status==3:
+          print('Wip')
+          exit()
 #         print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
 #         print(UF.TimeStamp(),bcolors.BOLD+'Stage 2:'+bcolors.ENDC+' Sending hit cluster to the HTCondor, so the reconstructed clusters can be merged along y-axis')
 #         bad_pop=[]
