@@ -408,7 +408,7 @@ while status<4:
                   if UserAnswer=='R':
                       for j in range(0,len(JobSets)):
                                 OptionHeader = [' --Set ', ' --Subset ', ' --EOS ', " --AFS ", " --PlateZ ", " --MaxSegments ", " --MaxSLG "," --MaxSTG "," --TrainSampleID "]
-                                OptionLine = [j, '$1', EOS_DIR, AFS_DIR, int(data[j][0]), MaxSegments, MaxSLG, MaxSTG,TrainSampleID]
+                                OptionLine = [j, '$1', EOS_DIR, AFS_DIR, int(JobSets[j][0]), MaxSegments, MaxSLG, MaxSTG,TrainSampleID]
                                 SHName = AFS_DIR + '/HTCondor/SH/SH_MUTr1a_' + str(j) + '.sh'
                                 SUBName = AFS_DIR + '/HTCondor/SUB/SUB_MUTr1a_' + str(j) + '.sub'
                                 MSGName = AFS_DIR + '/HTCondor/MSG/MSG_MUTr1a_' + str(j)
