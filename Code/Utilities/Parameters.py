@@ -47,6 +47,7 @@ MaxTrainSampleSize=50000
 MaxValSampleSize=100000
 MaxDOCA=50
 MaxAngle=1 #Seed Opening Angle (Magnitude) in radians
+VetoMotherTrack=[]
 
 # MaxTracksPerJob=20000
 # MaxEvalTracksPerJob=20000

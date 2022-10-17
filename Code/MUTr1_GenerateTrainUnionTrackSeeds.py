@@ -145,13 +145,14 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         data = data.values.tolist()
         print(UF.TimeStamp(), bcolors.OKGREEN+"The track segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+output_file_location+bcolors.ENDC)
         TrainDataMeta=UF.TrainingSampleMeta(TrainSampleID)
-        TrainDataMeta.IniTrackSeedMetaData(PM.MaxSLG,PM.MaxSTG,PM.MaxDOCA,PM.MaxAngle,data,PM.MaxSegments)
+        TrainDataMeta.IniTrackSeedMetaData(PM.MaxSLG,PM.MaxSTG,PM.MaxDOCA,PM.MaxAngle,data,PM.MaxSegments,PM.VetoMotherTrack)
         MaxSLG=PM.MaxSLG
         MaxSTG=PM.MaxSTG
         MaxDOCA=PM.MaxDOCA
         MaxAngle=PM.MaxAngle
         JobSets=data
         MaxSegments=PM.MaxSegments
+        VetoMotherTrack=PM.VetoMotherTrack
         TotJobs=0
         for j in range(0,len(JobSets)):
           for sj in range(0,int(JobSets[j][2])):
@@ -169,6 +170,7 @@ elif os.path.isfile(TrainSampleOutputMeta)==True:
     MaxAngle=Meta.MaxAngle
     JobSets=Meta.JobSets
     MaxSegments=Meta.MaxSegments
+    VetoMotherTrack=Meta.VetoMotherTrack
     TotJobs=0
     for j in range(0,len(JobSets)):
           for sj in range(0,int(JobSets[j][2])):
@@ -246,8 +248,8 @@ def AutoPilot0(wait_min, interval_min, max_interval_tolerance):
                            required_output_file_location=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/MUTr1a_'+TrainSampleID+'_RawTrackSeeds_'+str(j)+'_'+str(sj)+'_RES.csv'
                            bar.text = f'-> Checking whether the file : {required_output_file_location}, exists...'
                            bar()
-                           OptionHeader = [' --Set ', ' --Subset ', ' --EOS ', " --AFS ", " --PlateZ ", " --MaxSegments ", " --MaxSLG "," --MaxSTG ", " --TrainSampleID "]
-                           OptionLine = [j, sj, EOS_DIR, AFS_DIR, int(JobSets[j][0]),  MaxSegments, MaxSLG, MaxSTG, TrainSampleID]
+                           OptionHeader = [' --Set ', ' --Subset ', ' --EOS ', " --AFS ", " --PlateZ ", " --MaxSegments ", " --MaxSLG "," --MaxSTG ", " --TrainSampleID "," --VetoMotherTrack "]
+                           OptionLine = [j, sj, EOS_DIR, AFS_DIR, int(JobSets[j][0]),  MaxSegments, MaxSLG, MaxSTG, TrainSampleID, '"'+str(VetoMotherTrack)+'"']
                            SHName = AFS_DIR + '/HTCondor/SH/SH_MUTr1_' + str(j) + '_' + str(sj) + '.sh'
                            SUBName = AFS_DIR + '/HTCondor/SUB/SUB_MUTr1_' + str(j) + '_' + str(sj) + '.sub'
                            MSGName = AFS_DIR + '/HTCondor/MSG/MSG_MUTr1_' + str(j) + '_' + str(sj)
@@ -378,8 +380,8 @@ while status<3:
                            required_output_file_location=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/MUTr1a_'+TrainSampleID+'_RawTrackSeeds_'+str(j)+'_'+str(sj)+'_RES.csv'
                            bar.text = f'-> Checking whether the file : {required_output_file_location}, exists...'
                            bar()
-                           OptionHeader = [' --Set ', ' --Subset ', ' --EOS ', " --AFS ", " --PlateZ ", " --MaxSegments ", " --MaxSLG "," --MaxSTG "," --TrainSampleID "]
-                           OptionLine = [j, sj, EOS_DIR, AFS_DIR, int(JobSets[j][0]),  MaxSegments, MaxSLG, MaxSTG,TrainSampleID]
+                           OptionHeader = [' --Set ', ' --Subset ', ' --EOS ', " --AFS ", " --PlateZ ", " --MaxSegments ", " --MaxSLG "," --MaxSTG "," --TrainSampleID "," --VetoMotherTrack "]
+                           OptionLine = [j, sj, EOS_DIR, AFS_DIR, int(JobSets[j][0]),  MaxSegments, MaxSLG, MaxSTG,TrainSampleID,'"'+str(VetoMotherTrack)+'"']
                            SHName = AFS_DIR + '/HTCondor/SH/SH_MUTr1_' + str(j) + '_' + str(sj) + '.sh'
                            SUBName = AFS_DIR + '/HTCondor/SUB/SUB_MUTr1_' + str(j) + '_' + str(sj) + '.sub'
                            MSGName = AFS_DIR + '/HTCondor/MSG/MSG_MUTr1_' + str(j) + '_' + str(sj)
@@ -456,8 +458,8 @@ while status<3:
             if (TotJobs)==len(bad_pop):
                  print(UF.TimeStamp(),'Submitting jobs to HTCondor... ',bcolors.ENDC)
                  for j in range(0,len(JobSets)):
-                                OptionHeader = [' --Set ', ' --Subset ', ' --EOS ', " --AFS ", " --PlateZ ", " --MaxSegments ", " --MaxSLG "," --MaxSTG "," --TrainSampleID "]
-                                OptionLine = [j, '$1', EOS_DIR, AFS_DIR, int(JobSets[j][0]), MaxSegments, MaxSLG, MaxSTG,TrainSampleID]
+                                OptionHeader = [' --Set ', ' --Subset ', ' --EOS ', " --AFS ", " --PlateZ ", " --MaxSegments ", " --MaxSLG "," --MaxSTG "," --TrainSampleID "," --VetoMotherTrack "]
+                                OptionLine = [j, '$1', EOS_DIR, AFS_DIR, int(JobSets[j][0]), MaxSegments, MaxSLG, MaxSTG,TrainSampleID,'"'+str(VetoMotherTrack)+'"']
                                 SHName = AFS_DIR + '/HTCondor/SH/SH_MUTr1_' + str(j) + '.sh'
                                 SUBName = AFS_DIR + '/HTCondor/SUB/SUB_MUTr1_' + str(j) + '.sub'
                                 MSGName = AFS_DIR + '/HTCondor/MSG/MSG_MUTr1_' + str(j)
@@ -497,7 +499,7 @@ while status<3:
                    if os.path.isfile(output_file_location)==False:
                       continue #Skipping because not all jobs necesseraly produce the required file (if statistics are too low)
                    else:
-                    result=pd.read_csv(output_file_location,names = ['Segment_1','Segment_2', 'Track_Type'])
+                    result=pd.read_csv(output_file_location,names = ['Segment_1','Segment_2', 'Seed_Type'])
                     Records=len(result.axes[0])
                     print(UF.TimeStamp(),'Set',str(j),'and subset', str(sj), 'contains', Records, 'seeds',bcolors.ENDC)
                     result["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(result['Segment_1'], result['Segment_2'])]

@@ -9,6 +9,7 @@ import pandas as pd #We use Panda for a routine data processing
 import math #We use it for data manipulation
 import gc  #Helps to clear memory
 import numpy as np
+import ast
 
 
 
@@ -25,6 +26,8 @@ parser.add_argument('--EOS',help="EOS directory location", default='.')
 parser.add_argument('--AFS',help="AFS directory location", default='.')
 parser.add_argument('--TrainSampleID',help="Give this training sample batch an ID", default='SHIP_UR_v1')
 parser.add_argument('--MaxSegments',help="A maximum number of track combinations that will be used in a particular HTCondor job for this script", default='20000')
+parser.add_argument('--VetoMotherTrack',help="Skip Invalid Mother_IDs", default=[-1])
+
 ######################################## Set variables  #############################################################
 args = parser.parse_args()
 PlateZ=float(args.PlateZ)   #The coordinate of the st plate in the current scope
@@ -33,6 +36,7 @@ Subset=int(args.Subset)  #The subset helps to determine what portion of the trac
 MaxSLG=float(args.MaxSLG)
 MaxSTG=float(args.MaxSTG)
 TrainSampleID=args.TrainSampleID
+VetoMotherTrack=ast.literal_eval(args.VetoMotherTrack)
 ########################################     Preset framework parameters    #########################################
 MaxRecords=10000000 #A set parameter that helps to manage memory load of this script (Please do not exceed 10000000)
 MaxSegments=int(args.MaxSegments)
@@ -140,12 +144,12 @@ for i in range(0,Steps):
   merged_data.drop(merged_data.index[merged_data['SLG'] < 0], inplace = True) #Dropping the Seeds that are too far apart
   merged_data.drop(merged_data.index[merged_data['SLG'] > MaxSLG], inplace = True) #Dropping the track segment combinations where the length of the gap between segments is too large
   merged_data.drop(merged_data.index[merged_data['STG'] > merged_data['DynamicCut']], inplace = True)
-  print(merged_data)
-  exit()
   merged_data.drop(['y','z','x','e_x','e_y','e_z','join_key','STG','SLG','DynamicCut'],axis=1,inplace=True) #Removing the information that we don't need anymore
   if merged_data.empty==False:
     merged_data.drop(merged_data.index[merged_data['Segment_1'] == merged_data['Segment_2']], inplace = True) #Removing the cases where Seed tracks are the same
-    merged_data['Track_Type']=(merged_data['Mother_1']==merged_data['Mother_2'])
+    merged_data['Seed_Type']=True
+    for n in NV:
+      merged_data['Seed_Type']=((merged_data['Mother_1']==merged_data['Mother_2']) & (merged_data['Mother_1'].str.contains(str('-'+n))==False) & (merged_data['Seed_Type']==True))
     merged_data.drop(['Mother_1'],axis=1,inplace=True)
     merged_data.drop(['Mother_2'],axis=1,inplace=True)
     merged_list = merged_data.values.tolist() #Convirting the result to List data type
