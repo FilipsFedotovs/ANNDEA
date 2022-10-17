@@ -453,7 +453,7 @@ while status<2:
                           print(UF.TimeStamp(),bcolors.FAIL+'Stage 1 is uncompleted...'+bcolors.ENDC)
                           status=6
                           break
-        else:
+          else:
             if (TotJobs)==len(bad_pop):
                  print(UF.TimeStamp(),'Submitting jobs to HTCondor... ',bcolors.ENDC)
                  for j in range(0,len(JobSets)):
