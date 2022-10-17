@@ -134,7 +134,7 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         new_combined_data.to_csv(output_file_location,index=False)
         print(UF.TimeStamp(), bcolors.OKGREEN+"The track segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+output_file_location+bcolors.ENDC)
         TrainDataMeta=UF.TrainingSampleMeta(TrainSampleID)
-        TrainDataMeta.IniHitClusterMetaData(PM.MaxSLG,PM.MaxSTG,PM.MaxDOCA,PM.MaxAngle)
+        TrainDataMeta.IniTrackSeedMetaData(PM.MaxSLG,PM.MaxSTG,PM.MaxDOCA,PM.MaxAngle)
         TrainSampleOutputMeta=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/'+TrainSampleID+'_info.pkl'
         print(UF.PickleOperations(TrainSampleOutputMeta,'w', TrainDataMeta)[1])
         print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
