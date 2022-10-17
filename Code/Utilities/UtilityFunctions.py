@@ -1018,7 +1018,7 @@ def CleanFolder(folder,key):
                     print(e)
 #This function automates csv read/write operations
 def LogOperations(flocation,mode, message):
-    if mode=='UpdateLog':
+    if mode=='a':
         csv_writer_log=open(flocation,"a")
         log_writer = csv.writer(csv_writer_log)
         if len(message)>0:
