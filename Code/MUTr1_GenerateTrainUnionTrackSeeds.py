@@ -354,17 +354,17 @@ def AutoPilot0(wait_min, interval_min, max_interval_tolerance):
 #               return True
 #      return False
 #
-# if Mode=='RESET':
-#     print(UF.TimeStamp(),'Performing the cleanup... ',bcolors.ENDC)
-#     HTCondorTag="SoftUsed == \"ANNADEA-RH-"+RecBatchID+"\""
-#     UF.RecCleanUp(AFS_DIR, EOS_DIR, 'RH1_'+RecBatchID, ['RH1a','RH1b','RH1c','RH1d',RecBatchID+'_RH_OUTPUT.pkl'], HTCondorTag)
-#     status=0
-#     FreshStart=False
-# else:
-#     status=CheckStatus()
-#
-# print(UF.TimeStamp(),'There are 5 stages (0-4) of this script',status,bcolors.ENDC)
-# print(UF.TimeStamp(),'Current status has a code',status,bcolors.ENDC)
+if Mode=='RESET':
+    print(UF.TimeStamp(),'Performing the cleanup... ',bcolors.ENDC)
+    HTCondorTag="SoftUsed == \"ANNADEA-MUTr-"+TrainSampleID+"\""
+    UF.RecCleanUp(AFS_DIR, EOS_DIR, 'MUTr1_'+TrainSampleID, ['MUTr1a','MUTr1b'], HTCondorTag)
+    status=0
+    FreshStart=False
+else:
+    #status=CheckStatus()
+    print('WIP')
+print(UF.TimeStamp(),'There are 5 stages (0-4) of this script',status,bcolors.ENDC)
+print(UF.TimeStamp(),'Current status has a code',status,bcolors.ENDC)
 #
 status=1
 while status<2:
@@ -380,9 +380,9 @@ while status<2:
                            bar()
                            OptionHeader = [' --Set ', ' --Subset ', ' --EOS ', " --AFS ", " --PlateZ ", " --MaxSegments ", " --MaxSLG "," --MaxSTG "," --TrainSampleID "]
                            OptionLine = [j, sj, EOS_DIR, AFS_DIR, int(JobSets[j][0]),  MaxSegments, MaxSLG, MaxSTG,TrainSampleID]
-                           SHName = AFS_DIR + '/HTCondor/SH/SH_MUTr1a_' + str(j) + '_' + str(sj) + '.sh'
-                           SUBName = AFS_DIR + '/HTCondor/SUB/SUB_MUTr1a_' + str(j) + '_' + str(sj) + '.sub'
-                           MSGName = AFS_DIR + '/HTCondor/MSG/MSG_MUTr1a_' + str(j) + '_' + str(sj)
+                           SHName = AFS_DIR + '/HTCondor/SH/SH_MUTr1_' + str(j) + '_' + str(sj) + '.sh'
+                           SUBName = AFS_DIR + '/HTCondor/SUB/SUB_MUTr1_' + str(j) + '_' + str(sj) + '.sub'
+                           MSGName = AFS_DIR + '/HTCondor/MSG/MSG_MUTr1_' + str(j) + '_' + str(sj)
                            ScriptName = AFS_DIR + '/Code/Utilities/MUTr1a_GenerateRawTrackSeeds_Sub.py '
                            if os.path.isfile(required_output_file_location)!=True:
                               bad_pop.append([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, 1, 'ANNADEA-MUTr-'+TrainSampleID, False,False])
@@ -458,9 +458,9 @@ while status<2:
                  for j in range(0,len(JobSets)):
                                 OptionHeader = [' --Set ', ' --Subset ', ' --EOS ', " --AFS ", " --PlateZ ", " --MaxSegments ", " --MaxSLG "," --MaxSTG "," --TrainSampleID "]
                                 OptionLine = [j, '$1', EOS_DIR, AFS_DIR, int(JobSets[j][0]), MaxSegments, MaxSLG, MaxSTG,TrainSampleID]
-                                SHName = AFS_DIR + '/HTCondor/SH/SH_MUTr1a_' + str(j) + '.sh'
-                                SUBName = AFS_DIR + '/HTCondor/SUB/SUB_MUTr1a_' + str(j) + '.sub'
-                                MSGName = AFS_DIR + '/HTCondor/MSG/MSG_MUTr1a_' + str(j)
+                                SHName = AFS_DIR + '/HTCondor/SH/SH_MUTr1_' + str(j) + '.sh'
+                                SUBName = AFS_DIR + '/HTCondor/SUB/SUB_MUTr1_' + str(j) + '.sub'
+                                MSGName = AFS_DIR + '/HTCondor/MSG/MSG_MUTr1_' + str(j)
                                 ScriptName = AFS_DIR + '/Code/Utilities/MUTr1a_GenerateRawTrackSeeds_Sub.py '
                                 UF.SubmitJobs2Condor([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, int(JobSets[j][2]), 'ANNADEA-MUTr-'+TrainSampleID, False,False])
 
