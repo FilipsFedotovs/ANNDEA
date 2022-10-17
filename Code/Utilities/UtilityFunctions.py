@@ -46,11 +46,13 @@ class TrainingSampleMeta:
           self.X_overlap=X_overlap
           self.Y_overlap=Y_overlap
           self.Z_overlap=Z_overlap
-      def IniTrackSeedMetaData(self,MaxSLG,MaxSTG,MaxDOCA,MaxAngle):
+      def IniTrackSeedMetaData(self,MaxSLG,MaxSTG,MaxDOCA,MaxAngle,JobSets,MaxSegments):
           self.MaxSLG=MaxSLG
           self.MaxSTG=MaxSTG
           self.MaxDOCA=MaxDOCA
           self.MaxAngle=MaxAngle
+          self.JobSets=JobSets
+          self.MaxSegments=MaxSegments
 
       def UpdateHitClusterMetaData(self,NoS,NoNF,NoEF,NoSets):
           self.num_node_features=NoNF

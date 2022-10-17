@@ -132,15 +132,25 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         new_combined_data=new_combined_data.rename(columns={PM.tx: "tx"})
         new_combined_data=new_combined_data.rename(columns={PM.ty: "ty"})
         new_combined_data.to_csv(output_file_location,index=False)
+        data=new_combined_data[['Rec_Seg_ID','z']]
+        print(UF.TimeStamp(),'Analysing the data sample in order to understand how many jobs to submit to HTCondor... ',bcolors.ENDC)
+        data = data.groupby('Rec_Seg_ID')['z'].min()  #Keeping only starting hits for the each track record (we do not require the full information about track in this script)
+        data=data.reset_index()
+        data = data.groupby('z')['Rec_Seg_ID'].count()  #Keeping only starting hits for the each track record (we do not require the full information about track in this script)
+        data=data.reset_index()
+        data=data.sort_values(['z'],ascending=True)
+        data['Sub_Sets']=np.ceil(data['Rec_Seg_ID']/PM.MaxSegments)
+        data['Sub_Sets'] = data['Sub_Sets'].astype(int)
+        data = data.values.tolist()
         print(UF.TimeStamp(), bcolors.OKGREEN+"The track segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+output_file_location+bcolors.ENDC)
         TrainDataMeta=UF.TrainingSampleMeta(TrainSampleID)
-        TrainDataMeta.IniTrackSeedMetaData(PM.MaxSLG,PM.MaxSTG,PM.MaxDOCA,PM.MaxAngle)
+        TrainDataMeta.IniTrackSeedMetaData(PM.MaxSLG,PM.MaxSTG,PM.MaxDOCA,PM.MaxAngle,data,PM.MaxSegments)
         TrainSampleOutputMeta=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/'+TrainSampleID+'_info.pkl'
         print(UF.PickleOperations(TrainSampleOutputMeta,'w', TrainDataMeta)[1])
         print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
         print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 0 has successfully completed'+bcolors.ENDC)
-exit()
-# # ########################################     Preset framework parameters    #########################################
+
+# ########################################     Preset framework parameters    #########################################
 # input_file_location=EOS_DIR+'/ANNADEA/Data/REC_SET/RH1_'+RecBatchID+'_hits.csv'
 # print(UF.TimeStamp(),'Loading preselected data from ',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
 # data=pd.read_csv(input_file_location,header=0,usecols=['z','x','y'])
