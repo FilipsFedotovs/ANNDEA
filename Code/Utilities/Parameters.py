@@ -11,12 +11,16 @@ tx='TX' #Column name x-coordinate of the track hit
 ty='TY' #Column name for y-coordinate of the track hit
 z='Z' #Column name for z-coordinate of the track hit
 FEDRA_Track_ID='FEDRA Track ID' #Column nameActual track id for FEDRA (or other reconstruction software)
-FEDRA_Track_QUADRANT='Quarter' #Quarter of the ECC where the track is reconstructed If not present in the data please put the Track ID (the same as above)
+FEDRA_Track_Domain='Quarter' #Quarter of the ECC where the track is reconstructed If not present in the data please put the Track ID (the same as above)
+Rec_Track_ID='FEDRA Track ID' #Column nameActual track id for FEDRA (or other reconstruction software)
+Rec_Track_Domain='Quarter' #Quarter of the ECC where the track is reconstructed If not present in the data please put the Track ID (the same as above)
 MC_Track_ID='MC Track'  #Column name for Track ID for MC Truth reconstruction data
 MC_Event_ID='MC Event' #Column name for Event id for MC truth reconstruction data (If absent please enter the MCTrack as for above)
+MinHitsTrack=2
+TST=0.0001
+valRatio=0.1
 
-
-######List of geometrical constain parameters
+######Tracking Module - list of parameters that are specific to this module
 stepX=3000
 stepY=3000
 stepZ=6000
@@ -24,12 +28,49 @@ cut_dt=0.2
 cut_dr=60
 valRatio=0.1
 testRatio=0.05
-TST=0.0001
-
-MinHitsTrack=2
 num_node_features=5
 num_edge_features=5
-
 Model_Name='Model_Identity'
 ModelArchitecture=[[2], [1], [],[], [], [], [], [], [], [], [5]]
 
+######Track Union Module - list of parameters that are specific to this module
+
+MaxSegmentsPerJob=10000 #This parameter imposes the limit on the number of the tracks form the Start plate when forming the Seeds.
+MaxFitTracksPerJob=10000
+MaxTracksPerTrPool=20000
+
+######List of geometrical constain parameters
+MaxSLG=7000
+MaxSTG=160#This parameter restricts the maximum length of of the longitudinal and transverse distance between track segments.
+MinHitsTrack=2
+MaxTrainSampleSize=50000
+MaxValSampleSize=100000
+MaxDOCA=50
+MaxAngle=1 #Seed Opening Angle (Magnitude) in radians
+
+MaxTracksPerJob=20000
+MaxEvalTracksPerJob=20000
+MaxSeedsPerJob=40000
+MaxVxPerJob=10000
+MaxSeedsPerVxPool=20000
+##Model parameters
+pre_acceptance=0.5
+post_acceptance=0.5
+bg_acceptance = 1.0
+#pre_vx_acceptance=0.662
+resolution=50
+MaxX=1000.0
+MaxY=1000.0
+MaxZ=3000.0
+GNNMaxX=100.0
+GNNMaxY=100.0
+GNNMaxZ=1315
+GNNMaxTX=0.01
+GNNMaxTY=0.01
+Pre_CNN_Model_Name='1T_50_SHIP_PREFIT_1_model'
+Post_CNN_Model_Name='1T_50_SHIP_POSTFIT_1_model'
+Classifier_Model_Name= 'SND_Reduced_3Class2'
+Post_GNN_Model_Name = 'SND_Glue_Post_GMM3_FullCo_Angle2'
+#ModelArchitecture=[[6, 4, 1, 2, 2, 2, 2], [], [],[], [], [1, 4, 2], [], [], [], [], [7, 1, 1, 4]]
+ModelArchitecture=[[1, 4, 1, 8, 2, 2, 2], [], [],[], [], [1, 4, 2], [], [], [], [], [7, 1, 1, 4]]
+ModelArchitecturePlus=[[1, 4, [2, 2, 2], [8, 8, 8], 2, 2, 2], [], [],[], [], [1, 4, 2], [], [], [], [], [7, 1, 1, 4]]
