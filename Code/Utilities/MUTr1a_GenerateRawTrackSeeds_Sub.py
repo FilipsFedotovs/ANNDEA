@@ -148,8 +148,11 @@ for i in range(0,Steps):
   if merged_data.empty==False:
     merged_data.drop(merged_data.index[merged_data['Segment_1'] == merged_data['Segment_2']], inplace = True) #Removing the cases where Seed tracks are the same
     merged_data['Seed_Type']=True
-    for n in VetoMotherTrack:
-      merged_data['Seed_Type']=((merged_data['Mother_1']==merged_data['Mother_2']) & (merged_data['Mother_1'].str.contains(str('-'+n))==False) & (merged_data['Seed_Type']==True))
+    if len(VetoMotherTrack)>=1:
+      for n in VetoMotherTrack:
+        merged_data['Seed_Type']=((merged_data['Mother_1']==merged_data['Mother_2']) & (merged_data['Mother_1'].str.contains(str('-'+n))==False) & (merged_data['Seed_Type']==True))
+    else:
+        merged_data['Seed_Type']=(merged_data['Mother_1']==merged_data['Mother_2'])
     merged_data.drop(['Mother_1'],axis=1,inplace=True)
     merged_data.drop(['Mother_2'],axis=1,inplace=True)
     merged_list = merged_data.values.tolist() #Convirting the result to List data type
