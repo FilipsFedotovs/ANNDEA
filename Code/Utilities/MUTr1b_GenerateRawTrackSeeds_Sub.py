@@ -39,7 +39,6 @@ SubSet=args.SubSet
 fraction=args.Fraction
 AFS_DIR=args.AFS
 EOS_DIR=args.EOS
-PreFit=args.PreFit=='Y'
 ModelName=ast.literal_eval(args.ModelName)
 TrainSampleID=args.TrainSampleID
 # if PreFit:
