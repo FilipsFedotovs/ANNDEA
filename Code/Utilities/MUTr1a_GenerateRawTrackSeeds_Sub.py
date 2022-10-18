@@ -26,7 +26,7 @@ parser.add_argument('--EOS',help="EOS directory location", default='.')
 parser.add_argument('--AFS',help="AFS directory location", default='.')
 parser.add_argument('--TrainSampleID',help="Give this training sample batch an ID", default='SHIP_UR_v1')
 parser.add_argument('--MaxSegments',help="A maximum number of track combinations that will be used in a particular HTCondor job for this script", default='20000')
-parser.add_argument('--VetoMotherTrack',help="Skip Invalid Mother_IDs", default=[-1])
+parser.add_argument('--VetoMotherTrack',help="Skip Invalid Mother_IDs", default="[]")
 
 ######################################## Set variables  #############################################################
 args = parser.parse_args()

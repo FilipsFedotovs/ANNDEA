@@ -11,6 +11,7 @@ import math #We use it for data manipulation
 import numpy as np
 import os
 import time
+import ast
 from alive_progress import alive_bar
 
 class bcolors:   #We use it for the interface
@@ -33,7 +34,7 @@ print(bcolors.HEADER+"##########################################################
 #Setting the parser - this script is usually not run directly, but is used by a Master version Counterpart that passes the required arguments
 parser = argparse.ArgumentParser(description='This script prepares training data for training the tracking model')
 parser.add_argument('--Mode', help='Script will continue from the last checkpoint, unless you want to start from the scratch, then type "Reset"',default='')
-parser.add_argument('--ModelName',help="WHat GNN model would you like to use?", default=['MH_GNN_5FTR_4_120_4_120'])
+parser.add_argument('--ModelName',help="WHat GNN model would you like to use?", default="['MH_GNN_5FTR_4_120_4_120']")
 parser.add_argument('--Patience',help="How many checks to do before resubmitting the job?", default='15')
 parser.add_argument('--TrainSampleID',help="Give this training sample batch an ID", default='SHIP_UR_v1')
 parser.add_argument('--f',help="Please enter the full path to the file with track reconstruction", default='/afs/cern.ch/work/f/ffedship/public/SHIP/Source_Data/SHIP_Emulsion_FEDRA_Raw_UR.csv')
@@ -46,7 +47,7 @@ parser.add_argument('--Ymax',help="This option restricts data to only those even
 ######################################## Parsing argument values  #############################################################
 args = parser.parse_args()
 Mode=args.Mode.upper()
-ModelName=args.ModelName
+ModelName=ast.literal_eval(args.ModelName)
 TrainSampleID=args.TrainSampleID
 Patience=int(args.Patience)
 input_file_location=args.f
