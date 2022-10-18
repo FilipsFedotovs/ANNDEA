@@ -690,7 +690,8 @@ class EMO:
                  raise ValueError("Method 'DecorateTrackGeoInfo' currently works for seeds with partition of 2 only")
           else:
                 raise ValueError("Method 'DecorateTrackGeoInfo' works only if 'Decorate' method has been acted upon the seed before")
-      
+      def TrackQualityCheck(self,MaxDoca,MaxSLG, MaxSTG,MaxAngle):
+                    return (self.DOCA<=MaxDoca and self.Seg_Lon_Gap<=MaxSLG and self.Seg_Transv_Gap<=(MaxSTG+(self.Seg_Lon_Gap*0.96)) and abs(self.angle)<=MaxAngle)
       @staticmethod
       def unit_vector(vector):
           return vector / np.linalg.norm(vector)

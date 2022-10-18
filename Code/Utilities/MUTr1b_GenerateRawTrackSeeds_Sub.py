@@ -1,7 +1,6 @@
 
 #This simple script prepares data for CNN
 ########################################    Import libraries    #############################################
-#import csv
 import UtilityFunctions as UF
 from UtilityFunctions import EMO
 import ast
@@ -103,14 +102,11 @@ for s in range(0,limit):
          num_label = 0
      track.LabelSeed(num_label)
      track.Decorate(segments)
-     track.GetTrInfo()
-     print(track.Opening_Angle,track.DOCA,track.STG,track.SLG)
-     exit()
-#     try:
-#       track.DecorateTrackSeedGeoInfo()
-#     except:
-#       continue
-#     track.TrackQualityCheck(MaxDOCA,MaxSLG,MaxSTG, MaxAngle)
+     try:
+       track.GetTrInfo()
+     except:
+       continue
+     track.TrackQualityCheck(MaxDOCA,MaxSLG,MaxSTG, MaxAngle)
 #     if track.GeoFit and PreFit:
 #                track.PrepareTrackPrint(2000.0,500.0,20000.0,50,True)
 #                TrackImage=UF.LoadRenderImages([track],1,1,numClasses)[0]
@@ -118,17 +114,15 @@ for s in range(0,limit):
 #                track.CNNFitTrack(model.predict(TrackImage)[0][1])
 #                if track.Track_CNN_Fit>=acceptance:
 #                   GoodTracks.append(track)
-#     elif track.GeoFit:
-#            GoodTracks.append(track)
-#     else:
-#         del track
-#         continue
-# print(UF.TimeStamp(),bcolors.OKGREEN+'The raw image generation has been completed..'+bcolors.ENDC)
-# del tracks
-# del segments
-# gc.collect()
-# print(UF.TimeStamp(),'Saving the results..')
-# open_file = open(output_track_file_location, "wb")
-# pickle.dump(GoodTracks, open_file)
-# open_file.close()
-# exit()
+     if track.TrackQualityCheck(MaxDOCA,MaxSLG,MaxSTG, MaxAngle):
+           GoodTracks.append(track)
+     else:
+         del track
+         continue
+print(UF.TimeStamp(),bcolors.OKGREEN+'The raw image generation has been completed..'+bcolors.ENDC)
+del tracks
+del segments
+print(len(GoodTracks))
+gc.collect()
+print(UF.PickleOperations(output_track_file_location,'w', GoodTracks))
+
