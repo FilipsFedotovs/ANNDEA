@@ -26,9 +26,6 @@ parser.add_argument('--MaxSTG',help="Maximum Segment Transverse gap per SLG", de
 parser.add_argument('--MaxSLG',help="Maximum Segment Longitudinal Gap", default='4000')
 parser.add_argument('--EOS',help="EOS location", default='')
 parser.add_argument('--AFS',help="AFS location", default='')
-parser.add_argument('--MaxX',help="Image size in microns along the x-axis", default='2000.0')
-parser.add_argument('--MaxY',help="Image size in microns along the y-axis", default='500.0')
-parser.add_argument('--MaxZ',help="Image size in microns along the z-axis", default='20000.0')
 parser.add_argument('--ModelName',help="WHat GNN model would you like to use?", default="['MH_GNN_5FTR_4_120_4_120']")
 parser.add_argument('--TrainSampleID',help="Give this training sample batch an ID", default='SHIP_UR_v1')
 ########################################     Main body functions    #########################################
