@@ -57,8 +57,8 @@ MaxSTG=float(args.MaxSTG)
 MaxSLG=float(args.MaxSLG)
 MaxAngle=float(args.MaxAngle)
 input_segment_file_location=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/MUTr1_'+TrainSampleID+'_TRACK_SEGMENTS.csv'
-input_track_file_location=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/MUTr1b_'+TrainSampleID+'_RawTrackSeeds_'+str(Set)+'_'+str(SubSet)+'_'+str(fraction)+'.csv'
-output_track_file_location=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/MUTr1c_'+TrainSampleID+'_RawTrackSeeds_'+str(Set)+'_'+str(SubSet)+'_'+str(fraction)+'.pkl'
+input_track_file_location=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/MUTr1a_'+TrainSampleID+'_SelectedRawTrackSeeds_'+str(Set)+'_'+str(SubSet)+'_'+str(fraction)+'.csv'
+output_track_file_location=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/MUTr1b_'+TrainSampleID+'_RefinedTrackSeeds_'+str(Set)+'_'+str(SubSet)+'_'+str(fraction)+'.pkl'
 print(UF.TimeStamp(),'Loading the data')
 tracks=pd.read_csv(input_track_file_location)
 tracks_1=tracks.drop(['Segment_2'],axis=1)
