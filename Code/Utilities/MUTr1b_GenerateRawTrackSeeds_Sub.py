@@ -104,7 +104,7 @@ for s in range(0,limit):
      track.LabelSeed(num_label)
      track.Decorate(segments)
      track.GetTrInfo()
-     print(track.DOCA)
+     print(track.Opening_Angle,track.DOCA,track.STG,track.SLG)
      exit()
 #     try:
 #       track.DecorateTrackSeedGeoInfo()
