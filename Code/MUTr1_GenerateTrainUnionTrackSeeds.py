@@ -509,7 +509,7 @@ while status<4:
                       Compression_Ratio=0
                     print(UF.TimeStamp(),'Set',str(j),'and subset', str(sj), 'compression ratio is ', Compression_Ratio, ' %',bcolors.ENDC)
                     fractions=int(math.ceil(Records_After_Compression/MaxSegments))
-                    Meta.JobSets[j].append(fractions)
+                    Meta.JobSets[j][3].append(fractions)
                     for f in range(0,fractions):
                      new_output_file_location=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/MUTr1a_'+TrainSampleID+'_SelectedRawTrackSeeds_'+str(j)+'_'+str(sj)+'_'+str(f)+'.csv'
                      result[(f*MaxSegments):min(Records_After_Compression,((f+1)*MaxSegments))].to_csv(new_output_file_location,index=False)
