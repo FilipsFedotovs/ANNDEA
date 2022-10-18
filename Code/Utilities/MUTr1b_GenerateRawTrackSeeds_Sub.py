@@ -103,7 +103,8 @@ for s in range(0,limit):
          num_label = 0
      track.LabelSeed(num_label)
      track.Decorate(segments)
-     print(track.Hits)
+     track.GetTrInfo()
+     print(track.DOCA)
      exit()
 #     try:
 #       track.DecorateTrackSeedGeoInfo()
