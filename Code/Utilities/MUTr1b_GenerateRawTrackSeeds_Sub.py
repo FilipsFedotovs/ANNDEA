@@ -91,7 +91,7 @@ track_counter=0
 print(UF.TimeStamp(),bcolors.OKGREEN+'Data has been successfully loaded and prepared..'+bcolors.ENDC)
 #create seeds
 GoodTracks=[]
-print(UF.TimeStamp(),'Beginning the image generation part...')
+print(UF.TimeStamp(),'Beginning the sample generation part...')
 for s in range(0,limit):
      track=tracks.pop(0)
      label=track[2]
@@ -118,10 +118,9 @@ for s in range(0,limit):
      else:
          del track
          continue
-print(UF.TimeStamp(),bcolors.OKGREEN+'The raw image generation has been completed..'+bcolors.ENDC)
+print(UF.TimeStamp(),bcolors.OKGREEN+'The sample generation has been completed..'+bcolors.ENDC)
 del tracks
 del segments
-print(len(GoodTracks))
 gc.collect()
-print(UF.PickleOperations(output_track_file_location,'w', GoodTracks))
+print(UF.PickleOperations(output_track_file_location,'w', GoodTracks)[1])
 
