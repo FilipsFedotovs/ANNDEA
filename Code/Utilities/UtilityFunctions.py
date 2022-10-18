@@ -640,7 +640,7 @@ class EMO:
         return ('-'.join(self.Header)) == ('-'.join(other.Header))
       def __hash__(self):
         return hash(('-'.join(self.Header)))
-      def DecorateSegments(self,RawHits): #Decorate hit information
+      def Decorate(self,RawHits): #Decorate hit information
           self.Hits=[]
           for s in range(len(self.Header)):
               self.Hits.append([])
@@ -649,7 +649,8 @@ class EMO:
                       self.Hits[s].append(t[:5])
           for Hit in range(0, len(self.Hits)):
              self.Hits[Hit]=sorted(self.Hits[Hit],key=lambda x: float(x[2]),reverse=False)
-
+      def LabelSeed(self,label):
+          self.Label=label
 def GenerateModel(ModelMeta):
       if ModelMeta.ModelFramework=='PyTorch':
          import torch

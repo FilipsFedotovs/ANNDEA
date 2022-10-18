@@ -93,16 +93,18 @@ print(UF.TimeStamp(),bcolors.OKGREEN+'Data has been successfully loaded and prep
 #create seeds
 GoodTracks=[]
 print(UF.TimeStamp(),'Beginning the image generation part...')
-# for s in range(0,limit):
-#     track=tracks.pop(0)
-#     label=track[2]
-#     track=Track(track[:2])
-#     if label:
-#         num_label = 1
-#     else:
-#         num_label = 0
-#     track.MCtruthClassifySeed(num_label)
-#     track.DecorateSeed(segments)
+for s in range(0,limit):
+     track=tracks.pop(0)
+     label=track[2]
+     track=EMO(track[:2])
+     if label:
+         num_label = 1
+     else:
+         num_label = 0
+     track.LabelSeed(num_label)
+     track.Decorate(segments)
+     print(track.Hits)
+     exit()
 #     try:
 #       track.DecorateTrackSeedGeoInfo()
 #     except:
