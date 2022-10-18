@@ -632,7 +632,23 @@ class HitCluster:
                      return True
              return False
 
-
+class EMO:
+      def __init__(self,parts):
+          self.Header=sorted(parts, key=str.lower)
+          self.Partition=len(self.Header)
+      def __eq__(self, other):
+        return ('-'.join(self.Header)) == ('-'.join(other.Header))
+      def __hash__(self):
+        return hash(('-'.join(self.Header)))
+      def DecorateSegments(self,RawHits): #Decorate hit information
+          self.Hits=[]
+          for s in range(len(self.Header)):
+              self.Hits.append([])
+              for t in RawHits:
+                   if self.Header[s]==t[5]:
+                      self.Hits[s].append(t[:5])
+          for Hit in range(0, len(self.Hits)):
+             self.Hits[Hit]=sorted(self.Hits[Hit],key=lambda x: float(x[2]),reverse=False)
 
 def GenerateModel(ModelMeta):
       if ModelMeta.ModelFramework=='PyTorch':
