@@ -177,7 +177,7 @@ elif os.path.isfile(TrainSampleOutputMeta)==True:
           for sj in range(0,int(JobSets[j][2])):
               TotJobs+=1
 print(JobSets[j][2])
-print(JobSets[j])
+print(JobSets)
 exit()
 ########################################     Preset framework parameters    #########################################
 print(UF.TimeStamp(),'Loading preselected data from ',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
