@@ -145,40 +145,27 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         data['Sub_Sets'] = data['Sub_Sets'].astype(int)
         data = data.values.tolist()
         print(UF.TimeStamp(), bcolors.OKGREEN+"The track segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+output_file_location+bcolors.ENDC)
-        TrainDataMeta=UF.TrainingSampleMeta(TrainSampleID)
-        TrainDataMeta.IniTrackSeedMetaData(PM.MaxSLG,PM.MaxSTG,PM.MaxDOCA,PM.MaxAngle,data,PM.MaxSegments,PM.VetoMotherTrack)
-        MaxSLG=PM.MaxSLG
-        MaxSTG=PM.MaxSTG
-        MaxDOCA=PM.MaxDOCA
-        MaxAngle=PM.MaxAngle
-        JobSets=data
-        MaxSegments=PM.MaxSegments
-        VetoMotherTrack=PM.VetoMotherTrack
-        TotJobs=0
-        for j in range(0,len(JobSets)):
-          for sj in range(0,int(JobSets[j][2])):
-              TotJobs+=1
-        print(UF.PickleOperations(TrainSampleOutputMeta,'w', TrainDataMeta)[1])
+        Meta=UF.TrainingSampleMeta(TrainSampleID)
+        Meta.IniTrackSeedMetaData(PM.MaxSLG,PM.MaxSTG,PM.MaxDOCA,PM.MaxAngle,data,PM.MaxSegments,PM.VetoMotherTrack)
+        print(UF.PickleOperations(TrainSampleOutputMeta,'w', Meta)[1])
         print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
         print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 0 has successfully completed'+bcolors.ENDC)
 elif os.path.isfile(TrainSampleOutputMeta)==True:
     print(UF.TimeStamp(),'Loading previously saved data from ',bcolors.OKBLUE+TrainSampleOutputMeta+bcolors.ENDC)
     MetaInput=UF.PickleOperations(TrainSampleOutputMeta,'r', 'N/A')
     Meta=MetaInput[0]
-    MaxSLG=Meta.MaxSLG
-    MaxSTG=Meta.MaxSTG
-    MaxDOCA=Meta.MaxDOCA
-    MaxAngle=Meta.MaxAngle
-    JobSets=Meta.JobSets
-    MaxSegments=Meta.MaxSegments
-    VetoMotherTrack=Meta.VetoMotherTrack
-    TotJobs=0
-    for j in range(0,len(JobSets)):
+MaxSLG=Meta.MaxSLG
+MaxSTG=Meta.MaxSTG
+MaxDOCA=Meta.MaxDOCA
+MaxAngle=Meta.MaxAngle
+JobSets=Meta.JobSets
+MaxSegments=Meta.MaxSegments
+VetoMotherTrack=Meta.VetoMotherTrack
+TotJobs=0
+for j in range(0,len(JobSets)):
           for sj in range(0,int(JobSets[j][2])):
               TotJobs+=1
-print(JobSets[j][2])
-print(JobSets)
-exit()
+
 ########################################     Preset framework parameters    #########################################
 print(UF.TimeStamp(),'Loading preselected data from ',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
 FreshStart=True
@@ -496,11 +483,16 @@ while status<4:
         print(UF.TimeStamp(),bcolors.BOLD+'Stage 2:'+bcolors.ENDC+' Collecting and de-duplicating the results from stage 1')
         with alive_bar(TotJobs,force_tty=True, title='Checking the results from HTCondor') as bar:
             for j in range(0,len(JobSets)): #//Temporarily measure to save space
+                if len(Meta.JobSets[j])>3:
+                   Meta.JobSets[j][3]=[]
+                else:
+                   Meta.JobSets[j].append([])
                 for sj in range(0,int(JobSets[j][2])):
                    output_file_location=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/MUTr1a_'+TrainSampleID+'_RawTrackSeeds_'+str(j)+'_'+str(sj)+'.csv'
                    bar.text = f'-> Collecting the file : {output_file_location}...'
                    bar()
                    if os.path.isfile(output_file_location)==False:
+                      Meta.JobSets[j].append(0)
                       continue #Skipping because not all jobs necesseraly produce the required file (if statistics are too low)
                    else:
                     result=pd.read_csv(output_file_location,names = ['Segment_1','Segment_2', 'Seed_Type'])
@@ -517,16 +509,19 @@ while status<4:
                       Compression_Ratio=0
                     print(UF.TimeStamp(),'Set',str(j),'and subset', str(sj), 'compression ratio is ', Compression_Ratio, ' %',bcolors.ENDC)
                     fractions=int(math.ceil(Records_After_Compression/MaxSegments))
+                    Meta.JobSets[j].append(fractions)
                     for f in range(0,fractions):
                      new_output_file_location=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/MUTr1a_'+TrainSampleID+'_SelectedRawTrackSeeds_'+str(j)+'_'+str(sj)+'_'+str(f)+'.csv'
                      result[(f*MaxSegments):min(Records_After_Compression,((f+1)*MaxSegments))].to_csv(new_output_file_location,index=False)
         FreshStart=False
+        print(UF.PickleOperations(TrainSampleOutputMeta,'w', Meta)[1])
+        JobSets=Meta.JobSets
         print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 2 has successfully completed'+bcolors.ENDC)
         status=3
       if status==3:
          print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
          print(UF.TimeStamp(),bcolors.BOLD+'Stage 3:'+bcolors.ENDC+' Taking the list of seeds previously generated by Stage 2, converting them into Emulsion Objects and doing more rigorous selection')
-         print('WIP')
+         print(JobSets)
          exit()
          # bad_pop=[]
          # with alive_bar(TotJobs,force_tty=True, title='Checking the results from HTCondor') as bar:
