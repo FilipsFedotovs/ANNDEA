@@ -106,7 +106,6 @@ for s in range(0,limit):
        track.GetTrInfo()
      except:
        continue
-     track.TrackQualityCheck(MaxDOCA,MaxSLG,MaxSTG, MaxAngle)
 #     if track.GeoFit and PreFit:
 #                track.PrepareTrackPrint(2000.0,500.0,20000.0,50,True)
 #                TrackImage=UF.LoadRenderImages([track],1,1,numClasses)[0]
