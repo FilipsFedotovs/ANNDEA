@@ -484,6 +484,7 @@ while status<4:
         with alive_bar(TotJobs,force_tty=True, title='Checking the results from HTCondor') as bar:
             for j in range(0,len(JobSets)): #//Temporarily measure to save space
                 if len(Meta.JobSets[j])>3:
+                   Meta.JobSets[j]=Meta.JobSets[j][:4]
                    Meta.JobSets[j][3]=[]
                 else:
                    Meta.JobSets[j].append([])
