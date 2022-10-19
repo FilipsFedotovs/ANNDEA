@@ -459,8 +459,6 @@ while status<4:
              JobSet.append([])
              for j in range(len(JobSets[i][3])):
                  JobSet[i].append(JobSets[i][3][j])
-         for i in range(len(JobSets)):
-                JobSet.append(JobSets[i][2])
          TotJobs=0
          if type(JobSet) is int:
                         TotJobs=JobSet
