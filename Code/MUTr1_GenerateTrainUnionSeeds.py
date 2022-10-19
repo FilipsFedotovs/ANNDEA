@@ -284,7 +284,7 @@ while status<4:
                                     'MUTr1a',
                                     '.csv',
                                     TrainSampleID,
-                                    JobSet,
+                                    [JobSet],
                                     OptionHeader,
                                     OptionLine,
                                     'MUTr1a_GenerateRawSelectedSeeds_Sub.py',
