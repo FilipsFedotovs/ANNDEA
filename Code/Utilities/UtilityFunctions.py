@@ -1299,6 +1299,7 @@ def CreateCondorJobs(AFS,EOS,path,o,pfx,sfx,ID,loop_params,OptionHeader,OptionLi
                 TotJobs+=np.sum(lp)
         OptionHeader+=[' --EOS '," --AFS ", " --BatchID "]
         OptionLine+=[EOS, AFS, ID]
+        TotJobs=int(TotJobs)
         with alive_bar(TotJobs,force_tty=True, title='Checking the results from HTCondor') as bar:
              if nest_lvl==2:
                  for i in range(len(loop_params)):
@@ -1330,6 +1331,7 @@ def CreateCondorJobs(AFS,EOS,path,o,pfx,sfx,ID,loop_params,OptionHeader,OptionLi
                 TotJobs+=np.sum(lp)
         OptionHeader+=[' --EOS '," --AFS ", " --BatchID "]
         OptionLine+=[EOS, AFS, ID]
+        TotJobs=int(TotJobs)
         with alive_bar(TotJobs,force_tty=True, title='Checking the results from HTCondor') as bar:
              if nest_lvl==2:
                  for i in range(len(loop_params)):
