@@ -269,6 +269,8 @@ print(UF.TimeStamp(),'There are 5 stages (0-4) of this script',status,bcolors.EN
 print(UF.TimeStamp(),'Current status has a code',status,bcolors.ENDC)
 #
 status=1
+print(JobSets)
+exit()
 while status<4:
       if status==1:
           print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
@@ -281,8 +283,7 @@ while status<4:
                                     'MUTr1a',
                                     '.csv',
                                     TrainSampleID,
-                                    [len(JobSets),
-                                     int(JobSets[j][2])],
+                                    [JobSets],
                                     OptionHeader,
                                     OptionLine,
                                     'MUTr1a_GenerateRawSelectedSeeds_Sub.py',
