@@ -1284,7 +1284,7 @@ def CreateCondorJobs(AFS,EOS,path,o,pfx,sfx,ID,loop_params,OptionHeader,OptionLi
     if batch_sub==False:
         from alive_progress import alive_bar
         bad_pop=[]
-        TotJobs=np.prod(loop_params)
+        TotJobs=int(np.prod(loop_params))
         print(TotJobs)
         OptionHeader+=[' --EOS '," --AFS ", " --BatchID "]
         OptionLine+=[EOS, AFS, ID]
