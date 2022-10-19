@@ -364,6 +364,20 @@ while status<4:
       if status==1:
           print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
           print(UF.TimeStamp(),bcolors.BOLD+'Stage 1:'+bcolors.ENDC+' Sending hit cluster to the HTCondor, so tack segment combination pairs can be formed...')
+          OptionHeader = [" --PlateZ ", " --MaxSegments ", " --MaxSLG "," --MaxSTG "," --VetoMotherTrack "]
+          OptionLine = [int(JobSets[j][0]),  MaxSegments, MaxSLG, MaxSTG,'"'+str(VetoMotherTrack)+'"']
+          print(UF.CreateCondorJobs(AFS_DIR,EOS_DIR,
+                                    '/ANNADEA/Data/TRAIN_SET/',
+                                    'RawSeedsRes',
+                                    'MUTr1a',
+                                    '.csv',
+                                    TrainSampleID,
+                                    [len(JobSets),
+                                     int(JobSets[j][2])],
+                                    OptionHeader,
+                                    OptionLine,
+                                    'MUTr1a_GenerateRawSelectedSeeds_Sub.py')[0])
+          exit()
           bad_pop=[]
           with alive_bar(TotJobs,force_tty=True, title='Checking the results from HTCondor') as bar:
              for j in range(0,len(JobSets)):

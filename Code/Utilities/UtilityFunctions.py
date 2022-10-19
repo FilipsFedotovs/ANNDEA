@@ -1280,6 +1280,27 @@ def TrainCleanUp(AFS_DIR, EOS_DIR, Process, FileNames, ProcessId):
       folder =  AFS_DIR+'/HTCondor/MSG'
       CleanFolder(folder,'MSG_'+Process+'_')
 
+def CreateCondorJobs(AFS,EOS,path,o,pfx,sfx,ID,loop_params,OptionHeader,OptionLine,Sub_File,batch_sub=False, Log=False, GPU=False):
+    if batch_sub==False:
+        from alive_progress import alive_bar
+        bad_pop=[]
+        TotJobs=np.prod(loop_params)
+        OptionHeader+=[' --EOS '," --AFS ", " --BatchID "]
+        OptionLine+=[EOS, AFS, ID]
+        with alive_bar(TotJobs,force_tty=True, title='Checking the results from HTCondor') as bar:
+             if len(loop_params)==2:
+                 for i in range(0,loop_params[0]):
+                     for j in range(0,loop_params[1]):
+                               required_output_file_location=EOS+'/'+path+'/'+pfx+'_'+ID+'_'+o+'_'+str(i)+'_'+str(j)+sfx
+                               bar.text = f'-> Checking whether the file : {required_output_file_location}, exists...'
+                               bar()
+                               SHName = AFS + '/HTCondor/SH/SH_'+pfx+'_'+'_'+ ID+'_' + str(i) + '_' + str(j) + '.sh'
+                               SUBName = AFS + '/HTCondor/SUB/SUB_'+pfx+'_'+'_'+ ID+'_' + str(i) + '_' + str(j) + '.sub'
+                               MSGName = AFS + '/HTCondor/MSG/MSG_'+pfx+'_'+'_'+ ID+'_' + str(i) + '_' + str(j)
+                               ScriptName = AFS + '/Code/Utilities/'+Sub_File
+                               if os.path.isfile(required_output_file_location)!=True:
+                                  bad_pop.append([OptionHeader+[' --i ', ' --j ', ' --p ',' --pfx ', ' --sfx '], OptionLine+[i, j, path, pfx, sfx], SHName, SUBName, MSGName, ScriptName, 1, 'ANNADEA-'+pfx+'-'+ID, False,False])
+        return(bad_pop)
 def SubmitJobs2Condor(job):
     SHName = job[2]
     SUBName = job[3]
