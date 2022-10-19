@@ -271,9 +271,7 @@ print(UF.TimeStamp(),'Current status has a code',status,bcolors.ENDC)
 status=1
 JobSet=[]
 for i in range(len(JobSets)):
-    JobSet.append([JobSets[i][2]])
-print(JobSet)
-exit()
+    JobSet.append(JobSets[i][2])
 while status<4:
       if status==1:
           print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
@@ -286,7 +284,7 @@ while status<4:
                                     'MUTr1a',
                                     '.csv',
                                     TrainSampleID,
-                                    [JobSets],
+                                    [JobSet],
                                     OptionHeader,
                                     OptionLine,
                                     'MUTr1a_GenerateRawSelectedSeeds_Sub.py',
