@@ -1285,6 +1285,7 @@ def CreateCondorJobs(AFS,EOS,path,o,pfx,sfx,ID,loop_params,OptionHeader,OptionLi
         from alive_progress import alive_bar
         bad_pop=[]
         TotJobs=np.prod(loop_params)
+        print(TotJobs)
         OptionHeader+=[' --EOS '," --AFS ", " --BatchID "]
         OptionLine+=[EOS, AFS, ID]
         with alive_bar(TotJobs,force_tty=True, title='Checking the results from HTCondor') as bar:
