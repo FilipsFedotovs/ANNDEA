@@ -268,7 +268,7 @@ else:
 print(UF.TimeStamp(),'There are 5 stages (0-4) of this script',status,bcolors.ENDC)
 print(UF.TimeStamp(),'Current status has a code',status,bcolors.ENDC)
 #
-status=1
+status=3
 JobSet=[]
 for i in range(len(JobSets)):
     JobSet.append(JobSets[i][2])
