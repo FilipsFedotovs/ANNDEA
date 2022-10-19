@@ -450,8 +450,6 @@ while status<4:
              JobSet.append([])
              for j in range(len(JobSets[i][3])):
                  JobSet[i].append(JobSets[i][3][j])
-         print(JobSet)
-         exit()
          OptionHeader = [" --MaxSTG ", " --MaxSLG ", " --MaxDOCA ", " --MaxAngle "," --ModelName "]
          OptionLine = [MaxSTG, MaxSLG, MaxDOCA, MaxAngle,'"'+str(ModelName)+'"']
          bad_pop=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,
@@ -468,7 +466,8 @@ while status<4:
                                     False,
                                     [" --PlateZ ",JobSets])
 
-         bad_pop=[]
+         print(bad_pop)
+         exit()
          with alive_bar(TotJobs,force_tty=True, title='Checking the results from HTCondor') as bar:
              for j in range(0,len(JobSets)): #//Temporarily measure to save space
                  for sj in range(0,int(JobSets[j][2])):
