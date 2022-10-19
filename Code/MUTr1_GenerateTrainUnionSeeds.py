@@ -637,7 +637,7 @@ while status<5:
                 #    continue
 #                del new_data
                 UF.LogOperations(EOS_DIR+'/ANNADEA/Data/TRAIN_SET/MUTr1c_'+TrainSampleID+'_Temp_Stats.csv','w', [[TotalImages,TrueSeeds]])
-
+        status=5
 #
 #     if status==4:
 #        print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
