@@ -1443,8 +1443,6 @@ def CreateCondorJobs(AFS,EOS,path,o,pfx,sfx,ID,loop_params,OptionHeader,OptionLi
                                ScriptName = AFS + '/Code/Utilities/'+Sub_File
                                bad_pop.append([OptionHeader+[' --i ', ' --j ', ' --p ', ' --o ',' --pfx ', ' --sfx '], OptionLine+[i, '$1', path,o, pfx, sfx], SHName, SUBName, MSGName, ScriptName, loop_params[i], 'ANNADEA-'+pfx+'-'+ID, False,False])
              if nest_lvl==3:
-                 print(loop_params)
-                 exit()
                  for i in range(len(loop_params)):
                      for j in range(len(loop_params[i])):
                                bar.text = f'-> Preparing batch submission...'
@@ -1453,7 +1451,7 @@ def CreateCondorJobs(AFS,EOS,path,o,pfx,sfx,ID,loop_params,OptionHeader,OptionLi
                                SUBName = AFS + '/HTCondor/SUB/SUB_'+pfx+'_'+'_'+ ID+'_' + str(i) +'_' + str(j)+'.sub'
                                MSGName = AFS + '/HTCondor/MSG/MSG_'+pfx+'_'+'_'+ ID+'_' + str(i) +'_' + str(j)
                                ScriptName = AFS + '/Code/Utilities/'+Sub_File
-                               bad_pop.append([OptionHeader+[' --i ', ' --j ',' --k ', ' --p ', ' --o ',' --pfx ', ' --sfx '], OptionLine+[i, j, '$1', path,o, pfx, sfx], SHName, SUBName, MSGName, ScriptName, loop_params[i], 'ANNADEA-'+pfx+'-'+ID, False,False])
+                               bad_pop.append([OptionHeader+[' --i ', ' --j ',' --k ', ' --p ', ' --o ',' --pfx ', ' --sfx '], OptionLine+[i, j, '$1', path,o, pfx, sfx], SHName, SUBName, MSGName, ScriptName, loop_params[i][j], 'ANNADEA-'+pfx+'-'+ID, False,False])
         return(bad_pop)
    return []
 def SubmitJobs2Condor(job):
