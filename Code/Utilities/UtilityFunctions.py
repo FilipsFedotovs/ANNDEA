@@ -1297,14 +1297,12 @@ def CreateCondorJobs(AFS,EOS,path,o,pfx,sfx,ID,loop_params,OptionHeader,OptionLi
             nest_lvl=3
             for lp in loop_params:
                 TotJobs+=np.sum(lp)
-        print(TotJobs)
-        exit()
         OptionHeader+=[' --EOS '," --AFS ", " --BatchID "]
         OptionLine+=[EOS, AFS, ID]
         with alive_bar(TotJobs,force_tty=True, title='Checking the results from HTCondor') as bar:
-             if len(loop_params)==2:
-                 for i in range(0,loop_params[0]):
-                     for j in range(0,loop_params[1]):
+             if nest_lvl==2:
+                 for i in range(len(loop_params)):
+                     for j in range(loop_params[i]):
                                required_output_file_location=EOS+'/'+path+'/'+pfx+'_'+ID+'_'+o+'_'+str(i)+'_'+str(j)+sfx
                                bar.text = f'-> Checking whether the file : {required_output_file_location}, exists...'
                                bar()
@@ -1318,20 +1316,30 @@ def CreateCondorJobs(AFS,EOS,path,o,pfx,sfx,ID,loop_params,OptionHeader,OptionLi
     else:
         from alive_progress import alive_bar
         bad_pop=[]
-        TotJobs=int(loop_params[0])
-        print(TotJobs)
+        print(loop_params)
+        TotJobs=0
+        if type(loop_params) is int:
+            nest_lvl=1
+            TotJobs=loop_params
+        elif type(loop_params[0]) is int:
+            nest_lvl=2
+            TotJobs=np.sum(loop_params)
+        elif type(loop_params[0][0]) is int:
+            nest_lvl=3
+            for lp in loop_params:
+                TotJobs+=np.sum(lp)
         OptionHeader+=[' --EOS '," --AFS ", " --BatchID "]
         OptionLine+=[EOS, AFS, ID]
         with alive_bar(TotJobs,force_tty=True, title='Checking the results from HTCondor') as bar:
-             if len(loop_params)==2:
-                 for i in range(0,loop_params[0]):
+             if nest_lvl==2:
+                 for i in range(len(loop_params)):
                                bar.text = f'-> Preparing batch submission...'
                                bar()
                                SHName = AFS + '/HTCondor/SH/SH_'+pfx+'_'+'_'+ ID+'_' + str(i) + '.sh'
                                SUBName = AFS + '/HTCondor/SUB/SUB_'+pfx+'_'+'_'+ ID+'_' + str(i) + '.sub'
                                MSGName = AFS + '/HTCondor/MSG/MSG_'+pfx+'_'+'_'+ ID+'_' + str(i)
                                ScriptName = AFS + '/Code/Utilities/'+Sub_File
-                               bad_pop.append([OptionHeader+[' --i ', ' --j ', ' --p ', ' --o ',' --pfx ', ' --sfx ', Exception[0]], OptionLine+[i, '$1', path,o, pfx, sfx, Exception[1][i][0]], SHName, SUBName, MSGName, ScriptName, loop_params[1], 'ANNADEA-'+pfx+'-'+ID, False,False])
+                               bad_pop.append([OptionHeader+[' --i ', ' --j ', ' --p ', ' --o ',' --pfx ', ' --sfx ', Exception[0]], OptionLine+[i, '$1', path,o, pfx, sfx, Exception[1][i][0]], SHName, SUBName, MSGName, ScriptName, loop_params[i], 'ANNADEA-'+pfx+'-'+ID, False,False])
         return(bad_pop)
 def SubmitJobs2Condor(job):
     SHName = job[2]

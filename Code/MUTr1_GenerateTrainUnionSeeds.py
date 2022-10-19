@@ -284,12 +284,15 @@ while status<4:
                                     'MUTr1a',
                                     '.csv',
                                     TrainSampleID,
-                                    [JobSet],
+                                    JobSet,
                                     OptionHeader,
                                     OptionLine,
                                     'MUTr1a_GenerateRawSelectedSeeds_Sub.py',
                                     False,
                                     [" --PlateZ ",JobSets])
+          print(len(bad_pop))
+          print(bad_pop)
+          exit()
           if len(bad_pop)==0:
               FreshStart=False
               print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 1 has successfully completed'+bcolors.ENDC)
