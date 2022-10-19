@@ -269,7 +269,10 @@ print(UF.TimeStamp(),'There are 5 stages (0-4) of this script',status,bcolors.EN
 print(UF.TimeStamp(),'Current status has a code',status,bcolors.ENDC)
 #
 status=1
-print(JobSets)
+JobSet=[]
+for i in JobSets:
+    JobSet.append(JobSets[2])
+print(JobSet)
 exit()
 while status<4:
       if status==1:
