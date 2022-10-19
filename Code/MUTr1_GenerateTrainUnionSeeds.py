@@ -458,32 +458,13 @@ while status<4:
                                     'MUTr1b',
                                     '.pkl',
                                     TrainSampleID,
-                                    [len(JobSets),
-                                     int(JobSets[j][2])],
+                                    JobSet,
                                     OptionHeader,
                                     OptionLine,
-                                    'MUTr1a_GenerateRawSelectedSeeds_Sub.py',
-                                    False,
-                                    [" --PlateZ ",JobSets])
-
+                                    'MUTr1b_RefineSeeds_Sub.py',
+                                    False)
          print(bad_pop)
          exit()
-         with alive_bar(TotJobs,force_tty=True, title='Checking the results from HTCondor') as bar:
-             for j in range(0,len(JobSets)): #//Temporarily measure to save space
-                 for sj in range(0,int(JobSets[j][2])):
-                     for f in range(0,int(JobSets[j][3][sj])):
-                        required_output_file_location=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/MUTr1b_'+TrainSampleID+'_RefinedSeeds_'+str(j)+'_'+str(sj)+'_'+str(f)+'.pkl'
-                        bar.text = f'-> Checking whether the file : {required_output_file_location}, exists...'
-                        bar()
-                        OptionHeader = [' --Set ', ' --SubSet ', ' --Fraction ', ' --EOS ', " --AFS ", " --MaxSTG ", " --MaxSLG ", " --MaxDOCA ", " --MaxAngle "," --ModelName "]
-                        OptionLine = [j, sj, f, EOS_DIR, AFS_DIR, MaxSTG, MaxSLG, MaxDOCA, MaxAngle,'"'+str(ModelName)+'"']
-                        SHName = AFS_DIR + '/HTCondor/SH/SH_MUTr1_' + str(j) + '_' + str(sj) + '_' + str(f) +'.sh'
-                        SUBName = AFS_DIR + '/HTCondor/SUB/SUB_MUTr1_' + str(j) + '_' + str(sj) +  '_' + str(f) +'.sub'
-                        MSGName = AFS_DIR + '/HTCondor/MSG/MSG_MUTr1_' + str(j) + '_' + str(sj) +'_' + str(f)
-                        ScriptName = AFS_DIR + '/Code/Utilities/MUTr1b_RefineSeeds_Sub.py '
-                        if os.path.isfile(required_output_file_location)!=True:
-                           bad_pop.append([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, 1, 'ANNADEA-RH-'+TrainSampleID, False,False])
-         print(bad_pop)
          status=6
 #
 #         if FreshStart:
