@@ -18,24 +18,33 @@ import ast
 #Setting the parser - this script is usually not run directly, but is used by a Master version Counterpart that passes the required arguments
 parser = argparse.ArgumentParser(description='select cut parameters')
 parser.add_argument('--PlateZ',help="The Z coordinate of the starting plate", default='-36820.0')
-parser.add_argument('--Set',help="Set number", default='1')
-parser.add_argument('--Subset',help="Subset number", default='1')
+parser.add_argument('--i',help="Set number", default='1')
+parser.add_argument('--j',help="Subset number", default='1')
+parser.add_argument('--p',help="Path to the output file", default='')
+parser.add_argument('--o',help="Path to the output file name", default='')
+parser.add_argument('--pfx',help="Path to the output file name", default='')
+parser.add_argument('--sfx',help="Path to the output file name", default='')
 parser.add_argument('--MaxSLG',help="Maximum allowed longitudinal gap value between segments", default='8000')
 parser.add_argument('--MaxSTG',help="Maximum allowed transverse gap value between segments per SLG length", default='1000')
 parser.add_argument('--EOS',help="EOS directory location", default='.')
 parser.add_argument('--AFS',help="AFS directory location", default='.')
-parser.add_argument('--TrainSampleID',help="Give this training sample batch an ID", default='SHIP_UR_v1')
+parser.add_argument('--BatchID',help="Give this training sample batch an ID", default='SHIP_UR_v1')
 parser.add_argument('--MaxSegments',help="A maximum number of track combinations that will be used in a particular HTCondor job for this script", default='20000')
 parser.add_argument('--VetoMotherTrack',help="Skip Invalid Mother_IDs", default="[]")
+
 
 ######################################## Set variables  #############################################################
 args = parser.parse_args()
 PlateZ=float(args.PlateZ)   #The coordinate of the st plate in the current scope
-Set=args.Set    #This is just used to name the output file
-Subset=int(args.Subset)  #The subset helps to determine what portion of the track list is used to create the Seeds
+i=int(args.i)    #This is just used to name the output file
+j=int(args.j)  #The subset helps to determine what portion of the track list is used to create the Seeds
+p=args.p
+o=args.o
+sfx=args.sfx
+pfx=args.pfx
 MaxSLG=float(args.MaxSLG)
 MaxSTG=float(args.MaxSTG)
-TrainSampleID=args.TrainSampleID
+BatchID=args.BatchID
 VetoMotherTrack=ast.literal_eval(args.VetoMotherTrack)
 ########################################     Preset framework parameters    #########################################
 MaxRecords=10000000 #A set parameter that helps to manage memory load of this script (Please do not exceed 10000000)
@@ -47,9 +56,9 @@ AFS_DIR=args.AFS
 import UtilityFunctions as UF #This is where we keep routine utility functions
 
 #Specifying the full path to input/output files
-input_file_location=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/MUTr1_'+TrainSampleID+'_TRACK_SEGMENTS.csv'
-output_file_location=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/MUTr1a_'+TrainSampleID+'_RawSeeds_'+str(Set)+'_'+str(Subset)+'.csv'
-output_result_location=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/MUTr1a_'+TrainSampleID+'_RawSeeds_'+str(Set)+'_'+str(Subset)+'_RES.csv'
+input_file_location=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/MUTr1_'+BatchID+'_TRACK_SEGMENTS.csv'
+output_file_location=EOS_DIR+p+'/'+pfx+'_'+BatchID+'_RawSeeds_'+str(i)+'_'+str(j)+sfx
+output_result_location=EOS_DIR+'/'+p+'/'+pfx+'_'+BatchID+'_'+o+'_'+str(i)+'_'+str(j)+sfx
 print(UF.TimeStamp(), "Modules Have been imported successfully...")
 print(UF.TimeStamp(),'Loading pre-selected data from ',input_file_location)
 data=pd.read_csv(input_file_location,header=0,
@@ -85,8 +94,8 @@ del data_s
 gc.collect()
 
 #What section of data will we cut?
-StartDataCut=Subset*MaxSegments
-EndDataCut=(Subset+1)*MaxSegments
+StartDataCut=j*MaxSegments
+EndDataCut=(j+1)*MaxSegments
 
 #Specifying the right join
 
@@ -163,6 +172,7 @@ for i in range(0,Steps):
       del result_list
       result_list=[]
       gc.collect()
+
 
 UF.LogOperations(output_file_location,'a',result_list) #Writing the remaining data into the csv
 UF.LogOperations(output_result_location,'w',[])
