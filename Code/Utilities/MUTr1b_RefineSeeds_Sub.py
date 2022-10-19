@@ -17,26 +17,36 @@ class bcolors:
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
 parser = argparse.ArgumentParser(description='select cut parameters')
-parser.add_argument('--Set',help="Set Number", default='1')
-parser.add_argument('--SubSet',help="SubSet Number", default='1')
-parser.add_argument('--Fraction',help="Fraction", default='1')
 parser.add_argument('--MaxDOCA',help="Maximum DOCA allowed", default='50')
 parser.add_argument('--MaxAngle',help="Maximum magnitude of angle allowed", default='1')
 parser.add_argument('--MaxSTG',help="Maximum Segment Transverse gap per SLG", default='50')
 parser.add_argument('--MaxSLG',help="Maximum Segment Longitudinal Gap", default='4000')
+parser.add_argument('--i',help="Set number", default='1')
+parser.add_argument('--j',help="Subset number", default='1')
+parser.add_argument('--k',help="Fraction number", default='1')
+parser.add_argument('--p',help="Path to the output file", default='')
+parser.add_argument('--o',help="Path to the output file name", default='')
+parser.add_argument('--pfx',help="Path to the output file name", default='')
+parser.add_argument('--sfx',help="Path to the output file name", default='')
 parser.add_argument('--EOS',help="EOS location", default='')
 parser.add_argument('--AFS',help="AFS location", default='')
 parser.add_argument('--ModelName',help="WHat GNN model would you like to use?", default="['MH_GNN_5FTR_4_120_4_120']")
-parser.add_argument('--TrainSampleID',help="Give this training sample batch an ID", default='SHIP_UR_v1')
+parser.add_argument('--BatchID',help="Give this training sample batch an ID", default='SHIP_UR_v1')
 ########################################     Main body functions    #########################################
 args = parser.parse_args()
-Set=args.Set
-SubSet=args.SubSet
+i=int(args.i)    #This is just used to name the output file
+j=int(args.j)  #The subset helps to determine what portion of the track list is used to create the Seeds
+k=int(args.k)  #The subset helps to determine what portion of the track list is used to create the Seeds
+p=args.p
+o=args.o
+sfx=args.sfx
+pfx=args.pfx
+j=args.j
 fraction=args.Fraction
 AFS_DIR=args.AFS
 EOS_DIR=args.EOS
 ModelName=ast.literal_eval(args.ModelName)
-TrainSampleID=args.TrainSampleID
+BatchID=args.BatchID
 # if PreFit:
 #     resolution=float(args.resolution)
 #     acceptance=float(args.acceptance)
@@ -53,9 +63,9 @@ MaxDOCA=float(args.MaxDOCA)
 MaxSTG=float(args.MaxSTG)
 MaxSLG=float(args.MaxSLG)
 MaxAngle=float(args.MaxAngle)
-input_segment_file_location=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/MUTr1_'+TrainSampleID+'_TRACK_SEGMENTS.csv'
-input_track_file_location=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/MUTr1a_'+TrainSampleID+'_SelectedSeeds_'+str(Set)+'_'+str(SubSet)+'_'+str(fraction)+'.csv'
-output_track_file_location=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/MUTr1b_'+TrainSampleID+'_RefinedSeeds_'+str(Set)+'_'+str(SubSet)+'_'+str(fraction)+'.pkl'
+input_segment_file_location=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/MUTr1_'+BatchID+'_TRACK_SEGMENTS.csv'
+input_track_file_location=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/MUTr1a_'+BatchID+'_SelectedSeeds_'+str(i)+'_'+str(j)+'_'+str(k)+'.csv'
+output_file_location=EOS_DIR+'/'+p+'/'+pfx+'_'+BatchID+'_'+o+'_'+str(i)+'_'+str(j)+'_'+str(k)+sfx
 print(UF.TimeStamp(),'Loading the data')
 tracks=pd.read_csv(input_track_file_location)
 tracks_1=tracks.drop(['Segment_2'],axis=1)
@@ -119,5 +129,5 @@ print(UF.TimeStamp(),bcolors.OKGREEN+'The sample generation has been completed..
 del tracks
 del segments
 gc.collect()
-print(UF.PickleOperations(output_track_file_location,'w', GoodTracks)[1])
+print(UF.PickleOperations(output_file_location,'w', GoodTracks)[1])
 
