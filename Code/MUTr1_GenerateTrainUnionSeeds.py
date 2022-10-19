@@ -224,29 +224,28 @@ status=0
 #                        return 1
 #     return 0
 #
-def AutoPilot0(wait_min, interval_min, max_interval_tolerance):
+def AutoPilot(wait_min, interval_min, max_interval_tolerance,AFS,EOS,path,o,pfx,sfx,ID,loop_params,OptionHeader,OptionLine,Sub_File,Exception=['',''], Log=False, GPU=False):
      print(UF.TimeStamp(),'Going on an autopilot mode for ',wait_min, 'minutes while checking HTCondor every',interval_min,'min',bcolors.ENDC)
      wait_sec=wait_min*60
      interval_sec=interval_min*60
      intervals=int(math.ceil(wait_sec/interval_sec))
      for interval in range(1,intervals+1):
          time.sleep(interval_sec)
-         bad_pop=[]
          print(UF.TimeStamp(),"Scheduled job checkup...") #Progress display
-         with alive_bar(TotJobs,force_tty=True, title='Checking the results from HTCondor') as bar:
-             for j in range(0,len(JobSets)):
-                 for sj in range(0,int(JobSets[j][2])):
-                           required_output_file_location=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/MUTr1a_'+TrainSampleID+'_RawSeeds_'+str(j)+'_'+str(sj)+'_RES.csv'
-                           bar.text = f'-> Checking whether the file : {required_output_file_location}, exists...'
-                           bar()
-                           OptionHeader = [' --Set ', ' --Subset ', ' --EOS ', " --AFS ", " --PlateZ ", " --MaxSegments ", " --MaxSLG "," --MaxSTG ", " --TrainSampleID "," --VetoMotherTrack "]
-                           OptionLine = [j, sj, EOS_DIR, AFS_DIR, int(JobSets[j][0]),  MaxSegments, MaxSLG, MaxSTG, TrainSampleID, '"'+str(VetoMotherTrack)+'"']
-                           SHName = AFS_DIR + '/HTCondor/SH/SH_MUTr1_' + str(j) + '_' + str(sj) + '.sh'
-                           SUBName = AFS_DIR + '/HTCondor/SUB/SUB_MUTr1_' + str(j) + '_' + str(sj) + '.sub'
-                           MSGName = AFS_DIR + '/HTCondor/MSG/MSG_MUTr1_' + str(j) + '_' + str(sj)
-                           ScriptName = AFS_DIR + '/Code/Utilities/MUTr1a_GenerateRawSelectedSeeds_Sub.py '
-                           if os.path.isfile(required_output_file_location)!=True:
-                              bad_pop.append([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, 1, 'ANNADEA-MUTr-'+TrainSampleID, False,False])
+         bad_pop=UF.CreateCondorJobs(AFS,EOS,
+                                    path,
+                                    o,
+                                    pfx,
+                                    sfx,
+                                    ID,
+                                    loop_params,
+                                    OptionHeader,
+                                    OptionLine,
+                                    Sub_File,
+                                    False,
+                                    Exception,
+                                    Log,
+                                    GPU)
          if len(bad_pop)>0:
                print(UF.TimeStamp(),bcolors.WARNING+'Autopilot status update: There are still', len(bad_pop), 'HTCondor jobs remaining'+bcolors.ENDC)
                if interval%max_interval_tolerance==0:
@@ -256,97 +255,7 @@ def AutoPilot0(wait_min, interval_min, max_interval_tolerance):
          else:
               return True
      return False
-# def AutoPilot1(wait_min, interval_min, max_interval_tolerance):
-#      print(UF.TimeStamp(),'Going on an autopilot mode for ',wait_min, 'minutes while checking HTCondor every',interval_min,'min',bcolors.ENDC)
-#      wait_sec=wait_min*60
-#      interval_sec=interval_min*60
-#      intervals=int(math.ceil(wait_sec/interval_sec))
-#      for interval in range(1,intervals+1):
-#          time.sleep(interval_sec)
-#          bad_pop=[]
-#          print(UF.TimeStamp(),"Scheduled job checkup...") #Progress display
-#          with alive_bar(Ysteps*Xsteps,force_tty=True, title='Checking the Z-shift results from HTCondor') as bar:
-#             for j in range(0,Ysteps):
-#                  for i in range(0,Xsteps):
-#                       required_output_file_location=EOS_DIR+'/ANNADEA/Data/REC_SET/RH1b_'+RecBatchID+'_hit_cluster_rec_z_set_'+str(j)+'_' +str(i)+'.pkl'
-#                       bar.text = f'-> Checking whether the file : {required_output_file_location}, exists...'
-#                       bar()
-#                       OptionHeader = [' --Z_ID_Max ',' --Y_ID ', ' --X_ID ', ' --EOS ', " --AFS ", ' --RecBatchID ']
-#                       OptionLine = [Zsteps, j, i, EOS_DIR, AFS_DIR, RecBatchID]
-#                       SHName = AFS_DIR + '/HTCondor/SH/SH_RH1b_'+ RecBatchID+ '_' + str(j) + '_' + str(i) +'.sh'
-#                       SUBName = AFS_DIR + '/HTCondor/SUB/SUB_RH1b_'+ RecBatchID+ '_' + str(j) + '_' + str(i) + '.sub'
-#                       MSGName = AFS_DIR + '/HTCondor/MSG/MSG_RH1b_' + RecBatchID+ '_' + str(j) + '_' + str(i)
-#                       ScriptName = AFS_DIR + '/Code/Utilities/RH1b_LinkSegmentsZ_Sub.py '
-#                       if os.path.isfile(required_output_file_location)!=True:
-#                          bad_pop.append([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, 1, 'ANNADEA-RH-'+RecBatchID, False,False])
-#          if len(bad_pop)>0:
-#                print(UF.TimeStamp(),bcolors.WARNING+'Autopilot status update: There are still', len(bad_pop), 'HTCondor jobs remaining'+bcolors.ENDC)
-#                if interval%max_interval_tolerance==0:
-#                   for bp in bad_pop:
-#                       UF.SubmitJobs2Condor(bp)
-#                   print(UF.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
-#          else:
-#               return True
-#      return False
-# def AutoPilot2(wait_min, interval_min, max_interval_tolerance):
-#      print(UF.TimeStamp(),'Going on an autopilot mode for ',wait_min, 'minutes while checking HTCondor every',interval_min,'min',bcolors.ENDC)
-#      wait_sec=wait_min*60
-#      interval_sec=interval_min*60
-#      intervals=int(math.ceil(wait_sec/interval_sec))
-#      for interval in range(1,intervals+1):
-#          time.sleep(interval_sec)
-#          bad_pop=[]
-#          print(UF.TimeStamp(),"Scheduled job checkup...") #Progress display
-#          with alive_bar(Ysteps*Xsteps,force_tty=True, title='Checking the Y-shift results from HTCondor') as bar:
-#                    for i in range(0,Xsteps):
-#                       required_output_file_location=EOS_DIR+'/ANNADEA/Data/REC_SET/RH1c_'+RecBatchID+'_hit_cluster_rec_y_set_' +str(i)+'.pkl'
-#                       bar.text = f'-> Checking whether the file : {required_output_file_location}, exists...'
-#                       bar()
-#                       OptionHeader = [' --Y_ID_Max ', ' --X_ID ', ' --EOS ', " --AFS ", ' --RecBatchID ']
-#                       OptionLine = [Ysteps, i, EOS_DIR, AFS_DIR, RecBatchID]
-#                       SHName = AFS_DIR + '/HTCondor/SH/SH_RH1c_'+ RecBatchID+ '_'  + str(i) +'.sh'
-#                       SUBName = AFS_DIR + '/HTCondor/SUB/SUB_RH1c_'+ RecBatchID+ '_' + str(i) + '.sub'
-#                       MSGName = AFS_DIR + '/HTCondor/MSG/MSG_RH1c_' + RecBatchID+ '_' + str(i)
-#                       ScriptName = AFS_DIR + '/Code/Utilities/RH1c_LinkSegmentsY_Sub.py '
-#                       if os.path.isfile(required_output_file_location)!=True:
-#                          bad_pop.append([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, 1, 'ANNADEA-RH-'+RecBatchID, False,False])
-#          if len(bad_pop)>0:
-#                print(UF.TimeStamp(),bcolors.WARNING+'Autopilot status update: There are still', len(bad_pop), 'HTCondor jobs remaining'+bcolors.ENDC)
-#                if interval%max_interval_tolerance==0:
-#                   for bp in bad_pop:
-#                       UF.SubmitJobs2Condor(bp)
-#                   print(UF.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
-#          else:
-#               return True
-#      return False
-# def AutoPilot3(wait_min, interval_min, max_interval_tolerance):
-#      print(UF.TimeStamp(),'Going on an autopilot mode for ',wait_min, 'minutes while checking HTCondor every',interval_min,'min',bcolors.ENDC)
-#      wait_sec=wait_min*60
-#      interval_sec=interval_min*60
-#      intervals=int(math.ceil(wait_sec/interval_sec))
-#      for interval in range(1,intervals+1):
-#          time.sleep(interval_sec)
-#          bad_pop=[]
-#          print(UF.TimeStamp(),"Scheduled job checkup...") #Progress display
-#          required_output_file_location=EOS_DIR+'/ANNADEA/Data/REC_SET/RH1d_'+RecBatchID+'_hit_cluster_rec_x_set.pkl'
-#          OptionHeader = [' --X_ID_Max ', ' --EOS ', " --AFS ", ' --RecBatchID ']
-#          OptionLine = [Xsteps, EOS_DIR, AFS_DIR, RecBatchID]
-#          SHName = AFS_DIR + '/HTCondor/SH/SH_RH1d_'+RecBatchID+'.sh'
-#          SUBName = AFS_DIR + '/HTCondor/SUB/SUB_RH1d_'+RecBatchID+'.sub'
-#          MSGName = AFS_DIR + '/HTCondor/MSG/MSG_RH1d_' + RecBatchID
-#          ScriptName = AFS_DIR + '/Code/Utilities/RH1d_LinkSegmentsX_Sub.py '
-#          if os.path.isfile(required_output_file_location)!=True:
-#             bad_pop.append([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, 1, 'ANNADEA-RH-'+RecBatchID, False,False])
-#          if len(bad_pop)>0:
-#                print(UF.TimeStamp(),bcolors.WARNING+'Autopilot status update: There are still', len(bad_pop), 'HTCondor jobs remaining'+bcolors.ENDC)
-#                if interval%max_interval_tolerance==0:
-#                   for bp in bad_pop:
-#                       UF.SubmitJobs2Condor(bp)
-#                   print(UF.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
-#          else:
-#               return True
-#      return False
-#
+
 if Mode=='RESET':
     print(UF.TimeStamp(),'Performing the cleanup... ',bcolors.ENDC)
     HTCondorTag="SoftUsed == \"ANNADEA-MUTr-"+TrainSampleID+"\""
@@ -365,7 +274,7 @@ while status<4:
           print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
           print(UF.TimeStamp(),bcolors.BOLD+'Stage 1:'+bcolors.ENDC+' Sending hit cluster to the HTCondor, so tack segment combination pairs can be formed...')
           OptionHeader = [ " --MaxSegments ", " --MaxSLG "," --MaxSTG "," --VetoMotherTrack "]
-          OptionLine = [int(JobSets[j][0]),  MaxSegments, MaxSLG, MaxSTG,'"'+str(VetoMotherTrack)+'"']
+          OptionLine = [MaxSegments, MaxSLG, MaxSTG,'"'+str(VetoMotherTrack)+'"']
           bad_pop=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,
                                     '/ANNADEA/Data/TRAIN_SET/',
                                     'RawSeedsRes',
@@ -379,22 +288,6 @@ while status<4:
                                     'MUTr1a_GenerateRawSelectedSeeds_Sub.py',
                                     False,
                                     [" --PlateZ ",JobSets])
-          # exit()
-          # bad_pop=[]
-          # with alive_bar(TotJobs,force_tty=True, title='Checking the results from HTCondor') as bar:
-          #    for j in range(0,len(JobSets)):
-          #        for sj in range(0,int(JobSets[j][2])):
-          #                  required_output_file_location=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/MUTr1a_'+TrainSampleID+'_RawSeeds_'+str(j)+'_'+str(sj)+'_RES.csv'
-          #                  bar.text = f'-> Checking whether the file : {required_output_file_location}, exists...'
-          #                  bar()
-          #                  OptionHeader = [' --Set ', ' --Subset ', ' --EOS ', " --AFS ", " --PlateZ ", " --MaxSegments ", " --MaxSLG "," --MaxSTG "," --TrainSampleID "," --VetoMotherTrack "]
-          #                  OptionLine = [j, sj, EOS_DIR, AFS_DIR, int(JobSets[j][0]),  MaxSegments, MaxSLG, MaxSTG,TrainSampleID,'"'+str(VetoMotherTrack)+'"']
-          #                  SHName = AFS_DIR + '/HTCondor/SH/SH_MUTr1_' + str(j) + '_' + str(sj) + '.sh'
-          #                  SUBName = AFS_DIR + '/HTCondor/SUB/SUB_MUTr1_' + str(j) + '_' + str(sj) + '.sub'
-          #                  MSGName = AFS_DIR + '/HTCondor/MSG/MSG_MUTr1_' + str(j) + '_' + str(sj)
-          #                  ScriptName = AFS_DIR + '/Code/Utilities/MUTr1a_GenerateRawSelectedSeeds_Sub.py '
-          #                  if os.path.isfile(required_output_file_location)!=True:
-          #                     bad_pop.append([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, 1, 'ANNADEA-MUTr-'+TrainSampleID, False,False])
           if len(bad_pop)==0:
               FreshStart=False
               print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 1 has successfully completed'+bcolors.ENDC)
@@ -413,8 +306,6 @@ while status<4:
                        print(UF.TimeStamp(),'OK, exiting now then')
                        exit()
                   if UserAnswer=='R':
-                      OptionHeader = [ " --MaxSegments ", " --MaxSLG "," --MaxSTG "," --VetoMotherTrack "]
-                      OptionLine = [MaxSegments, MaxSLG, MaxSTG,'"'+str(VetoMotherTrack)+'"']
                       bad_pop=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,
                                     '/ANNADEA/Data/TRAIN_SET/',
                                     'RawSeedsRes',
@@ -428,18 +319,11 @@ while status<4:
                                     'MUTr1a_GenerateRawSelectedSeeds_Sub.py',
                                     True,
                                     [" --PlateZ ",JobSets])
-                      # for j in range(0,len(JobSets)):
-                      #           OptionHeader = [' --Set ', ' --Subset ', ' --EOS ', " --AFS ", " --PlateZ ", " --MaxSegments ", " --MaxSLG "," --MaxSTG "," --TrainSampleID "," --VetoMotherTrack "]
-                      #           OptionLine = [j, '$1', EOS_DIR, AFS_DIR, int(JobSets[j][0]), MaxSegments, MaxSLG, MaxSTG,TrainSampleID,'"'+str(VetoMotherTrack)+'"']
-                      #           SHName = AFS_DIR + '/HTCondor/SH/SH_MUTr1a_' + str(j) + '.sh'
-                      #           SUBName = AFS_DIR + '/HTCondor/SUB/SUB_MUTr1a_' + str(j) + '.sub'
-                      #           MSGName = AFS_DIR + '/HTCondor/MSG/MSG_MUTr1a_' + str(j)
-                      #           ScriptName = AFS_DIR + '/Code/Utilities/MUTr1a_GenerateRawSelectedSeeds_Sub.py '
-                      #           UF.SubmitJobs2Condor([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, int(JobSets[j][2]), 'ANNADEA-MUTr-'+TrainSampleID, False,False])
                       for bp in bad_pop:
                           UF.SubmitJobs2Condor(bp)
                   else:
-                     if AutoPilot0(600,10,Patience):
+                     if AutoPilot(600,10,Patience,AFS_DIR,EOS_DIR,'/ANNADEA/Data/TRAIN_SET/','RawSeedsRes','MUTr1a','.csv',TrainSampleID,[len(JobSets),
+                                     int(JobSets[j][2])],OptionHeader,OptionLine,'MUTr1a_GenerateRawSelectedSeeds_Sub.py',[" --PlateZ ",JobSets],False,False):
                          FreshStart=False
                          print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 0 has successfully completed'+bcolors.ENDC)
                          status=2
@@ -461,7 +345,8 @@ while status<4:
                       for bp in bad_pop:
                            UF.SubmitJobs2Condor(bp)
                       print(UF.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
-                      if AutoPilot0(600,10,Patience):
+                      if AutoPilot(600,10,Patience,AFS_DIR,EOS_DIR,'/ANNADEA/Data/TRAIN_SET/','RawSeedsRes','MUTr1a','.csv',TrainSampleID,[len(JobSets),
+                                     int(JobSets[j][2])],OptionHeader,OptionLine,'MUTr1a_GenerateRawSelectedSeeds_Sub.py',[" --PlateZ ",JobSets],False,False):
                           FreshStart=False
                           print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 1 has successfully completed'+bcolors.ENDC)
                           status=2
@@ -470,7 +355,8 @@ while status<4:
                           status=6
                           break
                    else:
-                      if AutoPilot0(int(UserAnswer),10,Patience):
+                      if AutoPilot(int(UserAnswer),10,Patience,AFS_DIR,EOS_DIR,'/ANNADEA/Data/TRAIN_SET/','RawSeedsRes','MUTr1a','.csv',TrainSampleID,[len(JobSets),
+                                     int(JobSets[j][2])],OptionHeader,OptionLine,'MUTr1a_GenerateRawSelectedSeeds_Sub.py',[" --PlateZ ",JobSets],False,False):
                           FreshStart=False
                           print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 1 has successfully completed'+bcolors.ENDC)
                           status=2
@@ -480,17 +366,25 @@ while status<4:
                           break
           else:
             if (TotJobs)==len(bad_pop):
-                 print(UF.TimeStamp(),'Submitting jobs to HTCondor... ',bcolors.ENDC)
-                 for j in range(0,len(JobSets)):
-                                OptionHeader = [' --Set ', ' --Subset ', ' --EOS ', " --AFS ", " --PlateZ ", " --MaxSegments ", " --MaxSLG "," --MaxSTG "," --TrainSampleID "," --VetoMotherTrack "]
-                                OptionLine = [j, '$1', EOS_DIR, AFS_DIR, int(JobSets[j][0]), MaxSegments, MaxSLG, MaxSTG,TrainSampleID,'"'+str(VetoMotherTrack)+'"']
-                                SHName = AFS_DIR + '/HTCondor/SH/SH_MUTr1_' + str(j) + '.sh'
-                                SUBName = AFS_DIR + '/HTCondor/SUB/SUB_MUTr1_' + str(j) + '.sub'
-                                MSGName = AFS_DIR + '/HTCondor/MSG/MSG_MUTr1_' + str(j)
-                                ScriptName = AFS_DIR + '/Code/Utilities/MUTr1a_GenerateRawSelectedSeeds_Sub.py '
-                                UF.SubmitJobs2Condor([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, int(JobSets[j][2]), 'ANNADEA-MUTr-'+TrainSampleID, False,False])
+                 bad_pop=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,
+                                    '/ANNADEA/Data/TRAIN_SET/',
+                                    'RawSeedsRes',
+                                    'MUTr1a',
+                                    '.csv',
+                                    TrainSampleID,
+                                    [len(JobSets),
+                                     int(JobSets[j][2])],
+                                    OptionHeader,
+                                    OptionLine,
+                                    'MUTr1a_GenerateRawSelectedSeeds_Sub.py',
+                                    True,
+                                    [" --PlateZ ",JobSets])
+                 for bp in bad_pop:
+                          UF.SubmitJobs2Condor(bp)
 
-                 if AutoPilot0(600,10,Patience):
+
+                 if AutoPilot(600,10,Patience,AFS_DIR,EOS_DIR,'/ANNADEA/Data/TRAIN_SET/','RawSeedsRes','MUTr1a','.csv',TrainSampleID,[len(JobSets),
+                                     int(JobSets[j][2])],OptionHeader,OptionLine,'MUTr1a_GenerateRawSelectedSeeds_Sub.py',[" --PlateZ ",JobSets],False,False):
                         FreshStart=False
                         print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 1 has successfully completed'+bcolors.ENDC)
                         status=2
@@ -502,7 +396,8 @@ while status<4:
             elif len(bad_pop)>0:
                       for bp in bad_pop:
                            UF.SubmitJobs2Condor(bp)
-                      if AutoPilot0(600,10,Patience):
+                      if AutoPilot(600,10,Patience,AFS_DIR,EOS_DIR,'/ANNADEA/Data/TRAIN_SET/','RawSeedsRes','MUTr1a','.csv',TrainSampleID,[len(JobSets),
+                                     int(JobSets[j][2])],OptionHeader,OptionLine,'MUTr1a_GenerateRawSelectedSeeds_Sub.py',[" --PlateZ ",JobSets],False,False):
                           FreshStart=False
                           print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 1 has successfully completed'+bcolors.ENDC)
                           status=2
@@ -555,6 +450,22 @@ while status<4:
       if status==3:
          print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
          print(UF.TimeStamp(),bcolors.BOLD+'Stage 3:'+bcolors.ENDC+' Taking the list of seeds previously generated by Stage 2, converting them into Emulsion Objects and doing more rigorous selection')
+         OptionHeader = [" --MaxSTG ", " --MaxSLG ", " --MaxDOCA ", " --MaxAngle "," --ModelName "]
+         OptionLine = [MaxSTG, MaxSLG, MaxDOCA, MaxAngle,'"'+str(ModelName)+'"']
+         bad_pop=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,
+                                    '/ANNADEA/Data/TRAIN_SET/',
+                                    'RefinedSeeds',
+                                    'MUTr1b',
+                                    '.pkl',
+                                    TrainSampleID,
+                                    [len(JobSets),
+                                     int(JobSets[j][2])],
+                                    OptionHeader,
+                                    OptionLine,
+                                    'MUTr1a_GenerateRawSelectedSeeds_Sub.py',
+                                    False,
+                                    [" --PlateZ ",JobSets])
+
          bad_pop=[]
          with alive_bar(TotJobs,force_tty=True, title='Checking the results from HTCondor') as bar:
              for j in range(0,len(JobSets)): #//Temporarily measure to save space
