@@ -414,7 +414,7 @@ while status<4:
                        exit()
                   if UserAnswer=='R':
                       OptionHeader = [ " --MaxSegments ", " --MaxSLG "," --MaxSTG "," --VetoMotherTrack "]
-                      OptionLine = [int(JobSets[j][0]),  MaxSegments, MaxSLG, MaxSTG,'"'+str(VetoMotherTrack)+'"']
+                      OptionLine = [MaxSegments, MaxSLG, MaxSTG,'"'+str(VetoMotherTrack)+'"']
                       bad_pop=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,
                                     '/ANNADEA/Data/TRAIN_SET/',
                                     'RawSeedsRes',
