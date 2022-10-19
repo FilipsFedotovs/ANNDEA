@@ -619,23 +619,23 @@ while status<5:
                                     base_data = new_data
                               else:
                                     base_data+=new_data
-                #try:
-                Records=len(base_data)
-                print(UF.TimeStamp(),'Set',str(i),'contains', Records, 'raw images',bcolors.ENDC)
+                try:
+                    Records=len(base_data)
+                    print(UF.TimeStamp(),'Set',str(i),'contains', Records, 'raw images',bcolors.ENDC)
 
-                base_data=list(set(base_data))
-                Records_After_Compression=len(base_data)
-                if Records>0:
-                      Compression_Ratio=int((Records_After_Compression/Records)*100)
-                else:
-                      CompressionRatio=0
-                TotalImages+=Records_After_Compression
-                TrueSeeds+=sum(1 for im in base_data if im.Label == 1)
-                print(UF.TimeStamp(),'Set',str(i),'compression ratio is ', Compression_Ratio, ' %',bcolors.ENDC)
-                print(UF.PickleOperations(output_file_location,'w',base_data)[1])
-               # except:
-                #    continue
-#                del new_data
+                    base_data=list(set(base_data))
+                    Records_After_Compression=len(base_data)
+                    if Records>0:
+                          Compression_Ratio=int((Records_After_Compression/Records)*100)
+                    else:
+                          CompressionRatio=0
+                    TotalImages+=Records_After_Compression
+                    TrueSeeds+=sum(1 for im in base_data if im.Label == 1)
+                    print(UF.TimeStamp(),'Set',str(i),'compression ratio is ', Compression_Ratio, ' %',bcolors.ENDC)
+                    print(UF.PickleOperations(output_file_location,'w',base_data)[1])
+                except:
+                    continue
+                del new_data
                 UF.LogOperations(EOS_DIR+'/ANNADEA/Data/TRAIN_SET/MUTr1c_'+TrainSampleID+'_Temp_Stats.csv','w', [[TotalImages,TrueSeeds]])
         status=5
 #
