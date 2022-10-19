@@ -1286,15 +1286,17 @@ def CreateCondorJobs(AFS,EOS,path,o,pfx,sfx,ID,loop_params,OptionHeader,OptionLi
         from alive_progress import alive_bar
         bad_pop=[]
         print(loop_params)
+        TotJobs=0
         if type(loop_params) is int:
             nest_lvl=1
+            TotJobs=loop_params
         elif type(loop_params[0]) is int:
             nest_lvl=2
+            TotJobs=np.sum(loop_params)
         elif type(loop_params[0][0]) is int:
             nest_lvl=3
-        print(nest_lvl)
-        exit()
-        TotJobs=int(np.prod(loop_params))
+            for lp in loop_params:
+                TotJobs+=np.sum(lp)
         print(TotJobs)
         exit()
         OptionHeader+=[' --EOS '," --AFS ", " --BatchID "]
