@@ -5,11 +5,11 @@
 
 ######List of naming conventions
 Hit_ID='ID'
-x='X' #Column name x-coordinate of the track hit
-y='Y' #Column name for y-coordinate of the track hit
-tx='TX' #Column name x-coordinate of the track hit
-ty='TY' #Column name for y-coordinate of the track hit
-z='Z' #Column name for z-coordinate of the track hit
+x='x' #Column name x-coordinate of the track hit
+y='y' #Column name for y-coordinate of the track hit
+tx='tx' #Column name x-coordinate of the track hit
+ty='ty' #Column name for y-coordinate of the track hit
+z='z' #Column name for z-coordinate of the track hit
 FEDRA_Track_ID='FEDRATrackID' #Column nameActual track id for FEDRA (or other reconstruction software)
 FEDRA_Track_Domain='quarter' #Quarter of the ECC where the track is reconstructed If not present in the data please put the Track ID (the same as above)
 Rec_Track_ID='FEDRATrackID' #Column nameActual track id for FEDRA (or other reconstruction software)
