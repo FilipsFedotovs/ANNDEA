@@ -231,11 +231,9 @@ while status<7:
           OptionLine = [MaxSegments, MaxSLG, MaxSTG,'"'+str(VetoMotherTrack)+'"']
           JobSet=[]
           for i in range(len(JobSets)):
-                JobSet.append(JobSets[i][2])
+                JobSet.append(int(JobSets[i][2]))
           TotJobs=0
-          print(JobSets)
-          print(JobSet)
-          exit()
+          
           if type(JobSet) is int:
                         TotJobs=JobSet
           elif type(JobSet[0]) is int:
