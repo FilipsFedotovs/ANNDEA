@@ -233,6 +233,8 @@ while status<7:
           for i in range(len(JobSets)):
                 JobSet.append(JobSets[i][2])
           TotJobs=0
+          print(JobSet)
+          exit()
           if type(JobSet) is int:
                         TotJobs=JobSet
           elif type(JobSet[0]) is int:
