@@ -48,6 +48,7 @@ parser.add_argument('--LabelRatio',help="What is the desired proportion of genui
 parser.add_argument('--TrainSampleSize',help="Maximum number of samples per Training file", default='50000')
 
 
+
 ######################################## Parsing argument values  #############################################################
 args = parser.parse_args()
 Mode=args.Mode.upper()
@@ -720,7 +721,7 @@ while status<7:
 
            del base_data
            gc.collect()
-           ValidationSampleSize=int(round(min((len(TotalData)*float(args.ValidationSize)),PM.MaxValSampleSize),0))
+           ValidationSampleSize=int(round(min((len(TotalData)*float(PM.valRatio)),PM.MaxValSampleSize),0))
            random.shuffle(TotalData)
            output_file_location=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_TRACK_SEEDS_OUTPUT.pkl'
            print(UF.PickleOperations(output_file_location,'w','N/A')[1])
