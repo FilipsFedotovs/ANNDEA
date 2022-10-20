@@ -676,6 +676,7 @@ while status<6:
            print(TrueSeedCorrection,FakeSeedCorrection)
            with alive_bar(len(JobSet),force_tty=True, title='Resampling the files...') as bar:
             for i in range(0,len(JobSet)):
+              bar()
               output_file_location=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/MUTr1d_'+TrainSampleID+'_SampledCompressedSeeds_'+str(i)+'.pkl'
               input_file_location=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/MUTr1c_'+TrainSampleID+'_CompressedSeeds_'+str(i)+'.pkl'
               if os.path.isfile(output_file_location)==False and os.path.isfile(input_file_location):
