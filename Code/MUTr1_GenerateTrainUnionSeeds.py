@@ -365,7 +365,7 @@ while status<7:
       if status==2:
         print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
         print(UF.TimeStamp(),bcolors.BOLD+'Stage 2:'+bcolors.ENDC+' Collecting and de-duplicating the results from stage 1')
-        with alive_bar(TotJobs,force_tty=True, title='Checking the results from HTCondor') as bar:
+        with alive_bar(len(JobSets),force_tty=True, title='Checking the results from HTCondor') as bar:
             for j in range(0,len(JobSets)): #//Temporarily measure to save space
                 if len(Meta.JobSets[j])>3:
                    Meta.JobSets[j]=Meta.JobSets[j][:4]
