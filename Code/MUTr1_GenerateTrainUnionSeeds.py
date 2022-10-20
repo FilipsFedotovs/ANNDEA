@@ -233,7 +233,7 @@ while status<7:
           for i in range(len(JobSets)):
                 JobSet.append(int(JobSets[i][2]))
           TotJobs=0
-          
+
           if type(JobSet) is int:
                         TotJobs=JobSet
           elif type(JobSet[0]) is int:
@@ -367,14 +367,21 @@ while status<7:
         print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
         print(UF.TimeStamp(),bcolors.BOLD+'Stage 2:'+bcolors.ENDC+' Collecting and de-duplicating the results from stage 1')
         with alive_bar(len(JobSets),force_tty=True, title='Checking the results from HTCondor') as bar:
-            for j in range(0,len(JobSets)): #//Temporarily measure to save space
-                if len(Meta.JobSets[j])>3:
-                   Meta.JobSets[j]=Meta.JobSets[j][:4]
-                   Meta.JobSets[j][3]=[]
+            min_i=0
+                
+            for i in range(0,len(JobSets)): #//Temporarily measure to save space
+                   test_file_location=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/MUTr1a_'+TrainSampleID+'_SelectedSeeds_'+str(i)+'_'+str(0)+'_'+str(0)+'.csv'
+                   if os.path.isfile(test_file_location):
+                        min_i=max(0,i-1)
+
+            for i in range(min_i,len(JobSets)): #//Temporarily measure to save space
+                if len(Meta.JobSets[i])>3:
+                   Meta.JobSets[i]=Meta.JobSets[i][:4]
+                   Meta.JobSets[i][3]=[]
                 else:
-                   Meta.JobSets[j].append([])
-                for sj in range(0,int(JobSets[j][2])):
-                   output_file_location=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/MUTr1a_'+TrainSampleID+'_RawSeeds_'+str(j)+'_'+str(sj)+'.csv'
+                   Meta.JobSets[i].append([])
+                for j in range(0,int(JobSets[i][2])):
+                   output_file_location=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/MUTr1a_'+TrainSampleID+'_RawSeeds_'+str(i)+'_'+str(j)+'.csv'
                    bar.text = f'-> Collecting the file : {output_file_location}...'
                    bar()
                    if os.path.isfile(output_file_location)==False:
@@ -383,7 +390,7 @@ while status<7:
                    else:
                     result=pd.read_csv(output_file_location,names = ['Segment_1','Segment_2', 'Seed_Type'])
                     Records=len(result.axes[0])
-                    print(UF.TimeStamp(),'Set',str(j),'and subset', str(sj), 'contains', Records, 'seeds',bcolors.ENDC)
+                    print(UF.TimeStamp(),'Set',str(i),'and subset', str(j), 'contains', Records, 'seeds',bcolors.ENDC)
                     result["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(result['Segment_1'], result['Segment_2'])]
                     result.drop_duplicates(subset="Seed_ID",keep='first',inplace=True)
                     result.drop(result.index[result['Segment_1'] == result['Segment_2']], inplace = True)
@@ -393,12 +400,12 @@ while status<7:
                       Compression_Ratio=int((Records_After_Compression/Records)*100)
                     else:
                       Compression_Ratio=0
-                    print(UF.TimeStamp(),'Set',str(j),'and subset', str(sj), 'compression ratio is ', Compression_Ratio, ' %',bcolors.ENDC)
+                    print(UF.TimeStamp(),'Set',str(i),'and subset', str(j), 'compression ratio is ', Compression_Ratio, ' %',bcolors.ENDC)
                     fractions=int(math.ceil(Records_After_Compression/MaxSegments))
-                    Meta.JobSets[j][3].append(fractions)
-                    for f in range(0,fractions):
-                     new_output_file_location=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/MUTr1a_'+TrainSampleID+'_SelectedSeeds_'+str(j)+'_'+str(sj)+'_'+str(f)+'.csv'
-                     result[(f*MaxSegments):min(Records_After_Compression,((f+1)*MaxSegments))].to_csv(new_output_file_location,index=False)
+                    Meta.JobSets[i][3].append(fractions)
+                    for k in range(0,fractions):
+                     new_output_file_location=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/MUTr1a_'+TrainSampleID+'_SelectedSeeds_'+str(i)+'_'+str(j)+'_'+str(k)+'.csv'
+                     result[(k*MaxSegments):min(Records_After_Compression,((k+1)*MaxSegments))].to_csv(new_output_file_location,index=False)
         FreshStart=False
         print(UF.PickleOperations(TrainSampleOutputMeta,'w', Meta)[1])
         JobSets=Meta.JobSets
