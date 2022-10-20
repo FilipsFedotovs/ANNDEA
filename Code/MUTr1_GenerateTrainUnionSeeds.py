@@ -725,7 +725,6 @@ while status<7:
            random.shuffle(TotalData)
            output_file_location=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_TRACK_SEEDS_OUTPUT.pkl'
            print(UF.PickleOperations(output_file_location,'w','N/A')[1])
-           ValExtracted_file = open(output_file_location, TotalData[:ValidationSampleSize])
            TotalData=TotalData[ValidationSampleSize:]
            print(UF.TimeStamp(), bcolors.OKGREEN+"Validation Set has been saved at ",bcolors.OKBLUE+output_file_location+bcolors.ENDC,bcolors.OKGREEN+'file...'+bcolors.ENDC)
            No_Train_Files=int(math.ceil(len(TotalData)/TrainSampleSize))
