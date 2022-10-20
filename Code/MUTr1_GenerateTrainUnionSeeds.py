@@ -175,61 +175,7 @@ for j in range(0,len(JobSets)):
 ########################################     Preset framework parameters    #########################################
 print(UF.TimeStamp(),'Loading preselected data from ',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
 FreshStart=True
-status=0
-#
-# #Defining handy functions to make the code little cleaner
-#
-# def CheckStatus():
-#     #Let's check at what stage are we
-#     print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
-#     print(UF.TimeStamp(),bcolors.BOLD+'Preparation 3/3:'+bcolors.ENDC+' Working out the scope of the upcoming work...')
-#     #First of all lets check that the output of reconstruction is completed
-#     required_output_file_location=EOS_DIR+'/ANNADEA/Data/REC_SET/'+RecBatchID+'_RH_OUTPUT.pkl'
-#     if os.path.isfile(required_output_file_location):
-#         return 5
-#     else:
-#         #Reconstruction output hasn't been produced - lets check the previous step result and so on
-#         required_output_file_location=EOS_DIR+'/ANNADEA/Data/REC_SET/RH1d_'+RecBatchID+'_hit_cluster_rec_x_set.pkl'
-#         if os.path.isfile(required_output_file_location):
-#            return 4
-#         else:
-#            bad_pop=0
-#            with alive_bar(Xsteps,force_tty=True, title='Checking the Y-shift results from HTCondor') as bar:
-#              for i in range(0,Xsteps):
-#                   required_output_file_location=EOS_DIR+'/ANNADEA/Data/REC_SET/RH1c_'+RecBatchID+'_hit_cluster_rec_y_set_' +str(i)+'.pkl'
-#                   bar.text = f'-> Checking whether the file : {required_output_file_location}, exists...'
-#                   bar()
-#                   if os.path.isfile(required_output_file_location)!=True:
-#                      bad_pop+=1
-#            if bad_pop==0:
-#                return 3
-#            else:
-#                 bad_pop=0
-#                 with alive_bar(Ysteps*Xsteps,force_tty=True, title='Checking the Z-shift results from HTCondor') as bar:
-#                         for j in range(0,Ysteps):
-#                              for i in range(0,Xsteps):
-#                                   required_output_file_location=EOS_DIR+'/ANNADEA/Data/REC_SET/RH1b_'+RecBatchID+'_hit_cluster_rec_z_set_'+str(j)+'_' +str(i)+'.pkl'
-#                                   bar.text = f'-> Checking whether the file : {required_output_file_location}, exists...'
-#                                   bar()
-#                                   if os.path.isfile(required_output_file_location)!=True:
-#                                      bad_pop+=1
-#                 if bad_pop==0:
-#                    return 2
-#                 else:
-#                     bad_pop=0
-#                     with alive_bar(Zsteps*Ysteps*Xsteps,force_tty=True, title='Checking the results from HTCondor') as bar:
-#                         for k in range(0,Zsteps):
-#                             for j in range(0,Ysteps):
-#                                  for i in range(0,Xsteps):
-#                                       required_output_file_location=EOS_DIR+'/ANNADEA/Data/REC_SET/RH1a_'+RecBatchID+'_hit_cluster_rec_set_'+str(k)+'_' +str(j)+'_' +str(i)+'.pkl'
-#                                       bar.text = f'-> Checking whether the file : {required_output_file_location}, exists...'
-#                                       bar()
-#                                       if os.path.isfile(required_output_file_location)!=True:
-#                                          bad_pop+=1
-#                     if bad_pop==0:
-#                        return 1
-#     return 0
-#
+status=1
 def AutoPilot(wait_min, interval_min, max_interval_tolerance,AFS,EOS,path,o,pfx,sfx,ID,loop_params,OptionHeader,OptionLine,Sub_File,Exception=['',''], Log=False, GPU=False):
      print(UF.TimeStamp(),'Going on an autopilot mode for ',wait_min, 'minutes while checking HTCondor every',interval_min,'min',bcolors.ENDC)
      wait_sec=wait_min*60
@@ -264,17 +210,18 @@ def AutoPilot(wait_min, interval_min, max_interval_tolerance,AFS,EOS,path,o,pfx,
 
 if Mode=='RESET':
     print(UF.TimeStamp(),'Performing the cleanup... ',bcolors.ENDC)
-    HTCondorTag="SoftUsed == \"ANNADEA-MUTr-"+TrainSampleID+"\""
-    UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MUTr1_'+TrainSampleID, ['MUTr1a','MUTr1b'], HTCondorTag)
-    status=0
+    HTCondorTag="SoftUsed == \"ANNADEA-MUTra-"+TrainSampleID+"\""
+    UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MUTr1a_'+TrainSampleID, ['MUTr1a'], HTCondorTag)
+    HTCondorTag="SoftUsed == \"ANNADEA-MUTrb-"+TrainSampleID+"\""
+    UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MUTr1b_'+TrainSampleID, ['MUTr1b'], HTCondorTag)
+    HTCondorTag="SoftUsed == \"ANNADEA-MUTr1c-"+TrainSampleID+"\""
+    UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MUTr1c_'+TrainSampleID, ['MUTr1c'], HTCondorTag)
+    HTCondorTag="SoftUsed == \"ANNADEA-MUTr1d-"+TrainSampleID+"\""
+    UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MUTr1d_'+TrainSampleID, ['MUTr1d'], HTCondorTag)
     FreshStart=False
 else:
-    #status=CheckStatus()
-    print('WIP')
-print(UF.TimeStamp(),'There are 5 stages (0-4) of this script',status,bcolors.ENDC)
-print(UF.TimeStamp(),'Current status has a code',status,bcolors.ENDC)
-#
-status=6
+    print(UF.TimeStamp(),'There are 7 stages (0-6) of this script',status,bcolors.ENDC)
+    print(UF.TimeStamp(),'Current status has a code',status,bcolors.ENDC)
 
 while status<7:
       if status==1:
@@ -340,10 +287,10 @@ while status<7:
                   else:
                      if AutoPilot(600,10,Patience,AFS_DIR,EOS_DIR,'/ANNADEA/Data/TRAIN_SET/','RawSeedsRes','MUTr1a','.csv',TrainSampleID,JobSet,OptionHeader,OptionLine,'MUTr1a_GenerateRawSelectedSeeds_Sub.py',[" --PlateZ ",JobSets],False,False):
                          FreshStart=False
-                         print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 0 has successfully completed'+bcolors.ENDC)
+                         print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 1 has successfully completed'+bcolors.ENDC)
                          status=2
                      else:
-                         print(UF.TimeStamp(),bcolors.FAIL+'Stage 0 is uncompleted...'+bcolors.ENDC)
+                         print(UF.TimeStamp(),bcolors.FAIL+'Stage 1 is uncompleted...'+bcolors.ENDC)
                          status=6
                          break
 
@@ -366,7 +313,7 @@ while status<7:
                           status=2
                       else:
                           print(UF.TimeStamp(),bcolors.FAIL+'Stage 1 is uncompleted...'+bcolors.ENDC)
-                          status=6
+                          status=8
                           break
                    else:
                       if AutoPilot(int(UserAnswer),10,Patience,AFS_DIR,EOS_DIR,'/ANNADEA/Data/TRAIN_SET/','RawSeedsRes','MUTr1a','.csv',TrainSampleID,JobSet,OptionHeader,OptionLine,'MUTr1a_GenerateRawSelectedSeeds_Sub.py',[" --PlateZ ",JobSets],False,False):
@@ -375,7 +322,7 @@ while status<7:
                           status=2
                       else:
                           print(UF.TimeStamp(),bcolors.FAIL+'Stage 1 is uncompleted...'+bcolors.ENDC)
-                          status=6
+                          status=8
                           break
           else:
             if (TotJobs)==len(bad_pop):
@@ -401,7 +348,7 @@ while status<7:
                         status=2
                  else:
                      print(UF.TimeStamp(),bcolors.FAIL+'Stage 1 is uncompleted...'+bcolors.ENDC)
-                     status=6
+                     status=8
                      break
 
             elif len(bad_pop)>0:
@@ -413,7 +360,7 @@ while status<7:
                           status=2
                       else:
                           print(UF.TimeStamp(),bcolors.FAIL+'Stage 1 is uncompleted...'+bcolors.ENDC)
-                          status=6
+                          status=8
                           break
       if status==2:
         print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
@@ -518,7 +465,7 @@ while status<7:
                         status=4
                     else:
                         print(UF.TimeStamp(),bcolors.FAIL+'Stage 3 is uncompleted...'+bcolors.ENDC)
-                        status=6
+                        status=8
                         break
 
               elif len(bad_pop)>0:
@@ -540,7 +487,7 @@ while status<7:
                          status=4
                       else:
                          print(UF.TimeStamp(),bcolors.FAIL+'Stage 3 is uncompleted...'+bcolors.ENDC)
-                         status=6
+                         status=8
                          break
                    else:
 
@@ -550,7 +497,7 @@ while status<7:
                          status=4
                       else:
                          print(UF.TimeStamp(),bcolors.FAIL+'Stage 3 is uncompleted...'+bcolors.ENDC)
-                         status=6
+                         status=8
                          break
 
               elif len(bad_pop)==0:
@@ -578,7 +525,7 @@ while status<7:
                         status=4
                  else:
                      print(UF.TimeStamp(),bcolors.FAIL+'Stage 3 is uncompleted...'+bcolors.ENDC)
-                     status=6
+                     status=8
                      break
 
             elif len(bad_pop)>0:
@@ -591,15 +538,12 @@ while status<7:
                          status=4
                       else:
                           print(UF.TimeStamp(),bcolors.FAIL+'Stage 3 is uncompleted...'+bcolors.ENDC)
-                          status=6
+                          status=8
                           break
             elif len(bad_pop)==0:
                 FreshStart=False
                 print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 3 has successfully completed'+bcolors.ENDC)
                 status=4
-
-
-
       if status==4:
         print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
         print(UF.TimeStamp(),bcolors.BOLD+'Stage 4:'+bcolors.ENDC+' Analysing the training samples')
@@ -646,7 +590,6 @@ while status<7:
                 UF.LogOperations(EOS_DIR+'/ANNADEA/Data/TRAIN_SET/MUTr1c_'+TrainSampleID+'_Temp_Stats.csv','w', [[TotalImages,TrueSeeds]])
         print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 4 has successfully completed'+bcolors.ENDC)
         status=5
-
       if status==5:
            print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
            print(UF.TimeStamp(),bcolors.BOLD+'Stage 5:'+bcolors.ENDC+' Resampling the results from the previous stage')
@@ -734,16 +677,15 @@ while status<7:
                  print(UF.PickleOperations(output_file_location,'w',TotalData[(SC*TrainSampleSize):min(len(TotalData),((SC+1)*TrainSampleSize))])[1])
                  bar.text = f'-> Saving the file : {output_file_location}...'
                  bar()
-               # UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'M3', ['M3_M3_SamplesCondensedImages','M3_M3_CondensedImages'], "SoftUsed == \"EDER-TSU-M3\"")
-               # print(bcolors.BOLD+'Would you like to delete track seeds data?'+bcolors.ENDC)
-               # UserAnswer=input(bcolors.BOLD+"Please, enter your option Y/N \n"+bcolors.ENDC)
-               # if UserAnswer=='Y':
-               #     UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'M3', ['M2_M3','M3_M3'], "SoftUsed == \"EDER-TSU-M3\"")
-               # else:
-               #  print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
-               #  print(UF.TimeStamp(), bcolors.OKGREEN+"Training and Validation data has been created: you can render them now..."+bcolors.ENDC)
-               #  print(bcolors.HEADER+"############################################# End of the program ################################################"+bcolors.ENDC)
-               #  exit()
+           print(UF.TimeStamp(),'Performing the cleanup... ',bcolors.ENDC)
+           HTCondorTag="SoftUsed == \"ANNADEA-MUTra-"+TrainSampleID+"\""
+           UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MUTr1a_'+TrainSampleID, ['MUTr1a'], HTCondorTag)
+           HTCondorTag="SoftUsed == \"ANNADEA-MUTrb-"+TrainSampleID+"\""
+           UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MUTr1b_'+TrainSampleID, ['MUTr1b'], HTCondorTag)
+           HTCondorTag="SoftUsed == \"ANNADEA-MUTr1c-"+TrainSampleID+"\""
+           UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MUTr1c_'+TrainSampleID, ['MUTr1c'], HTCondorTag)
+           HTCondorTag="SoftUsed == \"ANNADEA-MUTr1d-"+TrainSampleID+"\""
+           UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MUTr1d_'+TrainSampleID, ['MUTr1d'], HTCondorTag)
            print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 6 has successfully completed'+bcolors.ENDC)
            status=7
 if status==7:
