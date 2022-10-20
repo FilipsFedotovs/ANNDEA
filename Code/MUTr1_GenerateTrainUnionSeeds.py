@@ -691,7 +691,7 @@ while status<6:
                   ExtractedFake=random.sample(ExtractedFake,int(round(FakeSeedCorrection*len(ExtractedFake),0)))
                   TotalData=[]
                   TotalData=ExtractedTruth+ExtractedFake
-                  print(UF.PickleOperations(output_file_location,'r','N/A')[0])
+                  print(UF.PickleOperations(output_file_location,'w',TotalData)[0])
                   del TotalData
                   del ExtractedTruth
                   del ExtractedFake
