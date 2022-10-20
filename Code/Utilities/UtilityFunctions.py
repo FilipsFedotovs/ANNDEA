@@ -46,6 +46,15 @@ class TrainingSampleMeta:
           self.X_overlap=X_overlap
           self.Y_overlap=Y_overlap
           self.Z_overlap=Z_overlap
+      def IniTrackSeedMetaData(self,MaxSLG,MaxSTG,MaxDOCA,MaxAngle,JobSets,MaxSegments,VetoMotherTrack):
+          self.MaxSLG=MaxSLG
+          self.MaxSTG=MaxSTG
+          self.MaxDOCA=MaxDOCA
+          self.MaxAngle=MaxAngle
+          self.JobSets=JobSets
+          self.MaxSegments=MaxSegments
+          self.VetoMotherTrack=VetoMotherTrack
+
       def UpdateHitClusterMetaData(self,NoS,NoNF,NoEF,NoSets):
           self.num_node_features=NoNF
           self.num_edge_features=NoEF
@@ -623,7 +632,189 @@ class HitCluster:
                      return True
              return False
 
+class EMO:
+      def __init__(self,parts):
+          self.Header=sorted(parts, key=str.lower)
+          self.Partition=len(self.Header)
+      def __eq__(self, other):
+        return ('-'.join(self.Header)) == ('-'.join(other.Header))
+      def __hash__(self):
+        return hash(('-'.join(self.Header)))
+      def Decorate(self,RawHits): #Decorate hit information
+          self.Hits=[]
+          for s in range(len(self.Header)):
+              self.Hits.append([])
+              for t in RawHits:
+                   if self.Header[s]==t[5]:
+                      self.Hits[s].append(t[:5])
+          for Hit in range(0, len(self.Hits)):
+             self.Hits[Hit]=sorted(self.Hits[Hit],key=lambda x: float(x[2]),reverse=False)
+      def LabelSeed(self,label):
+          self.Label=label
+      def GetTrInfo(self):
+          if hasattr(self,'Hits'):
+             if self.Partition==2:
+                __XZ1=EMO.GetEquationOfTrack(self.Hits[0])[0]
+                __XZ2=EMO.GetEquationOfTrack(self.Hits[1])[0]
+                __YZ1=EMO.GetEquationOfTrack(self.Hits[0])[1]
+                __YZ2=EMO.GetEquationOfTrack(self.Hits[1])[1]
+                __X1S=EMO.GetEquationOfTrack(self.Hits[0])[3]
+                __X2S=EMO.GetEquationOfTrack(self.Hits[1])[3]
+                __Y1S=EMO.GetEquationOfTrack(self.Hits[0])[4]
+                __Y2S=EMO.GetEquationOfTrack(self.Hits[1])[4]
+                __Z1S=EMO.GetEquationOfTrack(self.Hits[0])[5]
+                __Z2S=EMO.GetEquationOfTrack(self.Hits[1])[5]
+                __vector_1_st = np.array([np.polyval(__XZ1,self.Hits[0][0][2]),np.polyval(__YZ1,self.Hits[0][0][2]),self.Hits[0][0][2]])
+                __vector_1_end = np.array([np.polyval(__XZ1,self.Hits[0][len(self.Hits[0])-1][2]),np.polyval(__YZ1,self.Hits[0][len(self.Hits[0])-1][2]),self.Hits[0][len(self.Hits[0])-1][2]])
+                __vector_2_st = np.array([np.polyval(__XZ2,self.Hits[0][0][2]),np.polyval(__YZ2,self.Hits[0][0][2]),self.Hits[0][0][2]])
+                __vector_2_end = np.array([np.polyval(__XZ2,self.Hits[0][len(self.Hits[0])-1][2]),np.polyval(__YZ2,self.Hits[0][len(self.Hits[0])-1][2]),self.Hits[0][len(self.Hits[0])-1][2]])
+                __result=EMO.closestDistanceBetweenLines(__vector_1_st,__vector_1_end,__vector_2_st,__vector_2_end,clampAll=False,clampA0=False,clampA1=False,clampB0=False,clampB1=False)
+                __midpoint=(__result[0]+__result[1])/2
+                __v1=np.subtract(__vector_1_end,__midpoint)
+                __v2=np.subtract(__vector_2_end,__midpoint)
+                if self.Hits[0][len(self.Hits)-1][2]>self.Hits[1][len(self.Hits)-1][2]: #Workout which track is leading (has highest z-coordinate)
+                    __leading_seg=0
+                    __subleading_seg=1
+                else:
+                    __leading_seg=1
+                    __subleading_seg=0
+                self.Opening_Angle=EMO.angle_between(__v1, __v2)
+                self.DOCA=__result[2]
+                self.SLG=float(self.Hits[__leading_seg][0][2])-float(self.Hits[__subleading_seg][len(self.Hits[__subleading_seg])-1][2])
+                __x2=float(self.Hits[__leading_seg][0][0])
+                __x1=self.Hits[__subleading_seg][len(self.Hits[__subleading_seg])-1][0]
+                __y2=float(self.Hits[__leading_seg][0][1])
+                __y1=self.Hits[__subleading_seg][len(self.Hits[__subleading_seg])-1][1]
+                self.STG=math.sqrt(((__x2-__x1)**2)+((__y2-__y1)**2))
+             else:
+                 raise ValueError("Method 'DecorateTrackGeoInfo' currently works for seeds with partition of 2 only")
+          else:
+                raise ValueError("Method 'DecorateTrackGeoInfo' works only if 'Decorate' method has been acted upon the seed before")
+      def TrackQualityCheck(self,MaxDoca,MaxSLG, MaxSTG,MaxAngle):
+                    return (self.DOCA<=MaxDoca and self.SLG<=MaxSLG and self.STG<=(MaxSTG+(self.SLG*0.96)) and abs(self.Opening_Angle)<=MaxAngle)
+      @staticmethod
+      def unit_vector(vector):
+          return vector / np.linalg.norm(vector)
 
+      def angle_between(v1, v2):
+            v1_u = EMO.unit_vector(v1)
+            v2_u = EMO.unit_vector(v2)
+            dot = v1_u[0]*v2_u[0] + v1_u[1]*v2_u[1]      # dot product
+            det = v1_u[0]*v2_u[1] - v1_u[1]*v2_u[0]      # determinant
+            return np.arctan2(det, dot)
+
+      def GetEquationOfTrack(EMO):
+          Xval=[]
+          Yval=[]
+          Zval=[]
+          for Hits in EMO:
+              Xval.append(Hits[0])
+              Yval.append(Hits[1])
+              Zval.append(Hits[2])
+          XZ=np.polyfit(Zval,Xval,1)
+          YZ=np.polyfit(Zval,Yval,1)
+          return (XZ,YZ, 'N/A',Xval[0],Yval[0],Zval[0])
+
+      def closestDistanceBetweenLines(a0,a1,b0,b1,clampAll=False,clampA0=False,clampA1=False,clampB0=False,clampB1=False):
+            a0=np.array(a0)
+            a1=np.array(a1)
+            b0=np.array(b0)
+            b1=np.array(b1)
+            # If clampAll=True, set all clamps to True
+            if clampAll:
+                clampA0=True
+                clampA1=True
+                clampB0=True
+                clampB1=True
+
+
+            # Calculate denomitator
+            A = a1 - a0
+            B = b1 - b0
+            magA = np.linalg.norm(A)
+            magB = np.linalg.norm(B)
+
+            _A = A / magA
+            _B = B / magB
+
+            cross = np.cross(_A, _B);
+            denom = np.linalg.norm(cross)**2
+
+
+            # If lines are parallel (denom=0) test if lines overlap.
+            # If they don't overlap then there is a closest point solution.
+            # If they do overlap, there are infinite closest positions, but there is a closest distance
+            if not denom:
+                d0 = np.dot(_A,(b0-a0))
+
+                # Overlap only possible with clamping
+                if clampA0 or clampA1 or clampB0 or clampB1:
+                    d1 = np.dot(_A,(b1-a0))
+
+                    # Is segment B before A?
+                    if d0 <= 0 >= d1:
+                        if clampA0 and clampB1:
+                            if np.absolute(d0) < np.absolute(d1):
+                                return a0,b0,np.linalg.norm(a0-b0)
+                            return a0,b1,np.linalg.norm(a0-b1)
+
+
+                    # Is segment B after A?
+                    elif d0 >= magA <= d1:
+                        if clampA1 and clampB0:
+                            if np.absolute(d0) < np.absolute(d1):
+                                return a1,b0,np.linalg.norm(a1-b0)
+                            return a1,b1,np.linalg.norm(a1-b1)
+
+
+                # Segments overlap, return distance between parallel segments
+                return None,None,np.linalg.norm(((d0*_A)+a0)-b0)
+
+
+
+            # Lines criss-cross: Calculate the projected closest points
+            t = (b0 - a0);
+            detA = np.linalg.det([t, _B, cross])
+            detB = np.linalg.det([t, _A, cross])
+
+            t0 = detA/denom;
+            t1 = detB/denom;
+
+            pA = a0 + (_A * t0) # Projected closest point on segment A
+            pB = b0 + (_B * t1) # Projected closest point on segment B
+
+
+            # Clamp projections
+            if clampA0 or clampA1 or clampB0 or clampB1:
+                if clampA0 and t0 < 0:
+                    pA = a0
+                elif clampA1 and t0 > magA:
+                    pA = a1
+
+                if clampB0 and t1 < 0:
+                    pB = b0
+                elif clampB1 and t1 > magB:
+                    pB = b1
+
+                # Clamp projection A
+                if (clampA0 and t0 < 0) or (clampA1 and t0 > magA):
+                    dot = np.dot(_B,(pA-b0))
+                    if clampB0 and dot < 0:
+                        dot = 0
+                    elif clampB1 and dot > magB:
+                        dot = magB
+                    pB = b0 + (_B * dot)
+
+                # Clamp projection B
+                if (clampB0 and t1 < 0) or (clampB1 and t1 > magB):
+                    dot = np.dot(_A,(pB-a0))
+                    if clampA0 and dot < 0:
+                        dot = 0
+                    elif clampA1 and dot > magA:
+                        dot = magA
+                    pA = a0 + (_A * dot)
+            return pA,pB,np.linalg.norm(pA-pB)
+      
 
 def GenerateModel(ModelMeta):
       if ModelMeta.ModelFramework=='PyTorch':
@@ -1010,7 +1201,7 @@ def CleanFolder(folder,key):
                     print(e)
 #This function automates csv read/write operations
 def LogOperations(flocation,mode, message):
-    if mode=='UpdateLog':
+    if mode=='a':
         csv_writer_log=open(flocation,"a")
         log_writer = csv.writer(csv_writer_log)
         if len(message)>0:
@@ -1089,6 +1280,180 @@ def TrainCleanUp(AFS_DIR, EOS_DIR, Process, FileNames, ProcessId):
       folder =  AFS_DIR+'/HTCondor/MSG'
       CleanFolder(folder,'MSG_'+Process+'_')
 
+def CreateCondorJobs(AFS,EOS,path,o,pfx,sfx,ID,loop_params,OptionHeader,OptionLine,Sub_File,batch_sub=False,Exception=['',''], Log=False, GPU=False):
+   if Exception[0]==" --PlateZ ":
+    if batch_sub==False:
+        from alive_progress import alive_bar
+        bad_pop=[]
+        print(loop_params)
+        TotJobs=0
+        if type(loop_params) is int:
+            nest_lvl=1
+            TotJobs=loop_params
+        elif type(loop_params[0]) is int:
+            nest_lvl=2
+            TotJobs=np.sum(loop_params)
+        elif type(loop_params[0][0]) is int:
+            nest_lvl=3
+            for lp in loop_params:
+                TotJobs+=np.sum(lp)
+        OptionHeader+=[' --EOS '," --AFS ", " --BatchID "]
+        OptionLine+=[EOS, AFS, ID]
+        TotJobs=int(TotJobs)
+        with alive_bar(TotJobs,force_tty=True, title='Checking the results from HTCondor') as bar:
+             if nest_lvl==2:
+                 for i in range(len(loop_params)):
+                     for j in range(loop_params[i]):
+                               required_output_file_location=EOS+'/'+path+'/'+pfx+'_'+ID+'_'+o+'_'+str(i)+'_'+str(j)+sfx
+                               bar.text = f'-> Checking whether the file : {required_output_file_location}, exists...'
+                               bar()
+                               SHName = AFS + '/HTCondor/SH/SH_'+pfx+'_'+'_'+ ID+'_' + str(i) + '_' + str(j) + '.sh'
+                               SUBName = AFS + '/HTCondor/SUB/SUB_'+pfx+'_'+'_'+ ID+'_' + str(i) + '_' + str(j) + '.sub'
+                               MSGName = AFS + '/HTCondor/MSG/MSG_'+pfx+'_'+'_'+ ID+'_' + str(i) + '_' + str(j)
+                               ScriptName = AFS + '/Code/Utilities/'+Sub_File
+                               if os.path.isfile(required_output_file_location)!=True:
+                                  bad_pop.append([OptionHeader+[' --i ', ' --j ', ' --p ', ' --o ',' --pfx ', ' --sfx ', Exception[0]], OptionLine+[i, j, path,o, pfx, sfx, Exception[1][j][0]], SHName, SUBName, MSGName, ScriptName, 1, 'ANNADEA-'+pfx+'-'+ID, False,False])
+
+             if nest_lvl==3:
+                 for i in range(len(loop_params)):
+                     for j in range(len(loop_params[i])):
+                         for k in range(loop_params[i][j]):
+                               required_output_file_location=EOS+'/'+path+'/'+pfx+'_'+ID+'_'+o+'_'+str(i)+'_'+str(j)+sfx
+                               bar.text = f'-> Checking whether the file : {required_output_file_location}, exists...'
+                               bar()
+                               SHName = AFS + '/HTCondor/SH/SH_'+pfx+'_'+'_'+ ID+'_' + str(i) + '_' + str(j) + '_' + str(k) +'.sh'
+                               SUBName = AFS + '/HTCondor/SUB/SUB_'+pfx+'_'+'_'+ ID+'_' + str(i) + '_' + str(j) + '_' + str(k) +'.sub'
+                               MSGName = AFS + '/HTCondor/MSG/MSG_'+pfx+'_'+'_'+ ID+'_' + str(i) + '_' + str(j) + '_' + str(j)
+                               ScriptName = AFS + '/Code/Utilities/'+Sub_File
+                               if os.path.isfile(required_output_file_location)!=True:
+                                  bad_pop.append([OptionHeader+[' --i ', ' --j ',' --k ', ' --p ', ' --o ',' --pfx ', ' --sfx ', Exception[0]], OptionLine+[i, j,k, path,o, pfx, sfx, Exception[1][j][0]], SHName, SUBName, MSGName, ScriptName, 1, 'ANNADEA-'+pfx+'-'+ID, False,False])
+        return(bad_pop)
+    else:
+        from alive_progress import alive_bar
+        bad_pop=[]
+        print(loop_params)
+        TotJobs=0
+        if type(loop_params) is int:
+            nest_lvl=1
+            TotJobs=loop_params
+        elif type(loop_params[0]) is int:
+            nest_lvl=2
+            TotJobs=np.sum(loop_params)
+        elif type(loop_params[0][0]) is int:
+            nest_lvl=3
+            for lp in loop_params:
+                TotJobs+=np.sum(lp)
+        OptionHeader+=[' --EOS '," --AFS ", " --BatchID "]
+        OptionLine+=[EOS, AFS, ID]
+        TotJobs=int(TotJobs)
+        with alive_bar(TotJobs,force_tty=True, title='Checking the results from HTCondor') as bar:
+             if nest_lvl==2:
+                 for i in range(len(loop_params)):
+                               bar.text = f'-> Preparing batch submission...'
+                               bar()
+                               SHName = AFS + '/HTCondor/SH/SH_'+pfx+'_'+'_'+ ID+'_' + str(i) + '.sh'
+                               SUBName = AFS + '/HTCondor/SUB/SUB_'+pfx+'_'+'_'+ ID+'_' + str(i) + '.sub'
+                               MSGName = AFS + '/HTCondor/MSG/MSG_'+pfx+'_'+'_'+ ID+'_' + str(i)
+                               ScriptName = AFS + '/Code/Utilities/'+Sub_File
+                               bad_pop.append([OptionHeader+[' --i ', ' --j ', ' --p ', ' --o ',' --pfx ', ' --sfx ', Exception[0]], OptionLine+[i, '$1', path,o, pfx, sfx, Exception[1][i][0]], SHName, SUBName, MSGName, ScriptName, loop_params[i], 'ANNADEA-'+pfx+'-'+ID, False,False])
+             if nest_lvl==3:
+                 for i in range(len(loop_params)):
+                     for j in range(loop_params[i]):
+                               bar.text = f'-> Preparing batch submission...'
+                               bar()
+                               SHName = AFS + '/HTCondor/SH/SH_'+pfx+'_'+'_'+ ID+'_' + str(i) + '.sh'
+                               SUBName = AFS + '/HTCondor/SUB/SUB_'+pfx+'_'+'_'+ ID+'_' + str(i) +'_' + str(j)+'.sub'
+                               MSGName = AFS + '/HTCondor/MSG/MSG_'+pfx+'_'+'_'+ ID+'_' + str(i) +'_' + str(j)
+                               ScriptName = AFS + '/Code/Utilities/'+Sub_File
+                               bad_pop.append([OptionHeader+[' --i ', ' --j ',' --k ', ' --p ', ' --o ',' --pfx ', ' --sfx ', Exception[0]], OptionLine+[i, j, '$1', path,o, pfx, sfx, Exception[1][i][0]], SHName, SUBName, MSGName, ScriptName, loop_params[i], 'ANNADEA-'+pfx+'-'+ID, False,False])
+        return(bad_pop)
+   else:
+    if batch_sub==False:
+        from alive_progress import alive_bar
+        bad_pop=[]
+        print(loop_params)
+        TotJobs=0
+        if type(loop_params) is int:
+            nest_lvl=1
+            TotJobs=loop_params
+        elif type(loop_params[0]) is int:
+            nest_lvl=2
+            TotJobs=np.sum(loop_params)
+        elif type(loop_params[0][0]) is int:
+            nest_lvl=3
+            for lp in loop_params:
+                TotJobs+=np.sum(lp)
+        OptionHeader+=[' --EOS '," --AFS ", " --BatchID "]
+        OptionLine+=[EOS, AFS, ID]
+        TotJobs=int(TotJobs)
+        with alive_bar(TotJobs,force_tty=True, title='Checking the results from HTCondor') as bar:
+             if nest_lvl==2:
+                 for i in range(len(loop_params)):
+                     for j in range(loop_params[i]):
+                               required_output_file_location=EOS+'/'+path+'/'+pfx+'_'+ID+'_'+o+'_'+str(i)+'_'+str(j)+sfx
+                               bar.text = f'-> Checking whether the file : {required_output_file_location}, exists...'
+                               bar()
+                               SHName = AFS + '/HTCondor/SH/SH_'+pfx+'_'+'_'+ ID+'_' + str(i) + '_' + str(j) + '.sh'
+                               SUBName = AFS + '/HTCondor/SUB/SUB_'+pfx+'_'+'_'+ ID+'_' + str(i) + '_' + str(j) + '.sub'
+                               MSGName = AFS + '/HTCondor/MSG/MSG_'+pfx+'_'+'_'+ ID+'_' + str(i) + '_' + str(j)
+                               ScriptName = AFS + '/Code/Utilities/'+Sub_File
+                               if os.path.isfile(required_output_file_location)!=True:
+                                  bad_pop.append([OptionHeader+[' --i ', ' --j ', ' --p ', ' --o ',' --pfx ', ' --sfx '], OptionLine+[i, j, path,o, pfx, sfx], SHName, SUBName, MSGName, ScriptName, 1, 'ANNADEA-'+pfx+'-'+ID, False,False])
+
+             if nest_lvl==3:
+                 for i in range(len(loop_params)):
+                     for j in range(len(loop_params[i])):
+                         for k in range(loop_params[i][j]):
+                               required_output_file_location=EOS+'/'+path+'/'+pfx+'_'+ID+'_'+o+'_'+str(i)+'_'+str(j) + '_' + str(k)+sfx
+                               bar.text = f'-> Checking whether the file : {required_output_file_location}, exists...'
+                               bar()
+                               SHName = AFS + '/HTCondor/SH/SH_'+pfx+'_'+'_'+ ID+'_' + str(i) + '_' + str(j) + '_' + str(k) +'.sh'
+                               SUBName = AFS + '/HTCondor/SUB/SUB_'+pfx+'_'+'_'+ ID+'_' + str(i) + '_' + str(j) + '_' + str(k) +'.sub'
+                               MSGName = AFS + '/HTCondor/MSG/MSG_'+pfx+'_'+'_'+ ID+'_' + str(i) + '_' + str(j) + '_' + str(j)
+                               ScriptName = AFS + '/Code/Utilities/'+Sub_File
+                               if os.path.isfile(required_output_file_location)!=True:
+                                  bad_pop.append([OptionHeader+[' --i ', ' --j ',' --k ', ' --p ', ' --o ',' --pfx ', ' --sfx '], OptionLine+[i, j,k, path,o, pfx, sfx], SHName, SUBName, MSGName, ScriptName, 1, 'ANNADEA-'+pfx+'-'+ID, False,False])
+        return(bad_pop)
+    else:
+        from alive_progress import alive_bar
+        bad_pop=[]
+        print(loop_params)
+        TotJobs=0
+        if type(loop_params) is int:
+            nest_lvl=1
+            TotJobs=loop_params
+        elif type(loop_params[0]) is int:
+            nest_lvl=2
+            TotJobs=np.sum(loop_params)
+        elif type(loop_params[0][0]) is int:
+            nest_lvl=3
+            for lp in loop_params:
+                TotJobs+=np.sum(lp)
+        OptionHeader+=[' --EOS '," --AFS ", " --BatchID "]
+        OptionLine+=[EOS, AFS, ID]
+        TotJobs=int(TotJobs)
+        with alive_bar(TotJobs,force_tty=True, title='Checking the results from HTCondor') as bar:
+             if nest_lvl==2:
+                 for i in range(len(loop_params)):
+                               bar.text = f'-> Preparing batch submission...'
+                               bar()
+                               SHName = AFS + '/HTCondor/SH/SH_'+pfx+'_'+'_'+ ID+'_' + str(i) + '.sh'
+                               SUBName = AFS + '/HTCondor/SUB/SUB_'+pfx+'_'+'_'+ ID+'_' + str(i) + '.sub'
+                               MSGName = AFS + '/HTCondor/MSG/MSG_'+pfx+'_'+'_'+ ID+'_' + str(i)
+                               ScriptName = AFS + '/Code/Utilities/'+Sub_File
+                               bad_pop.append([OptionHeader+[' --i ', ' --j ', ' --p ', ' --o ',' --pfx ', ' --sfx '], OptionLine+[i, '$1', path,o, pfx, sfx], SHName, SUBName, MSGName, ScriptName, loop_params[i], 'ANNADEA-'+pfx+'-'+ID, False,False])
+             if nest_lvl==3:
+                 for i in range(len(loop_params)):
+                     for j in range(len(loop_params[i])):
+                               bar.text = f'-> Preparing batch submission...'
+                               bar()
+                               SHName = AFS + '/HTCondor/SH/SH_'+pfx+'_'+'_'+ ID+'_' + str(i) + '.sh'
+                               SUBName = AFS + '/HTCondor/SUB/SUB_'+pfx+'_'+'_'+ ID+'_' + str(i) +'_' + str(j)+'.sub'
+                               MSGName = AFS + '/HTCondor/MSG/MSG_'+pfx+'_'+'_'+ ID+'_' + str(i) +'_' + str(j)
+                               ScriptName = AFS + '/Code/Utilities/'+Sub_File
+                               bad_pop.append([OptionHeader+[' --i ', ' --j ',' --k ', ' --p ', ' --o ',' --pfx ', ' --sfx '], OptionLine+[i, j, '$1', path,o, pfx, sfx], SHName, SUBName, MSGName, ScriptName, loop_params[i][j], 'ANNADEA-'+pfx+'-'+ID, False,False])
+        return(bad_pop)
+   return []
 def SubmitJobs2Condor(job):
     SHName = job[2]
     SUBName = job[3]

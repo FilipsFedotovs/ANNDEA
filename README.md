@@ -45,7 +45,7 @@ All modules
 6) **python3 MH1_GenerateTrainClusters.py --TrainSampleID Test_Sample --Xmin 50000 --Xmax 55000 --Ymin 50000 --Ymax 55000**
 7) After few minutes the script will ask for the user option (Warning, there are still x HTCondor jobs remaining). Type **R** and press **Enter**. The script will submit the subscript jobs and go to the autopilot mode.
 8) Exit tmux (by using **ctrl + b** and then typing  **d**). It can take up to few hours for HTCondor jobs to finish.
-9) Enter the same tmux session (by logging to the same lxplus machine and then typing  **tmux a -t 0**). The program should finish with the message *'Training samples are ready for the model creation/training'*
+9) Enter the same tmux session after some period (after overnight job for example) by logging to the same lxplus machine and then typing  **tmux a -t 0**. The program should finish with the message *'Training samples are ready for the model creation/training'*
 
 ### 1.3 Reconstructing a hit data using the new model 
 *This part is only needed if a new model is required*
@@ -54,9 +54,20 @@ All modules
 3) **tmux**
 4) **kinit username@CERN.CH -l 24h00m**
 5) Enter your lxplus password
+6) **python3 MH2_TrainModel.py --TrainSampleID Test_Sample --ModelName Test_Model --ModelParams '[1,20,1,20]'**
+7) The script will submit the subscript jobs and go to the autopilot mode.
+8) Exit tmux (by using **ctrl + b** and then typing  **d**). Script will keep running in the autopilot mode until all the steps in the hit reconstruction process have been completed.
+9) Enter the same tmux session (after overnight job for example) by logging to the same lxplus machine and then typing  **tmux a -t 0**. The program should finish with the message *'Training is finished then, thank you and goodbye'*
+
+### 1.4 Reconstructing a hit data using the new model 
+1) Go to ANNADEA directory on AFS
+2) **cd Code**
+3) **tmux**
+4) **kinit username@CERN.CH -l 24h00m**
+5) Enter your lxplus password
 6) **python3 RH1_ReconstructHits.py --Log KALMAN --ModelName Test_Model --Xmin 50000 --Xmax 550000 --Ymin 50000 --Ymax 55000 --X_overlap 1 --Y_overlap 1 --Z_overlap 1 --RecBatchID Test_Batch**
 7) The script will submit the subscript jobs and go to the autopilot mode.
 8) Exit tmux (by using **ctrl + b** and then typing  **d**). Script will keep running in the autopilot mode until all the steps in the hit reconstruction process have been completed.
-9) Enter the same tmux session (by logging to the same lxplus machine and then typing  **tmux a -t 0**). The program should finish with the message *'Training is finished then, thank you and goodbye'*
+9) Enter the same tmux session (after overnight job for example) by logging to the same lxplus machine and then typing  **tmux a -t 0**. The program should finish with the message *'Reconstruction has been completed'*
 
 
