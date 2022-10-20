@@ -271,7 +271,7 @@ else:
 print(UF.TimeStamp(),'There are 5 stages (0-4) of this script',status,bcolors.ENDC)
 print(UF.TimeStamp(),'Current status has a code',status,bcolors.ENDC)
 #
-status=5
+status=4
 
 while status<6:
       if status==1:
