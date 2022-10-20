@@ -45,6 +45,7 @@ parser.add_argument('--Ymin',help="This option restricts data to only those even
 parser.add_argument('--Ymax',help="This option restricts data to only those events that have tracks with hits y-coordinates that are below this value", default='0')
 parser.add_argument('--Samples',help="How many samples? Please enter the number or ALL if you want to use all data", default='ALL')
 parser.add_argument('--LabelRatio',help="What is the desired proportion of genuine seeds in the training/validation sets", default='0.5')
+parser.add_argument('--TrainSampleSize',help="Maximum number of samples per Training file", default='50000')
 
 
 ######################################## Parsing argument values  #############################################################
@@ -53,6 +54,7 @@ Mode=args.Mode.upper()
 ModelName=ast.literal_eval(args.ModelName)
 TrainSampleID=args.TrainSampleID
 Patience=int(args.Patience)
+TrainSampleSize=int(args.TrainSampleSize)
 input_file_location=args.f
 Xmin,Xmax,Ymin,Ymax=float(args.Xmin),float(args.Xmax),float(args.Ymin),float(args.Ymax)
 SliceData=max(Xmin,Xmax,Ymin,Ymax)>0 #We don't slice data if all values are set to zero simultaneousy (which is the default setting)
@@ -271,9 +273,9 @@ else:
 print(UF.TimeStamp(),'There are 5 stages (0-4) of this script',status,bcolors.ENDC)
 print(UF.TimeStamp(),'Current status has a code',status,bcolors.ENDC)
 #
-status=4
+status=6
 
-while status<6:
+while status<7:
       if status==1:
           print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
           print(UF.TimeStamp(),bcolors.BOLD+'Stage 1:'+bcolors.ENDC+' Sending hit cluster to the HTCondor, so tack segment combination pairs can be formed...')
@@ -641,6 +643,7 @@ while status<6:
                     continue
                 del new_data
                 UF.LogOperations(EOS_DIR+'/ANNADEA/Data/TRAIN_SET/MUTr1c_'+TrainSampleID+'_Temp_Stats.csv','w', [[TotalImages,TrueSeeds]])
+        print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 4 has successfully completed'+bcolors.ENDC)
         status=5
 
       if status==5:
@@ -678,9 +681,11 @@ while status<6:
            print(TrueSeedCorrection,FakeSeedCorrection)
            with alive_bar(len(JobSet),force_tty=True, title='Resampling the files...') as bar:
             for i in range(0,len(JobSet)):
-              bar()
+
               output_file_location=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/MUTr1d_'+TrainSampleID+'_SampledCompressedSeeds_'+str(i)+'.pkl'
               input_file_location=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/MUTr1c_'+TrainSampleID+'_CompressedSeeds_'+str(i)+'.pkl'
+              bar.text = f'-> Resampling the file : {input_file_location}, exists...'
+              bar()
               if os.path.isfile(output_file_location)==False and os.path.isfile(input_file_location):
                   base_data=UF.PickleOperations(input_file_location,'r','N/A')[0]
                   ExtractedTruth=[im for im in base_data if im.Label == 1]
@@ -691,12 +696,55 @@ while status<6:
                   ExtractedFake=random.sample(ExtractedFake,int(round(FakeSeedCorrection*len(ExtractedFake),0)))
                   TotalData=[]
                   TotalData=ExtractedTruth+ExtractedFake
-                  print(UF.PickleOperations(output_file_location,'w',TotalData)[0])
+                  print(UF.PickleOperations(output_file_location,'w',TotalData)[1])
                   del TotalData
                   del ExtractedTruth
                   del ExtractedFake
                   gc.collect()
+           print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 5 has successfully completed'+bcolors.ENDC)
            status=6
+      if status==6:
+           print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
+           print(UF.TimeStamp(),bcolors.BOLD+'Stage 6:'+bcolors.ENDC+' Preparing the final output')
+           TotalData=[]
+           JobSet=[]
+           for i in range(len(JobSets)):
+             JobSet.append([])
+             for j in range(len(JobSets[i][3])):
+                 JobSet[i].append(JobSets[i][3][j])
+           for j in range(0,len(data)):
+               input_file_location=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/MUTr1d_'+TrainSampleID+'_SampledCompressedSeeds_'+str(i)+'.pkl'
+               if os.path.isfile(output_file_location):
+                  base_data=UF.PickleOperations(input_file_location,'r','N/A')
+                  TotalData+=base_data
+           del base_data
+           gc.collect()
+           ValidationSampleSize=int(round(min((len(TotalData)*float(args.ValidationSize)),PM.MaxValSampleSize),0))
+           random.shuffle(TotalData)
+           output_file_location=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_TRACK_SEEDS_OUTPUT.pkl'
+           print(UF.PickleOperations(output_file_location,'w','N/A')[1])
+           ValExtracted_file = open(output_file_location, TotalData[:ValidationSampleSize])
+           TotalData=TotalData[ValidationSampleSize:]
+           print(UF.TimeStamp(), bcolors.OKGREEN+"Validation Set has been saved at ",bcolors.OKBLUE+output_file_location+bcolors.ENDC,bcolors.OKGREEN+'file...'+bcolors.ENDC)
+           No_Train_Files=int(math.ceil(len(TotalData)/TrainSampleSize))
+           with alive_bar(len(No_Train_Files),force_tty=True, title='Resampling the files...') as bar:
+               for SC in range(0,No_Train_Files):
+                 output_file_location=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_TRACK_SEEDS_OUTPUT_'+str(SC+1)+'.pkl'
+                 print(UF.PickleOperations(output_file_location,'w',TotalData[(SC*TrainSampleSize):min(len(TotalData),((SC+1)*TrainSampleSize))])[1])
+                 bar.text = f'-> Saving the file : {output_file_location}...'
+                 bar()
+               # UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'M3', ['M3_M3_SamplesCondensedImages','M3_M3_CondensedImages'], "SoftUsed == \"EDER-TSU-M3\"")
+               # print(bcolors.BOLD+'Would you like to delete track seeds data?'+bcolors.ENDC)
+               # UserAnswer=input(bcolors.BOLD+"Please, enter your option Y/N \n"+bcolors.ENDC)
+               # if UserAnswer=='Y':
+               #     UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'M3', ['M2_M3','M3_M3'], "SoftUsed == \"EDER-TSU-M3\"")
+               # else:
+               #  print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
+               #  print(UF.TimeStamp(), bcolors.OKGREEN+"Training and Validation data has been created: you can render them now..."+bcolors.ENDC)
+               #  print(bcolors.HEADER+"############################################# End of the program ################################################"+bcolors.ENDC)
+               #  exit()
+           print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 6 has successfully completed'+bcolors.ENDC)
+           status=7
 if status==7:
      print(UF.TimeStamp(), bcolors.OKGREEN+"Train sample generation has been completed"+bcolors.ENDC)
      exit()
