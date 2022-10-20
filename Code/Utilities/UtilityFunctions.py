@@ -1285,7 +1285,6 @@ def CreateCondorJobs(AFS,EOS,path,o,pfx,sfx,ID,loop_params,OptionHeader,OptionLi
     if batch_sub==False:
         from alive_progress import alive_bar
         bad_pop=[]
-        print(loop_params)
         TotJobs=0
         if type(loop_params) is int:
             nest_lvl=1
