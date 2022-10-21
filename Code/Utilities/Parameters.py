@@ -36,6 +36,7 @@ ModelArchitecture=[[2], [1], [],[], [], [], [], [], [], [], [5]]
 ######Track Union Module - list of parameters that are specific to this module
 
 MaxSegments=10000 #This parameter imposes the limit on the number of the tracks form the Start plate when forming the Seeds.
+MaxSeeds=50000
 # MaxFitTracksPerJob=10000
 # MaxTracksPerTrPool=20000
 

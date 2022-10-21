@@ -173,7 +173,6 @@ for j in range(0,len(JobSets)):
               TotJobs+=1
 
 ########################################     Preset framework parameters    #########################################
-print(UF.TimeStamp(),'Loading preselected data from ',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
 FreshStart=True
 status=1
 def AutoPilot(wait_min, interval_min, max_interval_tolerance,AFS,EOS,path,o,pfx,sfx,ID,loop_params,OptionHeader,OptionLine,Sub_File,Exception=['',''], Log=False, GPU=False):
@@ -373,6 +372,8 @@ while status<7:
                         min_i=max(0,i-1)
         with alive_bar(len(JobSets)-min_i,force_tty=True, title='Checking the results from HTCondor') as bar:
             for i in range(min_i,len(JobSets)): #//Temporarily measure to save space
+                bar.text = f'-> Analysing set : {i}...'
+                bar()
                 Meta=UF.PickleOperations(TrainSampleOutputMeta,'r', 'N/A')[0]
                 MaxSLG=Meta.MaxSLG
                 JobSets=Meta.JobSets
@@ -382,9 +383,9 @@ while status<7:
                 else:
                    Meta.JobSets[i].append([])
                 for j in range(0,int(JobSets[i][2])):
+
                    output_file_location=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/MUTr1a_'+TrainSampleID+'_RawSeeds_'+str(i)+'_'+str(j)+'.csv'
-                   bar.text = f'-> Collecting the file : {output_file_location}...'
-                   bar()
+
                    if os.path.isfile(output_file_location)==False:
                       Meta.JobSets[j].append(0)
                       continue #Skipping because not all jobs necesseraly produce the required file (if statistics are too low)
