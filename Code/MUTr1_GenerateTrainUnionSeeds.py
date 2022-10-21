@@ -152,7 +152,7 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         data = data.values.tolist()
         print(UF.TimeStamp(), bcolors.OKGREEN+"The track segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+output_file_location+bcolors.ENDC)
         Meta=UF.TrainingSampleMeta(TrainSampleID)
-        Meta.IniTrackSeedMetaData(PM.MaxSLG,PM.MaxSTG,PM.MaxDOCA,PM.MaxAngle,data,PM.MaxSegments,PM.VetoMotherTrack)
+        Meta.IniTrackSeedMetaData(PM.MaxSLG,PM.MaxSTG,PM.MaxDOCA,PM.MaxAngle,data,PM.MaxSegments,PM.VetoMotherTrack,PM.MaxSeeds)
         print(UF.PickleOperations(TrainSampleOutputMeta,'w', Meta)[1])
         print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
         print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 0 has successfully completed'+bcolors.ENDC)
@@ -166,6 +166,7 @@ MaxDOCA=Meta.MaxDOCA
 MaxAngle=Meta.MaxAngle
 JobSets=Meta.JobSets
 MaxSegments=Meta.MaxSegments
+MaxSeeds=Meta.MaxSeeds
 VetoMotherTrack=Meta.VetoMotherTrack
 TotJobs=0
 for j in range(0,len(JobSets)):
@@ -403,11 +404,11 @@ while status<7:
                     else:
                       Compression_Ratio=0
                     print(UF.TimeStamp(),'Set',str(i),'and subset', str(j), 'compression ratio is ', Compression_Ratio, ' %',bcolors.ENDC)
-                    fractions=int(math.ceil(Records_After_Compression/MaxSegments))
+                    fractions=int(math.ceil(Records_After_Compression/MaxSeeds))
                     Meta.JobSets[i][3].append(fractions)
                     for k in range(0,fractions):
                      new_output_file_location=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/MUTr1a_'+TrainSampleID+'_SelectedSeeds_'+str(i)+'_'+str(j)+'_'+str(k)+'.csv'
-                     result[(k*MaxSegments):min(Records_After_Compression,((k+1)*MaxSegments))].to_csv(new_output_file_location,index=False)
+                     result[(k*MaxSeeds):min(Records_After_Compression,((k+1)*MaxSeeds))].to_csv(new_output_file_location,index=False)
                 print(UF.PickleOperations(TrainSampleOutputMeta,'w', Meta)[1])
                 print(JobSets)
         FreshStart=False
