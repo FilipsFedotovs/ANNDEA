@@ -132,16 +132,14 @@ def AutoPilot(wait_min, interval_min, max_interval_tolerance):
     return True
 
 if Mode=='RESET':
- HTCondorTag="SoftUsed == \"ANNADEA-MUTr-"+ModelName+"\""
- UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MUTr', [ModelName], HTCondorTag)
+ HTCondorTag="SoftUsed == \"ANNADEA-MUTr2-"+ModelName+"\""
+ UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MUTr2', [ModelName], HTCondorTag)
  OptionHeader = [' --ModelParams ', ' --TrainParams ', " --TrainSampleID ", " --ModelName "]
  OptionLine = [ModelParamsStr, TrainParamsStr, TrainSampleID, ModelName]
  if ModelType=='CNN':
     Job=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,'/ANNADEA/Data/TRAIN_SET/','N/A','MUTr2','N/A',TrainSampleID,1,OptionHeader,OptionLine,'MUTr2_TrainModel_Sub.py',False,"['','']", True, True)[0]
  else:
     Job=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,'/ANNADEA/Data/TRAIN_SET/','N/A','MUTr2','N/A',TrainSampleID,1,OptionHeader,OptionLine,'MUTr2_TrainModel_Sub.py',False,"['','']", True, False)[0]
- print(Job)
- exit()
  TrainSampleInputMeta=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/'+TrainSampleID+'_info.pkl'
  print(UF.TimeStamp(),'Loading the data file ',bcolors.OKBLUE+TrainSampleInputMeta+bcolors.ENDC)
  MetaInput=UF.PickleOperations(TrainSampleInputMeta,'r', 'N/A')
@@ -149,11 +147,13 @@ if Mode=='RESET':
  Meta=MetaInput[0]
  Model_Meta_Path=EOSsubModelDIR+'/'+args.ModelName+'_Meta'
  ModelMeta=UF.ModelMeta(ModelName)
- ModelMeta.IniModelMeta(ModelParams, 'PyTorch', Meta, 'TCN', 'GNN')
+ if ModelType=='CNN':
+    ModelMeta.IniModelMeta(ModelParams, 'Tensorflow', Meta, 'N/A', 'CNN')
  ModelMeta.IniTrainingSession(TrainSampleID, datetime.datetime.now(), TrainParams)
  print(UF.PickleOperations(Model_Meta_Path, 'w', ModelMeta)[1])
- UF.SubmitJobs2Condor([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, 1, 'ANNADEA-M2-'+ModelName, True,False])
+ UF.SubmitJobs2Condor(Job)
  print(bcolors.BOLD+"The job has been submitted..."+bcolors.ENDC)
+ exit()
  print(bcolors.BOLD+'If you would like to stop training and exit please enter E'+bcolors.ENDC)
  print(bcolors.BOLD+'If you would like to continue training on autopilot please type waiting time in minutes'+bcolors.ENDC)
  UserAnswer=input(bcolors.BOLD+"Please, enter your option\n"+bcolors.ENDC)

@@ -91,6 +91,11 @@ class ModelMeta:
               self.stepZ=DataMeta.stepZ
               self.cut_dt=DataMeta.cut_dt
               self.cut_dr=DataMeta.cut_dr
+          elif (self.ModelFramework=='Tensorflow') and (self.ModelArchitecture=='CNN'):
+              self.MaxSLG=DataMeta.MaxSLG
+              self.MaxSTG=DataMeta.MaxSTG
+              self.MaxDOCA=DataMeta.MaxDOCA
+              self.MaxAngle=DataMeta.MaxAngle
       def IniTrainingSession(self, TrainDataID, DateTime, TrainParameters):
           self.TrainSessionsDataID.append(TrainDataID)
           self.TrainSessionsDateTime.append(DateTime)
