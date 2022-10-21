@@ -686,22 +686,24 @@ while status<7:
            TotalData=TotalData[ValidationSampleSize:]
            print(UF.TimeStamp(), bcolors.OKGREEN+"Validation Set has been saved at ",bcolors.OKBLUE+output_file_location+bcolors.ENDC,bcolors.OKGREEN+'file...'+bcolors.ENDC)
            No_Train_Files=int(math.ceil(len(TotalData)/TrainSampleSize))
+           print(TotalData)
+           print(TrainSampleSize)
            with alive_bar(No_Train_Files,force_tty=True, title='Resampling the files...') as bar:
                for SC in range(0,No_Train_Files):
                  output_file_location=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_TRACK_SEEDS_OUTPUT_'+str(SC+1)+'.pkl'
                  print(UF.PickleOperations(output_file_location,'w',TotalData[(SC*TrainSampleSize):min(len(TotalData),((SC+1)*TrainSampleSize))])[1])
                  bar.text = f'-> Saving the file : {output_file_location}...'
                  bar()
-           print(UF.TimeStamp(),'Performing the cleanup... ',bcolors.ENDC)
-           HTCondorTag="SoftUsed == \"ANNADEA-MUTra-"+TrainSampleID+"\""
-           UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MUTr1a_'+TrainSampleID, ['MUTr1a'], HTCondorTag)
-           HTCondorTag="SoftUsed == \"ANNADEA-MUTrb-"+TrainSampleID+"\""
-           UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MUTr1b_'+TrainSampleID, ['MUTr1b'], HTCondorTag)
-           HTCondorTag="SoftUsed == \"ANNADEA-MUTr1c-"+TrainSampleID+"\""
-           UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MUTr1c_'+TrainSampleID, ['MUTr1c'], HTCondorTag)
-           HTCondorTag="SoftUsed == \"ANNADEA-MUTr1d-"+TrainSampleID+"\""
-           UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MUTr1d_'+TrainSampleID, ['MUTr1d'], HTCondorTag)
-           print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 6 has successfully completed'+bcolors.ENDC)
+           # print(UF.TimeStamp(),'Performing the cleanup... ',bcolors.ENDC)
+           # HTCondorTag="SoftUsed == \"ANNADEA-MUTra-"+TrainSampleID+"\""
+           # UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MUTr1a_'+TrainSampleID, ['MUTr1a'], HTCondorTag)
+           # HTCondorTag="SoftUsed == \"ANNADEA-MUTrb-"+TrainSampleID+"\""
+           # UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MUTr1b_'+TrainSampleID, ['MUTr1b'], HTCondorTag)
+           # HTCondorTag="SoftUsed == \"ANNADEA-MUTr1c-"+TrainSampleID+"\""
+           # UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MUTr1c_'+TrainSampleID, ['MUTr1c'], HTCondorTag)
+           # HTCondorTag="SoftUsed == \"ANNADEA-MUTr1d-"+TrainSampleID+"\""
+           # UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MUTr1d_'+TrainSampleID, ['MUTr1d'], HTCondorTag)
+           # print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 6 has successfully completed'+bcolors.ENDC)
            status=7
 if status==7:
      print(UF.TimeStamp(), bcolors.OKGREEN+"Train sample generation has been completed"+bcolors.ENDC)
