@@ -1387,6 +1387,17 @@ def CreateCondorJobs(AFS,EOS,path,o,pfx,sfx,ID,loop_params,OptionHeader,OptionLi
         OptionLine+=[EOS, AFS, ID]
         TotJobs=int(TotJobs)
         with alive_bar(TotJobs,force_tty=True, title='Checking the results from HTCondor') as bar:
+             if nest_lvl==1:
+                 for i in range(loop_params):
+                               required_output_file_location=EOS+'/'+path+'/'+pfx+'_'+ID+'_'+o+'_'+str(i)+sfx
+                               bar.text = f'-> Checking whether the file : {required_output_file_location}, exists...'
+                               bar()
+                               SHName = AFS + '/HTCondor/SH/SH_'+pfx+'_'+ ID+'_' + str(i) + '.sh'
+                               SUBName = AFS + '/HTCondor/SUB/SUB_'+pfx+'_'+ ID+'_' + str(i) + '.sub'
+                               MSGName = AFS + '/HTCondor/MSG/MSG_'+pfx+'_'+ ID+'_' + str(i)
+                               ScriptName = AFS + '/Code/Utilities/'+Sub_File
+                               if os.path.isfile(required_output_file_location)!=True:
+                                  bad_pop.append([OptionHeader+[' --i ', ' --p ', ' --o ',' --pfx ', ' --sfx '], OptionLine+[i, path,o, pfx, sfx], SHName, SUBName, MSGName, ScriptName, 1, 'ANNADEA-'+pfx+'-'+ID, Log,GPU])
              if nest_lvl==2:
                  for i in range(len(loop_params)):
                      for j in range(loop_params[i]):
