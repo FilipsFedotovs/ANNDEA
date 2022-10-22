@@ -190,8 +190,8 @@ if ModelMeta.ModelType=='CNN':
        ts.PrepareTrackPrint(ModelMeta)
    print(TrainSamples[0].TrackPrint)
 
-   TrainSamples[4].Plot('XZ')
-   print(TrainSamples[4].Label)
+   TrainSamples[5].Plot('XZ')
+   print(TrainSamples[5].Label)
    exit()
 # for i in range(1,Meta.no_sets+1):
 #         flocation=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/'+TrainSampleID+'_TH_OUTPUT_'+str(i)+'.pkl'
