@@ -116,7 +116,7 @@ def CNNtrain(model, Sample, Batches):
         EndSeed=StartSeed+TrainParams[1]-1
         iterator+=(ib+1)*TrainParams[1]
         BatchImages=UF.LoadRenderImages(Sample,StartSeed,EndSeed)
-        t=model.train_on_batch(BatchImages[0],BatchImages[1])
+        t=model.train_on_batch(BatchImages[0],BatchImages[1],reset_metrics=False)
         print(t)
     return t,iterator
 def validate(model, device, sample):
