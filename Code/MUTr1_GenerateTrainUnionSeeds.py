@@ -638,6 +638,8 @@ while status<7:
            else:
               TrueSeedCorrection=RequiredTrueSeeds/TrueSeeds
            FakeSeedCorrection=RequiredFakeSeeds/(TotalImages-TrueSeeds)
+           T_temp=0
+           F_temp=0
            with alive_bar(len(JobSet),force_tty=True, title='Resampling the files...') as bar:
             for i in range(0,len(JobSet)):
 
@@ -653,7 +655,9 @@ while status<7:
                   gc.collect()
                   ExtractedTruth=random.sample(ExtractedTruth,int(round(TrueSeedCorrection*len(ExtractedTruth),0)))
                   ExtractedFake=random.sample(ExtractedFake,int(round(FakeSeedCorrection*len(ExtractedFake),0)))
-                  print(len(ExtractedTruth),len(ExtractedFake))
+                  T_temp+=len(ExtractedTruth)
+                  F_temp+=len(ExtractedFake)
+                  print(T_temp,F_temp)
                   TotalData=[]
                   TotalData=ExtractedTruth+ExtractedFake
                   print(UF.PickleOperations(output_file_location,'w',TotalData)[1])
