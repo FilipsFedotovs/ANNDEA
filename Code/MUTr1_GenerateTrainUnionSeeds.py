@@ -670,14 +670,14 @@ while status<7:
              JobSet.append([])
              for j in range(len(JobSets[i][3])):
                  JobSet[i].append(JobSets[i][3][j])
-           print(JobSet)
-           exit()
+
            for i in range(0,len(JobSet)):
                input_file_location=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/MUTr1d_'+TrainSampleID+'_SampledCompressedSeeds_'+str(i)+'.pkl'
                if os.path.isfile(input_file_location):
                   base_data=UF.PickleOperations(input_file_location,'r','N/A')
                   TotalData+=base_data
-
+           print(len(TotalData))
+           exit()
            del base_data
            gc.collect()
            ValidationSampleSize=int(round(min((len(TotalData)*float(PM.valRatio)),PM.MaxValSampleSize),0))
