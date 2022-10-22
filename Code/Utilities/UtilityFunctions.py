@@ -778,12 +778,12 @@ class EMO:
                    __Hits[0]=int(round(float(__Hits[0])/self.Resolution,0))
                    __Hits[1]=int(round(float(__Hits[1])/self.Resolution,0))
                    __Hits[2]=int(round(float(__Hits[2])/self.Resolution,0))
-                   self.TrackPrint.append(str(__Hits))
+                   self.TrackPrint.append(str(__Hits[:3]))
           for __Hits in __TempEnchTrack:
                    __Hits[0]=int(round(float(__Hits[0])/self.Resolution,0))
                    __Hits[1]=int(round(float(__Hits[1])/self.Resolution,0))
                    __Hits[2]=int(round(float(__Hits[2])/self.Resolution,0))
-                   self.TrackPrint.append(str(__Hits))
+                   self.TrackPrint.append(str(__Hits[:3]))
           self.TrackPrint=list(set(self.TrackPrint))
           for p in range(len(self.TrackPrint)):
                self.TrackPrint[p]=ast.literal_eval(self.TrackPrint[p])
