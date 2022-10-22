@@ -169,14 +169,15 @@ Meta=MetaInput[0]
 Model_Meta_Path=EOSsubModelDIR+'/'+args.ModelName+'_Meta'
 Model_Path=EOSsubModelDIR+'/'+args.ModelName
 ModelMeta=UF.PickleOperations(Model_Meta_Path, 'r', 'N/A')[0]
-ValFile=UF.PickleOperations(EOS_DIR+'/ANNADEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_TRACK_SEEDS_OUTPUT.pkl','r', 'N/A')[0]
+ValSamples=UF.PickleOperations(EOS_DIR+'/ANNADEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_TRACK_SEEDS_OUTPUT.pkl','r', 'N/A')[0]
 if ModelMeta.ModelType=='CNN':
    if len(ModelMeta.TrainSessionsData)==0:
-       TrainFile=UF.PickleOperations(EOS_DIR+'/ANNADEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_TRACK_SEEDS_OUTPUT_1.pkl','r', 'N/A')[0]
+       TrainSamples=UF.PickleOperations(EOS_DIR+'/ANNADEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_TRACK_SEEDS_OUTPUT_1.pkl','r', 'N/A')[0]
    else:
        print('WIP')
        exit()
-
+   NTrainBatches=math.ceil(float(len(TrainSamples))/float(TrainParams[2]))
+   NValBatches=math.ceil(float(len(ValSamples))/float(TrainParams[2]))
 # for i in range(1,Meta.no_sets+1):
 #         flocation=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/'+TrainSampleID+'_TH_OUTPUT_'+str(i)+'.pkl'
 #         print(UF.TimeStamp(),'Loading data from ',bcolors.OKBLUE+flocation+bcolors.ENDC)
@@ -217,7 +218,12 @@ def main(self):
     except:
         print(UF.TimeStamp(), bcolors.WARNING+"Model/state data files are missing, skipping this step..." +bcolors.ENDC)
         model = UF.GenerateModel(ModelMeta,TrainParams)
+    model.summary()
     print(model)
+
+
+
+
     # State_Save_Path=EOSsubModelDIR+'/'+args.ModelName+'_State'
     # Model_Meta_Path=EOSsubModelDIR+'/'+args.ModelName+'_Meta'
     # Model_Path=EOSsubModelDIR+'/'+args.ModelName
