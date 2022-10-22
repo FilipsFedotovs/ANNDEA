@@ -175,7 +175,6 @@ for j in range(0,len(JobSets)):
 
 ########################################     Preset framework parameters    #########################################
 FreshStart=True
-status=1
 def AutoPilot(wait_min, interval_min, max_interval_tolerance,AFS,EOS,path,o,pfx,sfx,ID,loop_params,OptionHeader,OptionLine,Sub_File,Exception=['',''], Log=False, GPU=False):
      print(UF.TimeStamp(),'Going on an autopilot mode for ',wait_min, 'minutes while checking HTCondor every',interval_min,'min',bcolors.ENDC)
      wait_sec=wait_min*60
@@ -234,6 +233,7 @@ if Mode=='RESET':
 else:
     print(UF.TimeStamp(),'There are 7 stages (0-6) of this script',status,bcolors.ENDC)
     print(UF.TimeStamp(),'Current status has a code',status,bcolors.ENDC)
+status=CheckStatus
 while status<7:
       if status==1:
           print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
@@ -421,7 +421,6 @@ while status<7:
                      new_output_file_location=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/MUTr1a_'+TrainSampleID+'_SelectedSeeds_'+str(i)+'_'+str(j)+'_'+str(k)+'.csv'
                      result[(k*MaxSeeds):min(Records_After_Compression,((k+1)*MaxSeeds))].to_csv(new_output_file_location,index=False)
                 print(UF.PickleOperations(TrainSampleOutputMeta,'w', Meta)[1])
-                print(JobSets)
         FreshStart=False
 
 
@@ -702,9 +701,9 @@ while status<7:
                  bar.text = f'-> Saving the file : {output_file_location}...'
                  bar()
            print(UF.TimeStamp(),'Performing the cleanup... ',bcolors.ENDC)
-           HTCondorTag="SoftUsed == \"ANNADEA-MUTra-"+TrainSampleID+"\""
+           HTCondorTag="SoftUsed == \"ANNADEA-MUTr1a-"+TrainSampleID+"\""
            UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MUTr1a_'+TrainSampleID, ['MUTr1a'], HTCondorTag)
-           HTCondorTag="SoftUsed == \"ANNADEA-MUTrb-"+TrainSampleID+"\""
+           HTCondorTag="SoftUsed == \"ANNADEA-MUTr1b-"+TrainSampleID+"\""
            UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MUTr1b_'+TrainSampleID, ['MUTr1b'], HTCondorTag)
            HTCondorTag="SoftUsed == \"ANNADEA-MUTr1c-"+TrainSampleID+"\""
            UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MUTr1c_'+TrainSampleID, ['MUTr1c'], HTCondorTag)
