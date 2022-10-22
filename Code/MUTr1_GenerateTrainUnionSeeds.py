@@ -232,7 +232,7 @@ if Mode=='RESET':
     FreshStart=False
     status=1
 else:
-    status=CheckStatus
+    status=CheckStatus()
 print(UF.TimeStamp(),'There are 8 stages (0-7) of this script',status,bcolors.ENDC)
 print(UF.TimeStamp(),'Current status has a stage',status,bcolors.ENDC)
 
