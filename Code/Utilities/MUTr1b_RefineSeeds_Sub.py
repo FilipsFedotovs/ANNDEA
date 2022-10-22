@@ -113,9 +113,6 @@ for s in range(0,limit):
          num_label = 0
      track.LabelSeed(num_label)
      track.Decorate(segments)
-     print(track.Hits)
-     print(track.Label)
-     exit()
      try:
        track.GetTrInfo()
      except:
@@ -128,7 +125,8 @@ for s in range(0,limit):
 #                if track.Track_CNN_Fit>=acceptance:
 #                   GoodTracks.append(track)
      if track.TrackQualityCheck(MaxDOCA,MaxSLG,MaxSTG, MaxAngle):
-           GoodTracks.append(track)
+           print(track.label)
+           GoodTracks.append(track.TrackQualityCheck)
      else:
          del track
          continue
