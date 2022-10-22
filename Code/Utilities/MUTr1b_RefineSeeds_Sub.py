@@ -106,13 +106,16 @@ for s in range(0,limit):
      print(track[:2])
      track=EMO(track[:2])
 
-     exit()
+
      if label:
          num_label = 1
      else:
          num_label = 0
      track.LabelSeed(num_label)
      track.Decorate(segments)
+     print(track.Hits)
+     print(track.Label)
+     exit()
      try:
        track.GetTrInfo()
      except:
