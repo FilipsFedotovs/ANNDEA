@@ -232,7 +232,7 @@ def main(self):
     #     train_loss, itr=CNNtrain(model, TrainSamples, NTrainBatches,ModelMeta.ModelParams)
     #     print(train_loss,itr)
     for epoch in range(0, 1):
-        train_loss, itr=CNNtrain(model, TrainSamples, 2,ModelMeta.ModelParams)
+        train_loss, itr=CNNtrain(model, TrainSamples, 2,ModelMeta.ModelParameters)
         print(train_loss,itr)
     #      train_loss, itr= train(model, device,TrainSamples, optimizer)
     #      thld, val_loss,val_acc = validate(model, device, ValSamples)
