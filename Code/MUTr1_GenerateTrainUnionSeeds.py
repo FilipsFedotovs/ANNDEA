@@ -230,10 +230,12 @@ if Mode=='RESET':
     HTCondorTag="SoftUsed == \"ANNADEA-MUTr1d-"+TrainSampleID+"\""
     UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MUTr1d_'+TrainSampleID, ['MUTr1d'], HTCondorTag)
     FreshStart=False
+    status=1
 else:
-    print(UF.TimeStamp(),'There are 7 stages (0-6) of this script',status,bcolors.ENDC)
-    print(UF.TimeStamp(),'Current status has a code',status,bcolors.ENDC)
-status=CheckStatus
+    status=CheckStatus
+print(UF.TimeStamp(),'There are 8 stages (0-7) of this script',status,bcolors.ENDC)
+print(UF.TimeStamp(),'Current status has a stage',status,bcolors.ENDC)
+
 while status<7:
       if status==1:
           print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
