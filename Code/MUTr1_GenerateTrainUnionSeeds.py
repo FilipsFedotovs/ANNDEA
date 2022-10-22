@@ -653,9 +653,7 @@ while status<7:
                   gc.collect()
                   ExtractedTruth=random.sample(ExtractedTruth,int(round(TrueSeedCorrection*len(ExtractedTruth),0)))
                   ExtractedFake=random.sample(ExtractedFake,int(round(FakeSeedCorrection*len(ExtractedFake),0)))
-                  print(len(ExtractedTruth))
-                  print(len(ExtractedFake))
-                  exit()
+                  print(len(ExtractedTruth),len(ExtractedFake))
                   TotalData=[]
                   TotalData=ExtractedTruth+ExtractedFake
                   print(UF.PickleOperations(output_file_location,'w',TotalData)[1])
@@ -664,6 +662,7 @@ while status<7:
                   del ExtractedFake
                   gc.collect()
            print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 5 has successfully completed'+bcolors.ENDC)
+           exit()
            status=6
       if status==6:
            print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
