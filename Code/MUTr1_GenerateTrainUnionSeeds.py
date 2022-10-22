@@ -686,7 +686,7 @@ while status<7:
            TotalData=TotalData[ValidationSampleSize:]
            print(UF.TimeStamp(), bcolors.OKGREEN+"Validation Set has been saved at ",bcolors.OKBLUE+output_file_location+bcolors.ENDC,bcolors.OKGREEN+'file...'+bcolors.ENDC)
            No_Train_Files=int(math.ceil(len(TotalData)/TrainSampleSize))
-           print(len(ValidationSampleSize))
+           print(ValidationSampleSize)
            print(len(TotalData))
            print(TrainSampleSize)
            with alive_bar(No_Train_Files,force_tty=True, title='Resampling the files...') as bar:
