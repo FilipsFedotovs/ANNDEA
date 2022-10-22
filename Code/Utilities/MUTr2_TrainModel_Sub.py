@@ -189,8 +189,8 @@ if ModelMeta.ModelType=='CNN':
    for ts in TrainSamples[:10]:
        ts.PrepareTrackPrint(ModelMeta)
    print(TrainSamples[0].TrackPrint)
-   print(TrainSamples[1].Label)
-   TrainSamples[1].Plot('XZ')
+   print(TrainSamples[2].Label)
+   TrainSamples[2].Plot('XZ')
 
    exit()
 # for i in range(1,Meta.no_sets+1):
