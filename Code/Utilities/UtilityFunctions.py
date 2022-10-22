@@ -1187,7 +1187,7 @@ def GenerateModel(ModelMeta,TrainParams=None):
             model = TCN(ModelMeta.num_node_features, ModelMeta.num_edge_features, ModelMeta.ModelParameters[3])
             return model
       elif ModelMeta.ModelFramework=='Tensorflow':
-          if ModelMeta.ModelArchitecture=='CNN':
+          if ModelMeta.ModelType=='CNN':
             act_fun_list=['N/A','linear','exponential','elu','relu', 'selu','sigmoid','softmax','softplus','softsign','tanh']
 
             import tensorflow as tf
