@@ -1186,8 +1186,28 @@ def GenerateModel(ModelMeta):
                      return edge_weights
             model = TCN(ModelMeta.num_node_features, ModelMeta.num_edge_features, ModelMeta.ModelParameters[3])
             return model
-
-
+      elif ModelMeta.ModelFramework=='Tensorflow':
+        import tensorflow as tf
+        from tensorflow import keras
+        from keras.models import Sequential
+        from keras.layers import Dense, Flatten, Conv3D, MaxPooling3D, Dropout, BatchNormalization
+        from keras.optimizers import adam
+        from keras import callbacks
+        from keras import backend as K
+        HiddenLayer=[]
+        FullyConnectedLayer=[]
+        OutputLayer=[]
+        for el in ModelMeta.ModelParameters:
+          if ModelMeta.ModelParameters.index(el)<=4 and len(el)>0:
+             HiddenLayer.append(el)
+          elif ModelMeta.ModelParameters.index(el)<=9 and len(el)>0:
+             FullyConnectedLayer.append(el)
+          elif ModelMeta.ModelParameters.index(el)==10 and len(el)>0:
+             OutputLayer.append(el)
+        print(HiddenLayer)
+        print(FullyConnectedLayer)
+        print(OutputLayer)
+        exit()
 def CleanFolder(folder,key):
     if key=='':
       for the_file in os.listdir(folder):
