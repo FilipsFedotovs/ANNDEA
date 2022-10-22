@@ -103,8 +103,9 @@ for s in range(0,limit):
 
      label=track[2]
      print(label)
-     track=EMO(track[:2])
      print(track[:2])
+     track=EMO(track[:2])
+
      exit()
      if label:
          num_label = 1
