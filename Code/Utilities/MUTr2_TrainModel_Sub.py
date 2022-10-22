@@ -32,15 +32,20 @@ parser.add_argument('--ModelParams',help="Please enter the model params: '[<Numb
 parser.add_argument('--TrainParams',help="Please enter the train params: '[<Session No>, <Learning Rate>, <Batch size>, <Epochs>]'", default='[1, 0.0001, 4, 10]')
 parser.add_argument('--AFS',help="Please enter the user afs directory", default='.')
 parser.add_argument('--EOS',help="Please enter the user eos directory", default='.')
-parser.add_argument('--TrainSampleID',help="Give name of the training ", default='SHIP_TrainSample_v1')
+parser.add_argument('--BatchID',help="Give name of the training ", default='SHIP_TrainSample_v1')
 parser.add_argument('--ModelName',help="Name of the model", default='1T_MC_1_model')
+parser.add_argument('--i',help="Set number", default='1')
+parser.add_argument('--p',help="Path to the output file", default='')
+parser.add_argument('--o',help="Path to the output file name", default='')
+parser.add_argument('--pfx',help="Path to the output file name", default='')
+parser.add_argument('--sfx',help="Path to the output file name", default='')
 parser.add_argument('--no-cuda', action='store_true', default=False,
                         help='disables CUDA training')
 ########################################     Initialising Variables    #########################################
 args = parser.parse_args()
 ModelParams=ast.literal_eval(args.ModelParams)
 TrainParams=ast.literal_eval(args.TrainParams)
-TrainSampleID=args.TrainSampleID
+TrainSampleID=args.BatchID
 ##################################   Loading Directory locations   ##################################################
 AFS_DIR=args.AFS
 EOS_DIR=args.EOS
