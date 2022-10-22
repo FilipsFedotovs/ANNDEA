@@ -232,7 +232,7 @@ def main(self):
     #     print(train_loss,itr)
     # exit()
     for epoch in range(0, 1):
-        train_loss, itr=CNNtrain(model, TrainSamples, 2)
+        train_loss, itr=CNNtrain(model, TrainSamples, 100)
         print(train_loss,itr)
         exit()
     #      train_loss, itr= train(model, device,TrainSamples, optimizer)
