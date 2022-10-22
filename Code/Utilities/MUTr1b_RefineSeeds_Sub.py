@@ -124,7 +124,6 @@ for s in range(0,limit):
 #                   GoodTracks.append(track)
      if track.TrackQualityCheck(MaxDOCA,MaxSLG,MaxSTG, MaxAngle):
            pos_label+=track.Label
-           print(pos_label)
            GoodTracks.append(track.TrackQualityCheck)
      else:
          del track

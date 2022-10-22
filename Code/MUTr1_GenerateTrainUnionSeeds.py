@@ -222,7 +222,7 @@ if Mode=='RESET':
 else:
     print(UF.TimeStamp(),'There are 7 stages (0-6) of this script',status,bcolors.ENDC)
     print(UF.TimeStamp(),'Current status has a code',status,bcolors.ENDC)
-
+status=5
 while status<7:
       if status==1:
           print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
@@ -612,6 +612,9 @@ while status<7:
            Temp_Stats=UF.LogOperations(EOS_DIR+'/ANNADEA/Data/TRAIN_SET/MUTr1c_'+TrainSampleID+'_Temp_Stats.csv','r', '_')
            TotalImages=int(Temp_Stats[0][0])
            TrueSeeds=int(Temp_Stats[0][1])
+           print(TotalImages)
+           print(TrueSeeds)
+           exit()
            JobSet=[]
            for i in range(len(JobSets)):
              JobSet.append([])
