@@ -8,7 +8,6 @@
 import argparse
 import math
 import ast
-import os
 import numpy as np
 import torch
 from torch import optim
@@ -198,7 +197,9 @@ print(UF.TimeStamp(), bcolors.OKGREEN+"Train and Validation data has loaded and 
 def main(self):
     print(UF.TimeStamp(),'Starting the training process... ')
     if ModelMeta.ModelType=='CNN':
+        import os
         os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # FATAL
+        import logging
         logging.getLogger('tensorflow').setLevel(logging.FATAL)
         import warnings
         warnings.simplefilter(action='ignore', category=FutureWarning)
