@@ -642,7 +642,6 @@ while status<7:
            F_temp=0
            with alive_bar(len(JobSet),force_tty=True, title='Resampling the files...') as bar:
             for i in range(0,len(JobSet)):
-
               output_file_location=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/MUTr1d_'+TrainSampleID+'_SampledCompressedSeeds_'+str(i)+'.pkl'
               input_file_location=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/MUTr1c_'+TrainSampleID+'_CompressedSeeds_'+str(i)+'.pkl'
               bar.text = f'-> Resampling the file : {input_file_location}, exists...'
@@ -655,11 +654,9 @@ while status<7:
                   gc.collect()
                   ExtractedTruth=random.sample(ExtractedTruth,int(round(TrueSeedCorrection*len(ExtractedTruth),0)))
                   ExtractedFake=random.sample(ExtractedFake,int(round(FakeSeedCorrection*len(ExtractedFake),0)))
-                  T_temp+=len(ExtractedTruth)
-                  F_temp+=len(ExtractedFake)
-                  print(T_temp,F_temp)
                   TotalData=[]
                   TotalData=ExtractedTruth+ExtractedFake
+                  print(len(TotalData))
                   print(UF.PickleOperations(output_file_location,'w',TotalData)[1])
                   del TotalData
                   del ExtractedTruth
