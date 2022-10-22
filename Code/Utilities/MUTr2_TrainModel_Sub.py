@@ -176,63 +176,81 @@ if ModelMeta.ModelType=='CNN':
        print('WIP')
        exit()
 
-print(ValFile)
-print(len(TrainFile))
-exit()
-for i in range(1,Meta.no_sets+1):
-        flocation=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/'+TrainSampleID+'_TH_OUTPUT_'+str(i)+'.pkl'
-        print(UF.TimeStamp(),'Loading data from ',bcolors.OKBLUE+flocation+bcolors.ENDC)
-        TrainClusters=UF.PickleOperations(flocation,'r', 'N/A')
-        TrainClusters=TrainClusters[0]
-        TrainFraction=int(math.floor(len(TrainClusters)*(1.0-(Meta.testRatio+Meta.valRatio))))
-        ValFraction=int(math.ceil(len(TrainClusters)*Meta.valRatio))
-        for smpl in range(0,TrainFraction):
-           if TrainClusters[smpl].ClusterGraph.num_edges>0:
-             TrainSamples.append(TrainClusters[smpl].ClusterGraph)
-        for smpl in range(TrainFraction,TrainFraction+ValFraction):
-            if TrainClusters[smpl].ClusterGraph.num_edges>0:
-             ValSamples.append(TrainClusters[smpl].ClusterGraph)
-        for smpl in range(TrainFraction+ValFraction,len(TrainClusters)):
-            if TrainClusters[smpl].ClusterGraph.num_edges>0:
-             TestSamples.append(TrainClusters[smpl].ClusterGraph)
-print(UF.TimeStamp(), bcolors.OKGREEN+"Train data has loaded and analysed successfully..."+bcolors.ENDC)
+# for i in range(1,Meta.no_sets+1):
+#         flocation=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/'+TrainSampleID+'_TH_OUTPUT_'+str(i)+'.pkl'
+#         print(UF.TimeStamp(),'Loading data from ',bcolors.OKBLUE+flocation+bcolors.ENDC)
+#         TrainClusters=UF.PickleOperations(flocation,'r', 'N/A')
+#         TrainClusters=TrainClusters[0]
+#         TrainFraction=int(math.floor(len(TrainClusters)*(1.0-(Meta.testRatio+Meta.valRatio))))
+#         ValFraction=int(math.ceil(len(TrainClusters)*Meta.valRatio))
+#         for smpl in range(0,TrainFraction):
+#            if TrainClusters[smpl].ClusterGraph.num_edges>0:
+#              TrainSamples.append(TrainClusters[smpl].ClusterGraph)
+#         for smpl in range(TrainFraction,TrainFraction+ValFraction):
+#             if TrainClusters[smpl].ClusterGraph.num_edges>0:
+#              ValSamples.append(TrainClusters[smpl].ClusterGraph)
+#         for smpl in range(TrainFraction+ValFraction,len(TrainClusters)):
+#             if TrainClusters[smpl].ClusterGraph.num_edges>0:
+#              TestSamples.append(TrainClusters[smpl].ClusterGraph)
+print(UF.TimeStamp(), bcolors.OKGREEN+"Train and Validation data has loaded and analysed successfully..."+bcolors.ENDC)
 
 def main(self):
     print(UF.TimeStamp(),'Starting the training process... ')
-    State_Save_Path=EOSsubModelDIR+'/'+args.ModelName+'_State'
-    Model_Meta_Path=EOSsubModelDIR+'/'+args.ModelName+'_Meta'
-    Model_Path=EOSsubModelDIR+'/'+args.ModelName
-    ModelMeta=UF.PickleOperations(Model_Meta_Path, 'r', 'N/A')[0]
-    device = torch.device('cpu')
-    model = UF.GenerateModel(ModelMeta).to(device)
-    optimizer = optim.Adam(model.parameters(), lr=TrainParams[0])
-    scheduler = StepLR(optimizer, step_size=0.1,gamma=0.1)
-    print(UF.TimeStamp(),'Try to load the previously saved model/optimiser state files ')
-    try:
-           model.load_state_dict(torch.load(Model_Path))
-           checkpoint = torch.load(State_Save_Path)
-           optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
-           scheduler.load_state_dict(checkpoint['scheduler'])
-    except:
-           print(UF.TimeStamp(), bcolors.WARNING+"Model/state data files are missing, skipping this step..." +bcolors.ENDC)
-    records=[]
-    for epoch in range(0, TrainParams[2]):
-         train_loss, itr= train(model, device,TrainSamples, optimizer)
-         thld, val_loss,val_acc = validate(model, device, ValSamples)
-         test_loss, test_acc = test(model, device,TestSamples, thld)
-         scheduler.step()
-         print(UF.TimeStamp(),'Epoch ',epoch, ' is completed')
-         records.append([epoch,itr,train_loss,thld,val_loss,val_acc,test_loss,test_acc])
-         torch.save({    'epoch': epoch,
-                      'optimizer_state_dict': optimizer.state_dict(),
-                      'scheduler': scheduler.state_dict(),    # HERE IS THE CHANGE
-                      }, State_Save_Path)
-    torch.save(model.state_dict(), Model_Path)
-    Header=[['Epoch','# Samples','Train Loss','Optimal Threshold','Validation Loss','Validation Accuracy','Test Loss','Test Accuracy']]
-    Header+=records
-    ModelMeta.CompleteTrainingSession(Header)
-    print(UF.PickleOperations(Model_Meta_Path, 'w', ModelMeta)[1])
-    exit()
+    if ModelMeta.ModelType=='CNN':
+        os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # FATAL
+        logging.getLogger('tensorflow').setLevel(logging.FATAL)
+        import warnings
+        warnings.simplefilter(action='ignore', category=FutureWarning)
+        import tensorflow as tf
+        from tensorflow import keras
+        from keras.models import Sequential
+        from keras.layers import Dense, Flatten, Conv3D, MaxPooling3D, Dropout, BatchNormalization
+        from keras.optimizers import adam
+        from keras import callbacks
+        from keras import backend as K
+        print('Model lib import')
+        exit()
+     # try:
+     #        model.load_state_dict(torch.load(Model_Path))
+     #        checkpoint = torch.load(State_Save_Path)
+     #        optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
+     #        scheduler.load_state_dict(checkpoint['scheduler'])
+     # except:
+     #        print(UF.TimeStamp(), bcolors.WARNING+"Model/state data files are missing, skipping this step..." +bcolors.ENDC)
+    # State_Save_Path=EOSsubModelDIR+'/'+args.ModelName+'_State'
+    # Model_Meta_Path=EOSsubModelDIR+'/'+args.ModelName+'_Meta'
+    # Model_Path=EOSsubModelDIR+'/'+args.ModelName
+    # ModelMeta=UF.PickleOperations(Model_Meta_Path, 'r', 'N/A')[0]
+    # device = torch.device('cpu')
+    # model = UF.GenerateModel(ModelMeta).to(device)
+    # optimizer = optim.Adam(model.parameters(), lr=TrainParams[0])
+    # scheduler = StepLR(optimizer, step_size=0.1,gamma=0.1)
+    # print(UF.TimeStamp(),'Try to load the previously saved model/optimiser state files ')
+    # try:
+    #        model.load_state_dict(torch.load(Model_Path))
+    #        checkpoint = torch.load(State_Save_Path)
+    #        optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
+    #        scheduler.load_state_dict(checkpoint['scheduler'])
+    # except:
+    #        print(UF.TimeStamp(), bcolors.WARNING+"Model/state data files are missing, skipping this step..." +bcolors.ENDC)
+    # records=[]
+    # for epoch in range(0, TrainParams[2]):
+    #      train_loss, itr= train(model, device,TrainSamples, optimizer)
+    #      thld, val_loss,val_acc = validate(model, device, ValSamples)
+    #      test_loss, test_acc = test(model, device,TestSamples, thld)
+    #      scheduler.step()
+    #      print(UF.TimeStamp(),'Epoch ',epoch, ' is completed')
+    #      records.append([epoch,itr,train_loss,thld,val_loss,val_acc,test_loss,test_acc])
+    #      torch.save({    'epoch': epoch,
+    #                   'optimizer_state_dict': optimizer.state_dict(),
+    #                   'scheduler': scheduler.state_dict(),    # HERE IS THE CHANGE
+    #                   }, State_Save_Path)
+    # torch.save(model.state_dict(), Model_Path)
+    # Header=[['Epoch','# Samples','Train Loss','Optimal Threshold','Validation Loss','Validation Accuracy','Test Loss','Test Accuracy']]
+    # Header+=records
+    # ModelMeta.CompleteTrainingSession(Header)
+    # print(UF.PickleOperations(Model_Meta_Path, 'w', ModelMeta)[1])
+    # exit()
 if __name__ == '__main__':
      main(sys.argv[1:])
 
