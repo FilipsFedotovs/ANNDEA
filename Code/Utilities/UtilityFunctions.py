@@ -1194,7 +1194,7 @@ def GenerateModel(ModelMeta,TrainParams=None):
             from tensorflow import keras
             from keras.models import Sequential
             from keras.layers import Dense, Flatten, Conv3D, MaxPooling3D, Dropout, BatchNormalization
-            from keras.optimizers import adam
+            from keras.optimizers import Adam
             from keras import callbacks
             from keras import backend as K
             HiddenLayer=[]
@@ -1241,7 +1241,7 @@ def GenerateModel(ModelMeta,TrainParams=None):
             decay_steps=100000,
             decay_rate=0.96,
             staircase=False)
-            opt = adam(learning_rate=lr_schedule)
+            opt = Adam(learning_rate=lr_schedule)
      # Compile the model
             model.compile(loss='categorical_crossentropy',optimizer=opt,metrics=['accuracy'])
             return model
