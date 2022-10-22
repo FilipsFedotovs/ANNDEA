@@ -186,7 +186,7 @@ if ModelMeta.ModelType=='CNN':
        exit()
    NTrainBatches=math.ceil(float(len(TrainSamples))/float(TrainParams[2]))
    NValBatches=math.ceil(float(len(ValSamples))/float(TrainParams[2]))
-   for ts in TrainSamples[:10]:
+   for ts in TrainSamples:
        ts.PrepareTrackPrint(ModelMeta)
 
 # for i in range(1,Meta.no_sets+1):
@@ -218,10 +218,6 @@ def main(self):
         warnings.simplefilter(action='ignore', category=FutureWarning)
         import tensorflow as tf
         from tensorflow import keras
-        from keras.models import Sequential
-        from keras.layers import Dense, Flatten, Conv3D, MaxPooling3D, Dropout, BatchNormalization
-        from keras.optimizers import adam
-        from keras import callbacks
         from keras import backend as K
     try:
         print(EOSsubModelDIR+'/'+ModelName)
