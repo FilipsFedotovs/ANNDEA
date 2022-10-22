@@ -227,13 +227,14 @@ def main(self):
         print(UF.TimeStamp(), bcolors.WARNING+"Model/state data files are missing, skipping this step..." +bcolors.ENDC)
         model = UF.GenerateModel(ModelMeta,TrainParams)
     model.summary()
-    for epoch in range(0, TrainParams[2]):
-        train_loss, itr=CNNtrain(model, TrainSamples, NTrainBatches)
-        print(train_loss,itr)
-    exit()
-    # for epoch in range(0, 1):
-    #     train_loss, itr=CNNtrain(model, TrainSamples, 2,ModelMeta)
+    # for epoch in range(0, TrainParams[2]):
+    #     train_loss, itr=CNNtrain(model, TrainSamples, NTrainBatches)
     #     print(train_loss,itr)
+    # exit()
+    for epoch in range(0, 1):
+        train_loss, itr=CNNtrain(model, TrainSamples, 2,ModelMeta)
+        print(train_loss,itr)
+        exit()
     #      train_loss, itr= train(model, device,TrainSamples, optimizer)
     #      thld, val_loss,val_acc = validate(model, device, ValSamples)
     #      test_loss, test_acc = test(model, device,TestSamples, thld)
