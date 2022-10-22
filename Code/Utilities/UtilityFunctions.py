@@ -822,7 +822,7 @@ class EMO:
             return pA,pB,np.linalg.norm(pA-pB)
       
 
-def GenerateModel(ModelMeta):
+def GenerateModel(ModelMeta,TrainParams=None):
       if ModelMeta.ModelFramework=='PyTorch':
          import torch
          import torch.nn as nn
@@ -1187,6 +1187,8 @@ def GenerateModel(ModelMeta):
             model = TCN(ModelMeta.num_node_features, ModelMeta.num_edge_features, ModelMeta.ModelParameters[3])
             return model
       elif ModelMeta.ModelFramework=='Tensorflow':
+        act_fun_list=['N/A','linear','exponential','elu','relu', 'selu','sigmoid','softmax','softplus','softsign','tanh']
+
         import tensorflow as tf
         from tensorflow import keras
         from keras.models import Sequential
@@ -1197,6 +1199,7 @@ def GenerateModel(ModelMeta):
         HiddenLayer=[]
         FullyConnectedLayer=[]
         OutputLayer=[]
+        ImageLayer=[]
         for el in ModelMeta.ModelParameters:
           if ModelMeta.ModelParameters.index(el)<=4 and len(el)>0:
              HiddenLayer.append(el)
@@ -1204,9 +1207,37 @@ def GenerateModel(ModelMeta):
              FullyConnectedLayer.append(el)
           elif ModelMeta.ModelParameters.index(el)==10 and len(el)>0:
              OutputLayer.append(el)
-        print(HiddenLayer)
-        print(FullyConnectedLayer)
-        print(OutputLayer)
+          elif ModelMeta.ModelParameters.index(el)==11 and len(el)>0:
+             ImageLayer.append(el)
+        H=int(round(ImageLayer[0]/ImageLayer[3],0))*2
+        W=int(round(ImageLayer[1]/ImageLayer[3],0))*2
+        L=int(round(ImageLayer[2]/ImageLayer[3],0))
+        model = Sequential()
+        for HL in HiddenLayer:
+                 Nodes=HL[0]*16
+                 KS=(HL[2]*2)+1
+                 PS=HL[3]
+                 DR=float(HL[6]-1)/10.0
+                 if HiddenLayer.index(HL)==0:
+                    model.add(Conv3D(Nodes, activation=act_fun_list[HL[1]],kernel_size=(KS,KS,KS),kernel_initializer='he_uniform', input_shape=(H,W,L,1)))
+                 else:
+                    model.add(Conv3D(Nodes, activation=act_fun_list[HL[1]],kernel_size=(KS,KS,KS),kernel_initializer='he_uniform'))
+                 if PS>1:
+                    model.add(MaxPooling3D(pool_size=(PS, PS, PS)))
+                 model.add(BatchNormalization(center=HL[4]>1, scale=HL[5]>1))
+                 model.add(Dropout(DR))
+        model.add(Flatten())
+        for FC in FullyConnectedLayer:
+                     Nodes=4**FC[0]
+                     DR=float(FC[2]-1)/10.0
+                     model.add(Dense(Nodes, activation=act_fun_list[FC[1]], kernel_initializer='he_uniform'))
+                     model.add(Dropout(DR))
+        model.add(Dense(OutputLayer[1], activation=act_fun_list[OutputLayer[0]]))
+        opt = adam(learning_rate=10**(-int(TrainParams[3])))
+ # Compile the model
+        model.compile(loss='categorical_crossentropy',optimizer=opt,metrics=['accuracy'])
+        model.summary()
+        print(model.optimizer.get_config())
         exit()
 def CleanFolder(folder,key):
     if key=='':
