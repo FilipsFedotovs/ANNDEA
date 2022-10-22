@@ -1594,14 +1594,14 @@ def LoadRenderImages(Tracks,StartTrack,EndTrack,ModelMeta):
         else:
            ImagesY[im]=0
         BlankRenderedImage=[]
-        for x in range(-H/2,H/2):
-          for y in range(-W/2,W/2):
+        for x in range(-int(H/2),int(H/2)):
+          for y in range(-int(W/2),int(W/2)):
             for z in range(0,L):
              BlankRenderedImage.append(0)
         RenderedImage = np.array(BlankRenderedImage)
         RenderedImage = np.reshape(RenderedImage,(H,W,L))
         for Hits in NewTracks[im].TrackPrint:
-                   RenderedImage[Hits[0]+(H/2)][Hits[1]+W/2][Hits[2]]=1
+                   RenderedImage[Hits[0]+(int(H/2))][Hits[1]+int(W/2)][Hits[2]]=1
         ImagesX[im]=RenderedImage
     ImagesX= ImagesX[..., np.newaxis]
     ImagesY=tf.keras.utils.to_categorical(ImagesY,ModelMeta.ModelParameters[10][1])
