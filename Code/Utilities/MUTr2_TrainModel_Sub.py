@@ -109,13 +109,13 @@ def train(model, device, sample, optimizer):
         losses_w.append(loss_w.item())
     loss_w = np.nanmean(losses_w)
     return loss_w,iterator
-def CNNtrain(model, Sample, Batches,MM):
+def CNNtrain(model, Sample, Batches):
     iterator=0
     for ib in range(0,Batches):
         StartSeed=(ib*TrainParams[1])+1
         EndSeed=StartSeed+TrainParams[1]-1
         iterator+=(EndSeed-StartSeed)
-        BatchImages=UF.LoadRenderImages(Sample,StartSeed,EndSeed,MM)
+        BatchImages=UF.LoadRenderImages(Sample,StartSeed,EndSeed)
         t=model.train_on_batch(BatchImages[0],BatchImages[1])
     return t,iterator
 def validate(model, device, sample):
@@ -188,11 +188,7 @@ if ModelMeta.ModelType=='CNN':
    NValBatches=math.ceil(float(len(ValSamples))/float(TrainParams[2]))
    for ts in TrainSamples[:10]:
        ts.PrepareTrackPrint(ModelMeta)
-   print(TrainSamples[0].TrackPrint)
 
-   TrainSamples[5].Plot('XZ')
-   print(TrainSamples[5].Label)
-   exit()
 # for i in range(1,Meta.no_sets+1):
 #         flocation=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/'+TrainSampleID+'_TH_OUTPUT_'+str(i)+'.pkl'
 #         print(UF.TimeStamp(),'Loading data from ',bcolors.OKBLUE+flocation+bcolors.ENDC)
@@ -235,9 +231,9 @@ def main(self):
         print(UF.TimeStamp(), bcolors.WARNING+"Model/state data files are missing, skipping this step..." +bcolors.ENDC)
         model = UF.GenerateModel(ModelMeta,TrainParams)
     model.summary()
-    # for epoch in range(0, TrainParams[2]):
-    #     train_loss, itr=CNNtrain(model, TrainSamples, NTrainBatches,ModelMeta.ModelParams)
-    #     print(train_loss,itr)
+    for epoch in range(0, TrainParams[2]):
+        train_loss, itr=CNNtrain(model, TrainSamples, NTrainBatches)
+        print(train_loss,itr)
     exit()
     # for epoch in range(0, 1):
     #     train_loss, itr=CNNtrain(model, TrainSamples, 2,ModelMeta)
