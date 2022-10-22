@@ -99,8 +99,13 @@ GoodTracks=[]
 print(UF.TimeStamp(),'Beginning the sample generation part...')
 for s in range(0,limit):
      track=tracks.pop(0)
+     print(track)
+
      label=track[2]
+     print(label)
      track=EMO(track[:2])
+     print(track[:2])
+     exit()
      if label:
          num_label = 1
      else:
