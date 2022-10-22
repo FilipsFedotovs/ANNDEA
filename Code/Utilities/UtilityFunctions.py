@@ -1235,7 +1235,7 @@ def GenerateModel(ModelMeta,TrainParams=None):
                          model.add(Dense(Nodes, activation=act_fun_list[FC[1]], kernel_initializer='he_uniform'))
                          model.add(Dropout(DR))
             model.add(Dense(OutputLayer[1], activation=act_fun_list[OutputLayer[0]]))
-            opt = Adam(learning_rate=TrainParams[1])
+            opt = Adam(learning_rate=TrainParams[0])
      # Compile the model
             model.compile(loss='categorical_crossentropy',optimizer=opt,metrics=['accuracy'])
             return model

@@ -109,7 +109,15 @@ def train(model, device, sample, optimizer):
         losses_w.append(loss_w.item())
     loss_w = np.nanmean(losses_w)
     return loss_w,iterator
-
+def CNNtrain(model, Sample, Batches,MP):
+    iterator=0
+    for ib in range(0,Batches):
+        StartSeed=(ib*TrainParams[1])+1
+        EndSeed=StartSeed+TrainParams[1]-1
+        iterator+=(EndSeed-StartSeed)
+        BatchImages=UF.LoadRenderImages(Sample,StartSeed,EndSeed,MP[10][1])
+        t=model.train_on_batch(BatchImages[0],BatchImages[1])
+    return t,iterator
 def validate(model, device, sample):
     model.eval()
     opt_thlds, accs, losses = [], [], []
@@ -215,12 +223,23 @@ def main(self):
     try:
         print(EOSsubModelDIR+'/'+ModelName)
         model=tf.keras.models.load_model(EOSsubModelDIR+ModelName)
+        K.set_value(model.optimizer.learning_rate, TrainParams[1])
     except:
         print(UF.TimeStamp(), bcolors.WARNING+"Model/state data files are missing, skipping this step..." +bcolors.ENDC)
         model = UF.GenerateModel(ModelMeta,TrainParams)
     model.summary()
-    print(model)
-
+    # for epoch in range(0, TrainParams[2]):
+    #     train_loss, itr=CNNtrain(model, TrainSamples, NTrainBatches,ModelMeta.ModelParams)
+    #     print(train_loss,itr)
+    for epoch in range(0, 1):
+        train_loss, itr=CNNtrain(model, TrainSamples, 2,ModelMeta.ModelParams)
+        print(train_loss,itr)
+    #      train_loss, itr= train(model, device,TrainSamples, optimizer)
+    #      thld, val_loss,val_acc = validate(model, device, ValSamples)
+    #      test_loss, test_acc = test(model, device,TestSamples, thld)
+    #      scheduler.step()
+    #      print(UF.TimeStamp(),'Epoch ',epoch, ' is completed')
+    #      records.append([epoch,itr,train_loss,thld,val_loss,val_acc,test_loss,test_acc])
 
 
 
