@@ -170,7 +170,7 @@ Model_Path=EOSsubModelDIR+'/'+args.ModelName
 ModelMeta=UF.PickleOperations(Model_Meta_Path, 'r', 'N/A')[0]
 ValFile=UF.PickleOperations(EOS_DIR+'/ANNADEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_TRACK_SEEDS_OUTPUT.pkl','r', 'N/A')[0]
 if ModelMeta.ModelType=='CNN':
-   if len(ModelMeta.TrainSessionsData==0):
+   if len(ModelMeta.TrainSessionsData)==0:
        TrainFile=UF.PickleOperations(EOS_DIR+'/ANNADEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_TRACK_SEEDS_OUTPUT_1.pkl','r', 'N/A')[0]
    else:
        print('WIP')
