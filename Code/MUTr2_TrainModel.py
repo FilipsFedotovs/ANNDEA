@@ -134,8 +134,8 @@ def AutoPilot(wait_min, interval_min, max_interval_tolerance):
 if Mode=='RESET':
  HTCondorTag="SoftUsed == \"ANNADEA-MUTr2-"+ModelName+"\""
  UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MUTr2', [ModelName], HTCondorTag)
- OptionHeader = [' --ModelParams ', ' --TrainParams ', " --TrainSampleID ", " --ModelName "]
- OptionLine = [ModelParamsStr, TrainParamsStr, TrainSampleID, ModelName]
+ OptionHeader = [' --ModelParams ', ' --TrainParams ', " --ModelName "]
+ OptionLine = [ModelParamsStr, TrainParamsStr, ModelName]
  if ModelType=='CNN':
     Job=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,'/ANNADEA/Data/TRAIN_SET/','N/A','MUTr2','N/A',TrainSampleID,1,OptionHeader,OptionLine,'MUTr2_TrainModel_Sub.py',False,"['','']", True, True)[0]
  else:

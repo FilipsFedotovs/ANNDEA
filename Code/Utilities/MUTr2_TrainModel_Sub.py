@@ -160,15 +160,16 @@ def test(model, device, sample, thld):
             losses.append(loss.item())
     return np.nanmean(losses), np.nanmean(accs)
 
-print('here')
 TrainSampleInputMeta=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/'+TrainSampleID+'_info.pkl'
 print(UF.TimeStamp(),'Loading the data file ',bcolors.OKBLUE+TrainSampleInputMeta+bcolors.ENDC)
 MetaInput=UF.PickleOperations(TrainSampleInputMeta,'r', 'N/A')
 print(MetaInput[1])
 Meta=MetaInput[0]
-TrainSamples=[]
-ValSamples=[]
-TestSamples=[]
+Model_Meta_Path=EOSsubModelDIR+'/'+args.ModelName+'_Meta'
+Model_Path=EOSsubModelDIR+'/'+args.ModelName
+ModelMeta=UF.PickleOperations(Model_Meta_Path, 'r', 'N/A')[0]
+print(vars(ModelMeta))
+exit()
 for i in range(1,Meta.no_sets+1):
         flocation=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/'+TrainSampleID+'_TH_OUTPUT_'+str(i)+'.pkl'
         print(UF.TimeStamp(),'Loading data from ',bcolors.OKBLUE+flocation+bcolors.ENDC)
