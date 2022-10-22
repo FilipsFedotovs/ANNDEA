@@ -46,6 +46,7 @@ args = parser.parse_args()
 ModelParams=ast.literal_eval(args.ModelParams)
 TrainParams=ast.literal_eval(args.TrainParams)
 TrainSampleID=args.BatchID
+ModelName=args.ModelName
 ##################################   Loading Directory locations   ##################################################
 AFS_DIR=args.AFS
 EOS_DIR=args.EOS
@@ -210,15 +211,11 @@ def main(self):
         from keras.optimizers import adam
         from keras import callbacks
         from keras import backend as K
-        print('Model lib import')
-        exit()
-     # try:
-     #        model.load_state_dict(torch.load(Model_Path))
-     #        checkpoint = torch.load(State_Save_Path)
-     #        optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
-     #        scheduler.load_state_dict(checkpoint['scheduler'])
-     # except:
-     #        print(UF.TimeStamp(), bcolors.WARNING+"Model/state data files are missing, skipping this step..." +bcolors.ENDC)
+    try:
+        print(EOSsubModelDIR+'/'+ModelName)
+        model=tf.keras.models.load_model(EOSsubModelDIR+ModelName)
+    except:
+             print(UF.TimeStamp(), bcolors.WARNING+"Model/state data files are missing, skipping this step..." +bcolors.ENDC)
     # State_Save_Path=EOSsubModelDIR+'/'+args.ModelName+'_State'
     # Model_Meta_Path=EOSsubModelDIR+'/'+args.ModelName+'_Meta'
     # Model_Path=EOSsubModelDIR+'/'+args.ModelName
