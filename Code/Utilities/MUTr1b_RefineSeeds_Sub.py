@@ -125,7 +125,8 @@ for s in range(0,limit):
 #                if track.Track_CNN_Fit>=acceptance:
 #                   GoodTracks.append(track)
      if track.TrackQualityCheck(MaxDOCA,MaxSLG,MaxSTG, MaxAngle):
-           print(track.label)
+           if track.Label:
+              print(track.Label)
            GoodTracks.append(track.TrackQualityCheck)
      else:
          del track
