@@ -1209,9 +1209,12 @@ def GenerateModel(ModelMeta,TrainParams=None):
              OutputLayer.append(el)
           elif ModelMeta.ModelParameters.index(el)==11 and len(el)>0:
              ImageLayer.append(el)
+        print(HiddenLayer,FullyConnectedLayer,OutputLayer,ImageLayer)
+        exit()
         H=int(round(ImageLayer[0]/ImageLayer[3],0))*2
         W=int(round(ImageLayer[1]/ImageLayer[3],0))*2
         L=int(round(ImageLayer[2]/ImageLayer[3],0))
+
         model = Sequential()
         for HL in HiddenLayer:
                  Nodes=HL[0]*16
