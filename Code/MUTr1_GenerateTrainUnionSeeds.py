@@ -675,7 +675,7 @@ while status<7:
                print('Here')
                input_file_location=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/MUTr1d_'+TrainSampleID+'_SampledCompressedSeeds_'+str(i)+'.pkl'
                if os.path.isfile(input_file_location):
-                  base_data=UF.PickleOperations(input_file_location,'r','N/A')[1]
+                  base_data=UF.PickleOperations(input_file_location,'r','N/A')[0]
                   print(len(base_data))
                   TotalData+=base_data
            print(len(TotalData))
