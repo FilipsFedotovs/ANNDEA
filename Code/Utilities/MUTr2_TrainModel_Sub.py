@@ -176,7 +176,7 @@ if ModelMeta.ModelType=='CNN':
        print('WIP')
        exit()
 
-print(len(ValFile))
+print(ValFile)
 print(len(TrainFile))
 exit()
 for i in range(1,Meta.no_sets+1):
