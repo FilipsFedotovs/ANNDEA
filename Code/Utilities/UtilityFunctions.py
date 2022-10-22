@@ -1240,7 +1240,7 @@ def GenerateModel(ModelMeta,TrainParams=None):
             initial_learning_rate,
             decay_steps=100000,
             decay_rate=0.96,
-            staircase=True)
+            staircase=False)
             opt = adam(learning_rate=lr_schedule)
      # Compile the model
             model.compile(loss='categorical_crossentropy',optimizer=opt,metrics=['accuracy'])
