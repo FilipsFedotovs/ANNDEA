@@ -114,7 +114,7 @@ def CNNtrain(model, Sample, Batches):
     for ib in range(0,Batches):
         StartSeed=(ib*TrainParams[1])+1
         EndSeed=StartSeed+TrainParams[1]-1
-        iterator+=(EndSeed-StartSeed)
+        iterator+=(ib+1)*TrainParams[1]
         BatchImages=UF.LoadRenderImages(Sample,StartSeed,EndSeed)
         t=model.train_on_batch(BatchImages[0],BatchImages[1])
     return t,iterator
@@ -232,7 +232,7 @@ def main(self):
     #     print(train_loss,itr)
     # exit()
     for epoch in range(0, 1):
-        train_loss, itr=CNNtrain(model, TrainSamples, 100)
+        train_loss, itr=CNNtrain(model, TrainSamples, 200)
         print(train_loss,itr)
         exit()
     #      train_loss, itr= train(model, device,TrainSamples, optimizer)
