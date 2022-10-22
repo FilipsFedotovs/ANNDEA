@@ -638,8 +638,6 @@ while status<7:
            else:
               TrueSeedCorrection=RequiredTrueSeeds/TrueSeeds
            FakeSeedCorrection=RequiredFakeSeeds/(TotalImages-TrueSeeds)
-           T_temp=0
-           F_temp=0
            with alive_bar(len(JobSet),force_tty=True, title='Resampling the files...') as bar:
             for i in range(0,len(JobSet)):
               output_file_location=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/MUTr1d_'+TrainSampleID+'_SampledCompressedSeeds_'+str(i)+'.pkl'
@@ -656,14 +654,12 @@ while status<7:
                   ExtractedFake=random.sample(ExtractedFake,int(round(FakeSeedCorrection*len(ExtractedFake),0)))
                   TotalData=[]
                   TotalData=ExtractedTruth+ExtractedFake
-                  print(len(TotalData))
                   print(UF.PickleOperations(output_file_location,'w',TotalData)[1])
                   del TotalData
                   del ExtractedTruth
                   del ExtractedFake
                   gc.collect()
            print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 5 has successfully completed'+bcolors.ENDC)
-           exit()
            status=6
       if status==6:
            print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
@@ -674,6 +670,8 @@ while status<7:
              JobSet.append([])
              for j in range(len(JobSets[i][3])):
                  JobSet[i].append(JobSets[i][3][j])
+           print(JobSet)
+           exit()
            for i in range(0,len(JobSet)):
                input_file_location=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/MUTr1d_'+TrainSampleID+'_SampledCompressedSeeds_'+str(i)+'.pkl'
                if os.path.isfile(input_file_location):
