@@ -8,6 +8,7 @@ import datetime
 import numpy as np
 import copy
 from statistics import mean
+import ast
 class bcolors:
     HEADER = '\033[95m'
     OKBLUE = '\033[94m'
@@ -698,6 +699,157 @@ class EMO:
                 raise ValueError("Method 'DecorateTrackGeoInfo' works only if 'Decorate' method has been acted upon the seed before")
       def TrackQualityCheck(self,MaxDoca,MaxSLG, MaxSTG,MaxAngle):
                     return (self.DOCA<=MaxDoca and self.SLG<=MaxSLG and self.STG<=(MaxSTG+(self.SLG*0.96)) and abs(self.Opening_Angle)<=MaxAngle)
+
+      def PrepareTrackPrint(self,MM):
+          __TempTrack=copy.deepcopy(self.Hits)
+
+          self.Resolution=MM.ModelParameters[11][3]
+          self.bX=int(round(MM.ModelParameters[11][0]/self.Resolution,0))
+          self.bY=int(round(MM.ModelParameters[11][1]/self.Resolution,0))
+          self.bZ=int(round(MM.ModelParameters[11][2]/self.Resolution,0))
+          self.H=(self.bX)*2
+          self.W=(self.bY)*2
+          self.L=(self.bZ)
+          __StartTrackZ=6666666666
+          __EndTrackZ=-6666666666
+          for __Track in __TempTrack:
+            __CurrentZ=float(__Track[0][2])
+            if __CurrentZ<=__StartTrackZ:
+                __StartTrackZ=__CurrentZ
+                __FinX=float(__Track[0][0])
+                __FinY=float(__Track[0][1])
+                __FinZ=float(__Track[0][2])
+                self.PrecedingTrackInd=__TempTrack.index(__Track)
+            if __CurrentZ>=__EndTrackZ:
+                __EndTrackZ=__CurrentZ
+                self.LagTrackInd=__TempTrack.index(__Track)
+          for __Tracks in __TempTrack:
+              for __Hits in __Tracks:
+                  __Hits[0]=float(__Hits[0])-__FinX
+                  __Hits[1]=float(__Hits[1])-__FinY
+                  __Hits[2]=float(__Hits[2])-__FinZ
+          for __Tracks in __TempTrack:
+              for __Hits in __Tracks:
+                  __Hits[2]=__Hits[2]*self.Resolution/1315
+
+          __TempEnchTrack=[]
+          for __Tracks in __TempTrack:
+               for h in range(0,len(__Tracks)-1):
+                   __deltaX=float(__Tracks[h+1][0])-float(__Tracks[h][0])
+                   __deltaZ=float(__Tracks[h+1][2])-float(__Tracks[h][2])
+                   __deltaY=float(__Tracks[h+1][1])-float(__Tracks[h][1])
+                   try:
+                    __vector_1 = [__deltaZ,0]
+                    __vector_2 = [__deltaZ, __deltaX]
+                    __ThetaAngle=EMO.angle_between(__vector_1, __vector_2)
+                   except:
+                     __ThetaAngle=0.0
+                   try:
+                     __vector_1 = [__deltaZ,0]
+                     __vector_2 = [__deltaZ, __deltaY]
+                     __PhiAngle=EMO.angle_between(__vector_1, __vector_2)
+                   except:
+                     __PhiAngle=0.0
+                   __TotalDistance=math.sqrt((__deltaX**2)+(__deltaY**2)+(__deltaZ**2))
+                   __Distance=(float(self.Resolution)/3)
+                   if __Distance>=0 and __Distance<1:
+                      __Distance=1.0
+                   if __Distance<0 and __Distance>-1:
+                      __Distance=-1.0
+                   __Iterations=int(round(__TotalDistance/__Distance,0))
+                   for i in range(1,__Iterations):
+                       __New_Hit=[]
+                       if math.isnan(float(__Tracks[h][0])+float(i)*__Distance*math.sin(__ThetaAngle)):
+                          continue
+                       if math.isnan(float(__Tracks[h][1])+float(i)*__Distance*math.sin(__PhiAngle)):
+                          continue
+                       if math.isnan(float(__Tracks[h][2])+float(i)*__Distance*math.cos(__ThetaAngle)):
+                          continue
+                       __New_Hit.append(float(__Tracks[h][0])+float(i)*__Distance*math.sin(__ThetaAngle))
+                       __New_Hit.append(float(__Tracks[h][1])+float(i)*__Distance*math.sin(__PhiAngle))
+                       __New_Hit.append(float(__Tracks[h][2])+float(i)*__Distance*math.cos(__ThetaAngle))
+                       __TempEnchTrack.append(__New_Hit)
+          #
+          # #Pixelise print
+
+          self.TrackPrint=[]
+          for __Tracks in __TempTrack:
+               for __Hits in __Tracks:
+                   __Hits[0]=int(round(float(__Hits[0])/self.Resolution,0))
+                   __Hits[1]=int(round(float(__Hits[1])/self.Resolution,0))
+                   __Hits[2]=int(round(float(__Hits[2])/self.Resolution,0))
+                   self.TrackPrint.append(str(__Hits))
+          for __Hits in __TempEnchTrack:
+                   __Hits[0]=int(round(float(__Hits[0])/self.Resolution,0))
+                   __Hits[1]=int(round(float(__Hits[1])/self.Resolution,0))
+                   __Hits[2]=int(round(float(__Hits[2])/self.Resolution,0))
+                   self.TrackPrint.append(str(__Hits))
+          self.TrackPrint=list(set(self.TrackPrint))
+          for p in range(len(self.TrackPrint)):
+               self.TrackPrint[p]=ast.literal_eval(self.TrackPrint[p])
+          self.TrackPrint=[p for p in self.TrackPrint if (abs(p[0])<self.bX and abs(p[1])<self.bY and abs(p[2])<self.bZ)]
+          del __TempEnchTrack
+          del __TempTrack
+      def Plot(self,PlotType):
+        if PlotType=='XZ' or PlotType=='ZX':
+          __InitialData=[]
+          __Index=-1
+          for x in range(-self.bX,self.bX):
+             for z in range(0,self.bZ):
+                 __InitialData.append(0.0)
+          __Matrix = np.array(__InitialData)
+          __Matrix=np.reshape(__Matrix,(self.H,self.L))
+          for __Hits in self.TrackPrint:
+                   __Matrix[int(__Hits[0])+self.bX][int(__Hits[2])]=1
+          import matplotlib as plt
+          from matplotlib.colors import LogNorm
+          from matplotlib import pyplot as plt
+          plt.title('Seed '+':'.join(self.Header))
+          plt.xlabel('Z [microns /'+str(int(self.Resolution))+']')
+          plt.ylabel('X [microns /'+str(int(self.Resolution))+']')
+          __image=plt.imshow(__Matrix,cmap='gray_r',extent=[0,self.bZ,self.bX,-self.bX])
+          plt.gca().invert_yaxis()
+          plt.show()
+        elif PlotType=='YZ' or PlotType=='ZY':
+          __InitialData=[]
+          __Index=-1
+          for y in range(-self.bY,self.bY):
+             for z in range(0,self.bZ):
+                 __InitialData.append(0.0)
+          __Matrix = np.array(__InitialData)
+          __Matrix=np.reshape(__Matrix,(self.W,self.L))
+          for __Hits in self.TrackPrint:
+                   __Matrix[int(__Hits[1])+self.bY][int(__Hits[2])]=1
+          import matplotlib as plt
+          from matplotlib.colors import LogNorm
+          from matplotlib import pyplot as plt
+          plt.title('Seed '+':'.join(self.Header))
+          plt.xlabel('Z [microns /'+str(int(self.Resolution))+']')
+          plt.ylabel('Y [microns /'+str(int(self.Resolution))+']')
+          __image=plt.imshow(__Matrix,cmap='gray_r',extent=[0,self.bZ,self.bY,-self.bY])
+          plt.gca().invert_yaxis()
+          plt.show()
+        elif PlotType=='XY' or PlotType=='YX':
+          __InitialData=[]
+          __Index=-1
+          for x in range(-self.bX,self.bX):
+             for y in range(-self.bY,self.bY):
+                 __InitialData.append(0.0)
+          __Matrix = np.array(__InitialData)
+          __Matrix=np.reshape(__Matrix,(self.H,self.W))
+          for __Hits in self.TrackPrint:
+                   __Matrix[int(__Hits[0])+self.bX][int(__Hits[1]+self.bY)]=1
+          import matplotlib as plt
+          from matplotlib.colors import LogNorm
+          from matplotlib import pyplot as plt
+          plt.title('Seed '+':'.join(self.Header))
+          plt.xlabel('Y [microns /'+str(int(self.Resolution))+']')
+          plt.ylabel('X [microns /'+str(int(self.Resolution))+']')
+          __image=plt.imshow(__Matrix,cmap='gray_r',extent=[-self.bY,self.bY,self.bX,-self.bX])
+          plt.gca().invert_yaxis()
+          plt.show()
+        else:
+          print('Invalid plot type input value! Should be XZ, YZ or XY')
       @staticmethod
       def unit_vector(vector):
           return vector / np.linalg.norm(vector)
@@ -1579,30 +1731,27 @@ def ErrorOperations(a,b,a_e,b_e,mode):
         c_e=(a/b)*math.sqrt(((a_e/a)**2) + ((b_e/b)**2))
         return(c_e)
 
-def LoadRenderImages(Tracks,StartTrack,EndTrack,ModelMeta):
+def LoadRenderImages(Seeds,StartSeed,EndSeed):
     import tensorflow as tf
-    NewTracks=Tracks[StartTrack-1:min(EndTrack,len(Tracks))]
-    ImagesY=np.empty([len(NewTracks),1])
-    ImageLayer=ModelMeta.ModelParameters[11]
-    H=int(round(ImageLayer[0]/ImageLayer[3],0))*2
-    W=int(round(ImageLayer[1]/ImageLayer[3],0))*2
-    L=int(round(ImageLayer[2]/ImageLayer[3],0))
-    ImagesX=np.empty([len(NewTracks),H,W,L],dtype=np.bool)
-    for im in range(len(NewTracks)):
-        if hasattr(NewTracks[im],'Label'):
-           ImagesY[im]=int(float(NewTracks[im].Label))
+    from tensorflow import keras
+    NewSeeds=Seeds[StartSeed-1:min(EndSeed,len(Seeds))]
+    ImagesY=np.empty([len(NewSeeds),1])
+    ImagesX=np.empty([len(NewSeeds),NewSeeds[0].H,NewSeeds[0].W,NewSeeds[0].L],dtype=np.bool)
+    for im in range(len(NewSeeds)):
+        if hasattr(NewSeeds[im],'Label'):
+           ImagesY[im]=int(float(NewSeeds[im].Label))
         else:
            ImagesY[im]=0
         BlankRenderedImage=[]
-        for x in range(-int(H/2),int(H/2)):
-          for y in range(-int(W/2),int(W/2)):
-            for z in range(0,L):
+        for x in range(-NewSeeds[im].bX,NewSeeds[im].bX):
+          for y in range(-NewSeeds[im].bY,NewSeeds[im].bY):
+            for z in range(0,NewSeeds[im].bZ):
              BlankRenderedImage.append(0)
         RenderedImage = np.array(BlankRenderedImage)
-        RenderedImage = np.reshape(RenderedImage,(H,W,L))
-        for Hits in NewTracks[im].TrackPrint:
-                   RenderedImage[Hits[0]+(int(H/2))][Hits[1]+int(W/2)][Hits[2]]=1
+        RenderedImage = np.reshape(RenderedImage,(NewSeeds[im].H,NewSeeds[im].W,NewSeeds[im].L))
+        for Hits in NewSeeds[im].TrackPrint:
+                   RenderedImage[Hits[0]+NewSeeds[im].bX][Hits[1]+NewSeeds[im].bY][Hits[2]]=1
         ImagesX[im]=RenderedImage
     ImagesX= ImagesX[..., np.newaxis]
-    ImagesY=tf.keras.utils.to_categorical(ImagesY,ModelMeta.ModelParameters[10][1])
+    ImagesY=tf.keras.utils.to_categorical(ImagesY,2)
     return (ImagesX,ImagesY)

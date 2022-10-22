@@ -186,6 +186,10 @@ if ModelMeta.ModelType=='CNN':
        exit()
    NTrainBatches=math.ceil(float(len(TrainSamples))/float(TrainParams[2]))
    NValBatches=math.ceil(float(len(ValSamples))/float(TrainParams[2]))
+   for ts in TrainSamples:
+       ts.PrepareTrackPrint(ModelMeta)
+   print(TrainSamples[0].TrackPrint)
+   exit()
 # for i in range(1,Meta.no_sets+1):
 #         flocation=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/'+TrainSampleID+'_TH_OUTPUT_'+str(i)+'.pkl'
 #         print(UF.TimeStamp(),'Loading data from ',bcolors.OKBLUE+flocation+bcolors.ENDC)
@@ -231,9 +235,10 @@ def main(self):
     # for epoch in range(0, TrainParams[2]):
     #     train_loss, itr=CNNtrain(model, TrainSamples, NTrainBatches,ModelMeta.ModelParams)
     #     print(train_loss,itr)
-    for epoch in range(0, 1):
-        train_loss, itr=CNNtrain(model, TrainSamples, 2,ModelMeta)
-        print(train_loss,itr)
+    exit()
+    # for epoch in range(0, 1):
+    #     train_loss, itr=CNNtrain(model, TrainSamples, 2,ModelMeta)
+    #     print(train_loss,itr)
     #      train_loss, itr= train(model, device,TrainSamples, optimizer)
     #      thld, val_loss,val_acc = validate(model, device, ValSamples)
     #      test_loss, test_acc = test(model, device,TestSamples, thld)
