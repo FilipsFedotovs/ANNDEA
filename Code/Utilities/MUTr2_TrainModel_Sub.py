@@ -168,7 +168,16 @@ Meta=MetaInput[0]
 Model_Meta_Path=EOSsubModelDIR+'/'+args.ModelName+'_Meta'
 Model_Path=EOSsubModelDIR+'/'+args.ModelName
 ModelMeta=UF.PickleOperations(Model_Meta_Path, 'r', 'N/A')[0]
-print(vars(ModelMeta))
+ValFile=UF.PickleOperations(EOS_DIR+'/ANNADEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_TRACK_SEEDS_OUTPUT.pkl','r', 'N/A')[0]
+if ModelMeta.ModelType=='CNN':
+   if len(ModelMeta.TrainSessionData==0):
+       TrainFile=UF.PickleOperations(EOS_DIR+'/ANNADEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_TRACK_SEEDS_OUTPUT_1.pkl','r', 'N/A')[0]
+   else:
+       print('WIP')
+       exit()
+
+print(len(ValFile))
+print(len(TrainFile))
 exit()
 for i in range(1,Meta.no_sets+1):
         flocation=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/'+TrainSampleID+'_TH_OUTPUT_'+str(i)+'.pkl'
