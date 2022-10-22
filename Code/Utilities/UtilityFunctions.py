@@ -1209,12 +1209,10 @@ def GenerateModel(ModelMeta,TrainParams=None):
              OutputLayer=el
           elif ModelMeta.ModelParameters.index(el)==11:
              ImageLayer=el
-        print(HiddenLayer,FullyConnectedLayer,OutputLayer,ImageLayer)
-        exit()
         H=int(round(ImageLayer[0]/ImageLayer[3],0))*2
         W=int(round(ImageLayer[1]/ImageLayer[3],0))*2
         L=int(round(ImageLayer[2]/ImageLayer[3],0))
-
+        print(H,W,L)
         model = Sequential()
         for HL in HiddenLayer:
                  Nodes=HL[0]*16
@@ -1236,7 +1234,7 @@ def GenerateModel(ModelMeta,TrainParams=None):
                      model.add(Dense(Nodes, activation=act_fun_list[FC[1]], kernel_initializer='he_uniform'))
                      model.add(Dropout(DR))
         model.add(Dense(OutputLayer[1], activation=act_fun_list[OutputLayer[0]]))
-        opt = adam(learning_rate=10**(-int(TrainParams[3])))
+        opt = adam(learning_rate=TrainParams[0])
  # Compile the model
         model.compile(loss='categorical_crossentropy',optimizer=opt,metrics=['accuracy'])
         model.summary()
