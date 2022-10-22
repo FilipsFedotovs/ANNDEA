@@ -612,9 +612,6 @@ while status<7:
            Temp_Stats=UF.LogOperations(EOS_DIR+'/ANNADEA/Data/TRAIN_SET/MUTr1c_'+TrainSampleID+'_Temp_Stats.csv','r', '_')
            TotalImages=int(Temp_Stats[0][0])
            TrueSeeds=int(Temp_Stats[0][1])
-           print(TotalImages)
-           print(TrueSeeds)
-           exit()
            JobSet=[]
            for i in range(len(JobSets)):
              JobSet.append([])
@@ -627,6 +624,7 @@ while status<7:
                else:
                    RequiredFakeSeeds=TotalImages-TrueSeeds
                    RequiredTrueSeeds=int(round((RequiredFakeSeeds/(1.0-float(args.LabelRatio)))-RequiredFakeSeeds,0))
+
            else:
                NormalisedTotSamples=int(args.Samples)
                if TrueSeeds<=(float(args.LabelRatio)*NormalisedTotSamples):
@@ -635,6 +633,8 @@ while status<7:
                else:
                    RequiredFakeSeeds=NormalisedTotSamples*(1.0-float(args.LabelRatio))
                    RequiredTrueSeeds=int(round((RequiredFakeSeeds/(1.0-float(args.LabelRatio)))-RequiredFakeSeeds,0))
+           print(RequiredTrueSeeds,RequiredFakeSeeds)
+           exit()
            if TrueSeeds==0:
                TrueSeedCorrection=0
            else:
