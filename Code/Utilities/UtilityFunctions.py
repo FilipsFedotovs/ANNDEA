@@ -1205,10 +1205,10 @@ def GenerateModel(ModelMeta,TrainParams=None):
              HiddenLayer.append(el)
           elif ModelMeta.ModelParameters.index(el)<=9 and len(el)>0:
              FullyConnectedLayer.append(el)
-          elif ModelMeta.ModelParameters.index(el)==10 and len(el)>0:
-             OutputLayer.append(el)
-          elif ModelMeta.ModelParameters.index(el)==11 and len(el)>0:
-             ImageLayer.append(el)
+          elif ModelMeta.ModelParameters.index(el)==10:
+             OutputLayer=el
+          elif ModelMeta.ModelParameters.index(el)==11:
+             ImageLayer=el
         print(HiddenLayer,FullyConnectedLayer,OutputLayer,ImageLayer)
         exit()
         H=int(round(ImageLayer[0]/ImageLayer[3],0))*2
