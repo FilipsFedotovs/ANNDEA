@@ -97,6 +97,7 @@ print(UF.TimeStamp(),bcolors.OKGREEN+'Data has been successfully loaded and prep
 #create seeds
 GoodTracks=[]
 print(UF.TimeStamp(),'Beginning the sample generation part...')
+pos_label=0
 for s in range(0,limit):
      track=tracks.pop(0)
 
@@ -122,8 +123,8 @@ for s in range(0,limit):
 #                if track.Track_CNN_Fit>=acceptance:
 #                   GoodTracks.append(track)
      if track.TrackQualityCheck(MaxDOCA,MaxSLG,MaxSTG, MaxAngle):
-           if track.Label:
-              print(track.Label)
+           pos_label+=track.Label
+           print(pos_label)
            GoodTracks.append(track.TrackQualityCheck)
      else:
          del track
