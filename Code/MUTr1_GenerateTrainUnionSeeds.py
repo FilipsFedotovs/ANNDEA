@@ -222,7 +222,6 @@ if Mode=='RESET':
 else:
     print(UF.TimeStamp(),'There are 7 stages (0-6) of this script',status,bcolors.ENDC)
     print(UF.TimeStamp(),'Current status has a code',status,bcolors.ENDC)
-status=5
 while status<7:
       if status==1:
           print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
@@ -672,14 +671,10 @@ while status<7:
                  JobSet[i].append(JobSets[i][3][j])
 
            for i in range(0,len(JobSet)):
-               print('Here')
                input_file_location=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/MUTr1d_'+TrainSampleID+'_SampledCompressedSeeds_'+str(i)+'.pkl'
                if os.path.isfile(input_file_location):
                   base_data=UF.PickleOperations(input_file_location,'r','N/A')[0]
-                  print(len(base_data))
                   TotalData+=base_data
-           print(len(TotalData))
-           exit()
            del base_data
            gc.collect()
            ValidationSampleSize=int(round(min((len(TotalData)*float(PM.valRatio)),PM.MaxValSampleSize),0))
