@@ -1579,27 +1579,30 @@ def ErrorOperations(a,b,a_e,b_e,mode):
         c_e=(a/b)*math.sqrt(((a_e/a)**2) + ((b_e/b)**2))
         return(c_e)
 
-def LoadRenderImages(Tracks,StartTrack,EndTrack,numClasses):
+def LoadRenderImages(Tracks,StartTrack,EndTrack,ModelMeta):
     import tensorflow as tf
-    from tensorflow import keras
     NewTracks=Tracks[StartTrack-1:min(EndTrack,len(Tracks))]
     ImagesY=np.empty([len(NewTracks),1])
-    ImagesX=np.empty([len(NewTracks),NewTracks[0].H,NewTracks[0].W,NewTracks[0].L],dtype=np.bool)
+    ImageLayer=ModelMeta.ModelParameters[11]
+    H=int(round(ImageLayer[0]/ImageLayer[3],0))*2
+    W=int(round(ImageLayer[1]/ImageLayer[3],0))*2
+    L=int(round(ImageLayer[2]/ImageLayer[3],0))
+    ImagesX=np.empty([len(NewTracks),H,W,L],dtype=np.bool)
     for im in range(len(NewTracks)):
-        if hasattr(NewTracks[im],'MC_truth_label'):
-           ImagesY[im]=int(float(NewTracks[im].MC_truth_label))
+        if hasattr(NewTracks[im],'Label'):
+           ImagesY[im]=int(float(NewTracks[im].Label))
         else:
            ImagesY[im]=0
         BlankRenderedImage=[]
-        for x in range(-NewTracks[im].bX,NewTracks[im].bX):
-          for y in range(-NewTracks[im].bY,NewTracks[im].bY):
-            for z in range(0,NewTracks[im].bZ):
+        for x in range(-H/2,H/2):
+          for y in range(-W/2,W/2):
+            for z in range(0,L):
              BlankRenderedImage.append(0)
         RenderedImage = np.array(BlankRenderedImage)
-        RenderedImage = np.reshape(RenderedImage,(NewTracks[im].H,NewTracks[im].W,NewTracks[im].L))
+        RenderedImage = np.reshape(RenderedImage,(H,W,L))
         for Hits in NewTracks[im].TrackPrint:
-                   RenderedImage[Hits[0]+NewTracks[im].bX][Hits[1]+NewTracks[im].bY][Hits[2]]=1
+                   RenderedImage[Hits[0]+(H/2)][Hits[1]+W/2][Hits[2]]=1
         ImagesX[im]=RenderedImage
     ImagesX= ImagesX[..., np.newaxis]
-    ImagesY=tf.keras.utils.to_categorical(ImagesY,numClasses)
+    ImagesY=tf.keras.utils.to_categorical(ImagesY,ModelMeta.ModelParameters[10][1])
     return (ImagesX,ImagesY)

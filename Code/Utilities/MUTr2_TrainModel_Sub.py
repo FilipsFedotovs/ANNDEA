@@ -109,13 +109,13 @@ def train(model, device, sample, optimizer):
         losses_w.append(loss_w.item())
     loss_w = np.nanmean(losses_w)
     return loss_w,iterator
-def CNNtrain(model, Sample, Batches,MP):
+def CNNtrain(model, Sample, Batches,MM):
     iterator=0
     for ib in range(0,Batches):
         StartSeed=(ib*TrainParams[1])+1
         EndSeed=StartSeed+TrainParams[1]-1
         iterator+=(EndSeed-StartSeed)
-        BatchImages=UF.LoadRenderImages(Sample,StartSeed,EndSeed,MP[10][1])
+        BatchImages=UF.LoadRenderImages(Sample,StartSeed,EndSeed,MM)
         t=model.train_on_batch(BatchImages[0],BatchImages[1])
     return t,iterator
 def validate(model, device, sample):
@@ -232,7 +232,7 @@ def main(self):
     #     train_loss, itr=CNNtrain(model, TrainSamples, NTrainBatches,ModelMeta.ModelParams)
     #     print(train_loss,itr)
     for epoch in range(0, 1):
-        train_loss, itr=CNNtrain(model, TrainSamples, 2,ModelMeta.ModelParameters)
+        train_loss, itr=CNNtrain(model, TrainSamples, 2,ModelMeta)
         print(train_loss,itr)
     #      train_loss, itr= train(model, device,TrainSamples, optimizer)
     #      thld, val_loss,val_acc = validate(model, device, ValSamples)
