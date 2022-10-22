@@ -216,7 +216,7 @@ def main(self):
         model=tf.keras.models.load_model(EOSsubModelDIR+ModelName)
     except:
         print(UF.TimeStamp(), bcolors.WARNING+"Model/state data files are missing, skipping this step..." +bcolors.ENDC)
-        model = UF.GenerateModel(ModelMeta).to(device)
+        model = UF.GenerateModel(ModelMeta,TrainParams)
     print(model)
     # State_Save_Path=EOSsubModelDIR+'/'+args.ModelName+'_State'
     # Model_Meta_Path=EOSsubModelDIR+'/'+args.ModelName+'_Meta'
