@@ -884,8 +884,7 @@ class EMO:
               for __Tracks in __TempTrack:
                       for h in range(len(__Tracks)):
                           __Tracks[h]=__Tracks[h][:3]
-              print(__TempTrack)
-              exit()
+
               __LongestDistance=0.0
               for __Track in __TempTrack:
                 __Xdiff=float(__Track[len(__Track)-1][0])-float(__Track[0][0])
@@ -900,11 +899,12 @@ class EMO:
                     self.LongestTrackInd=__TempTrack.index(__Track)
               # Shift
               for __Tracks in __TempTrack:
-                  for __Hits in __Tracks:
-                      __Hits=__Hits[:3]
-                      __Hits[0]=float(__Hits[0])-__FinX
-                      __Hits[1]=float(__Hits[1])-__FinY
-                      __Hits[2]=float(__Hits[2])-__FinZ
+                  for h in range(len(__Tracks)):
+                      __Tracks[h][0]=float(__Tracks[h][0])-__FinX
+                      __Tracks[h][1]=float(__Tracks[h][1])-__FinY
+                      __Tracks[h][2]=float(__Tracks[h][2])-__FinZ
+              print(__TempTrack)
+              exit()
               # Rescale
               for __Tracks in __TempTrack:
                       for __Hits in __Tracks:
