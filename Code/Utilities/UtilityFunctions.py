@@ -700,7 +700,7 @@ class EMO:
       def TrackQualityCheck(self,MaxDoca,MaxSLG, MaxSTG,MaxAngle):
                     return (self.DOCA<=MaxDoca and self.SLG<=MaxSLG and self.STG<=(MaxSTG+(self.SLG*0.96)) and abs(self.Opening_Angle)<=MaxAngle)
 
-      def PrepareTrackPrint(self,MM):
+      def PrepareTrackPrint(self,MM,ImageType):
           __TempTrack=copy.deepcopy(self.Hits)
 
           self.Resolution=MM.ModelParameters[11][3]
@@ -741,13 +741,13 @@ class EMO:
                    try:
                     __vector_1 = [__deltaZ,0]
                     __vector_2 = [__deltaZ, __deltaX]
-                    __ThetaAngle=EMO.angle_between(__vector_1, __vector_2)
+                    __ThetaAngle=EMO.Opening_Angle(__vector_1, __vector_2)
                    except:
                      __ThetaAngle=0.0
                    try:
                      __vector_1 = [__deltaZ,0]
                      __vector_2 = [__deltaZ, __deltaY]
-                     __PhiAngle=EMO.angle_between(__vector_1, __vector_2)
+                     __PhiAngle=EMO.Opening_Angle(__vector_1, __vector_2)
                    except:
                      __PhiAngle=0.0
                    __TotalDistance=math.sqrt((__deltaX**2)+(__deltaY**2)+(__deltaZ**2))
@@ -769,8 +769,91 @@ class EMO:
                        __New_Hit.append(float(__Tracks[h][1])+float(i)*__Distance*math.sin(__PhiAngle))
                        __New_Hit.append(float(__Tracks[h][2])+float(i)*__Distance*math.cos(__ThetaAngle))
                        __TempEnchTrack.append(__New_Hit)
-          #
-          # #Pixelise print
+          if ImageType=='CNN-E':
+              #Lon Rotate x
+              __Track=__TempTrack[self.LagTrackInd]
+              __Vardiff=float(__Track[len(__Track)-1][0])
+              __Zdiff=float(__Track[len(__Track)-1][2])
+              __vector_1 = [__Zdiff, 0]
+              __vector_2 = [__Zdiff, __Vardiff]
+              __Angle=EMO.Opening_Angle(__vector_1, __vector_2)
+              if np.isnan(__Angle)==True:
+                        __Angle=0.0
+              for __Tracks in __TempTrack:
+                for __hits in __Tracks:
+                     __Z=float(__hits[2])
+                     __Pos=float(__hits[0])
+                     __hits[2]=(__Z*math.cos(-__Angle)) - (__Pos * math.sin(-__Angle))
+                     __hits[0]=(__Z*math.sin(-__Angle)) + (__Pos * math.cos(-__Angle))
+              #Lon Rotate y
+              __Track=__TempTrack[self.LagTrackInd]
+              __Vardiff=float(__Track[len(__Track)-1][1])
+              __Zdiff=float(__Track[len(__Track)-1][2])
+              __vector_1 = [__Zdiff, 0]
+              __vector_2 = [__Zdiff, __Vardiff]
+              __Angle=EMO.Opening_Angle(__vector_1, __vector_2)
+              if np.isnan(__Angle)==True:
+                         __Angle=0.0
+              for __Tracks in __TempTrack:
+                for __hits in __Tracks:
+                     __Z=float(__hits[2])
+                     __Pos=float(__hits[1])
+                     __hits[2]=(__Z*math.cos(-__Angle)) - (__Pos * math.sin(-__Angle))
+                     __hits[1]=(__Z*math.sin(-__Angle)) + (__Pos * math.cos(-__Angle))
+             #  Phi rotate print
+
+              __LongestDistance=0.0
+              for __Track in __TempTrack:
+                     __X=float(__Track[len(__Track)-1][0])
+                     __Y=float(__Track[len(__Track)-1][1])
+                     __Distance=math.sqrt((__X**2)+(__Y**2))
+                     if __Distance>=__LongestDistance:
+                      __LongestDistance=__Distance
+                      __vector_1 = [__Distance, 0]
+                      __vector_2 = [__X, __Y]
+                      __Angle=-EMO.angle_between(__vector_1,__vector_2)
+              if np.isnan(__Angle)==True:
+                         __Angle=0.0
+              for __Tracks in __TempTrack:
+                 for __hits in __Tracks:
+                     __X=float(__hits[0])
+                     __Y=float(__hits[1])
+                     __hits[0]=(__X*math.cos(__Angle)) - (__Y * math.sin(__Angle))
+                     __hits[1]=(__X*math.sin(__Angle)) + (__Y * math.cos(__Angle))
+
+              __X=[]
+              __Y=[]
+              __Z=[]
+              for __Tracks in __TempTrack:
+                 for __hits in __Tracks:
+                     __X.append(__hits[0])
+                     __Y.append(__hits[1])
+                     __Z.append(__hits[2])
+              __dUpX=MM.ModelParameters[11][0]-max(__X)
+              __dDownX=MM.ModelParameters[11][0]+min(__X)
+              __dX=(__dUpX+__dDownX)/2
+              __xshift=__dUpX-__dX
+              __X=[]
+              for __Tracks in __TempTrack:
+                 for __hits in __Tracks:
+                     __hits[0]=__hits[0]+__xshift
+                     __X.append(__hits[0])
+             ##########Y
+              __dUpY=MM.ModelParameters[11][1]-max(__Y)
+              __dDownY=MM.ModelParameters[11][1]+min(__Y)
+              __dY=(__dUpY+__dDownY)/2
+              __yshift=__dUpY-__dY
+              __Y=[]
+              for __Tracks in __TempTrack:
+                 for __hits in __Tracks:
+                     __hits[1]=__hits[1]+__yshift
+                     __Y.append(__hits[1])
+              __min_scale=max(max(__X)/(MM.ModelParameters[11][0]-(2*self.Resolution)),max(__Y)/(MM.ModelParameters[11][1]-(2*self.Resolution)), max(__Z)/(MM.ModelParameters[11][2]-(2*self.Resolution)))
+              for __Tracks in __TempTrack:
+                 for __hits in __Tracks:
+                     __hits[0]=int(round(__hits[0]/__min_scale,0))
+                     __hits[1]=int(round(__hits[1]/__min_scale,0))
+                     __hits[2]=int(round(__hits[2]/__min_scale,0))
 
           self.TrackPrint=[]
           for __Tracks in __TempTrack:
@@ -1341,7 +1424,6 @@ def GenerateModel(ModelMeta,TrainParams=None):
       elif ModelMeta.ModelFramework=='Tensorflow':
           if ModelMeta.ModelType=='CNN':
             act_fun_list=['N/A','linear','exponential','elu','relu', 'selu','sigmoid','softmax','softplus','softsign','tanh']
-
             import tensorflow as tf
             from tensorflow import keras
             from keras.models import Sequential
@@ -1365,7 +1447,6 @@ def GenerateModel(ModelMeta,TrainParams=None):
             H=int(round(ImageLayer[0]/ImageLayer[3],0))*2
             W=int(round(ImageLayer[1]/ImageLayer[3],0))*2
             L=int(round(ImageLayer[2]/ImageLayer[3],0))
-            print(H,W,L)
             model = Sequential()
             for HL in HiddenLayer:
                      Nodes=HL[0]*16

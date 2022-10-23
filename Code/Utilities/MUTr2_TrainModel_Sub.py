@@ -188,8 +188,9 @@ if ModelMeta.ModelType=='CNN':
    NTrainBatches=math.ceil(float(len(TrainSamples))/float(TrainParams[2]))
    NValBatches=math.ceil(float(len(ValSamples))/float(TrainParams[2]))
    for ts in TrainSamples:
-       ts.PrepareTrackPrint(ModelMeta)
-
+       ts.PrepareTrackPrint(ModelMeta,'CNN-E')
+   TrainSamples[0].Plot('XZ')
+   exit()
 # for i in range(1,Meta.no_sets+1):
 #         flocation=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/'+TrainSampleID+'_TH_OUTPUT_'+str(i)+'.pkl'
 #         print(UF.TimeStamp(),'Loading data from ',bcolors.OKBLUE+flocation+bcolors.ENDC)
@@ -226,7 +227,7 @@ def main(self):
         K.set_value(model.optimizer.learning_rate, TrainParams[1])
     except:
         print(UF.TimeStamp(), bcolors.WARNING+"Model/state data files are missing, skipping this step..." +bcolors.ENDC)
-        model = UF.GenerateModel(ModelMeta,TrainParams)
+        model = UF.GenerateModel(ModelMeta,TrainParams,'CNN_E')
     model.summary()
     # for epoch in range(0, TrainParams[2]):
     #     train_loss, itr=CNNtrain(model, TrainSamples, NTrainBatches)
