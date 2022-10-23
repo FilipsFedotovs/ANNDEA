@@ -69,7 +69,7 @@ print(UF.TimeStamp(), bcolors.OKGREEN+"Modules Have been imported successfully..
 
 def ModelTrainingSaturation(Meta):
     print(Meta)
-    if len(Meta)==1:
+    if len(Meta)==2:
         return False
     else:
         LossDataForChecking=[]
@@ -104,10 +104,10 @@ def AutoPilot(wait_min, interval_min, max_interval_tolerance):
                completion=did
                break
        if len(Model_Meta.TrainSessionsDataID)==len(Model_Meta.TrainSessionsData):
-           if len(Model_Meta.TrainSessionsData[-1])==1 and len(Model_Meta.TrainSessionsData)>2:
+           if len(Model_Meta.TrainSessionsData[-1])==2 and len(Model_Meta.TrainSessionsData)>2:
               test_input=Model_Meta.TrainSessionsData[-1]+Model_Meta.TrainSessionsData[-2][1:]+Model_Meta.TrainSessionsData[-3][1:]
            else:
-              test_input=Model_Meta.TrainSessionsData[completion] 
+              test_input=Model_Meta.TrainSessionsData[completion]
            if ModelTrainingSaturation(test_input):
               print(UF.TimeStamp(),bcolors.WARNING+'Warning, the model seems to be over saturated'+bcolors.ENDC)
               print(UF.TimeStamp(),'Aborting the training...')
@@ -182,7 +182,7 @@ else:
                completion=did
                break
        if len(Model_Meta.TrainSessionsDataID)==len(Model_Meta.TrainSessionsData):
-           if len(Model_Meta.TrainSessionsData[-1])==1 and len(Model_Meta.TrainSessionsData)>2:
+           if len(Model_Meta.TrainSessionsData[-1])==2 and len(Model_Meta.TrainSessionsData)>2:
               test_input=Model_Meta.TrainSessionsData[-1]+Model_Meta.TrainSessionsData[-2]+Model_Meta.TrainSessionsData[-3]
            else:
               test_input=Model_Meta.TrainSessionsData[completion]
