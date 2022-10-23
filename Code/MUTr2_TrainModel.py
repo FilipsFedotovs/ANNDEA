@@ -163,6 +163,8 @@ if Mode=='RESET':
  ModelMeta=UF.ModelMeta(ModelName)
  if ModelType=='CNN':
     ModelMeta.IniModelMeta(ModelParams, 'Tensorflow', Meta, ModelArchitecture, 'CNN')
+ elif ModelType=='GNN':
+                    ModelMeta.IniModelMeta(ModelParams, 'PyTorch', Meta, ModelArchitecture, 'GNN')
  ModelMeta.IniTrainingSession(TrainSampleID, datetime.datetime.now(), TrainParams)
  print(UF.PickleOperations(Model_Meta_Path, 'w', ModelMeta)[1])
  UF.SubmitJobs2Condor(Job)
