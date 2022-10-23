@@ -101,7 +101,7 @@ if ModelMeta.ModelType=='CNN':
        for el in range(len(ModelMeta.TrainSessionsDataID)-1,-1,-1):
         print(el)
         if ModelMeta.TrainSessionsDataID[el]==TrainSampleID:
-           print(ModelMeta.TrainSessionsData)
+           print(ModelMeta.TrainSessionsData[el][-1])
            print(ModelMeta.TrainSessionsDataID)
        exit()
    NTrainBatches=math.ceil(float(len(TrainSamples))/float(TrainParams[1]))
