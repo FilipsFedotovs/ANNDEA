@@ -1588,8 +1588,6 @@ def GenerateModel(ModelMeta,TrainParams=None):
                     if len(HiddenLayer)==3:
 
                         x = self.conv1(x, edge_index)
-                        print(x)
-                        exit()
                         x = x.relu()
                         x = self.conv2(x, edge_index)
                         x = x.relu()
