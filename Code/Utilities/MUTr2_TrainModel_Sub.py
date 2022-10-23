@@ -191,9 +191,9 @@ def main(self):
         from torch.optim.lr_scheduler import StepLR
         import torch.nn.functional as F
         print(UF.TimeStamp(),'Starting the training process... ')
-        State_Save_Path=EOSsubModelDIR+'/'+args.ModelName+'_State'
-        Model_Meta_Path=EOSsubModelDIR+'/'+args.ModelName+'_Meta'
-        Model_Path=EOSsubModelDIR+'/'+args.ModelName
+        State_Save_Path=EOSsubModelDIR+'/'+ModelName+'_State'
+        Model_Meta_Path=EOSsubModelDIR+'/'+ModelName+'_Meta'
+        Model_Path=EOSsubModelDIR+'/'+ModelName
         ModelMeta=UF.PickleOperations(Model_Meta_Path, 'r', 'N/A')[0]
         device = torch.device('cpu')
         model = UF.GenerateModel(ModelMeta).to(device)
