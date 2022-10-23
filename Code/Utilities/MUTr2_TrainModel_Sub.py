@@ -239,7 +239,7 @@ def main(self):
                print(UF.TimeStamp(), bcolors.WARNING+"Model/state data files are missing, skipping this step..." +bcolors.ENDC)
         records=[]
         for epoch in range(0, TrainParams[2]):
-            train_loss, itr= GNNtrain(model,TrainSamples, optimizer)
+            train_loss= GNNtrain(model,TrainSamples, optimizer)
             print(train_loss)
         #      thld, val_loss,val_acc = validate(model, device, ValSamples)
         #      test_loss, test_acc = test(model, device,TestSamples, thld)
