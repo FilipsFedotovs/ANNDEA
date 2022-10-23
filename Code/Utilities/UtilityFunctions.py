@@ -880,38 +880,38 @@ class EMO:
       def PrepareSeedGraph(self,MM):
           if MM.ModelArchitecture=='GCN-3N-FC':
 
-              __TempTrack=copy.deepcopy(self.Hits)
-              for __Tracks in __TempTrack:
-                      for h in range(len(__Tracks)):
-                          __Tracks[h]=__Tracks[h][:3]
+                      __TempTrack=copy.deepcopy(self.Hits)
+                      for __Tracks in __TempTrack:
+                              for h in range(len(__Tracks)):
+                                  __Tracks[h]=__Tracks[h][:3]
 
-              __LongestDistance=0.0
-              for __Track in __TempTrack:
-                __Xdiff=float(__Track[len(__Track)-1][0])-float(__Track[0][0])
-                __Ydiff=float(__Track[len(__Track)-1][1])-float(__Track[0][1])
-                __Zdiff=float(__Track[len(__Track)-1][2])-float(__Track[0][2])
-                __Distance=math.sqrt(__Xdiff**2+__Ydiff**2+__Zdiff**2)
-                if __Distance>=__LongestDistance:
-                    __LongestDistance=__Distance
-                    __FinX=float(__Track[0][0])
-                    __FinY=float(__Track[0][1])
-                    __FinZ=float(__Track[0][2])
-                    self.LongestTrackInd=__TempTrack.index(__Track)
-              # Shift
-              for __Tracks in __TempTrack:
-                  for h in range(len(__Tracks)):
-                      __Tracks[h][0]=float(__Tracks[h][0])-__FinX
-                      __Tracks[h][1]=float(__Tracks[h][1])-__FinY
-                      __Tracks[h][2]=float(__Tracks[h][2])-__FinZ
+                      __LongestDistance=0.0
+                      for __Track in __TempTrack:
+                        __Xdiff=float(__Track[len(__Track)-1][0])-float(__Track[0][0])
+                        __Ydiff=float(__Track[len(__Track)-1][1])-float(__Track[0][1])
+                        __Zdiff=float(__Track[len(__Track)-1][2])-float(__Track[0][2])
+                        __Distance=math.sqrt(__Xdiff**2+__Ydiff**2+__Zdiff**2)
+                        if __Distance>=__LongestDistance:
+                            __LongestDistance=__Distance
+                            __FinX=float(__Track[0][0])
+                            __FinY=float(__Track[0][1])
+                            __FinZ=float(__Track[0][2])
+                            self.LongestTrackInd=__TempTrack.index(__Track)
+                      # Shift
+                      for __Tracks in __TempTrack:
+                          for h in range(len(__Tracks)):
+                              __Tracks[h][0]=float(__Tracks[h][0])-__FinX
+                              __Tracks[h][1]=float(__Tracks[h][1])-__FinY
+                              __Tracks[h][2]=float(__Tracks[h][2])-__FinZ
 
-              # Rescale
-              for __Tracks in __TempTrack:
-                      for h in range(len(__Tracks)):
-                          __Tracks[h][0]=__Tracks[h][0]/MM.ModelParameters[11][0]
-                          __Tracks[h][1]=__Tracks[h][1]/MM.ModelParameters[11][1]
-                          __Tracks[h][2]=__Tracks[h][2]/MM.ModelParameters[11][2]
+                      # Rescale
+                      for __Tracks in __TempTrack:
+                              for h in range(len(__Tracks)):
+                                  __Tracks[h][0]=__Tracks[h][0]/MM.ModelParameters[11][0]
+                                  __Tracks[h][1]=__Tracks[h][1]/MM.ModelParameters[11][1]
+                                  __Tracks[h][2]=__Tracks[h][2]/MM.ModelParameters[11][2]
 
-                        import pandas as pd
+                      import pandas as pd
 # Graph representation v2 (fully connected)
                       for el in range(len(__TempTrack[0])):
                          __TempTrack[0][el].append('0')
