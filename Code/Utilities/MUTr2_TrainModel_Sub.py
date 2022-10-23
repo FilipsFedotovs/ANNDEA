@@ -224,6 +224,7 @@ def main(self):
         ModelMeta=UF.PickleOperations(Model_Meta_Path, 'r', 'N/A')[0]
         device = torch.device('cpu')
         model = UF.GenerateModel(ModelMeta).to(device)
+        print(model)
         optimizer = optim.Adam(model.parameters(), lr=TrainParams[0])
 
         scheduler = StepLR(optimizer, step_size=0.1,gamma=0.1)
