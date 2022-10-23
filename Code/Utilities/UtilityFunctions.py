@@ -1586,17 +1586,14 @@ def GenerateModel(ModelMeta,TrainParams=None):
                 def forward(self, x, edge_index, edge_attr, batch):
                     # 1. Obtain node embeddings
                     if len(HiddenLayer)==3:
-                        print(x)
-                        print(edge_index)
-                        print(edge_attr)
 
-                        x = self.conv1(x, edge_index, edge_attr)
+                        x = self.conv1(x, edge_index)
                         print(x)
                         exit()
                         x = x.relu()
-                        x = self.conv2(x, edge_index, edge_attr)
+                        x = self.conv2(x, edge_index)
                         x = x.relu()
-                        x = self.conv3(x, edge_index, edge_attr)
+                        x = self.conv3(x, edge_index)
 
                     # 2. Readout layer
                     x = global_mean_pool(x, batch)  # [batch_size, hidden_channels]

@@ -82,6 +82,7 @@ def GNNtrain(model, Sample,optimizer):
         print(data.num_nodes)
         print(data.num_edges)
         print(data.num_node_features)
+
         exit()
         out = model(data.x, data.edge_index, data.edge_attr, data.batch)
         loss = criterion(out, data.y)
