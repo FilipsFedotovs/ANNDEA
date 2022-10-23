@@ -1513,7 +1513,7 @@ def GenerateModel(ModelMeta,TrainParams=None):
               elif ModelMeta.ModelParameters.index(el)==11:
                  ImageLayer=el
             class GCN(torch.nn.Module):
-                def __init__(self, hidden_channels):
+                def __init__(self):
                     super(GCN, self).__init__()
                     torch.manual_seed(12345)
                     if len(HiddenLayer)==3:
@@ -1541,7 +1541,7 @@ def GenerateModel(ModelMeta,TrainParams=None):
                     x = self.lin(x)
                     x = self.softmax(x)
                     return x
-
+            return GCN()
 
       elif ModelMeta.ModelFramework=='Tensorflow':
           if ModelMeta.ModelType=='CNN':
