@@ -90,8 +90,8 @@ print(UF.TimeStamp(),'Loading the data file ',bcolors.OKBLUE+TrainSampleInputMet
 MetaInput=UF.PickleOperations(TrainSampleInputMeta,'r', 'N/A')
 print(MetaInput[1])
 Meta=MetaInput[0]
-Model_Meta_Path=EOSsubModelDIR+'/'+args.ModelName+'_Meta'
-Model_Path=EOSsubModelDIR+'/'+args.ModelName
+Model_Meta_Path=EOSsubModelDIR+'/'+ModelName+'_Meta'
+Model_Path=EOSsubModelDIR+'/'+ModelName
 ModelMeta=UF.PickleOperations(Model_Meta_Path, 'r', 'N/A')[0]
 ValSamples=UF.PickleOperations(EOS_DIR+'/ANNADEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_TRACK_SEEDS_OUTPUT.pkl','r', 'N/A')[0]
 print(UF.PickleOperations(EOS_DIR+'/ANNADEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_TRACK_SEEDS_OUTPUT.pkl','r', 'N/A')[1])
@@ -141,9 +141,9 @@ elif ModelMeta.ModelType=='GNN':
        NTrainBatches=math.ceil(float(len(TrainSamples))/float(TrainParams[1]))
        NValBatches=math.ceil(float(len(ValSamples))/float(TrainParams[1]))
        for ts in TrainSamples:
-           ts.PrepareSeedPrint(ModelMeta)
+           ts.PrepareSeedGraph(ModelMeta)
        for vs in ValSamples:
-           vs.PrepareSeedPrint(ModelMeta)
+           vs.PrepareSeedGraph(ModelMeta)
 
 print(UF.TimeStamp(), bcolors.OKGREEN+"Train and Validation data has loaded and analysed successfully..."+bcolors.ENDC)
 
