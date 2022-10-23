@@ -159,6 +159,7 @@ elif ModelMeta.ModelType=='GNN':
            ts.PrepareSeedGraph(ModelMeta)
        train_dataset = []
        for smpl in TrainSamples[:10]:
+        smpl.GraphSeed.y = smpl.GraphSeed.y
         train_dataset.append(copy.deepcopy(smpl.GraphSeed))
        del TrainSamples
 
@@ -166,6 +167,7 @@ elif ModelMeta.ModelType=='GNN':
            vs.PrepareSeedGraph(ModelMeta)
        val_dataset = []
        for smpl in ValSamples[:10]:
+        smpl.GraphSeed.y = smpl.GraphSeed.y
         val_dataset.append(copy.deepcopy(smpl.GraphSeed))
        del ValSamples
        import torch_geometric
