@@ -878,7 +878,7 @@ class EMO:
           del __TempTrack
 
       def PrepareSeedGraph(self,MM):
-          if MM.ModelArchitecture=='GNN-3N-FC':
+          if MM.ModelArchitecture=='GCN-3N-FC':
               __TempTrack=copy.deepcopy(self.Hits)
 
               __LongestDistance=0.0
