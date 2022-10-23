@@ -728,10 +728,9 @@ class EMO:
                   __Hits[0]=float(__Hits[0])-__FinX
                   __Hits[1]=float(__Hits[1])-__FinY
                   __Hits[2]=float(__Hits[2])-__FinZ
-          for __Tracks in __TempTrack:
-              for __Hits in __Tracks:
-                  __Hits[2]=__Hits[2]*self.Resolution/1315
+
           if ImageType=='CNN-E':
+
               #Lon Rotate x
               __Track=__TempTrack[self.LagTrackInd]
               __Vardiff=float(__Track[len(__Track)-1][0])
@@ -816,6 +815,10 @@ class EMO:
                      __hits[0]=int(round(__hits[0]/__min_scale,0))
                      __hits[1]=int(round(__hits[1]/__min_scale,0))
                      __hits[2]=int(round(__hits[2]/__min_scale,0))
+          else:
+            for __Tracks in __TempTrack:
+                  for __Hits in __Tracks:
+                      __Hits[2]=__Hits[2]*self.Resolution/1315
           __TempEnchTrack=[]
           for __Tracks in __TempTrack:
                for h in range(0,len(__Tracks)-1):
