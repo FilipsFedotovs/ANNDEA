@@ -71,7 +71,7 @@ def CNNtrain(model, Sample, Batches):
         StartSeed=(ib*TrainParams[1])+1
 
         EndSeed=StartSeed+TrainParams[1]-1
-        print(EndSeed)
+        print(StartSeed,EndSeed,Batches,len(Sample))
         BatchImages=UF.LoadRenderImages(Sample,StartSeed,EndSeed)
         t=model.train_on_batch(BatchImages[0],BatchImages[1],reset_metrics=False)
         print(ib,t)
