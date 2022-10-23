@@ -1566,14 +1566,12 @@ def GenerateModel(ModelMeta,TrainParams=None):
             from torch_geometric.nn import GCNConv
             HiddenLayer=[]
             OutputLayer=[]
-            ImageLayer=[]
             for el in ModelMeta.ModelParameters:
               if ModelMeta.ModelParameters.index(el)<=4 and len(el)>0:
                  HiddenLayer.append(el)
               elif ModelMeta.ModelParameters.index(el)==10:
                  OutputLayer=el
-              elif ModelMeta.ModelParameters.index(el)==11:
-                 ImageLayer=el
+
             class GCN(torch.nn.Module):
                 def __init__(self):
                     super(GCN, self).__init__()

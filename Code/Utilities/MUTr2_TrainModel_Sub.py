@@ -171,8 +171,8 @@ elif ModelMeta.ModelType=='GNN':
        import torch_geometric
        from torch_geometric.loader import DataLoader
 
-       TrainSamples = DataLoader(train_dataset[:10], batch_size=TrainParams[1], shuffle=True)
-       ValSamples = DataLoader(val_dataset[:10], batch_size=TrainParams[1], shuffle=False)
+       TrainSamples = DataLoader(train_dataset, batch_size=TrainParams[1], shuffle=True)
+       ValSamples = DataLoader(val_dataset, batch_size=TrainParams[1], shuffle=False)
 
 print(UF.TimeStamp(), bcolors.OKGREEN+"Train and Validation data has loaded and analysed successfully..."+bcolors.ENDC)
 
