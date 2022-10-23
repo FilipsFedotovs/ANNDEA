@@ -99,7 +99,7 @@ if ModelMeta.ModelType=='CNN':
        train_set=1
    else:
        print(ModelMeta.TrainSessionsData)
-       print(ModelMeta.TrainSessionsID)
+       print(ModelMeta.TrainSessionsDataID)
        exit()
    NTrainBatches=math.ceil(float(len(TrainSamples))/float(TrainParams[1]))
    NValBatches=math.ceil(float(len(ValSamples))/float(TrainParams[1]))
