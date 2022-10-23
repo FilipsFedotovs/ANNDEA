@@ -910,11 +910,11 @@ class EMO:
                           __Tracks[h][0]=__Tracks[h][0]/MM.ModelParameters[11][0]
                           __Tracks[h][1]=__Tracks[h][1]/MM.ModelParameters[11][1]
                           __Tracks[h][2]=__Tracks[h][2]/MM.ModelParameters[11][2]
-              print(__TempTrack)
-              exit()
+
               # input
               __graphData_x =__TempTrack[0]+__TempTrack[1]
-
+              print(__graphData_x)
+              exit()
               # position of nodes
               __graphData_pos = []
               for node in __graphData_x:
