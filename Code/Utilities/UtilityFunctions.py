@@ -881,6 +881,9 @@ class EMO:
           if MM.ModelArchitecture=='GCN-3N-FC':
 
               __TempTrack=copy.deepcopy(self.Hits)
+              for __Tracks in __TempTrack:
+                      for h in len(__Tracks):
+                          __Tracks[h]=__Tracks[h][:3]
               __LongestDistance=0.0
               for __Track in __TempTrack:
                 __Xdiff=float(__Track[len(__Track)-1][0])-float(__Track[0][0])
