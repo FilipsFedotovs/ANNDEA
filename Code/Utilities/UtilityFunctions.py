@@ -1586,10 +1586,12 @@ def GenerateModel(ModelMeta,TrainParams=None):
                 def forward(self, x, edge_index, edge_attr, batch):
                     # 1. Obtain node embeddings
                     if len(HiddenLayer)==3:
-
-                        x = self.conv1(x, edge_index, edge_attr)
                         print(x)
+                        print(edge_index)
+                        print(edge_attr)
                         exit()
+                        x = self.conv1(x, edge_index, edge_attr)
+
                         x = x.relu()
                         x = self.conv2(x, edge_index, edge_attr)
                         x = x.relu()
