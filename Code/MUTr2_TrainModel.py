@@ -19,6 +19,7 @@ class bcolors:
 parser = argparse.ArgumentParser(description='Enter training job parameters')
 parser.add_argument('--ModelName',help="Which model would you like to use as a base for training (please enter N if you want to train a new model from scratch)", default='Default')
 parser.add_argument('--ModelType',help="What Neural Network type would you like to use: CNN/GNN?", default='CNN')
+parser.add_argument('--ModelArchitecture',help="What Type of Image/Graph: CNN, CNN-E", default='CNN')
 parser.add_argument('--ModelParams',help="Please enter the model params: '[<Number of MLP layers>, <'MLP hidden size'>, <Number of IN layers>, <'IN hidden size'>]'", default='[3,80,3,80]')
 parser.add_argument('--TrainParams',help="Please enter the train params: '[<Learning Rate>, <Batch size>, <Epochs>]'", default='[0.0001, 4, 10]')
 parser.add_argument('--TrainSampleID',help="Give name to this train sample", default='SHIP_TrainSample_v1')
@@ -29,6 +30,7 @@ args = parser.parse_args()
 Mode=args.Mode.upper()
 ModelName=args.ModelName
 ModelType=args.ModelType
+ModelArchitecture=args.ModelArchitecture
 ModelParamsStr='"'+args.ModelParams+'"'
 TrainParamsStr='"'+args.TrainParams+'"'
 ModelParams=ast.literal_eval(args.ModelParams)
@@ -148,7 +150,7 @@ if Mode=='RESET':
  Model_Meta_Path=EOSsubModelDIR+'/'+args.ModelName+'_Meta'
  ModelMeta=UF.ModelMeta(ModelName)
  if ModelType=='CNN':
-    ModelMeta.IniModelMeta(ModelParams, 'Tensorflow', Meta, 'N/A', 'CNN')
+    ModelMeta.IniModelMeta(ModelParams, 'Tensorflow', Meta, ModelArchitecture, 'CNN')
  ModelMeta.IniTrainingSession(TrainSampleID, datetime.datetime.now(), TrainParams)
  print(UF.PickleOperations(Model_Meta_Path, 'w', ModelMeta)[1])
  UF.SubmitJobs2Condor(Job)

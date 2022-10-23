@@ -117,58 +117,17 @@ def CNNtrain(model, Sample, Batches):
         iterator+=TrainParams[1]
         BatchImages=UF.LoadRenderImages(Sample,StartSeed,EndSeed)
         t=model.train_on_batch(BatchImages[0],BatchImages[1],reset_metrics=False)
-        print(t)
     return t,iterator
-def validate(model, device, sample):
-    model.eval()
-    opt_thlds, accs, losses = [], [], []
-    for HC in sample:
-        data = HC.to(device)
-        if (len(data.x)==0 or len(data.edge_index)==0): continue
-        try:
-            output = model(data.x, data.edge_index, data.edge_attr)
-        except:
-            continue
 
-        y, output = data.y.float(), output.squeeze(1)
-        try:
-          loss = F.binary_cross_entropy(output, y, reduction='mean').item()
-        except:
-            print('Erroneus data set: ',data.x, data.edge_index, data.edge_attr, 'skipping these samples...')
-            continue
-        diff, opt_thld, opt_acc = 100, 0, 0
-        best_tpr, best_tnr = 0, 0
-        for thld in np.arange(0.01, 0.6, 0.01):
-            acc, TPR, TNR = binary_classification_stats(output, y, thld)
-            delta = abs(TPR-TNR)
-            if (delta.item() < diff):
-                diff, opt_thld, opt_acc = delta.item(), thld, acc.item()
-        opt_thlds.append(opt_thld)
-        accs.append(opt_acc)
-        losses.append(loss)
-    return np.nanmean(opt_thlds),np.nanmean(losses),np.nanmean(accs)
+def CNNvalidate(model, Sample, Batches):
+    for ib in range(0,Batches):
+        StartSeed=(ib*TrainParams[1])+1
+        EndSeed=StartSeed+TrainParams[1]-1
+        BatchImages=UF.LoadRenderImages(Sample,StartSeed,EndSeed)
+        v=model.test_on_batch(BatchImages[0],BatchImages[1],reset_metrics=False)
+    return v
 
-def test(model, device, sample, thld):
-    model.eval()
-    losses, accs = [], []
-    with torch.no_grad():
-        for HC in sample:
-            data = HC.to(device)
-            if (len(data.x)==0 or len(data.edge_index)==0): continue
-            try:
-               output = model(data.x, data.edge_index, data.edge_attr)
-            except:
-               continue
-            y, output = data.y.float(), output.squeeze(1)
-            acc, TPR, TNR = binary_classification_stats(output, y, thld)
-            try:
-                loss = F.binary_cross_entropy(output, y,reduction='mean')
-            except:
-                print('Erroneus data set: ',data.x, data.edge_index, data.edge_attr, 'skipping these samples...')
-                continue
-            accs.append(acc.item())
-            losses.append(loss.item())
-    return np.nanmean(losses), np.nanmean(accs)
+
 
 TrainSampleInputMeta=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/'+TrainSampleID+'_info.pkl'
 print(UF.TimeStamp(),'Loading the data file ',bcolors.OKBLUE+TrainSampleInputMeta+bcolors.ENDC)
@@ -182,6 +141,7 @@ ValSamples=UF.PickleOperations(EOS_DIR+'/ANNADEA/Data/TRAIN_SET/'+TrainSampleID+
 if ModelMeta.ModelType=='CNN':
    if len(ModelMeta.TrainSessionsData)==0:
        TrainSamples=UF.PickleOperations(EOS_DIR+'/ANNADEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_TRACK_SEEDS_OUTPUT_1.pkl','r', 'N/A')[0]
+       train_set=1
    else:
        print('WIP')
        exit()
@@ -219,37 +179,29 @@ def main(self):
         import tensorflow as tf
         from tensorflow import keras
         from keras import backend as K
-    try:
-        print(EOSsubModelDIR+'/'+ModelName)
-        model=tf.keras.models.load_model(EOSsubModelDIR+ModelName)
-        K.set_value(model.optimizer.learning_rate, TrainParams[1])
-    except:
-        print(UF.TimeStamp(), bcolors.WARNING+"Model/state data files are missing, skipping this step..." +bcolors.ENDC)
-        model = UF.GenerateModel(ModelMeta,TrainParams)
-    model.summary()
-    # for epoch in range(0, TrainParams[2]):
-    #     train_loss, itr=CNNtrain(model, TrainSamples, NTrainBatches)
-    #     print(train_loss,itr)
-    # exit()
-    for epoch in range(0, 1):
-        train_loss, itr=CNNtrain(model, TrainSamples, NTrainBatches)
-        print(train_loss,itr)
+        try:
+            print(EOSsubModelDIR+'/'+ModelName)
+            model=tf.keras.models.load_model(EOSsubModelDIR+ModelName)
+            K.set_value(model.optimizer.learning_rate, TrainParams[1])
+        except:
+            print(UF.TimeStamp(), bcolors.WARNING+"Model/state data files are missing, skipping this step..." +bcolors.ENDC)
+            model = UF.GenerateModel(ModelMeta,TrainParams)
+        model.summary()
+        records=[]
+        for epoch in range(0, TrainParams[2]):
+            train_loss, itr=CNNtrain(model, TrainSamples, NTrainBatches)
+            val_loss=CNNvalidate(model, ValSamples, NValBatches)
+            test_loss=val_loss
+            print(UF.TimeStamp(),'Epoch ',epoch, ' is completed')
+            records.append([epoch,itr,train_loss,0.5,val_loss[0],val_loss[1],test_loss[0],test_loss[1],train_set])
+        Model_Meta_Path=EOSsubModelDIR+'/'+args.ModelName+'_Meta'
+        Model_Path=EOSsubModelDIR+'/'+args.ModelName
+        model.save(Model_Path)
+        Header=[['Epoch','# Samples','Train Loss','Optimal Threshold','Validation Loss','Validation Accuracy','Test Loss','Test Accuracy','Training Set']]
+        Header+=records
+        ModelMeta.CompleteTrainingSession(Header)
+        print(UF.PickleOperations(Model_Meta_Path, 'w', ModelMeta)[1])
         exit()
-    #      train_loss, itr= train(model, device,TrainSamples, optimizer)
-    #      thld, val_loss,val_acc = validate(model, device, ValSamples)
-    #      test_loss, test_acc = test(model, device,TestSamples, thld)
-    #      scheduler.step()
-    #      print(UF.TimeStamp(),'Epoch ',epoch, ' is completed')
-    #      records.append([epoch,itr,train_loss,thld,val_loss,val_acc,test_loss,test_acc])
-
-
-
-    # State_Save_Path=EOSsubModelDIR+'/'+args.ModelName+'_State'
-    # Model_Meta_Path=EOSsubModelDIR+'/'+args.ModelName+'_Meta'
-    # Model_Path=EOSsubModelDIR+'/'+args.ModelName
-    # ModelMeta=UF.PickleOperations(Model_Meta_Path, 'r', 'N/A')[0]
-    # device = torch.device('cpu')
-    # model = UF.GenerateModel(ModelMeta).to(device)
     # optimizer = optim.Adam(model.parameters(), lr=TrainParams[0])
     # scheduler = StepLR(optimizer, step_size=0.1,gamma=0.1)
     # print(UF.TimeStamp(),'Try to load the previously saved model/optimiser state files ')
