@@ -108,6 +108,8 @@ if ModelMeta.ModelType=='CNN':
    NValBatches=math.ceil(float(len(ValSamples))/float(TrainParams[1]))
    for ts in TrainSamples:
        ts.PrepareTrackPrint(ModelMeta,'CNN-E')
+   for vs in ValSamples:
+       vs.PrepareTrackPrint(ModelMeta,'CNN-E')
 
 print(UF.TimeStamp(), bcolors.OKGREEN+"Train and Validation data has loaded and analysed successfully..."+bcolors.ENDC)
 
