@@ -903,16 +903,15 @@ class EMO:
                       __Tracks[h][0]=float(__Tracks[h][0])-__FinX
                       __Tracks[h][1]=float(__Tracks[h][1])-__FinY
                       __Tracks[h][2]=float(__Tracks[h][2])-__FinZ
-              print(__TempTrack)
-              exit()
+
               # Rescale
               for __Tracks in __TempTrack:
-                      for __Hits in __Tracks:
-                          __Hits=__Hits[:3]
-                          __Hits[0]=__Hits[0]/MM.ModelParameters[11][0]
-                          __Hits[1]=__Hits[1]/MM.ModelParameters[11][1]
-                          __Hits[2]=__Hits[2]/MM.ModelParameters[11][2]
-
+                      for h in range(len(__Tracks)):
+                          __Tracks[h][0]=__Tracks[h][0]/MM.ModelParameters[11][0]
+                          __Tracks[h][1]=__Tracks[h][1]/MM.ModelParameters[11][1]
+                          __Tracks[h][2]=__Tracks[h][2]/MM.ModelParameters[11][2]
+              print(__TempTrack)
+              exit()
               # input
               __graphData_x =__TempTrack[0]+__TempTrack[1]
 
