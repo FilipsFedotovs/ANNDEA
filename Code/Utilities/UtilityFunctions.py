@@ -896,6 +896,7 @@ class EMO:
               # Shift
               for __Tracks in __TempTrack:
                   for __Hits in __Tracks:
+                      __Hits=__Hits[:3]
                       __Hits[0]=float(__Hits[0])-__FinX
                       __Hits[1]=float(__Hits[1])-__FinY
                       __Hits[2]=float(__Hits[2])-__FinZ
@@ -905,8 +906,6 @@ class EMO:
                           __Hits[0]=__Hits[0]/MM.ModelParameters[11][0]
                           __Hits[1]=__Hits[1]/MM.ModelParameters[11][1]
                           __Hits[2]=__Hits[2]/MM.ModelParameters[11][2]
-                          __Hits[3]=__Hits[3]/MM.ModelParameters[11][3]
-                          __Hits[4]=__Hits[4]/MM.ModelParameters[11][4]
 
               # input
               __graphData_x =__TempTrack[0]+__TempTrack[1]
