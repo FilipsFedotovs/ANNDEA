@@ -700,7 +700,7 @@ class EMO:
       def TrackQualityCheck(self,MaxDoca,MaxSLG, MaxSTG,MaxAngle):
                     return (self.DOCA<=MaxDoca and self.SLG<=MaxSLG and self.STG<=(MaxSTG+(self.SLG*0.96)) and abs(self.Opening_Angle)<=MaxAngle)
 
-      def PrepareTrackPrint(self,MM):
+      def PrepareSeedPrint(self,MM):
           __TempTrack=copy.deepcopy(self.Hits)
 
           self.Resolution=MM.ModelParameters[11][3]
@@ -876,6 +876,87 @@ class EMO:
           self.TrackPrint=[p for p in self.TrackPrint if (abs(p[0])<self.bX and abs(p[1])<self.bY and abs(p[2])<self.bZ)]
           del __TempEnchTrack
           del __TempTrack
+
+      def PrepareSeedGraph(self,MaxX,MaxY,MaxZ,MaxTX,MaxTY,Rescale):
+          __TempTrack=copy.deepcopy(self.SegmentHits)
+
+          __LongestDistance=0.0
+          for __Track in __TempTrack:
+            __Xdiff=float(__Track[len(__Track)-1][0])-float(__Track[0][0])
+            __Ydiff=float(__Track[len(__Track)-1][1])-float(__Track[0][1])
+            __Zdiff=float(__Track[len(__Track)-1][2])-float(__Track[0][2])
+            __Distance=math.sqrt(__Xdiff**2+__Ydiff**2+__Zdiff**2)
+            if __Distance>=__LongestDistance:
+                __LongestDistance=__Distance
+                __FinX=float(__Track[0][0])
+                __FinY=float(__Track[0][1])
+                __FinZ=float(__Track[0][2])
+                self.LongestTrackInd=__TempTrack.index(__Track)
+          # Shift
+          for __Tracks in __TempTrack:
+              for __Hits in __Tracks:
+                  __Hits[0]=float(__Hits[0])-__FinX
+                  __Hits[1]=float(__Hits[1])-__FinY
+                  __Hits[2]=float(__Hits[2])-__FinZ
+          # Rescale
+          if Rescale:
+              for __Tracks in __TempTrack:
+                  for __Hits in __Tracks:
+                      __Hits[0]=__Hits[0]/MaxX
+                      __Hits[1]=__Hits[1]/MaxY
+                      __Hits[2]=__Hits[2]/MaxZ
+                      __Hits[3]=__Hits[3]/MaxTX
+                      __Hits[4]=__Hits[4]/MaxTY
+
+
+
+          # input
+          __graphData_x =__TempTrack[0]+__TempTrack[1]
+
+          # position of nodes
+          __graphData_pos = []
+          for node in __graphData_x:
+            __graphData_pos.append(node[0:3])
+
+          # edge index and attributes
+          __graphData_edge_index = []
+          __graphData_edge_attr = []
+
+          # bipartite
+        #   for i in range(len(__TempTrack[0])):
+        #     for j in range(len(__TempTrack[0]), len(__TempTrack[0])+len(__TempTrack[1])):
+        #         __graphData_edge_index.append([i,j])
+        #         __graphData_edge_attr.append(np.array(__graphData_pos[j]) - np.array(__graphData_pos[i]))
+        #         __graphData_edge_index.append([j,i])
+        #         __graphData_edge_attr.append(np.array(__graphData_pos[i]) - np.array(__graphData_pos[j]))
+
+          #fully connected
+          for i in range(len(__TempTrack[0])+len(__TempTrack[1])):
+            for j in range(0,i):
+                __graphData_edge_index.append([i,j])
+                __graphData_edge_attr.append(np.array(__graphData_pos[j]) - np.array(__graphData_pos[i]))
+                __graphData_edge_index.append([j,i])
+                __graphData_edge_attr.append(np.array(__graphData_pos[i]) - np.array(__graphData_pos[j]))
+
+          import torch
+          import torch_geometric
+          from torch_geometric.data import Data
+
+          if(hasattr(self, 'MC_truth_label')):
+            # target outcome
+            __graphData_y = np.array([self.MC_truth_label])
+            self.GraphSeed=Data(x=torch.Tensor(__graphData_x),
+                              edge_index = torch.Tensor(__graphData_edge_index).t().contiguous().long(),
+                              edge_attr = torch.Tensor(__graphData_edge_attr),
+                              y=torch.Tensor(__graphData_y).long(),
+                              pos = torch.Tensor(__graphData_pos)
+                              )
+          else:
+            self.GraphSeed=Data(x=torch.Tensor(__graphData_x),
+                              edge_index = torch.Tensor(__graphData_edge_index).t().contiguous().long(),
+                              edge_attr = torch.Tensor(__graphData_edge_attr),
+                              pos = torch.Tensor(__graphData_pos)
+                              )
       def Plot(self,PlotType):
         if PlotType=='XZ' or PlotType=='ZX':
           __InitialData=[]

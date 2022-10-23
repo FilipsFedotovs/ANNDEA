@@ -133,13 +133,15 @@ def AutoPilot(wait_min, interval_min, max_interval_tolerance):
                  print(bcolors.OKGREEN+"......................................................................."+bcolors.ENDC)
                  interval_count=1
        elif interval_count%max_interval_tolerance==0:
+
                 print(UF.TimeStamp(),bcolors.WARNING+'Job has not been received, resubmitting...'+bcolors.ENDC)
+                HTCondorTag="SoftUsed == \"ANNADEA-MUTr2-"+ModelName+"\""
+                UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MUTr2_'+ModelName, ['N/A'], HTCondorTag)
                 if Model_Meta.ModelType=='CNN':
                     Job=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,'/ANNADEA/Data/TRAIN_SET/','N/A','MUTr2','N/A',ModelName,1,OptionHeader,OptionLine,'MUTr2_TrainModel_Sub.py',False,"['','']", True, True)[0]
                 else:
                     Job=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,'/ANNADEA/Data/TRAIN_SET/','N/A','MUTr2','N/A',ModelName,1,OptionHeader,OptionLine,'MUTr2_TrainModel_Sub.py',False,"['','']", True, False)[0]
-                HTCondorTag="SoftUsed == \"ANNADEA-MUTr2-"+ModelName+"\""
-                UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MUTr2_'+ModelName, [ModelName], HTCondorTag)
+
                 UF.SubmitJobs2Condor(Job)
                 print(bcolors.BOLD+"The job has been submitted..."+bcolors.ENDC)
        print(UF.TimeStamp(),bcolors.WARNING+'The job is not ready, waiting again...'+bcolors.ENDC)
@@ -203,7 +205,6 @@ else:
                     Job=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,'/ANNADEA/Data/TRAIN_SET/','N/A','MUTr2','N/A',ModelName,1,OptionHeader,OptionLine,'MUTr2_TrainModel_Sub.py',False,"['','']", True, True)[0]
                  else:
                     Job=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,'/ANNADEA/Data/TRAIN_SET/','N/A','MUTr2','N/A',ModelName,1,OptionHeader,OptionLine,'MUTr2_TrainModel_Sub.py',False,"['','']", True, False)[0]
-                 HTCondorTag="SoftUsed == \"ANNADEA-MUTr2-"+ModelName+"\""
                  UF.SubmitJobs2Condor(Job)
                  print(bcolors.BOLD+"The job has been submitted..."+bcolors.ENDC)
                  print(UF.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
