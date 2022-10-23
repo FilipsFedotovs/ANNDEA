@@ -189,8 +189,6 @@ if ModelMeta.ModelType=='CNN':
    NValBatches=math.ceil(float(len(ValSamples))/float(TrainParams[2]))
    for ts in TrainSamples:
        ts.PrepareTrackPrint(ModelMeta,'CNN-E')
-   TrainSamples[1].Plot('XZ')
-   exit()
 # for i in range(1,Meta.no_sets+1):
 #         flocation=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/'+TrainSampleID+'_TH_OUTPUT_'+str(i)+'.pkl'
 #         print(UF.TimeStamp(),'Loading data from ',bcolors.OKBLUE+flocation+bcolors.ENDC)
