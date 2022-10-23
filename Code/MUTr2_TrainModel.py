@@ -68,14 +68,18 @@ print(UF.TimeStamp(), bcolors.OKGREEN+"Modules Have been imported successfully..
 #This code fragment covers the Algorithm logic on the first run
 
 def ModelTrainingSaturation(Meta):
-    LossDataForChecking=[]
-    AccDataForChecking=[]
-    for i in range(1,len(Meta)):
-               LossDataForChecking.append(Meta[i][6])
-               AccDataForChecking.append(Meta[i][7])
-    LossGrad=UF.GetEquationOfLine(LossDataForChecking)[0]
-    AccGrad=UF.GetEquationOfLine(AccDataForChecking)[0]
-    return LossGrad>=-PM.TST and AccGrad<=PM.TST
+    print(Meta)
+    if len(Meta)==1:
+        return False
+    else:
+        LossDataForChecking=[]
+        AccDataForChecking=[]
+        for i in range(1,len(Meta)):
+                   LossDataForChecking.append(Meta[i][6])
+                   AccDataForChecking.append(Meta[i][7])
+        LossGrad=UF.GetEquationOfLine(LossDataForChecking)[0]
+        AccGrad=UF.GetEquationOfLine(AccDataForChecking)[0]
+        return LossGrad>=-PM.TST and AccGrad<=PM.TST
 
 def AutoPilot(wait_min, interval_min, max_interval_tolerance):
     print(UF.TimeStamp(),'Going on an autopilot mode for ',wait_min, 'minutes while checking HTCondor every',interval_min,'min',bcolors.ENDC)
@@ -92,13 +96,19 @@ def AutoPilot(wait_min, interval_min, max_interval_tolerance):
        Model_Meta_Raw=UF.PickleOperations(Model_Meta_Path, 'r', 'N/A')
        print(Model_Meta_Raw[1])
        Model_Meta=Model_Meta_Raw[0]
+
        completion=None
+
        for did in range(len(Model_Meta.TrainSessionsDataID)-1,-1,-1):
            if Model_Meta.TrainSessionsDataID[did]==TrainSampleID:
                completion=did
                break
        if len(Model_Meta.TrainSessionsDataID)==len(Model_Meta.TrainSessionsData):
-           if ModelTrainingSaturation(Model_Meta.TrainSessionsData[completion]):
+           if len(Model_Meta.TrainSessionsData[-1])==1 and len(Model_Meta.TrainSessionsData)>2:
+              test_input=Model_Meta.TrainSessionsData[-1]+Model_Meta.TrainSessionsData[-2][1:]+Model_Meta.TrainSessionsData[-3][1:]
+           else:
+              test_input=Model_Meta.TrainSessionsData[completion] 
+           if ModelTrainingSaturation(test_input):
               print(UF.TimeStamp(),bcolors.WARNING+'Warning, the model seems to be over saturated'+bcolors.ENDC)
               print(UF.TimeStamp(),'Aborting the training...')
               exit()
@@ -172,7 +182,11 @@ else:
                completion=did
                break
        if len(Model_Meta.TrainSessionsDataID)==len(Model_Meta.TrainSessionsData):
-           if ModelTrainingSaturation(Model_Meta.TrainSessionsData[completion]):
+           if len(Model_Meta.TrainSessionsData[-1])==1 and len(Model_Meta.TrainSessionsData)>2:
+              test_input=Model_Meta.TrainSessionsData[-1]+Model_Meta.TrainSessionsData[-2]+Model_Meta.TrainSessionsData[-3]
+           else:
+              test_input=Model_Meta.TrainSessionsData[completion]
+           if ModelTrainingSaturation(test_input):
               print(UF.TimeStamp(),bcolors.WARNING+'Warning, the model seems to be over saturated'+bcolors.ENDC)
               print(bcolors.BOLD+'If you would like to stop training and exit please enter E'+bcolors.ENDC)
               print(bcolors.BOLD+'If you would like to resubmit your script enter R'+bcolors.ENDC)
