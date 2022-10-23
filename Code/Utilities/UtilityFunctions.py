@@ -913,8 +913,7 @@ class EMO:
 
               # input
               __graphData_x =__TempTrack[0]+__TempTrack[1]
-              print(__graphData_x)
-              exit()
+
               # position of nodes
               __graphData_pos = []
               for node in __graphData_x:
@@ -931,7 +930,8 @@ class EMO:
                     __graphData_edge_attr.append(np.array(__graphData_pos[j]) - np.array(__graphData_pos[i]))
                     __graphData_edge_index.append([j,i])
                     __graphData_edge_attr.append(np.array(__graphData_pos[i]) - np.array(__graphData_pos[j]))
-
+              print(__graphData_edge_index)
+              exit()
               import torch
               import torch_geometric
               from torch_geometric.data import Data
