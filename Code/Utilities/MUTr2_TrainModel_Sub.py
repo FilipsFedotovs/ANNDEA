@@ -76,6 +76,17 @@ def CNNtrain(model, Sample, Batches):
         t=model.train_on_batch(BatchImages[0],BatchImages[1],reset_metrics=False)
     return t
 
+def GNNtrain(model, Sample,optimizer):
+    model.train()
+    for data in Sample:
+        out = model(data.x, data.edge_index, data.edge_attr, data.batch)
+        loss = criterion(out, data.y)
+        loss.backward()  # Derive gradients.
+        optimizer.step()  # Update parameters based on gradients.
+        optimizer.zero_grad()
+
+    return loss
+
 def CNNvalidate(model, Sample, Batches):
     for ib in range(2360,Batches):
         StartSeed=(ib*TrainParams[1])+1
@@ -122,6 +133,8 @@ if ModelMeta.ModelType=='CNN':
        vs.PrepareSeedPrint(ModelMeta)
 
 elif ModelMeta.ModelType=='GNN':
+       import torch
+       criterion = torch.nn.CrossEntropyLoss()
        if len(ModelMeta.TrainSessionsData)==0:
            TrainSamples=UF.PickleOperations(EOS_DIR+'/ANNADEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_TRACK_SEEDS_OUTPUT_1.pkl','r', 'N/A')[0]
            print(UF.PickleOperations(EOS_DIR+'/ANNADEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_TRACK_SEEDS_OUTPUT_1.pkl','r', 'N/A')[1])
@@ -201,10 +214,8 @@ def main(self):
         print(UF.PickleOperations(Model_Meta_Path, 'w', ModelMeta)[1])
         exit()
     elif ModelMeta.ModelType=='GNN':
-        import torch
         from torch import optim
         from torch.optim.lr_scheduler import StepLR
-        import torch.nn.functional as F
         print(UF.TimeStamp(),'Starting the training process... ')
         State_Save_Path=EOSsubModelDIR+'/'+ModelName+'_State'
         Model_Meta_Path=EOSsubModelDIR+'/'+ModelName+'_Meta'
@@ -213,6 +224,7 @@ def main(self):
         device = torch.device('cpu')
         model = UF.GenerateModel(ModelMeta).to(device)
         optimizer = optim.Adam(model.parameters(), lr=TrainParams[0])
+
         scheduler = StepLR(optimizer, step_size=0.1,gamma=0.1)
         print(UF.TimeStamp(),'Try to load the previously saved model/optimiser state files ')
         try:
@@ -224,8 +236,8 @@ def main(self):
                print(UF.TimeStamp(), bcolors.WARNING+"Model/state data files are missing, skipping this step..." +bcolors.ENDC)
         records=[]
         for epoch in range(0, TrainParams[2]):
-            print('Wip')
-        #      train_loss, itr= train(model, device,TrainSamples, optimizer)
+            train_loss, itr= GNNtrain(model,TrainSamples, optimizer)
+            print(train_loss)
         #      thld, val_loss,val_acc = validate(model, device, ValSamples)
         #      test_loss, test_acc = test(model, device,TestSamples, thld)
         #      scheduler.step()
