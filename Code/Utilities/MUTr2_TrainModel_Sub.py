@@ -155,24 +155,24 @@ elif ModelMeta.ModelType=='GNN':
                    print(UF.PickleOperations(EOS_DIR+'/ANNADEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_TRACK_SEEDS_OUTPUT_1.pkl','r', 'N/A')[1])
        NTrainBatches=math.ceil(float(len(TrainSamples))/float(TrainParams[1]))
        NValBatches=math.ceil(float(len(ValSamples))/float(TrainParams[1]))
-       for ts in TrainSamples:
+       for ts in TrainSamples[:10]:
            ts.PrepareSeedGraph(ModelMeta)
        train_dataset = []
-       for smpl in TrainSamples:
+       for smpl in TrainSamples[:10]:
         train_dataset.append(copy.deepcopy(smpl.GraphSeed))
        del TrainSamples
 
-       for vs in ValSamples:
+       for vs in ValSamples[:10]:
            vs.PrepareSeedGraph(ModelMeta)
        val_dataset = []
-       for smpl in ValSamples:
+       for smpl in ValSamples[:10]:
         val_dataset.append(copy.deepcopy(smpl.GraphSeed))
        del ValSamples
        import torch_geometric
        from torch_geometric.loader import DataLoader
 
-       TrainSamples = DataLoader(train_dataset, batch_size=TrainParams[1], shuffle=True)
-       ValSamples = DataLoader(val_dataset, batch_size=TrainParams[1], shuffle=False)
+       TrainSamples = DataLoader(train_dataset[:10], batch_size=TrainParams[1], shuffle=True)
+       ValSamples = DataLoader(val_dataset[:10], batch_size=TrainParams[1], shuffle=False)
 
 print(UF.TimeStamp(), bcolors.OKGREEN+"Train and Validation data has loaded and analysed successfully..."+bcolors.ENDC)
 
