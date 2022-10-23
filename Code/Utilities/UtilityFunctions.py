@@ -879,8 +879,8 @@ class EMO:
 
       def PrepareSeedGraph(self,MM):
           if MM.ModelArchitecture=='GCN-3N-FC':
-              __TempTrack=copy.deepcopy(self.Hits)
 
+              __TempTrack=copy.deepcopy(self.Hits)
               __LongestDistance=0.0
               for __Track in __TempTrack:
                 __Xdiff=float(__Track[len(__Track)-1][0])-float(__Track[0][0])
@@ -903,6 +903,7 @@ class EMO:
               # Rescale
               for __Tracks in __TempTrack:
                       for __Hits in __Tracks:
+                          __Hits=__Hits[:3]
                           __Hits[0]=__Hits[0]/MM.ModelParameters[11][0]
                           __Hits[1]=__Hits[1]/MM.ModelParameters[11][1]
                           __Hits[2]=__Hits[2]/MM.ModelParameters[11][2]
