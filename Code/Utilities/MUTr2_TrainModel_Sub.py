@@ -69,9 +69,7 @@ def CNNtrain(model, Sample, Batches):
 
     for ib in range(2480,Batches):
         StartSeed=(ib*TrainParams[1])+1
-
         EndSeed=StartSeed+TrainParams[1]-1
-        print(StartSeed,EndSeed,Batches,len(Sample))
         BatchImages=UF.LoadRenderImages(Sample,StartSeed,EndSeed)
         t=model.train_on_batch(BatchImages[0],BatchImages[1],reset_metrics=False)
     return t
@@ -100,7 +98,8 @@ if ModelMeta.ModelType=='CNN':
        TrainSamples=UF.PickleOperations(EOS_DIR+'/ANNADEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_TRACK_SEEDS_OUTPUT_1.pkl','r', 'N/A')[0]
        train_set=1
    else:
-       print('WIP')
+       print(ModelMeta.TrainSessionsData)
+       print(ModelMeta.TrainSessionsData)
        exit()
    NTrainBatches=math.ceil(float(len(TrainSamples))/float(TrainParams[1]))
    NValBatches=math.ceil(float(len(ValSamples))/float(TrainParams[1]))
