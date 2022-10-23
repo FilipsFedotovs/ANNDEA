@@ -9,6 +9,7 @@ import argparse
 import math
 import ast
 import os
+import copy
 # import torch
 # from torch import optim
 # from torch.optim.lr_scheduler import StepLR
@@ -142,8 +143,22 @@ elif ModelMeta.ModelType=='GNN':
        NValBatches=math.ceil(float(len(ValSamples))/float(TrainParams[1]))
        for ts in TrainSamples:
            ts.PrepareSeedGraph(ModelMeta)
+       train_dataset = []
+       for smpl in TrainSamples:
+        train_dataset.append(copy.deepcopy(smpl.GraphSeed))
+       del TrainSamples
+
        for vs in ValSamples:
            vs.PrepareSeedGraph(ModelMeta)
+       val_dataset = []
+       for smpl in ValSamples:
+        val_dataset.append(copy.deepcopy(smpl.GraphSeed))
+       del ValSamples
+       import torch_geometric
+       from torch_geometric.loader import DataLoader
+
+       TrainSamples = DataLoader(train_dataset, batch_size=TrainParams[1], shuffle=True)
+       ValSamples = DataLoader(val_dataset, batch_size=TrainParams[1], shuffle=False)
 
 print(UF.TimeStamp(), bcolors.OKGREEN+"Train and Validation data has loaded and analysed successfully..."+bcolors.ENDC)
 
@@ -197,8 +212,6 @@ def main(self):
         ModelMeta=UF.PickleOperations(Model_Meta_Path, 'r', 'N/A')[0]
         device = torch.device('cpu')
         model = UF.GenerateModel(ModelMeta).to(device)
-        print(model)
-        exit()
         optimizer = optim.Adam(model.parameters(), lr=TrainParams[0])
         scheduler = StepLR(optimizer, step_size=0.1,gamma=0.1)
         print(UF.TimeStamp(),'Try to load the previously saved model/optimiser state files ')
