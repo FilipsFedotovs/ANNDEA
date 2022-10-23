@@ -74,7 +74,6 @@ def CNNtrain(model, Sample, Batches):
         print(StartSeed,EndSeed,Batches,len(Sample))
         BatchImages=UF.LoadRenderImages(Sample,StartSeed,EndSeed)
         t=model.train_on_batch(BatchImages[0],BatchImages[1],reset_metrics=False)
-        print(ib,t)
     return t
 
 def CNNvalidate(model, Sample, Batches):
@@ -83,7 +82,6 @@ def CNNvalidate(model, Sample, Batches):
         EndSeed=StartSeed+TrainParams[1]-1
         BatchImages=UF.LoadRenderImages(Sample,StartSeed,EndSeed)
         v=model.test_on_batch(BatchImages[0],BatchImages[1],reset_metrics=False)
-        print(ib,v)
     return v
 
 
@@ -107,9 +105,9 @@ if ModelMeta.ModelType=='CNN':
    NTrainBatches=math.ceil(float(len(TrainSamples))/float(TrainParams[1]))
    NValBatches=math.ceil(float(len(ValSamples))/float(TrainParams[1]))
    for ts in TrainSamples:
-       ts.PrepareTrackPrint(ModelMeta,'CNN-E')
+       ts.PrepareTrackPrint(ModelMeta)
    for vs in ValSamples:
-       vs.PrepareTrackPrint(ModelMeta,'CNN-E')
+       vs.PrepareTrackPrint(ModelMeta)
 
 print(UF.TimeStamp(), bcolors.OKGREEN+"Train and Validation data has loaded and analysed successfully..."+bcolors.ENDC)
 
@@ -140,8 +138,6 @@ def main(self):
             test_loss=val_loss
             print(UF.TimeStamp(),'Epoch ',epoch, ' is completed')
             records.append([epoch,itr,train_loss[0],0.5,val_loss[0],val_loss[1],test_loss[0],test_loss[1],train_set])
-        print(records)
-        exit()
         Model_Meta_Path=EOSsubModelDIR+'/'+args.ModelName+'_Meta'
         Model_Path=EOSsubModelDIR+'/'+args.ModelName
         model.save(Model_Path)

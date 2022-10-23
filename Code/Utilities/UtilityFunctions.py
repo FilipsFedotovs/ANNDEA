@@ -700,7 +700,7 @@ class EMO:
       def TrackQualityCheck(self,MaxDoca,MaxSLG, MaxSTG,MaxAngle):
                     return (self.DOCA<=MaxDoca and self.SLG<=MaxSLG and self.STG<=(MaxSTG+(self.SLG*0.96)) and abs(self.Opening_Angle)<=MaxAngle)
 
-      def PrepareTrackPrint(self,MM,ImageType):
+      def PrepareTrackPrint(self,MM):
           __TempTrack=copy.deepcopy(self.Hits)
 
           self.Resolution=MM.ModelParameters[11][3]
@@ -729,7 +729,7 @@ class EMO:
                   __Hits[1]=float(__Hits[1])-__FinY
                   __Hits[2]=float(__Hits[2])-__FinZ
 
-          if ImageType=='CNN-E':
+          if MM.ModelArchitecture=='CNN-E':
 
               #Lon Rotate x
               __Track=__TempTrack[self.LagTrackInd]
