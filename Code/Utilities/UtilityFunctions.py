@@ -1135,7 +1135,9 @@ def GenerateModel(ModelMeta,TrainParams=None):
       if ModelMeta.ModelFramework=='PyTorch':
          import torch
          import torch.nn as nn
-         from torch.nn import Sequential as Seq, Linear, ReLU, Sigmoid
+
+         from torch.nn import Sequential as Seq, Linear, ReLU, Sigmoid,Softmax,global_mean_pool
+         import torch.nn.functional as F
          from torch import Tensor
          import torch_geometric
          from torch_geometric.nn import MessagePassing
@@ -1496,8 +1498,49 @@ def GenerateModel(ModelMeta,TrainParams=None):
                      return edge_weights
             model = TCN(ModelMeta.num_node_features, ModelMeta.num_edge_features, ModelMeta.ModelParameters[3])
             return model
-         elif ModelMeta.ModelArchitecture[:3]=='GCN':
-             return 'Hello'
+         elif ModelMeta.ModelArchitecture=='GCN-3N-FC':
+            from torch_geometric.nn import GCNConv
+            HiddenLayer=[]
+            OutputLayer=[]
+            ImageLayer=[]
+            for el in ModelMeta.ModelParameters:
+              if ModelMeta.ModelParameters.index(el)<=4 and len(el)>0:
+                 HiddenLayer.append(el)
+              elif ModelMeta.ModelParameters.index(el)==10:
+                 OutputLayer=el
+              elif ModelMeta.ModelParameters.index(el)==11:
+                 ImageLayer=el
+            class GCN(torch.nn.Module):
+                def __init__(self, hidden_channels):
+                    super(GCN, self).__init__()
+                    torch.manual_seed(12345)
+                    if len(HiddenLayer)==3:
+                        self.conv1 = GCNConv(3 , HiddenLayer[0][0], dim=HiddenLayer[0][1], kernel_size=HiddenLayer[0][2])
+                        self.conv2 = GCNConv(HiddenLayer[1][0], dim=HiddenLayer[1][1], kernel_size=HiddenLayer[1][2])
+                        self.conv3 = GCNConv(HiddenLayer[2][0], dim=HiddenLayer[2][1], kernel_size=HiddenLayer[2][2])
+
+                    self.lin = Linear(OutputLayer[0],OutputLayer[1])
+                    self.softmax = Softmax(dim=-1)
+
+                def forward(self, x, edge_index, edge_attr, batch):
+                    # 1. Obtain node embeddings
+                    if len(HiddenLayer)==3:
+                        x = self.conv1(x, edge_index, edge_attr)
+                        x = x.relu()
+                        x = self.conv2(x, edge_index, edge_attr)
+                        x = x.relu()
+                        x = self.conv3(x, edge_index, edge_attr)
+
+                    # 2. Readout layer
+                    x = global_mean_pool(x, batch)  # [batch_size, hidden_channels]
+
+                    # 3. Apply a final classifier
+                    x = F.dropout(x, p=0.5, training=self.training)
+                    x = self.lin(x)
+                    x = self.softmax(x)
+                    return x
+
+
       elif ModelMeta.ModelFramework=='Tensorflow':
           if ModelMeta.ModelType=='CNN':
             act_fun_list=['N/A','linear','exponential','elu','relu', 'selu','sigmoid','softmax','softplus','softsign','tanh']
