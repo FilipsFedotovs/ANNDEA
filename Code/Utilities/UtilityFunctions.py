@@ -878,7 +878,7 @@ class EMO:
           del __TempTrack
 
       def PrepareSeedGraph(self,MM):
-          if MM.ModelArchitecture=='GCN-3N-FC':
+          if MM.ModelArchitecture=='GCN-4N-FC':
 
                       __TempTrack=copy.deepcopy(self.Hits)
                       for __Tracks in __TempTrack:
@@ -1562,7 +1562,7 @@ def GenerateModel(ModelMeta,TrainParams=None):
                      return edge_weights
             model = TCN(ModelMeta.num_node_features, ModelMeta.num_edge_features, ModelMeta.ModelParameters[3])
             return model
-         elif ModelMeta.ModelArchitecture=='GCN-3N-FC':
+         elif ModelMeta.ModelArchitecture=='GCN-4N-FC':
             from torch_geometric.nn import GCNConv
             HiddenLayer=[]
             OutputLayer=[]
@@ -1579,7 +1579,7 @@ def GenerateModel(ModelMeta,TrainParams=None):
                     super(GCN, self).__init__()
                     torch.manual_seed(12345)
                     if len(HiddenLayer)==3:
-                        self.conv1 = GCNConv(3 , HiddenLayer[0][0])
+                        self.conv1 = GCNConv(4 , HiddenLayer[0][0])
                         self.conv2 = GCNConv(HiddenLayer[0][0],HiddenLayer[1][0])
                         self.conv3 = GCNConv(HiddenLayer[1][0],HiddenLayer[2][0])
                         self.lin = Linear(HiddenLayer[2][0],OutputLayer[1])
