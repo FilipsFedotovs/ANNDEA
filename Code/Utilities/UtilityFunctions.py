@@ -1518,10 +1518,9 @@ def GenerateModel(ModelMeta,TrainParams=None):
                     torch.manual_seed(12345)
                     if len(HiddenLayer)==3:
                         self.conv1 = GCNConv(3 , HiddenLayer[0][0])
-                        self.conv2 = GCNConv(HiddenLayer[1][0])
-                        self.conv3 = GCNConv(HiddenLayer[2][0])
-
-                    self.lin = Linear(OutputLayer[0],OutputLayer[1])
+                        self.conv2 = GCNConv(HiddenLayer[0][0],HiddenLayer[1][0])
+                        self.conv3 = GCNConv(HiddenLayer[1][0],HiddenLayer[2][0])
+                        self.lin = Linear(HiddenLayer[2][0],OutputLayer[1])
                     self.softmax = Softmax(dim=-1)
 
                 def forward(self, x, edge_index, edge_attr, batch):
