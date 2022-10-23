@@ -776,7 +776,7 @@ class EMO:
               __Zdiff=float(__Track[len(__Track)-1][2])
               __vector_1 = [__Zdiff, 0]
               __vector_2 = [__Zdiff, __Vardiff]
-              __Angle=EMO.Opening_Angle(__vector_1, __vector_2)
+              __Angle=EMO.angle_between(__vector_1, __vector_2)
               if np.isnan(__Angle)==True:
                         __Angle=0.0
               for __Tracks in __TempTrack:
@@ -791,7 +791,7 @@ class EMO:
               __Zdiff=float(__Track[len(__Track)-1][2])
               __vector_1 = [__Zdiff, 0]
               __vector_2 = [__Zdiff, __Vardiff]
-              __Angle=EMO.Opening_Angle(__vector_1, __vector_2)
+              __Angle=EMO.angle_between(__vector_1, __vector_2)
               if np.isnan(__Angle)==True:
                          __Angle=0.0
               for __Tracks in __TempTrack:
