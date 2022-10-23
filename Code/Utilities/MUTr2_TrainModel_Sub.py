@@ -104,8 +104,8 @@ if ModelMeta.ModelType=='CNN':
    else:
        print('WIP')
        exit()
-   NTrainBatches=math.ceil(float(len(TrainSamples))/float(TrainParams[2]))
-   NValBatches=math.ceil(float(len(ValSamples))/float(TrainParams[2]))
+   NTrainBatches=math.ceil(float(len(TrainSamples))/float(TrainParams[1]))
+   NValBatches=math.ceil(float(len(ValSamples))/float(TrainParams[1]))
    for ts in TrainSamples:
        ts.PrepareTrackPrint(ModelMeta,'CNN-E')
 
