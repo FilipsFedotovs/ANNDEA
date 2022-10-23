@@ -67,7 +67,7 @@ def zero_divide(a, b):
 
 def CNNtrain(model, Sample, Batches):
 
-    for ib in range(0,Batches):
+    for ib in range(2499,Batches):
         StartSeed=(ib*TrainParams[1])+1
         EndSeed=StartSeed+TrainParams[1]-1
 
@@ -77,7 +77,7 @@ def CNNtrain(model, Sample, Batches):
     return t
 
 def CNNvalidate(model, Sample, Batches):
-    for ib in range(0,Batches):
+    for ib in range(2000,Batches):
         StartSeed=(ib*TrainParams[1])+1
         EndSeed=StartSeed+TrainParams[1]-1
         BatchImages=UF.LoadRenderImages(Sample,StartSeed,EndSeed)
