@@ -8,6 +8,7 @@
 import argparse
 import math
 import ast
+import os
 # import torch
 # from torch import optim
 # from torch.optim.lr_scheduler import StepLR
@@ -93,17 +94,25 @@ Model_Meta_Path=EOSsubModelDIR+'/'+args.ModelName+'_Meta'
 Model_Path=EOSsubModelDIR+'/'+args.ModelName
 ModelMeta=UF.PickleOperations(Model_Meta_Path, 'r', 'N/A')[0]
 ValSamples=UF.PickleOperations(EOS_DIR+'/ANNADEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_TRACK_SEEDS_OUTPUT.pkl','r', 'N/A')[0]
+print(F.PickleOperations(EOS_DIR+'/ANNADEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_TRACK_SEEDS_OUTPUT.pkl','r', 'N/A')[1])
 if ModelMeta.ModelType=='CNN':
    if len(ModelMeta.TrainSessionsData)==0:
        TrainSamples=UF.PickleOperations(EOS_DIR+'/ANNADEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_TRACK_SEEDS_OUTPUT_1.pkl','r', 'N/A')[0]
+       print(UF.PickleOperations(EOS_DIR+'/ANNADEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_TRACK_SEEDS_OUTPUT_1.pkl','r', 'N/A')[1])
        train_set=1
    else:
        for el in range(len(ModelMeta.TrainSessionsDataID)-1,-1,-1):
         print(el)
         if ModelMeta.TrainSessionsDataID[el]==TrainSampleID:
-           print(ModelMeta.TrainSessionsData[el][-1])
-           print(ModelMeta.TrainSessionsDataID)
-       exit()
+           train_set=ModelMeta.TrainSessionsData[el][-1][8]+1
+           next_file=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_TRACK_SEEDS_OUTPUT_'+str(train_set)+'.pkl'
+           if os.path.isfile(next_file):
+               TrainSamples=UF.PickleOperations(next_file,'r', 'N/A')[0]
+               print(UF.PickleOperations(next_file,'r', 'N/A')[1])
+           else:
+               train_set=1
+               TrainSamples=UF.PickleOperations(EOS_DIR+'/ANNADEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_TRACK_SEEDS_OUTPUT_1.pkl','r', 'N/A')[0]
+               print(UF.PickleOperations(EOS_DIR+'/ANNADEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_TRACK_SEEDS_OUTPUT_1.pkl','r', 'N/A')[1])
    NTrainBatches=math.ceil(float(len(TrainSamples))/float(TrainParams[1]))
    NValBatches=math.ceil(float(len(ValSamples))/float(TrainParams[1]))
    for ts in TrainSamples:
