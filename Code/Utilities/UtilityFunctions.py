@@ -1139,7 +1139,7 @@ def GenerateModel(ModelMeta,TrainParams=None):
          from torch import Tensor
          import torch_geometric
          from torch_geometric.nn import MessagePassing
-
+         print(ModelMeta.ModelArchitecture[:3])
          if ModelMeta.ModelArchitecture=='TCN':
             from MH_IN import InteractionNetwork as IN
             class MLP(nn.Module):
@@ -1496,7 +1496,7 @@ def GenerateModel(ModelMeta,TrainParams=None):
                      return edge_weights
             model = TCN(ModelMeta.num_node_features, ModelMeta.num_edge_features, ModelMeta.ModelParameters[3])
             return model
-         if ModelMeta.ModelArchitecture[:3]=='GCN':
+         elif ModelMeta.ModelArchitecture[:3]=='GCN':
              return 'Hello'
       elif ModelMeta.ModelFramework=='Tensorflow':
           if ModelMeta.ModelType=='CNN':
