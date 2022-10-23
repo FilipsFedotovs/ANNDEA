@@ -116,9 +116,9 @@ if ModelMeta.ModelType=='CNN':
    NTrainBatches=math.ceil(float(len(TrainSamples))/float(TrainParams[1]))
    NValBatches=math.ceil(float(len(ValSamples))/float(TrainParams[1]))
    for ts in TrainSamples:
-       ts.PrepareTrackPrint(ModelMeta)
+       ts.PrepareSeedPrint(ModelMeta)
    for vs in ValSamples:
-       vs.PrepareTrackPrint(ModelMeta)
+       vs.PrepareSeedPrint(ModelMeta)
 
 elif ModelMeta.ModelType=='GNN':
        if len(ModelMeta.TrainSessionsData)==0:
