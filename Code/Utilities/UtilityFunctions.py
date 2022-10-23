@@ -882,7 +882,7 @@ class EMO:
 
               __TempTrack=copy.deepcopy(self.Hits)
               for __Tracks in __TempTrack:
-                      for h in len(__Tracks):
+                      for h in range(len(__Tracks)):
                           __Tracks[h]=__Tracks[h][:3]
               __LongestDistance=0.0
               for __Track in __TempTrack:
