@@ -59,8 +59,8 @@ sys.path.insert(1, AFS_DIR+'/Code/Utilities/')
 import UtilityFunctions as UF
 import Parameters as PM
 import datetime
-OptionHeader = [' --TrainParams ', " --ModelName "]
-OptionLine = [TrainParamsStr, ModelName]
+OptionHeader = [' --TrainParams ', " --TrainSampleID "]
+OptionLine = [TrainParamsStr, TrainSampleID]
 print(bcolors.HEADER+"####################################################################################################"+bcolors.ENDC)
 print(bcolors.HEADER+"#########################  Initialising ANNDEA model training module       #########################"+bcolors.ENDC)
 print(bcolors.HEADER+"#########################            Written by Filips Fedotovs            #########################"+bcolors.ENDC)

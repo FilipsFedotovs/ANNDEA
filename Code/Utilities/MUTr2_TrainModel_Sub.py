@@ -32,7 +32,7 @@ parser.add_argument('--TrainParams',help="Please enter the train params: '[<Sess
 parser.add_argument('--AFS',help="Please enter the user afs directory", default='.')
 parser.add_argument('--EOS',help="Please enter the user eos directory", default='.')
 parser.add_argument('--BatchID',help="Give name of the training ", default='SHIP_TrainSample_v1')
-parser.add_argument('--ModelName',help="Name of the model", default='1T_MC_1_model')
+parser.add_argument('--TrainSampleID',help="Train Sample ID", default='1T_MC_1_model')
 parser.add_argument('--i',help="Set number", default='1')
 parser.add_argument('--p',help="Path to the output file", default='')
 parser.add_argument('--o',help="Path to the output file name", default='')
@@ -41,8 +41,8 @@ parser.add_argument('--sfx',help="Path to the output file name", default='')
 ########################################     Initialising Variables    #########################################
 args = parser.parse_args()
 TrainParams=ast.literal_eval(args.TrainParams)
-TrainSampleID=args.BatchID
-ModelName=args.ModelName
+TrainSampleID=args.TrainSampleID
+ModelName=args.BatchID
 ##################################   Loading Directory locations   ##################################################
 AFS_DIR=args.AFS
 EOS_DIR=args.EOS
