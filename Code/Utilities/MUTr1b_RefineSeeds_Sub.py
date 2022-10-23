@@ -30,7 +30,7 @@ parser.add_argument('--pfx',help="Path to the output file name", default='')
 parser.add_argument('--sfx',help="Path to the output file name", default='')
 parser.add_argument('--EOS',help="EOS location", default='')
 parser.add_argument('--AFS',help="AFS location", default='')
-parser.add_argument('--ModelName',help="WHat GNN model would you like to use?", default="['MH_GNN_5FTR_4_120_4_120']")
+parser.add_argument('--ModelName',help="WHat ANN model would you like to use?", default="['MH_GNN_5FTR_4_120_4_120']")
 parser.add_argument('--BatchID',help="Give this training sample batch an ID", default='SHIP_UR_v1')
 ########################################     Main body functions    #########################################
 args = parser.parse_args()
@@ -45,12 +45,9 @@ AFS_DIR=args.AFS
 EOS_DIR=args.EOS
 ModelName=ast.literal_eval(args.ModelName)
 BatchID=args.BatchID
-# if PreFit:
-#     resolution=float(args.resolution)
-#     acceptance=float(args.acceptance)
-#     MaxX=float(args.MaxX)
-#     MaxY=float(args.MaxY)
-#     MaxZ=float(args.MaxZ)
+if len(ModelName)>0:
+
+
 #     print(UF.TimeStamp(),'Loading the model...')
 #     #Load the model
 #     import tensorflow as tf

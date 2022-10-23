@@ -78,7 +78,7 @@ def CNNtrain(model, Sample, Batches):
     return t
 
 def CNNvalidate(model, Sample, Batches):
-    for ib in range(2000,Batches):
+    for ib in range(2300,Batches):
         StartSeed=(ib*TrainParams[1])+1
         EndSeed=StartSeed+TrainParams[1]-1
         BatchImages=UF.LoadRenderImages(Sample,StartSeed,EndSeed)
@@ -139,7 +139,9 @@ def main(self):
             val_loss=CNNvalidate(model, ValSamples, NValBatches)
             test_loss=val_loss
             print(UF.TimeStamp(),'Epoch ',epoch, ' is completed')
-            records.append([epoch,itr,train_loss,0.5,val_loss[0][0],val_loss[0][1],test_loss[0][0],test_loss[0][1],train_set])
+            records.append([epoch,itr,train_loss[0],0.5,val_loss[0],val_loss[1],test_loss[0],test_loss[1],train_set])
+        print(records)
+        exit()
         Model_Meta_Path=EOSsubModelDIR+'/'+args.ModelName+'_Meta'
         Model_Path=EOSsubModelDIR+'/'+args.ModelName
         model.save(Model_Path)
