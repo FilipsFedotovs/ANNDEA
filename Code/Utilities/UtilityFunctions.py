@@ -930,7 +930,7 @@ class EMO:
                     __graphData_edge_attr.append(np.array(__graphData_pos[j]) - np.array(__graphData_pos[i]))
                     __graphData_edge_index.append([j,i])
                     __graphData_edge_attr.append(np.array(__graphData_pos[i]) - np.array(__graphData_pos[j]))
-              print(__graphData_edge_index)
+              print(__graphData_edge_attr)
               exit()
               import torch
               import torch_geometric
