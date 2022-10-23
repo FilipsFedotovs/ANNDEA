@@ -175,7 +175,8 @@ elif ModelMeta.ModelType=='GNN':
 
        TrainSamples = DataLoader(train_dataset, batch_size=TrainParams[1], shuffle=True)
        ValSamples = DataLoader(val_dataset, batch_size=TrainParams[1], shuffle=False)
-       print(TrainSamples)
+       print(TrainSamples[0].x)
+       exit()
        print(TrainParams[1])
 
 print(UF.TimeStamp(), bcolors.OKGREEN+"Train and Validation data has loaded and analysed successfully..."+bcolors.ENDC)
