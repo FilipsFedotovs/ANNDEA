@@ -1136,12 +1136,14 @@ def GenerateModel(ModelMeta,TrainParams=None):
          import torch
          import torch.nn as nn
 
-         from torch.nn import Sequential as Seq, Linear, ReLU, Sigmoid,Softmax,global_mean_pool
+         from torch.nn import Sequential as Seq, Linear, ReLU, Sigmoid,Softmax
          import torch.nn.functional as F
+
          from torch import Tensor
          import torch_geometric
          from torch_geometric.nn import MessagePassing
-         print(ModelMeta.ModelArchitecture[:3])
+         from torch_geometric.nn import global_mean_pool
+
          if ModelMeta.ModelArchitecture=='TCN':
             from MH_IN import InteractionNetwork as IN
             class MLP(nn.Module):
