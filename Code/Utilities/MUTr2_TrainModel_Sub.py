@@ -175,7 +175,8 @@ elif ModelMeta.ModelType=='GNN':
 
        TrainSamples = DataLoader(train_dataset, batch_size=TrainParams[1], shuffle=True)
        ValSamples = DataLoader(val_dataset, batch_size=TrainParams[1], shuffle=False)
-       print(TrainSamples[0].x)
+       for data in TrainSamples:
+        print(data.x, data.edge_index, data.edge_attr, data.batch)
        exit()
        print(TrainParams[1])
 
