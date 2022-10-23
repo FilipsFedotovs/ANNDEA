@@ -158,9 +158,9 @@ elif ModelMeta.ModelType=='GNN':
        for ts in TrainSamples[:10]:
            ts.PrepareSeedGraph(ModelMeta)
        train_dataset = []
-       for smpl in TrainSamples[:10]:
-        smpl.GraphSeed.y = smpl.GraphSeed.y
-        train_dataset.append(copy.deepcopy(smpl.GraphSeed))
+       for smpl1 in TrainSamples[:10]:
+        smpl1.GraphSeed.y = smpl1.GraphSeed.y
+        train_dataset.append(copy.deepcopy(smpl1.GraphSeed))
        del TrainSamples
 
        for vs in ValSamples[:10]:
