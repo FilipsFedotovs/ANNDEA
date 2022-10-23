@@ -174,8 +174,8 @@ def main(self):
             test_loss=val_loss
             print(UF.TimeStamp(),'Epoch ',epoch, ' is completed')
             records.append([epoch,itr,train_loss[0],0.5,val_loss[0],val_loss[1],test_loss[0],test_loss[1],train_set])
-        Model_Meta_Path=EOSsubModelDIR+'/'+args.ModelName+'_Meta'
-        Model_Path=EOSsubModelDIR+'/'+args.ModelName
+        Model_Meta_Path=EOSsubModelDIR+'/'+ModelName+'_Meta'
+        Model_Path=EOSsubModelDIR+'/'+ModelName
         model.save(Model_Path)
         Header=[['Epoch','# Samples','Train Loss','Optimal Threshold','Validation Loss','Validation Accuracy','Test Loss','Test Accuracy','Training Set']]
         Header+=records
