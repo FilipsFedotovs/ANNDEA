@@ -190,6 +190,7 @@ else:
                break
        if len(Model_Meta.TrainSessionsDataID)==len(Model_Meta.TrainSessionsData):
            if len(Model_Meta.TrainSessionsData[-1])==2 and len(Model_Meta.TrainSessionsData)>2:
+              print(Model_Meta.TrainSessionsData)
               test_input=Model_Meta.TrainSessionsData[-5]+Model_Meta.TrainSessionsData[-3]+Model_Meta.TrainSessionsData[-1]
            else:
               test_input=Model_Meta.TrainSessionsData[completion]
