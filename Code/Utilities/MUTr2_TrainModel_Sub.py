@@ -130,6 +130,8 @@ if ModelMeta.ModelType=='CNN':
        for el in range(len(ModelMeta.TrainSessionsDataID)-1,-1,-1):
         print(el)
         if ModelMeta.TrainSessionsDataID[el]==TrainSampleID:
+           print(ModelMeta.TrainSessionsData[el])
+           exit()
            train_set=ModelMeta.TrainSessionsData[el][-1][8]+1
            next_file=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_TRACK_SEEDS_OUTPUT_'+str(train_set)+'.pkl'
            if os.path.isfile(next_file):
