@@ -128,7 +128,7 @@ if ModelMeta.ModelType=='CNN':
        train_set=1
    else:
        print(ModelMeta.TrainSessionsDataID)
-       for el in range(min(len(ModelMeta.TrainSessionsDataID)-2,0),-1,-1):
+       for el in range(max(len(ModelMeta.TrainSessionsDataID)-2,0),-1,-1):
         if ModelMeta.TrainSessionsDataID[el]==TrainSampleID:
            print(ModelMeta.TrainSessionsData[el])
            train_set=ModelMeta.TrainSessionsData[el][-1][8]+1
