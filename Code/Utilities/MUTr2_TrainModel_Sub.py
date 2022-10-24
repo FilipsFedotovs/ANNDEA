@@ -167,7 +167,7 @@ elif ModelMeta.ModelType=='GNN':
                    print(UF.PickleOperations(EOS_DIR+'/ANNADEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_TRACK_SEEDS_OUTPUT_1.pkl','r', 'N/A')[1])
        NTrainBatches=math.ceil(float(len(TrainSamples))/float(TrainParams[1]))
        NValBatches=math.ceil(float(len(ValSamples))/float(TrainParams[1]))
-       for ts in TrainSamples:
+       for ts in TrainSamples[:10]:
            ts.PrepareSeedGraph(ModelMeta)
        train_dataset = []
        for smpl1 in TrainSamples:
@@ -175,7 +175,7 @@ elif ModelMeta.ModelType=='GNN':
         train_dataset.append(copy.deepcopy(smpl1.GraphSeed))
        del TrainSamples
 
-       for vs in ValSamples:
+       for vs in ValSamples[:10]:
            vs.PrepareSeedGraph(ModelMeta)
        val_dataset = []
        for smpl in ValSamples:
