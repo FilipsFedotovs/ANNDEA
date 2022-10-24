@@ -45,15 +45,15 @@ AFS_DIR=args.AFS
 EOS_DIR=args.EOS
 ModelName=ast.literal_eval(args.ModelName)
 BatchID=args.BatchID
-if len(ModelName)>0:
-
-
-#     print(UF.TimeStamp(),'Loading the model...')
-#     #Load the model
-#     import tensorflow as tf
-#     from tensorflow import keras
-#     model_name=EOS_DIR+'/EDER-TSU/Models/'+args.ModelName
-#     model=tf.keras.models.load_model(model_name)
+Models=[]
+Metas=[]
+EOSsubDIR=EOS_DIR+'/'+'ANNADEA'
+EOSsubModelDIR=EOSsubDIR+'/'+'Models'
+for m in ModelName:
+    Model_Meta_Path=EOSsubModelDIR+'/'+m+'_Meta'
+    Model_Path=EOSsubModelDIR+'/'+m
+    ModelMeta=UF.PickleOperations(Model_Meta_Path, 'r', 'N/A')[0]
+    ModelMetas
 MaxDOCA=float(args.MaxDOCA)
 MaxSTG=float(args.MaxSTG)
 MaxSLG=float(args.MaxSLG)
@@ -111,7 +111,8 @@ for s in range(0,limit):
        track.GetTrInfo()
      except:
        continue
-#     if track.GeoFit and PreFit:
+     keep_seed=True
+     for m in ModelName:
 #                track.PrepareTrackPrint(2000.0,500.0,20000.0,50,True)
 #                TrackImage=UF.LoadRenderImages([track],1,1,numClasses)[0]
 #                track.UnloadTrackPrint()

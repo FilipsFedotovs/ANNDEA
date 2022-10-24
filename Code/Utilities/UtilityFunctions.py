@@ -1069,6 +1069,9 @@ class EMO:
           plt.show()
         else:
           print('Invalid plot type input value! Should be XZ, YZ or XY')
+
+      def FitSeed(self,MM):
+          return MM.ModelParameters
       @staticmethod
       def unit_vector(vector):
           return vector / np.linalg.norm(vector)

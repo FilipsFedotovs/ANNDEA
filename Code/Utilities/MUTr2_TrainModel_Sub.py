@@ -155,8 +155,8 @@ elif ModelMeta.ModelType=='GNN':
            print(UF.PickleOperations(EOS_DIR+'/ANNADEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_TRACK_SEEDS_OUTPUT_1.pkl','r', 'N/A')[1])
            train_set=1
        else:
-           for el in range(len(ModelMeta.TrainSessionsDataID)-1,-1,-1):
-            print(el)
+           for el in range(min(len(ModelMeta.TrainSessionsDataID)-2,0),-1,-1):
+            print(ModelMeta.TrainSessionsData[el])
             if ModelMeta.TrainSessionsDataID[el]==TrainSampleID:
                train_set=ModelMeta.TrainSessionsData[el][-1][8]+1
                next_file=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_TRACK_SEEDS_OUTPUT_'+str(train_set)+'.pkl'
