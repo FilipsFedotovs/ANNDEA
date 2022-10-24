@@ -193,8 +193,6 @@ else:
               test_input=[Model_Meta.TrainSessionsData[-3][1],Model_Meta.TrainSessionsData[-2][1],Model_Meta.TrainSessionsData[-1][1]]
            else:
               test_input=Model_Meta.TrainSessionsData[completion]
-           print(test_input)
-           exit()
            if ModelTrainingSaturation(test_input):
               print(UF.TimeStamp(),bcolors.WARNING+'Warning, the model seems to be over saturated'+bcolors.ENDC)
               print(bcolors.BOLD+'If you would like to stop training and exit please enter E'+bcolors.ENDC)
