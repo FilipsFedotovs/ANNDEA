@@ -1071,7 +1071,7 @@ class EMO:
           print('Invalid plot type input value! Should be XZ, YZ or XY')
 
       def FitSeed(self,Mmeta,M):
-          return MM.ModelParameters
+          return Mmeta.ModelParameters
       @staticmethod
       def unit_vector(vector):
           return vector / np.linalg.norm(vector)
