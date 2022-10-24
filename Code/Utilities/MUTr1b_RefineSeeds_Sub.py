@@ -116,7 +116,7 @@ for s in range(0,limit):
      except:
        continue
      keep_seed=True
-     for m in range(Metas):
+     for m in range(len(Metas)):
          print(track.FitSeed(Metas[m],Models[m]))
          exit()
      if track.TrackQualityCheck(MaxDOCA,MaxSLG,MaxSTG, MaxAngle):
