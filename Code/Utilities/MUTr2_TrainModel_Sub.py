@@ -120,6 +120,7 @@ Model_Path=EOSsubModelDIR+'/'+ModelName
 ModelMeta=UF.PickleOperations(Model_Meta_Path, 'r', 'N/A')[0]
 ValSamples=UF.PickleOperations(EOS_DIR+'/ANNADEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_TRACK_SEEDS_OUTPUT.pkl','r', 'N/A')[0]
 print(UF.PickleOperations(EOS_DIR+'/ANNADEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_TRACK_SEEDS_OUTPUT.pkl','r', 'N/A')[1])
+train_set=1
 if ModelMeta.ModelType=='CNN':
    if len(ModelMeta.TrainSessionsData)==0:
        TrainSamples=UF.PickleOperations(EOS_DIR+'/ANNADEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_TRACK_SEEDS_OUTPUT_1.pkl','r', 'N/A')[0]
@@ -253,23 +254,25 @@ def main(self):
         records=[]
         for epoch in range(0, TrainParams[2]):
             train_loss,itr= GNNtrain(model,TrainSamples, optimizer),len(TrainSamples.dataset)
-            print(train_loss.item())
-            print(GNNvalidate(model,  ValSamples))
-            exit()
-        #      test_loss, test_acc = test(model, device,TestSamples, thld)
-        #      scheduler.step()
-        #      print(UF.TimeStamp(),'Epoch ',epoch, ' is completed')
-        #      records.append([epoch,itr,train_loss,thld,val_loss,val_acc,test_loss,test_acc])
-        #      torch.save({    'epoch': epoch,
-        #                   'optimizer_state_dict': optimizer.state_dict(),
-        #                   'scheduler': scheduler.state_dict(),    # HERE IS THE CHANGE
-        #                   }, State_Save_Path)
-        # torch.save(model.state_dict(), Model_Path)
-        # Header=[['Epoch','# Samples','Train Loss','Optimal Threshold','Validation Loss','Validation Accuracy','Test Loss','Test Accuracy']]
-        # Header+=records
-        # ModelMeta.CompleteTrainingSession(Header)
-        # print(UF.PickleOperations(Model_Meta_Path, 'w', ModelMeta)[1])
-        # exit()
+            val=GNNvalidate(model,  ValSamples)
+            val_loss=val[1]
+            val_acc=val[0]
+            test_loss=val_loss
+            test_acc=val_acc
+            scheduler.step()
+            print(UF.TimeStamp(),'Epoch ',epoch, ' is completed')
+            records.append([epoch,itr,train_loss.item(),0.5,val_loss,val_acc,test_loss,test_acc,train_set])
+            torch.save({    'epoch': epoch,
+                          'optimizer_state_dict': optimizer.state_dict(),
+                          'scheduler': scheduler.state_dict(),    # HERE IS THE CHANGE
+                          }, State_Save_Path)
+            print(records)
+        torch.save(model.state_dict(), Model_Path)
+        Header=[['Epoch','# Samples','Train Loss','Optimal Threshold','Validation Loss','Validation Accuracy','Test Loss','Test Accuracy','Training Set']]
+        Header+=records
+        ModelMeta.CompleteTrainingSession(Header)
+        print(UF.PickleOperations(Model_Meta_Path, 'w', ModelMeta)[1])
+        exit()
 if __name__ == '__main__':
      main(sys.argv[1:])
 
