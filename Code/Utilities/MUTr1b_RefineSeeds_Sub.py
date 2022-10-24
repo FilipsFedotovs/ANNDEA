@@ -53,7 +53,9 @@ for m in ModelName:
     Model_Meta_Path=EOSsubModelDIR+'/'+m+'_Meta'
     Model_Path=EOSsubModelDIR+'/'+m
     ModelMeta=UF.PickleOperations(Model_Meta_Path, 'r', 'N/A')[0]
-    ModelMetas
+    Metas.append(ModelMeta)
+print(Metas[0].ModelType)
+exit()
 MaxDOCA=float(args.MaxDOCA)
 MaxSTG=float(args.MaxSTG)
 MaxSLG=float(args.MaxSLG)
@@ -112,13 +114,13 @@ for s in range(0,limit):
      except:
        continue
      keep_seed=True
-     for m in ModelName:
-#                track.PrepareTrackPrint(2000.0,500.0,20000.0,50,True)
-#                TrackImage=UF.LoadRenderImages([track],1,1,numClasses)[0]
-#                track.UnloadTrackPrint()
-#                track.CNNFitTrack(model.predict(TrackImage)[0][1])
-#                if track.Track_CNN_Fit>=acceptance:
-#                   GoodTracks.append(track)
+#      for m in ModelName:
+# #                track.PrepareTrackPrint(2000.0,500.0,20000.0,50,True)
+# #                TrackImage=UF.LoadRenderImages([track],1,1,numClasses)[0]
+# #                track.UnloadTrackPrint()
+# #                track.CNNFitTrack(model.predict(TrackImage)[0][1])
+# #                if track.Track_CNN_Fit>=acceptance:
+# #                   GoodTracks.append(track)
      if track.TrackQualityCheck(MaxDOCA,MaxSLG,MaxSTG, MaxAngle):
            GoodTracks.append(track.TrackQualityCheck)
      else:
