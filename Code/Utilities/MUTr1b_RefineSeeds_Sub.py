@@ -57,7 +57,7 @@ for m in ModelName:
     if ModelMeta.ModelFramework=='Tensorflow':
         import tensorflow as tf
         from tensorflow import keras
-        Models.append(tf.keras.models.load_model(EOSsubModelDIR+ModelName))
+        Models.append(tf.keras.models.load_model(Model_Path))
 MaxDOCA=float(args.MaxDOCA)
 MaxSTG=float(args.MaxSTG)
 MaxSLG=float(args.MaxSLG)
