@@ -54,6 +54,9 @@ for m in ModelName:
     Model_Path=EOSsubModelDIR+'/'+m
     ModelMeta=UF.PickleOperations(Model_Meta_Path, 'r', 'N/A')[0]
     Metas.append(ModelMeta)
+    if ModelMeta.ModelFramework=='Tensorflow':
+        import tensorflow as tf
+        from tensorflow import keras
 print(Metas[0].ModelID)
 exit()
 MaxDOCA=float(args.MaxDOCA)

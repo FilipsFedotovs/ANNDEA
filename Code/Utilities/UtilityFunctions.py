@@ -1608,7 +1608,6 @@ def GenerateModel(ModelMeta,TrainParams=None):
 
       elif ModelMeta.ModelFramework=='Tensorflow':
           if ModelMeta.ModelType=='CNN':
-
             act_fun_list=['N/A','linear','exponential','elu','relu', 'selu','sigmoid','softmax','softplus','softsign','tanh']
             import tensorflow as tf
             from tensorflow import keras
