@@ -209,9 +209,9 @@ def AutoPilot(wait_min, interval_min, max_interval_tolerance,AFS,EOS,path,o,pfx,
 def CheckStatus():
     if os.path.isfile(EOS_DIR+'/ANNADEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_TRACK_SEEDS_OUTPUT_1.pkl'):
         return 7
-    elif os.path.isfile(EOS_DIR+'/ANNADEA/Data/TRAIN_SET/MUTr1d_'+TrainSampleID+'_SampledCompressedSeeds_'+str(i)+'.pkl'):
+    elif os.path.isfile(EOS_DIR+'/ANNADEA/Data/TRAIN_SET/MUTr1d_'+TrainSampleID+'_SampledCompressedSeeds_0.pkl'):
         return 6
-    elif os.path.isfile(EOS_DIR+'/ANNADEA/Data/TRAIN_SET/MUTr1c_'+TrainSampleID+'_CompressedSeeds_'+str(i)+'.pkl'):
+    elif os.path.isfile(EOS_DIR+'/ANNADEA/Data/TRAIN_SET/MUTr1c_'+TrainSampleID+'_CompressedSeeds_0.pkl'):
         return 5
     elif os.path.isfile(EOS_DIR+'/ANNADEA/Data/TRAIN_SET/MUTr1b_'+TrainSampleID+'_RefinedSeeds_0_0_0.pkl'):
         return 3
