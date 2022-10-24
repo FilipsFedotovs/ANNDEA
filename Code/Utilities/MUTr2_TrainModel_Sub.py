@@ -69,7 +69,7 @@ def zero_divide(a, b):
 
 def CNNtrain(model, Sample, Batches):
 
-    for ib in range(2497,Batches):
+    for ib in range(Batches):
         StartSeed=(ib*TrainParams[1])+1
         EndSeed=StartSeed+TrainParams[1]-1
         BatchImages=UF.LoadRenderImages(Sample,StartSeed,EndSeed)
@@ -101,7 +101,7 @@ def GNNvalidate(model, Sample):
     return (correct / len(Sample.dataset), loss_accumulative/len(Sample.dataset))
 
 def CNNvalidate(model, Sample, Batches):
-    for ib in range(2360,Batches):
+    for ib in range(Batches):
         StartSeed=(ib*TrainParams[1])+1
         EndSeed=StartSeed+TrainParams[1]-1
         BatchImages=UF.LoadRenderImages(Sample,StartSeed,EndSeed)
@@ -253,7 +253,7 @@ def main(self):
         records=[]
         for epoch in range(0, TrainParams[2]):
             train_loss,itr= GNNtrain(model,TrainSamples, optimizer),len(TrainSamples.dataset)
-            print(train_loss[0])
+            print(train_loss.item())
             print(GNNvalidate(model,  ValSamples))
             exit()
         #      test_loss, test_acc = test(model, device,TestSamples, thld)
