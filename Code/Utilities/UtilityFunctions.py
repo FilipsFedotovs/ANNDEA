@@ -1071,7 +1071,10 @@ class EMO:
           print('Invalid plot type input value! Should be XZ, YZ or XY')
 
       def FitSeed(self,Mmeta,M):
-          return Mmeta.ModelParameters
+          if Mmeta.ModelType=='CNN':
+             EMO.PrepareSeedPrint(Mmeta)
+             __Image=LoadRenderImages([self],1,1)
+          return __Image
       @staticmethod
       def unit_vector(vector):
           return vector / np.linalg.norm(vector)
