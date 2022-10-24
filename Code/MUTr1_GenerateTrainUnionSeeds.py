@@ -649,7 +649,10 @@ while status<7:
                TrueSeedCorrection=0
            else:
               TrueSeedCorrection=RequiredTrueSeeds/TrueSeeds
-           FakeSeedCorrection=RequiredFakeSeeds/(TotalImages-TrueSeeds)
+           if TotalImages-TrueSeeds>0:
+            FakeSeedCorrection=RequiredFakeSeeds/(TotalImages-TrueSeeds)
+           else:
+             FakeSeedCorrection=0
            with alive_bar(len(JobSet),force_tty=True, title='Resampling the files...') as bar:
             for i in range(0,len(JobSet)):
               output_file_location=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/MUTr1d_'+TrainSampleID+'_SampledCompressedSeeds_'+str(i)+'.pkl'
