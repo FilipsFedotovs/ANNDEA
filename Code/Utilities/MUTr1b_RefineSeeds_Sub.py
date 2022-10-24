@@ -54,7 +54,7 @@ for m in ModelName:
     Model_Path=EOSsubModelDIR+'/'+m
     ModelMeta=UF.PickleOperations(Model_Meta_Path, 'r', 'N/A')[0]
     Metas.append(ModelMeta)
-print(Metas[0].ModelType)
+print(Metas[0].ModelID)
 exit()
 MaxDOCA=float(args.MaxDOCA)
 MaxSTG=float(args.MaxSTG)
