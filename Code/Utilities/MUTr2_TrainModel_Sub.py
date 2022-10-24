@@ -87,6 +87,19 @@ def GNNtrain(model, Sample,optimizer):
 
     return loss
 
+def GNNvalidate(model, Sample):
+    model.eval()
+    correct = 0
+    loss_accumulative = 0
+    for data in Sample:
+         out = model(data.x, data.edge_index, data.edge_attr, data.batch)
+         pred = out.argmax(dim=1)  # Use the class with highest probability.
+         y_index = data.y.argmax(dim=1)
+         correct += int((pred == y_index).sum())  # Check against ground-truth labels.
+         loss = criterion(out, data.y)
+         loss_accumulative += float(loss)
+    return (correct / len(Sample.dataset), loss_accumulative/len(Sample.dataset))
+
 def CNNvalidate(model, Sample, Batches):
     for ib in range(2360,Batches):
         StartSeed=(ib*TrainParams[1])+1
@@ -239,9 +252,10 @@ def main(self):
                print(UF.TimeStamp(), bcolors.WARNING+"Model/state data files are missing, skipping this step..." +bcolors.ENDC)
         records=[]
         for epoch in range(0, TrainParams[2]):
-            train_loss= GNNtrain(model,TrainSamples, optimizer)
-            print(train_loss)
-        #      thld, val_loss,val_acc = validate(model, device, ValSamples)
+            train_loss,itr= GNNtrain(model,TrainSamples, optimizer),len(TrainSamples.dataset)
+            print(train_loss[0])
+            print(GNNvalidate(model,  ValSamples))
+            exit()
         #      test_loss, test_acc = test(model, device,TestSamples, thld)
         #      scheduler.step()
         #      print(UF.TimeStamp(),'Epoch ',epoch, ' is completed')
