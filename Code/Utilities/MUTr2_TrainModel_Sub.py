@@ -168,18 +168,18 @@ elif ModelMeta.ModelType=='GNN':
                    print(UF.PickleOperations(EOS_DIR+'/ANNADEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_TRACK_SEEDS_OUTPUT_1.pkl','r', 'N/A')[1])
        NTrainBatches=math.ceil(float(len(TrainSamples))/float(TrainParams[1]))
        NValBatches=math.ceil(float(len(ValSamples))/float(TrainParams[1]))
-       for ts in TrainSamples[:10]:
+       for ts in TrainSamples:
            ts.PrepareSeedGraph(ModelMeta)
        train_dataset = []
-       for smpl1 in TrainSamples[:10]:
+       for smpl1 in TrainSamples:
         smpl1.GraphSeed.y = smpl1.GraphSeed.y
         train_dataset.append(copy.deepcopy(smpl1.GraphSeed))
        del TrainSamples
 
-       for vs in ValSamples[:10]:
+       for vs in ValSamples:
            vs.PrepareSeedGraph(ModelMeta)
        val_dataset = []
-       for smpl in ValSamples[:10]:
+       for smpl in ValSamples:
         smpl.GraphSeed.y = smpl.GraphSeed.y
         val_dataset.append(copy.deepcopy(smpl.GraphSeed))
        del ValSamples
@@ -266,7 +266,6 @@ def main(self):
                           'optimizer_state_dict': optimizer.state_dict(),
                           'scheduler': scheduler.state_dict(),    # HERE IS THE CHANGE
                           }, State_Save_Path)
-            print(records)
         torch.save(model.state_dict(), Model_Path)
         Header=[['Epoch','# Samples','Train Loss','Optimal Threshold','Validation Loss','Validation Accuracy','Test Loss','Test Accuracy','Training Set']]
         Header+=records
