@@ -1074,7 +1074,7 @@ class EMO:
           if Mmeta.ModelType=='CNN':
              EMO.PrepareSeedPrint(self,Mmeta)
              __Image=LoadRenderImages([self],1,1)[0]
-             self.Fit=M.predict(__Image[0][1])
+             self.Fit=M.predict(__Image)[0][1]
           return self.Fit>=0.5
       @staticmethod
       def unit_vector(vector):
