@@ -134,7 +134,7 @@ if ModelMeta.ModelType=='CNN':
            train_set=ModelMeta.TrainSessionsData[el][-1][8]+1
            next_file=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_TRACK_SEEDS_OUTPUT_'+str(train_set)+'.pkl'
            if os.path.isfile(next_file):
-               TrainSamples=UF.PickleOperations(next_file,'r', 'N/A')[0]
+               TrainSamples=UF.PickleOperations(next_file,'r', 'N/A')[0][:40]
                print(UF.PickleOperations(next_file,'r', 'N/A')[1])
            else:
                train_set=1
@@ -207,13 +207,13 @@ def main(self):
         import tensorflow as tf
         from tensorflow import keras
         from keras import backend as K
-        try:
-            print(EOSsubModelDIR+'/'+ModelName)
-            model=tf.keras.models.load_model(EOSsubModelDIR+ModelName)
-            K.set_value(model.optimizer.learning_rate, TrainParams[1])
-        except:
-            print(UF.TimeStamp(), bcolors.WARNING+"Model/state data files are missing, skipping this step..." +bcolors.ENDC)
-            model = UF.GenerateModel(ModelMeta,TrainParams)
+        # try:
+        print(EOSsubModelDIR+'/'+ModelName)
+        model=tf.keras.models.load_model(EOSsubModelDIR+ModelName)
+        K.set_value(model.optimizer.learning_rate, TrainParams[1])
+        # except:
+        #     print(UF.TimeStamp(), bcolors.WARNING+"Model/state data files are missing, skipping this step..." +bcolors.ENDC)
+        #     model = UF.GenerateModel(ModelMeta,TrainParams)
         model.summary()
         records=[]
         for epoch in range(0, TrainParams[2]):
