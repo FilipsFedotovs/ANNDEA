@@ -208,8 +208,7 @@ def main(self):
         from tensorflow import keras
         from keras import backend as K
         # try:
-        print(EOSsubModelDIR+'/'+ModelName)
-        model=tf.keras.models.load_model(EOSsubModelDIR+ModelName)
+        model=tf.keras.models.load_model(Model_Path)
         K.set_value(model.optimizer.learning_rate, TrainParams[1])
         # except:
         #     print(UF.TimeStamp(), bcolors.WARNING+"Model/state data files are missing, skipping this step..." +bcolors.ENDC)
