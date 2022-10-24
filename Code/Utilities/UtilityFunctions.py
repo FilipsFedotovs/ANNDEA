@@ -1073,7 +1073,7 @@ class EMO:
       def FitSeed(self,Mmeta,M):
           if Mmeta.ModelType=='CNN':
              EMO.PrepareSeedPrint(self,Mmeta)
-             __Image=LoadRenderImages([self],1,1)
+             __Image=LoadRenderImages([self],1,1)[0]
           return __Image
       @staticmethod
       def unit_vector(vector):
