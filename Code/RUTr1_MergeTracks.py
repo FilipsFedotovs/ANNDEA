@@ -122,7 +122,7 @@ if Log and (os.path.isfile(required_file_location)==False or Mode=='RESET'):
          print(UF.TimeStamp(),'Slicing the data...')
          ValidEvents=data.drop(data.index[(data[PM.x] > Xmax) | (data[PM.x] < Xmin) | (data[PM.y] > Ymax) | (data[PM.y] < Ymin)])
          ValidEvents.drop([PM.x,PM.y,PM.z,PM.tx,PM.ty,'MC_Mother_Track_ID'],axis=1,inplace=True)
-         ValidEvents.drop_duplicates(subset='Re _Seg_ID',keep='first',inplace=True)
+         ValidEvents.drop_duplicates(subset='Rec_Seg_ID',keep='first',inplace=True)
          data=pd.merge(data, ValidEvents, how="inner", on=['Rec_Seg_ID'])
          final_rows=len(data.axes[0])
          print(UF.TimeStamp(),'The sliced data has ',final_rows,' hits')
