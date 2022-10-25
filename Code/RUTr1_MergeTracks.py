@@ -35,7 +35,7 @@ print(bcolors.HEADER+"##########################################################
 #Setting the parser - this script is usually not run directly, but is used by a Master version Counterpart that passes the required arguments
 parser = argparse.ArgumentParser(description='This script prepares training data for training the tracking model')
 parser.add_argument('--Mode', help='Script will continue from the last checkpoint, unless you want to start from the scratch, then type "Reset"',default='')
-parser.add_argument('--ModelName',help="WHat GNN model would you like to use?", default="['MH_GNN_5FTR_4_120_4_120']")
+parser.add_argument('--ModelName',help="WHat GNN models would you like to use?", default="['MH_GNN_5FTR_4_120_4_120']")
 parser.add_argument('--Patience',help="How many checks to do before resubmitting the job?", default='15')
 parser.add_argument('--RecBatchID',help="Give this training sample batch an ID", default='SHIP_UR_v1')
 parser.add_argument('--f',help="Please enter the full path to the file with track reconstruction", default='/afs/cern.ch/work/f/ffedship/public/SHIP/Source_Data/SHIP_Emulsion_Rec_Raw_UR.csv')
@@ -76,7 +76,7 @@ import Parameters as PM #This is where we keep framework global parameters
 #Establishing paths
 EOSsubDIR=EOS_DIR+'/'+'ANNADEA'
 EOSsubModelDIR=EOSsubDIR+'/'+'Models'
-TrainSampleOutputMeta=EOS_DIR+'/ANNADEA/Data/REC_SET/'+RecBatchID+'_info.pkl'
+EOSsubModelMetaDIR=EOSsubDIR+'/'+'Models/'+ModelName[0]+'_Meta.pkl'
 required_file_location=EOS_DIR+'/ANNADEA/Data/REC_SET/RUTr1_'+RecBatchID+'_TRACK_SEGMENTS.csv'
 required_eval_file_location=EOS_DIR+'/ANNADEA/Data/TEST_SET/EUTr1_'+RecBatchID+'_TRACK_SEGMENTS.csv'
 ########################################     Phase 1 - Create compact source file    #########################################
@@ -199,8 +199,13 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 0 has successfully completed'+bcolors.ENDC)
 exit()
 
-# elif os.path.isfile(TrainSampleOutputMeta)==True:
-#     print(UF.TimeStamp(),'Loading previously saved data from ',bcolors.OKBLUE+TrainSampleOutputMeta+bcolors.ENDC)
+if os.path.isfile(EOSsubModelMetaDIR)==False:
+      print(UF.TimeStamp(), bcolors.FAIL+"Fail to proceed further as the model file {EOSsubModelMetaDIR} has not been found..."+bcolors.ENDC)
+      exit()
+else:
+
+   print(UF.TimeStamp(),'Loading previously saved data from ',bcolors.OKBLUE+EOSsubModelMetaDIR+bcolors.ENDC)
+   exit()
 #     MetaInput=UF.PickleOperations(TrainSampleOutputMeta,'r', 'N/A')
 #     Meta=MetaInput[0]
 # MaxSLG=Meta.MaxSLG
