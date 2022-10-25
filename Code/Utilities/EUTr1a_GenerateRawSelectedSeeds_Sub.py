@@ -109,7 +109,8 @@ for i in range(0,Steps):
       result_list=[]
       gc.collect()
 
-
+print(result_list)
+exit()
 UF.LogOperations(output_file_location,'a',result_list) #Writing the remaining data into the csv
 UF.LogOperations(output_result_location,'w',[])
 print(UF.TimeStamp(), "Eval seed generation is finished...")
