@@ -216,7 +216,7 @@ else:
    MaxAngle=PM.MaxAngle
    MaxSegments=PM.MaxSegments
    MaxSeeds=PM.MaxSeeds
-   VetoMotherTrack=Meta.VetoMotherTrack
+   VetoMotherTrack=PM.VetoMotherTrack
    exit()
 # TotJobs=0
 # for j in range(0,len(JobSets)):
