@@ -203,18 +203,21 @@ if os.path.isfile(EOSsubModelMetaDIR)==False:
       print(UF.TimeStamp(), bcolors.FAIL+"Fail to proceed further as the model file "+EOSsubModelMetaDIR+ " has not been found..."+bcolors.ENDC)
       exit()
 else:
-
    print(UF.TimeStamp(),'Loading previously saved data from ',bcolors.OKBLUE+EOSsubModelMetaDIR+bcolors.ENDC)
    MetaInput=UF.PickleOperations(EOSsubModelMetaDIR,'r', 'N/A')
    Meta=MetaInput[0]
-   MaxSLG=Meta.MaxSLG
-# MaxSTG=Meta.MaxSTG
-# MaxDOCA=Meta.MaxDOCA
-# MaxAngle=Meta.MaxAngle
-# JobSets=Meta.JobSets
-# MaxSegments=Meta.MaxSegments
-# MaxSeeds=Meta.MaxSeeds
-# VetoMotherTrack=Meta.VetoMotherTrack
+   #MaxSLG=Meta.MaxSLG
+   MaxSLG=PM.MaxSLG
+   #MaxSTG=Meta.MaxSTG
+   MaxSTG=PM.MaxSTG
+   #MaxDOCA=Meta.MaxDOCA
+   MaxDOCA=PM.MaxDOCA
+   #MaxAngle=Meta.MaxAngle
+   MaxAngle=PM.MaxAngle
+   MaxSegments=PM.MaxSegments
+   MaxSeeds=PM.MaxSeeds
+   VetoMotherTrack=Meta.VetoMotherTrack
+   exit()
 # TotJobs=0
 # for j in range(0,len(JobSets)):
 #           for sj in range(0,int(JobSets[j][2])):
