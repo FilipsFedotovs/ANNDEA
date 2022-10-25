@@ -82,7 +82,7 @@ required_eval_file_location=EOS_DIR+'/ANNADEA/Data/TEST_SET/EUTr1_'+RecBatchID+'
 ########################################     Phase 1 - Create compact source file    #########################################
 print(UF.TimeStamp(),bcolors.BOLD+'Stage 0:'+bcolors.ENDC+' Preparing the source data...')
 
-if Log and (os.path.isfile(required_file_location)==False or Mode=='RESET'):
+if Log and (os.path.isfile(required_eval_file_location)==False or Mode=='RESET'):
     print(UF.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
     data=pd.read_csv(input_file_location,
                 header=0,
