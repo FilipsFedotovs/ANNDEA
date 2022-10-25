@@ -57,7 +57,7 @@ output_result_location=EOS_DIR+'/'+p+'/'+pfx+'_'+BatchID+'_'+o+'_'+str(i)+sfx
 print(UF.TimeStamp(), "Modules Have been imported successfully...")
 print(UF.TimeStamp(),'Loading pre-selected data from ',input_file_location)
 data=pd.read_csv(input_file_location,header=0,
-                    usecols=['x','y','z','Rec_Seg_ID','MC_Mother_Track_ID'])
+                    usecols=['z','Rec_Seg_ID','MC_Mother_Track_ID'])
 
 
 print(UF.TimeStamp(),'Creating segment combinations... ')
@@ -76,10 +76,10 @@ print(UF.TimeStamp(),'There are total of ', Records, 'tracks in the data set')
 Cut=math.ceil(MaxRecords/Records) #Even if use only a max of 20000 track on the right join we cannot perform the full outer join due to the memory limitations, we do it in a small 'cuts'
 Steps=math.ceil(MaxSegments/Cut)  #Calculating number of cuts
 data_s=pd.merge(data, data_header, how="inner", on=["Rec_Seg_ID","z"]) #Shrinking the Track data so just a star hit for each track is present.
+print(data_s)
+exit()
 data_s.drop(['e_z'],axis=1,inplace=True)
 data_e=pd.merge(data, data_header, how="inner", left_on=["Rec_Seg_ID","z"], right_on=["Rec_Seg_ID","e_z"]) #Shrinking the Track data so just a star hit for each track is present.
-data_e=data_e.rename(columns={"x": "e_x"})
-data_e=data_e.rename(columns={"y": "e_y"})
 data_e.drop(['z_x'],axis=1,inplace=True)
 data_e.drop(['z_y'],axis=1,inplace=True)
 data=pd.merge(data_s, data_e, how="inner", on=["Rec_Seg_ID",'MC_Mother_Track_ID']) #Combining datasets so for each track we know its starting and ending coordinates
