@@ -97,11 +97,8 @@ for i in range(0,Steps):
         merged_data['Seed_Type']=((merged_data['MC_Mother_Track_ID'].str.contains(str('-'+n))==False) & (merged_data['Seed_Type']==True))
     else:
         merged_data['Seed_Type']=True
-    print(merged_data)
-    exit()
     merged_data.drop(merged_data.index[merged_data['Seed_Type'] == False], inplace = True)
-    merged_data.drop(['Mother_1'],axis=1,inplace=True)
-    merged_data.drop(['Mother_2'],axis=1,inplace=True)
+    merged_data.drop(['MC_Mother_Track_ID'],axis=1,inplace=True)
     merged_data.drop(['Seed_Type'],axis=1,inplace=True)
     merged_list = merged_data.values.tolist() #Convirting the result to List data type
     result_list+=merged_list #Adding the result to the list
