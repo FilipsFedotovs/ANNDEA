@@ -205,10 +205,9 @@ if os.path.isfile(EOSsubModelMetaDIR)==False:
 else:
 
    print(UF.TimeStamp(),'Loading previously saved data from ',bcolors.OKBLUE+EOSsubModelMetaDIR+bcolors.ENDC)
-   exit()
-#     MetaInput=UF.PickleOperations(TrainSampleOutputMeta,'r', 'N/A')
-#     Meta=MetaInput[0]
-# MaxSLG=Meta.MaxSLG
+   MetaInput=UF.PickleOperations(EOSsubModelMetaDIR,'r', 'N/A')
+   Meta=MetaInput[0]
+   MaxSLG=Meta.MaxSLG
 # MaxSTG=Meta.MaxSTG
 # MaxDOCA=Meta.MaxDOCA
 # MaxAngle=Meta.MaxAngle
@@ -220,7 +219,7 @@ else:
 # for j in range(0,len(JobSets)):
 #           for sj in range(0,int(JobSets[j][2])):
 #               TotJobs+=1
-
+exit()
 ########################################     Preset framework parameters    #########################################
 FreshStart=True
 def AutoPilot(wait_min, interval_min, max_interval_tolerance,AFS,EOS,path,o,pfx,sfx,ID,loop_params,OptionHeader,OptionLine,Sub_File,Exception=['',''], Log=False, GPU=False):
