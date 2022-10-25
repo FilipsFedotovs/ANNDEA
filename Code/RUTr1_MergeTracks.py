@@ -199,22 +199,22 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 0 has successfully completed'+bcolors.ENDC)
 exit()
 
-elif os.path.isfile(TrainSampleOutputMeta)==True:
-    print(UF.TimeStamp(),'Loading previously saved data from ',bcolors.OKBLUE+TrainSampleOutputMeta+bcolors.ENDC)
-    MetaInput=UF.PickleOperations(TrainSampleOutputMeta,'r', 'N/A')
-    Meta=MetaInput[0]
-MaxSLG=Meta.MaxSLG
-MaxSTG=Meta.MaxSTG
-MaxDOCA=Meta.MaxDOCA
-MaxAngle=Meta.MaxAngle
-JobSets=Meta.JobSets
-MaxSegments=Meta.MaxSegments
-MaxSeeds=Meta.MaxSeeds
-VetoMotherTrack=Meta.VetoMotherTrack
-TotJobs=0
-for j in range(0,len(JobSets)):
-          for sj in range(0,int(JobSets[j][2])):
-              TotJobs+=1
+# elif os.path.isfile(TrainSampleOutputMeta)==True:
+#     print(UF.TimeStamp(),'Loading previously saved data from ',bcolors.OKBLUE+TrainSampleOutputMeta+bcolors.ENDC)
+#     MetaInput=UF.PickleOperations(TrainSampleOutputMeta,'r', 'N/A')
+#     Meta=MetaInput[0]
+# MaxSLG=Meta.MaxSLG
+# MaxSTG=Meta.MaxSTG
+# MaxDOCA=Meta.MaxDOCA
+# MaxAngle=Meta.MaxAngle
+# JobSets=Meta.JobSets
+# MaxSegments=Meta.MaxSegments
+# MaxSeeds=Meta.MaxSeeds
+# VetoMotherTrack=Meta.VetoMotherTrack
+# TotJobs=0
+# for j in range(0,len(JobSets)):
+#           for sj in range(0,int(JobSets[j][2])):
+#               TotJobs+=1
 
 ########################################     Preset framework parameters    #########################################
 FreshStart=True
