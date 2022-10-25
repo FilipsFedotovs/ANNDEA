@@ -59,8 +59,7 @@ print(UF.TimeStamp(),'Loading pre-selected data from ',input_file_location)
 data=pd.read_csv(input_file_location,header=0,
                     usecols=['x','y','z','Rec_Seg_ID','MC_Mother_Track_ID'])
 
-print(data)
-exit()
+
 print(UF.TimeStamp(),'Creating segment combinations... ')
 data_header = data.groupby('Rec_Seg_ID')['z'].min()  #Keeping only starting hits for the each track record (we do not require the full information about track in this script)
 data_header=data_header.reset_index()
@@ -89,8 +88,7 @@ del data_s
 gc.collect()
 
 #What section of data will we cut?
-StartDataCut=j*MaxSegments
-EndDataCut=(j+1)*MaxSegments
+
 
 #Specifying the right join
 
@@ -100,8 +98,6 @@ r_data.drop(r_data.index[r_data['z'] != PlateZ], inplace = True)
 
 Records=len(r_data.axes[0])
 print(UF.TimeStamp(),'There are  ', Records, 'segments in the starting plate')
-
-r_data=r_data.iloc[StartDataCut:min(EndDataCut,Records)]
 
 
 Records=len(r_data.axes[0])
