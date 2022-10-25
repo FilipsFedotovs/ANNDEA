@@ -197,7 +197,7 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         print(UF.TimeStamp(), bcolors.OKGREEN+"The track segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+required_file_location+bcolors.ENDC)
         print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
         print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 0 has successfully completed'+bcolors.ENDC)
-exit()
+
 
 if os.path.isfile(EOSsubModelMetaDIR)==False:
       print(UF.TimeStamp(), bcolors.FAIL+"Fail to proceed further as the model file {EOSsubModelMetaDIR} has not been found..."+bcolors.ENDC)
