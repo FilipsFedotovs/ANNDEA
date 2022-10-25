@@ -200,7 +200,7 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
 
 
 if os.path.isfile(EOSsubModelMetaDIR)==False:
-      print(UF.TimeStamp(), bcolors.FAIL+"Fail to proceed further as the model file {EOSsubModelMetaDIR} has not been found..."+bcolors.ENDC)
+      print(UF.TimeStamp(), bcolors.FAIL+"Fail to proceed further as the model file "+EOSsubModelMetaDIR+ "has not been found..."+bcolors.ENDC)
       exit()
 else:
 
