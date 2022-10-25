@@ -76,7 +76,7 @@ import Parameters as PM #This is where we keep framework global parameters
 #Establishing paths
 EOSsubDIR=EOS_DIR+'/'+'ANNADEA'
 EOSsubModelDIR=EOSsubDIR+'/'+'Models'
-EOSsubModelMetaDIR=EOSsubDIR+'/'+'Models/'+ModelName[0]+'_Meta.pkl'
+EOSsubModelMetaDIR=EOSsubDIR+'/'+'Models/'+ModelName[0]+'_Meta'
 required_file_location=EOS_DIR+'/ANNADEA/Data/REC_SET/RUTr1_'+RecBatchID+'_TRACK_SEGMENTS.csv'
 required_eval_file_location=EOS_DIR+'/ANNADEA/Data/TEST_SET/EUTr1_'+RecBatchID+'_TRACK_SEGMENTS.csv'
 ########################################     Phase 1 - Create compact source file    #########################################
@@ -200,7 +200,7 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
 
 
 if os.path.isfile(EOSsubModelMetaDIR)==False:
-      print(UF.TimeStamp(), bcolors.FAIL+"Fail to proceed further as the model file "+EOSsubModelMetaDIR+ "has not been found..."+bcolors.ENDC)
+      print(UF.TimeStamp(), bcolors.FAIL+"Fail to proceed further as the model file "+EOSsubModelMetaDIR+ " has not been found..."+bcolors.ENDC)
       exit()
 else:
 
