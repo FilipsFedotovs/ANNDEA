@@ -121,7 +121,7 @@ for s in range(0,limit):
              if track.FitSeed(Metas[m],Models[m])==False:
                 keep_seed=False
          if keep_seed:
-            GoodTracks.append(track.TrackQualityCheck)
+            GoodTracks.append(track)
      else:
          del track
          continue
