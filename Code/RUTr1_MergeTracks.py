@@ -284,7 +284,7 @@ else:
 print(UF.TimeStamp(),'There are 8 stages (0-7) of this script',status,bcolors.ENDC)
 print(UF.TimeStamp(),'Current status has a stage',status,bcolors.ENDC)
 
-while status<2:
+while status<3:
       if status==-2:
           print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
           print(UF.TimeStamp(),bcolors.BOLD+'Stage -3:'+bcolors.ENDC+' Sending eval seeds to HTCondor...')
