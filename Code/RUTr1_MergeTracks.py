@@ -706,7 +706,7 @@ while status<3:
                     bar()
                     rec=None
                     for j in range(0,int(Meta.JobSets[i][2])):
-                        for k in range(0,Meta.JobSets[i][3][2]):
+                        for k in range(0,Meta.JobSets[i][3][j]):
                           new_input_file_location=EOS_DIR+'/ANNADEA/Data/REC_SET/RUTr1a_'+RecBatchID+'_SelectedSeeds_'+str(i)+'_'+str(j)+'_'+str(k)+'.csv'
                           if os.path.isfile(new_input_file_location)==False:
                                 break
