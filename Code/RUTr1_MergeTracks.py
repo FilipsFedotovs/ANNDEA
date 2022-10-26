@@ -678,7 +678,7 @@ while status<3:
              print(UF.TimeStamp(),'Initiating the logging...')
              eval_data_file=EOS_DIR+'/ANNADEA/Data/TEST_SET/EUTr1b_'+RecBatchID+'_SEED_TRUTH_COMBINATIONS.csv'
              eval_data=pd.read_csv(eval_data_file,header=0,usecols=['Segment_1','Segment_2'])
-             eval_data["Seeds_ID"]= ['-'.join(sorted(tup)) for tup in zip(eval_data['Segment_1'], eval_data['Segment_2'])]
+             eval_data["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(eval_data['Segment_1'], eval_data['Segment_2'])]
              eval_data.drop(['Segment_1'],axis=1,inplace=True)
              eval_data.drop(['Segment_2'],axis=1,inplace=True)
              eval_no=0
