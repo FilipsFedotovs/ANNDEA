@@ -306,7 +306,7 @@ else:
 print(UF.TimeStamp(),'There are 8 stages (0-7) of this script',status,bcolors.ENDC)
 print(UF.TimeStamp(),'Current status has a stage',status,bcolors.ENDC)
 status=3
-while status<4:
+while status<5:
       if status==-2:
           print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
           print(UF.TimeStamp(),bcolors.BOLD+'Stage -3:'+bcolors.ENDC+' Sending eval seeds to HTCondor...')
@@ -732,8 +732,6 @@ while status<4:
          # except:
          #     print(UF.TimeStamp(), bcolors.WARNING+'Log creation has failed'+bcolors.ENDC)
         FreshStart=False
-        exit()
-
         print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
         status=3
       if status==3:
@@ -878,6 +876,62 @@ while status<4:
                 FreshStart=False
                 print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
                 status+=1
+      if status==4:
+        print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
+        print(UF.TimeStamp(),bcolors.BOLD+'Stage '+str(status)+':'+bcolors.ENDC+' Analysing the training samples')
+        JobSet=[]
+        for i in range(len(JobSets)):
+             JobSet.append([])
+             for j in range(len(JobSets[i][3])):
+                 JobSet[i].append(JobSets[i][3][j])
+        base_data = None
+        for i in range(0,len(JobSet)):
+                for j in range(len(JobSet[i])):
+                         for k in range(JobSet[i][j]):
+                              required_output_file_location=EOS_DIR+'/ANNADEA/Data/REC_SET/RUTr1b_'+RecBatchID+'_'+'RefinedSeeds'+'_'+str(i)+'_'+str(j) + '_' + str(k)+'.pkl'
+                              new_data=UF.PickleOperations(required_output_file_location,'r','N/A')[0]
+                              if base_data == None:
+                                    base_data = new_data
+                              else:
+                                    base_data+=new_data
+        Records=len(base_data)
+        print(UF.TimeStamp(),'Set',str(i),'contains', Records, 'raw images',bcolors.ENDC)
+
+        base_data=list(set(base_data))
+        Records_After_Compression=len(base_data)
+        if Records>0:
+                              Compression_Ratio=int((Records_After_Compression/Records)*100)
+        else:
+                              CompressionRatio=0
+        print(UF.TimeStamp(),'Set',str(i),'compression ratio is ', Compression_Ratio, ' %',bcolors.ENDC)
+        output_file_location=EOS_DIR+'/ANNADEA/Data/REC_SET/RUTrc_Fit_Seeds.pkl'
+        print(UF.PickleOperations(output_file_location,'w',base_data)[1])
+        if args.Log=='Y':
+
+             print(UF.TimeStamp(),'Initiating the logging...')
+             eval_data_file=EOS_DIR+'/ANNADEA/Data/TEST_SET/EUTr1b_'+RecBatchID+'_SEED_TRUTH_COMBINATIONS.csv'
+             eval_data=pd.read_csv(eval_data_file,header=0,usecols=['Segment_1','Segment_2'])
+             eval_data["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(eval_data['Segment_1'], eval_data['Segment_2'])]
+             eval_data.drop(['Segment_1'],axis=1,inplace=True)
+             eval_data.drop(['Segment_2'],axis=1,inplace=True)
+             rec_no=0
+             eval_no=0
+             rec_list=[]
+             for rd in base_data:
+                 rec_list.append([rd.SegmentHeader[0],rd.SegmentHeader[1]])
+             del base_data
+             rec = pd.DataFrame(rec_list, columns = ['Segment_1','Segment_2'])
+             rec["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(rec['Segment_1'], rec['Segment_2'])]
+             rec.drop(['Segment_1'],axis=1,inplace=True)
+             rec.drop(['Segment_2'],axis=1,inplace=True)
+             rec_eval=pd.merge(eval_data, rec, how="inner", on=['Seed_ID'])
+             eval_no=len(rec_eval)
+             rec_no=(len(rec)-len(rec_eval))
+             UF.LogOperations(EOS_DIR+'/ANNADEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv', 'a', [[3,'ANN Seed Fit',rec_no,eval_no,eval_no/(rec_no+eval_no),eval_no/len(eval_data)]])
+             print(UF.TimeStamp(), bcolors.OKGREEN+"The log data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+EOS_DIR+'/EDER-TSU/Data/REC_SET/R_LOG.csv'+bcolors.ENDC)
+        del new_data
+        print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
+        status+=1
 if status==7:
      print(UF.TimeStamp(), bcolors.OKGREEN+"Train sample generation has been completed"+bcolors.ENDC)
      exit()
