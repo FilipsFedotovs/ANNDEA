@@ -693,8 +693,6 @@ while status<7:
                   TotalData+=base_data
            del base_data
            gc.collect()
-           print(len(TotalData))
-           exit()
            ValidationSampleSize=int(round(min((len(TotalData)*float(PM.valRatio)),PM.MaxValSampleSize),0))
            random.shuffle(TotalData)
            output_file_location=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_TRACK_SEEDS_OUTPUT.pkl'
