@@ -694,11 +694,11 @@ while status<3:
                                 break
                           else:
                              rec_new=pd.read_csv(new_input_file_location,usecols = ['Segment_1','Segment_2'])
-                             rec_new["Track_ID"]= ['-'.join(sorted(tup)) for tup in zip(rec_new['Segment_1'], rec_new['Segment_2'])]
+                             rec_new["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(rec_new['Segment_1'], rec_new['Segment_2'])]
                              rec_new.drop(['Segment_1'],axis=1,inplace=True)
                              rec_new.drop(['Segment_2'],axis=1,inplace=True)
                              rec = pd.concat([rec, rec_new], ignore_index=True)
-                             rec.drop_duplicates(subset="Track_ID",keep='first',inplace=True)
+                             rec.drop_duplicates(subset="Seed_ID",keep='first',inplace=True)
 
              #rec.drop_duplicates(subset="Track_ID",keep='first',inplace=True)
                     rec_eval=pd.merge(eval_data, rec, how="inner", on=['Seed_ID'])
