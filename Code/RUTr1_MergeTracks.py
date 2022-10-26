@@ -648,12 +648,6 @@ while status<3:
             for i in range(min_i,len(JobSets)): #//Temporarily measure to save space
                 bar.text = f'-> Analysing set : {i}...'
                 bar()
-                if len(JobSets[i])>3:
-                   JobSets[i]=JobSets[i][:4]
-                   JobSets[i][3]=[]
-                else:
-                   JobSets[i].append([])
-                print(JobSets[i])
                 for j in range(0,int(JobSets[i][2])):
 
                    output_file_location=EOS_DIR+'/ANNADEA/Data/REC_SET/RUTr1a_'+RecBatchID+'_RawSeeds_'+str(i)+'_'+str(j)+'.csv'
@@ -676,7 +670,6 @@ while status<3:
                       Compression_Ratio=0
                     print(UF.TimeStamp(),'Set',str(i),'and subset', str(j), 'compression ratio is ', Compression_Ratio, ' %',bcolors.ENDC)
                     fractions=int(math.ceil(Records_After_Compression/MaxSeeds))
-                    JobSets[i][3].append(fractions)
                     for k in range(0,fractions):
                      new_output_file_location=EOS_DIR+'/ANNADEA/Data/REC_SET/RUTr1a_'+RecBatchID+'_SelectedSeeds_'+str(i)+'_'+str(j)+'_'+str(k)+'.csv'
                      result[(k*MaxSeeds):min(Records_After_Compression,((k+1)*MaxSeeds))].to_csv(new_output_file_location,index=False)
@@ -685,13 +678,15 @@ while status<3:
              print(UF.TimeStamp(),'Initiating the logging...')
              eval_data_file=EOS_DIR+'/ANNADEA/Data/TEST_SET/EUTr1b_'+RecBatchID+'_SEED_TRUTH_COMBINATIONS.csv'
              eval_data=pd.read_csv(eval_data_file,header=0,usecols=['Segment_1','Segment_2'])
-             eval_data["Track_ID"]= ['-'.join(sorted(tup)) for tup in zip(eval_data['Segment_1'], eval_data['Segment_2'])]
+             eval_data["Seeds_ID"]= ['-'.join(sorted(tup)) for tup in zip(eval_data['Segment_1'], eval_data['Segment_2'])]
              eval_data.drop(['Segment_1'],axis=1,inplace=True)
              eval_data.drop(['Segment_2'],axis=1,inplace=True)
-             rec=None
+             eval_no=0
+             rec_no=0
              with alive_bar(len(JobSets),force_tty=True, title='Preparing data for the log...') as bar:
                  for i in range(0,len(JobSets)):
                     bar()
+                    rec=None
                     for j in range(0,int(JobSets[i][2])):
                         for k in range(0,1000):
                           new_input_file_location=EOS_DIR+'/ANNADEA/Data/REC_SET/RUTr1a_'+RecBatchID+'_SelectedSeeds_'+str(i)+'_'+str(j)+'_'+str(k)+'.csv'
@@ -706,10 +701,10 @@ while status<3:
                              rec.drop_duplicates(subset="Track_ID",keep='first',inplace=True)
 
              #rec.drop_duplicates(subset="Track_ID",keep='first',inplace=True)
-             rec_eval=pd.merge(eval_data, rec, how="inner", on=['Track_ID'])
+                    rec_eval=pd.merge(eval_data, rec, how="inner", on=['Seed_ID'])
 
-             eval_no=len(rec_eval)
-             rec_no=(len(rec)-len(rec_eval))
+                    eval_no+=len(rec_eval)
+                    rec_no+=(len(rec)-len(rec_eval))
              UF.LogOperations(EOS_DIR+'/ANNADEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv', 'a', [[2,'SLG and STG cuts',rec_no,eval_no,eval_no/(rec_no+eval_no),eval_no/len(eval_data)]])
              print(UF.TimeStamp(), bcolors.OKGREEN+"The log data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+EOS_DIR+'/ANNADEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv'+bcolors.ENDC)
          # except:
