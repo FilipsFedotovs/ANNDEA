@@ -75,7 +75,6 @@ data_header=pd.merge(data_header, data_end_header, how="inner", on=["Rec_Seg_ID"
 data_header.drop(data_header.index[data_header['z'] < PlateZ], inplace = True)
 Records=len(data_header)
 print(UF.TimeStamp(),'There are total of ', Records, 'tracks in the data set')
-print('----')
 Cut=math.ceil(MaxRecords/Records) #Even if use only a max of 20000 track on the right join we cannot perform the full outer join due to the memory limitations, we do it in a small 'cuts'
 Steps=math.ceil(MaxSegments/Cut)  #Calculating number of cuts
 data_s=pd.merge(data, data_header, how="inner", on=["Rec_Seg_ID","z"]) #Shrinking the Track data so just a star hit for each track is present.
@@ -152,8 +151,6 @@ for i in range(0,Steps):
 
   if merged_data.empty==False:
     merged_data.drop(merged_data.index[merged_data['Segment_1'] == merged_data['Segment_2']], inplace = True) #Removing the cases where Seed tracks are the same
-    print(merged_data)
-    exit()
     merged_list = merged_data.values.tolist() #Convirting the result to List data type
     result_list+=merged_list #Adding the result to the list
   if len(result_list)>=2000000: #Once the list gets too big we dump the results into csv to save memory
