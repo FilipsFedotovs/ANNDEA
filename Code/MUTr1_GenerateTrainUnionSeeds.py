@@ -47,8 +47,6 @@ parser.add_argument('--Samples',help="How many samples? Please enter the number 
 parser.add_argument('--LabelRatio',help="What is the desired proportion of genuine seeds in the training/validation sets", default='0.5')
 parser.add_argument('--TrainSampleSize',help="Maximum number of samples per Training file", default='50000')
 
-
-
 ######################################## Parsing argument values  #############################################################
 args = parser.parse_args()
 Mode=args.Mode.upper()

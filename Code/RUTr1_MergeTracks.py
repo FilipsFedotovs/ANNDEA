@@ -77,6 +77,7 @@ import Parameters as PM #This is where we keep framework global parameters
 EOSsubDIR=EOS_DIR+'/'+'ANNADEA'
 EOSsubModelDIR=EOSsubDIR+'/'+'Models'
 EOSsubModelMetaDIR=EOSsubDIR+'/'+'Models/'+ModelName[0]+'_Meta'
+RecOutputMeta=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/'+RecBatchID+'_info.pkl'
 required_file_location=EOS_DIR+'/ANNADEA/Data/REC_SET/RUTr1_'+RecBatchID+'_TRACK_SEGMENTS.csv'
 required_eval_file_location=EOS_DIR+'/ANNADEA/Data/TEST_SET/EUTr1_'+RecBatchID+'_TRACK_SEGMENTS.csv'
 ########################################     Phase 1 - Create compact source file    #########################################
@@ -206,18 +207,14 @@ else:
    print(UF.TimeStamp(),'Loading previously saved data from ',bcolors.OKBLUE+EOSsubModelMetaDIR+bcolors.ENDC)
    MetaInput=UF.PickleOperations(EOSsubModelMetaDIR,'r', 'N/A')
    Meta=MetaInput[0]
-   #MaxSLG=Meta.MaxSLG
-   MaxSLG=PM.MaxSLG
-   #MaxSTG=Meta.MaxSTG
-   MaxSTG=PM.MaxSTG
-   #MaxDOCA=Meta.MaxDOCA
-   MaxDOCA=PM.MaxDOCA
-   #MaxAngle=Meta.MaxAngle
-   MaxAngle=PM.MaxAngle
+   MaxSLG=Meta.MaxSLG
+   MaxSTG=Meta.MaxSTG
+   MaxDOCA=Meta.MaxDOCA
+   MaxAngle=Meta.MaxAngle
    MaxSegments=PM.MaxSegments
    MaxSeeds=PM.MaxSeeds
-   VetoMotherTrack=PM.VetoMotherTrack
-
+   VetoMotherTrack=Meta.VetoMotherTrack
+exit()
 # TotJobs=0
 # for j in range(0,len(JobSets)):
 #           for sj in range(0,int(JobSets[j][2])):
