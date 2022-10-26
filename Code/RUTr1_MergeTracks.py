@@ -854,7 +854,7 @@ while status<5:
                  if AutoPilot(600,10,Patience,AFS_DIR,EOS_DIR,'/ANNADEA/Data/REC_SET/','RefinedSeeds','RUTr1b','.pkl',RecBatchID,JobSet,OptionHeader,OptionLine,'RUTr1b_RefineSeeds_Sub.py',['',''],False,False):
                         FreshStart=False
                         print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
-                        status+=1
+                        status=4
                  else:
                      print(UF.TimeStamp(),bcolors.FAIL+'Stage '+str(status)+' is uncompleted...'+bcolors.ENDC)
                      status=8
@@ -867,7 +867,7 @@ while status<5:
                       if AutoPilot(600,10,Patience,AFS_DIR,EOS_DIR,'/ANNADEA/Data/REC_SET/','RefinedSeeds','RUTr1b','.pkl',RecBatchID,JobSet,OptionHeader,OptionLine,'RUTr1b_RefineSeeds_Sub.py',['',''],False,False):
                          FreshStart=False
                          print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
-                         status+=1
+                         status=4
                       else:
                           print(UF.TimeStamp(),bcolors.FAIL+'Stage '+str(status)+' is uncompleted...'+bcolors.ENDC)
                           status=8
@@ -875,7 +875,7 @@ while status<5:
             elif len(bad_pop)==0:
                 FreshStart=False
                 print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
-                status+=1
+                status=4
       if status==4:
         print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
         print(UF.TimeStamp(),bcolors.BOLD+'Stage '+str(status)+':'+bcolors.ENDC+' Analysing the training samples')
@@ -885,7 +885,9 @@ while status<5:
              for j in range(len(JobSets[i][3])):
                  JobSet[i].append(JobSets[i][3][j])
         base_data = None
-        for i in range(0,len(JobSet)):
+        with alive_bar(len(JobSets),force_tty=True, title='Checking the results from HTCondor') as bar:
+         for i in range(0,len(JobSet)):
+                bar()
                 for j in range(len(JobSet[i])):
                          for k in range(JobSet[i][j]):
                               required_output_file_location=EOS_DIR+'/ANNADEA/Data/REC_SET/RUTr1b_'+RecBatchID+'_'+'RefinedSeeds'+'_'+str(i)+'_'+str(j) + '_' + str(k)+'.pkl'
@@ -907,7 +909,6 @@ while status<5:
         output_file_location=EOS_DIR+'/ANNADEA/Data/REC_SET/RUTrc_Fit_Seeds.pkl'
         print(UF.PickleOperations(output_file_location,'w',base_data)[1])
         if args.Log=='Y':
-
              print(UF.TimeStamp(),'Initiating the logging...')
              eval_data_file=EOS_DIR+'/ANNADEA/Data/TEST_SET/EUTr1b_'+RecBatchID+'_SEED_TRUTH_COMBINATIONS.csv'
              eval_data=pd.read_csv(eval_data_file,header=0,usecols=['Segment_1','Segment_2'])
@@ -918,7 +919,7 @@ while status<5:
              eval_no=0
              rec_list=[]
              for rd in base_data:
-                 rec_list.append([rd.SegmentHeader[0],rd.SegmentHeader[1]])
+                 rec_list.append([rd.Header[0],rd.Header[1]])
              del base_data
              rec = pd.DataFrame(rec_list, columns = ['Segment_1','Segment_2'])
              rec["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(rec['Segment_1'], rec['Segment_2'])]
@@ -931,7 +932,7 @@ while status<5:
              print(UF.TimeStamp(), bcolors.OKGREEN+"The log data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+EOS_DIR+'/EDER-TSU/Data/REC_SET/R_LOG.csv'+bcolors.ENDC)
         del new_data
         print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
-        status+=1
+        status=5
 if status==7:
      print(UF.TimeStamp(), bcolors.OKGREEN+"Train sample generation has been completed"+bcolors.ENDC)
      exit()
