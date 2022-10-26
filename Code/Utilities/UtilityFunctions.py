@@ -1084,10 +1084,105 @@ class EMO:
              graph.batch = torch.zeros(len(graph.x),dtype=torch.int64)
              self.Fit=M(graph.x, graph.edge_index, graph.edge_attr,graph.batch)[0][1].item()
           return self.Fit>=0.5
+      
+      def InjectTrackSeed(self,OtherSeed):
+          self_matx=EMO.DensityMatrix(OtherSeed.Header,self.Header)
+          if EMO.Overlap(self_matx)==False:
+              return EMO.Overlap(self_matx)
+          new_seed_header=EMO.ProjectVectorElements(self_matx,self.Header)
+          new_self_hits=EMO.ProjectVectorElements(self_matx,self.Hits)
+          new_self_fit=EMO.ProjectVectorElements(self_matx,self.Fit)
+          remain_1_s = EMO.GenerateInverseVector(self.Header,new_seed_header)
+          remain_1_o = EMO.GenerateInverseVector(OtherSeed.Header,new_seed_header)
+          OtherSeed.Header=EMO.ProjectVectorElements([remain_1_o],OtherSeed.Header)
+          self.Header=EMO.ProjectVectorElements([remain_1_s],self.Header)
+          OtherSeed.Hits=EMO.ProjectVectorElements([remain_1_o],OtherSeed.Hits)
+          self.Hits=EMO.ProjectVectorElements([remain_1_s],self.Hits)
+          OtherSeed.Fit=EMO.ProjectVectorElements([remain_1_o],OtherSeed.Fit)
+          self.Fit=EMO.ProjectVectorElements([remain_1_s],self.Fit)
+          if (len(OtherSeed.Header))==0:
+              self.Header+=new_seed_header
+              self.Hits+=new_self_hits
+              self.Fit+=new_self_fit
+              self.Avg_Fit=sum(self.Fit)/len(self.Fit)
+              self.Partition=len(self.Header)
+              if len(self.Fit)!=len(self.Header):
+                  raise Exception('Fit error')
+                  exit()
+
+              return True
+          if (len(self.Header))==0:
+              self.Header+=new_seed_header
+              self.Hits+=new_self_hits
+              self.Fit+=new_self_fit
+              self.Header+=OtherSeed.Header
+              self.Hits+=OtherSeed.Hits
+              self.Fit+=OtherSeed.Fit
+              self.Avg_Fit=sum(self.Fit)/len(self.Fit)
+              self.Partition=len(self.Header)
+              if len(self.Fit)!=len(self.Header):
+                  raise Exception('Fit error')
+                  exit()
+              return True
+          self_2_matx=EMO.DensityMatrix(OtherSeed.Hits,self.Hits)
+          other_2_matx=EMO.DensityMatrix(self.Hits,OtherSeed.Hits)
+          #print('Test',self_2_matx,self_2_matx)
+          last_s_seed_header=EMO.ProjectVectorElements(self_2_matx,self.Header)
+          last_o_seed_header=EMO.ProjectVectorElements(other_2_matx,OtherSeed.Header)
+          remain_2_s = EMO.GenerateInverseVector(self.Header,last_s_seed_header)
+          remain_2_o = EMO.GenerateInverseVector(OtherSeed.Header,last_o_seed_header)
+
+          new_seed_header+=EMO.ProjectVectorElements([remain_2_s],self.Header)
+          new_seed_header+=EMO.ProjectVectorElements([remain_2_o],OtherSeed.Header)
+          new_self_fit+=EMO.ProjectVectorElements([remain_2_s],self.Fit)
+          new_self_fit+=EMO.ProjectVectorElements([remain_2_o],OtherSeed.Fit)
+          new_self_hits+=EMO.ProjectVectorElements([remain_2_s],self.Hits)
+          new_self_hits+=EMO.ProjectVectorElements([remain_2_o],OtherSeed.Hits)
+
+
+          last_remain_headers_s = EMO.GenerateInverseVector(self.Header,new_seed_header)
+          last_remain_headers_o = EMO.GenerateInverseVector(OtherSeed.Header,new_seed_header)
+          last_self_headers=EMO.ProjectVectorElements([last_remain_headers_s],self.Header)
+          last_other_headers=EMO.ProjectVectorElements([last_remain_headers_o],OtherSeed.Header)
+          if (len(last_other_headers))==0:
+              self.Header=new_seed_header
+              self.Hits=new_self_hits
+              self.Fit=new_self_fit
+              self.Avg_Fit=sum(self.Fit)/len(self.Fit)
+              self.Partition=len(self.Header)
+              if len(self.Fit)!=len(self.Header):
+                  raise Exception('Fit error')
+                  exit()
+              return True
+
+          last_self_hits=EMO.ProjectVectorElements([last_remain_headers_s],self.Hits)
+          last_other_hits=EMO.ProjectVectorElements([last_remain_headers_o],OtherSeed.Hits)
+          last_self_fits=EMO.ProjectVectorElements([last_remain_headers_s],self.Fit)
+          last_other_fits=EMO.ProjectVectorElements([last_remain_headers_o],OtherSeed.Fit)
+          last_remain_matr=EMO.DensityMatrix(last_other_hits,last_self_hits)
+
+          new_seed_header+=EMO.ReplaceWeakerTracks(last_remain_matr,last_other_headers,last_self_headers,last_other_fits,last_self_fits)
+          new_self_fit+=EMO.ReplaceWeakerFits(new_seed_header,last_self_headers,last_other_headers,last_other_fits,last_self_fits)[0:len(EMO.ReplaceWeakerFits(new_seed_header,last_self_headers,last_other_headers,last_other_fits,last_self_fits))]
+          new_self_hits+=EMO.ReplaceWeakerTracks(last_remain_matr,last_other_hits,last_self_hits,last_other_fits,last_self_fits)
+          self.Header=new_seed_header
+          self.Hits=new_self_hits
+          self.Fit=new_self_fit
+          self.Avg_Fit=sum(self.Fit)/len(self.Fit)
+          self.Partition=len(self.Header)
+          if len(self.Fit)!=len(self.Header):
+                  raise Exception('Fit error')
+                  exit()
+
+          return True
       @staticmethod
       def unit_vector(vector):
           return vector / np.linalg.norm(vector)
-
+      def Overlap(a):
+            overlap=0
+            for j in a:
+                for i in j:
+                    overlap+=i
+            return(overlap>0)
       def angle_between(v1, v2):
             v1_u = EMO.unit_vector(v1)
             v2_u = EMO.unit_vector(v2)
@@ -1207,7 +1302,139 @@ class EMO:
                     pA = a0 + (_A * dot)
             return pA,pB,np.linalg.norm(pA-pB)
       
-
+      def Product(a,b):
+         if type(a) is str:
+             if type(b) is str:
+                 return(int(a==b))
+             if type(b) is int:
+                 return(b)
+         if type(b) is str:
+             if type(a) is str:
+                 return(int(a==b))
+             if type(a) is int:
+                 return(a)
+         if type(a) is list:
+             if type(b) is list:
+                 a_temp=[]
+                 b_temp=[]
+                 for el in a:
+                     a_temp.append(el[2])
+                 for el in b:
+                     b_temp.append(el[2])
+                 min_a=min(a_temp)
+                 min_b=min(b_temp)
+                 max_a=max(a_temp)
+                 max_b=max(b_temp)
+                 if (min_b>=min_a) and (max_b<=max_a):
+                     return(1)
+                 elif (min_a>=min_b) and (max_a<=max_b):
+                     return(1)
+                 elif (max_a>min_b) and (max_a<max_b):
+                     return(1)
+                 elif (max_b>min_a) and (max_b<max_a):
+                     return(1)
+                 return(0)
+             elif b==1:
+                 return(a)
+             elif b==0:
+                 return(b)
+             else:
+                 raise Exception('Value incompatibility error')
+         if type(b) is list:
+             if type(a) is list:
+                 a_temp=[]
+                 b_temp=[]
+                 for el in a:
+                     a_temp.append(el[2])
+                 for el in b:
+                     b_temp.append(el[2])
+                 min_a=min(a_temp)
+                 min_b=min(b_temp)
+                 max_a=max(a_temp)
+                 max_b=max(b_temp)
+                 if (min_b>=min_a) and (max_b<=max_a):
+                     return(1)
+                 elif (min_a>=min_b) and (max_a<=max_b):
+                     return(1)
+                 elif (max_a>min_b) and (max_a<max_b):
+                     return(1)
+                 elif (max_b>min_a) and (max_b<max_a):
+                     return(1)
+                 return(0)
+             elif a==1:
+                 return(b)
+             elif a==0:
+                 return(a)
+             else:
+                 raise Exception('Value incompatibility error')
+         if type(b) is int and type(a) is int:
+             return(a*b)
+         elif type(b) is int and ((type(a) is float) or (type(a) is np.float32)):
+             return(a*b)
+         elif type(a) is int and ((type(b) is float) or (type(b) is np.float32)):
+             return(a*b)
+      def DensityMatrix(m,f):
+            matrix=[]
+            for j in m:
+                row=[]
+                for i in f:
+                    row.append(EMO.Product(j,i))
+                matrix.append(row)
+            return matrix
+      def ReplaceWeakerTracks(matx,m,f,m_fit,f_fit):
+                      res_vector=[]
+                      delete_vec=[]
+                      for j in range(len(m)):
+                          accumulative_fit_f=0
+                          accumulative_fit_m=m_fit[j]
+                          del_temp_vec=[]
+                          counter=0
+                          for i in range(len(matx[j])):
+                                  if matx[j][i]==1:
+                                      accumulative_fit_f+=f_fit[i]
+                                      del_temp_vec.append(f[i])
+                                      counter+=1
+                          if (accumulative_fit_m>accumulative_fit_f/counter):
+                              res_vector.append(m[j])
+                              delete_vec+=del_temp_vec
+                          else:
+                              res_vector+=del_temp_vec
+                      final_vector=[]
+                      for mel in m:
+                          if (mel in res_vector):
+                             final_vector.append(mel)
+                      for fel in f:
+                          if (fel in delete_vec)==False:
+                             final_vector.append(fel)
+                      return(final_vector)
+      def ReplaceWeakerFits(h,l_f,l_m,m_fit,f_fit):
+                      new_h=l_f+l_m
+                      new_fit=f_fit+m_fit
+                      res_fits=[]
+                      for hd in range(len(new_h)):
+                          if (new_h[hd] in h):
+                              res_fits.append(new_fit[hd])
+                      return res_fits
+      def ProjectVectorElements(m,v):
+                  if (len(m[0])!=len(v)):
+                      raise Exception('Number of vector columns is not equal to number of acting matrix rows')
+                  else:
+                      res_vector=[]
+                      for j in m:
+                          for i in range(len(j)):
+                              if (EMO.Product(j[i],v[i]))==1:
+                                  res_vector.append(v[i])
+                              elif (EMO.Product(j[i],v[i]))==v[i]:
+                                  res_vector.append(v[i])
+                      return(res_vector)
+      def GenerateInverseVector(ov,v):
+            inv_vector=[]
+            for el in ov:
+               if (el in v) == False:
+                   inv_vector.append(1)
+               elif (el in v):
+                   inv_vector.append(0)
+            return(inv_vector)
 def GenerateModel(ModelMeta,TrainParams=None):
       if ModelMeta.ModelFramework=='PyTorch':
          import torch
