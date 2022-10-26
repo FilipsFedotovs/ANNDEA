@@ -688,6 +688,7 @@ while status<3:
              eval_data["Track_ID"]= ['-'.join(sorted(tup)) for tup in zip(eval_data['Segment_1'], eval_data['Segment_2'])]
              eval_data.drop(['Segment_1'],axis=1,inplace=True)
              eval_data.drop(['Segment_2'],axis=1,inplace=True)
+             rec=None
              for i in range(0,len(JobSets)):
                 for j in range(0,int(JobSets[i][2])):
                     for k in range(0,1000):
