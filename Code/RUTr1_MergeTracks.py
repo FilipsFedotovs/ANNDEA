@@ -306,8 +306,8 @@ else:
     status=CheckStatus()
 print(UF.TimeStamp(),'There are 8 stages (0-7) of this script',status,bcolors.ENDC)
 print(UF.TimeStamp(),'Current status has a stage',status,bcolors.ENDC)
-status=5
-while status<6:
+status=6
+while status<7:
       if status==-2:
           print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
           print(UF.TimeStamp(),bcolors.BOLD+'Stage -3:'+bcolors.ENDC+' Sending eval seeds to HTCondor...')
@@ -961,121 +961,118 @@ while status<6:
                                     OptionHeader,
                                     OptionLine,
                                     'RUTr1d_MergeSeeds_Sub.py',
+                                    False)
+         if FreshStart:
+              if (TotJobs)==len(bad_pop):
+                 print(UF.TimeStamp(),bcolors.WARNING+'Warning, there are still', len(bad_pop), 'HTCondor jobs remaining'+bcolors.ENDC)
+                 print(bcolors.BOLD+'If you would like to wait and exit please enter E'+bcolors.ENDC)
+                 print(bcolors.BOLD+'If you would like to wait please enter enter the maximum wait time in minutes'+bcolors.ENDC)
+                 print(bcolors.BOLD+'If you would like to resubmit please enter R'+bcolors.ENDC)
+                 UserAnswer=input(bcolors.BOLD+"Please, enter your option\n"+bcolors.ENDC)
+                 print(UF.TimeStamp(),'Submitting jobs to HTCondor... ',bcolors.ENDC)
+                 if UserAnswer=='E':
+                      print(UF.TimeStamp(),'OK, exiting now then')
+                      exit()
+                 if UserAnswer=='R':
+                     bad_pop=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,
+                                    '/ANNADEA/Data/REC_SET/',
+                                    'MergedSeeds',
+                                    'RUTr1d',
+                                    '.pkl',
+                                    RecBatchID,
+                                    JobSet,
+                                    OptionHeader,
+                                    OptionLine,
+                                    'RUTr1d_MergeSeeds_Sub.py',
                                     True)
-         print(bad_pop)
-         exit()
-    #
-    #      if FreshStart:
-    #           if (TotJobs)==len(bad_pop):
-    #              print(UF.TimeStamp(),bcolors.WARNING+'Warning, there are still', len(bad_pop), 'HTCondor jobs remaining'+bcolors.ENDC)
-    #              print(bcolors.BOLD+'If you would like to wait and exit please enter E'+bcolors.ENDC)
-    #              print(bcolors.BOLD+'If you would like to wait please enter enter the maximum wait time in minutes'+bcolors.ENDC)
-    #              print(bcolors.BOLD+'If you would like to resubmit please enter R'+bcolors.ENDC)
-    #              UserAnswer=input(bcolors.BOLD+"Please, enter your option\n"+bcolors.ENDC)
-    #              print(UF.TimeStamp(),'Submitting jobs to HTCondor... ',bcolors.ENDC)
-    #              if UserAnswer=='E':
-    #                   print(UF.TimeStamp(),'OK, exiting now then')
-    #                   exit()
-    #              if UserAnswer=='R':
-    #                  bad_pop=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,
-    #                                 '/ANNADEA/Data/REC_SET/',
-    #                                 'RefinedSeeds',
-    #                                 'RUTr1b',
-    #                                 '.pkl',
-    #                                 RecBatchID,
-    #                                 JobSet,
-    #                                 OptionHeader,
-    #                                 OptionLine,
-    #                                 'RUTr1b_RefineSeeds_Sub.py',
-    #                                 True)
-    #                  for bp in bad_pop:
-    #                       UF.SubmitJobs2Condor(bp)
-    #              else:
-    #                 if AutoPilot(600,10,Patience,AFS_DIR,EOS_DIR,'/ANNADEA/Data/REC_SET/','RefinedSeeds','RUTr1b','.pkl',RecBatchID,JobSet,OptionHeader,OptionLine,'RUTr1b_RefineSeeds_Sub.py',['',''],False,False):
-    #                     FreshStart=False
-    #                     print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
-    #                     status+=1
-    #                 else:
-    #                     print(UF.TimeStamp(),bcolors.FAIL+'Stage '+str(status)+' is uncompleted...'+bcolors.ENDC)
-    #                     status=8
-    #                     break
-    #
-    #           elif len(bad_pop)>0:
-    #                print(UF.TimeStamp(),bcolors.WARNING+'Warning, there are still', len(bad_pop), 'HTCondor jobs remaining'+bcolors.ENDC)
-    #                print(bcolors.BOLD+'If you would like to wait and exit please enter E'+bcolors.ENDC)
-    #                print(bcolors.BOLD+'If you would like to wait please enter enter the maximum wait time in minutes'+bcolors.ENDC)
-    #                print(bcolors.BOLD+'If you would like to resubmit please enter R'+bcolors.ENDC)
-    #                UserAnswer=input(bcolors.BOLD+"Please, enter your option\n"+bcolors.ENDC)
-    #                if UserAnswer=='E':
-    #                    print(UF.TimeStamp(),'OK, exiting now then')
-    #                    exit()
-    #                if UserAnswer=='R':
-    #                   for bp in bad_pop:
-    #                        UF.SubmitJobs2Condor(bp)
-    #                   print(UF.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
-    #                   if AutoPilot(600,10,Patience,AFS_DIR,EOS_DIR,'/ANNADEA/Data/REC_SET/','RefinedSeeds','RUTr1b','.pkl',RecBatchID,JobSet,OptionHeader,OptionLine,'RUTr1b_RefineSeeds_Sub.py',['',''],False,False):
-    #                      FreshStart=False
-    #                      print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
-    #                      status+=1
-    #                   else:
-    #                      print(UF.TimeStamp(),bcolors.FAIL+'Stage '+str(status)+' is uncompleted...'+bcolors.ENDC)
-    #                      status=8
-    #                      break
-    #                else:
-    #
-    #                   if AutoPilot(int(UserAnswer),10,Patience,AFS_DIR,EOS_DIR,'/ANNADEA/Data/REC_SET/','RefinedSeeds','RUTr1b','.pkl',RecBatchID,JobSet,OptionHeader,OptionLine,'RUTr1b_RefineSeeds_Sub.py',['',''],False,False):
-    #                      FreshStart=False
-    #                      print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
-    #                      status+=1
-    #                   else:
-    #                      print(UF.TimeStamp(),bcolors.FAIL+'Stage '+str(status)+' is uncompleted...'+bcolors.ENDC)
-    #                      status=8
-    #                      break
-    #
-    #           elif len(bad_pop)==0:
-    #             FreshStart=False
-    #             print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
-    #             status=4
-    #      else:
-    #         if (TotJobs)==len(bad_pop):
-    #              bad_pop=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,
-    #                                 '/ANNADEA/Data/REC_SET/',
-    #                                 'RefinedSeeds',
-    #                                 'RUTr1b',
-    #                                 '.pkl',
-    #                                 RecBatchID,
-    #                                 JobSet,
-    #                                 OptionHeader,
-    #                                 OptionLine,
-    #                                 'RUTr1b_RefineSeeds_Sub.py',
-    #                                 True)
-    #              for bp in bad_pop:
-    #                       UF.SubmitJobs2Condor(bp)
-    #              if AutoPilot(600,10,Patience,AFS_DIR,EOS_DIR,'/ANNADEA/Data/REC_SET/','RefinedSeeds','RUTr1b','.pkl',RecBatchID,JobSet,OptionHeader,OptionLine,'RUTr1b_RefineSeeds_Sub.py',['',''],False,False):
-    #                     FreshStart=False
-    #                     print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
-    #                     status=4
-    #              else:
-    #                  print(UF.TimeStamp(),bcolors.FAIL+'Stage '+str(status)+' is uncompleted...'+bcolors.ENDC)
-    #                  status=8
-    #                  break
-    #
-    #         elif len(bad_pop)>0:
-    #                   for bp in bad_pop:
-    #                        UF.SubmitJobs2Condor(bp)
-    #                   print(UF.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
-    #                   if AutoPilot(600,10,Patience,AFS_DIR,EOS_DIR,'/ANNADEA/Data/REC_SET/','RefinedSeeds','RUTr1b','.pkl',RecBatchID,JobSet,OptionHeader,OptionLine,'RUTr1b_RefineSeeds_Sub.py',['',''],False,False):
-    #                      FreshStart=False
-    #                      print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
-    #                      status=4
-    #                   else:
-    #                       print(UF.TimeStamp(),bcolors.FAIL+'Stage '+str(status)+' is uncompleted...'+bcolors.ENDC)
-    #                       status=8
-    #                       break
-    #         elif len(bad_pop)==0:
-    #             FreshStart=False
-    #             print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
-    #             status=4
+                     for bp in bad_pop:
+                          UF.SubmitJobs2Condor(bp)
+                 else:
+                    if AutoPilot(600,10,Patience,AFS_DIR,EOS_DIR,'/ANNADEA/Data/REC_SET/','MergedSeeds','RUTr1d','.pkl',RecBatchID,JobSet,OptionHeader,OptionLine,'RUTr1d_MergeSeeds_Sub.py',['',''],False,False):
+                        FreshStart=False
+                        print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
+                        status=6
+                    else:
+                        print(UF.TimeStamp(),bcolors.FAIL+'Stage '+str(status)+' is uncompleted...'+bcolors.ENDC)
+                        status=8
+                        break
+
+              elif len(bad_pop)>0:
+                   print(UF.TimeStamp(),bcolors.WARNING+'Warning, there are still', len(bad_pop), 'HTCondor jobs remaining'+bcolors.ENDC)
+                   print(bcolors.BOLD+'If you would like to wait and exit please enter E'+bcolors.ENDC)
+                   print(bcolors.BOLD+'If you would like to wait please enter enter the maximum wait time in minutes'+bcolors.ENDC)
+                   print(bcolors.BOLD+'If you would like to resubmit please enter R'+bcolors.ENDC)
+                   UserAnswer=input(bcolors.BOLD+"Please, enter your option\n"+bcolors.ENDC)
+                   if UserAnswer=='E':
+                       print(UF.TimeStamp(),'OK, exiting now then')
+                       exit()
+                   if UserAnswer=='R':
+                      for bp in bad_pop:
+                           UF.SubmitJobs2Condor(bp)
+                      print(UF.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
+                      if AutoPilot(600,10,Patience,AFS_DIR,EOS_DIR,'/ANNADEA/Data/REC_SET/','MergedSeeds','RUTr1d','.pkl',RecBatchID,JobSet,OptionHeader,OptionLine,'RUTr1d_MergeSeeds_Sub.py',['',''],False,False):
+                         FreshStart=False
+                         print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
+                         status=6
+                      else:
+                         print(UF.TimeStamp(),bcolors.FAIL+'Stage '+str(status)+' is uncompleted...'+bcolors.ENDC)
+                         status=8
+                         break
+                   else:
+
+                      if AutoPilot(int(UserAnswer),10,Patience,AFS_DIR,EOS_DIR,'/ANNADEA/Data/REC_SET/','MergedSeeds','RUTr1d','.pkl',RecBatchID,JobSet,OptionHeader,OptionLine,'RUTr1d_MergeSeeds_Sub.py',['',''],False,False):
+                         FreshStart=False
+                         print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
+                         status=6
+                      else:
+                         print(UF.TimeStamp(),bcolors.FAIL+'Stage '+str(status)+' is uncompleted...'+bcolors.ENDC)
+                         status=8
+                         break
+
+              elif len(bad_pop)==0:
+                FreshStart=False
+                print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
+                status=6
+         else:
+            if (TotJobs)==len(bad_pop):
+                 bad_pop=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,
+                                    '/ANNADEA/Data/REC_SET/',
+                                    'MergedSeeds',
+                                    'RUTr1d',
+                                    '.pkl',
+                                    RecBatchID,
+                                    JobSet,
+                                    OptionHeader,
+                                    OptionLine,
+                                    'RUTr1d_MergeSeeds_Sub.py',
+                                    True)
+                 for bp in bad_pop:
+                          UF.SubmitJobs2Condor(bp)
+                 if AutoPilot(600,10,Patience,AFS_DIR,EOS_DIR,'/ANNADEA/Data/REC_SET/','MergedSeeds','RUTr1d','.pkl',RecBatchID,JobSet,OptionHeader,OptionLine,'RUTr1d_MergeSeeds_Sub.py',['',''],False,False):
+                        FreshStart=False
+                        print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
+                        status=6
+                 else:
+                     print(UF.TimeStamp(),bcolors.FAIL+'Stage '+str(status)+' is uncompleted...'+bcolors.ENDC)
+                     status=8
+                     break
+
+            elif len(bad_pop)>0:
+                      for bp in bad_pop:
+                           UF.SubmitJobs2Condor(bp)
+                      print(UF.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
+                      if AutoPilot(600,10,Patience,AFS_DIR,EOS_DIR,'/ANNADEA/Data/REC_SET/','MergedSeeds','RUTr1d','.pkl',RecBatchID,JobSet,OptionHeader,OptionLine,'RUTr1d_MergeSeeds_Sub.py',['',''],False,False):
+                         FreshStart=False
+                         print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
+                         status=6
+                      else:
+                          print(UF.TimeStamp(),bcolors.FAIL+'Stage '+str(status)+' is uncompleted...'+bcolors.ENDC)
+                          status=8
+                          break
+            elif len(bad_pop)==0:
+                FreshStart=False
+                print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
+                status=6
 if status==7:
      print(UF.TimeStamp(), bcolors.OKGREEN+"Train sample generation has been completed"+bcolors.ENDC)
      exit()
