@@ -648,7 +648,7 @@ while status<3:
             for i in range(min_i,len(JobSets)): #//Temporarily measure to save space
                 bar.text = f'-> Analysing set : {i}...'
                 bar()
-                if len(Meta.JobSets[i])>3:
+                if len(JobSets[i])>3:
                    JobSets[i]=JobSets[i][:4]
                    JobSets[i][3]=[]
                 else:
