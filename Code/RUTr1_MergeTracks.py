@@ -693,6 +693,8 @@ while status<3:
                 for j in range(0,int(JobSets[i][2])):
                     for k in range(0,1000):
                       new_input_file_location=EOS_DIR+'/ANNADEA/Data/REC_SET/RUTr1a_'+RecBatchID+'_SelectedSeeds_'+str(i)+'_'+str(j)+'_'+str(k)+'.csv'
+                      print(new_input_file_location)
+                      exit()
                       if os.path.isfile(new_input_file_location)==False:
                             break
                       else:
