@@ -78,7 +78,6 @@ print(UF.TimeStamp(),'There are total of ', Records, 'tracks in the data set')
 print('----')
 Cut=math.ceil(MaxRecords/Records) #Even if use only a max of 20000 track on the right join we cannot perform the full outer join due to the memory limitations, we do it in a small 'cuts'
 Steps=math.ceil(MaxSegments/Cut)  #Calculating number of cuts
-print(Cut,Steps)
 data_s=pd.merge(data, data_header, how="inner", on=["Rec_Seg_ID","z"]) #Shrinking the Track data so just a star hit for each track is present.
 data_s.drop(['e_z'],axis=1,inplace=True)
 data_e=pd.merge(data, data_header, how="inner", left_on=["Rec_Seg_ID","z"], right_on=["Rec_Seg_ID","e_z"]) #Shrinking the Track data so just a star hit for each track is present.
@@ -137,10 +136,10 @@ UF.LogOperations(output_file_location,'w',result_list)
 #This is where we start
 
 for i in range(0,Steps):
-  r_temp_data=r_data.iloc[0:min(Cut,len(r_data.axes[0]))] #Taking a small slice of the data
-  r_data.drop(r_data.index[0:min(Cut,len(r_data.axes[0]))],inplace=True) #Shrinking the right join dataframe
+  r_temp_data=r_data.iloc[0:min(Cut,len(r_data))] #Taking a small slice of the data
+  r_data.drop(r_data.index[0:min(Cut,len(r_data))],inplace=True) #Shrinking the right join dataframe
   merged_data=pd.merge(data, r_temp_data, how="inner", on=['join_key']) #Merging Tracks to check whether they could form a seed
-  print(merged_data)
+  print(data,r_temp_data,merged_data)
   exit()
   merged_data['SLG']=merged_data['z']-merged_data['e_z'] #Calculating the Euclidean distance between Track start hits
   merged_data['STG']=np.sqrt((merged_data['x']-merged_data['e_x'])**2+((merged_data['y']-merged_data['e_y'])**2)) #Calculating the Euclidean distance between Track start hits
