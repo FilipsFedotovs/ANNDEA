@@ -704,11 +704,11 @@ while status<3:
              eval_no=0
              rec_no=0
              with alive_bar(len(JobSets),force_tty=True, title='Preparing data for the log...') as bar:
-                 for i in range(0,len(JobSets)):
+                 for i in range(0,len(Meta.JobSets)):
                     bar()
                     rec=None
-                    for j in range(0,int(JobSets[i][2])):
-                        for k in range(0,1000):
+                    for j in range(0,int(Meta.JobSets[i][2])):
+                        for k in range(0,Meta.JobSets[i][3][2]):
                           new_input_file_location=EOS_DIR+'/ANNADEA/Data/REC_SET/RUTr1a_'+RecBatchID+'_SelectedSeeds_'+str(i)+'_'+str(j)+'_'+str(k)+'.csv'
                           if os.path.isfile(new_input_file_location)==False:
                                 break
