@@ -688,24 +688,27 @@ while status<3:
              eval_data["Track_ID"]= ['-'.join(sorted(tup)) for tup in zip(eval_data['Segment_1'], eval_data['Segment_2'])]
              eval_data.drop(['Segment_1'],axis=1,inplace=True)
              eval_data.drop(['Segment_2'],axis=1,inplace=True)
-             rec_no=0
-             eval_no=0
              for i in range(0,len(JobSets)):
                 for j in range(0,int(JobSets[i][2])):
-                    for f in range(0,1000):
+                    for k in range(0,1000):
                       new_input_file_location=EOS_DIR+'/ANNADEA/Data/REC_SET/RUTr1a_'+RecBatchID+'_SelectedSeeds_'+str(i)+'_'+str(j)+'_'+str(k)+'.csv'
                       if os.path.isfile(new_input_file_location)==False:
                             break
                       else:
                          progress=round((float(j)/float(len(data)))*100,0)
                          print(UF.TimeStamp(),'progress is ',progress,' %', end="\r", flush=True) #Progress display
-                         rec=pd.read_csv(new_input_file_location,usecols = ['Segment_1','Segment_2'])
-                         rec["Track_ID"]= ['-'.join(sorted(tup)) for tup in zip(rec['Segment_1'], rec['Segment_2'])]
-                         rec.drop(['Segment_1'],axis=1,inplace=True)
-                         rec.drop(['Segment_2'],axis=1,inplace=True)
-                         rec_eval=pd.merge(eval_data, rec, how="inner", on=['Track_ID'])
-                         eval_no+=len(rec_eval)
-                         rec_no+=(len(rec)-len(rec_eval))
+                         rec_new=pd.read_csv(new_input_file_location,usecols = ['Segment_1','Segment_2'])
+                         rec_new["Track_ID"]= ['-'.join(sorted(tup)) for tup in zip(rec_new['Segment_1'], rec_new['Segment_2'])]
+                         rec_new.drop(['Segment_1'],axis=1,inplace=True)
+                         rec_new.drop(['Segment_2'],axis=1,inplace=True)
+                         rec = pd.concat([rec, rec_new], ignore_index=True)
+                         rec.drop_duplicates(subset="Track_ID",keep='first',inplace=True)
+
+             #rec.drop_duplicates(subset="Track_ID",keep='first',inplace=True)
+             rec_eval=pd.merge(eval_data, rec, how="inner", on=['Track_ID'])
+
+             eval_no=len(rec_eval)
+             rec_no=(len(rec)-len(rec_eval))
              UF.LogOperations(EOS_DIR+'/ANNADEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv', 'a', [[2,'SLG and STG cuts',rec_no,eval_no,eval_no/(rec_no+eval_no),eval_no/len(eval_data)]])
              print(UF.TimeStamp(), bcolors.OKGREEN+"The log data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+EOS_DIR+'/ANNADEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv'+bcolors.ENDC)
          # except:
