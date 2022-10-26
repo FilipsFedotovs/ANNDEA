@@ -608,7 +608,7 @@ while status<7:
                 else:
                               CompressionRatio=0
                 TotalImages+=Records_After_Compression
-                print(base_data[0])
+                print(base_data[0].Label)
                 exit()
                 TrueSeeds+=sum(1 for im in base_data if im.Label == 1)
                 print(UF.TimeStamp(),'Set',str(i),'compression ratio is ', Compression_Ratio, ' %',bcolors.ENDC)
