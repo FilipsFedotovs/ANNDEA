@@ -690,12 +690,10 @@ while status<3:
              eval_data.drop(['Segment_2'],axis=1,inplace=True)
              rec_no=0
              eval_no=0
-             print(JobSets)
-             exit()
              for i in range(0,len(JobSets)):
                 for j in range(0,int(JobSets[i][2])):
                     for f in range(0,1000):
-                      new_input_file_location=EOS_DIR+'/EDER-TSU/Data/REC_SET/R2_R3_RawTracks_'+str(j)+'_'+str(sj)+'_'+str(f)+'.csv'
+                      new_input_file_location=EOS_DIR+'/ANNADEA/Data/REC_SET/RUTr1a_'+RecBatchID+'_SelectedSeeds_'+str(i)+'_'+str(j)+'_'+str(k)+'.csv'
                       if os.path.isfile(new_input_file_location)==False:
                             break
                       else:
@@ -708,8 +706,8 @@ while status<3:
                          rec_eval=pd.merge(eval_data, rec, how="inner", on=['Track_ID'])
                          eval_no+=len(rec_eval)
                          rec_no+=(len(rec)-len(rec_eval))
-             UF.LogOperations(EOS_DIR+'/EDER-TSU/Data/REC_SET/R_LOG.csv', 'UpdateLog', [[2,'SLG and STG cuts',rec_no,eval_no,eval_no/(rec_no+eval_no),eval_no/len(eval_data)]])
-             print(UF.TimeStamp(), bcolors.OKGREEN+"The log data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+EOS_DIR+'/EDER-TSU/Data/REC_SET/R_LOG.csv'+bcolors.ENDC)
+             UF.LogOperations(EOS_DIR+'/ANNADEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv', 'a', [[2,'SLG and STG cuts',rec_no,eval_no,eval_no/(rec_no+eval_no),eval_no/len(eval_data)]])
+             print(UF.TimeStamp(), bcolors.OKGREEN+"The log data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+EOS_DIR+'/ANNADEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv'+bcolors.ENDC)
          # except:
          #     print(UF.TimeStamp(), bcolors.WARNING+'Log creation has failed'+bcolors.ENDC)
         FreshStart=False
