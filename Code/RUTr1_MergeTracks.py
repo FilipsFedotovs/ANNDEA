@@ -680,6 +680,38 @@ while status<3:
                     for k in range(0,fractions):
                      new_output_file_location=EOS_DIR+'/ANNADEA/Data/REC_SET/RUTr1a_'+RecBatchID+'_SelectedSeeds_'+str(i)+'_'+str(j)+'_'+str(k)+'.csv'
                      result[(k*MaxSeeds):min(Records_After_Compression,((k+1)*MaxSeeds))].to_csv(new_output_file_location,index=False)
+        if Log:
+         # try:
+             print(UF.TimeStamp(),'Initiating the logging...')
+             eval_data_file=EOS_DIR+'/ANNADEA/Data/TEST_SET/EUTr1b_'+RecBatchID+'_SEED_TRUTH_COMBINATIONS.csv'
+             eval_data=pd.read_csv(eval_data_file,header=0,usecols=['Segment_1','Segment_2'])
+             eval_data["Track_ID"]= ['-'.join(sorted(tup)) for tup in zip(eval_data['Segment_1'], eval_data['Segment_2'])]
+             eval_data.drop(['Segment_1'],axis=1,inplace=True)
+             eval_data.drop(['Segment_2'],axis=1,inplace=True)
+             rec_no=0
+             eval_no=0
+             print(JobSets)
+             exit()
+             for i in range(0,len(JobSets)):
+                for j in range(0,int(JobSets[i][2])):
+                    for f in range(0,1000):
+                      new_input_file_location=EOS_DIR+'/EDER-TSU/Data/REC_SET/R2_R3_RawTracks_'+str(j)+'_'+str(sj)+'_'+str(f)+'.csv'
+                      if os.path.isfile(new_input_file_location)==False:
+                            break
+                      else:
+                         progress=round((float(j)/float(len(data)))*100,0)
+                         print(UF.TimeStamp(),'progress is ',progress,' %', end="\r", flush=True) #Progress display
+                         rec=pd.read_csv(new_input_file_location,usecols = ['Segment_1','Segment_2'])
+                         rec["Track_ID"]= ['-'.join(sorted(tup)) for tup in zip(rec['Segment_1'], rec['Segment_2'])]
+                         rec.drop(['Segment_1'],axis=1,inplace=True)
+                         rec.drop(['Segment_2'],axis=1,inplace=True)
+                         rec_eval=pd.merge(eval_data, rec, how="inner", on=['Track_ID'])
+                         eval_no+=len(rec_eval)
+                         rec_no+=(len(rec)-len(rec_eval))
+             UF.LogOperations(EOS_DIR+'/EDER-TSU/Data/REC_SET/R_LOG.csv', 'UpdateLog', [[2,'SLG and STG cuts',rec_no,eval_no,eval_no/(rec_no+eval_no),eval_no/len(eval_data)]])
+             print(UF.TimeStamp(), bcolors.OKGREEN+"The log data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+EOS_DIR+'/EDER-TSU/Data/REC_SET/R_LOG.csv'+bcolors.ENDC)
+         # except:
+         #     print(UF.TimeStamp(), bcolors.WARNING+'Log creation has failed'+bcolors.ENDC)
         FreshStart=False
         exit()
 
