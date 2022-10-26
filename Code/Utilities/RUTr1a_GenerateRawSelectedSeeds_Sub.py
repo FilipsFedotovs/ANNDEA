@@ -102,8 +102,6 @@ Records=len(r_data)
 print(UF.TimeStamp(),'There are  ', Records, 'segments in the starting plate')
 
 r_data=r_data.iloc[StartDataCut:min(EndDataCut,Records)]
-print(len(r_data))
-exit()
 Records=len(r_data)
 print(UF.TimeStamp(),'However we will only attempt  ', Records, 'track segments in the starting plate')
 r_data.drop(['y'],axis=1,inplace=True)
@@ -141,6 +139,8 @@ for i in range(0,Steps):
   r_temp_data=r_data.iloc[0:min(Cut,len(r_data.axes[0]))] #Taking a small slice of the data
   r_data.drop(r_data.index[0:min(Cut,len(r_data.axes[0]))],inplace=True) #Shrinking the right join dataframe
   merged_data=pd.merge(data, r_temp_data, how="inner", on=['join_key']) #Merging Tracks to check whether they could form a seed
+  print(merged_data)
+  exit()
   merged_data['SLG']=merged_data['z']-merged_data['e_z'] #Calculating the Euclidean distance between Track start hits
   merged_data['STG']=np.sqrt((merged_data['x']-merged_data['e_x'])**2+((merged_data['y']-merged_data['e_y'])**2)) #Calculating the Euclidean distance between Track start hits
   merged_data['DynamicCut']=MaxSTG+(merged_data['SLG']*0.96)
