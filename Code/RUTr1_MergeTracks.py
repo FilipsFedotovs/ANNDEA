@@ -492,8 +492,6 @@ while status<2:
           for i in range(len(JobSets)):
                 JobSet.append(int(JobSets[i][2]))
           TotJobs=0
-          print(JobSet)
-          exit()
           if type(JobSet) is int:
                         TotJobs=JobSet
           elif type(JobSet[0]) is int:
@@ -502,15 +500,15 @@ while status<2:
                         for lp in JobSet:
                             TotJobs+=np.sum(lp)
           bad_pop=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,
-                                    '/ANNADEA/Data/TRAIN_SET/',
+                                    '/ANNADEA/Data/REC_SET/',
                                     'RawSeedsRes',
-                                    'MUTr1a',
+                                    'RUTr1a',
                                     '.csv',
-                                    TrainSampleID,
+                                    RecBatchID,
                                     JobSet,
                                     OptionHeader,
                                     OptionLine,
-                                    'MUTr1a_GenerateRawSelectedSeeds_Sub.py',
+                                    'RUTr1a_GenerateRawSelectedSeeds_Sub.py',
                                     False,
                                     [" --PlateZ ",JobSets])
           if len(bad_pop)==0:
@@ -532,21 +530,21 @@ while status<2:
                        exit()
                   if UserAnswer=='R':
                       bad_pop=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,
-                                    '/ANNADEA/Data/TRAIN_SET/',
+                                    '/ANNADEA/Data/REC_SET/',
                                     'RawSeedsRes',
-                                    'MUTr1a',
+                                    'RUTr1a',
                                     '.csv',
-                                    TrainSampleID,
+                                    RecBatchID,
                                     JobSet,
                                     OptionHeader,
                                     OptionLine,
-                                    'MUTr1a_GenerateRawSelectedSeeds_Sub.py',
+                                    'RUTr1a_GenerateRawSelectedSeeds_Sub.py',
                                     True,
                                     [" --PlateZ ",JobSets])
                       for bp in bad_pop:
                           UF.SubmitJobs2Condor(bp)
                   else:
-                     if AutoPilot(600,10,Patience,AFS_DIR,EOS_DIR,'/ANNADEA/Data/TRAIN_SET/','RawSeedsRes','MUTr1a','.csv',TrainSampleID,JobSet,OptionHeader,OptionLine,'MUTr1a_GenerateRawSelectedSeeds_Sub.py',[" --PlateZ ",JobSets],False,False):
+                     if AutoPilot(600,10,Patience,AFS_DIR,EOS_DIR,'/ANNADEA/Data/REC_SET/','RawSeedsRes','RUTr1a','.csv',RecBatchID,JobSet,OptionHeader,OptionLine,'RUTr1a_GenerateRawSelectedSeeds_Sub.py',[" --PlateZ ",JobSets],False,False):
                          FreshStart=False
                          print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 1 has successfully completed'+bcolors.ENDC)
                          status=2
@@ -568,7 +566,7 @@ while status<2:
                       for bp in bad_pop:
                            UF.SubmitJobs2Condor(bp)
                       print(UF.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
-                      if AutoPilot(600,10,Patience,AFS_DIR,EOS_DIR,'/ANNADEA/Data/TRAIN_SET/','RawSeedsRes','MUTr1a','.csv',TrainSampleID,JobSet,OptionHeader,OptionLine,'MUTr1a_GenerateRawSelectedSeeds_Sub.py',[" --PlateZ ",JobSets],False,False):
+                      if AutoPilot(600,10,Patience,AFS_DIR,EOS_DIR,'/ANNADEA/Data/REC_SET/','RawSeedsRes','RUTr1a','.csv',RecBatchID,JobSet,OptionHeader,OptionLine,'RUTr1a_GenerateRawSelectedSeeds_Sub.py',[" --PlateZ ",JobSets],False,False):
                           FreshStart=False
                           print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 1 has successfully completed'+bcolors.ENDC)
                           status=2
@@ -577,7 +575,7 @@ while status<2:
                           status=8
                           break
                    else:
-                      if AutoPilot(int(UserAnswer),10,Patience,AFS_DIR,EOS_DIR,'/ANNADEA/Data/TRAIN_SET/','RawSeedsRes','MUTr1a','.csv',TrainSampleID,JobSet,OptionHeader,OptionLine,'MUTr1a_GenerateRawSelectedSeeds_Sub.py',[" --PlateZ ",JobSets],False,False):
+                      if AutoPilot(int(UserAnswer),10,Patience,AFS_DIR,EOS_DIR,'/ANNADEA/Data/REC_SET/','RawSeedsRes','RUTr1a','.csv',RecBatchID,JobSet,OptionHeader,OptionLine,'RUTr1a_GenerateRawSelectedSeeds_Sub.py',[" --PlateZ ",JobSets],False,False):
                           FreshStart=False
                           print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 1 has successfully completed'+bcolors.ENDC)
                           status=2
@@ -588,22 +586,22 @@ while status<2:
           else:
             if (TotJobs)==len(bad_pop):
                  bad_pop=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,
-                                    '/ANNADEA/Data/TRAIN_SET/',
+                                    '/ANNADEA/Data/REC_SET/',
                                     'RawSeedsRes',
-                                    'MUTr1a',
+                                    'RUTr1a',
                                     '.csv',
-                                    TrainSampleID,
+                                    RecBatchID,
                                     JobSet,
                                     OptionHeader,
                                     OptionLine,
-                                    'MUTr1a_GenerateRawSelectedSeeds_Sub.py',
+                                    'RUTr1a_GenerateRawSelectedSeeds_Sub.py',
                                     True,
                                     [" --PlateZ ",JobSets])
                  for bp in bad_pop:
                           UF.SubmitJobs2Condor(bp)
 
 
-                 if AutoPilot(600,10,Patience,AFS_DIR,EOS_DIR,'/ANNADEA/Data/TRAIN_SET/','RawSeedsRes','MUTr1a','.csv',TrainSampleID,JobSet,OptionHeader,OptionLine,'MUTr1a_GenerateRawSelectedSeeds_Sub.py',[" --PlateZ ",JobSets],False,False):
+                 if AutoPilot(600,10,Patience,AFS_DIR,EOS_DIR,'/ANNADEA/Data/REC_SET/','RawSeedsRes','RUTr1a','.csv',RecBatchID,JobSet,OptionHeader,OptionLine,'RUTr1a_GenerateRawSelectedSeeds_Sub.py',[" --PlateZ ",JobSets],False,False):
                         FreshStart=False
                         print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 1 has successfully completed'+bcolors.ENDC)
                         status=2
@@ -615,7 +613,7 @@ while status<2:
             elif len(bad_pop)>0:
                       for bp in bad_pop:
                            UF.SubmitJobs2Condor(bp)
-                      if AutoPilot(600,10,Patience,AFS_DIR,EOS_DIR,'/ANNADEA/Data/TRAIN_SET/','RawSeedsRes','MUTr1a','.csv',TrainSampleID,JobSet,OptionHeader,OptionLine,'MUTr1a_GenerateRawSelectedSeeds_Sub.py',[" --PlateZ ",JobSets],False,False):
+                      if AutoPilot(600,10,Patience,AFS_DIR,EOS_DIR,'/ANNADEA/Data/REC_SET/','RawSeedsRes','RUTr1a','.csv',RecBatchID,JobSet,OptionHeader,OptionLine,'RUTr1a_GenerateRawSelectedSeeds_Sub.py',[" --PlateZ ",JobSets],False,False):
                           FreshStart=False
                           print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 1 has successfully completed'+bcolors.ENDC)
                           status=2
