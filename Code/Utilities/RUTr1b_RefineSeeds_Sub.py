@@ -112,7 +112,6 @@ print(UF.TimeStamp(),'Beginning the sample generation part...')
 for s in range(0,limit):
      track=tracks.pop(0)
 
-     label=track[2]
      track=EMO(track[:2])
 
 
