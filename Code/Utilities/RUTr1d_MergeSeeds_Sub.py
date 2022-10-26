@@ -63,7 +63,7 @@ while TrackCounterContinue:
     print(UF.TimeStamp(),'progress is ',progress,' %', end="\r", flush=True) #Progress display
     SubjectTrack=base_data[TrackCounter]
     for ObjectTrack in base_data[TrackCounter+1:]:
-        if SubjectTrack.InjectTrack(ObjectTrack):
+        if SubjectTrack.InjectTrackSeed(ObjectTrack):
            base_data.pop(base_data.index(ObjectTrack))
     TrackCounter+=1
 print(str(InitialDataLength), "2-segments track seeds were merged into ", str(len(base_data)), 'tracks...')
