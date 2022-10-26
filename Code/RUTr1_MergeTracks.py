@@ -574,10 +574,10 @@ while status<0:
                     bar.text = f'-> Analysing set : {i}...'
                     bar()
                     if i==0:
-                       output_file_location=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/RUTr1a_'+RecBatchID+'_RawSeeds_'+str(i)+'.csv'
+                       output_file_location=EOS_DIR+'/ANNADEA/Data/TEST_SET/EUTr1a_'+RecBatchID+'_RawSeeds_'+str(i)+'.csv'
                        result=pd.read_csv(output_file_location,names = ['Segment_1','Segment_2'])
                     else:
-                        output_file_location=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/RUTr1a_'+RecBatchID+'_RawSeeds_'+str(i)+'.csv'
+                        output_file_location=EOS_DIR+'/ANNADEA/Data/TEST_SET/EUTr1a_'+RecBatchID+'_RawSeeds_'+str(i)+'.csv'
                         new_result=pd.read_csv(output_file_location,names = ['Segment_1','Segment_2'])
                         result=pd.concat([result,new_result])
             Records=len(result)
