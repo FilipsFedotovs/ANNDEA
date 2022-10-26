@@ -580,21 +580,34 @@ while status<0:
                         output_file_location=EOS_DIR+'/ANNADEA/Data/TEST_SET/EUTr1a_'+RecBatchID+'_RawSeeds_'+str(i)+'.csv'
                         new_result=pd.read_csv(output_file_location,names = ['Segment_1','Segment_2'])
                         result=pd.concat([result,new_result])
-            Records=len(result)
+
             print(UF.TimeStamp(),'Set',str(i), 'contains', Records, 'seeds',bcolors.ENDC)
-            result["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(result['Segment_1'], result['Segment_2'])]
-            result.drop_duplicates(subset="Seed_ID",keep='first',inplace=True)
-            result.drop(result.index[result['Segment_1'] == result['Segment_2']], inplace = True)
-            result.drop(["Seed_ID"],axis=1,inplace=True)
-            Records_After_Compression=len(result)
-            if Records>0:
+        Records=len(result)
+        result["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(result['Segment_1'], result['Segment_2'])]
+        result.drop_duplicates(subset="Seed_ID",keep='first',inplace=True)
+        result.drop(result.index[result['Segment_1'] == result['Segment_2']], inplace = True)
+        result.drop(["Seed_ID"],axis=1,inplace=True)
+        Records_After_Compression=len(result)
+        if Records>0:
                       Compression_Ratio=int((Records_After_Compression/Records)*100)
-            else:
+        else:
                       Compression_Ratio=0
-            print(UF.TimeStamp(),'Set',str(i), 'compression ratio is ', Compression_Ratio, ' %',bcolors.ENDC)
-            new_output_file_location=EOS_DIR+'/ANNADEA/Data/TEST_SET/EUTr1_'+RecBatchID+'_SEED_TRUTH_COMBINATIONS.csv'
-            result.to_csv(new_output_file_location,index=False)
+        print(UF.TimeStamp(),'Set',str(i), 'compression ratio is ', Compression_Ratio, ' %',bcolors.ENDC)
+        new_output_file_location=EOS_DIR+'/ANNADEA/Data/TEST_SET/EUTr1_'+RecBatchID+'_SEED_TRUTH_COMBINATIONS.csv'
+        result.to_csv(new_output_file_location,index=False)
+        eval_no=len(result)
+
+        rec_data=pd.read_csv(required_file_location,header=0,
+                    usecols=['Rec_Seg_ID'])
+
+        rec_data.drop_duplicates(subset="Rec_Seg_ID",keep='first',inplace=True)
+        rec_data.drop_duplicates(keep='first',inplace=True)
+        rec_no=len(rec_data)
+        rec_no=(rec_no**2)-rec_no-eval_no
+        UF.LogOperations(EOS_DIR+'/ANNADEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv', 'StartLog', [['Step_No','Step_Desc','Fake_Seeds','Truth_Seeds','Precision','Recall'],[1,'Initial Sampling',rec_no,eval_no,eval_no/(rec_no+eval_no),1.0]])
+        print(UF.TimeStamp(), bcolors.OKGREEN+"The log data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+EOS_DIR+'/ANNADEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv'+bcolors.ENDC)
         FreshStart=False
+
         print(UF.TimeStamp(),bcolors.OKGREEN+'Stage -1 has successfully completed'+bcolors.ENDC)
         status=0
       if status==0:
