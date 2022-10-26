@@ -897,7 +897,7 @@ while status<5:
                               else:
                                     base_data+=new_data
         Records=len(base_data)
-        print(UF.TimeStamp(),'Set',str(i),'contains', Records, 'raw images',bcolors.ENDC)
+        print(UF.TimeStamp(),'The output contains', Records, 'raw images',bcolors.ENDC)
 
         base_data=list(set(base_data))
         Records_After_Compression=len(base_data)
@@ -905,7 +905,7 @@ while status<5:
                               Compression_Ratio=int((Records_After_Compression/Records)*100)
         else:
                               CompressionRatio=0
-        print(UF.TimeStamp(),'Set',str(i),'compression ratio is ', Compression_Ratio, ' %',bcolors.ENDC)
+        print(UF.TimeStamp(),'The output compression ratio is ', Compression_Ratio, ' %',bcolors.ENDC)
         output_file_location=EOS_DIR+'/ANNADEA/Data/REC_SET/RUTrc_Fit_Seeds.pkl'
         print(UF.PickleOperations(output_file_location,'w',base_data)[1])
         if args.Log=='Y':
@@ -929,7 +929,7 @@ while status<5:
              eval_no=len(rec_eval)
              rec_no=(len(rec)-len(rec_eval))
              UF.LogOperations(EOS_DIR+'/ANNADEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv', 'a', [[3,'ANN Seed Fit',rec_no,eval_no,eval_no/(rec_no+eval_no),eval_no/len(eval_data)]])
-             print(UF.TimeStamp(), bcolors.OKGREEN+"The log data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+EOS_DIR+'/EDER-TSU/Data/REC_SET/R_LOG.csv'+bcolors.ENDC)
+             print(UF.TimeStamp(), bcolors.OKGREEN+"The log data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+EOS_DIR+'/ANNADEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv'+bcolors.ENDC)
         del new_data
         print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
         status=5
