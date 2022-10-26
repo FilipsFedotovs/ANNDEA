@@ -278,11 +278,13 @@ def AutoPilot(wait_min, interval_min, max_interval_tolerance,AFS,EOS,path,o,pfx,
      return False
 def CheckStatus():
     if Log:
+        if os.path.isfile(EOS_DIR+'/ANNADEA/Data/REC_SET/RUTr1a_'+RecBatchID+'_SelectedSeeds_0_0_0.csv'):
+            return 2
         if os.path.isfile(EOS_DIR+'/ANNADEA/Data/TEST_SET/EUTr1b_'+RecBatchID+'_SEED_TRUTH_COMBINATIONS.csv'):
             return 1
-        elif EOS_DIR+'/ANNADEA/Data/TEST_SET/EUTr1a_'+RecBatchID+'_RawSeeds_0.csv':
+        elif os.path.isfile(EOS_DIR+'/ANNADEA/Data/TEST_SET/EUTr1a_'+RecBatchID+'_RawSeeds_0.csv'):
             return -2
-        elif EOS_DIR+'/ANNADEA/Data/REC_SET/EUTr1a_'+RecBatchID+'_RawSeeds_0_0.csv':
+        elif os.path.isfile(EOS_DIR+'/ANNADEA/Data/REC_SET/EUTr1a_'+RecBatchID+'_RawSeeds_0_0.csv'):
             return 1
         return -2
 
