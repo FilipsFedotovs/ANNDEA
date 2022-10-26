@@ -1082,7 +1082,7 @@ class EMO:
              import torch
              graph = self.GraphSeed
              graph.batch = torch.zeros(len(graph.x),dtype=torch.int64)
-             self.Fit=M((graph.x, graph.edge_index, graph.edge_attr,graph.batch)[0][1].item())
+             self.Fit=M(graph.x, graph.edge_index, graph.edge_attr,graph.batch)[0][1].item()
              print(self.Fit)
              exit()
           return self.Fit>=0.5
