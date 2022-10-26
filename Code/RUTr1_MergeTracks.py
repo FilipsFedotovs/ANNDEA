@@ -275,7 +275,7 @@ if Mode=='RESET':
     HTCondorTag="SoftUsed == \"ANNADEA-RUTr1d-"+RecBatchID+"\""
     UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'RUTr1d_'+RecBatchID, ['RUTr1d'], HTCondorTag)
     FreshStart=False
-    status=1
+    status=-2
 else:
     print(UF.TimeStamp(),'Analysing the current script status...',bcolors.ENDC)
     status=CheckStatus()
