@@ -306,7 +306,7 @@ else:
     status=CheckStatus()
 print(UF.TimeStamp(),'There are 8 stages (0-7) of this script',status,bcolors.ENDC)
 print(UF.TimeStamp(),'Current status has a stage',status,bcolors.ENDC)
-status=5
+status=3
 while status<7:
       if status==-2:
           print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
@@ -946,7 +946,7 @@ while status<7:
          base_data=[tr for tr in base_data if tr.Fit >= Acceptance]
          print(UF.TimeStamp(), bcolors.OKGREEN+"The refining was successful, "+str(len(base_data))+" track seeds remain..."+bcolors.ENDC)
          output_file_location=EOS_DIR+'/ANNADEA/Data/REC_SET/RUTr1c_'+RecBatchID+'_Fit_Filtered_Seeds.pkl'
-         print(UF.PickleOperations(input_file_location,'w',base_data)[0])
+         print(UF.PickleOperations(output_file_location,'w',base_data)[0])
          no_iter=int(math.ceil(float(len(base_data)/float(MaxSegments))))
          print(UF.TimeStamp(), "Submitting jobs to HTCondor...")
          OptionHeader = []
