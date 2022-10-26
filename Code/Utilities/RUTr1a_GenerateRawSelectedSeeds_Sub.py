@@ -93,20 +93,18 @@ gc.collect()
 #What section of data will we cut?
 StartDataCut=j*MaxSegments
 EndDataCut=(j+1)*MaxSegments
-print(StartDataCut,EndDataCut)
-exit()
 #Specifying the right join
 
 r_data=data.rename(columns={"Rec_Seg_ID": "Segment_2"})
 r_data.drop(r_data.index[r_data['z'] != PlateZ], inplace = True)
 
-Records=len(r_data.axes[0])
+Records=len(r_data)
 print(UF.TimeStamp(),'There are  ', Records, 'segments in the starting plate')
 
 r_data=r_data.iloc[StartDataCut:min(EndDataCut,Records)]
-
-
-Records=len(r_data.axes[0])
+print(len(r_data))
+exit()
+Records=len(r_data)
 print(UF.TimeStamp(),'However we will only attempt  ', Records, 'track segments in the starting plate')
 r_data.drop(['y'],axis=1,inplace=True)
 r_data.drop(['x'],axis=1,inplace=True)
