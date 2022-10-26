@@ -377,6 +377,10 @@ while status<0:
                           print(UF.TimeStamp(),bcolors.FAIL+'Stage -2 is uncompleted...'+bcolors.ENDC)
                           status=8
                           break
+              elif len(bad_pop)==0:
+                  FreshStart=False
+                  print(UF.TimeStamp(),bcolors.OKGREEN+'Stage -2 has successfully completed'+bcolors.ENDC)
+                  status=-1
           else:
             if (TotJobs)==len(bad_pop):
                  bad_pop=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,
