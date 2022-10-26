@@ -697,16 +697,16 @@ while status<3:
                              rec_new["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(rec_new['Segment_1'], rec_new['Segment_2'])]
                              rec_new.drop(['Segment_1'],axis=1,inplace=True)
                              rec_new.drop(['Segment_2'],axis=1,inplace=True)
-                             try:
-                                rec = pd.concat([rec, rec_new], ignore_index=True)
-                             except:
-                                 rec=rec
-                             rec.drop_duplicates(subset="Seed_ID",keep='first',inplace=True)
-                    print(len(rec))
-                    rec_eval=pd.merge(eval_data, rec, how="inner", on=['Seed_ID'])
+                             rec = pd.concat([rec, rec_new], ignore_index=True)
 
-                    eval_no+=len(rec_eval)
-                    rec_no+=(len(rec)-len(rec_eval))
+                             rec.drop_duplicates(subset="Seed_ID",keep='first',inplace=True)
+                    try:
+                        rec_eval=pd.merge(eval_data, rec, how="inner", on=['Seed_ID'])
+
+                        eval_no+=len(rec_eval)
+                        rec_no+=(len(rec)-len(rec_eval))
+                    except:
+                        continue
              UF.LogOperations(EOS_DIR+'/ANNADEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv', 'a', [[2,'SLG and STG cuts',rec_no,eval_no,eval_no/(rec_no+eval_no),eval_no/len(eval_data)]])
              print(UF.TimeStamp(), bcolors.OKGREEN+"The log data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+EOS_DIR+'/ANNADEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv'+bcolors.ENDC)
          # except:
