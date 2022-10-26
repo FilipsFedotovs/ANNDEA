@@ -189,7 +189,7 @@ elif ModelMeta.ModelType=='GNN':
        ValSamples = DataLoader(val_dataset, batch_size=TrainParams[1], shuffle=False)
 
 print(UF.TimeStamp(), bcolors.OKGREEN+"Train and Validation data has loaded and analysed successfully..."+bcolors.ENDC)
-
+print(len(TrainSamples),len(ValSamples))
 def main(self):
     Model_Meta_Path=EOSsubModelDIR+'/'+ModelName+'_Meta'
     Model_Path=EOSsubModelDIR+'/'+ModelName
