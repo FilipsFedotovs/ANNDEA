@@ -110,8 +110,6 @@ r_data.drop(['z'],axis=1,inplace=True)
 data.drop(['e_y'],axis=1,inplace=True)
 data.drop(['e_x'],axis=1,inplace=True)
 data.drop(['e_z'],axis=1,inplace=True)
-print(data)
-exit()
 data.drop(data.index[data['z'] <= PlateZ], inplace = True)
 data=data.rename(columns={"Rec_Seg_ID": "Segment_1"})
 
