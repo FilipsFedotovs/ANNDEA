@@ -700,9 +700,9 @@ while status<3:
                              try:
                                 rec = pd.concat([rec, rec_new], ignore_index=True)
                              except:
-                                 rec=rec_new
+                                 rec=rec
                              rec.drop_duplicates(subset="Seed_ID",keep='first',inplace=True)
-
+                    print(len(rec))
                     rec_eval=pd.merge(eval_data, rec, how="inner", on=['Seed_ID'])
 
                     eval_no+=len(rec_eval)
