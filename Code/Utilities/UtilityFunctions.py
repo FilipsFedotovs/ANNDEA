@@ -1076,6 +1076,14 @@ class EMO:
              __Image=LoadRenderImages([self],1,1)[0]
              self.Fit=M.predict(__Image)[0][1]
              del __Image
+          elif Mmeta.ModelType=='GNN':
+             EMO.PrepareSeedGraph(self,Mmeta)
+             import torch
+             graph = self.GraphSeed
+             graph.batch = torch.zeros(len(graph.x),dtype=torch.int64)
+             self.Fit=M.predict((graph.x, graph.edge_index, graph.edge_attr,graph.batch)[0][1].item())
+             print(self.Fit)
+             exit()
           return self.Fit>=0.5
       @staticmethod
       def unit_vector(vector):
