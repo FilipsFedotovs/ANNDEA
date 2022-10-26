@@ -306,7 +306,7 @@ else:
     status=CheckStatus()
 print(UF.TimeStamp(),'There are 8 stages (0-7) of this script',status,bcolors.ENDC)
 print(UF.TimeStamp(),'Current status has a stage',status,bcolors.ENDC)
-status=3
+status=5
 while status<6:
       if status==-2:
           print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
@@ -961,7 +961,7 @@ while status<6:
                                     OptionHeader,
                                     OptionLine,
                                     'RUTr1d_MergeSeeds_Sub.py',
-                                    False)
+                                    True)
          print(bad_pop)
          exit()
     #
