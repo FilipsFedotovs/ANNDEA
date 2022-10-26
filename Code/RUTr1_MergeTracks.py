@@ -258,7 +258,7 @@ def AutoPilot(wait_min, interval_min, max_interval_tolerance,AFS,EOS,path,o,pfx,
      return False
 def CheckStatus():
     if Log:
-        if os.path.isfile(EOS_DIR+'/ANNADEA/Data/TEST_SET/EUTr1a_'+RecBatchID+'_SEED_TRUTH_COMBINATIONS.csv'):
+        if os.path.isfile(EOS_DIR+'/ANNADEA/Data/TEST_SET/EUTr1b_'+RecBatchID+'_SEED_TRUTH_COMBINATIONS.csv'):
             return 0
         elif EOS_DIR+'/ANNADEA/Data/TEST_SET/EUTr1a_'+RecBatchID+'_RawSeeds_0.csv':
             return -2
@@ -266,14 +266,14 @@ def CheckStatus():
 
 if Mode=='RESET':
     print(UF.TimeStamp(),'Performing the cleanup... ',bcolors.ENDC)
-    HTCondorTag="SoftUsed == \"ANNADEA-RUTr1a-"+RecBatchID+"\""
-    UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'RUTr1a_'+RecBatchID, ['RUTr1a'], HTCondorTag)
-    HTCondorTag="SoftUsed == \"ANNADEA-RUTr1b-"+RecBatchID+"\""
-    UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'RUTr1b_'+RecBatchID, ['RUTr1b'], HTCondorTag)
-    HTCondorTag="SoftUsed == \"ANNADEA-RUTr1c-"+RecBatchID+"\""
-    UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'RUTr1c_'+RecBatchID, ['RUTr1c'], HTCondorTag)
-    HTCondorTag="SoftUsed == \"ANNADEA-RUTr1d-"+RecBatchID+"\""
-    UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'RUTr1d_'+RecBatchID, ['RUTr1d'], HTCondorTag)
+    HTCondorTag="SoftUsed == \"ANNADEA-EUTr1a-"+RecBatchID+"\""
+    UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'EUTr1a_'+RecBatchID, ['EUTr1a',RecBatchID+'_REC_LOG.csv','EUTr1b'], HTCondorTag)
+    # HTCondorTag="SoftUsed == \"ANNADEA-RUTr1b-"+RecBatchID+"\""
+    # UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'RUTr1b_'+RecBatchID, ['RUTr1b'], HTCondorTag)
+    # HTCondorTag="SoftUsed == \"ANNADEA-RUTr1c-"+RecBatchID+"\""
+    # UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'RUTr1c_'+RecBatchID, ['RUTr1c'], HTCondorTag)
+    # HTCondorTag="SoftUsed == \"ANNADEA-RUTr1d-"+RecBatchID+"\""
+    # UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'RUTr1d_'+RecBatchID, ['RUTr1d'], HTCondorTag)
     FreshStart=False
     status=-2
 else:
@@ -593,7 +593,7 @@ while status<0:
         else:
                       Compression_Ratio=0
         print(UF.TimeStamp(),'Set',str(i), 'compression ratio is ', Compression_Ratio, ' %',bcolors.ENDC)
-        new_output_file_location=EOS_DIR+'/ANNADEA/Data/TEST_SET/EUTr1_'+RecBatchID+'_SEED_TRUTH_COMBINATIONS.csv'
+        new_output_file_location=EOS_DIR+'/ANNADEA/Data/TEST_SET/EUTr1b_'+RecBatchID+'_SEED_TRUTH_COMBINATIONS.csv'
         result.to_csv(new_output_file_location,index=False)
         eval_no=len(result)
 
@@ -607,7 +607,6 @@ while status<0:
         UF.LogOperations(EOS_DIR+'/ANNADEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv', 'StartLog', [['Step_No','Step_Desc','Fake_Seeds','Truth_Seeds','Precision','Recall'],[1,'Initial Sampling',rec_no,eval_no,eval_no/(rec_no+eval_no),1.0]])
         print(UF.TimeStamp(), bcolors.OKGREEN+"The log data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+EOS_DIR+'/ANNADEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv'+bcolors.ENDC)
         FreshStart=False
-
         print(UF.TimeStamp(),bcolors.OKGREEN+'Stage -1 has successfully completed'+bcolors.ENDC)
         status=0
       if status==0:
