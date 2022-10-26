@@ -262,6 +262,8 @@ def CheckStatus():
             return 1
         elif EOS_DIR+'/ANNADEA/Data/TEST_SET/EUTr1a_'+RecBatchID+'_RawSeeds_0.csv':
             return -2
+        elif EOS_DIR+'/ANNADEA/Data/REC_SET/EUTr1a_'+RecBatchID+'_RawSeeds_0_0.csv':
+            return 1
         return -2
 
 if Mode=='RESET':
@@ -621,6 +623,68 @@ while status<2:
                           print(UF.TimeStamp(),bcolors.FAIL+'Stage 1 is uncompleted...'+bcolors.ENDC)
                           status=8
                           break
+      if status==2:
+        print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
+        print(UF.TimeStamp(),bcolors.BOLD+'Stage 2:'+bcolors.ENDC+' Collecting and de-duplicating the results from stage 1')
+        min_i=0
+        for i in range(0,len(JobSets)): #//Temporarily measure to save space
+                   test_file_location=EOS_DIR+'/ANNADEA/Data/REC_SET/RUTr1a_'+RecBatchID+'_SelectedSeeds_'+str(i)+'_'+str(0)+'_'+str(0)+'.csv'
+                   if os.path.isfile(test_file_location):
+                        min_i=max(0,i-1)
+        print(UF.TimeStamp(),'Analysing the data sample in order to understand how many jobs to submit to HTCondor... ',bcolors.ENDC)
+        data=pd.read_csv(required_file_location,header=0,
+                    usecols=['z','Rec_Seg_ID'])
+
+        data = data.groupby('Rec_Seg_ID')['z'].min()  #Keeping only starting hits for the each track record (we do not require the full information about track in this script)
+        data=data.reset_index()
+        data = data.groupby('z')['Rec_Seg_ID'].count()  #Keeping only starting hits for the each track record (we do not require the full information about track in this script)
+        data=data.reset_index()
+        data=data.sort_values(['z'],ascending=True)
+        data['Sub_Sets']=np.ceil(data['Rec_Seg_ID']/PM.MaxSegments)
+        data['Sub_Sets'] = data['Sub_Sets'].astype(int)
+        JobSets = data.values.tolist()
+        with alive_bar(len(JobSets)-min_i,force_tty=True, title='Checking the results from HTCondor') as bar:
+
+            for i in range(min_i,len(JobSets)): #//Temporarily measure to save space
+                bar.text = f'-> Analysing set : {i}...'
+                bar()
+                if len(Meta.JobSets[i])>3:
+                   JobSets[i]=Meta.JobSets[i][:4]
+                   JobSets[i][3]=[]
+                else:
+                   JobSets[i].append([])
+
+                for j in range(0,int(JobSets[i][2])):
+
+                   output_file_location=EOS_DIR+'/ANNADEA/Data/REC_SET/RUTr1a_'+RecBatchID+'_RawSeeds_'+str(i)+'_'+str(j)+'.csv'
+
+                   if os.path.isfile(output_file_location)==False:
+                      JobSets[j].append(0)
+                      continue #Skipping because not all jobs necesseraly produce the required file (if statistics are too low)
+                   else:
+                    result=pd.read_csv(output_file_location,names = ['Segment_1','Segment_2'])
+                    Records=len(result)
+                    print(UF.TimeStamp(),'Set',str(i),'and subset', str(j), 'contains', Records, 'seeds',bcolors.ENDC)
+                    result["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(result['Segment_1'], result['Segment_2'])]
+                    result.drop_duplicates(subset="Seed_ID",keep='first',inplace=True)
+                    result.drop(result.index[result['Segment_1'] == result['Segment_2']], inplace = True)
+                    result.drop(["Seed_ID"],axis=1,inplace=True)
+                    Records_After_Compression=len(result)
+                    if Records>0:
+                      Compression_Ratio=int((Records_After_Compression/Records)*100)
+                    else:
+                      Compression_Ratio=0
+                    print(UF.TimeStamp(),'Set',str(i),'and subset', str(j), 'compression ratio is ', Compression_Ratio, ' %',bcolors.ENDC)
+                    fractions=int(math.ceil(Records_After_Compression/MaxSeeds))
+                    JobSets[i][3].append(fractions)
+                    for k in range(0,fractions):
+                     new_output_file_location=EOS_DIR+'/ANNADEA/Data/REC_SET/RUTr1a_'+RecBatchID+'_SelectedSeeds_'+str(i)+'_'+str(j)+'_'+str(k)+'.csv'
+                     result[(k*MaxSeeds):min(Records_After_Compression,((k+1)*MaxSeeds))].to_csv(new_output_file_location,index=False)
+        FreshStart=False
+        exit()
+
+        print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 2 has successfully completed'+bcolors.ENDC)
+        status=3
 if status==7:
      print(UF.TimeStamp(), bcolors.OKGREEN+"Train sample generation has been completed"+bcolors.ENDC)
      exit()
