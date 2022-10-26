@@ -625,7 +625,7 @@ while status<7:
            Temp_Stats=UF.LogOperations(EOS_DIR+'/ANNADEA/Data/TRAIN_SET/MUTr1c_'+TrainSampleID+'_Temp_Stats.csv','r', '_')
            TotalImages=int(Temp_Stats[0][0])
            TrueSeeds=int(Temp_Stats[0][1])
-           print(Total)
+           print(TotalImages)
            JobSet=[]
            for i in range(len(JobSets)):
              JobSet.append([])
