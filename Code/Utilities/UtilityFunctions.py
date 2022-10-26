@@ -1946,6 +1946,14 @@ def CreateCondorJobs(AFS,EOS,path,o,pfx,sfx,ID,loop_params,OptionHeader,OptionLi
                                MSGName = AFS + '/HTCondor/MSG/MSG_'+pfx+'_'+ ID+'_' + str(i) +'_' + str(j)
                                ScriptName = AFS + '/Code/Utilities/'+Sub_File
                                bad_pop.append([OptionHeader+[' --i ', ' --j ',' --k ', ' --p ', ' --o ',' --pfx ', ' --sfx '], OptionLine+[i, j, '$1', path,o, pfx, sfx], SHName, SUBName, MSGName, ScriptName, loop_params[i][j], 'ANNADEA-'+pfx+'-'+ID, False,False])
+             if nest_lvl==1:
+                               bar.text = f'-> Preparing batch submission...'
+                               bar()
+                               SHName = AFS + '/HTCondor/SH/SH_'+pfx+'_'+ ID+'.sh'
+                               SUBName = AFS + '/HTCondor/SUB/SUB_'+pfx+'_'+ ID+'.sub'
+                               MSGName = AFS + '/HTCondor/MSG/MSG_'+pfx+'_'+ ID
+                               ScriptName = AFS + '/Code/Utilities/'+Sub_File
+                               bad_pop.append([OptionHeader+[' --i ', ' --p ', ' --o ',' --pfx ', ' --sfx '], OptionLine+['$1', path,o, pfx, sfx], SHName, SUBName, MSGName, ScriptName, loop_params, 'ANNADEA-'+pfx+'-'+ID, False,False])
         return(bad_pop)
    return []
 def SubmitJobs2Condor(job):
