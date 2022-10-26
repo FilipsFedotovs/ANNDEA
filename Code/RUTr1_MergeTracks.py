@@ -382,7 +382,11 @@ while status<0:
                   print(UF.TimeStamp(),bcolors.OKGREEN+'Stage -2 has successfully completed'+bcolors.ENDC)
                   status=-1
           else:
-            if (TotJobs)==len(bad_pop):
+            if len(bad_pop)==0:
+              FreshStart=False
+              print(UF.TimeStamp(),bcolors.OKGREEN+'Stage -2 has successfully completed'+bcolors.ENDC)
+              status=-1
+            elif (TotJobs)==len(bad_pop):
                  bad_pop=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,
                                     '/ANNADEA/Data/TEST_SET/',
                                     'RawSeedsRes',
