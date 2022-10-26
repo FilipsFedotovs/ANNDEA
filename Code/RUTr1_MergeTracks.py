@@ -697,9 +697,9 @@ while status<3:
                              rec_new["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(rec_new['Segment_1'], rec_new['Segment_2'])]
                              rec_new.drop(['Segment_1'],axis=1,inplace=True)
                              rec_new.drop(['Segment_2'],axis=1,inplace=True)
-                             if rec!=None:
+                             try:
                                 rec = pd.concat([rec, rec_new], ignore_index=True)
-                             else:
+                             except:
                                  rec=rec_new
                              rec.drop_duplicates(subset="Seed_ID",keep='first',inplace=True)
 
