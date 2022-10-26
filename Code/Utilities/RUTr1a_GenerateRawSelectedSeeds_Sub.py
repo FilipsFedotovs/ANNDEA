@@ -73,11 +73,12 @@ data_end_header=data_end_header.rename(columns={"z": "e_z"})
 data_header=pd.merge(data_header, data_end_header, how="inner", on=["Rec_Seg_ID"]) #Shrinking the Track data so just a star hit for each track is present.
 #Doing a plate region cut for the Main Data
 data_header.drop(data_header.index[data_header['z'] < PlateZ], inplace = True)
-Records=len(data_header.axes[0])
+Records=len(data_header)
 print(UF.TimeStamp(),'There are total of ', Records, 'tracks in the data set')
 print('----')
 Cut=math.ceil(MaxRecords/Records) #Even if use only a max of 20000 track on the right join we cannot perform the full outer join due to the memory limitations, we do it in a small 'cuts'
 Steps=math.ceil(MaxSegments/Cut)  #Calculating number of cuts
+print(Cut,Steps)
 data_s=pd.merge(data, data_header, how="inner", on=["Rec_Seg_ID","z"]) #Shrinking the Track data so just a star hit for each track is present.
 data_s.drop(['e_z'],axis=1,inplace=True)
 data_e=pd.merge(data, data_header, how="inner", left_on=["Rec_Seg_ID","z"], right_on=["Rec_Seg_ID","e_z"]) #Shrinking the Track data so just a star hit for each track is present.
