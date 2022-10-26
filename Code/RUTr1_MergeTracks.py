@@ -835,7 +835,7 @@ while status<5:
               elif len(bad_pop)==0:
                 FreshStart=False
                 print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
-                status+=1
+                status=4
          else:
             if (TotJobs)==len(bad_pop):
                  bad_pop=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,
