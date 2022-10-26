@@ -148,6 +148,20 @@ if Log and (os.path.isfile(required_eval_file_location)==False or Mode=='RESET')
     print(bcolors.HEADER+"############################################# End of the program ################################################"+bcolors.ENDC)
 
 if os.path.isfile(required_file_location)==False or Mode=='RESET':
+        if os.path.isfile(EOSsubModelMetaDIR)==False:
+              print(UF.TimeStamp(), bcolors.FAIL+"Fail to proceed further as the model file "+EOSsubModelMetaDIR+ " has not been found..."+bcolors.ENDC)
+              exit()
+        else:
+           print(UF.TimeStamp(),'Loading previously saved data from ',bcolors.OKBLUE+EOSsubModelMetaDIR+bcolors.ENDC)
+           MetaInput=UF.PickleOperations(EOSsubModelMetaDIR,'r', 'N/A')
+           Meta=MetaInput[0]
+           MaxSLG=Meta.MaxSLG
+           MaxSTG=Meta.MaxSTG
+           MaxDOCA=Meta.MaxDOCA
+           MaxAngle=Meta.MaxAngle
+           MaxSegments=PM.MaxSegments
+           MaxSeeds=PM.MaxSeeds
+           VetoMotherTrack=PM.VetoMotherTrack
         print(UF.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
         data=pd.read_csv(input_file_location,
                     header=0,
@@ -195,30 +209,39 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         new_combined_data=new_combined_data.rename(columns={PM.tx: "tx"})
         new_combined_data=new_combined_data.rename(columns={PM.ty: "ty"})
         new_combined_data.to_csv(required_file_location,index=False)
+        data=new_combined_data[['Rec_Seg_ID','z']]
+        print(UF.TimeStamp(),'Analysing the data sample in order to understand how many jobs to submit to HTCondor... ',bcolors.ENDC)
+        data = data.groupby('Rec_Seg_ID')['z'].min()  #Keeping only starting hits for the each track record (we do not require the full information about track in this script)
+        data=data.reset_index()
+        data = data.groupby('z')['Rec_Seg_ID'].count()  #Keeping only starting hits for the each track record (we do not require the full information about track in this script)
+        data=data.reset_index()
+        data=data.sort_values(['z'],ascending=True)
+        data['Sub_Sets']=np.ceil(data['Rec_Seg_ID']/PM.MaxSegments)
+        data['Sub_Sets'] = data['Sub_Sets'].astype(int)
+        data = data.values.tolist()
         print(UF.TimeStamp(), bcolors.OKGREEN+"The track segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+required_file_location+bcolors.ENDC)
+        Meta=UF.TrainingSampleMeta(RecBatchID)
+        Meta.IniTrackSeedMetaData(MaxSLG,MaxSTG,MaxDOCA,MaxAngle,data,MaxSegments,VetoMotherTrack,MaxSeeds)
+        print(UF.PickleOperations(RecOutputMeta,'w', Meta)[1])
         print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
         print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 0 has successfully completed'+bcolors.ENDC)
+elif os.path.isfile(RecOutputMeta)==True:
+    print(UF.TimeStamp(),'Loading previously saved data from ',bcolors.OKBLUE+RecOutputMeta+bcolors.ENDC)
+    MetaInput=UF.PickleOperations(RecOutputMeta,'r', 'N/A')
+    Meta=MetaInput[0]
+MaxSLG=Meta.MaxSLG
+MaxSTG=Meta.MaxSTG
+MaxDOCA=Meta.MaxDOCA
+MaxAngle=Meta.MaxAngle
+JobSets=Meta.JobSets
+MaxSegments=Meta.MaxSegments
+MaxSeeds=Meta.MaxSeeds
+VetoMotherTrack=Meta.VetoMotherTrack
+TotJobs=0
 
-
-if os.path.isfile(EOSsubModelMetaDIR)==False:
-      print(UF.TimeStamp(), bcolors.FAIL+"Fail to proceed further as the model file "+EOSsubModelMetaDIR+ " has not been found..."+bcolors.ENDC)
-      exit()
-else:
-   print(UF.TimeStamp(),'Loading previously saved data from ',bcolors.OKBLUE+EOSsubModelMetaDIR+bcolors.ENDC)
-   MetaInput=UF.PickleOperations(EOSsubModelMetaDIR,'r', 'N/A')
-   Meta=MetaInput[0]
-   MaxSLG=Meta.MaxSLG
-   MaxSTG=Meta.MaxSTG
-   MaxDOCA=Meta.MaxDOCA
-   MaxAngle=Meta.MaxAngle
-   MaxSegments=PM.MaxSegments
-   MaxSeeds=PM.MaxSeeds
-   VetoMotherTrack=PM.VetoMotherTrack
-exit()
-# TotJobs=0
-# for j in range(0,len(JobSets)):
-#           for sj in range(0,int(JobSets[j][2])):
-#               TotJobs+=1
+for j in range(0,len(JobSets)):
+          for sj in range(0,int(JobSets[j][2])):
+              TotJobs+=1
 
 ########################################     Preset framework parameters    #########################################
 FreshStart=True
@@ -472,25 +495,11 @@ while status<3:
       if status==1:
           print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
           print(UF.TimeStamp(),bcolors.BOLD+'Stage 1:'+bcolors.ENDC+' Sending hit cluster to the HTCondor, so tack segment combination pairs can be formed...')
-
-          OptionHeader = [ " --MaxSegments ", " --MaxSLG "," --MaxSTG "]
-          OptionLine = [MaxSegments, MaxSLG, MaxSTG]
-          print(UF.TimeStamp(),'Analysing the data sample in order to understand how many jobs to submit to HTCondor... ',bcolors.ENDC)
-          data=pd.read_csv(required_file_location,header=0,
-                    usecols=['z','Rec_Seg_ID'])
-
-          data = data.groupby('Rec_Seg_ID')['z'].min()  #Keeping only starting hits for the each track record (we do not require the full information about track in this script)
-          data=data.reset_index()
-          data = data.groupby('z')['Rec_Seg_ID'].count()  #Keeping only starting hits for the each track record (we do not require the full information about track in this script)
-          data=data.reset_index()
-          data=data.sort_values(['z'],ascending=True)
-          data['Sub_Sets']=np.ceil(data['Rec_Seg_ID']/PM.MaxSegments)
-          data['Sub_Sets'] = data['Sub_Sets'].astype(int)
-          JobSets = data.values.tolist()
           JobSet=[]
           for i in range(len(JobSets)):
                 JobSet.append(int(JobSets[i][2]))
           TotJobs=0
+
           if type(JobSet) is int:
                         TotJobs=JobSet
           elif type(JobSet[0]) is int:
@@ -498,6 +507,9 @@ while status<3:
           elif type(JobSet[0][0]) is int:
                         for lp in JobSet:
                             TotJobs+=np.sum(lp)
+          OptionHeader = [ " --MaxSegments ", " --MaxSLG "," --MaxSTG "]
+          OptionLine = [MaxSegments, MaxSLG, MaxSTG]
+          print(UF.TimeStamp(),'Analysing the data sample in order to understand how many jobs to submit to HTCondor... ',bcolors.ENDC)
           bad_pop=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,
                                     '/ANNADEA/Data/REC_SET/',
                                     'RawSeedsRes',
@@ -645,12 +657,19 @@ while status<3:
             for i in range(min_i,len(JobSets)): #//Temporarily measure to save space
                 bar.text = f'-> Analysing set : {i}...'
                 bar()
+                Meta=UF.PickleOperations(TrainSampleOutputMeta,'r', 'N/A')[0]
+                MaxSLG=Meta.MaxSLG
+                JobSets=Meta.JobSets
+                if len(Meta.JobSets[i])>3:
+                   Meta.JobSets[i]=Meta.JobSets[i][:4]
+                   Meta.JobSets[i][3]=[]
+                else:
+                   Meta.JobSets[i].append([])
                 for j in range(0,int(JobSets[i][2])):
-
                    output_file_location=EOS_DIR+'/ANNADEA/Data/REC_SET/RUTr1a_'+RecBatchID+'_RawSeeds_'+str(i)+'_'+str(j)+'.csv'
 
                    if os.path.isfile(output_file_location)==False:
-                      JobSets[j].append(0)
+                      Meta.JobSets[j].append(0)
                       continue #Skipping because not all jobs necesseraly produce the required file (if statistics are too low)
                    else:
                     result=pd.read_csv(output_file_location,names = ['Segment_1','Segment_2'])
@@ -667,10 +686,14 @@ while status<3:
                       Compression_Ratio=0
                     print(UF.TimeStamp(),'Set',str(i),'and subset', str(j), 'compression ratio is ', Compression_Ratio, ' %',bcolors.ENDC)
                     fractions=int(math.ceil(Records_After_Compression/MaxSeeds))
+                    Meta.JobSets[i][3].append(fractions)
                     for k in range(0,fractions):
                      new_output_file_location=EOS_DIR+'/ANNADEA/Data/REC_SET/RUTr1a_'+RecBatchID+'_SelectedSeeds_'+str(i)+'_'+str(j)+'_'+str(k)+'.csv'
                      result[(k*MaxSeeds):min(Records_After_Compression,((k+1)*MaxSeeds))].to_csv(new_output_file_location,index=False)
+                print(UF.PickleOperations(RecOutputMeta,'w', Meta)[1])
         if Log:
+             print(Meta.JobSets)
+             exit()
          # try:
              print(UF.TimeStamp(),'Initiating the logging...')
              eval_data_file=EOS_DIR+'/ANNADEA/Data/TEST_SET/EUTr1b_'+RecBatchID+'_SEED_TRUTH_COMBINATIONS.csv'
