@@ -268,8 +268,8 @@ if Mode=='RESET':
     print(UF.TimeStamp(),'Performing the cleanup... ',bcolors.ENDC)
     HTCondorTag="SoftUsed == \"ANNADEA-EUTr1a-"+RecBatchID+"\""
     UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'EUTr1a_'+RecBatchID, ['EUTr1a',RecBatchID+'_REC_LOG.csv','EUTr1b'], HTCondorTag)
-    # HTCondorTag="SoftUsed == \"ANNADEA-RUTr1b-"+RecBatchID+"\""
-    # UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'RUTr1b_'+RecBatchID, ['RUTr1b'], HTCondorTag)
+    HTCondorTag="SoftUsed == \"ANNADEA-RUTr1a-"+RecBatchID+"\""
+    UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'RUTr1a_'+RecBatchID, ['RUTr1a'], HTCondorTag)
     # HTCondorTag="SoftUsed == \"ANNADEA-RUTr1c-"+RecBatchID+"\""
     # UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'RUTr1c_'+RecBatchID, ['RUTr1c'], HTCondorTag)
     # HTCondorTag="SoftUsed == \"ANNADEA-RUTr1d-"+RecBatchID+"\""
