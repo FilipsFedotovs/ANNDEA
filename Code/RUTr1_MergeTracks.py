@@ -649,11 +649,11 @@ while status<3:
                 bar.text = f'-> Analysing set : {i}...'
                 bar()
                 if len(Meta.JobSets[i])>3:
-                   JobSets[i]=Meta.JobSets[i][:4]
+                   JobSets[i]=JobSets[i][:4]
                    JobSets[i][3]=[]
                 else:
                    JobSets[i].append([])
-
+                print(JobSets[i])
                 for j in range(0,int(JobSets[i][2])):
 
                    output_file_location=EOS_DIR+'/ANNADEA/Data/REC_SET/RUTr1a_'+RecBatchID+'_RawSeeds_'+str(i)+'_'+str(j)+'.csv'
