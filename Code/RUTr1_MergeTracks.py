@@ -1497,6 +1497,8 @@ while status<10:
                     eval_no=0
                     rec_list=[]
                     rec_1 = pd.DataFrame(csv_out, columns = ['Segment_1','Q','Track_ID'])
+                    rec_1['Q']=rec_1['Q'].astype(str)
+                    rec_1['Track_ID']=rec_1['Track_ID'].astype(str)
                     rec_1['New_Track_ID']=rec_1['Q']+'-'+rec_1['Track_ID']
                     rec_1.drop(['Q'],axis=1,inplace=True)
                     rec_1.drop(['Track_ID'],axis=1,inplace=True)
