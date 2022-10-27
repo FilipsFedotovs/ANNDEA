@@ -882,7 +882,8 @@ class EMO:
           self.TrackPrint=[p for p in self.TrackPrint if (abs(p[0])<self.bX and abs(p[1])<self.bY and abs(p[2])<self.bZ)]
           del __TempEnchTrack
           del __TempTrack
-
+      def AssignANNTrUID(self,ID):
+          self.UTrID=ID
       def PrepareSeedGraph(self,MM):
           if MM.ModelArchitecture=='GCN-4N-FC':
 
