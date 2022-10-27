@@ -1549,7 +1549,7 @@ while status<11:
                 new_combined_data=new_combined_data.drop(['New_Track_Quarter'],axis=1)
                 new_combined_data=new_combined_data.drop(['New_Track_ID'],axis=1)
                 new_combined_data.drop_duplicates(subset=[PM.Rec_Track_Domain,PM.Rec_Track_ID,PM.z],keep='first',inplace=True)
-                output_file_location=EOS_DIR+'/ANNADEA/Data/REC_SET/'+RecBatchID+'_UNION_TRACKS.pkl'
+                output_file_location=EOS_DIR+'/ANNADEA/Data/REC_SET/'+RecBatchID+'_UNION_TRACKS.csv'
                 new_combined_data.to_csv(output_file_location,index=False)
                 print(UF.TimeStamp(), bcolors.OKGREEN+"The re-glued track data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+output_file_location+bcolors.ENDC)
                 print(bcolors.HEADER+"############################################# End of the program ################################################"+bcolors.ENDC)
