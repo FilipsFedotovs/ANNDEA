@@ -285,7 +285,7 @@ def AutoPilot(wait_min, interval_min, max_interval_tolerance,AFS,EOS,path,o,pfx,
 def UpdateStatus(status):
     Meta.UpdateStatus(status)
     print(UF.PickleOperations(RecOutputMeta,'w', Meta)[1])
-
+UpdateStatus(1)
 if Mode=='RESET':
     print(UF.TimeStamp(),'Performing the cleanup... ',bcolors.ENDC)
     HTCondorTag="SoftUsed == \"ANNADEA-EUTr1a-"+RecBatchID+"\""
