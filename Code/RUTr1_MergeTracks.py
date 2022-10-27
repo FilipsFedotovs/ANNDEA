@@ -1470,6 +1470,7 @@ while status<10:
                                  if SubjectSeed.InjectTrackSeed(ObjectSeed):
                                                  base_data.pop(base_data.index(ObjectSeed))
                          SeedCounter+=1
+                         bar()
                  print(str(InitialDataLength), "vertices from different files were merged into", str(len(base_data)), 'vertices with higher multiplicity...')
                  for v in range(0,len(base_data)):
                      base_data[v].AssignANNTrUID(v)
