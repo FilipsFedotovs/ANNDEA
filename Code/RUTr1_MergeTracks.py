@@ -285,7 +285,7 @@ def AutoPilot(wait_min, interval_min, max_interval_tolerance,AFS,EOS,path,o,pfx,
 def UpdateStatus(status):
     Meta.UpdateStatus(status)
     print(UF.PickleOperations(RecOutputMeta,'w', Meta)[1])
-#UpdateStatus(6)
+UpdateStatus(9)
 if Mode=='RESET':
     print(UF.TimeStamp(),'Performing the cleanup... ',bcolors.ENDC)
     HTCondorTag="SoftUsed == \"ANNADEA-EUTr1a-"+RecBatchID+"\""
@@ -1483,7 +1483,7 @@ while status<11:
                          csv_out.append([TH,RecBatchID,Tr.UTrID])
                  print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
                  print(UF.TimeStamp(), "Saving the results into the file",bcolors.OKBLUE+output_csv_location+bcolors.ENDC)
-                 UF.LogOperations(output_csv_location,'StartLog', csv_out)
+                 UF.LogOperations(output_csv_location,'w', csv_out)
                  print(UF.TimeStamp(), "Saving the results into the file",bcolors.OKBLUE+output_file_location+bcolors.ENDC)
                  print(UF.PickleOperations(output_file_location,'w',base_data)[1])
                  if args.Log=='Y':
