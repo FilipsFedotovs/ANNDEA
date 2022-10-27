@@ -1428,6 +1428,10 @@ while status<10:
          print(UF.TimeStamp(), "Loading fit track seeds from the file",bcolors.OKBLUE+input_file_location+bcolors.ENDC)
          test_data_len=len(UF.PickleOperations(input_file_location,'r','N/A')[0])
          no_iter=int(math.ceil(float(test_data_len/float(MaxSegments))))
+         if no_iter==1:
+             UpdateStatus(9)
+             status=9
+             continue
          print(UF.TimeStamp(), "Consolidating the files...")
          base_data = []
          for i in range(no_iter):
