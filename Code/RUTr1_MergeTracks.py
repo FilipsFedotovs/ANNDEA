@@ -1116,9 +1116,9 @@ while status<7:
          base_data = None
          for i in range(no_iter):
              new_data=UF.PickleOperations(EOS_DIR+'/ANNADEA/Data/REC_SET/RUTr1d_'+RecBatchID+'_MergedSeeds_'+str(i)+'.pkl','r','N/A')[0]
-             base_data=pd.concat([base_data,new_data])
+             base_data+=new_data
          output_file_location=EOS_DIR+'/ANNADEA/Data/REC_SET/RUTr1c_'+RecBatchID+'_Fit_Filtered_Seeds.pkl'
-         print(UF.PickleOperations(output_file_location,'w',base_data)[0])
+         print(UF.PickleOperations(output_file_location,'w',base_data)[1])
          print(UF.TimeStamp(), bcolors.OKGREEN+"Re-loading is successful, there are "+str(len(base_data))+" fit seeds..."+bcolors.ENDC)
          no_iter=int(math.ceil(float(len(base_data)/float(MaxSegments))))
          print(UF.TimeStamp(), "Submitting jobs to HTCondor...")
