@@ -1496,14 +1496,14 @@ while status<10:
                     rec_no=0
                     eval_no=0
                     rec_list=[]
-                    print(eval_data)
-                    print(csv_out)
+                    rec_1 = pd.DataFrame(csv_out, columns = ['Segment_1','Q','Track_ID'])
+                    rec_1['New_Track_ID']=rec_1['Q']+'-'+rec_1['Track_ID']
+                    rec_1.drop(['Q'],axis=1,inplace=True)
+                    rec_1.drop(['Track_ID'],axis=1,inplace=True)
+                    print(rec_1)
+                    rec_2 = pd.DataFrame(csv_out, columns = ['Segment_2','Q','Track_ID'])
+                    rec_2.drop(['Q'],axis=1,inplace=True)
 
-                    exit()
-         #            rec_1 = pd.DataFrame(csv_out[1:], columns = ['Segment_1','Q','Track_ID'])
-         #            rec_1.drop(['Q'],axis=1,inplace=True)
-         #            rec_2 = pd.DataFrame(csv_out[1:], columns = ['Segment_2','Q','Track_ID'])
-         #            rec_2.drop(['Q'],axis=1,inplace=True)
          #            rec=pd.merge(rec_1, rec_2, how="inner", on=['Track_ID'])
          #            rec.drop(['Track_ID'],axis=1,inplace=True)
          #            rec.drop(rec.index[rec['Segment_1'] == rec['Segment_2']], inplace = True)
