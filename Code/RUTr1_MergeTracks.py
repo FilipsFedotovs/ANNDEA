@@ -223,6 +223,10 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         print(UF.TimeStamp(), bcolors.OKGREEN+"The track segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+required_file_location+bcolors.ENDC)
         Meta=UF.TrainingSampleMeta(RecBatchID)
         Meta.IniTrackSeedMetaData(MaxSLG,MaxSTG,MaxDOCA,MaxAngle,data,MaxSegments,VetoMotherTrack,MaxSeeds)
+        if Log:
+            Meta.UpdateStatus(-2)
+        else:
+            Meta.UpdateStatus(1)
         print(UF.PickleOperations(RecOutputMeta,'w', Meta)[1])
         print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
         print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 0 has successfully completed'+bcolors.ENDC)
@@ -239,6 +243,7 @@ MaxSegments=Meta.MaxSegments
 MaxSeeds=Meta.MaxSeeds
 VetoMotherTrack=Meta.VetoMotherTrack
 TotJobs=0
+
 
 for j in range(0,len(JobSets)):
           for sj in range(0,int(JobSets[j][2])):
@@ -277,17 +282,9 @@ def AutoPilot(wait_min, interval_min, max_interval_tolerance,AFS,EOS,path,o,pfx,
          else:
               return True
      return False
-def CheckStatus():
-    if Log:
-        if os.path.isfile(EOS_DIR+'/ANNADEA/Data/REC_SET/RUTr1a_'+RecBatchID+'_SelectedSeeds_0_0_0.csv'):
-            return 2
-        if os.path.isfile(EOS_DIR+'/ANNADEA/Data/TEST_SET/EUTr1b_'+RecBatchID+'_SEED_TRUTH_COMBINATIONS.csv'):
-            return 1
-        elif os.path.isfile(EOS_DIR+'/ANNADEA/Data/TEST_SET/EUTr1a_'+RecBatchID+'_RawSeeds_0.csv'):
-            return -2
-        elif os.path.isfile(EOS_DIR+'/ANNADEA/Data/REC_SET/EUTr1a_'+RecBatchID+'_RawSeeds_0_0.csv'):
-            return 1
-        return -2
+def UpdateStatus(status):
+    Meta.UpdateStatus(status)
+    print(UF.PickleOperations(RecOutputMeta,'w', Meta)[1])
 
 if Mode=='RESET':
     print(UF.TimeStamp(),'Performing the cleanup... ',bcolors.ENDC)
@@ -300,13 +297,16 @@ if Mode=='RESET':
     # HTCondorTag="SoftUsed == \"ANNADEA-RUTr1d-"+RecBatchID+"\""
     # UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'RUTr1d_'+RecBatchID, ['RUTr1d'], HTCondorTag)
     FreshStart=False
-    status=-2
+    if Log:
+       UpdateStatus(-2) 
+    else:
+       UpdateStatus(1)  
 else:
     print(UF.TimeStamp(),'Analysing the current script status...',bcolors.ENDC)
-    status=CheckStatus()
+    status=Meta.sta
 print(UF.TimeStamp(),'There are 8 stages (0-7) of this script',status,bcolors.ENDC)
 print(UF.TimeStamp(),'Current status has a stage',status,bcolors.ENDC)
-status=3
+status=Meta.Status[-1]
 while status<7:
       if status==-2:
           print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
@@ -334,8 +334,9 @@ while status<7:
           if len(bad_pop)==0:
               FreshStart=False
               print(UF.TimeStamp(),bcolors.OKGREEN+'Stage -2 has successfully completed'+bcolors.ENDC)
+              UpdateStatus(-1)
               status=-1
-
+              
 
           if FreshStart:
               if (TotJobs)==len(bad_pop):
@@ -366,10 +367,11 @@ while status<7:
                      if AutoPilot(600,10,Patience,AFS_DIR,EOS_DIR,'/ANNADEA/Data/TEST_SET/','RawSeedsRes','EUTr1a','.csv',RecBatchID,Sets,OptionHeader,OptionLine,'EUTr1a_GenerateRawSelectedSeeds_Sub.py'):
                          FreshStart=False
                          print(UF.TimeStamp(),bcolors.OKGREEN+'Stage -2 has successfully completed'+bcolors.ENDC)
+                         UpdateStatus(-1)
                          status=-1
                      else:
                          print(UF.TimeStamp(),bcolors.FAIL+'Stage -2 is uncompleted...'+bcolors.ENDC)
-                         status=6
+                         status=20
                          break
 
               elif len(bad_pop)>0:
@@ -388,28 +390,32 @@ while status<7:
                       if AutoPilot(600,10,Patience,AFS_DIR,EOS_DIR,'/ANNADEA/Data/TEST_SET/','RawSeedsRes','EUTr1a','.csv',RecBatchID,Sets,OptionHeader,OptionLine,'EUTr1a_GenerateRawSelectedSeeds_Sub.py'):
                           FreshStart=False
                           print(UF.TimeStamp(),bcolors.OKGREEN+'Stage -2 has successfully completed'+bcolors.ENDC)
+                          UpdateStatus(-1)
                           status=-1
                       else:
                           print(UF.TimeStamp(),bcolors.FAIL+'Stage -2 is uncompleted...'+bcolors.ENDC)
-                          status=8
+                          status=20
                           break
                    else:
                       if AutoPilot(int(UserAnswer),10,Patience,AFS_DIR,EOS_DIR,'/ANNADEA/Data/TEST_SET/','RawSeedsRes','EUTr1a','.csv',RecBatchID,Sets,OptionHeader,OptionLine,'EUTr1a_GenerateRawSelectedSeeds_Sub.py'):
                           FreshStart=False
                           print(UF.TimeStamp(),bcolors.OKGREEN+'Stage -2 has successfully completed'+bcolors.ENDC)
+                          UpdateStatus(-1)
                           status=-1
                       else:
                           print(UF.TimeStamp(),bcolors.FAIL+'Stage -2 is uncompleted...'+bcolors.ENDC)
-                          status=8
+                          status=20
                           break
               elif len(bad_pop)==0:
                   FreshStart=False
                   print(UF.TimeStamp(),bcolors.OKGREEN+'Stage -2 has successfully completed'+bcolors.ENDC)
+                  UpdateStatus(-1)
                   status=-1
           else:
             if len(bad_pop)==0:
               FreshStart=False
               print(UF.TimeStamp(),bcolors.OKGREEN+'Stage -2 has successfully completed'+bcolors.ENDC)
+              UpdateStatus(-1)
               status=-1
             elif (TotJobs)==len(bad_pop):
                  bad_pop=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,
@@ -429,10 +435,11 @@ while status<7:
 
                  if AutoPilot(600,10,Patience,AFS_DIR,EOS_DIR,'/ANNADEA/Data/TEST_SET/','RawSeedsRes','EUTr1a','.csv',RecBatchID,Sets,OptionHeader,OptionLine,'EUTr1a_GenerateRawSelectedSeeds_Sub.py'):
                         print(UF.TimeStamp(),bcolors.OKGREEN+'Stage -2 has successfully completed'+bcolors.ENDC)
+                        UpdateStatus(-1)
                         status=-1
                  else:
                      print(UF.TimeStamp(),bcolors.FAIL+'Stage -2 is uncompleted...'+bcolors.ENDC)
-                     status=8
+                     status=20
                      break
 
             elif len(bad_pop)>0:
@@ -441,10 +448,11 @@ while status<7:
                       if AutoPilot(600,10,Patience,AFS_DIR,EOS_DIR,'/ANNADEA/Data/TEST_SET/','RawSeedsRes','EUTr1a','.csv',RecBatchID,Sets,OptionHeader,OptionLine,'EUTr1a_GenerateRawSelectedSeeds_Sub.py'):
                           FreshStart=False
                           print(UF.TimeStamp(),bcolors.OKGREEN+'Stage -2 has successfully completed'+bcolors.ENDC)
+                          UpdateStatus(-1)
                           status=-1
                       else:
                           print(UF.TimeStamp(),bcolors.FAIL+'Stage -2 is uncompleted...'+bcolors.ENDC)
-                          status=8
+                          status=20
                           break
       if status==-1:
         print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
@@ -494,6 +502,7 @@ while status<7:
         print(UF.TimeStamp(), bcolors.OKGREEN+"The log data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+EOS_DIR+'/ANNADEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv'+bcolors.ENDC)
         FreshStart=False
         print(UF.TimeStamp(),bcolors.OKGREEN+'Stage -1 has successfully completed'+bcolors.ENDC)
+        UpdateStatus(1)
         status=1
       if status==1:
           print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
@@ -528,6 +537,7 @@ while status<7:
           if len(bad_pop)==0:
               FreshStart=False
               print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 1 has successfully completed'+bcolors.ENDC)
+              UpdateStatus(2)
               status=2
 
 
@@ -561,10 +571,11 @@ while status<7:
                      if AutoPilot(600,10,Patience,AFS_DIR,EOS_DIR,'/ANNADEA/Data/REC_SET/','RawSeedsRes','RUTr1a','.csv',RecBatchID,JobSet,OptionHeader,OptionLine,'RUTr1a_GenerateRawSelectedSeeds_Sub.py',[" --PlateZ ",JobSets],False,False):
                          FreshStart=False
                          print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 1 has successfully completed'+bcolors.ENDC)
+                         UpdateStatus(2)
                          status=2
                      else:
                          print(UF.TimeStamp(),bcolors.FAIL+'Stage 1 is uncompleted...'+bcolors.ENDC)
-                         status=6
+                         status=20
                          break
 
               elif len(bad_pop)>0:
@@ -583,19 +594,21 @@ while status<7:
                       if AutoPilot(600,10,Patience,AFS_DIR,EOS_DIR,'/ANNADEA/Data/REC_SET/','RawSeedsRes','RUTr1a','.csv',RecBatchID,JobSet,OptionHeader,OptionLine,'RUTr1a_GenerateRawSelectedSeeds_Sub.py',[" --PlateZ ",JobSets],False,False):
                           FreshStart=False
                           print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 1 has successfully completed'+bcolors.ENDC)
+                          UpdateStatus(2)
                           status=2
                       else:
                           print(UF.TimeStamp(),bcolors.FAIL+'Stage 1 is uncompleted...'+bcolors.ENDC)
-                          status=8
+                          status=20
                           break
                    else:
                       if AutoPilot(int(UserAnswer),10,Patience,AFS_DIR,EOS_DIR,'/ANNADEA/Data/REC_SET/','RawSeedsRes','RUTr1a','.csv',RecBatchID,JobSet,OptionHeader,OptionLine,'RUTr1a_GenerateRawSelectedSeeds_Sub.py',[" --PlateZ ",JobSets],False,False):
                           FreshStart=False
                           print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 1 has successfully completed'+bcolors.ENDC)
+                          UpdateStatus(2)
                           status=2
                       else:
                           print(UF.TimeStamp(),bcolors.FAIL+'Stage 1 is uncompleted...'+bcolors.ENDC)
-                          status=8
+                          status=20
                           break
           else:
             if (TotJobs)==len(bad_pop):
@@ -618,10 +631,11 @@ while status<7:
                  if AutoPilot(600,10,Patience,AFS_DIR,EOS_DIR,'/ANNADEA/Data/REC_SET/','RawSeedsRes','RUTr1a','.csv',RecBatchID,JobSet,OptionHeader,OptionLine,'RUTr1a_GenerateRawSelectedSeeds_Sub.py',[" --PlateZ ",JobSets],False,False):
                         FreshStart=False
                         print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 1 has successfully completed'+bcolors.ENDC)
+                        UpdateStatus(2)
                         status=2
                  else:
                      print(UF.TimeStamp(),bcolors.FAIL+'Stage 1 is uncompleted...'+bcolors.ENDC)
-                     status=8
+                     status=20
                      break
 
             elif len(bad_pop)>0:
@@ -630,10 +644,11 @@ while status<7:
                       if AutoPilot(600,10,Patience,AFS_DIR,EOS_DIR,'/ANNADEA/Data/REC_SET/','RawSeedsRes','RUTr1a','.csv',RecBatchID,JobSet,OptionHeader,OptionLine,'RUTr1a_GenerateRawSelectedSeeds_Sub.py',[" --PlateZ ",JobSets],False,False):
                           FreshStart=False
                           print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 1 has successfully completed'+bcolors.ENDC)
+                          UpdateStatus(2)
                           status=2
                       else:
                           print(UF.TimeStamp(),bcolors.FAIL+'Stage 1 is uncompleted...'+bcolors.ENDC)
-                          status=8
+                          status=20
                           break
       if status==2:
         print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
@@ -734,6 +749,7 @@ while status<7:
          #     print(UF.TimeStamp(), bcolors.WARNING+'Log creation has failed'+bcolors.ENDC)
         FreshStart=False
         print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
+        UpdateStatus(3)
         status=3
       if status==3:
          print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
@@ -795,10 +811,11 @@ while status<7:
                     if AutoPilot(600,10,Patience,AFS_DIR,EOS_DIR,'/ANNADEA/Data/REC_SET/','RefinedSeeds','RUTr1b','.pkl',RecBatchID,JobSet,OptionHeader,OptionLine,'RUTr1b_RefineSeeds_Sub.py',['',''],False,False):
                         FreshStart=False
                         print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
-                        status+=1
+                        UpdateStatus(4)
+                        status=4
                     else:
                         print(UF.TimeStamp(),bcolors.FAIL+'Stage '+str(status)+' is uncompleted...'+bcolors.ENDC)
-                        status=8
+                        status=20
                         break
 
               elif len(bad_pop)>0:
@@ -817,25 +834,28 @@ while status<7:
                       if AutoPilot(600,10,Patience,AFS_DIR,EOS_DIR,'/ANNADEA/Data/REC_SET/','RefinedSeeds','RUTr1b','.pkl',RecBatchID,JobSet,OptionHeader,OptionLine,'RUTr1b_RefineSeeds_Sub.py',['',''],False,False):
                          FreshStart=False
                          print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
-                         status+=1
+                         UpdateStatus(4)
+                         status=4
                       else:
                          print(UF.TimeStamp(),bcolors.FAIL+'Stage '+str(status)+' is uncompleted...'+bcolors.ENDC)
-                         status=8
+                         status=20
                          break
                    else:
 
                       if AutoPilot(int(UserAnswer),10,Patience,AFS_DIR,EOS_DIR,'/ANNADEA/Data/REC_SET/','RefinedSeeds','RUTr1b','.pkl',RecBatchID,JobSet,OptionHeader,OptionLine,'RUTr1b_RefineSeeds_Sub.py',['',''],False,False):
                          FreshStart=False
                          print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
-                         status+=1
+                         UpdateStatus(4)
+                         status=4
                       else:
                          print(UF.TimeStamp(),bcolors.FAIL+'Stage '+str(status)+' is uncompleted...'+bcolors.ENDC)
-                         status=8
+                         status=20
                          break
 
               elif len(bad_pop)==0:
                 FreshStart=False
                 print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
+                UpdateStatus(4)
                 status=4
          else:
             if (TotJobs)==len(bad_pop):
@@ -855,10 +875,11 @@ while status<7:
                  if AutoPilot(600,10,Patience,AFS_DIR,EOS_DIR,'/ANNADEA/Data/REC_SET/','RefinedSeeds','RUTr1b','.pkl',RecBatchID,JobSet,OptionHeader,OptionLine,'RUTr1b_RefineSeeds_Sub.py',['',''],False,False):
                         FreshStart=False
                         print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
+                        UpdateStatus(4)
                         status=4
                  else:
                      print(UF.TimeStamp(),bcolors.FAIL+'Stage '+str(status)+' is uncompleted...'+bcolors.ENDC)
-                     status=8
+                     status=20
                      break
 
             elif len(bad_pop)>0:
@@ -868,14 +889,16 @@ while status<7:
                       if AutoPilot(600,10,Patience,AFS_DIR,EOS_DIR,'/ANNADEA/Data/REC_SET/','RefinedSeeds','RUTr1b','.pkl',RecBatchID,JobSet,OptionHeader,OptionLine,'RUTr1b_RefineSeeds_Sub.py',['',''],False,False):
                          FreshStart=False
                          print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
+                         UpdateStatus(4)
                          status=4
                       else:
                           print(UF.TimeStamp(),bcolors.FAIL+'Stage '+str(status)+' is uncompleted...'+bcolors.ENDC)
-                          status=8
+                          status=20
                           break
             elif len(bad_pop)==0:
                 FreshStart=False
                 print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
+                UpdateStatus(4)
                 status=4
       if status==4:
         print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
@@ -933,6 +956,7 @@ while status<7:
              print(UF.TimeStamp(), bcolors.OKGREEN+"The log data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+EOS_DIR+'/ANNADEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv'+bcolors.ENDC)
         del new_data
         print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
+        UpdateStatus(5)
         status=5
       if status==5:
          print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
@@ -991,10 +1015,11 @@ while status<7:
                     if AutoPilot(600,10,Patience,AFS_DIR,EOS_DIR,'/ANNADEA/Data/REC_SET/','MergedSeeds','RUTr1d','.pkl',RecBatchID,JobSet,OptionHeader,OptionLine,'RUTr1d_MergeSeeds_Sub.py',['',''],False,False):
                         FreshStart=False
                         print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
+                        UpdateStatus(6)
                         status=6
                     else:
                         print(UF.TimeStamp(),bcolors.FAIL+'Stage '+str(status)+' is uncompleted...'+bcolors.ENDC)
-                        status=8
+                        status=20
                         break
 
               elif len(bad_pop)>0:
@@ -1013,25 +1038,28 @@ while status<7:
                       if AutoPilot(600,10,Patience,AFS_DIR,EOS_DIR,'/ANNADEA/Data/REC_SET/','MergedSeeds','RUTr1d','.pkl',RecBatchID,JobSet,OptionHeader,OptionLine,'RUTr1d_MergeSeeds_Sub.py',['',''],False,False):
                          FreshStart=False
                          print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
+                         UpdateStatus(6)
                          status=6
                       else:
                          print(UF.TimeStamp(),bcolors.FAIL+'Stage '+str(status)+' is uncompleted...'+bcolors.ENDC)
-                         status=8
+                         status=20
                          break
                    else:
 
                       if AutoPilot(int(UserAnswer),10,Patience,AFS_DIR,EOS_DIR,'/ANNADEA/Data/REC_SET/','MergedSeeds','RUTr1d','.pkl',RecBatchID,JobSet,OptionHeader,OptionLine,'RUTr1d_MergeSeeds_Sub.py',['',''],False,False):
                          FreshStart=False
                          print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
+                         UpdateStatus(6)
                          status=6
                       else:
                          print(UF.TimeStamp(),bcolors.FAIL+'Stage '+str(status)+' is uncompleted...'+bcolors.ENDC)
-                         status=8
+                         status=20
                          break
 
               elif len(bad_pop)==0:
                 FreshStart=False
                 print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
+                UpdateStatus(6)
                 status=6
          else:
             if (TotJobs)==len(bad_pop):
@@ -1051,10 +1079,11 @@ while status<7:
                  if AutoPilot(600,10,Patience,AFS_DIR,EOS_DIR,'/ANNADEA/Data/REC_SET/','MergedSeeds','RUTr1d','.pkl',RecBatchID,JobSet,OptionHeader,OptionLine,'RUTr1d_MergeSeeds_Sub.py',['',''],False,False):
                         FreshStart=False
                         print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
+                        UpdateStatus(6)
                         status=6
                  else:
                      print(UF.TimeStamp(),bcolors.FAIL+'Stage '+str(status)+' is uncompleted...'+bcolors.ENDC)
-                     status=8
+                     status=20
                      break
 
             elif len(bad_pop)>0:
@@ -1064,14 +1093,16 @@ while status<7:
                       if AutoPilot(600,10,Patience,AFS_DIR,EOS_DIR,'/ANNADEA/Data/REC_SET/','MergedSeeds','RUTr1d','.pkl',RecBatchID,JobSet,OptionHeader,OptionLine,'RUTr1d_MergeSeeds_Sub.py',['',''],False,False):
                          FreshStart=False
                          print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
+                         UpdateStatus(6)
                          status=6
                       else:
                           print(UF.TimeStamp(),bcolors.FAIL+'Stage '+str(status)+' is uncompleted...'+bcolors.ENDC)
-                          status=8
+                          status=20
                           break
             elif len(bad_pop)==0:
                 FreshStart=False
                 print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
+                UpdateStatus(6)
                 status=6
 if status==7:
      print(UF.TimeStamp(), bcolors.OKGREEN+"Train sample generation has been completed"+bcolors.ENDC)
