@@ -62,6 +62,11 @@ class TrainingSampleMeta:
           self.num_edge_features=NoEF
           self.tot_sample_size=NoS
           self.no_sets=NoSets
+      def UpdateStatus(self, status):
+          if hasattr(self,'Status'):
+            self.Status.append(status)
+          else:
+            self.Status=[status]
 def GetEquationOfLine(Data):
           x=[]
           for i in range(0,len(Data)):
@@ -84,7 +89,7 @@ class ModelMeta:
           self.TrainSessionsDateTime=[]
           self.TrainSessionsParameters=[]
           self.TrainSessionsData=[]
-          self.Status=[]
+
           if (self.ModelFramework=='PyTorch') and (self.ModelArchitecture=='TCN'):
               self.num_node_features=DataMeta.num_node_features
               self.num_edge_features=DataMeta.num_edge_features
@@ -104,11 +109,7 @@ class ModelMeta:
           self.TrainSessionsParameters.append(TrainParameters)
       def CompleteTrainingSession(self, TrainData):
           self.TrainSessionsData.append(TrainData)
-      def UpdateStatus(self, status):
-          if hasattr(self,'Status'):
-            self.Status.append(status)
-          else:
-            self.Status=[status]
+
 
 class HitCluster:
       def __init__(self,ClusterID, Step):
