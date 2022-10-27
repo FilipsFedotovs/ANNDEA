@@ -1005,7 +1005,7 @@ while status<7:
                                     'RUTr1d',
                                     '.pkl',
                                     RecBatchID,
-                                    JobSet,
+                                    no_iter,
                                     OptionHeader,
                                     OptionLine,
                                     'RUTr1d_MergeSeeds_Sub.py',
@@ -1013,7 +1013,7 @@ while status<7:
                      for bp in bad_pop:
                           UF.SubmitJobs2Condor(bp)
                  else:
-                    if AutoPilot(600,10,Patience,AFS_DIR,EOS_DIR,'/ANNADEA/Data/REC_SET/','MergedSeeds','RUTr1d','.pkl',RecBatchID,JobSet,OptionHeader,OptionLine,'RUTr1d_MergeSeeds_Sub.py',['',''],False,False):
+                    if AutoPilot(600,10,Patience,AFS_DIR,EOS_DIR,'/ANNADEA/Data/REC_SET/','MergedSeeds','RUTr1d','.pkl',RecBatchID,no_iter,OptionHeader,OptionLine,'RUTr1d_MergeSeeds_Sub.py',['',''],False,False):
                         FreshStart=False
                         print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
                         UpdateStatus(6)
@@ -1036,7 +1036,7 @@ while status<7:
                       for bp in bad_pop:
                            UF.SubmitJobs2Condor(bp)
                       print(UF.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
-                      if AutoPilot(600,10,Patience,AFS_DIR,EOS_DIR,'/ANNADEA/Data/REC_SET/','MergedSeeds','RUTr1d','.pkl',RecBatchID,JobSet,OptionHeader,OptionLine,'RUTr1d_MergeSeeds_Sub.py',['',''],False,False):
+                      if AutoPilot(600,10,Patience,AFS_DIR,EOS_DIR,'/ANNADEA/Data/REC_SET/','MergedSeeds','RUTr1d','.pkl',RecBatchID,no_iter,OptionHeader,OptionLine,'RUTr1d_MergeSeeds_Sub.py',['',''],False,False):
                          FreshStart=False
                          print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
                          UpdateStatus(6)
@@ -1047,7 +1047,7 @@ while status<7:
                          break
                    else:
 
-                      if AutoPilot(int(UserAnswer),10,Patience,AFS_DIR,EOS_DIR,'/ANNADEA/Data/REC_SET/','MergedSeeds','RUTr1d','.pkl',RecBatchID,JobSet,OptionHeader,OptionLine,'RUTr1d_MergeSeeds_Sub.py',['',''],False,False):
+                      if AutoPilot(int(UserAnswer),10,Patience,AFS_DIR,EOS_DIR,'/ANNADEA/Data/REC_SET/','MergedSeeds','RUTr1d','.pkl',RecBatchID,no_iter,OptionHeader,OptionLine,'RUTr1d_MergeSeeds_Sub.py',['',''],False,False):
                          FreshStart=False
                          print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
                          UpdateStatus(6)
@@ -1070,14 +1070,14 @@ while status<7:
                                     'RUTr1d',
                                     '.pkl',
                                     RecBatchID,
-                                    JobSet,
+                                    no_iter,
                                     OptionHeader,
                                     OptionLine,
                                     'RUTr1d_MergeSeeds_Sub.py',
                                     True)
                  for bp in bad_pop:
                           UF.SubmitJobs2Condor(bp)
-                 if AutoPilot(600,10,Patience,AFS_DIR,EOS_DIR,'/ANNADEA/Data/REC_SET/','MergedSeeds','RUTr1d','.pkl',RecBatchID,JobSet,OptionHeader,OptionLine,'RUTr1d_MergeSeeds_Sub.py',['',''],False,False):
+                 if AutoPilot(600,10,Patience,AFS_DIR,EOS_DIR,'/ANNADEA/Data/REC_SET/','MergedSeeds','RUTr1d','.pkl',RecBatchID,no_iter,OptionHeader,OptionLine,'RUTr1d_MergeSeeds_Sub.py',['',''],False,False):
                         FreshStart=False
                         print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
                         UpdateStatus(6)
@@ -1091,7 +1091,7 @@ while status<7:
                       for bp in bad_pop:
                            UF.SubmitJobs2Condor(bp)
                       print(UF.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
-                      if AutoPilot(600,10,Patience,AFS_DIR,EOS_DIR,'/ANNADEA/Data/REC_SET/','MergedSeeds','RUTr1d','.pkl',RecBatchID,JobSet,OptionHeader,OptionLine,'RUTr1d_MergeSeeds_Sub.py',['',''],False,False):
+                      if AutoPilot(600,10,Patience,AFS_DIR,EOS_DIR,'/ANNADEA/Data/REC_SET/','MergedSeeds','RUTr1d','.pkl',RecBatchID,no_iter,OptionHeader,OptionLine,'RUTr1d_MergeSeeds_Sub.py',['',''],False,False):
                          FreshStart=False
                          print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
                          UpdateStatus(6)
@@ -1156,7 +1156,7 @@ while status<7:
                                     'RUTr1d',
                                     '.pkl',
                                     RecBatchID,
-                                    JobSet,
+                                    no_iter,
                                     OptionHeader,
                                     OptionLine,
                                     'RUTr1d_MergeSeeds_Sub.py',
@@ -1164,7 +1164,7 @@ while status<7:
                      for bp in bad_pop:
                           UF.SubmitJobs2Condor(bp)
                  else:
-                    if AutoPilot(600,10,Patience,AFS_DIR,EOS_DIR,'/ANNADEA/Data/REC_SET/','MergedSeeds','RUTr1d','.pkl',RecBatchID,JobSet,OptionHeader,OptionLine,'RUTr1d_MergeSeeds_Sub.py',['',''],False,False):
+                    if AutoPilot(600,10,Patience,AFS_DIR,EOS_DIR,'/ANNADEA/Data/REC_SET/','MergedSeeds','RUTr1d','.pkl',RecBatchID,no_iter,OptionHeader,OptionLine,'RUTr1d_MergeSeeds_Sub.py',['',''],False,False):
                         FreshStart=False
                         print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
                         UpdateStatus(7)
@@ -1187,7 +1187,7 @@ while status<7:
                       for bp in bad_pop:
                            UF.SubmitJobs2Condor(bp)
                       print(UF.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
-                      if AutoPilot(600,10,Patience,AFS_DIR,EOS_DIR,'/ANNADEA/Data/REC_SET/','MergedSeeds','RUTr1d','.pkl',RecBatchID,JobSet,OptionHeader,OptionLine,'RUTr1d_MergeSeeds_Sub.py',['',''],False,False):
+                      if AutoPilot(600,10,Patience,AFS_DIR,EOS_DIR,'/ANNADEA/Data/REC_SET/','MergedSeeds','RUTr1d','.pkl',RecBatchID,no_iter,OptionHeader,OptionLine,'RUTr1d_MergeSeeds_Sub.py',['',''],False,False):
                          FreshStart=False
                          print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
                          UpdateStatus(7)
@@ -1198,7 +1198,7 @@ while status<7:
                          break
                    else:
 
-                      if AutoPilot(int(UserAnswer),10,Patience,AFS_DIR,EOS_DIR,'/ANNADEA/Data/REC_SET/','MergedSeeds','RUTr1d','.pkl',RecBatchID,JobSet,OptionHeader,OptionLine,'RUTr1d_MergeSeeds_Sub.py',['',''],False,False):
+                      if AutoPilot(int(UserAnswer),10,Patience,AFS_DIR,EOS_DIR,'/ANNADEA/Data/REC_SET/','MergedSeeds','RUTr1d','.pkl',RecBatchID,no_iter,OptionHeader,OptionLine,'RUTr1d_MergeSeeds_Sub.py',['',''],False,False):
                          FreshStart=False
                          print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
                          UpdateStatus(7)
@@ -1221,14 +1221,14 @@ while status<7:
                                     'RUTr1d',
                                     '.pkl',
                                     RecBatchID,
-                                    JobSet,
+                                    no_iter,
                                     OptionHeader,
                                     OptionLine,
                                     'RUTr1d_MergeSeeds_Sub.py',
                                     True)
                  for bp in bad_pop:
                           UF.SubmitJobs2Condor(bp)
-                 if AutoPilot(600,10,Patience,AFS_DIR,EOS_DIR,'/ANNADEA/Data/REC_SET/','MergedSeeds','RUTr1d','.pkl',RecBatchID,JobSet,OptionHeader,OptionLine,'RUTr1d_MergeSeeds_Sub.py',['',''],False,False):
+                 if AutoPilot(600,10,Patience,AFS_DIR,EOS_DIR,'/ANNADEA/Data/REC_SET/','MergedSeeds','RUTr1d','.pkl',RecBatchID,no_iter,OptionHeader,OptionLine,'RUTr1d_MergeSeeds_Sub.py',['',''],False,False):
                         FreshStart=False
                         print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
                         UpdateStatus(7)
@@ -1242,7 +1242,7 @@ while status<7:
                       for bp in bad_pop:
                            UF.SubmitJobs2Condor(bp)
                       print(UF.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
-                      if AutoPilot(600,10,Patience,AFS_DIR,EOS_DIR,'/ANNADEA/Data/REC_SET/','MergedSeeds','RUTr1d','.pkl',RecBatchID,JobSet,OptionHeader,OptionLine,'RUTr1d_MergeSeeds_Sub.py',['',''],False,False):
+                      if AutoPilot(600,10,Patience,AFS_DIR,EOS_DIR,'/ANNADEA/Data/REC_SET/','MergedSeeds','RUTr1d','.pkl',RecBatchID,no_iter,OptionHeader,OptionLine,'RUTr1d_MergeSeeds_Sub.py',['',''],False,False):
                          FreshStart=False
                          print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
                          UpdateStatus(7)
