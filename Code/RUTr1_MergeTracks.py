@@ -308,7 +308,7 @@ print(UF.TimeStamp(),'There are 8 stages (0-7) of this script',status,bcolors.EN
 print(UF.TimeStamp(),'Current status has a stage',status,bcolors.ENDC)
 status=Meta.Status[-1]
 
-while status<7:
+while status<10:
       if status==-2:
           print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
           print(UF.TimeStamp(),bcolors.BOLD+'Stage -3:'+bcolors.ENDC+' Sending eval seeds to HTCondor...')
@@ -1508,7 +1508,7 @@ while status<7:
          #
          # UpdateStatus(9)
          # status=9
-if status==7:
+if status==15:
      print(UF.TimeStamp(), bcolors.OKGREEN+"Train sample generation has been completed"+bcolors.ENDC)
      exit()
 else:
