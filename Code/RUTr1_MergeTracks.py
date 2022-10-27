@@ -285,7 +285,7 @@ def AutoPilot(wait_min, interval_min, max_interval_tolerance,AFS,EOS,path,o,pfx,
 def UpdateStatus(status):
     Meta.UpdateStatus(status)
     print(UF.PickleOperations(RecOutputMeta,'w', Meta)[1])
-
+UpdateStatus(6)
 if Mode=='RESET':
     print(UF.TimeStamp(),'Performing the cleanup... ',bcolors.ENDC)
     HTCondorTag="SoftUsed == \"ANNADEA-EUTr1a-"+RecBatchID+"\""
@@ -307,6 +307,7 @@ else:
 print(UF.TimeStamp(),'There are 8 stages (0-7) of this script',status,bcolors.ENDC)
 print(UF.TimeStamp(),'Current status has a stage',status,bcolors.ENDC)
 status=Meta.Status[-1]
+
 while status<7:
       if status==-2:
           print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
