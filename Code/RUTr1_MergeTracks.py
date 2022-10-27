@@ -1508,7 +1508,7 @@ while status<10:
                     rec_2.drop(['Track_ID'],axis=1,inplace=True)
 
                     rec=pd.merge(rec_1, rec_2, how="inner", on=['New_Track_ID'])
-                    rec.drop(['Track_ID'],axis=1,inplace=True)
+                    rec.drop(['New_Track_ID'],axis=1,inplace=True)
                     rec.drop(rec.index[rec['Segment_1'] == rec['Segment_2']], inplace = True)
                     rec["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(rec['Segment_1'], rec['Segment_2'])]
                     rec.drop(['Segment_1'],axis=1,inplace=True)
