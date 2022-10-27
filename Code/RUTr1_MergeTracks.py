@@ -1113,7 +1113,7 @@ while status<7:
          test_data_len=len(UF.PickleOperations(input_file_location,'r','N/A')[0])
          no_iter=int(math.ceil(float(test_data_len/float(MaxSegments))))
          print(UF.TimeStamp(), "Consolidating the files...")
-         base_data = None
+         base_data = []
          for i in range(no_iter):
              new_data=UF.PickleOperations(EOS_DIR+'/ANNADEA/Data/REC_SET/RUTr1d_'+RecBatchID+'_MergedSeeds_'+str(i)+'.pkl','r','N/A')[0]
              base_data+=new_data
