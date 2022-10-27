@@ -973,6 +973,10 @@ while status<10:
          output_file_location=EOS_DIR+'/ANNADEA/Data/REC_SET/RUTr1c_'+RecBatchID+'_Fit_Filtered_Seeds.pkl'
          print(UF.PickleOperations(output_file_location,'w',base_data)[0])
          no_iter=int(math.ceil(float(len(base_data)/float(MaxSegments))))
+         if no_iter==1:
+             UpdateStatus(8)
+             status=8
+             continue
          print(UF.TimeStamp(), "Submitting jobs to HTCondor...")
          OptionHeader = []
          OptionLine = []
@@ -1122,8 +1126,13 @@ while status<10:
 
          output_file_location=EOS_DIR+'/ANNADEA/Data/REC_SET/RUTr1c_'+RecBatchID+'_Fit_Filtered_Seeds.pkl'
          print(UF.PickleOperations(output_file_location,'w',base_data)[1])
+
          print(UF.TimeStamp(), bcolors.OKGREEN+"Re-loading is successful, there are "+str(len(base_data))+" fit seeds..."+bcolors.ENDC)
          no_iter=int(math.ceil(float(len(base_data)/float(MaxSegments))))
+         if no_iter==1:
+             UpdateStatus(8)
+             status=8
+             continue
          print(UF.TimeStamp(), "Submitting jobs to HTCondor...")
          OptionHeader = []
          OptionLine = []
@@ -1275,6 +1284,10 @@ while status<10:
          print(UF.PickleOperations(output_file_location,'w',base_data)[1])
          print(UF.TimeStamp(), bcolors.OKGREEN+"Re-loading is successful, there are "+str(len(base_data))+" fit seeds..."+bcolors.ENDC)
          no_iter=int(math.ceil(float(len(base_data)/float(MaxSegments))))
+         if no_iter==1:
+             UpdateStatus(8)
+             status=8
+             continue
          print(UF.TimeStamp(), "Submitting jobs to HTCondor...")
          OptionHeader = []
          OptionLine = []
