@@ -1075,6 +1075,7 @@ class EMO:
              EMO.PrepareSeedPrint(self,Mmeta)
              __Image=LoadRenderImages([self],1,1)[0]
              self.Fit=M.predict(__Image)[0][1]
+             self.FIT=[self.Fit,self.Fit]
              del __Image
           elif Mmeta.ModelType=='GNN':
              EMO.PrepareSeedGraph(self,Mmeta)
@@ -1083,30 +1084,32 @@ class EMO:
              graph = self.GraphSeed
              graph.batch = torch.zeros(len(graph.x),dtype=torch.int64)
              self.Fit=M(graph.x, graph.edge_index, graph.edge_attr,graph.batch)[0][1].item()
+             self.FIT=[self.Fit,self.Fit]
           return self.Fit>=0.5
       
       def InjectTrackSeed(self,OtherSeed):
           self_matx=EMO.DensityMatrix(OtherSeed.Header,self.Header)
           if EMO.Overlap(self_matx)==False:
               return EMO.Overlap(self_matx)
+
           new_seed_header=EMO.ProjectVectorElements(self_matx,self.Header)
           new_self_hits=EMO.ProjectVectorElements(self_matx,self.Hits)
-          new_self_fit=EMO.ProjectVectorElements(self_matx,self.Fit)
+          new_self_fit=EMO.ProjectVectorElements(self_matx,self.FIT)
           remain_1_s = EMO.GenerateInverseVector(self.Header,new_seed_header)
           remain_1_o = EMO.GenerateInverseVector(OtherSeed.Header,new_seed_header)
           OtherSeed.Header=EMO.ProjectVectorElements([remain_1_o],OtherSeed.Header)
           self.Header=EMO.ProjectVectorElements([remain_1_s],self.Header)
           OtherSeed.Hits=EMO.ProjectVectorElements([remain_1_o],OtherSeed.Hits)
           self.Hits=EMO.ProjectVectorElements([remain_1_s],self.Hits)
-          OtherSeed.Fit=EMO.ProjectVectorElements([remain_1_o],OtherSeed.Fit)
-          self.Fit=EMO.ProjectVectorElements([remain_1_s],self.Fit)
+          OtherSeed.FIT=EMO.ProjectVectorElements([remain_1_o],OtherSeed.FIT)
+          self.FIT=EMO.ProjectVectorElements([remain_1_s],self.FIT)
           if (len(OtherSeed.Header))==0:
               self.Header+=new_seed_header
               self.Hits+=new_self_hits
-              self.Fit+=new_self_fit
-              self.Avg_Fit=sum(self.Fit)/len(self.Fit)
+              self.FIT+=new_self_fit
+              self.Fit=sum(self.FIT)/len(self.FIT)
               self.Partition=len(self.Header)
-              if len(self.Fit)!=len(self.Header):
+              if len(self.FIT)!=len(self.Header):
                   raise Exception('Fit error')
                   exit()
 
@@ -1114,13 +1117,13 @@ class EMO:
           if (len(self.Header))==0:
               self.Header+=new_seed_header
               self.Hits+=new_self_hits
-              self.Fit+=new_self_fit
+              self.FIT+=new_self_fit
               self.Header+=OtherSeed.Header
               self.Hits+=OtherSeed.Hits
-              self.Fit+=OtherSeed.Fit
-              self.Avg_Fit=sum(self.Fit)/len(self.Fit)
+              self.FIT+=OtherSeed.FIT
+              self.Fit=sum(self.FIT)/len(self.FIT)
               self.Partition=len(self.Header)
-              if len(self.Fit)!=len(self.Header):
+              if len(self.FIT)!=len(self.Header):
                   raise Exception('Fit error')
                   exit()
               return True
@@ -1134,8 +1137,8 @@ class EMO:
 
           new_seed_header+=EMO.ProjectVectorElements([remain_2_s],self.Header)
           new_seed_header+=EMO.ProjectVectorElements([remain_2_o],OtherSeed.Header)
-          new_self_fit+=EMO.ProjectVectorElements([remain_2_s],self.Fit)
-          new_self_fit+=EMO.ProjectVectorElements([remain_2_o],OtherSeed.Fit)
+          new_self_fit+=EMO.ProjectVectorElements([remain_2_s],self.FIT)
+          new_self_fit+=EMO.ProjectVectorElements([remain_2_o],OtherSeed.FIT)
           new_self_hits+=EMO.ProjectVectorElements([remain_2_s],self.Hits)
           new_self_hits+=EMO.ProjectVectorElements([remain_2_o],OtherSeed.Hits)
 
@@ -1147,18 +1150,18 @@ class EMO:
           if (len(last_other_headers))==0:
               self.Header=new_seed_header
               self.Hits=new_self_hits
-              self.Fit=new_self_fit
-              self.Avg_Fit=sum(self.Fit)/len(self.Fit)
+              self.FIT=new_self_fit
+              self.Fit=sum(self.FIT)/len(self.FIT)
               self.Partition=len(self.Header)
-              if len(self.Fit)!=len(self.Header):
+              if len(self.FIT)!=len(self.Header):
                   raise Exception('Fit error')
                   exit()
               return True
 
           last_self_hits=EMO.ProjectVectorElements([last_remain_headers_s],self.Hits)
           last_other_hits=EMO.ProjectVectorElements([last_remain_headers_o],OtherSeed.Hits)
-          last_self_fits=EMO.ProjectVectorElements([last_remain_headers_s],self.Fit)
-          last_other_fits=EMO.ProjectVectorElements([last_remain_headers_o],OtherSeed.Fit)
+          last_self_fits=EMO.ProjectVectorElements([last_remain_headers_s],self.FIT)
+          last_other_fits=EMO.ProjectVectorElements([last_remain_headers_o],OtherSeed.FIT)
           last_remain_matr=EMO.DensityMatrix(last_other_hits,last_self_hits)
 
           new_seed_header+=EMO.ReplaceWeakerTracks(last_remain_matr,last_other_headers,last_self_headers,last_other_fits,last_self_fits)
@@ -1166,10 +1169,10 @@ class EMO:
           new_self_hits+=EMO.ReplaceWeakerTracks(last_remain_matr,last_other_hits,last_self_hits,last_other_fits,last_self_fits)
           self.Header=new_seed_header
           self.Hits=new_self_hits
-          self.Fit=new_self_fit
-          self.Avg_Fit=sum(self.Fit)/len(self.Fit)
+          self.FIT=new_self_fit
+          self.Avg_Fit=sum(self.FIT)/len(self.FIT)
           self.Partition=len(self.Header)
-          if len(self.Fit)!=len(self.Header):
+          if len(self.FIT)!=len(self.Header):
                   raise Exception('Fit error')
                   exit()
 
