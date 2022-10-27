@@ -1493,8 +1493,6 @@ while status<10:
                     eval_data["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(eval_data['Segment_1'], eval_data['Segment_2'])]
                     eval_data.drop(['Segment_1'],axis=1,inplace=True)
                     eval_data.drop(['Segment_2'],axis=1,inplace=True)
-                    rec_no=0
-                    eval_no=0
                     rec_list=[]
                     rec_1 = pd.DataFrame(csv_out, columns = ['Segment_1','Q','Track_ID'])
                     rec_1['Q']=rec_1['Q'].astype(str)
@@ -1502,33 +1500,27 @@ while status<10:
                     rec_1['New_Track_ID']=rec_1['Q']+'-'+rec_1['Track_ID']
                     rec_1.drop(['Q'],axis=1,inplace=True)
                     rec_1.drop(['Track_ID'],axis=1,inplace=True)
-                    print(rec_1)
                     rec_2 = pd.DataFrame(csv_out, columns = ['Segment_2','Q','Track_ID'])
+                    rec_2['Q']=rec_2['Q'].astype(str)
+                    rec_2['Track_ID']=rec_2['Track_ID'].astype(str)
+                    rec_2['New_Track_ID']=rec_2['Q']+'-'+rec_2['Track_ID']
                     rec_2.drop(['Q'],axis=1,inplace=True)
+                    rec_2.drop(['Track_ID'],axis=1,inplace=True)
 
-         #            rec=pd.merge(rec_1, rec_2, how="inner", on=['Track_ID'])
-         #            rec.drop(['Track_ID'],axis=1,inplace=True)
-         #            rec.drop(rec.index[rec['Segment_1'] == rec['Segment_2']], inplace = True)
-         #            rec["Track_ID"]= ['-'.join(sorted(tup)) for tup in zip(rec['Segment_1'], rec['Segment_2'])]
-         #            rec.drop(['Segment_1'],axis=1,inplace=True)
-         #            rec.drop(['Segment_2'],axis=1,inplace=True)
-         #            rec.drop_duplicates(subset=['Track_ID'], keep='first', inplace=True)
-         #            rec_eval=pd.merge(eval_data, rec, how="inner", on=['Track_ID'])
-         #            eval_no=len(rec_eval)
-         #            rec_no=(len(rec)-len(rec_eval))
-         #            UF.LogOperations(EOS_DIR+'/EDER-TSU/Data/REC_SET/R_LOG.csv', 'UpdateLog', [[6,'Track merging',rec_no,eval_no,eval_no/(rec_no+eval_no),eval_no/len(eval_data)]])
-         #            print(UF.TimeStamp(), bcolors.OKGREEN+"The log data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+EOS_DIR+'/EDER-TSU/Data/REC_SET/R_LOG.csv'+bcolors.ENDC)
-         #
-         #         print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
-         #         print(UF.TimeStamp(),bcolors.OKGREEN+'The vertex merging has been completed..'+bcolors.ENDC)
-         #         print(bcolors.HEADER+"############################################# End of the program ################################################"+bcolors.ENDC)
-         #
-         # output_file_location=EOS_DIR+'/ANNADEA/Data/REC_SET/RUTr1c_'+RecBatchID+'_Fit_Filtered_Seeds.pkl'
-         # print(UF.PickleOperations(output_file_location,'w',base_data)[1])
-         # print(UF.TimeStamp(), bcolors.OKGREEN+"Re-loading is successful, there are "+str(len(base_data))+" fit seeds..."+bcolors.ENDC)
-         #
-         # UpdateStatus(9)
-         # status=9
+                    rec=pd.merge(rec_1, rec_2, how="inner", on=['New_Track_ID'])
+                    rec.drop(['Track_ID'],axis=1,inplace=True)
+                    rec.drop(rec.index[rec['Segment_1'] == rec['Segment_2']], inplace = True)
+                    rec["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(rec['Segment_1'], rec['Segment_2'])]
+                    rec.drop(['Segment_1'],axis=1,inplace=True)
+                    rec.drop(['Segment_2'],axis=1,inplace=True)
+                    rec.drop_duplicates(subset=['Seed_ID'], keep='first', inplace=True)
+                    rec_eval=pd.merge(eval_data, rec, how="inner", on=['Seed_ID'])
+                    eval_no=len(rec_eval)
+                    rec_no=(len(rec)-len(rec_eval))
+                    UF.LogOperations(EOS_DIR+'/ANNADEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv', 'a', [[4,'Track Seed Merging',rec_no,eval_no,eval_no/(rec_no+eval_no),eval_no/len(eval_data)]])
+                    print(UF.TimeStamp(), bcolors.OKGREEN+"The log data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+EOS_DIR+'/ANNADEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv'+bcolors.ENDC)
+                 UpdateStatus(10)
+                 status=10
 if status==15:
      print(UF.TimeStamp(), bcolors.OKGREEN+"Train sample generation has been completed"+bcolors.ENDC)
      exit()
