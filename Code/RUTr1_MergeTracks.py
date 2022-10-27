@@ -303,7 +303,7 @@ if Mode=='RESET':
        UpdateStatus(1)  
 else:
     print(UF.TimeStamp(),'Analysing the current script status...',bcolors.ENDC)
-    status=Meta.sta
+    status=Meta.Status[-1]
 print(UF.TimeStamp(),'There are 8 stages (0-7) of this script',status,bcolors.ENDC)
 print(UF.TimeStamp(),'Current status has a stage',status,bcolors.ENDC)
 status=Meta.Status[-1]
