@@ -134,7 +134,7 @@ if ModelMeta.ModelType=='CNN':
            print(ModelMeta.TrainSessionsData[el])
 
            train_set=ModelMeta.TrainSessionsData[el][-1][8]+1
-           print(train_set)
+           break
            next_file=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_TRACK_SEEDS_OUTPUT_'+str(train_set)+'.pkl'
            if os.path.isfile(next_file):
                TrainSamples=UF.PickleOperations(next_file,'r', 'N/A')[0]
@@ -143,6 +143,7 @@ if ModelMeta.ModelType=='CNN':
                train_set=1
                TrainSamples=UF.PickleOperations(EOS_DIR+'/ANNADEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_TRACK_SEEDS_OUTPUT_1.pkl','r', 'N/A')[0]
                print(UF.PickleOperations(EOS_DIR+'/ANNADEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_TRACK_SEEDS_OUTPUT_1.pkl','r', 'N/A')[1])
+               break
    exit()
    NTrainBatches=math.ceil(float(len(TrainSamples))/float(TrainParams[1]))
    NValBatches=math.ceil(float(len(ValSamples))/float(TrainParams[1]))
