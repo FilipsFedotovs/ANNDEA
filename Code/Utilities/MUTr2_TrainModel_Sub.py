@@ -128,6 +128,8 @@ if ModelMeta.ModelType=='CNN':
        print(UF.PickleOperations(EOS_DIR+'/ANNADEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_TRACK_SEEDS_OUTPUT_1.pkl','r', 'N/A')[1])
        train_set=1
    else:
+       print(ModelMeta.TrainSessionsDataID)
+       exit()
        for el in range(max(len(ModelMeta.TrainSessionsDataID)-2,0),-1,-1):
         if ModelMeta.TrainSessionsDataID[el]==TrainSampleID:
            train_set=ModelMeta.TrainSessionsData[el][-1][8]+1
