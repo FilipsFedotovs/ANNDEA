@@ -61,7 +61,8 @@ print(UF.TimeStamp(), "Modules Have been imported successfully...")
 print(UF.TimeStamp(),'Loading pre-selected data from ',input_file_location)
 data=pd.read_csv(input_file_location,header=0,
                     usecols=['x','y','z','tx','ty','Rec_Seg_ID']+ExtraColumns)
-
+for i in ExtraColumns:
+            data[i]=data[i].astype(str)
 track_headers = data[['Rec_Seg_ID']+ExtraColumns]
 track_headers = track_headers.drop_duplicates()
 track_headers=track_headers.values.tolist()
