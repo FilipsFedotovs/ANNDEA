@@ -137,10 +137,10 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
 
         output_file_location=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/MUTr1_'+TrainSampleID+'_TRACK_SEGMENTS.csv'
         print(UF.TimeStamp(),'Removing tracks which have less than',PM.MinHitsTrack,'hits...')
-        track_no_data=data.groupby(['MC_Mother_Track_ID','Rec_Seg_ID'],as_index=False).count()
+        track_no_data=data.groupby(['MC_Mother_Track_ID','Rec_Seg_ID']+ExtraColumns,as_index=False).count()
         track_no_data=track_no_data.drop([PM.y,PM.z,PM.tx,PM.ty],axis=1)
         track_no_data=track_no_data.rename(columns={PM.x: "Rec_Seg_No"})
-        new_combined_data=pd.merge(data, track_no_data, how="left", on=['Rec_Seg_ID','MC_Mother_Track_ID'])
+        new_combined_data=pd.merge(data, track_no_data, how="left", on=['Rec_Seg_ID','MC_Mother_Track_ID']+ExtraColumns)
         new_combined_data = new_combined_data[new_combined_data.Rec_Seg_No >= PM.MinHitsTrack]
         new_combined_data = new_combined_data.drop(["Rec_Seg_No"],axis=1)
         new_combined_data=new_combined_data.sort_values(['Rec_Seg_ID',PM.x],ascending=[1,1])
