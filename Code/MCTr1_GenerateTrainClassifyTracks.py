@@ -152,6 +152,7 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         new_combined_data=new_combined_data.rename(columns={PM.tx: "tx"})
         new_combined_data=new_combined_data.rename(columns={PM.ty: "ty"})
         new_combined_data.to_csv(output_file_location,index=False)
+        print(new_combined_data)
         data=new_combined_data[['Rec_Seg_ID']]
         print(UF.TimeStamp(),'Analysing the data sample in order to understand how many jobs to submit to HTCondor... ',bcolors.ENDC)
         data.drop_duplicates(subset='Rec_Seg_ID',keep='first',inplace=True)
