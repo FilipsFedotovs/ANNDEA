@@ -56,8 +56,7 @@ ModelName=ast.literal_eval(args.ModelName)
 ClassHeaders=ast.literal_eval(args.ClassHeaders)
 ClassNames=ast.literal_eval(args.ClassNames)
 ClassValues=ast.literal_eval(args.ClassValues)
-print(ClassHeaders,ClassNames,ClassValues)
-exit()
+
 TrainSampleID=args.TrainSampleID
 Patience=int(args.Patience)
 TrainSampleSize=int(args.TrainSampleSize)
@@ -83,7 +82,13 @@ import Parameters as PM #This is where we keep framework global parameters
 EOSsubDIR=EOS_DIR+'/'+'ANNADEA'
 EOSsubModelDIR=EOSsubDIR+'/'+'Models'
 TrainSampleOutputMeta=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/'+TrainSampleID+'_info.pkl'
-required_file_location=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/MUTr1_'+TrainSampleID+'_TRACK_SEGMENTS.csv'
+required_file_location=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/MCTr1_'+TrainSampleID+'_TRACKS.csv'
+ColumnsToImport=[PM.Rec_Track_ID,PM.Rec_Track_Domain,PM.x,PM.y,PM.z,PM.tx,PM.ty,PM.MC_Track_ID,PM.MC_Event_ID]
+for i in ClassNames:
+    for j in i:
+        ColumnsToImport.append(j)
+print(ColumnsToImport)
+exit()
 ########################################     Phase 1 - Create compact source file    #########################################
 print(UF.TimeStamp(),bcolors.BOLD+'Stage 0:'+bcolors.ENDC+' Preparing the source data...')
 
