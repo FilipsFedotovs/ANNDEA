@@ -85,7 +85,7 @@ for s in range(0,limit):
     track=EMO([track[0]])
     print(track.Header)
     label=1
-    for i in range(ClassNames):
+    for i in range(len(ClassNames)):
         print(ClassNames[i])
     print(Max_Labels)
 #
