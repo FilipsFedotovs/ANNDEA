@@ -64,8 +64,9 @@ data=pd.read_csv(input_file_location,header=0,
 
 track_headers = data[['Rec_Seg_ID']+ExtraColumns]
 track_headers = track_headers.drop_duplicates()
+track_headers=track_headers.values.tolist()
 print(track_headers)
-
+exit()
 track_data = data[['x','y','z','tx','ty','Rec_Seg_ID']].values.tolist() #Convirting the result to List data type
 print(track_data)
 exit()
