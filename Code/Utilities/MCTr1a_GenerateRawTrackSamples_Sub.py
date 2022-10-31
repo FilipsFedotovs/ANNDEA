@@ -89,7 +89,7 @@ for s in range(0,limit):
         for j in range(len(ClassNames[i])):
             pos_counter+=1
             for k in ClassValues[i][j]:
-                if j!=track[pos_counter]:
+                if k!=track[pos_counter]:
                     class_flag=True
         if class_flag:
             label+=1
