@@ -27,7 +27,6 @@ parser.add_argument('--EOS',help="EOS directory location", default='.')
 parser.add_argument('--AFS',help="AFS directory location", default='.')
 parser.add_argument('--BatchID',help="Give this training sample batch an ID", default='SHIP_UR_v1')
 parser.add_argument('--MaxSegments',help="A maximum number of track combinations that will be used in a particular HTCondor job for this script", default='20000')
-parser.add_argument('--ClassHeaders',help="What class headers to use?", default="['EM Background']")
 parser.add_argument('--ClassNames',help="What class headers to use?", default="[['Flag','ProcID']]")
 parser.add_argument('--ClassValues',help="What class values to use?", default="[['13','-13'],['8']]")
 
@@ -40,7 +39,6 @@ o=args.o
 sfx=args.sfx
 pfx=args.pfx
 BatchID=args.BatchID
-ClassHeaders=ast.literal_eval(args.ClassHeaders)
 ClassNames=ast.literal_eval(args.ClassNames)
 ClassValues=ast.literal_eval(args.ClassValues)
 ExtraColumns=[]
@@ -86,7 +84,8 @@ for s in range(0,limit):
     print(track)
     track=EMO([track[0]])
     print(track.Header)
-    exit()
+    Max_Labels=len(ClassNames)+1
+    print(Max_Labels)
 #
 #
 #     #label=(track[1] in MotherPDGList)

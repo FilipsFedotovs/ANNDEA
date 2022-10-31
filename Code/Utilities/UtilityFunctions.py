@@ -669,6 +669,8 @@ class EMO:
              self.Hits[Hit]=sorted(self.Hits[Hit],key=lambda x: float(x[2]),reverse=False)
       def LabelSeed(self,label):
           self.Label=label
+      def LabelTrack(self,label):
+          self.Label=label
       def GetTrInfo(self):
           if hasattr(self,'Hits'):
              if self.Partition==2:
