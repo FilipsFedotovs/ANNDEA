@@ -90,48 +90,23 @@ for s in range(0,limit):
             pos_counter+=1
             if (track[pos_counter] in ClassValues[i][j])==False:
                     class_flag=True
-                    print(pos_counter,k,track[pos_counter],class_flag,(track[pos_counter] in ClassValues[i][j]))
-                    x=input()
         if class_flag:
             label+=1
-    print(track,label)
+
     track_obj.LabelTrack(label)
 
+    track_obj.Decorate(track_data)
+    GoodTracks.append(track_obj)
+    continue
 #
-#     #label=(track[1] in MotherPDGLis
-# #t)
-#     # for test
-#     #print(track[0], track[1], label)
-#
-#
-#     # 0 for incoming muons, 1 for photons and muons, 2 for others
-#     if track[1] == 0:
-#         label = 0
-#     elif track[1] in MotherPDGList:
-#         label = 1
-#     else :
-#         label = 2
-#
-#     track=Track([track[0]])
-#     track.MCtruthClassifyTrack(label)
+print('The raw image generation has been completed..')
+
+print(UF.TimeStamp(),'Saving the results..')
 #
 #
 #
-#     track.DecorateSegments(segments)
-#     GoodTracks.append(track)
-#     del track
-#     continue
-#
-# print('The raw image generation has been completed..')
-# del tracks
-# del segments
-# gc.collect()
-# print(UF.TimeStamp(),'Saving the results..')
-#
-#
-#
-# UF.LogOperations(output_file_location,'w',GoodTracks) #Writing the remaining data into the csv
-# print(UF.TimeStamp(), "Train seed generation is finished...")
+UF.LogOperations(output_file_location,'w',GoodTracks) #Writing the remaining data into the csv
+print(UF.TimeStamp(), "Train seed generation is finished...")
 #End of the script
 
 
