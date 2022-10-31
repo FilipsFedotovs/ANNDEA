@@ -82,13 +82,22 @@ Max_Labels=len(ClassNames)+1
 for s in range(0,limit):
     track=track_headers.pop(0)
     print(track)
-    track=EMO([track[0]])
+    track_obj=EMO([track[0]])
     print(track.Header)
-    label=1
+    label=0
+    pos_counter=0
     for i in range(len(ClassNames)):
-        print(ClassNames[i])
-        print(ClassValues[i])
-    print(Max_Labels)
+        class_flag=False
+        for j in range(len(ClassNames)[i]):
+            pos_counter+=1
+            for k in ClassValues[i][j]:
+                if j!=track[pos_counter]:
+                    class_flag=True
+        if class_flag:
+            label+=1
+    print(track,label)
+    track_obj.LabelTrack(label)
+
 #
 #     #label=(track[1] in MotherPDGLis
 # #t)
