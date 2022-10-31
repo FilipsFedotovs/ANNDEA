@@ -86,7 +86,7 @@ for s in range(0,limit):
     pos_counter=0
     for i in range(len(ClassNames)):
         class_flag=False
-        for j in range(len(ClassNames)[i]):
+        for j in range(len(ClassNames[i])):
             pos_counter+=1
             for k in ClassValues[i][j]:
                 if j!=track[pos_counter]:
