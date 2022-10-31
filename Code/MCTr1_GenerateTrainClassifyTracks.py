@@ -87,8 +87,7 @@ ColumnsToImport=[PM.Rec_Track_ID,PM.Rec_Track_Domain,PM.x,PM.y,PM.z,PM.tx,PM.ty,
 for i in ClassNames:
     for j in i:
         ColumnsToImport.append(j)
-print(ColumnsToImport)
-exit()
+
 ########################################     Phase 1 - Create compact source file    #########################################
 print(UF.TimeStamp(),bcolors.BOLD+'Stage 0:'+bcolors.ENDC+' Preparing the source data...')
 
@@ -96,9 +95,7 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         print(UF.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
         data=pd.read_csv(input_file_location,
                     header=0,
-                    usecols=[PM.Rec_Track_ID,PM.Rec_Track_Domain,
-                            PM.x,PM.y,PM.z,PM.tx,PM.ty,
-                            PM.MC_Track_ID,PM.MC_Event_ID])
+                    usecols=ColumnsToImport)
         total_rows=len(data.axes[0])
         print(UF.TimeStamp(),'The raw data has ',total_rows,' hits')
         print(UF.TimeStamp(),'Removing unreconstructed hits...')
@@ -116,6 +113,7 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         data=data.drop([PM.MC_Event_ID],axis=1)
         data=data.drop([PM.MC_Track_ID],axis=1)
         compress_data=data.drop([PM.x,PM.y,PM.z,PM.tx,PM.ty],axis=1)
+
         compress_data['MC_Mother_Track_No']= compress_data['MC_Mother_Track_ID']
         compress_data=compress_data.groupby(by=['Rec_Seg_ID','MC_Mother_Track_ID'])['MC_Mother_Track_No'].count().reset_index()
         compress_data=compress_data.sort_values(['Rec_Seg_ID','MC_Mother_Track_No'],ascending=[1,0])
@@ -123,7 +121,8 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         data=data.drop(['MC_Mother_Track_ID'],axis=1)
         compress_data=compress_data.drop(['MC_Mother_Track_No'],axis=1)
         data=pd.merge(data, compress_data, how="left", on=['Rec_Seg_ID'])
-
+        print(data)
+        exit()
         if SliceData:
              print(UF.TimeStamp(),'Slicing the data...')
              ValidEvents=data.drop(data.index[(data[PM.x] > Xmax) | (data[PM.x] < Xmin) | (data[PM.y] > Ymax) | (data[PM.y] < Ymin)])
