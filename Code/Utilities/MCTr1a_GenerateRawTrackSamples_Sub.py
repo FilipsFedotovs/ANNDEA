@@ -43,9 +43,9 @@ ClassHeaders=ast.literal_eval(args.ClassHeaders)
 ClassNames=ast.literal_eval(args.ClassNames)
 ClassValues=ast.literal_eval(args.ClassValues)
 ExtraColumns=[]
-for i in ClassNames:
-    for j in i:
-        ExtraColumns.append(j)
+for j in ClassNames:
+    for k in j:
+        ExtraColumns.append(k)
 ########################################     Preset framework parameters    #########################################
 MaxSegments=int(args.MaxSegments)
 #Loading Directory locations
