@@ -81,9 +81,7 @@ limit = len(track_headers)
 Max_Labels=len(ClassNames)+1
 for s in range(0,limit):
     track=track_headers.pop(0)
-    print(track)
     track_obj=EMO([track[0]])
-    print(track.Header)
     label=0
     pos_counter=0
     for i in range(len(ClassNames)):
