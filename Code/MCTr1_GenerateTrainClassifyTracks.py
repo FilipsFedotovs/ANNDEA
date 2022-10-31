@@ -137,7 +137,6 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
 
         output_file_location=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/MUTr1_'+TrainSampleID+'_TRACKS.csv'
         print(UF.TimeStamp(),'Removing tracks which have less than',PM.MinHitsTrack,'hits...')
-        print(data)
         track_no_data=data.groupby(['MC_Mother_Track_ID','Rec_Seg_ID']+ExtraColumns,as_index=False).count()
         track_no_data=track_no_data.drop([PM.y,PM.z,PM.tx,PM.ty],axis=1)
         track_no_data=track_no_data.rename(columns={PM.x: "Rec_Seg_No"})
@@ -153,13 +152,11 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         new_combined_data=new_combined_data.rename(columns={PM.tx: "tx"})
         new_combined_data=new_combined_data.rename(columns={PM.ty: "ty"})
         new_combined_data.to_csv(output_file_location,index=False)
-        print(new_combined_data)
         data=new_combined_data[['Rec_Seg_ID']]
         print(UF.TimeStamp(),'Analysing the data sample in order to understand how many jobs to submit to HTCondor... ',bcolors.ENDC)
         data.drop_duplicates(subset='Rec_Seg_ID',keep='first',inplace=True)
         data = data.values.tolist()
         no_submissions=math.ceil(len(data)/PM.MaxSeeds)
-        print(no_submissions)
         print(UF.TimeStamp(), bcolors.OKGREEN+"The track segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+output_file_location+bcolors.ENDC)
         Meta=UF.TrainingSampleMeta(TrainSampleID)
         Meta.IniTrackMetaData(ClassHeaders,ClassNames,ClassValues,PM.MaxSegments,no_submissions)
@@ -167,7 +164,6 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         print(UF.PickleOperations(TrainSampleOutputMeta,'w', Meta)[1])
         print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
         print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 0 has successfully completed'+bcolors.ENDC)
-        exit()
 elif os.path.isfile(TrainSampleOutputMeta)==True:
     print(UF.TimeStamp(),'Loading previously saved data from ',bcolors.OKBLUE+TrainSampleOutputMeta+bcolors.ENDC)
     MetaInput=UF.PickleOperations(TrainSampleOutputMeta,'r', 'N/A')
@@ -242,32 +238,19 @@ while status<7:
       if status==1:
           print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
           print(UF.TimeStamp(),bcolors.BOLD+'Stage 1:'+bcolors.ENDC+' Sending hit cluster to the HTCondor, so tack segment combination pairs can be formed...')
-          OptionHeader = [ " --MaxSegments ", " --MaxSLG "," --MaxSTG "," --VetoMotherTrack "]
-          OptionLine = [MaxSegments, MaxSLG, MaxSTG,'"'+str(VetoMotherTrack)+'"']
-          JobSet=[]
-          for i in range(len(JobSets)):
-                JobSet.append(int(JobSets[i][2]))
-          TotJobs=0
-
-          if type(JobSet) is int:
-                        TotJobs=JobSet
-          elif type(JobSet[0]) is int:
-                        TotJobs=np.sum(JobSet)
-          elif type(JobSet[0][0]) is int:
-                        for lp in JobSet:
-                            TotJobs+=np.sum(lp)
+          OptionHeader = [ " --MaxSegments ", " --ClassNames "," --ClassValues "]
+          OptionLine = [MaxSegments,ClassNames,ClassValues]
           bad_pop=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,
                                     '/ANNADEA/Data/TRAIN_SET/',
-                                    'RawSeedsRes',
-                                    'MUTr1a',
-                                    '.csv',
+                                    'RawTrackSamples',
+                                    'MCTr1a',
+                                    '.pkl',
                                     TrainSampleID,
-                                    JobSet,
+                                    JobSets,
                                     OptionHeader,
                                     OptionLine,
-                                    'MUTr1a_GenerateRawSelectedSeeds_Sub.py',
-                                    False,
-                                    [" --PlateZ ",JobSets])
+                                    'MCTr1a_GenerateRawTrackSamples_Sub.py',
+                                    False)
           if len(bad_pop)==0:
               FreshStart=False
               print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 1 has successfully completed'+bcolors.ENDC)
@@ -288,20 +271,19 @@ while status<7:
                   if UserAnswer=='R':
                       bad_pop=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,
                                     '/ANNADEA/Data/TRAIN_SET/',
-                                    'RawSeedsRes',
-                                    'MUTr1a',
-                                    '.csv',
+                                    'RawTrackSamples',
+                                    'MCTr1a',
+                                    '.pkl',
                                     TrainSampleID,
-                                    JobSet,
+                                    JobSets,
                                     OptionHeader,
                                     OptionLine,
-                                    'MUTr1a_GenerateRawSelectedSeeds_Sub.py',
-                                    True,
-                                    [" --PlateZ ",JobSets])
+                                    'MCTr1a_GenerateRawTrackSamples_Sub.py',
+                                    True)
                       for bp in bad_pop:
                           UF.SubmitJobs2Condor(bp)
                   else:
-                     if AutoPilot(600,10,Patience,AFS_DIR,EOS_DIR,'/ANNADEA/Data/TRAIN_SET/','RawSeedsRes','MUTr1a','.csv',TrainSampleID,JobSet,OptionHeader,OptionLine,'MUTr1a_GenerateRawSelectedSeeds_Sub.py',[" --PlateZ ",JobSets],False,False):
+                     if AutoPilot(600,10,Patience,AFS_DIR,EOS_DIR,'/ANNADEA/Data/TRAIN_SET/','RawTrackSamples','MCTr1a','.pkl',TrainSampleID,JobSet,OptionHeader,OptionLine,'MCTr1a_GenerateRawTrackSamples_Sub.py'):
                          FreshStart=False
                          print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 1 has successfully completed'+bcolors.ENDC)
                          status=2
@@ -324,7 +306,7 @@ while status<7:
                       for bp in bad_pop:
                            UF.SubmitJobs2Condor(bp)
                       print(UF.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
-                      if AutoPilot(600,10,Patience,AFS_DIR,EOS_DIR,'/ANNADEA/Data/TRAIN_SET/','RawSeedsRes','MUTr1a','.csv',TrainSampleID,JobSet,OptionHeader,OptionLine,'MUTr1a_GenerateRawSelectedSeeds_Sub.py',[" --PlateZ ",JobSets],False,False):
+                      if AutoPilot(600,10,Patience,AFS_DIR,EOS_DIR,'/ANNADEA/Data/TRAIN_SET/','RawTrackSamples','MCTr1a','.pkl',TrainSampleID,JobSet,OptionHeader,OptionLine,'MCTr1a_GenerateRawTrackSamples_Sub.py'):
                           FreshStart=False
                           print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 1 has successfully completed'+bcolors.ENDC)
                           status=2
@@ -334,7 +316,7 @@ while status<7:
                           status=8
                           break
                    else:
-                      if AutoPilot(int(UserAnswer),10,Patience,AFS_DIR,EOS_DIR,'/ANNADEA/Data/TRAIN_SET/','RawSeedsRes','MUTr1a','.csv',TrainSampleID,JobSet,OptionHeader,OptionLine,'MUTr1a_GenerateRawSelectedSeeds_Sub.py',[" --PlateZ ",JobSets],False,False):
+                      if AutoPilot(int(UserAnswer),10,Patience,AFS_DIR,EOS_DIR,'/ANNADEA/Data/TRAIN_SET/','RawTrackSamples','MCTr1a','.pkl',TrainSampleID,JobSet,OptionHeader,OptionLine,'MCTr1a_GenerateRawTrackSamples_Sub.py'):
                           FreshStart=False
                           print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 1 has successfully completed'+bcolors.ENDC)
                           status=2
@@ -347,21 +329,20 @@ while status<7:
             if (TotJobs)==len(bad_pop):
                  bad_pop=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,
                                     '/ANNADEA/Data/TRAIN_SET/',
-                                    'RawSeedsRes',
-                                    'MUTr1a',
-                                    '.csv',
+                                    'RawTrackSamples',
+                                    'MCTr1a',
+                                    '.pkl',
                                     TrainSampleID,
-                                    JobSet,
+                                    JobSets,
                                     OptionHeader,
                                     OptionLine,
-                                    'MUTr1a_GenerateRawSelectedSeeds_Sub.py',
-                                    True,
-                                    [" --PlateZ ",JobSets])
+                                    'MCTr1a_GenerateRawTrackSamples_Sub.py',
+                                    True)
                  for bp in bad_pop:
                           UF.SubmitJobs2Condor(bp)
 
 
-                 if AutoPilot(600,10,Patience,AFS_DIR,EOS_DIR,'/ANNADEA/Data/TRAIN_SET/','RawSeedsRes','MUTr1a','.csv',TrainSampleID,JobSet,OptionHeader,OptionLine,'MUTr1a_GenerateRawSelectedSeeds_Sub.py',[" --PlateZ ",JobSets],False,False):
+                 if AutoPilot(600,10,Patience,AFS_DIR,EOS_DIR,'/ANNADEA/Data/TRAIN_SET/','RawTrackSamples','MCTr1a','.pkl',TrainSampleID,JobSet,OptionHeader,OptionLine,'MCTr1a_GenerateRawTrackSamples_Sub.py'):
                         FreshStart=False
                         print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 1 has successfully completed'+bcolors.ENDC)
                         status=2
@@ -374,7 +355,7 @@ while status<7:
             elif len(bad_pop)>0:
                       for bp in bad_pop:
                            UF.SubmitJobs2Condor(bp)
-                      if AutoPilot(600,10,Patience,AFS_DIR,EOS_DIR,'/ANNADEA/Data/TRAIN_SET/','RawSeedsRes','MUTr1a','.csv',TrainSampleID,JobSet,OptionHeader,OptionLine,'MUTr1a_GenerateRawSelectedSeeds_Sub.py',[" --PlateZ ",JobSets],False,False):
+                      if AutoPilot(600,10,Patience,AFS_DIR,EOS_DIR,'/ANNADEA/Data/TRAIN_SET/','RawTrackSamples','MCTr1a','.pkl',TrainSampleID,JobSet,OptionHeader,OptionLine,'MCTr1a_GenerateRawTrackSamples_Sub.py'):
                           FreshStart=False
                           print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 1 has successfully completed'+bcolors.ENDC)
                           status=2
