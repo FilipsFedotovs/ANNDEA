@@ -283,7 +283,7 @@ while status<7:
                       for bp in bad_pop:
                           UF.SubmitJobs2Condor(bp)
                   else:
-                     if AutoPilot(600,10,Patience,AFS_DIR,EOS_DIR,'/ANNADEA/Data/TRAIN_SET/','RawTrackSamples','MCTr1a','.pkl',TrainSampleID,JobSet,OptionHeader,OptionLine,'MCTr1a_GenerateRawTrackSamples_Sub.py'):
+                     if AutoPilot(600,10,Patience,AFS_DIR,EOS_DIR,'/ANNADEA/Data/TRAIN_SET/','RawTrackSamples','MCTr1a','.pkl',TrainSampleID,JobSets,OptionHeader,OptionLine,'MCTr1a_GenerateRawTrackSamples_Sub.py'):
                          FreshStart=False
                          print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 1 has successfully completed'+bcolors.ENDC)
                          status=2
@@ -306,7 +306,7 @@ while status<7:
                       for bp in bad_pop:
                            UF.SubmitJobs2Condor(bp)
                       print(UF.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
-                      if AutoPilot(600,10,Patience,AFS_DIR,EOS_DIR,'/ANNADEA/Data/TRAIN_SET/','RawTrackSamples','MCTr1a','.pkl',TrainSampleID,JobSet,OptionHeader,OptionLine,'MCTr1a_GenerateRawTrackSamples_Sub.py'):
+                      if AutoPilot(600,10,Patience,AFS_DIR,EOS_DIR,'/ANNADEA/Data/TRAIN_SET/','RawTrackSamples','MCTr1a','.pkl',TrainSampleID,JobSets,OptionHeader,OptionLine,'MCTr1a_GenerateRawTrackSamples_Sub.py'):
                           FreshStart=False
                           print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 1 has successfully completed'+bcolors.ENDC)
                           status=2
@@ -316,7 +316,7 @@ while status<7:
                           status=8
                           break
                    else:
-                      if AutoPilot(int(UserAnswer),10,Patience,AFS_DIR,EOS_DIR,'/ANNADEA/Data/TRAIN_SET/','RawTrackSamples','MCTr1a','.pkl',TrainSampleID,JobSet,OptionHeader,OptionLine,'MCTr1a_GenerateRawTrackSamples_Sub.py'):
+                      if AutoPilot(int(UserAnswer),10,Patience,AFS_DIR,EOS_DIR,'/ANNADEA/Data/TRAIN_SET/','RawTrackSamples','MCTr1a','.pkl',TrainSampleID,JobSets,OptionHeader,OptionLine,'MCTr1a_GenerateRawTrackSamples_Sub.py'):
                           FreshStart=False
                           print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 1 has successfully completed'+bcolors.ENDC)
                           status=2
@@ -342,7 +342,7 @@ while status<7:
                           UF.SubmitJobs2Condor(bp)
 
 
-                 if AutoPilot(600,10,Patience,AFS_DIR,EOS_DIR,'/ANNADEA/Data/TRAIN_SET/','RawTrackSamples','MCTr1a','.pkl',TrainSampleID,JobSet,OptionHeader,OptionLine,'MCTr1a_GenerateRawTrackSamples_Sub.py'):
+                 if AutoPilot(600,10,Patience,AFS_DIR,EOS_DIR,'/ANNADEA/Data/TRAIN_SET/','RawTrackSamples','MCTr1a','.pkl',TrainSampleID,JobSets,OptionHeader,OptionLine,'MCTr1a_GenerateRawTrackSamples_Sub.py'):
                         FreshStart=False
                         print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 1 has successfully completed'+bcolors.ENDC)
                         status=2
@@ -355,7 +355,7 @@ while status<7:
             elif len(bad_pop)>0:
                       for bp in bad_pop:
                            UF.SubmitJobs2Condor(bp)
-                      if AutoPilot(600,10,Patience,AFS_DIR,EOS_DIR,'/ANNADEA/Data/TRAIN_SET/','RawTrackSamples','MCTr1a','.pkl',TrainSampleID,JobSet,OptionHeader,OptionLine,'MCTr1a_GenerateRawTrackSamples_Sub.py'):
+                      if AutoPilot(600,10,Patience,AFS_DIR,EOS_DIR,'/ANNADEA/Data/TRAIN_SET/','RawTrackSamples','MCTr1a','.pkl',TrainSampleID,JobSets,OptionHeader,OptionLine,'MCTr1a_GenerateRawTrackSamples_Sub.py'):
                           FreshStart=False
                           print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 1 has successfully completed'+bcolors.ENDC)
                           status=2
