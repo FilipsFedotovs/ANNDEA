@@ -87,10 +87,11 @@ for s in range(0,limit):
     label=1
     for i in range(len(ClassNames)):
         print(ClassNames[i])
+        print(ClassValues[i])
     print(Max_Labels)
 #
-#
-#     #label=(track[1] in MotherPDGList)
+#     #label=(track[1] in MotherPDGLis
+# #t)
 #     # for test
 #     #print(track[0], track[1], label)
 #
