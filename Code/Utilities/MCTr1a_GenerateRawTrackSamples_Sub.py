@@ -10,6 +10,7 @@ import math #We use it for data manipulation
 import gc  #Helps to clear memory
 import numpy as np
 import ast
+from UtilityFunctions import EMO
 
 
 
@@ -71,17 +72,21 @@ track_data = data[['x','y','z','tx','ty','Rec_Seg_ID']].values.tolist() #Convirt
 
 track_headers = track_headers[int(i)*MaxSegments : min((int(i)+1)*MaxSegments, len(track_headers))]
 print(track_headers)
-# gc.collect()
-#
-# track_counter=0
-# print(UF.TimeStamp(),bcolors.OKGREEN+'Data has been successfully loaded and prepared..'+bcolors.ENDC)
-# #create seeds
-# GoodTracks=[]
-# print(UF.TimeStamp(),'Beginning the image generation part...')
-# limit = len(tracks)
-#
-# for s in range(0,limit):
-#     track=tracks.pop(0)
+gc.collect()
+
+track_counter=0
+print(UF.TimeStamp(),bcolors.OKGREEN+'Data has been successfully loaded and prepared..'+bcolors.ENDC)
+#create seeds
+GoodTracks=[]
+print(UF.TimeStamp(),'Beginning the image generation part...')
+limit = len(track_headers)
+
+for s in range(0,limit):
+    track=track_headers.pop(0)
+    print(track)
+    track=EMO(track[0])
+    print(track.Header)
+    exit()
 #
 #
 #     #label=(track[1] in MotherPDGList)
