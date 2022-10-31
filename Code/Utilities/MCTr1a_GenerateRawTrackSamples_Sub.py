@@ -88,11 +88,9 @@ for s in range(0,limit):
         class_flag=False
         for j in range(len(ClassNames[i])):
             pos_counter+=1
-            for k in ClassValues[i][j]:
-
-                if k!=track[pos_counter]:
+            if (track[pos_counter] in ClassValues[i][j])==False:
                     class_flag=True
-                    print(pos_counter,k,track[pos_counter],class_flag)
+                    print(pos_counter,k,track[pos_counter],class_flag,(track[pos_counter] in ClassValues[i][j]))
                     x=input()
         if class_flag:
             label+=1
