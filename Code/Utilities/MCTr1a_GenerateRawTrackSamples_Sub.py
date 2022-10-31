@@ -86,7 +86,7 @@ for s in range(0,limit):
     print(track.Header)
     label=1
     for i in range(ClassNames):
-        print(ClassNames)
+        print(ClassNames[i])
     print(Max_Labels)
 #
 #
