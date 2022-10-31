@@ -66,12 +66,11 @@ for i in ExtraColumns:
 track_headers = data[['Rec_Seg_ID']+ExtraColumns]
 track_headers = track_headers.drop_duplicates()
 track_headers=track_headers.values.tolist()
-print(track_headers)
-exit()
+
 track_data = data[['x','y','z','tx','ty','Rec_Seg_ID']].values.tolist() #Convirting the result to List data type
-print(track_data)
-exit()
-# tracks = tracks[int(Set)*MaxSegmentsPerJob : min((int(Set)+1)*MaxSegmentsPerJob, len(tracks))]
+
+track_headers = track_headers[int(i)*MaxSegments : min((int(i)+1)*MaxSegments, len(track_headers))]
+print(track_headers)
 # gc.collect()
 #
 # track_counter=0
