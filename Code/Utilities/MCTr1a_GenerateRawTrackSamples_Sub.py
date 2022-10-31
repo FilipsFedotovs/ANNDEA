@@ -75,7 +75,7 @@ print(track_headers)
 gc.collect()
 
 track_counter=0
-print(UF.TimeStamp(),bcolors.OKGREEN+'Data has been successfully loaded and prepared..'+bcolors.ENDC)
+print('Data has been successfully loaded and prepared..')
 #create seeds
 GoodTracks=[]
 print(UF.TimeStamp(),'Beginning the image generation part...')
