@@ -56,7 +56,6 @@ ModelMeta.IniModelMeta(ModelParams,ModelFramework, Meta, ModelArchitecture, Mode
 if ModelType=='CNN':
         import os
         os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # FATAL
-        print(UF.TimeStamp(), bcolors.WARNING+"Model/state data files are missing, skipping this step..." +bcolors.ENDC)
         model = UF.GenerateModel(ModelMeta,[0,0,0,0])
         model.summary()
 elif ModelMeta.ModelType=='GNN':

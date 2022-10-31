@@ -285,17 +285,13 @@ def AutoPilot(wait_min, interval_min, max_interval_tolerance,AFS,EOS,path,o,pfx,
 def UpdateStatus(status):
     Meta.UpdateStatus(status)
     print(UF.PickleOperations(RecOutputMeta,'w', Meta)[1])
-UpdateStatus(9)
+
 if Mode=='RESET':
     print(UF.TimeStamp(),'Performing the cleanup... ',bcolors.ENDC)
     HTCondorTag="SoftUsed == \"ANNADEA-EUTr1a-"+RecBatchID+"\""
     UF.EvalCleanUp(AFS_DIR, EOS_DIR, 'EUTr1a_'+RecBatchID, ['EUTr1a','EUTr1b'], HTCondorTag)
     HTCondorTag="SoftUsed == \"ANNADEA-RUTr1a-"+RecBatchID+"\""
     UF.RecCleanUp(AFS_DIR, EOS_DIR, 'RUTr1a_'+RecBatchID, ['RUTr1a',RecBatchID+'_REC_LOG.csv'], HTCondorTag)
-    # HTCondorTag="SoftUsed == \"ANNADEA-RUTr1c-"+RecBatchID+"\""
-    # UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'RUTr1c_'+RecBatchID, ['RUTr1c'], HTCondorTag)
-    # HTCondorTag="SoftUsed == \"ANNADEA-RUTr1d-"+RecBatchID+"\""
-    # UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'RUTr1d_'+RecBatchID, ['RUTr1d'], HTCondorTag)
     FreshStart=False
     if Log:
        UpdateStatus(-2) 
@@ -337,6 +333,7 @@ while status<11:
               print(UF.TimeStamp(),bcolors.OKGREEN+'Stage -2 has successfully completed'+bcolors.ENDC)
               UpdateStatus(-1)
               status=-1
+              continue
               
 
           if FreshStart:
@@ -370,6 +367,7 @@ while status<11:
                          print(UF.TimeStamp(),bcolors.OKGREEN+'Stage -2 has successfully completed'+bcolors.ENDC)
                          UpdateStatus(-1)
                          status=-1
+                         continue
                      else:
                          print(UF.TimeStamp(),bcolors.FAIL+'Stage -2 is uncompleted...'+bcolors.ENDC)
                          status=20
@@ -393,6 +391,7 @@ while status<11:
                           print(UF.TimeStamp(),bcolors.OKGREEN+'Stage -2 has successfully completed'+bcolors.ENDC)
                           UpdateStatus(-1)
                           status=-1
+                          continue
                       else:
                           print(UF.TimeStamp(),bcolors.FAIL+'Stage -2 is uncompleted...'+bcolors.ENDC)
                           status=20
@@ -403,6 +402,7 @@ while status<11:
                           print(UF.TimeStamp(),bcolors.OKGREEN+'Stage -2 has successfully completed'+bcolors.ENDC)
                           UpdateStatus(-1)
                           status=-1
+                          continue
                       else:
                           print(UF.TimeStamp(),bcolors.FAIL+'Stage -2 is uncompleted...'+bcolors.ENDC)
                           status=20
@@ -412,12 +412,14 @@ while status<11:
                   print(UF.TimeStamp(),bcolors.OKGREEN+'Stage -2 has successfully completed'+bcolors.ENDC)
                   UpdateStatus(-1)
                   status=-1
+                  continue
           else:
             if len(bad_pop)==0:
               FreshStart=False
               print(UF.TimeStamp(),bcolors.OKGREEN+'Stage -2 has successfully completed'+bcolors.ENDC)
               UpdateStatus(-1)
               status=-1
+              continue
             elif (TotJobs)==len(bad_pop):
                  bad_pop=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,
                                     '/ANNADEA/Data/TEST_SET/',
@@ -438,6 +440,7 @@ while status<11:
                         print(UF.TimeStamp(),bcolors.OKGREEN+'Stage -2 has successfully completed'+bcolors.ENDC)
                         UpdateStatus(-1)
                         status=-1
+                        continue
                  else:
                      print(UF.TimeStamp(),bcolors.FAIL+'Stage -2 is uncompleted...'+bcolors.ENDC)
                      status=20
@@ -451,6 +454,7 @@ while status<11:
                           print(UF.TimeStamp(),bcolors.OKGREEN+'Stage -2 has successfully completed'+bcolors.ENDC)
                           UpdateStatus(-1)
                           status=-1
+                          continue
                       else:
                           print(UF.TimeStamp(),bcolors.FAIL+'Stage -2 is uncompleted...'+bcolors.ENDC)
                           status=20
@@ -505,6 +509,7 @@ while status<11:
         print(UF.TimeStamp(),bcolors.OKGREEN+'Stage -1 has successfully completed'+bcolors.ENDC)
         UpdateStatus(1)
         status=1
+        continue
       if status==1:
           print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
           print(UF.TimeStamp(),bcolors.BOLD+'Stage 1:'+bcolors.ENDC+' Sending hit cluster to the HTCondor, so tack segment combination pairs can be formed...')
@@ -540,6 +545,7 @@ while status<11:
               print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 1 has successfully completed'+bcolors.ENDC)
               UpdateStatus(2)
               status=2
+              continue
 
 
           if FreshStart:
@@ -574,6 +580,7 @@ while status<11:
                          print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 1 has successfully completed'+bcolors.ENDC)
                          UpdateStatus(2)
                          status=2
+                         continue
                      else:
                          print(UF.TimeStamp(),bcolors.FAIL+'Stage 1 is uncompleted...'+bcolors.ENDC)
                          status=20
@@ -597,6 +604,7 @@ while status<11:
                           print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 1 has successfully completed'+bcolors.ENDC)
                           UpdateStatus(2)
                           status=2
+                          continue
                       else:
                           print(UF.TimeStamp(),bcolors.FAIL+'Stage 1 is uncompleted...'+bcolors.ENDC)
                           status=20
@@ -607,6 +615,7 @@ while status<11:
                           print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 1 has successfully completed'+bcolors.ENDC)
                           UpdateStatus(2)
                           status=2
+                          continue
                       else:
                           print(UF.TimeStamp(),bcolors.FAIL+'Stage 1 is uncompleted...'+bcolors.ENDC)
                           status=20
@@ -634,6 +643,7 @@ while status<11:
                         print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 1 has successfully completed'+bcolors.ENDC)
                         UpdateStatus(2)
                         status=2
+                        continue
                  else:
                      print(UF.TimeStamp(),bcolors.FAIL+'Stage 1 is uncompleted...'+bcolors.ENDC)
                      status=20
@@ -647,6 +657,7 @@ while status<11:
                           print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 1 has successfully completed'+bcolors.ENDC)
                           UpdateStatus(2)
                           status=2
+                          continue
                       else:
                           print(UF.TimeStamp(),bcolors.FAIL+'Stage 1 is uncompleted...'+bcolors.ENDC)
                           status=20
@@ -752,6 +763,7 @@ while status<11:
         print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
         UpdateStatus(3)
         status=3
+        continue
       if status==3:
          print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
          print(UF.TimeStamp(),bcolors.BOLD+'Stage '+str(status)+':'+bcolors.ENDC+' Taking the list of seeds previously generated by Stage 2, converting them into Emulsion Objects and doing more rigorous selection')
@@ -814,6 +826,7 @@ while status<11:
                         print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
                         UpdateStatus(4)
                         status=4
+                        continue
                     else:
                         print(UF.TimeStamp(),bcolors.FAIL+'Stage '+str(status)+' is uncompleted...'+bcolors.ENDC)
                         status=20
@@ -837,6 +850,7 @@ while status<11:
                          print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
                          UpdateStatus(4)
                          status=4
+                         continue
                       else:
                          print(UF.TimeStamp(),bcolors.FAIL+'Stage '+str(status)+' is uncompleted...'+bcolors.ENDC)
                          status=20
@@ -848,6 +862,7 @@ while status<11:
                          print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
                          UpdateStatus(4)
                          status=4
+                         continue
                       else:
                          print(UF.TimeStamp(),bcolors.FAIL+'Stage '+str(status)+' is uncompleted...'+bcolors.ENDC)
                          status=20
@@ -858,6 +873,7 @@ while status<11:
                 print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
                 UpdateStatus(4)
                 status=4
+                continue
          else:
             if (TotJobs)==len(bad_pop):
                  bad_pop=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,
@@ -878,6 +894,7 @@ while status<11:
                         print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
                         UpdateStatus(4)
                         status=4
+                        continue
                  else:
                      print(UF.TimeStamp(),bcolors.FAIL+'Stage '+str(status)+' is uncompleted...'+bcolors.ENDC)
                      status=20
@@ -892,6 +909,7 @@ while status<11:
                          print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
                          UpdateStatus(4)
                          status=4
+                         continue
                       else:
                           print(UF.TimeStamp(),bcolors.FAIL+'Stage '+str(status)+' is uncompleted...'+bcolors.ENDC)
                           status=20
@@ -901,6 +919,7 @@ while status<11:
                 print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
                 UpdateStatus(4)
                 status=4
+                continue
       if status==4:
         print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
         print(UF.TimeStamp(),bcolors.BOLD+'Stage '+str(status)+':'+bcolors.ENDC+' Analysing the training samples')
@@ -959,6 +978,7 @@ while status<11:
         print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
         UpdateStatus(5)
         status=5
+        continue
       if status==5:
          print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
          print(UF.TimeStamp(),bcolors.BOLD+'Stage '+str(status)+':'+bcolors.ENDC+' Taking the list of seeds previously generated by Stage 2, converting them into Emulsion Objects and doing more rigorous selection')
@@ -1022,6 +1042,7 @@ while status<11:
                         print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
                         UpdateStatus(6)
                         status=6
+                        continue
                     else:
                         print(UF.TimeStamp(),bcolors.FAIL+'Stage '+str(status)+' is uncompleted...'+bcolors.ENDC)
                         status=20
@@ -1045,6 +1066,7 @@ while status<11:
                          print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
                          UpdateStatus(6)
                          status=6
+                         continue
                       else:
                          print(UF.TimeStamp(),bcolors.FAIL+'Stage '+str(status)+' is uncompleted...'+bcolors.ENDC)
                          status=20
@@ -1056,6 +1078,7 @@ while status<11:
                          print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
                          UpdateStatus(6)
                          status=6
+                         continue
                       else:
                          print(UF.TimeStamp(),bcolors.FAIL+'Stage '+str(status)+' is uncompleted...'+bcolors.ENDC)
                          status=20
@@ -1066,6 +1089,7 @@ while status<11:
                 print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
                 UpdateStatus(6)
                 status=6
+                continue
          else:
             if (TotJobs)==len(bad_pop):
                  bad_pop=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,
@@ -1086,6 +1110,7 @@ while status<11:
                         print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
                         UpdateStatus(6)
                         status=6
+                        continue
                  else:
                      print(UF.TimeStamp(),bcolors.FAIL+'Stage '+str(status)+' is uncompleted...'+bcolors.ENDC)
                      status=20
@@ -1109,6 +1134,7 @@ while status<11:
                 print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
                 UpdateStatus(6)
                 status=6
+                continue
       if status==6:
          print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
          print(UF.TimeStamp(),bcolors.BOLD+'Stage '+str(status)+':'+bcolors.ENDC+' Taking the list of seeds previously generated by Stage 2, converting them into Emulsion Objects and doing more rigorous selection')
@@ -1178,6 +1204,7 @@ while status<11:
                         print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
                         UpdateStatus(7)
                         status=7
+                        continue
                     else:
                         print(UF.TimeStamp(),bcolors.FAIL+'Stage '+str(status)+' is uncompleted...'+bcolors.ENDC)
                         status=20
@@ -1201,6 +1228,7 @@ while status<11:
                          print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
                          UpdateStatus(7)
                          status=7
+                         continue
                       else:
                          print(UF.TimeStamp(),bcolors.FAIL+'Stage '+str(status)+' is uncompleted...'+bcolors.ENDC)
                          status=20
@@ -1222,6 +1250,7 @@ while status<11:
                 print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
                 UpdateStatus(7)
                 status=7
+                continue
          else:
             if (TotJobs)==len(bad_pop):
                  bad_pop=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,
@@ -1242,6 +1271,7 @@ while status<11:
                         print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
                         UpdateStatus(7)
                         status=7
+                        continue
                  else:
                      print(UF.TimeStamp(),bcolors.FAIL+'Stage '+str(status)+' is uncompleted...'+bcolors.ENDC)
                      status=20
@@ -1256,6 +1286,7 @@ while status<11:
                          print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
                          UpdateStatus(7)
                          status=7
+                         continue
                       else:
                           print(UF.TimeStamp(),bcolors.FAIL+'Stage '+str(status)+' is uncompleted...'+bcolors.ENDC)
                           status=20
@@ -1265,6 +1296,7 @@ while status<11:
                 print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
                 UpdateStatus(7)
                 status=7
+                continue
       if status==7:
          print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
          print(UF.TimeStamp(),bcolors.BOLD+'Stage '+str(status)+':'+bcolors.ENDC+' Taking the list of seeds previously generated by Stage 2, converting them into Emulsion Objects and doing more rigorous selection')
@@ -1333,6 +1365,7 @@ while status<11:
                         print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
                         UpdateStatus(8)
                         status=8
+                        continue
                     else:
                         print(UF.TimeStamp(),bcolors.FAIL+'Stage '+str(status)+' is uncompleted...'+bcolors.ENDC)
                         status=20
@@ -1356,6 +1389,7 @@ while status<11:
                          print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
                          UpdateStatus(8)
                          status=8
+                         continue
                       else:
                          print(UF.TimeStamp(),bcolors.FAIL+'Stage '+str(status)+' is uncompleted...'+bcolors.ENDC)
                          status=20
@@ -1367,6 +1401,7 @@ while status<11:
                          print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
                          UpdateStatus(8)
                          status=8
+                         continue
                       else:
                          print(UF.TimeStamp(),bcolors.FAIL+'Stage '+str(status)+' is uncompleted...'+bcolors.ENDC)
                          status=20
@@ -1377,6 +1412,7 @@ while status<11:
                 print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
                 UpdateStatus(8)
                 status=8
+                continue
          else:
             if (TotJobs)==len(bad_pop):
                  bad_pop=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,
@@ -1397,6 +1433,7 @@ while status<11:
                         print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
                         UpdateStatus(8)
                         status=8
+                        continue
                  else:
                      print(UF.TimeStamp(),bcolors.FAIL+'Stage '+str(status)+' is uncompleted...'+bcolors.ENDC)
                      status=20
@@ -1420,6 +1457,7 @@ while status<11:
                 print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
                 UpdateStatus(8)
                 status=8
+                continue
       if status==8:
          print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
          print(UF.TimeStamp(),bcolors.BOLD+'Stage '+str(status)+':'+bcolors.ENDC+' Taking the list of seeds previously generated by Stage 2, converting them into Emulsion Objects and doing more rigorous selection')
@@ -1446,6 +1484,7 @@ while status<11:
 
          UpdateStatus(9)
          status=9
+         continue
       if status==9:
                  print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
                  print(UF.TimeStamp(),bcolors.BOLD+'Stage '+str(status)+':'+bcolors.ENDC+' Taking the list of seeds previously generated by Stage 2, converting them into Emulsion Objects and doing more rigorous selection')
@@ -1521,6 +1560,7 @@ while status<11:
                     print(UF.TimeStamp(), bcolors.OKGREEN+"The log data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+EOS_DIR+'/ANNADEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv'+bcolors.ENDC)
                  UpdateStatus(10)
                  status=10
+                 continue
       if status==10:
                 print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
                 print(UF.TimeStamp(),bcolors.BOLD+'Stage '+str(status)+':'+bcolors.ENDC+' Taking the list of seeds previously generated by Stage 2, converting them into Emulsion Objects and doing more rigorous selection')
@@ -1553,7 +1593,6 @@ while status<11:
                 new_combined_data.to_csv(output_file_location,index=False)
                 print(UF.TimeStamp(), bcolors.OKGREEN+"The re-glued track data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+output_file_location+bcolors.ENDC)
                 print(bcolors.HEADER+"############################################# End of the program ################################################"+bcolors.ENDC)
-
                 UpdateStatus(15)
                 status=15
                 continue
