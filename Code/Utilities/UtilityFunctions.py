@@ -47,6 +47,12 @@ class TrainingSampleMeta:
           self.X_overlap=X_overlap
           self.Y_overlap=Y_overlap
           self.Z_overlap=Z_overlap
+      def IniTrackMetaData(self,ClassHeaders,ClassNames,ClassValues,MaxSegments,JobSets):
+          self.ClassHeaders=ClassHeaders
+          self.ClassNames=ClassNames
+          self.ClassValues=ClassValues
+          self.MaxSegments=MaxSegments
+          self.JobSets=JobSets
       def IniTrackSeedMetaData(self,MaxSLG,MaxSTG,MaxDOCA,MaxAngle,JobSets,MaxSegments,VetoMotherTrack,MaxSeeds):
           self.MaxSLG=MaxSLG
           self.MaxSTG=MaxSTG
@@ -56,7 +62,6 @@ class TrainingSampleMeta:
           self.MaxSegments=MaxSegments
           self.MaxSeeds=MaxSeeds
           self.VetoMotherTrack=VetoMotherTrack
-
       def UpdateHitClusterMetaData(self,NoS,NoNF,NoEF,NoSets):
           self.num_node_features=NoNF
           self.num_edge_features=NoEF
