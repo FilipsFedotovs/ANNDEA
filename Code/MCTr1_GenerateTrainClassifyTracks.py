@@ -84,10 +84,11 @@ EOSsubModelDIR=EOSsubDIR+'/'+'Models'
 TrainSampleOutputMeta=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/'+TrainSampleID+'_info.pkl'
 required_file_location=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/MCTr1_'+TrainSampleID+'_TRACKS.csv'
 ColumnsToImport=[PM.Rec_Track_ID,PM.Rec_Track_Domain,PM.x,PM.y,PM.z,PM.tx,PM.ty,PM.MC_Track_ID,PM.MC_Event_ID]
+ExtraColumns=[]
 for i in ClassNames:
     for j in i:
         ColumnsToImport.append(j)
-
+        ExtraColumns.append(j)
 ########################################     Phase 1 - Create compact source file    #########################################
 print(UF.TimeStamp(),bcolors.BOLD+'Stage 0:'+bcolors.ENDC+' Preparing the source data...')
 
@@ -103,9 +104,12 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         final_rows=len(data.axes[0])
         print(UF.TimeStamp(),'The cleaned data has ',final_rows,' hits')
         data[PM.MC_Event_ID] = data[PM.MC_Event_ID].astype(str)
+        for i in ExtraColumns:
+            data[i]=data[i].astype(str)
         data[PM.MC_Track_ID] = data[PM.MC_Track_ID].astype(str)
         data[PM.Rec_Track_ID] = data[PM.Rec_Track_ID].astype(str)
         data[PM.Rec_Track_Domain] = data[PM.Rec_Track_Domain].astype(str)
+        data[PM.MC_Event_ID] = data[PM.MC_Event_ID].astype(str)
         data['Rec_Seg_ID'] = data[PM.Rec_Track_Domain] + '-' + data[PM.Rec_Track_ID]
         data['MC_Mother_Track_ID'] = data[PM.MC_Event_ID] + '-' + data[PM.MC_Track_ID]
         data=data.drop([PM.Rec_Track_ID],axis=1)
@@ -121,8 +125,7 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         data=data.drop(['MC_Mother_Track_ID'],axis=1)
         compress_data=compress_data.drop(['MC_Mother_Track_No'],axis=1)
         data=pd.merge(data, compress_data, how="left", on=['Rec_Seg_ID'])
-        print(data)
-        exit()
+
         if SliceData:
              print(UF.TimeStamp(),'Slicing the data...')
              ValidEvents=data.drop(data.index[(data[PM.x] > Xmax) | (data[PM.x] < Xmin) | (data[PM.y] > Ymax) | (data[PM.y] < Ymin)])
@@ -166,6 +169,7 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         print(UF.PickleOperations(TrainSampleOutputMeta,'w', Meta)[1])
         print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
         print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 0 has successfully completed'+bcolors.ENDC)
+        print(data)
 elif os.path.isfile(TrainSampleOutputMeta)==True:
     print(UF.TimeStamp(),'Loading previously saved data from ',bcolors.OKBLUE+TrainSampleOutputMeta+bcolors.ENDC)
     MetaInput=UF.PickleOperations(TrainSampleOutputMeta,'r', 'N/A')
@@ -220,29 +224,17 @@ def AutoPilot(wait_min, interval_min, max_interval_tolerance,AFS,EOS,path,o,pfx,
          else:
               return True
      return False
-def CheckStatus():
-    if os.path.isfile(EOS_DIR+'/ANNADEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_TRACK_SEEDS_OUTPUT_1.pkl'):
-        return 7
-    elif os.path.isfile(EOS_DIR+'/ANNADEA/Data/TRAIN_SET/MUTr1d_'+TrainSampleID+'_SampledCompressedSeeds_0.pkl'):
-        return 6
-    elif os.path.isfile(EOS_DIR+'/ANNADEA/Data/TRAIN_SET/MUTr1c_'+TrainSampleID+'_CompressedSeeds_0.pkl'):
-        return 5
-    elif os.path.isfile(EOS_DIR+'/ANNADEA/Data/TRAIN_SET/MUTr1b_'+TrainSampleID+'_RefinedSeeds_0_0_0.pkl'):
-        return 3
-    elif os.path.isfile(EOS_DIR+'/ANNADEA/Data/TRAIN_SET/MUTr1a_'+TrainSampleID+'_SelectedSeeds_0_0_0.csv'):
-        return 2
-    else:
-        return 1
+
 if Mode=='RESET':
     print(UF.TimeStamp(),'Performing the cleanup... ',bcolors.ENDC)
-    HTCondorTag="SoftUsed == \"ANNADEA-MUTr1a-"+TrainSampleID+"\""
-    UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MUTr1a_'+TrainSampleID, ['MUTr1a'], HTCondorTag)
-    HTCondorTag="SoftUsed == \"ANNADEA-MUTr1b-"+TrainSampleID+"\""
-    UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MUTr1b_'+TrainSampleID, ['MUTr1b'], HTCondorTag)
-    HTCondorTag="SoftUsed == \"ANNADEA-MUTr1c-"+TrainSampleID+"\""
-    UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MUTr1c_'+TrainSampleID, ['MUTr1c'], HTCondorTag)
-    HTCondorTag="SoftUsed == \"ANNADEA-MUTr1d-"+TrainSampleID+"\""
-    UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MUTr1d_'+TrainSampleID, ['MUTr1d'], HTCondorTag)
+    HTCondorTag="SoftUsed == \"ANNADEA-MCTr1a-"+TrainSampleID+"\""
+    UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MCTr1a_'+TrainSampleID, ['MCTr1a'], HTCondorTag)
+    HTCondorTag="SoftUsed == \"ANNADEA-MCTr1b-"+TrainSampleID+"\""
+    UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MCTr1b_'+TrainSampleID, ['MCTr1b'], HTCondorTag)
+    HTCondorTag="SoftUsed == \"ANNADEA-MCTr1c-"+TrainSampleID+"\""
+    UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MCTr1c_'+TrainSampleID, ['MCTr1c'], HTCondorTag)
+    HTCondorTag="SoftUsed == \"ANNADEA-MCTr1d-"+TrainSampleID+"\""
+    UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MCTr1d_'+TrainSampleID, ['MCTr1d'], HTCondorTag)
     FreshStart=False
     UpdateStatus(1)
     status=1
