@@ -67,7 +67,7 @@ track_headers=track_headers.values.tolist()
 track_data = data[['x','y','z','tx','ty','Rec_Seg_ID']].values.tolist() #Convirting the result to List data type
 
 track_headers = track_headers[int(i)*MaxSegments : min((int(i)+1)*MaxSegments, len(track_headers))]
-print(track_headers)
+
 gc.collect()
 
 track_counter=0
