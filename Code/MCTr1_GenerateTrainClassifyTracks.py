@@ -87,10 +87,12 @@ ColumnsToImport=[PM.Rec_Track_ID,PM.Rec_Track_Domain,PM.x,PM.y,PM.z,PM.tx,PM.ty,
 ExtraColumns=[]
 for i in ClassNames:
     for j in i:
-        ColumnsToImport.append(j)
+        if (j in ColumnsToImport)==False:
+            ColumnsToImport.append(j)
         if (j in ExtraColumns)==False:
                 ExtraColumns.append(j)
 print(ExtraColumns)
+print(ColumnsToImport)
 exit()
 ########################################     Phase 1 - Create compact source file    #########################################
 print(UF.TimeStamp(),bcolors.BOLD+'Stage 0:'+bcolors.ENDC+' Preparing the source data...')
