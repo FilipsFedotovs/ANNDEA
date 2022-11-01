@@ -82,6 +82,9 @@ for s in range(0,limit):
     track_obj=EMO([track[0]])
     label=0
     pos_counter=0
+    print(track)
+    print(ClassNames)
+    exit()
     for i in range(len(ClassNames)):
         class_flag=False
         for j in range(len(ClassNames[i])):
