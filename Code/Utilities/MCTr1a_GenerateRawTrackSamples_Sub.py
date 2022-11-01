@@ -65,7 +65,7 @@ for j in ExtraColumns:
 track_headers = data[['Rec_Seg_ID']+ExtraColumns]
 track_headers = track_headers.drop_duplicates()
 track_headers=track_headers.values.tolist()
-track_column_headers=track_headers.column.values.tolist()
+track_column_headers=track_headers.columns.values.tolist()
 print(track_column_headers)
 exit()
 track_data = data[['x','y','z','tx','ty','Rec_Seg_ID']].values.tolist() #Convirting the result to List data type
