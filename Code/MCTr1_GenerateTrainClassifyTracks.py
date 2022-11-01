@@ -88,7 +88,7 @@ ExtraColumns=[]
 for i in ClassNames:
     for j in i:
         ColumnsToImport.append(j)
-        if j in ExtraColumns==False:
+        if (j in ExtraColumns)==False:
                 ExtraColumns.append(j)
 print(ExtraColumns)
 exit()
