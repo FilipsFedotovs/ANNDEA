@@ -65,7 +65,9 @@ for j in ExtraColumns:
 track_headers = data[['Rec_Seg_ID']+ExtraColumns]
 track_headers = track_headers.drop_duplicates()
 track_headers=track_headers.values.tolist()
-
+track_column_headers=track_headers.column.values.tolist()
+print(track_column_headers)
+exit()
 track_data = data[['x','y','z','tx','ty','Rec_Seg_ID']].values.tolist() #Convirting the result to List data type
 
 track_headers = track_headers[int(i)*MaxSegments : min((int(i)+1)*MaxSegments, len(track_headers))]
