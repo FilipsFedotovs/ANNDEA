@@ -67,8 +67,7 @@ track_headers = track_headers.drop_duplicates()
 track_column_headers=track_headers.columns.values.tolist()
 track_headers=track_headers.values.tolist()
 
-print(track_column_headers)
-exit()
+
 track_data = data[['x','y','z','tx','ty','Rec_Seg_ID']].values.tolist() #Convirting the result to List data type
 
 track_headers = track_headers[int(i)*MaxSegments : min((int(i)+1)*MaxSegments, len(track_headers))]
@@ -89,10 +88,12 @@ for s in range(0,limit):
     pos_counter=0
     print(track)
     print(ClassNames)
-    exit()
+
     for i in range(len(ClassNames)):
         class_flag=False
         for j in range(len(ClassNames[i])):
+            print(ClassValues[i][j])
+            exit()
             pos_counter+=1
             if (track[pos_counter] in ClassValues[i][j])==False:
                     class_flag=True
