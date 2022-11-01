@@ -42,7 +42,8 @@ ClassValues=ast.literal_eval(args.ClassValues)
 ExtraColumns=[]
 for j in ClassNames:
     for k in j:
-        ExtraColumns.append(k)
+        if (k in ExtraColumns)==False:
+            ExtraColumns.append(k)
 ########################################     Preset framework parameters    #########################################
 MaxSegments=int(args.MaxSegments)
 #Loading Directory locations
