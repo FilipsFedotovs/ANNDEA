@@ -44,6 +44,7 @@ for j in ClassNames:
     for k in j:
         if (k in ExtraColumns)==False:
             ExtraColumns.append(k)
+
 ########################################     Preset framework parameters    #########################################
 MaxSegments=int(args.MaxSegments)
 #Loading Directory locations
