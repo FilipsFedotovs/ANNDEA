@@ -88,7 +88,8 @@ ExtraColumns=[]
 for i in ClassNames:
     for j in i:
         ColumnsToImport.append(j)
-        ExtraColumns.append(j)
+        if j in ExtraColumns==False:
+                ExtraColumns.append(j)
 ########################################     Phase 1 - Create compact source file    #########################################
 print(UF.TimeStamp(),bcolors.BOLD+'Stage 0:'+bcolors.ENDC+' Preparing the source data...')
 
