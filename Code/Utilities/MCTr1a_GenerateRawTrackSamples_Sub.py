@@ -6,9 +6,7 @@
 ########################################    Import libraries    #############################################
 import argparse
 import pandas as pd #We use Panda for a routine data processing
-import math #We use it for data manipulation
 import gc  #Helps to clear memory
-import numpy as np
 import ast
 from UtilityFunctions import EMO
 
@@ -98,14 +96,10 @@ for s in range(0,limit):
     track_obj.Decorate(track_data)
     GoodTracks.append(track_obj)
     continue
-#
-print('The raw image generation has been completed..')
 
+print('The raw image generation has been completed..')
 print(UF.TimeStamp(),'Saving the results..')
-#
-#
-#
-UF.LogOperations(output_file_location,'w',GoodTracks) #Writing the remaining data into the csv
+print(UF.PickleOperations(output_file_location,'w', GoodTracks)[1])
 print(UF.TimeStamp(), "Train seed generation is finished...")
 #End of the script
 
