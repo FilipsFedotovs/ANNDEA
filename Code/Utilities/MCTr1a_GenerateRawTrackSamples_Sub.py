@@ -63,7 +63,7 @@ data=pd.read_csv(input_file_location,header=0,
 for j in ExtraColumns:
             data[j]=data[j].astype(str)
 track_headers = data[['Rec_Seg_ID']+ExtraColumns]
-track_headers = track_headers.drop_duplicates()
+track_headers = track_headers.drop_duplicates(subset=['Rec_Seg_ID'])
 print(track_headers)
 exit()
 track_column_headers=track_headers.columns.values.tolist()
