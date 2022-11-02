@@ -408,7 +408,7 @@ while status<4:
           No_Train_Files=int(math.ceil(len(TotalData)/TrainSampleSize))
           for i in range(0,No_Train_Files):
               output_file_location=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_TRACK_OUTPUT_'+str(i+1)+'.pkl'
-              print(UF.PickleOperations(output_file_location,'w', TotalData[(i*PM.TrainSampleSize):min(len(TotalData),((i+1)*TrainSampleSize))])[1])
+              print(UF.PickleOperations(output_file_location,'w', TotalData[(i*TrainSampleSize):min(len(TotalData),((i+1)*TrainSampleSize))])[1])
           print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 2 has successfully completed'+bcolors.ENDC)
 
 
