@@ -376,13 +376,12 @@ while status<7:
                 output_file_location=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/'+'/'+'MCTr1b'+'_'+TrainSampleID+'_'+'SelectedTrackSamples'+'_'+str(i)+'.pkl'
                 base_data=UF.PickleOperations(req_file,'r', 'N/A')[0]
                 ExtractedData=[]
-                min_len=len([j for j in base_data if j.Label==i])
-                print(min_len,i,len([j for j in base_data if j.Label==i]))
-                for i in range(len(ClassHeaders)+1):
-                    print(len([j for j in base_data if j.Label==i]),i)
-                    if len([j for j in base_data if j.Label==i])!=0:
-                       ExtractedData.append([j for j in base_data if j.Label==i])
-                       min_len=min(len([j for j in base_data if j.Label==i]),min_len)
+                min_len=len([j for j in base_data if j.Label==0])
+                for j in range(len(ClassHeaders)+1):
+                    print(len([k for k in base_data if k.Label==j]),j)
+                    if len([k for k in base_data if k.Label==j])!=0:
+                       ExtractedData.append([k for k in base_data if k.Label==j])
+                       min_len=min(len([k for k in base_data if k.Label==j]),min_len)
                 print(min_len)
                 TotalData=[]
                 for s in range(len(ExtractedData)):
