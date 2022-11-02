@@ -384,7 +384,7 @@ while status<7:
                        min_len=min(len([j for j in base_data if j.Label==i]),min_len)
                 for s in range(len(ExtractedData)):
                     ExtractedData[s]=random.sample(ExtractedData[s],min_len)
-                print(len(ExtractedData[0]))
+                print(len(ExtractedData[1]))
                 print(min_len)
                 exit()
 
