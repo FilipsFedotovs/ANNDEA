@@ -86,24 +86,18 @@ for s in range(0,limit):
     track_obj=EMO([track[0]])
     label=0
 
-    print(track)
-    print(ClassNames)
-
     for i in range(len(ClassNames)):
         class_flag=False
         for j in range(len(ClassNames[i])):
             pos_counter=track_column_headers.index(ClassNames[i][j])
-            print(track_column_headers)
-            print(pos_counter)
-            print(ClassValues[i][j])
-            print(ClassNames[i][j])
-            exit()
+
 
             if (track[pos_counter] in ClassValues[i][j])==False:
                     class_flag=True
         if class_flag:
             label+=1
-
+    print(track,label)
+    x=input()
     track_obj.LabelTrack(label)
 
     track_obj.Decorate(track_data)
