@@ -94,7 +94,7 @@ for s in range(0,limit):
 
             if (track[pos_counter] in ClassValues[i][j])==False:
                     class_flag=True
-            if class_flag:
+        if class_flag:
                label+=1
     print(track,label)
     x=input()
