@@ -67,7 +67,10 @@ track_headers = track_headers.drop_duplicates()
 track_column_headers=track_headers.columns.values.tolist()
 track_headers=track_headers.values.tolist()
 track_data = data[['x','y','z','tx','ty','Rec_Seg_ID']].values.tolist() #Convirting the result to List data type
+print(len(track_headers))
 track_headers = track_headers[int(i)*MaxSegments : min((int(i)+1)*MaxSegments, len(track_headers))]
+print(len(track_headers))
+
 gc.collect()
 track_counter=0
 print('Data has been successfully loaded and prepared..')
@@ -95,7 +98,8 @@ for s in range(0,limit):
     track_obj.Decorate(track_data)
     GoodTracks.append(track_obj)
     continue
-
+print(len(GoodTracks))
+exit()
 print('The raw image generation has been completed..')
 print(UF.TimeStamp(),'Saving the results..')
 print(UF.PickleOperations(output_file_location,'w', GoodTracks)[1])
