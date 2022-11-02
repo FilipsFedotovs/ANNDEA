@@ -382,12 +382,11 @@ while status<7:
                     if len([j for j in base_data if j.Label==i])!=0:
                        ExtractedData.append([j for j in base_data if j.Label==i])
                        min_len=min(len([j for j in base_data if j.Label==i]),min_len)
-                for s in range(len(ExtractedData)):
-                    ExtractedData[s]=random.sample(ExtractedData[s],min_len)
-                print(len(ExtractedData[1]))
-                print(min_len)
-                exit()
 
+                TotalData=None
+                for s in range(len(ExtractedData)):
+                    TotalData+=random.sample(ExtractedData[s],min_len)
+                print(len(TotalData))
                 # Extracted0=[im for im in base_data if im.Label ==0]
                 # Extracted1=[im for im in base_data if im.MC_truth_label ==1]
                 # Extracted2=[im for im in base_data if im.MC_truth_label ==2]
