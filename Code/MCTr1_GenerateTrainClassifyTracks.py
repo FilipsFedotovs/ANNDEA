@@ -44,7 +44,6 @@ parser.add_argument('--Xmax',help="This option restricts data to only those even
 parser.add_argument('--Ymin',help="This option restricts data to only those events that have tracks with hits y-coordinates that are above this value", default='0')
 parser.add_argument('--Ymax',help="This option restricts data to only those events that have tracks with hits y-coordinates that are below this value", default='0')
 parser.add_argument('--Samples',help="How many samples? Please enter the number or ALL if you want to use all data", default='ALL')
-parser.add_argument('--LabelRatio',help="What is the desired proportion of genuine seeds in the training/validation sets", default='0.5')
 parser.add_argument('--TrainSampleSize',help="Maximum number of samples per Training file", default='50000')
 parser.add_argument('--ClassHeaders',help="What class headers to use?", default="['EM Background']")
 parser.add_argument('--ClassNames',help="What class headers to use?", default="[['Flag','ProcID']]")
@@ -258,6 +257,7 @@ while status<7:
           if len(bad_pop)==0:
               FreshStart=False
               print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 1 has successfully completed'+bcolors.ENDC)
+              UpdateStatus(2)
               status=2
               continue
 
@@ -290,6 +290,7 @@ while status<7:
                      if AutoPilot(600,10,Patience,AFS_DIR,EOS_DIR,'/ANNADEA/Data/TRAIN_SET/','RawTrackSamples','MCTr1a','.pkl',TrainSampleID,JobSets,OptionHeader,OptionLine,'MCTr1a_GenerateRawTrackSamples_Sub.py'):
                          FreshStart=False
                          print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 1 has successfully completed'+bcolors.ENDC)
+                         UpdateStatus(2)
                          status=2
                          continue
                      else:
@@ -313,6 +314,7 @@ while status<7:
                       if AutoPilot(600,10,Patience,AFS_DIR,EOS_DIR,'/ANNADEA/Data/TRAIN_SET/','RawTrackSamples','MCTr1a','.pkl',TrainSampleID,JobSets,OptionHeader,OptionLine,'MCTr1a_GenerateRawTrackSamples_Sub.py'):
                           FreshStart=False
                           print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 1 has successfully completed'+bcolors.ENDC)
+                          UpdateStatus(2)
                           status=2
                           continue
                       else:
@@ -323,6 +325,7 @@ while status<7:
                       if AutoPilot(int(UserAnswer),10,Patience,AFS_DIR,EOS_DIR,'/ANNADEA/Data/TRAIN_SET/','RawTrackSamples','MCTr1a','.pkl',TrainSampleID,JobSets,OptionHeader,OptionLine,'MCTr1a_GenerateRawTrackSamples_Sub.py'):
                           FreshStart=False
                           print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 1 has successfully completed'+bcolors.ENDC)
+                          UpdateStatus(2)
                           status=2
                           continue
                       else:
@@ -349,6 +352,7 @@ while status<7:
                  if AutoPilot(600,10,Patience,AFS_DIR,EOS_DIR,'/ANNADEA/Data/TRAIN_SET/','RawTrackSamples','MCTr1a','.pkl',TrainSampleID,JobSets,OptionHeader,OptionLine,'MCTr1a_GenerateRawTrackSamples_Sub.py'):
                         FreshStart=False
                         print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 1 has successfully completed'+bcolors.ENDC)
+                        UpdateStatus(2)
                         status=2
                         continue
                  else:
@@ -362,6 +366,7 @@ while status<7:
                       if AutoPilot(600,10,Patience,AFS_DIR,EOS_DIR,'/ANNADEA/Data/TRAIN_SET/','RawTrackSamples','MCTr1a','.pkl',TrainSampleID,JobSets,OptionHeader,OptionLine,'MCTr1a_GenerateRawTrackSamples_Sub.py'):
                           FreshStart=False
                           print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 1 has successfully completed'+bcolors.ENDC)
+                          UpdateStatus(2)
                           status=2
                           continue
                       else:
@@ -378,51 +383,46 @@ while status<7:
                 ExtractedData=[]
                 min_len=len([j for j in base_data if j.Label==0])
                 for j in range(len(ClassHeaders)+1):
-                    print(len([k for k in base_data if k.Label==j]),j)
                     if len([k for k in base_data if k.Label==j])!=0:
                        ExtractedData.append([k for k in base_data if k.Label==j])
                        min_len=min(len([k for k in base_data if k.Label==j]),min_len)
-                print(min_len)
+
                 TotalData=[]
                 for s in range(len(ExtractedData)):
                     TotalData+=random.sample(ExtractedData[s],min_len)
-                print(len(TotalData))
-                x=input()
-                # Extracted0=[im for im in base_data if im.Label ==0]
-                # Extracted1=[im for im in base_data if im.MC_truth_label ==1]
-                # Extracted2=[im for im in base_data if im.MC_truth_label ==2]
-                    #
-                    # minLen = min(len(Extracted0), len(Extracted1), len(Extracted2))
-                    # del base_data
-                    # gc.collect()
-                    #
-                    # Extracted0=random.sample(Extracted0,minLen)
-                    # Extracted1=random.sample(Extracted1,minLen)
-                    #
-                    # TotalData=[]
-                    #
-                    #
-                    #
-                    # TotalData=Extracted0+Extracted1+Extracted2
-                    #
-                    #
-                    # write_data_file=open(req_file,'wb')
-                    # pickle.dump(TotalData, write_data_file)
-                    # write_data_file.close()
-                    # del TotalData
-                    # del Extracted0
-                    # del Extracted1
-                    # del Extracted2
-                    # gc.collect()
-                    # ProcessStatus=3
-
-
-
+                print(UF.PickleOperations(output_file_location,'w', TotalData)[1])
         print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 2 has successfully completed'+bcolors.ENDC)
+        UpdateStatus(3)
         status=3
         continue
 
-      # if status==3:
+      if status==3:
+          print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
+          print(UF.TimeStamp(),bcolors.BOLD+'Stage 3:'+bcolors.ENDC+' Taking the list of seeds previously generated by Stage 2, converting them into Emulsion Objects and doing more rigorous selection')
+          TotalData=[]
+          for i in range(JobSets):
+                req_file=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/'+'/'+'MCTr1b'+'_'+TrainSampleID+'_'+'SelectedTrackSamples'+'_'+str(i)+'.pkl'
+                base_data=UF.PickleOperations(req_file,'r', 'N/A')[0]
+                TotalData+=base_data
+          ValidationSampleSize=int(round(min((len(TotalData)*float(PM.valRatio)),PM.MaxValSampleSize),0))
+          print(len(TotalData))
+          print(ValidationSampleSize)
+          exit()
+          random.shuffle(TotalData)
+            output_file_location=EOS_DIR+'/EDER-TSU/Data/TRAIN_SET/M7_M8_Validation_Set.pkl'
+            ValExtracted_file = open(output_file_location, "wb")
+            pickle.dump(TotalData[:ValidationSampleSize], ValExtracted_file)
+            ValExtracted_file.close()
+            TotalData=TotalData[ValidationSampleSize:]
+            print(UF.TimeStamp(), bcolors.OKGREEN+"Validation Set has been saved at ",bcolors.OKBLUE+output_file_location+bcolors.ENDC,bcolors.OKGREEN+'file...'+bcolors.ENDC)
+            No_Train_Files=int(math.ceil(len(TotalData)/PM.MaxTrainSampleSize))
+            for SC in range(0,No_Train_Files):
+                output_file_location=EOS_DIR+'/EDER-TSU/Data/TRAIN_SET/M7_M8_Train_Set_'+str(SC+1)+'.pkl'
+                OldExtracted_file = open(output_file_location, "wb")
+                pickle.dump(TotalData[(SC*PM.MaxTrainSampleSize):min(len(TotalData),((SC+1)*PM.MaxTrainSampleSize))], OldExtracted_file)
+                OldExtracted_file.close()
+                print(UF.TimeStamp(), bcolors.OKGREEN+"Train Set", str(SC+1) ," has been saved at ",bcolors.OKBLUE+output_file_location+bcolors.ENDC,bcolors.OKGREEN+'file...'+bcolors.ENDC)
+            UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'M7', ['M7_M7_SamplesCondensedImages','M7_M7_CondensedImages'], "SoftUsed == \"EDER-TSU-M7\"")
       #    print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
       #    print(UF.TimeStamp(),bcolors.BOLD+'Stage 3:'+bcolors.ENDC+' Taking the list of seeds previously generated by Stage 2, converting them into Emulsion Objects and doing more rigorous selection')
       #    JobSet=[]
