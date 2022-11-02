@@ -85,17 +85,20 @@ for s in range(0,limit):
     track=track_headers.pop(0)
     track_obj=EMO([track[0]])
     label=0
-    pos_counter=0
+
     print(track)
     print(ClassNames)
 
     for i in range(len(ClassNames)):
         class_flag=False
         for j in range(len(ClassNames[i])):
+            pos_counter=track_column_headers.index(ClassNames[i][j])
+            print(track_column_headers)
+            print(pos_counter)
             print(ClassValues[i][j])
             print(ClassNames[i][j])
             exit()
-            pos_counter+=1
+
             if (track[pos_counter] in ClassValues[i][j])==False:
                     class_flag=True
         if class_flag:
