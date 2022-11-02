@@ -401,9 +401,6 @@ while status<4:
                 base_data=UF.PickleOperations(req_file,'r', 'N/A')[0]
                 TotalData+=base_data
           ValidationSampleSize=int(round(min((len(TotalData)*float(PM.valRatio)),PM.MaxValSampleSize),0))
-          print(len(TotalData))
-          print(ValidationSampleSize)
-          exit()
           random.shuffle(TotalData)
           output_file_location=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_TRACK_OUTPUT.pkl'
           print(UF.PickleOperations(output_file_location,'w', TotalData[:ValidationSampleSize])[1])
