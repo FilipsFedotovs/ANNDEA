@@ -377,7 +377,7 @@ while status<7:
                 base_data=UF.PickleOperations(req_file,'r', 'N/A')[0]
                 ExtractedData=[]
                 min_len=len([j for j in base_data if j.Label==i])
-                print(min_len,i,[j for j in base_data if j.Label==i])
+                print(min_len,i,len([j for j in base_data if j.Label==i]))
                 for i in range(len(ClassHeaders)+1):
                     print(len([j for j in base_data if j.Label==i]),i)
                     if len([j for j in base_data if j.Label==i])!=0:
