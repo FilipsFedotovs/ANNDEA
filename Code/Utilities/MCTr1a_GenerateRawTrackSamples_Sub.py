@@ -91,6 +91,7 @@ for s in range(0,limit):
         for j in range(len(ClassNames[i])):
             pos_counter=track_column_headers.index(ClassNames[i][j])
             print(ClassNames,ClassNames[i],ClassNames[i][j])
+            print(ClassValues,ClassValues[i],ClassValues[i][j])
             print(track,track[pos_counter])
 
             if (track[pos_counter] in ClassValues[i][j])==False:
