@@ -97,7 +97,6 @@ for s in range(0,limit):
     track_obj.LabelTrack(label)
     track_obj.Decorate(track_data)
     GoodTracks.append(track_obj)
-    print(s,len(GoodTracks))
     continue
 
 print('The raw image generation has been completed..')
