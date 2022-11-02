@@ -99,7 +99,9 @@ for s in range(0,limit):
                     class_flag=True
             print(class_flag,label)
             print('-----------------')
-        if class_flag==:
+        if class_flag==False:
+            break
+        else:
                label+=1
     print(track,label)
     x=input()
