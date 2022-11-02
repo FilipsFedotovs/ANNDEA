@@ -84,10 +84,10 @@ Max_Labels=len(ClassNames)+1
 for s in range(0,limit):
     track=track_headers.pop(0)
     track_obj=EMO([track[0]])
-    label=-1
-
+    label=0
+    class_flag=False
     for i in range(len(ClassNames)):
-        class_flag=False
+
         for j in range(len(ClassNames[i])):
             print('-----------------')
             pos_counter=track_column_headers.index(ClassNames[i][j])
@@ -99,7 +99,7 @@ for s in range(0,limit):
                     class_flag=True
             print(class_flag,label)
             print('-----------------')
-        if class_flag:
+    if class_flag:
                label+=1
     print(track,label)
     x=input()
