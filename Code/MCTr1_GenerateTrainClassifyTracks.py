@@ -378,6 +378,7 @@ while status<7:
                 ExtractedData=[]
                 min_len=len([j for j in base_data if j.Label==i])
                 for i in range(len(ClassHeaders)+1):
+                    print(len([j for j in base_data if j.Label==i]),i)
                     if len([j for j in base_data if j.Label==i])!=0:
                        ExtractedData.append([j for j in base_data if j.Label==i])
                        min_len=min(len([j for j in base_data if j.Label==i]),min_len)
