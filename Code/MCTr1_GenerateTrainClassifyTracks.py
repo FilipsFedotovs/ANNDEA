@@ -374,7 +374,7 @@ while status<7:
         for i in range(JobSets):
                 req_file=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/'+'/'+'MCTr1a'+'_'+TrainSampleID+'_'+'RawTrackSamples'+'_'+str(i)+'.pkl'
                 output_file_location=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/'+'/'+'MCTr1b'+'_'+TrainSampleID+'_'+'SelectedTrackSamples'+'_'+str(i)+'.pkl'
-                base_data=UF.PickleOperations(req_file,'r', base_data)[1]
+                base_data=UF.PickleOperations(req_file,'r', 'N/A')[1]
                 print(len(ClassHeaders))
                 print(len(base_data))
                 exit()
