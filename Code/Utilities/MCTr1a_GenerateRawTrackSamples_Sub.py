@@ -84,7 +84,7 @@ Max_Labels=len(ClassNames)+1
 for s in range(0,limit):
     track=track_headers.pop(0)
     track_obj=EMO([track[0]])
-    label=0
+    label=-1
 
     for i in range(len(ClassNames)):
         class_flag=False
