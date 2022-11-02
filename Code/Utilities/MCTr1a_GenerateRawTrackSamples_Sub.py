@@ -94,9 +94,11 @@ for s in range(0,limit):
             print(ClassNames,ClassNames[i],ClassNames[i][j])
             print(ClassValues,ClassValues[i],ClassValues[i][j])
             print(track,track[pos_counter])
-            print('-----------------')
+
             if (track[pos_counter] in ClassValues[i][j])==False:
                     class_flag=True
+            print(class_flag,label)
+            print('-----------------')
         if class_flag:
                label+=1
     print(track,label)
