@@ -159,12 +159,8 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         data=new_combined_data[['Rec_Seg_ID']]
         print(UF.TimeStamp(),'Analysing the data sample in order to understand how many jobs to submit to HTCondor... ',bcolors.ENDC)
         data.drop_duplicates(subset='Rec_Seg_ID',keep='first',inplace=True)
-        print(len(data))
         data = data.values.tolist()
-        print(len(data))
-        no_submissions=math.ceil(len(data)/PM.MaxSeeds)
-        print(no_submissions)
-        exit()
+        no_submissions=math.ceil(len(data)/PM.MaxSegments)
         print(UF.TimeStamp(), bcolors.OKGREEN+"The track segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+output_file_location+bcolors.ENDC)
         Meta=UF.TrainingSampleMeta(TrainSampleID)
         Meta.IniTrackMetaData(ClassHeaders,ClassNames,ClassValues,PM.MaxSegments,no_submissions)

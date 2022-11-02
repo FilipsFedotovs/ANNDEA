@@ -63,15 +63,12 @@ data=pd.read_csv(input_file_location,header=0,
 for j in ExtraColumns:
             data[j]=data[j].astype(str)
 track_headers = data[['Rec_Seg_ID']+ExtraColumns]
-track_headers = track_headers.drop_duplicates(subset=['Rec_Seg_ID'])
-print(track_headers)
-exit()
+track_headers = track_headers.drop_duplicates(subset=['Rec_Seg_ID'],keep='first')
 track_column_headers=track_headers.columns.values.tolist()
 track_headers=track_headers.values.tolist()
 track_data = data[['x','y','z','tx','ty','Rec_Seg_ID']].values.tolist() #Convirting the result to List data type
-print(len(track_headers))
 track_headers = track_headers[int(i)*MaxSegments : min((int(i)+1)*MaxSegments, len(track_headers))]
-print(len(track_headers))
+
 
 gc.collect()
 track_counter=0
@@ -100,8 +97,7 @@ for s in range(0,limit):
     track_obj.Decorate(track_data)
     GoodTracks.append(track_obj)
     continue
-print(len(GoodTracks))
-exit()
+
 print('The raw image generation has been completed..')
 print(UF.TimeStamp(),'Saving the results..')
 print(UF.PickleOperations(output_file_location,'w', GoodTracks)[1])
