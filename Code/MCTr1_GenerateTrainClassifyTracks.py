@@ -383,7 +383,7 @@ while status<7:
                        ExtractedData.append([j for j in base_data if j.Label==i])
                        min_len=min(len([j for j in base_data if j.Label==i]),min_len)
 
-                TotalData=None
+                TotalData=[]
                 for s in range(len(ExtractedData)):
                     TotalData+=random.sample(ExtractedData[s],min_len)
                 print(len(TotalData))
