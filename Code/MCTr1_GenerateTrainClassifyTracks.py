@@ -376,6 +376,7 @@ while status<7:
                 output_file_location=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/'+'/'+'MCTr1b'+'_'+TrainSampleID+'_'+'SelectedTrackSamples'+'_'+str(i)+'.pkl'
                 base_data=UF.PickleOperations(req_file,'r', base_data)[1]
                 print(len(ClassHeaders))
+                print(len(base_data))
                 exit()
 
                 # Extracted0=[im for im in base_data if im.Label ==0]
