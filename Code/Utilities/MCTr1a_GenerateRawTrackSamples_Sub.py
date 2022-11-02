@@ -89,11 +89,12 @@ for s in range(0,limit):
     for i in range(len(ClassNames)):
         class_flag=False
         for j in range(len(ClassNames[i])):
+            print('-----------------')
             pos_counter=track_column_headers.index(ClassNames[i][j])
             print(ClassNames,ClassNames[i],ClassNames[i][j])
             print(ClassValues,ClassValues[i],ClassValues[i][j])
             print(track,track[pos_counter])
-
+            print('-----------------')
             if (track[pos_counter] in ClassValues[i][j])==False:
                     class_flag=True
         if class_flag:
