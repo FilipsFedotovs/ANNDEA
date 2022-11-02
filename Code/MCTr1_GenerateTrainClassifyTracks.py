@@ -387,6 +387,7 @@ while status<7:
                 for s in range(len(ExtractedData)):
                     TotalData+=random.sample(ExtractedData[s],min_len)
                 print(len(TotalData))
+                exit()
                 # Extracted0=[im for im in base_data if im.Label ==0]
                 # Extracted1=[im for im in base_data if im.MC_truth_label ==1]
                 # Extracted2=[im for im in base_data if im.MC_truth_label ==2]
