@@ -77,8 +77,7 @@ print('Data has been successfully loaded and prepared..')
 GoodTracks=[]
 print(UF.TimeStamp(),'Beginning the image generation part...')
 limit = len(track_headers)
-print(limit)
-exit()
+
 Max_Labels=len(ClassNames)+1
 for s in range(0,limit):
     track=track_headers.pop(0)
@@ -98,6 +97,7 @@ for s in range(0,limit):
     track_obj.LabelTrack(label)
     track_obj.Decorate(track_data)
     GoodTracks.append(track_obj)
+    print(s,len(GoodTracks))
     continue
 
 print('The raw image generation has been completed..')
