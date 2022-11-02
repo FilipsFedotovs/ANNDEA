@@ -66,14 +66,9 @@ track_headers = data[['Rec_Seg_ID']+ExtraColumns]
 track_headers = track_headers.drop_duplicates()
 track_column_headers=track_headers.columns.values.tolist()
 track_headers=track_headers.values.tolist()
-
-
 track_data = data[['x','y','z','tx','ty','Rec_Seg_ID']].values.tolist() #Convirting the result to List data type
-
 track_headers = track_headers[int(i)*MaxSegments : min((int(i)+1)*MaxSegments, len(track_headers))]
-
 gc.collect()
-
 track_counter=0
 print('Data has been successfully loaded and prepared..')
 #create seeds
@@ -85,7 +80,6 @@ for s in range(0,limit):
     track=track_headers.pop(0)
     track_obj=EMO([track[0]])
     label=0
-
     for i in range(len(ClassNames)):
         class_flag=False
         for j in range(len(ClassNames[i])):
@@ -97,9 +91,7 @@ for s in range(0,limit):
             break
         else:
                label+=1
-
     track_obj.LabelTrack(label)
-
     track_obj.Decorate(track_data)
     GoodTracks.append(track_obj)
     continue
