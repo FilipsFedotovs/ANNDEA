@@ -377,12 +377,13 @@ while status<7:
                 base_data=UF.PickleOperations(req_file,'r', 'N/A')[0]
                 ExtractedData=[]
                 min_len=len([j for j in base_data if j.Label==i])
+                print(min_len)
                 for i in range(len(ClassHeaders)+1):
                     print(len([j for j in base_data if j.Label==i]),i)
                     if len([j for j in base_data if j.Label==i])!=0:
                        ExtractedData.append([j for j in base_data if j.Label==i])
                        min_len=min(len([j for j in base_data if j.Label==i]),min_len)
-
+                print(min_len)
                 TotalData=[]
                 for s in range(len(ExtractedData)):
                     TotalData+=random.sample(ExtractedData[s],min_len)
