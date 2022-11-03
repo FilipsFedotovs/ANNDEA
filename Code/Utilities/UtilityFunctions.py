@@ -1031,8 +1031,6 @@ class EMO:
                             else:
                                 __y.append(0)
                           __graphData_y = (__y)
-                          print(__graphData_y)
-                          exit()
                           import torch
                           import torch_geometric
                           from torch_geometric.data import Data
