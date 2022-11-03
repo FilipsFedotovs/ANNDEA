@@ -2274,6 +2274,7 @@ def LoadRenderImages(Seeds,StartSeed,EndSeed):
     from tensorflow import keras
     NewSeeds=Seeds[StartSeed-1:min(EndSeed,len(Seeds))]
     ImagesY=np.empty([len(NewSeeds),1])
+
     ImagesX=np.empty([len(NewSeeds),NewSeeds[0].H,NewSeeds[0].W,NewSeeds[0].L],dtype=np.bool)
     for im in range(len(NewSeeds)):
         if hasattr(NewSeeds[im],'Label'):
@@ -2292,4 +2293,6 @@ def LoadRenderImages(Seeds,StartSeed,EndSeed):
         ImagesX[im]=RenderedImage
     ImagesX= ImagesX[..., np.newaxis]
     ImagesY=tf.keras.utils.to_categorical(ImagesY,2)
+    print(ImagesY)
+    exit()
     return (ImagesX,ImagesY)
