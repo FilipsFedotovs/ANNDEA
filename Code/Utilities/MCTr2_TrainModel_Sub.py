@@ -263,6 +263,7 @@ def main(self):
             test_acc=val_acc
             scheduler.step()
             print(UF.TimeStamp(),'Epoch ',epoch, ' is completed')
+            print([epoch,itr,train_loss.item(),0.5,val_loss,val_acc,test_loss,test_acc,train_set])
             records.append([epoch,itr,train_loss.item(),0.5,val_loss,val_acc,test_loss,test_acc,train_set])
             torch.save({    'epoch': epoch,
                           'optimizer_state_dict': optimizer.state_dict(),
