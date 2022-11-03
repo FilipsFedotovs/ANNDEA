@@ -67,12 +67,12 @@ def zero_divide(a, b):
     if (b==0): return 0
     return a/b
 
-def CNNtrain(model, Sample, Batches):
+def CNNtrain(model, Sample, Batches,num_classes):
 
     for ib in range(Batches):
         StartSeed=(ib*TrainParams[1])+1
         EndSeed=StartSeed+TrainParams[1]-1
-        BatchImages=UF.LoadRenderImages(Sample,StartSeed,EndSeed)
+        BatchImages=UF.LoadRenderImages(Sample,StartSeed,EndSeed,num_classes)
         t=model.train_on_batch(BatchImages[0],BatchImages[1],reset_metrics=False)
         print(t)
     return t
@@ -219,7 +219,7 @@ def main(self):
         model.summary()
         records=[]
         for epoch in range(0, TrainParams[2]):
-            train_loss, itr=CNNtrain(model, TrainSamples, NTrainBatches),len(TrainSamples)
+            train_loss, itr=CNNtrain(model, TrainSamples, NTrainBatches,ModelMeta.ModelParams[10][1]),len(TrainSamples)
             val_loss=CNNvalidate(model, ValSamples, NValBatches)
             test_loss=val_loss
             print(UF.TimeStamp(),'Epoch ',epoch, ' is completed')
