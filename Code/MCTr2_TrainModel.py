@@ -161,9 +161,6 @@ if Mode=='RESET':
  Meta=MetaInput[0]
 
  ModelParams[10][1]=len(Meta.ClassHeaders)+1
- print(ModelParams)
- print(Meta.ClassHeaders)
- exit()
  Model_Meta_Path=EOSsubModelDIR+'/'+args.ModelName+'_Meta'
  ModelMeta=UF.ModelMeta(ModelName)
  if ModelType=='CNN':
