@@ -110,10 +110,15 @@ class ModelMeta:
               self.cut_dt=DataMeta.cut_dt
               self.cut_dr=DataMeta.cut_dr
           else:
-              self.MaxSLG=DataMeta.MaxSLG
-              self.MaxSTG=DataMeta.MaxSTG
-              self.MaxDOCA=DataMeta.MaxDOCA
-              self.MaxAngle=DataMeta.MaxAngle
+              if hasattr(DataMeta,'MaxSLG'):
+                  self.MaxSLG=DataMeta.MaxSLG
+              if hasattr(DataMeta,'MaxSTG'):
+                  self.MaxSTG=DataMeta.MaxSTG
+              if hasattr(DataMeta,'MaxDOCA'):
+                  self.MaxDOCA=DataMeta.MaxDOCA
+              if hasattr(DataMeta,'MaxAngle'):
+                  self.MaxAngle=DataMeta.MaxAngle
+
       def IniTrainingSession(self, TrainDataID, DateTime, TrainParameters):
           self.TrainSessionsDataID.append(TrainDataID)
           self.TrainSessionsDateTime.append(DateTime)
