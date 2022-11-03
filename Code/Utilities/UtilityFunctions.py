@@ -1020,11 +1020,15 @@ class EMO:
 
 
                       try:
-                          if self.Label==0:
-                             __graphData_y = ([1,0])
-                          if self.Label==1:
-                             __graphData_y = ([0,1])
-
+                          __y=[]
+                          for i in range(MM.ModelParameters[10][1]):
+                            if self.Label==i:
+                                __y.append(1)
+                            else:
+                                __y.append(0)
+                          __graphData_y = (__y)
+                          print(__graphData_y)
+                          exit()
                           import torch
                           import torch_geometric
                           from torch_geometric.data import Data
