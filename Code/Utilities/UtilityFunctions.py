@@ -2271,7 +2271,6 @@ def ErrorOperations(a,b,a_e,b_e,mode):
 
 def LoadRenderImages(Seeds,StartSeed,EndSeed,num_classes):
     import tensorflow as tf
-    from tensorflow import keras
     NewSeeds=Seeds[StartSeed-1:min(EndSeed,len(Seeds))]
     ImagesY=np.empty([len(NewSeeds),1])
 
@@ -2292,8 +2291,5 @@ def LoadRenderImages(Seeds,StartSeed,EndSeed,num_classes):
                    RenderedImage[Hits[0]+NewSeeds[im].bX][Hits[1]+NewSeeds[im].bY][Hits[2]]=1
         ImagesX[im]=RenderedImage
     ImagesX= ImagesX[..., np.newaxis]
-    print(ImagesY)
     ImagesY=tf.keras.utils.to_categorical(ImagesY,num_classes)
-    print(ImagesY)
-    exit()
     return (ImagesX,ImagesY)

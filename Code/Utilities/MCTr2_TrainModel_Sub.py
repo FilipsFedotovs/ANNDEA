@@ -101,12 +101,13 @@ def GNNvalidate(model, Sample):
          loss_accumulative += float(loss)
     return (correct / len(Sample.dataset), loss_accumulative/len(Sample.dataset))
 
-def CNNvalidate(model, Sample, Batches):
+def CNNvalidate(model, Sample, Batches,num_classes):
     for ib in range(Batches):
         StartSeed=(ib*TrainParams[1])+1
         EndSeed=StartSeed+TrainParams[1]-1
-        BatchImages=UF.LoadRenderImages(Sample,StartSeed,EndSeed)
+        BatchImages=UF.LoadRenderImages(Sample,StartSeed,EndSeed,num_classes)
         v=model.test_on_batch(BatchImages[0],BatchImages[1],reset_metrics=False)
+        print(v)
     return v
 
 
@@ -220,7 +221,7 @@ def main(self):
         records=[]
         for epoch in range(0, TrainParams[2]):
             train_loss, itr=CNNtrain(model, TrainSamples, NTrainBatches,ModelMeta.ModelParameters[10][1]),len(TrainSamples)
-            val_loss=CNNvalidate(model, ValSamples, NValBatches)
+            val_loss=CNNvalidate(model, ValSamples, NValBatches,ModelMeta.ModelParameters[10][1])
             test_loss=val_loss
             print(UF.TimeStamp(),'Epoch ',epoch, ' is completed')
             records.append([epoch,itr,train_loss[0],0.5,val_loss[0],val_loss[1],test_loss[0],test_loss[1],train_set])
