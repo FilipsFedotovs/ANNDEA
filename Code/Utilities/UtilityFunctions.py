@@ -985,7 +985,7 @@ class EMO:
                       try:
                         __graphData_nodes =__TempTrack[0]+__TempTrack[1]
                       except:
-                        __graphData_nodes =__TempTrack[0]  
+                        __graphData_nodes =__TempTrack[0]
 
                     # position of nodes
                       __graphData_pos = []
