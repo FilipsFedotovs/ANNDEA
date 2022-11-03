@@ -2275,7 +2275,7 @@ def ErrorOperations(a,b,a_e,b_e,mode):
         c_e=(a/b)*math.sqrt(((a_e/a)**2) + ((b_e/b)**2))
         return(c_e)
 
-def LoadRenderImages(Seeds,StartSeed,EndSeed,num_classes):
+def LoadRenderImages(Seeds,StartSeed,EndSeed,num_classes=2):
     import tensorflow as tf
     NewSeeds=Seeds[StartSeed-1:min(EndSeed,len(Seeds))]
     ImagesY=np.empty([len(NewSeeds),1])
