@@ -159,6 +159,7 @@ if Mode=='RESET':
  MetaInput=UF.PickleOperations(TrainSampleInputMeta,'r', 'N/A')
  print(MetaInput[1])
  Meta=MetaInput[0]
+ print(ModelParams)
  print(Meta.ClassHeaders)
  exit()
  Model_Meta_Path=EOSsubModelDIR+'/'+args.ModelName+'_Meta'
