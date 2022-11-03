@@ -219,7 +219,7 @@ def main(self):
         model.summary()
         records=[]
         for epoch in range(0, TrainParams[2]):
-            train_loss, itr=CNNtrain(model, TrainSamples, NTrainBatches,ModelMeta.ModelParams[10][1]),len(TrainSamples)
+            train_loss, itr=CNNtrain(model, TrainSamples, NTrainBatches,ModelMeta.ModelParameters[10][1]),len(TrainSamples)
             val_loss=CNNvalidate(model, ValSamples, NValBatches)
             test_loss=val_loss
             print(UF.TimeStamp(),'Epoch ',epoch, ' is completed')
