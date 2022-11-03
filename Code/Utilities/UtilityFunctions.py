@@ -982,8 +982,10 @@ class EMO:
                       __graphData_list = __graphData_join.values.tolist()
 
 
-
-                      __graphData_nodes =__TempTrack[0]+__TempTrack[1]
+                      try:
+                        __graphData_nodes =__TempTrack[0]+__TempTrack[1]
+                      except:
+                        __graphData_nodes =__TempTrack[0]  
 
                     # position of nodes
                       __graphData_pos = []
