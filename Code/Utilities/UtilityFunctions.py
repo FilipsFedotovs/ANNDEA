@@ -94,6 +94,12 @@ class ModelMeta:
           self.TrainSessionsDateTime=[]
           self.TrainSessionsParameters=[]
           self.TrainSessionsData=[]
+          if hasattr(DataMeta,'ClassHeader'):
+              self.ClassHeader=DataMeta.ClassHeader
+          if hasattr(DataMeta,'ClassNames'):
+              self.ClassHeader=DataMeta.ClassNames
+          if hasattr(DataMeta,'ClassValues'):
+              self.ClassHeader=DataMeta.ClassValues
 
           if (self.ModelFramework=='PyTorch') and (self.ModelArchitecture=='TCN'):
               self.num_node_features=DataMeta.num_node_features
