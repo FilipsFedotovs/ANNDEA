@@ -364,7 +364,13 @@ while status<3:
 
         ExtractedData = pd.DataFrame (ExtractedData, columns = ExtractedHeader)
         print(ExtractedData)
+        data=pd.read_csv(args.f,header=0)
+#        try:
+        data.drop([base_data[0].ClassHeaders],axis=1,inplace=True)
+        print(data)
         exit()
+        # except:
+        #     print('No columns to drop')
         print(UF.PickleOperations(output_file_location,'w', TotalData)[1])
         print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 2 has successfully completed'+bcolors.ENDC)
         output_file_location=EOS_DIR+'/ANNADEA/Data/REC_SET/'+RecBatchID+'_UNION_TRACKS.csv'
