@@ -55,7 +55,7 @@ RecBatchID=args.RecBatchID
 import UtilityFunctions as UF #This is where we keep routine utility functions
 
 #Specifying the full path to input/output files
-input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RH1_'+RecBatchID+'_hits.csv'
+input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RTr1_'+RecBatchID+'_hits.csv'
 
 print(UF.TimeStamp(), "Modules Have been imported successfully...")
 print(UF.TimeStamp(),'Loading pre-selected data from ',input_file_location)
@@ -79,7 +79,7 @@ data.drop(data.index[data['y'] < (Y_ID*stepY)], inplace = True)  #Keeping the re
 data_list=data.values.tolist()
 
 if Log!='NO':
-    input_file_location=EOS_DIR+'/ANNDEA/Data/TEST_SET/EH1_'+RecBatchID+'_hits.csv'
+    input_file_location=EOS_DIR+'/ANNDEA/Data/TEST_SET/ETr1_'+RecBatchID+'_hits.csv'
     print(UF.TimeStamp(),'Loading pre-selected data from ',input_file_location)
     MCdata=pd.read_csv(input_file_location,header=0,
                                 usecols=["Hit_ID","x","y","z","tx","ty",'MC_Mother_Track_ID'])
@@ -99,7 +99,7 @@ if Log!='NO':
     MCdata_list=MCdata.values.tolist()
 
 if Log=='KALMAN':
-    input_file_location=EOS_DIR+'/ANNDEA/Data/TEST_SET/KH1_'+RecBatchID+'_hits.csv'
+    input_file_location=EOS_DIR+'/ANNDEA/Data/TEST_SET/KTr1_'+RecBatchID+'_hits.csv'
     print(UF.TimeStamp(),'Loading pre-selected data from ',input_file_location)
     FEDRAdata=pd.read_csv(input_file_location,header=0,
                                 usecols=["Hit_ID","x","y","z","tx","ty",'FEDRA_Track_ID'])
@@ -146,7 +146,7 @@ if Log!='NO':
 else:
     HC.LinkHits(combined_weight_list,False,[],cut_dt,cut_dr,Acceptance)
 HC.UnloadClusterGraph()
-output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RH1a_'+RecBatchID+'_hit_cluster_rec_set_'+str(Z_ID_n)+'_' +str(Y_ID_n)+'_' +str(X_ID_n)+'.pkl'
+output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RTr1a_'+RecBatchID+'_hit_cluster_rec_set_'+str(Z_ID_n)+'_' +str(Y_ID_n)+'_' +str(X_ID_n)+'.pkl'
 UF.PickleOperations(output_file_location,'w', HC)
 #End of the script
 

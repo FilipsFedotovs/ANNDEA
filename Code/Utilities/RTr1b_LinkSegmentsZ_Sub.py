@@ -48,7 +48,7 @@ def zero_divide(a, b):
     if (b==0): return 0
     return a/b
 
-FirstFile=EOS_DIR+'/ANNDEA/Data/REC_SET/RH1a_'+RecBatchID+'_hit_cluster_rec_set_'+str(0)+'_' +str(Y_ID)+'_' +str(X_ID)+'.pkl'
+FirstFile=EOS_DIR+'/ANNDEA/Data/REC_SET/RTr1a_'+RecBatchID+'_hit_cluster_rec_set_'+str(0)+'_' +str(Y_ID)+'_' +str(X_ID)+'.pkl'
 FirstFileRaw=UF.PickleOperations(FirstFile,'r', 'N/A')
 FirstFile=FirstFileRaw[0]
 ZContractedTable=FirstFile.RecHits.rename(columns={"Segment_ID": "Master_Segment_ID","z": "Master_z" })
@@ -87,7 +87,7 @@ for i in range(1,Z_ID_Max):
 
 
 FirstFile.RecSegments=ZContractedTable.sort_values(["Master_Segment_ID",'Master_z'],ascending=[1,1])
-OutputFile=EOS_DIR+'/ANNDEA/Data/REC_SET/RH1b_'+RecBatchID+'_hit_cluster_rec_z_set_'+str(Y_ID)+'_' +str(X_ID)+'.pkl'
+OutputFile=EOS_DIR+'/ANNDEA/Data/REC_SET/RTr1b_'+RecBatchID+'_hit_cluster_rec_z_set_'+str(Y_ID)+'_' +str(X_ID)+'.pkl'
 print(UF.PickleOperations(OutputFile, 'w', FirstFile)[1])
 exit()
 
