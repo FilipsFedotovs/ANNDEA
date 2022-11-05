@@ -350,7 +350,7 @@ while status<3:
       if status==2:
         print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
         print(UF.TimeStamp(),bcolors.BOLD+'Stage 2:'+bcolors.ENDC+' Collecting and de-duplicating the results from stage 1')
-        req_file=EOS_DIR+'/ANNADEA/Data/REC_SET/'+'MCTr1a'+'_'+RecBatchID+'_ClassifiedTrackSamples_0.pkl'
+        req_file=EOS_DIR+'/ANNADEA/Data/REC_SET/'+'RCTr1a'+'_'+RecBatchID+'_ClassifiedTrackSamples_0.pkl'
         base_data=UF.PickleOperations(req_file,'r', 'N/A')[0]
         print(base_data.Header[0])
         exit()
