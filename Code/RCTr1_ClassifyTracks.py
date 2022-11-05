@@ -84,11 +84,9 @@ else:
            print(UF.TimeStamp(),'Loading previously saved data from ',bcolors.OKBLUE+EOSsubModelMetaDIR+bcolors.ENDC)
            MetaInput=UF.PickleOperations(EOSsubModelMetaDIR,'r', 'N/A')
            Meta=MetaInput[0]
-           ClassHeaders=Meta.ClassHeaders,
-           print(Meta.ClassHeaders)
-           exit()
-           ClassNames=Meta.ClassNames,
-           ClassValues=Meta.ClassValues,
+           ClassHeaders=Meta.ClassHeaders
+           ClassNames=Meta.ClassNames
+           ClassValues=Meta.ClassValues
            MaxSegments=PM.MaxSegments
            print(ClassHeaders,ClassNames,ClassValues)
 for i in ClassNames:
