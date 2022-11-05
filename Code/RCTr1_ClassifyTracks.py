@@ -88,6 +88,7 @@ else:
            ClassNames=Meta.ClassNames,
            ClassValues=Meta.ClassValues,
            MaxSegments=PM.MaxSegments
+           print(ClassHeaders,ClassNames,ClassValues)
 for i in ClassNames:
     for j in i:
         if (j in ColumnsToImport)==False:
