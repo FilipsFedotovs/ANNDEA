@@ -383,11 +383,9 @@ while status<3:
              data=pd.merge(data, ValidEvents, how="inner", on=['Rec_Seg_ID'])
              final_rows=len(data.axes[0])
              print(UF.TimeStamp(),'The sliced data has ',final_rows,' hits')
-        print(data)
-        exit()
         print(UF.TimeStamp(),'Removing tracks which have less than',PM.MinHitsTrack,'hits...')
         track_no_data=data.groupby(['Rec_Seg_ID'],as_index=False).count()
-        track_no_data=track_no_data.drop([PM.y,PM.z,PM.tx,PM.ty],axis=1)
+        track_no_data=track_no_data[['Rec_Seg_ID',PM.x]]
         track_no_data=track_no_data.rename(columns={PM.x: "Rec_Seg_No"})
         new_combined_data=pd.merge(data, track_no_data, how="left", on=['Rec_Seg_ID'])
         new_combined_data = new_combined_data[new_combined_data.Rec_Seg_No >= PM.MinHitsTrack]
