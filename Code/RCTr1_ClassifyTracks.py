@@ -356,7 +356,7 @@ while status<3:
         for i in base_data:
             ExtractedData.append(i.Header+i.Class)
             print(ExtractedData)
-            exit()
+            x=input()
         exit()
         for i in range(JobSets):
                 req_file=EOS_DIR+'/ANNADEA/Data/REC_SET/'+'/'+'MCTr1a'+'_'+RecBatchID+'_'+'ClassifiedTrackSamples'+'_'+str(i)+'.pkl'
