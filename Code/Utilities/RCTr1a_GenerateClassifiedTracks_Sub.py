@@ -93,16 +93,11 @@ for s in range(0,limit):
      track=EMO([track[0]])
      track.Decorate(track_data)
      track.ClassifySeed(ModelMeta,model)
-     print(track.Class)
-     print(track.ClassHeaders)
-     exit()
      GoodTracks.append(track)
 
 print(UF.TimeStamp(),'The track classification has been completed..')
-print(UF.PickleOperations(output_file_location,'w', GoodTracks)[1])
 print(UF.TimeStamp(),'Saving the results..')
 print(UF.PickleOperations(output_file_location,'w', GoodTracks)[1])
-print(UF.TimeStamp(), "Train seed generation is finished...")
 #End of the script
 
 
