@@ -367,6 +367,36 @@ while status<3:
         data=pd.read_csv(args.f,header=0)
 #        try:
         data.drop(base_data[0].ClassHeaders,axis=1,errors='ignore',inplace=True)
+        total_rows=len(data.axes[0])
+        print(UF.TimeStamp(),'The raw data has ',total_rows,' hits')
+        print(UF.TimeStamp(),'Removing unreconstructed hits...')
+        data=data.dropna(subset=[PM.Rec_Track_ID])
+        final_rows=len(data.axes[0])
+        print(UF.TimeStamp(),'The cleaned data has ',final_rows,' hits')
+        exit()
+        data[PM.Rec_Track_ID] = data[PM.Rec_Track_ID].astype(str)
+        data[PM.Rec_Track_Domain] = data[PM.Rec_Track_Domain].astype(str)
+        data['Rec_Seg_ID'] = data[PM.Rec_Track_Domain] + '-' + data[PM.Rec_Track_ID]
+        data=data.drop([PM.Rec_Track_ID],axis=1)
+        data=data.drop([PM.Rec_Track_Domain],axis=1)
+        if SliceData:
+             print(UF.TimeStamp(),'Slicing the data...')
+             ValidEvents=data.drop(data.index[(data[PM.x] > Xmax) | (data[PM.x] < Xmin) | (data[PM.y] > Ymax) | (data[PM.y] < Ymin)])
+             ValidEvents.drop([PM.x,PM.y,PM.z,PM.tx,PM.ty],axis=1,inplace=True)
+             ValidEvents.drop_duplicates(subset='Rec_Seg_ID',keep='first',inplace=True)
+             data=pd.merge(data, ValidEvents, how="inner", on=['Rec_Seg_ID'])
+             final_rows=len(data.axes[0])
+             print(UF.TimeStamp(),'The sliced data has ',final_rows,' hits')
+
+        print(UF.TimeStamp(),'Removing tracks which have less than',PM.MinHitsTrack,'hits...')
+        track_no_data=data.groupby(['Rec_Seg_ID'],as_index=False).count()
+        track_no_data=track_no_data.drop([PM.y,PM.z,PM.tx,PM.ty],axis=1)
+        track_no_data=track_no_data.rename(columns={PM.x: "Rec_Seg_No"})
+        new_combined_data=pd.merge(data, track_no_data, how="left", on=['Rec_Seg_ID'])
+        new_combined_data = new_combined_data[new_combined_data.Rec_Seg_No >= PM.MinHitsTrack]
+        new_combined_data = new_combined_data.drop(["Rec_Seg_No"],axis=1)
+        new_combined_data=new_combined_data.sort_values(['Rec_Seg_ID',PM.x],ascending=[1,1])
+        grand_final_rows=len(new_combined_data.axes[0])
         print(data)
         exit()
         # except:
