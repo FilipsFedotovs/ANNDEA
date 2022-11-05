@@ -90,7 +90,7 @@ limit = len(track_headers)
 
 for s in range(0,limit):
      track=track_headers.pop(0)
-     track=EMO(track[0])
+     track=EMO([track[0]])
      track.Decorate(track_data)
      track.ClassifySeed(ModelMeta,model)
      exit()
