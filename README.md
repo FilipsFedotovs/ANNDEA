@@ -1,4 +1,4 @@
-# ANNADEA
+# ANNDEA
 Artificial Neural Network Driven Emulsion Analysis.
 This README just serves as a very short user guide, the documentation will be written much later.
 
@@ -28,16 +28,16 @@ All modules
 
 ### 1.1 Installation steps
 1) go to your home directory in afs where you would like to install the package
-2) **git clone https://github.com/FilipsFedotovs/ANNADEA/**
-3) **cd ANNADEA/**
+2) **git clone https://github.com/FilipsFedotovs/ANNDEA/**
+3) **cd ANNDEA/**
 4) **python setup.py**
 5) The installation will require an EOS directory, please enter the location on EOS where you would like to keep data and the models. An example of the input is /eos/experiment/ship/user/username (but create the directory there first).
 6) The installation will ask whether you want to copy default training and validation files (that were prepared earlier). Unless you have your own, please enter **Y**.     The installer will copy and analyse existing data, it might take 5-10 minutes
-7) if the message *'ANNADEA setup is successfully completed'* is displayed, it means that the package is ready for work
+7) if the message *'ANNDEA setup is successfully completed'* is displayed, it means that the package is ready for work
 
 ### 1.2 Creating training files 
 *This part is only needed if a new model is required*
-1) Go to ANNADEA directory on AFS
+1) Go to ANNDEA directory on AFS
 2) **cd Code**
 3) **tmux**
 4) **kinit username@CERN.CH -l 24h00m**
@@ -49,7 +49,7 @@ All modules
 
 ### 1.3 Reconstructing a hit data using the new model 
 *This part is only needed if a new model is required*
-1) Go to ANNADEA directory on AFS
+1) Go to ANNDEA directory on AFS
 2) **cd Code**
 3) **tmux**
 4) **kinit username@CERN.CH -l 24h00m**
@@ -60,7 +60,7 @@ All modules
 9) Enter the same tmux session (after overnight job for example) by logging to the same lxplus machine and then typing  **tmux a -t 0**. The program should finish with the message *'Training is finished then, thank you and goodbye'*
 
 ### 1.4 Reconstructing a hit data using the new model 
-1) Go to ANNADEA directory on AFS
+1) Go to ANNDEA directory on AFS
 2) **cd Code**
 3) **tmux**
 4) **kinit username@CERN.CH -l 24h00m**

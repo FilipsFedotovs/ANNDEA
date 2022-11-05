@@ -54,7 +54,7 @@ AFS_DIR=args.AFS
 import UtilityFunctions as UF #This is where we keep routine utility functions
 
 #Specifying the full path to input/output files
-input_file_location=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/MCTr1_'+BatchID+'_TRACKS.csv'
+input_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MCTr1_'+BatchID+'_TRACKS.csv'
 output_file_location=EOS_DIR+p+'/'+pfx+'_'+BatchID+'_'+o+'_'+str(i)+sfx
 print(UF.TimeStamp(), "Modules Have been imported successfully...")
 print(UF.TimeStamp(),'Loading pre-selected data from ',input_file_location)

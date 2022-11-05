@@ -39,7 +39,7 @@ BatchID=args.BatchID
 
 
 
-input_file_location=EOS_DIR+'/ANNADEA/Data/REC_SET/RUTr1c_'+BatchID+'_Fit_Filtered_Seeds.pkl'
+input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1c_'+BatchID+'_Fit_Filtered_Seeds.pkl'
 
 output_file_location=EOS_DIR+'/'+p+'/'+pfx+'_'+BatchID+'_'+o+'_'+str(i)+sfx
 

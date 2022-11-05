@@ -1,5 +1,5 @@
 #This simple connects hits in the data to produce tracks
-#Tracking Module of the ANNADEA package
+#Tracking Module of the ANNDEA package
 #Made by Filips Fedotovs
 
 
@@ -71,11 +71,11 @@ import UtilityFunctions as UF #This is where we keep routine utility functions
 import Parameters as PM #This is where we keep framework global parameters
 
 #Establishing paths
-EOSsubDIR=EOS_DIR+'/'+'ANNADEA'
+EOSsubDIR=EOS_DIR+'/'+'ANNDEA'
 EOSsubModelDIR=EOSsubDIR+'/'+'Models'
 EOSsubModelMetaDIR=EOSsubDIR+'/'+'Models/'+ModelName+'_Meta'
-RecOutputMeta=EOS_DIR+'/ANNADEA/Data/REC_SET/'+RecBatchID+'_info.pkl'
-required_file_location=EOS_DIR+'/ANNADEA/Data/REC_SET/RCTr1_'+RecBatchID+'_TRACKS.csv'
+RecOutputMeta=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_info.pkl'
+required_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RCTr1_'+RecBatchID+'_TRACKS.csv'
 ColumnsToImport=[PM.Rec_Track_ID,PM.Rec_Track_Domain,PM.x,PM.y,PM.z,PM.tx,PM.ty]
 if os.path.isfile(EOSsubModelMetaDIR)==False:
               print(UF.TimeStamp(), bcolors.FAIL+"Fail to proceed further as the model file "+EOSsubModelMetaDIR+ " has not been found..."+bcolors.ENDC)
@@ -197,9 +197,9 @@ def AutoPilot(wait_min, interval_min, max_interval_tolerance,AFS,EOS,path,o,pfx,
 
 if Mode=='RESET':
     print(UF.TimeStamp(),'Performing the cleanup... ',bcolors.ENDC)
-    # HTCondorTag="SoftUsed == \"ANNADEA-MCTr1a-"+TrainSampleID+"\""
+    # HTCondorTag="SoftUsed == \"ANNDEA-MCTr1a-"+TrainSampleID+"\""
     # UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MCTr1a_'+TrainSampleID, ['MCTr1a'+TrainSampleID], HTCondorTag)
-    # HTCondorTag="SoftUsed == \"ANNADEA-MCTr1b-"+TrainSampleID+"\""
+    # HTCondorTag="SoftUsed == \"ANNDEA-MCTr1b-"+TrainSampleID+"\""
     # UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MCTr1b_'+TrainSampleID, ['MCTr1b'+TrainSampleID], HTCondorTag)
     FreshStart=False
     UpdateStatus(1)
@@ -218,7 +218,7 @@ while status<3:
           OptionHeader = [ " --MaxSegments ", " --ModelName "]
           OptionLine = [MaxSegments,ModelName]
           bad_pop=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,
-                                    '/ANNADEA/Data/REC_SET/',
+                                    '/ANNDEA/Data/REC_SET/',
                                     'ClassifiedTrackSamples',
                                     'RCTr1a',
                                     '.pkl',
@@ -248,7 +248,7 @@ while status<3:
                        exit()
                   if UserAnswer=='R':
                        bad_pop=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,
-                                    '/ANNADEA/Data/REC_SET/',
+                                    '/ANNDEA/Data/REC_SET/',
                                     'ClassifiedTrackSamples',
                                     'RCTr1a',
                                     '.pkl',
@@ -261,7 +261,7 @@ while status<3:
                        for bp in bad_pop:
                           UF.SubmitJobs2Condor(bp)
                   else:
-                     if AutoPilot(600,10,Patience,AFS_DIR,EOS_DIR,'/ANNADEA/Data/REC_SET/','ClassifiedTrackSamples','RCTr1a','.pkl',RecBatchID,JobSets,OptionHeader,OptionLine,'RCTr1a_GenerateClassifiedTracks_Sub.py'):
+                     if AutoPilot(600,10,Patience,AFS_DIR,EOS_DIR,'/ANNDEA/Data/REC_SET/','ClassifiedTrackSamples','RCTr1a','.pkl',RecBatchID,JobSets,OptionHeader,OptionLine,'RCTr1a_GenerateClassifiedTracks_Sub.py'):
                          FreshStart=False
                          print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 1 has successfully completed'+bcolors.ENDC)
                          UpdateStatus(2)
@@ -285,7 +285,7 @@ while status<3:
                       for bp in bad_pop:
                            UF.SubmitJobs2Condor(bp)
                       print(UF.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
-                      if AutoPilot(600,10,Patience,AFS_DIR,EOS_DIR,'/ANNADEA/Data/REC_SET/','ClassifiedTrackSamples','RCTr1a','.pkl',RecBatchID,JobSets,OptionHeader,OptionLine,'RCTr1a_GenerateClassifiedTracks_Sub.py'):
+                      if AutoPilot(600,10,Patience,AFS_DIR,EOS_DIR,'/ANNDEA/Data/REC_SET/','ClassifiedTrackSamples','RCTr1a','.pkl',RecBatchID,JobSets,OptionHeader,OptionLine,'RCTr1a_GenerateClassifiedTracks_Sub.py'):
                           FreshStart=False
                           print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 1 has successfully completed'+bcolors.ENDC)
                           UpdateStatus(2)
@@ -296,7 +296,7 @@ while status<3:
                           status=8
                           break
                    else:
-                      if AutoPilot(int(UserAnswer),10,Patience,AFS_DIR,EOS_DIR,'/ANNADEA/Data/REC_SET/','ClassifiedTrackSamples','RCTr1a','.pkl',RecBatchID,JobSets,OptionHeader,OptionLine,'RCTr1a_GenerateClassifiedTracks_Sub.py'):
+                      if AutoPilot(int(UserAnswer),10,Patience,AFS_DIR,EOS_DIR,'/ANNDEA/Data/REC_SET/','ClassifiedTrackSamples','RCTr1a','.pkl',RecBatchID,JobSets,OptionHeader,OptionLine,'RCTr1a_GenerateClassifiedTracks_Sub.py'):
                           FreshStart=False
                           print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 1 has successfully completed'+bcolors.ENDC)
                           UpdateStatus(2)
@@ -309,7 +309,7 @@ while status<3:
           else:
             if (TotJobs)==len(bad_pop):
                  bad_pop=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,
-                                    '/ANNADEA/Data/REC_SET/',
+                                    '/ANNDEA/Data/REC_SET/',
                                     'ClassifiedTrackSamples',
                                     'RCTr1a',
                                     '.pkl',
@@ -323,7 +323,7 @@ while status<3:
                           UF.SubmitJobs2Condor(bp)
 
 
-                 if AutoPilot(600,10,Patience,AFS_DIR,EOS_DIR,'/ANNADEA/Data/REC_SET/','ClassifiedTrackSamples','RCTr1a','.pkl',RecBatchID,JobSets,OptionHeader,OptionLine,'RCTr1a_GenerateClassifiedTracks_Sub.py'):
+                 if AutoPilot(600,10,Patience,AFS_DIR,EOS_DIR,'/ANNDEA/Data/REC_SET/','ClassifiedTrackSamples','RCTr1a','.pkl',RecBatchID,JobSets,OptionHeader,OptionLine,'RCTr1a_GenerateClassifiedTracks_Sub.py'):
                         FreshStart=False
                         print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 1 has successfully completed'+bcolors.ENDC)
                         UpdateStatus(2)
@@ -337,7 +337,7 @@ while status<3:
             elif len(bad_pop)>0:
                       for bp in bad_pop:
                            UF.SubmitJobs2Condor(bp)
-                      if AutoPilot(600,10,Patience,AFS_DIR,EOS_DIR,'/ANNADEA/Data/REC_SET/','ClassifiedTrackSamples','RCTr1a','.pkl',RecBatchID,JobSets,OptionHeader,OptionLine,'RCTr1a_GenerateClassifiedTracks_Sub.py'):
+                      if AutoPilot(600,10,Patience,AFS_DIR,EOS_DIR,'/ANNDEA/Data/REC_SET/','ClassifiedTrackSamples','RCTr1a','.pkl',RecBatchID,JobSets,OptionHeader,OptionLine,'RCTr1a_GenerateClassifiedTracks_Sub.py'):
                           FreshStart=False
                           print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 1 has successfully completed'+bcolors.ENDC)
                           UpdateStatus(2)
@@ -350,14 +350,14 @@ while status<3:
       if status==2:
         print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
         print(UF.TimeStamp(),bcolors.BOLD+'Stage 2:'+bcolors.ENDC+' Collecting and de-duplicating the results from stage 1')
-        req_file=EOS_DIR+'/ANNADEA/Data/REC_SET/'+'RCTr1a'+'_'+RecBatchID+'_ClassifiedTrackSamples_0.pkl'
+        req_file=EOS_DIR+'/ANNDEA/Data/REC_SET/'+'RCTr1a'+'_'+RecBatchID+'_ClassifiedTrackSamples_0.pkl'
         base_data=UF.PickleOperations(req_file,'r', 'N/A')[0]
         ExtractedHeader=['Rec_Seg_ID']+base_data[0].ClassHeaders
         ExtractedData=[]
         for i in base_data:
             ExtractedData.append(i.Header+i.Class)
         for i in range(1,JobSets):
-                req_file=EOS_DIR+'/ANNADEA/Data/REC_SET/'+'/'+'MCTr1a'+'_'+RecBatchID+'_'+'ClassifiedTrackSamples'+'_'+str(i)+'.pkl'
+                req_file=EOS_DIR+'/ANNDEA/Data/REC_SET/'+'/'+'MCTr1a'+'_'+RecBatchID+'_'+'ClassifiedTrackSamples'+'_'+str(i)+'.pkl'
                 base_data=UF.PickleOperations(req_file,'r', 'N/A')[0]
                 for i in base_data:
                      ExtractedData.append(i.Header+i.Class)
@@ -393,7 +393,7 @@ while status<3:
         print(UF.TimeStamp(),'The cleaned data has ',grand_final_rows,' hits')
         final_data=pd.merge(new_combined_data,ExtractedData,how='inner',on=['Rec_Seg_ID'])
         final_data=final_data.drop(['Rec_Seg_ID'],axis=1)
-        output_file_location=EOS_DIR+'/ANNADEA/Data/REC_SET/'+RecBatchID+'_CLASSIFIED_TRACKS.csv'
+        output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_CLASSIFIED_TRACKS.csv'
         final_data.to_csv(output_file_location,index=False)
         print(UF.TimeStamp(), bcolors.OKGREEN+"The classified track data has been written to"+bcolors.ENDC, bcolors.OKBLUE+output_file_location+bcolors.ENDC)
         print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 2 has successfully completed'+bcolors.ENDC)

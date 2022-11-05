@@ -45,7 +45,7 @@ AFS_DIR=args.AFS
 
 import UtilityFunctions as UF #This is where we keep routine utility functions
 
-EOSsubDIR=EOS_DIR+'/'+'ANNADEA'
+EOSsubDIR=EOS_DIR+'/'+'ANNDEA'
 EOSsubModelDIR=EOSsubDIR+'/'+'Models'
 Model_Meta_Path=EOSsubModelDIR+'/'+ModelName+'_Meta'
 Model_Path=EOSsubModelDIR+'/'+ModelName
@@ -66,7 +66,7 @@ if ModelMeta.ModelFramework=='PyTorch':
 
 
 #Specifying the full path to input/output files
-input_file_location=EOS_DIR+'/ANNADEA/Data/REC_SET/RCTr1_'+BatchID+'_TRACKS.csv'
+input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RCTr1_'+BatchID+'_TRACKS.csv'
 output_file_location=EOS_DIR+p+'/'+pfx+'_'+BatchID+'_'+o+'_'+str(i)+sfx
 print(UF.TimeStamp(), "Modules Have been imported successfully...")
 print(UF.TimeStamp(),'Loading pre-selected data from ',input_file_location)

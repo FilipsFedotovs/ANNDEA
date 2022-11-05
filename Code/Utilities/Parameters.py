@@ -1,5 +1,5 @@
-#This is the list of parameters that ANNADEA uses for reconstruction, model training etc. There have been collated here in one place for the user convenience
-# Part of ANNADEA package
+#This is the list of parameters that ANNDEA uses for reconstruction, model training etc. There have been collated here in one place for the user convenience
+# Part of ANNDEA package
 #Made by Filips Fedotovs
 #Current version 1.0
 

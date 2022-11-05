@@ -51,7 +51,7 @@ for c in config:
 csv_reader.close()
 
 #Loading Data configurations
-EOSsubDIR=EOS_DIR+'/'+'ANNADEA'
+EOSsubDIR=EOS_DIR+'/'+'ANNDEA'
 EOSsubDataDIR=EOSsubDIR+'/'+'Data'
 EOSsubModelDIR=EOSsubDIR+'/'+'Models'
 import sys
@@ -118,13 +118,13 @@ def AutoPilot(wait_min, interval_min, max_interval_tolerance):
            else:
                  print(UF.TimeStamp(), bcolors.OKGREEN+"Training is finished, starting another session..."+bcolors.ENDC)
                  if Model_Meta.ModelType=='CNN':
-                    Job=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,'/ANNADEA/Data/TRAIN_SET/','N/A','MCTr2','N/A',ModelName,1,OptionHeader,OptionLine,'MCTr2_TrainModel_Sub.py',False,"['','']", True, True)[0]
+                    Job=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,'/ANNDEA/Data/TRAIN_SET/','N/A','MCTr2','N/A',ModelName,1,OptionHeader,OptionLine,'MCTr2_TrainModel_Sub.py',False,"['','']", True, True)[0]
                  else:
-                    Job=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,'/ANNADEA/Data/TRAIN_SET/','N/A','MCTr2','N/A',ModelName,1,OptionHeader,OptionLine,'MCTr2_TrainModel_Sub.py',False,"['','']", True, False)[0]
-                 HTCondorTag="SoftUsed == \"ANNADEA-MCTr2-"+ModelName+"\""
+                    Job=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,'/ANNDEA/Data/TRAIN_SET/','N/A','MCTr2','N/A',ModelName,1,OptionHeader,OptionLine,'MCTr2_TrainModel_Sub.py',False,"['','']", True, False)[0]
+                 HTCondorTag="SoftUsed == \"ANNDEA-MCTr2-"+ModelName+"\""
                  UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MCTr2_'+ModelName, [ModelName], HTCondorTag)
 
-                 TrainSampleInputMeta=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/'+TrainSampleID+'_info.pkl'
+                 TrainSampleInputMeta=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_info.pkl'
                  print(UF.TimeStamp(),'Loading the data file ',bcolors.OKBLUE+TrainSampleInputMeta+bcolors.ENDC)
                  Model_Meta.IniTrainingSession(TrainSampleID, datetime.datetime.now(), TrainParams)
                  print(UF.PickleOperations(Model_Meta_Path, 'w', Model_Meta)[1])
@@ -135,12 +135,12 @@ def AutoPilot(wait_min, interval_min, max_interval_tolerance):
        elif interval_count%max_interval_tolerance==0:
 
                 print(UF.TimeStamp(),bcolors.WARNING+'Job has not been received, resubmitting...'+bcolors.ENDC)
-                HTCondorTag="SoftUsed == \"ANNADEA-MCTr2-"+ModelName+"\""
+                HTCondorTag="SoftUsed == \"ANNDEA-MCTr2-"+ModelName+"\""
                 UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MCTr2_'+ModelName, ['N/A'], HTCondorTag)
                 if Model_Meta.ModelType=='CNN':
-                    Job=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,'/ANNADEA/Data/TRAIN_SET/','N/A','MCTr2','N/A',ModelName,1,OptionHeader,OptionLine,'MCTr2_TrainModel_Sub.py',False,"['','']", True, True)[0]
+                    Job=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,'/ANNDEA/Data/TRAIN_SET/','N/A','MCTr2','N/A',ModelName,1,OptionHeader,OptionLine,'MCTr2_TrainModel_Sub.py',False,"['','']", True, True)[0]
                 else:
-                    Job=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,'/ANNADEA/Data/TRAIN_SET/','N/A','MCTr2','N/A',ModelName,1,OptionHeader,OptionLine,'MCTr2_TrainModel_Sub.py',False,"['','']", True, False)[0]
+                    Job=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,'/ANNDEA/Data/TRAIN_SET/','N/A','MCTr2','N/A',ModelName,1,OptionHeader,OptionLine,'MCTr2_TrainModel_Sub.py',False,"['','']", True, False)[0]
 
                 UF.SubmitJobs2Condor(Job)
                 print(bcolors.BOLD+"The job has been submitted..."+bcolors.ENDC)
@@ -148,13 +148,13 @@ def AutoPilot(wait_min, interval_min, max_interval_tolerance):
     return True
 
 if Mode=='RESET':
- HTCondorTag="SoftUsed == \"ANNADEA-MCTr2-"+ModelName+"\""
+ HTCondorTag="SoftUsed == \"ANNDEA-MCTr2-"+ModelName+"\""
  UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MCTr2_'+ModelName, [ModelName], HTCondorTag)
  if ModelType=='CNN':
-    Job=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,'/ANNADEA/Data/TRAIN_SET/','N/A','MCTr2','N/A',ModelName,1,OptionHeader,OptionLine,'MCTr2_TrainModel_Sub.py',False,"['','']", True, True)[0]
+    Job=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,'/ANNDEA/Data/TRAIN_SET/','N/A','MCTr2','N/A',ModelName,1,OptionHeader,OptionLine,'MCTr2_TrainModel_Sub.py',False,"['','']", True, True)[0]
  else:
-    Job=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,'/ANNADEA/Data/TRAIN_SET/','N/A','MCTr2','N/A',ModelName,1,OptionHeader,OptionLine,'MCTr2_TrainModel_Sub.py',False,"['','']", True, False)[0]
- TrainSampleInputMeta=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/'+TrainSampleID+'_info.pkl'
+    Job=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,'/ANNDEA/Data/TRAIN_SET/','N/A','MCTr2','N/A',ModelName,1,OptionHeader,OptionLine,'MCTr2_TrainModel_Sub.py',False,"['','']", True, False)[0]
+ TrainSampleInputMeta=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_info.pkl'
  print(UF.TimeStamp(),'Loading the data file ',bcolors.OKBLUE+TrainSampleInputMeta+bcolors.ENDC)
  MetaInput=UF.PickleOperations(TrainSampleInputMeta,'r', 'N/A')
  print(MetaInput[1])
@@ -206,9 +206,9 @@ else:
               if UserAnswer=='R':
 
                  if Model_Meta.ModelType=='CNN':
-                    Job=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,'/ANNADEA/Data/TRAIN_SET/','N/A','MCTr2','N/A',ModelName,1,OptionHeader,OptionLine,'MCTr2_TrainModel_Sub.py',False,"['','']", True, True)[0]
+                    Job=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,'/ANNDEA/Data/TRAIN_SET/','N/A','MCTr2','N/A',ModelName,1,OptionHeader,OptionLine,'MCTr2_TrainModel_Sub.py',False,"['','']", True, True)[0]
                  else:
-                    Job=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,'/ANNADEA/Data/TRAIN_SET/','N/A','MCTr2','N/A',ModelName,1,OptionHeader,OptionLine,'MCTr2_TrainModel_Sub.py',False,"['','']", True, False)[0]
+                    Job=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,'/ANNDEA/Data/TRAIN_SET/','N/A','MCTr2','N/A',ModelName,1,OptionHeader,OptionLine,'MCTr2_TrainModel_Sub.py',False,"['','']", True, False)[0]
                  UF.SubmitJobs2Condor(Job)
                  print(bcolors.BOLD+"The job has been submitted..."+bcolors.ENDC)
                  print(UF.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
@@ -225,20 +225,20 @@ else:
                  elif UserAnswer=='S':
 
                     if Model_Meta.ModelType=='CNN':
-                         Job=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,'/ANNADEA/Data/TRAIN_SET/','N/A','MCTr2','N/A',ModelName,1,OptionHeader,OptionLine,'MCTr2_TrainModel_Sub.py',False,"['','']", True, True)[0]
+                         Job=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,'/ANNDEA/Data/TRAIN_SET/','N/A','MCTr2','N/A',ModelName,1,OptionHeader,OptionLine,'MCTr2_TrainModel_Sub.py',False,"['','']", True, True)[0]
                     else:
-                         Job=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,'/ANNADEA/Data/TRAIN_SET/','N/A','MCTr2','N/A',ModelName,1,OptionHeader,OptionLine,'MCTr2_TrainModel_Sub.py',False,"['','']", True, False)[0]
-                    HTCondorTag="SoftUsed == \"ANNADEA-MCTr2-"+ModelName+"\""
+                         Job=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,'/ANNDEA/Data/TRAIN_SET/','N/A','MCTr2','N/A',ModelName,1,OptionHeader,OptionLine,'MCTr2_TrainModel_Sub.py',False,"['','']", True, False)[0]
+                    HTCondorTag="SoftUsed == \"ANNDEA-MCTr2-"+ModelName+"\""
                     Model_Meta.IniTrainingSession(TrainSampleID, datetime.datetime.now(), TrainParams)
                     print(UF.PickleOperations(Model_Meta_Path, 'w', Model_Meta)[1])
                     UF.SubmitJobs2Condor(Job)
                     print(bcolors.BOLD+"The job has been submitted..."+bcolors.ENDC)
                  else:
                      if Model_Meta.ModelType=='CNN':
-                         Job=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,'/ANNADEA/Data/TRAIN_SET/','N/A','MCTr2','N/A',ModelName,1,OptionHeader,OptionLine,'MCTr2_TrainModel_Sub.py',False,"['','']", True, True)[0]
+                         Job=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,'/ANNDEA/Data/TRAIN_SET/','N/A','MCTr2','N/A',ModelName,1,OptionHeader,OptionLine,'MCTr2_TrainModel_Sub.py',False,"['','']", True, True)[0]
                      else:
-                         Job=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,'/ANNADEA/Data/TRAIN_SET/','N/A','MCTr2','N/A',ModelName,1,OptionHeader,OptionLine,'MCTr2_TrainModel_Sub.py',False,"['','']", True, False)[0]
-                     HTCondorTag="SoftUsed == \"ANNADEA-MCTr2-"+ModelName+"\""
+                         Job=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,'/ANNDEA/Data/TRAIN_SET/','N/A','MCTr2','N/A',ModelName,1,OptionHeader,OptionLine,'MCTr2_TrainModel_Sub.py',False,"['','']", True, False)[0]
+                     HTCondorTag="SoftUsed == \"ANNDEA-MCTr2-"+ModelName+"\""
                      Model_Meta.IniTrainingSession(TrainSampleID, datetime.datetime.now(), TrainParams)
                      print(UF.PickleOperations(Model_Meta_Path, 'w', Model_Meta)[1])
                      UF.SubmitJobs2Condor(Job)
@@ -256,9 +256,9 @@ else:
                   exit()
            elif UserAnswer=='R':
                  if Model_Meta.ModelType=='CNN':
-                         Job=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,'/ANNADEA/Data/TRAIN_SET/','N/A','MCTr2','N/A',ModelName,1,OptionHeader,OptionLine,'MCTr2_TrainModel_Sub.py',False,"['','']", True, True)[0]
+                         Job=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,'/ANNDEA/Data/TRAIN_SET/','N/A','MCTr2','N/A',ModelName,1,OptionHeader,OptionLine,'MCTr2_TrainModel_Sub.py',False,"['','']", True, True)[0]
                  else:
-                         Job=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,'/ANNADEA/Data/TRAIN_SET/','N/A','MCTr2','N/A',ModelName,1,OptionHeader,OptionLine,'MCTr2_TrainModel_Sub.py',False,"['','']", True, False)[0]
+                         Job=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,'/ANNDEA/Data/TRAIN_SET/','N/A','MCTr2','N/A',ModelName,1,OptionHeader,OptionLine,'MCTr2_TrainModel_Sub.py',False,"['','']", True, False)[0]
                  UF.SubmitJobs2Condor(Job)
                  print(bcolors.BOLD+"The job has been submitted..."+bcolors.ENDC)
                  print(UF.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
@@ -268,13 +268,13 @@ else:
      else:
                  print(UF.TimeStamp(),bcolors.WARNING+'Warning! No existing meta files have been found, starting everything from the scratch.'+bcolors.ENDC)
                  if ModelType=='CNN':
-                         Job=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,'/ANNADEA/Data/TRAIN_SET/','N/A','MCTr2','N/A',ModelName,1,OptionHeader,OptionLine,'MCTr2_TrainModel_Sub.py',False,"['','']", True, True)[0]
+                         Job=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,'/ANNDEA/Data/TRAIN_SET/','N/A','MCTr2','N/A',ModelName,1,OptionHeader,OptionLine,'MCTr2_TrainModel_Sub.py',False,"['','']", True, True)[0]
                  else:
-                         Job=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,'/ANNADEA/Data/TRAIN_SET/','N/A','MCTr2','N/A',ModelName,1,OptionHeader,OptionLine,'MCTr2_TrainModel_Sub.py',False,"['','']", True, False)[0]
-                 HTCondorTag="SoftUsed == \"ANNADEA-MCTr2-"+ModelName+"\""
+                         Job=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,'/ANNDEA/Data/TRAIN_SET/','N/A','MCTr2','N/A',ModelName,1,OptionHeader,OptionLine,'MCTr2_TrainModel_Sub.py',False,"['','']", True, False)[0]
+                 HTCondorTag="SoftUsed == \"ANNDEA-MCTr2-"+ModelName+"\""
                  UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MCTr2_'+ModelName, [ModelName], HTCondorTag)
 
-                 TrainSampleInputMeta=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/'+TrainSampleID+'_info.pkl'
+                 TrainSampleInputMeta=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_info.pkl'
                  print(UF.TimeStamp(),'Loading the data file ',bcolors.OKBLUE+TrainSampleInputMeta+bcolors.ENDC)
                  MetaInput=UF.PickleOperations(TrainSampleInputMeta,'r', 'N/A')
                  print(MetaInput[1])

@@ -1,4 +1,5 @@
-#Belogs to: ANNADEA
+#Belogs to: ANNDEA
+#Version Rel0.Tr1.UTr1.CTr1.V0.UV0.Ev0.CEv0
 #Purpose: To setup all working directories for the new user
 
 ########################################    Import libraries    #############################################
@@ -20,7 +21,7 @@ class bcolors:
 print('                                                                                                                                    ')
 print('                                                                                                                                    ')
 print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
-print(bcolors.HEADER+"######################     Initialising ANNADEA Installation Module                #####################"+bcolors.ENDC)
+print(bcolors.HEADER+"######################     Initialising ANNDEA Installation Module                 #####################"+bcolors.ENDC)
 print(bcolors.HEADER+"#########################              Written by Filips Fedotovs              #########################"+bcolors.ENDC)
 print(bcolors.HEADER+"#########################                 PhD Student at UCL                   #########################"+bcolors.ENDC)
 print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
@@ -46,7 +47,7 @@ if UserChoice=='Y':
      if row[0]=='EOS_DIR':
        try:
         DEL_DIR=row[1]
-        DEL_DIR+='/'+'ANNADEA'
+        DEL_DIR+='/'+'ANNDEA'
         shutil.rmtree(DEL_DIR)
         break
        except:
@@ -97,13 +98,12 @@ dir_writer.writerow(string_to_write)
 print(bcolors.OKGREEN+'Updated the directory mapping file with EOS location'+bcolors.ENDC)
 
 ########################################     Create sub-directories on EOS    #########################################
-
-EOSsubDIR=EOSDir+'/'+'ANNADEA'
+EOSsubDIR=EOSDir+'/'+'ANNDEA'
 EOSsubDataDIR=EOSsubDIR+'/'+'Data'
-EOSsubModelDIR=EOSsubDIR+'/'+'Models'
-EOSsubTrainDIR=EOSsubDataDIR+'/'+'TRAIN_SET'
-EOSsubRecDIR=EOSsubDataDIR+'/'+'REC_SET'
-EOSsubTestDIR=EOSsubDataDIR+'/'+'TEST_SET'
+EOSsubModelDIR=EOSsubDIR+'/'+'Models' #This is where we keep the models
+EOSsubTrainDIR=EOSsubDataDIR+'/'+'TRAIN_SET' #We keep Model training related files (training and validation samles) there
+EOSsubRecDIR=EOSsubDataDIR+'/'+'REC_SET' #In this folder we keep reconstruction files - it is the most used folder in most cases
+EOSsubTestDIR=EOSsubDataDIR+'/'+'TEST_SET' #Here we keep evaluation sets - only if we have MC data
 
 FolderCreate(EOSsubDIR)
 FolderCreate(EOSsubDataDIR)
@@ -112,16 +112,17 @@ FolderCreate(EOSsubTrainDIR)
 FolderCreate(EOSsubRecDIR)
 FolderCreate(EOSsubTestDIR)
 
+#Currently disabled
 #########################################   Workout out training and validation files #################################
-print(bcolors.BOLD+'Copying the models...'+bcolors.ENDC)
-# #Copying the pretrained models to the user directory
-ModelOrigin='/eos/experiment/ship/ANNADEA/Models/'
-src_files = os.listdir(ModelOrigin)
-for file_name in src_files:
-      full_file_name = os.path.join(ModelOrigin, file_name)
-      if os.path.isfile(full_file_name):
-          print('Copying file', full_file_name, 'from ',bcolors.OKBLUE+ModelOrigin+bcolors.ENDC,'into', bcolors.OKBLUE+EOSsubModelDIR+bcolors.ENDC)
-          shutil.copy(full_file_name, EOSsubModelDIR)
+# print(bcolors.BOLD+'Copying the models...'+bcolors.ENDC)
+# # #Copying the pretrained models to the user directory
+# ModelOrigin='/eos/experiment/ship/ANNDEA/Models/'
+# src_files = os.listdir(ModelOrigin)
+# for file_name in src_files:
+#       full_file_name = os.path.join(ModelOrigin, file_name)
+#       if os.path.isfile(full_file_name):
+#           print('Copying file', full_file_name, 'from ',bcolors.OKBLUE+ModelOrigin+bcolors.ENDC,'into', bcolors.OKBLUE+EOSsubModelDIR+bcolors.ENDC)
+#           shutil.copy(full_file_name, EOSsubModelDIR)
 
-print(bcolors.OKGREEN+'ANNADEA setup is successfully completed' +bcolors.ENDC)
+print(bcolors.OKGREEN+'ANNDEA setup is successfully completed' +bcolors.ENDC)
 exit()
