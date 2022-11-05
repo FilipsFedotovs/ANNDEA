@@ -78,7 +78,7 @@ import Parameters as PM #This is where we keep framework global parameters
 EOSsubDIR=EOS_DIR+'/'+'ANNADEA'
 EOSsubModelDIR=EOSsubDIR+'/'+'Models'
 EOSsubModelMetaDIR=EOSsubDIR+'/'+'Models/'+ModelName[0]+'_Meta'
-RecOutputMeta=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/'+RecBatchID+'_info.pkl'
+RecOutputMeta=EOS_DIR+'/ANNADEA/Data/REC_SET/'+RecBatchID+'_info.pkl'
 required_file_location=EOS_DIR+'/ANNADEA/Data/REC_SET/RUTr1_'+RecBatchID+'_TRACK_SEGMENTS.csv'
 required_eval_file_location=EOS_DIR+'/ANNADEA/Data/TEST_SET/EUTr1_'+RecBatchID+'_TRACK_SEGMENTS.csv'
 ########################################     Phase 1 - Create compact source file    #########################################
