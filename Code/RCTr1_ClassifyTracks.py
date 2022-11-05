@@ -374,17 +374,17 @@ while status<3:
         final_rows=len(data.axes[0])
         print(UF.TimeStamp(),'The cleaned data has ',final_rows,' hits')
         data['Rec_Seg_ID'] = data[PM.Rec_Track_Domain].astype(str) + '-' + data[PM.Rec_Track_ID].astype(str)
-        print(data)
-        exit()
+
         if SliceData:
              print(UF.TimeStamp(),'Slicing the data...')
              ValidEvents=data.drop(data.index[(data[PM.x] > Xmax) | (data[PM.x] < Xmin) | (data[PM.y] > Ymax) | (data[PM.y] < Ymin)])
-             ValidEvents.drop([PM.x,PM.y,PM.z,PM.tx,PM.ty],axis=1,inplace=True)
+             ValidEvents=ValidEvents[['Rec_Seg_ID']]
              ValidEvents.drop_duplicates(subset='Rec_Seg_ID',keep='first',inplace=True)
              data=pd.merge(data, ValidEvents, how="inner", on=['Rec_Seg_ID'])
              final_rows=len(data.axes[0])
              print(UF.TimeStamp(),'The sliced data has ',final_rows,' hits')
-
+        print(data)
+        exit()
         print(UF.TimeStamp(),'Removing tracks which have less than',PM.MinHitsTrack,'hits...')
         track_no_data=data.groupby(['Rec_Seg_ID'],as_index=False).count()
         track_no_data=track_no_data.drop([PM.y,PM.z,PM.tx,PM.ty],axis=1)
