@@ -392,10 +392,10 @@ while status<3:
         new_combined_data = new_combined_data.drop(["Rec_Seg_No"],axis=1)
         new_combined_data=new_combined_data.sort_values(['Rec_Seg_ID',PM.x],ascending=[1,1])
         grand_final_rows=len(new_combined_data.axes[0])
-        print(new_combined_data)
+        print(UF.TimeStamp(),'The cleaned data has ',grand_final_rows,' hits')
+        final_data=pd.merge(new_combined_data,ExtractedData,how='inner',on=['Rec_Seg_ID'])
+        print(final_data)
         exit()
-        # except:
-        #     print('No columns to drop')
         print(UF.PickleOperations(output_file_location,'w', TotalData)[1])
         print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 2 has successfully completed'+bcolors.ENDC)
         output_file_location=EOS_DIR+'/ANNADEA/Data/REC_SET/'+RecBatchID+'_UNION_TRACKS.csv'
