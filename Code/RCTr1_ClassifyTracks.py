@@ -366,7 +366,7 @@ while status<3:
         print(ExtractedData)
         data=pd.read_csv(args.f,header=0)
 #        try:
-        data.drop(base_data[0].ClassHeaders,axis=1,inplace=True)
+        data.drop(base_data[0].ClassHeaders,axis=1,errors='ignore',inplace=True)
         print(data)
         exit()
         # except:
