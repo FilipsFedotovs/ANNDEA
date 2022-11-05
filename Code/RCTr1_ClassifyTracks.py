@@ -85,6 +85,8 @@ else:
            MetaInput=UF.PickleOperations(EOSsubModelMetaDIR,'r', 'N/A')
            Meta=MetaInput[0]
            ClassHeaders=Meta.ClassHeaders,
+           print(Meta.ClassHeaders)
+           exit()
            ClassNames=Meta.ClassNames,
            ClassValues=Meta.ClassValues,
            MaxSegments=PM.MaxSegments
