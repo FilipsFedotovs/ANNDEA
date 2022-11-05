@@ -395,6 +395,7 @@ while status<3:
         final_data=final_data.drop(['Rec_Seg_ID'],axis=1)
         output_file_location=EOS_DIR+'/ANNADEA/Data/REC_SET/'+RecBatchID+'_CLASSIFIED_TRACKS.csv'
         final_data.to_csv(output_file_location,index=False)
+        print(UF.TimeStamp(), bcolors.OKGREEN+"The classified track data has been written to"+bcolors.ENDC, bcolors.OKBLUE+output_file_location+bcolors.ENDC)
         print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 2 has successfully completed'+bcolors.ENDC)
         UpdateStatus(3)
         status=3
