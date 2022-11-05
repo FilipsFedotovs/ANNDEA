@@ -352,26 +352,20 @@ while status<3:
         print(UF.TimeStamp(),bcolors.BOLD+'Stage 2:'+bcolors.ENDC+' Collecting and de-duplicating the results from stage 1')
         req_file=EOS_DIR+'/ANNADEA/Data/REC_SET/'+'RCTr1a'+'_'+RecBatchID+'_ClassifiedTrackSamples_0.pkl'
         base_data=UF.PickleOperations(req_file,'r', 'N/A')[0]
-        ExtractedData=[['Rec_Seg_ID']+base_data[0].ClassHeaders]
+        ExtractedHeader=['Rec_Seg_ID']+base_data[0].ClassHeaders
+        ExtractedData=[]
         for i in base_data:
             ExtractedData.append(i.Header+i.Class)
-            print(ExtractedData)
-            x=input()
-        exit()
-        for i in range(JobSets):
+        for i in range(1,JobSets):
                 req_file=EOS_DIR+'/ANNADEA/Data/REC_SET/'+'/'+'MCTr1a'+'_'+RecBatchID+'_'+'ClassifiedTrackSamples'+'_'+str(i)+'.pkl'
                 base_data=UF.PickleOperations(req_file,'r', 'N/A')[0]
-                ExtractedData=['Track_ID']
-                min_len=len([j for j in base_data if j.Label==0])
-                for j in range(len(ClassHeaders)+1):
-                    if len([k for k in base_data if k.Label==j])!=0:
-                       ExtractedData.append([k for k in base_data if k.Label==j])
-                       min_len=min(len([k for k in base_data if k.Label==j]),min_len)
+                for i in base_data:
+                     ExtractedData.append(i.Header+i.Class)
 
-                TotalData=[]
-                for s in range(len(ExtractedData)):
-                    TotalData+=random.sample(ExtractedData[s],min_len)
-                print(UF.PickleOperations(output_file_location,'w', TotalData)[1])
+        ExtractedData = pd.DataFrame (ExtractedData, columns = ExtractedHeader)
+        print(ExtractedData)
+        exit()
+        print(UF.PickleOperations(output_file_location,'w', TotalData)[1])
         print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 2 has successfully completed'+bcolors.ENDC)
         output_file_location=EOS_DIR+'/ANNADEA/Data/REC_SET/'+RecBatchID+'_UNION_TRACKS.csv'
         UpdateStatus(3)
