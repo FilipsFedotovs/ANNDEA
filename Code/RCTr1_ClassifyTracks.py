@@ -374,6 +374,8 @@ while status<3:
         final_rows=len(data.axes[0])
         print(UF.TimeStamp(),'The cleaned data has ',final_rows,' hits')
         data['Rec_Seg_ID'] = data[PM.Rec_Track_Domain].astype(str) + '-' + data[PM.Rec_Track_ID].astype(str)
+        print(data)
+        exit()
         if SliceData:
              print(UF.TimeStamp(),'Slicing the data...')
              ValidEvents=data.drop(data.index[(data[PM.x] > Xmax) | (data[PM.x] < Xmin) | (data[PM.y] > Ymax) | (data[PM.y] < Ymin)])
