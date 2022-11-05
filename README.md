@@ -30,7 +30,7 @@ All modules
 1) go to your home directory in afs where you would like to install the package
 2) **git clone https://github.com/FilipsFedotovs/ANNDEA/**
 3) **cd ANNDEA/**
-4) **python setup.py**
+4) **python3 setup.py**
 5) The installation will require an EOS directory, please enter the location on EOS where you would like to keep data and the models. An example of the input is /eos/experiment/ship/user/username (but create the directory there first).
 6) The installation will ask whether you want to copy default training and validation files (that were prepared earlier). Unless you have your own, please enter **Y**.     The installer will copy and analyse existing data, it might take 5-10 minutes
 7) if the message *'ANNDEA setup is successfully completed'* is displayed, it means that the package is ready for work
@@ -42,7 +42,7 @@ All modules
 3) **tmux**
 4) **kinit username@CERN.CH -l 24h00m**
 5) Enter your lxplus password
-6) **python3 MH1_GenerateTrainClusters.py --TrainSampleID Test_Sample --Xmin 50000 --Xmax 55000 --Ymin 50000 --Ymax 55000**
+6) **python3 MTr1_GenerateTrainClusters.py --TrainSampleID Test_Sample --Xmin 50000 --Xmax 55000 --Ymin 50000 --Ymax 55000**
 7) After few minutes the script will ask for the user option (Warning, there are still x HTCondor jobs remaining). Type **R** and press **Enter**. The script will submit the subscript jobs and go to the autopilot mode.
 8) Exit tmux (by using **ctrl + b** and then typing  **d**). It can take up to few hours for HTCondor jobs to finish.
 9) Enter the same tmux session after some period (after overnight job for example) by logging to the same lxplus machine and then typing  **tmux a -t 0**. The program should finish with the message *'Training samples are ready for the model creation/training'*
