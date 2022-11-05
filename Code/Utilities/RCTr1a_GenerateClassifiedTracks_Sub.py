@@ -92,7 +92,7 @@ for s in range(0,limit):
      track=track_headers.pop(0)
      track=EMO(track[0])
      track.Decorate(track_data)
-     track.ClassifyTrack(ModelMeta,model)
+     track.ClassifySeed(ModelMeta,model)
      exit()
      GoodTracks.append(track)
 
