@@ -352,6 +352,8 @@ while status<3:
         print(UF.TimeStamp(),bcolors.BOLD+'Stage 2:'+bcolors.ENDC+' Collecting and de-duplicating the results from stage 1')
         req_file=EOS_DIR+'/ANNADEA/Data/REC_SET/'+'RCTr1a'+'_'+RecBatchID+'_ClassifiedTrackSamples_0.pkl'
         base_data=UF.PickleOperations(req_file,'r', 'N/A')[0]
+        ExtractedHeader=['Rec_Seg_ID']+base_data[0].ClassHeaders
+        print(ExtractedHeader)
         print(base_data[0].Header[0])
         exit()
         for i in range(JobSets):
