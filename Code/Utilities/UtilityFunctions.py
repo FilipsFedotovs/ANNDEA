@@ -1117,7 +1117,24 @@ class EMO:
              self.Fit=M(graph.x, graph.edge_index, graph.edge_attr,graph.batch)[0][1].item()
              self.FIT=[self.Fit,self.Fit]
           return self.Fit>=0.5
-      
+      def ClassifySeed(self,Mmeta,M):
+          if Mmeta.ModelType=='CNN':
+             EMO.PrepareSeedPrint(self,Mmeta)
+             __Image=LoadRenderImages([self],1,1)[0]
+             self.Class=M.predict(__Image)[0]
+             self.ClassHeaders=Mmeta.ClassHeaders.append('Other')
+             del __Image
+          elif Mmeta.ModelType=='GNN':
+             EMO.PrepareSeedGraph(self,Mmeta)
+             M.eval()
+             import torch
+             graph = self.GraphSeed
+             graph.batch = torch.zeros(len(graph.x),dtype=torch.int64)
+             #self.Fit=M(graph.x, graph.edge_index, graph.edge_attr,graph.batch)[0][1].item()
+             print(M(graph.x, graph.edge_index, graph.edge_attr,graph.batch)[0][1].item())
+             exit()
+             #self.FIT=[self.Fit,self.Fit]
+          return self.Fit>=0.5
       def InjectTrackSeed(self,OtherSeed):
           self_matx=EMO.DensityMatrix(OtherSeed.Header,self.Header)
           if EMO.Overlap(self_matx)==False:

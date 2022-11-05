@@ -88,28 +88,16 @@ GoodTracks=[]
 print(UF.TimeStamp(),'Beginning the image generation part...')
 limit = len(track_headers)
 
-Max_Labels=len(ClassNames)+1
 for s in range(0,limit):
-    track=track_headers.pop(0)
-    track_obj=EMO([track[0]])
-    label=0
-    for i in range(len(ClassNames)):
-        class_flag=False
-        for j in range(len(ClassNames[i])):
-            pos_counter=track_column_headers.index(ClassNames[i][j])
-            if (track[pos_counter] in ClassValues[i][j])==False:
-                    class_flag=True
+     track=track_headers.pop(0)
+     track=EMO(track[0])
+     track.Decorate(track_data)
+     track.ClassifyTrack(ModelMeta,model)
+     exit()
+     GoodTracks.append(track)
 
-        if class_flag==False:
-            break
-        else:
-               label+=1
-    track_obj.LabelTrack(label)
-    track_obj.Decorate(track_data)
-    GoodTracks.append(track_obj)
-    continue
-
-print('The raw image generation has been completed..')
+print(UF.TimeStamp(),'The track classification has been completed..')
+print(UF.PickleOperations(output_file_location,'w', GoodTracks)[1])
 print(UF.TimeStamp(),'Saving the results..')
 print(UF.PickleOperations(output_file_location,'w', GoodTracks)[1])
 print(UF.TimeStamp(), "Train seed generation is finished...")
