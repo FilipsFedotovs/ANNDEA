@@ -363,9 +363,7 @@ while status<3:
                      ExtractedData.append(i.Header+i.Class)
 
         ExtractedData = pd.DataFrame (ExtractedData, columns = ExtractedHeader)
-        print(ExtractedData)
         data=pd.read_csv(args.f,header=0)
-#        try:
         data.drop(base_data[0].ClassHeaders,axis=1,errors='ignore',inplace=True)
         total_rows=len(data.axes[0])
         print(UF.TimeStamp(),'The raw data has ',total_rows,' hits')
@@ -394,17 +392,15 @@ while status<3:
         grand_final_rows=len(new_combined_data.axes[0])
         print(UF.TimeStamp(),'The cleaned data has ',grand_final_rows,' hits')
         final_data=pd.merge(new_combined_data,ExtractedData,how='inner',on=['Rec_Seg_ID'])
-        print(final_data)
-        exit()
-        print(UF.PickleOperations(output_file_location,'w', TotalData)[1])
+        final_data=final_data.drop(['Rec_Seg_ID'],axis=1)
+        output_file_location=EOS_DIR+'/ANNADEA/Data/REC_SET/'+RecBatchID+'_CLASSIFIED_TRACKS.csv'
+        final_data.to_csv(output_file_location,index=False)
         print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 2 has successfully completed'+bcolors.ENDC)
-        output_file_location=EOS_DIR+'/ANNADEA/Data/REC_SET/'+RecBatchID+'_UNION_TRACKS.csv'
         UpdateStatus(3)
         status=3
         continue
-
 if status==3:
-     print(UF.TimeStamp(), bcolors.OKGREEN+"Train sample generation has been completed"+bcolors.ENDC)
+     print(UF.TimeStamp(), bcolors.OKGREEN+"Track classification has been completed"+bcolors.ENDC)
      exit()
 else:
      print(UF.TimeStamp(), bcolors.FAIL+"Reconstruction has not been completed as one of the processes has timed out. Please run the script again (without Reset Mode)."+bcolors.ENDC)
