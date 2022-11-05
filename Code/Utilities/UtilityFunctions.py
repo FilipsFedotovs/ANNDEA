@@ -1132,9 +1132,7 @@ class EMO:
              graph.batch = torch.zeros(len(graph.x),dtype=torch.int64)
              #self.Fit=M(graph.x, graph.edge_index, graph.edge_attr,graph.batch)[0][1].item()
              self.Class=M(graph.x, graph.edge_index, graph.edge_attr,graph.batch).tolist()[0]
-             print(Mmeta.ClassHeaders)
-             exit()
-             self.ClassHeaders=Mmeta.ClassHeaders.append('Other')
+             self.ClassHeaders=Mmeta.ClassHeaders+['Other']
       def InjectTrackSeed(self,OtherSeed):
           self_matx=EMO.DensityMatrix(OtherSeed.Header,self.Header)
           if EMO.Overlap(self_matx)==False:
