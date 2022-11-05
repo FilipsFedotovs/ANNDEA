@@ -93,6 +93,8 @@ for s in range(0,limit):
      track=EMO([track[0]])
      track.Decorate(track_data)
      track.ClassifySeed(ModelMeta,model)
+     print(track.Class)
+     print(track.ClassHeaders)
      exit()
      GoodTracks.append(track)
 
