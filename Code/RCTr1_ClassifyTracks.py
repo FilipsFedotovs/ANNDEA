@@ -216,7 +216,7 @@ while status<2:
           print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
           print(UF.TimeStamp(),bcolors.BOLD+'Stage 1:'+bcolors.ENDC+' Sending hit cluster to the HTCondor, so tack segment combination pairs can be formed...')
           OptionHeader = [ " --MaxSegments ", " --ModelName "]
-          OptionLine = [MaxSegments,'"'+str(ClassNames)+'"','"'+str(ClassValues)+'"']
+          OptionLine = [MaxSegments,ModelName]
           bad_pop=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,
                                     '/ANNADEA/Data/REC_SET/',
                                     'ClassifiedTrackSamples',
