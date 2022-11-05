@@ -181,7 +181,6 @@ TotJobs=JobSets
 
 ########################################     Preset framework parameters    #########################################
 FreshStart=True
-exit()
 def UpdateStatus(status):
     Meta.UpdateStatus(status)
     print(UF.PickleOperations(TrainSampleOutputMeta,'w', Meta)[1])
