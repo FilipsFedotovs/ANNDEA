@@ -95,7 +95,7 @@ class ModelMeta:
           self.TrainSessionsParameters=[]
           self.TrainSessionsData=[]
           if hasattr(DataMeta,'ClassHeaders'):
-              self.ClassHeader=DataMeta.ClassHeaders
+              self.ClassHeaders=DataMeta.ClassHeaders
           if hasattr(DataMeta,'ClassNames'):
               self.ClassHeader=DataMeta.ClassNames
           if hasattr(DataMeta,'ClassValues'):
