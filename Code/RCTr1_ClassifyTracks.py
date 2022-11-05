@@ -73,7 +73,7 @@ import Parameters as PM #This is where we keep framework global parameters
 #Establishing paths
 EOSsubDIR=EOS_DIR+'/'+'ANNADEA'
 EOSsubModelDIR=EOSsubDIR+'/'+'Models'
-EOSsubModelMetaDIR=EOSsubDIR+'/'+'Models/'+ModelName[0]+'_Meta'
+EOSsubModelMetaDIR=EOSsubDIR+'/'+'Models/'+ModelName+'_Meta'
 RecOutputMeta=EOS_DIR+'/ANNADEA/Data/REC_SET/'+RecBatchID+'_info.pkl'
 required_file_location=EOS_DIR+'/ANNADEA/Data/REC_SET/RUTr1_'+RecBatchID+'_TRACKS.csv'
 ColumnsToImport=[PM.Rec_Track_ID,PM.Rec_Track_Domain,PM.x,PM.y,PM.z,PM.tx,PM.ty]
