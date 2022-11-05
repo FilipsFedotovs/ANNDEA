@@ -97,9 +97,9 @@ class ModelMeta:
           if hasattr(DataMeta,'ClassHeaders'):
               self.ClassHeaders=DataMeta.ClassHeaders
           if hasattr(DataMeta,'ClassNames'):
-              self.ClassHeader=DataMeta.ClassNames
+              self.ClassNames=DataMeta.ClassNames
           if hasattr(DataMeta,'ClassValues'):
-              self.ClassHeader=DataMeta.ClassValues
+              self.ClassValues=DataMeta.ClassValues
 
           if (self.ModelFramework=='PyTorch') and (self.ModelArchitecture=='TCN'):
               self.num_node_features=DataMeta.num_node_features
