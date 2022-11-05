@@ -373,12 +373,7 @@ while status<3:
         data=data.dropna(subset=[PM.Rec_Track_ID])
         final_rows=len(data.axes[0])
         print(UF.TimeStamp(),'The cleaned data has ',final_rows,' hits')
-        exit()
-        data[PM.Rec_Track_ID] = data[PM.Rec_Track_ID].astype(str)
-        data[PM.Rec_Track_Domain] = data[PM.Rec_Track_Domain].astype(str)
-        data['Rec_Seg_ID'] = data[PM.Rec_Track_Domain] + '-' + data[PM.Rec_Track_ID]
-        data=data.drop([PM.Rec_Track_ID],axis=1)
-        data=data.drop([PM.Rec_Track_Domain],axis=1)
+        data['Rec_Seg_ID'] = data[PM.Rec_Track_Domain].astype(str) + '-' + data[PM.Rec_Track_ID].astype(str)
         if SliceData:
              print(UF.TimeStamp(),'Slicing the data...')
              ValidEvents=data.drop(data.index[(data[PM.x] > Xmax) | (data[PM.x] < Xmin) | (data[PM.y] > Ymax) | (data[PM.y] < Ymin)])
@@ -397,7 +392,7 @@ while status<3:
         new_combined_data = new_combined_data.drop(["Rec_Seg_No"],axis=1)
         new_combined_data=new_combined_data.sort_values(['Rec_Seg_ID',PM.x],ascending=[1,1])
         grand_final_rows=len(new_combined_data.axes[0])
-        print(data)
+        print(new_combined_data)
         exit()
         # except:
         #     print('No columns to drop')
