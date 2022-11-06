@@ -71,8 +71,8 @@ for q in range(1,no_quadrants+1):
         new_data=pd.merge(new_data,new_vx_data,how='left',on=['FEDRATrackID'])
         data=pd.concat([data,new_data])
         #new_data=pd.read_csv(input_file,header=0)
-        print(data)
-        exit()
+print(data)
+exit()
 
 #
 #
