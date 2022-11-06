@@ -39,7 +39,7 @@ import Parameters as PM #This is where we keep framework global parameters
 #Setting the parser
 parser = argparse.ArgumentParser(description='This script compares the ouput of the previous step with the output of ANNDEA reconstructed data to calculate reconstruction performance.')
 parser.add_argument('--f',help="Please enter the full path directory there the files are located", default='/eos/user/a/aiulian/sim_fedra/mergeneutrinos_260422_1e2nu_1e5mu/newtracking_110522/')
-parser.add_argument('--TestBricks',help="What Names would you like to assign to the reconstruction methods that generated the tracks?", default="[11]")
+parser.add_argument('--TestBricks',help="What Names would you like to assign to the reconstruction methods that generated the tracks?", default="['11']")
 parser.add_argument('--Gap',help="Offset along z?", default="50000")
 
 args = parser.parse_args()
@@ -66,6 +66,7 @@ no_quadrants=1
 no_brick_layers=2
 columns_to_extract=['ID','x','y','z','TX','TY','MCEvent','MCTrack','MCMotherID','P','MotherPDG','PdgCode', 'ProcID', 'FEDRATrackID']
 gap=int(args.Gap)
+TestBricks=ast.literal_eval(args.TestBricks)
 data=None
 for q in range(1,no_quadrants+1):
     for bl in range(1,no_brick_layers+1):
@@ -83,7 +84,8 @@ for q in range(1,no_quadrants+1):
         new_data['Fiducial_Cut_z_LB']=new_data['Z'].min()
         new_data['Fiducial_Cut_z_UB']=new_data['Z'].max()
         data=pd.concat([data,new_data])
-        #new_data=pd.read_csv(input_file,header=0)
+
+
 data_agg=data.groupby(by=['MC_Track'])['Z'].min().reset_index()
 data_agg=data_agg.rename(columns={'Z': 'MC_Track_Start_Z'})
 data=pd.merge(data,data_agg,how='inner',on=['MC_Track'])
@@ -97,8 +99,15 @@ data=data.rename(columns={'VertexS': 'FEDRA_Vertex_ID'})
 data=data.rename(columns={'VertexE': 'FEDRA_Secondary_Vertex_ID'})
 data=data.rename(columns={'Z': 'z'})
 data.drop(['MCEvent','MCMotherID','MC_Track_Start_Z'],axis=1,inplace=True)
-print(data)
-exit()
+
+
+test_data=None
+for tb in TestBricks:
+    for q in range(1,no_quadrants+1):
+        for bl in range(1,no_brick_layers+1):
+            new_test_data=data.drop(data.index[(data['Brick_ID'] != tb)])
+            test_data=pd.concat([test_data,new_test_data])
+print(len(test_data))
 #
 #
 #
