@@ -107,122 +107,18 @@ for tb in TestBricks:
         for bl in range(1,no_brick_layers+1):
             new_test_data=data.drop(data.index[(data['Brick_ID'] != tb)])
             test_data=pd.concat([test_data,new_test_data])
-print(len(test_data))
-#
-#
-#
-#
-# if SliceData:
-#            print(UF.TimeStamp(),'Slicing the data...')
-#            raw_data=raw_data.drop(raw_data.index[(raw_data[PM.x] > Xmax) | (raw_data[PM.x] < Xmin) | (raw_data[PM.y] > Ymax) | (raw_data[PM.y] < Ymin)])
-#            final_rows=len(raw_data.axes[0])
-#            print(UF.TimeStamp(),'The sliced raw data has ',final_rows,' hits')
-# raw_data.drop([PM.x,PM.y,PM.z],axis=1,inplace=True)
-# raw_data[PM.MC_Event_ID] = raw_data[PM.MC_Event_ID].astype(str)
-# raw_data[PM.MC_Track_ID] = raw_data[PM.MC_Track_ID].astype(str)
-# raw_data[PM.Hit_ID] = raw_data[PM.Hit_ID].astype(str)
-# raw_data['MC_Mother_Track_ID'] = raw_data[PM.MC_Event_ID] + '-' + raw_data[PM.MC_Track_ID]
-# raw_data.drop([PM.MC_Event_ID,PM.MC_Track_ID],axis=1,inplace=True)
-#
-# for rn in range(len(RecNames)):
-#     raw_data[TrackID[rn][0]] = raw_data[TrackID[rn][0]].astype(str)
-#     raw_data[TrackID[rn][1]] = raw_data[TrackID[rn][1]].astype(str)
-#     raw_data[RecNames[rn]] = raw_data[TrackID[rn][0]] + '-' + raw_data[TrackID[rn][1]]
-#     raw_data.drop([TrackID[rn][0],TrackID[rn][1]],axis=1,inplace=True)
-# print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
-# print(UF.TimeStamp(),bcolors.BOLD+'Stage 2:'+bcolors.ENDC+' Calculating recombination metrics...')
-#
-#
-# eval_data_comb=raw_data[['MC_Mother_Track_ID',PM.Hit_ID]]
-# eval_data_comb=pd.merge(eval_data_comb,eval_data_comb[[PM.Hit_ID,'MC_Mother_Track_ID']].rename(columns={PM.Hit_ID: "Right_Hit"}),how='inner', on = ['MC_Mother_Track_ID'])
-#
-# eval_data_comb.drop(eval_data_comb.index[eval_data_comb[PM.Hit_ID] == eval_data_comb["Right_Hit"]], inplace = True)
-# eval_data_comb["Hit_Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(eval_data_comb[PM.Hit_ID], eval_data_comb["Right_Hit"])]
-# eval_data_comb.drop_duplicates(subset="Hit_Seed_ID",keep='first',inplace=True)
-# eval_data_comb.drop(['MC_Mother_Track_ID',PM.Hit_ID,'Right_Hit'],axis=1,inplace=True)
-# TruthHitSeedCount=len(eval_data_comb)
-#
-#
-# print(UF.TimeStamp(),'Total 2-hit combinations are expected according to Monte Carlo:',TruthHitSeedCount)
-# for RN in RecNames:
-#     print(UF.TimeStamp(),'Creating '+RN+' recombination metrics...')
-#     rec_data_comb=raw_data[[RN,PM.Hit_ID]]
-#     rec_data_comb.drop(rec_data_comb.index[(rec_data_comb[RN] == 'nan-nan')],inplace=True)
-#     rec_data_comb=pd.merge(rec_data_comb,rec_data_comb[[PM.Hit_ID,RN]].rename(columns={PM.Hit_ID: "Right_Hit"}),how='inner', on = [RN])
-#     rec_data_comb.drop(rec_data_comb.index[rec_data_comb[PM.Hit_ID] == rec_data_comb["Right_Hit"]], inplace = True)
-#     rec_data_comb["Hit_Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(rec_data_comb[PM.Hit_ID], rec_data_comb["Right_Hit"])]
-#     rec_data_comb.drop_duplicates(subset="Hit_Seed_ID",keep='first',inplace=True)
-#     rec_data_comb.drop([RN,PM.Hit_ID,'Right_Hit'],axis=1,inplace=True)
-#     RecHitSeedCount=len(rec_data_comb)
-#     OverlapHitSeedCount=len(pd.merge(eval_data_comb,rec_data_comb,how='inner', on=["Hit_Seed_ID"]))
-#     if TruthHitSeedCount==0:
-#         Recall=0
-#     else:
-#         Recall=round((float(OverlapHitSeedCount)/float(TruthHitSeedCount))*100,2)
-#     if OverlapHitSeedCount==0:
-#         Precision=0
-#     else:
-#         Precision=round((float(OverlapHitSeedCount)/float(RecHitSeedCount))*100,2)
-#     print(UF.TimeStamp(), bcolors.OKGREEN+'Recombination metrics for ',bcolors.BOLD+RN+bcolors.ENDC,' are ready and listed bellow:'+bcolors.ENDC)
-#     print(UF.TimeStamp(),'Total 2-hit combinations were reconstructed by '+RN+':',RecHitSeedCount)
-#     print(UF.TimeStamp(),'Correct combinations were reconstructed by '+RN+':',OverlapHitSeedCount)
-#     print(UF.TimeStamp(),'Therefore the recall of the '+RN+': is' ,bcolors.BOLD+str(Recall), '%'+bcolors.ENDC)
-#     print(UF.TimeStamp(),'And the precision of the '+RN+': is',bcolors.BOLD+str(Precision), '%'+bcolors.ENDC)
-#
-#
-#
-# print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
-# print(UF.TimeStamp(),bcolors.BOLD+'Stage 3:'+bcolors.ENDC+' Analyzing track reconstruction metrics...')
-#
-#
-# raw_data_mc=raw_data.groupby(by=['MC_Mother_Track_ID']+MCCategories)[PM.Hit_ID].nunique().reset_index()
-# raw_data_mc.drop(raw_data_mc.index[(raw_data_mc[PM.Hit_ID] < 2)],inplace=True)
-# raw_data_mc.rename(columns={PM.Hit_ID: "MC_Mother_Track_Size"},inplace=True)
-# mc_data_tot=raw_data_mc['MC_Mother_Track_ID'].nunique()
-# print(UF.TimeStamp(),'Total number of MC tracks is:',mc_data_tot)
-# data_mc=pd.merge(raw_data[['MC_Mother_Track_ID',PM.Hit_ID]],raw_data_mc,how='inner', on =['MC_Mother_Track_ID'])
-# for RN in RecNames:
-#   raw_data_rec=raw_data.drop(raw_data.index[(raw_data[RN] == 'nan-nan')])
-#   raw_data_rec=raw_data_rec[[RN,PM.Hit_ID]]
-#   raw_data_temp_rec=raw_data_rec[[RN,PM.Hit_ID]].rename(columns={PM.Hit_ID: RN+'_Size'})
-#   raw_data_temp_rec=raw_data_temp_rec.groupby(by=[RN])[RN+'_Size'].nunique().reset_index()
-#   raw_data_temp_rec.drop(raw_data_temp_rec.index[(raw_data_temp_rec[RN+'_Size'] < 2)],inplace=True)
-#   rec_data_tot=raw_data_temp_rec[RN].nunique()
-#   data_rec=pd.merge(raw_data_rec[[RN,PM.Hit_ID]],raw_data_temp_rec,how='inner', on =[RN])
-#   data_rec=pd.merge(data_rec,data_mc,how='inner', on =[PM.Hit_ID])
-#   data_rec=data_rec.rename(columns={PM.Hit_ID: RN+'_Overlap'})
-#   data_rec=data_rec.groupby(by=[RN,RN+'_Size','MC_Mother_Track_ID'])[RN+'_Overlap'].nunique().reset_index()
-#   data_rec.drop(data_rec.index[(data_rec[RN+'_Overlap'] < 2)],inplace=True)
-#   data_temp_rec=data_rec[[RN,'MC_Mother_Track_ID']].rename(columns={RN: RN+'_Segmentation'})
-#   data_temp_rec=data_temp_rec.groupby(by=['MC_Mother_Track_ID'])[RN+'_Segmentation'].nunique().reset_index()
-#   data_rec=pd.merge(data_rec,data_temp_rec,how='inner', on =['MC_Mother_Track_ID'])
-#   data_rec.sort_values(by=[RN,RN+'_Overlap'], ascending=[1,0],inplace=True)
-#   data_rec.drop_duplicates(subset=[RN],keep='first',inplace=True)
-#   data_rec.drop([RN],axis=1,inplace=True)
-#   rec_data_mtch=data_rec['MC_Mother_Track_ID'].nunique()
-#   raw_data_mc=pd.merge(raw_data_mc,data_rec,how='left', on =['MC_Mother_Track_ID'])
-#   print(UF.TimeStamp(), bcolors.OKGREEN+'Recombination metrics for ',bcolors.BOLD+RN+bcolors.ENDC,bcolors.OKGREEN+' are ready and listed bellow:'+bcolors.ENDC)
-#   print(UF.TimeStamp(),'Total number of reconstructed tracks :',bcolors.BOLD+str(rec_data_tot)+bcolors.ENDC)
-#   print(UF.TimeStamp(),'But the number of those tracks matched to MC tracks is:',bcolors.BOLD+str(rec_data_mtch)+bcolors.ENDC)
-#   if raw_data_mc["MC_Mother_Track_Size"].sum()>0:
-#     Recall=raw_data_mc[RN+'_Overlap'].sum()/raw_data_mc["MC_Mother_Track_Size"].sum()
-#   else:
-#     Recall=0
-#   if raw_data_mc[RN+'_Size'].sum()>0:
-#     Precision=raw_data_mc[RN+'_Overlap'].sum()/raw_data_mc[RN+'_Size'].sum()
-#   else:
-#       Precision=0
-#   Segmentation=raw_data_mc[RN+'_Segmentation'].mean()
-#   print(UF.TimeStamp(),'Average track reconstruction efficiency:',bcolors.BOLD+str(round(Recall,2)*100), '%'+bcolors.ENDC)
-#   print(UF.TimeStamp(),'Average track reconstruction purity:',bcolors.BOLD+str(round(Precision,2)*100), '%'+bcolors.ENDC)
-#   print(UF.TimeStamp(),'Average track segmentation:',bcolors.BOLD+str(round(Segmentation,2))+bcolors.ENDC)
-# print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
-# print(UF.TimeStamp(),bcolors.BOLD+'Stage 4:'+bcolors.ENDC+' Writing the output...')
-# output_file_location=EOS_DIR+'/ANNDEA/Data/TEST_SET/EH_TRACK_REC_STATS.csv'
-# raw_data_mc.to_csv(output_file_location,index=False)
-# print(UF.TimeStamp(), bcolors.OKGREEN+"The track reconstruction stats for further analysis are written there:"+bcolors.ENDC, bcolors.OKBLUE+output_file_location+bcolors.ENDC)
-# print(bcolors.HEADER+"############################################# End of the program ################################################"+bcolors.ENDC)
-# #End of the script
+output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/SND_Raw_Data_Test.csv'
+test_data.to_csv(output_file_location,index=False)
+print(UF.TimeStamp(), bcolors.OKGREEN+"The test data was written to :"+bcolors.ENDC, bcolors.OKBLUE+output_file_location+bcolors.ENDC)
+for tb in TestBricks:
+    for q in range(1,no_quadrants+1):
+        for bl in range(1,no_brick_layers+1):
+            data=data.drop(data.index[(data['Brick_ID'] == tb)])
+
+output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/SND_Raw_Data_Train.csv'
+data.to_csv(output_file_location,index=False)
+print(UF.TimeStamp(), bcolors.OKGREEN+"The train data was written to :"+bcolors.ENDC, bcolors.OKBLUE+output_file_location+bcolors.ENDC)
+print(bcolors.HEADER+"############################################# End of the program ################################################"+bcolors.ENDC)
 
 
 
