@@ -62,8 +62,8 @@ def MotherIDNorm(row):
           return -2
 
 input_file_location=args.f
-no_quadrants=1
-no_brick_layers=2
+no_quadrants=4
+no_brick_layers=5
 columns_to_extract=['ID','x','y','z','TX','TY','MCEvent','MCTrack','MCMotherID','P','MotherPDG','PdgCode', 'ProcID', 'FEDRATrackID']
 gap=int(args.Gap)
 TestBricks=ast.literal_eval(args.TestBricks)
