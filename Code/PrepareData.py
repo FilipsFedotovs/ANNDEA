@@ -109,6 +109,7 @@ for tb in TestBricks:
             test_data=pd.concat([test_data,new_test_data])
 output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/SND_Raw_Data_Test.csv'
 test_data.to_csv(output_file_location,index=False)
+print(len(test_data))
 print(UF.TimeStamp(), bcolors.OKGREEN+"The test data was written to :"+bcolors.ENDC, bcolors.OKBLUE+output_file_location+bcolors.ENDC)
 for tb in TestBricks:
     for q in range(1,no_quadrants+1):
@@ -116,6 +117,7 @@ for tb in TestBricks:
             data=data.drop(data.index[(data['Brick_ID'] == tb)])
 
 output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/SND_Raw_Data_Train.csv'
+print(len(data))
 data.to_csv(output_file_location,index=False)
 print(UF.TimeStamp(), bcolors.OKGREEN+"The train data was written to :"+bcolors.ENDC, bcolors.OKBLUE+output_file_location+bcolors.ENDC)
 print(bcolors.HEADER+"############################################# End of the program ################################################"+bcolors.ENDC)
