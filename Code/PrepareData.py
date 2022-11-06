@@ -66,11 +66,8 @@ for q in range(1,no_quadrants+1):
         input_file=input_file_location+'/b0000'+str(bl)+str(q)+'/brick'+str(bl)+str(q)+'.csv'
         print(UF.TimeStamp(), 'Loading ',bcolors.OKBLUE+input_file+bcolors.ENDC)
         new_data=pd.read_csv(input_file,header=0,usecols=columns_to_extract)
-        new_data['FEDRATrackID'] = new_data['FEDRATrackID'].astype(int)
-        print(new_data)
-        exit()
         input_vx_file=input_file_location+'/b0000'+str(bl)+str(q)+'/brick'+str(bl)+str(q)+'._vertices.csv'
-        new_vx_data=pd.read_csv(input_file,header=0)
+        new_vx_data=pd.read_csv(input_vx_file,header=0)
         new_data=pd.merge(new_data,new_vx_data,how='left',on=['FEDRATrackID'])
         #new_data=pd.read_csv(input_file,header=0)
         print(new_data)
