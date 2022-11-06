@@ -85,7 +85,9 @@ for q in range(1,no_quadrants+1):
         data=pd.concat([data,new_data])
         #new_data=pd.read_csv(input_file,header=0)
 data_agg=data.groupby(by=['MC_Track'])['Z'].min().reset_index()
-print(data_agg)
+data.agg=data_agg.rename(columns={'Z': 'MC_Track_Star_Z'})
+data=pd.merge(data,data_agg,how='inner',on=['MC_Track'])
+print(data)
 exit()
 
 #
