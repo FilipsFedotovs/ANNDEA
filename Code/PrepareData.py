@@ -40,7 +40,7 @@ import Parameters as PM #This is where we keep framework global parameters
 parser = argparse.ArgumentParser(description='This script compares the ouput of the previous step with the output of ANNDEA reconstructed data to calculate reconstruction performance.')
 parser.add_argument('--f',help="Please enter the full path directory there the files are located", default='/eos/user/a/aiulian/sim_fedra/mergeneutrinos_260422_1e2nu_1e5mu/newtracking_110522/')
 parser.add_argument('--TestBricks',help="What Names would you like to assign to the reconstruction methods that generated the tracks?", default="[11]")
-parser.add_argument('--Offset',help="Offset along z?", default="50000")
+parser.add_argument('--Gap',help="Offset along z?", default="50000")
 
 args = parser.parse_args()
 
@@ -60,7 +60,7 @@ input_file_location=args.f
 no_quadrants=4
 no_brick_layers=5
 columns_to_extract=['ID','x','y','z','TX','TY','MCEvent','MCTrack','MCMotherID','P','MotherPDG','PdgCode', 'ProcID', 'FEDRATrackID']
-offset=int(args.Offset)
+gap=int(args.gap)
 data=None
 for q in range(1,no_quadrants+1):
     for bl in range(1,no_brick_layers+1):
@@ -71,9 +71,8 @@ for q in range(1,no_quadrants+1):
         new_vx_data=pd.read_csv(input_vx_file,header=0)
         new_data=pd.merge(new_data,new_vx_data,how='left',on=['FEDRATrackID'])
         new_data['Brick_ID']=str(bl)+str(q)
-        new_data['Z']=(new_data['z']+(bl*(77585+offset))-offset)+77585
+        new_data['Z']=(new_data['z']+(bl*(77585+gap)))
         print(new_data)
-        exit()
         data=pd.concat([data,new_data])
         #new_data=pd.read_csv(input_file,header=0)
 print(data)
