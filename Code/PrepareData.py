@@ -56,7 +56,7 @@ print(UF.TimeStamp(),bcolors.BOLD+'Stage 1:'+bcolors.ENDC+' Preparing the input 
 ######################################## Set variables  #############################################################
 
 def MotherIDNorm(row):
-        if row['Z']>=row['Fiducial_Cut_x_LB'] and row['Z']<=row['Fiducial_Cut_x_UB']:
+        if row['Z']>=row['Fiducial_Cut_z_LB'] and row['Z']<=row['Fiducial_Cut_z_UB']:
           return row['MCMotherID']
         else:
           return -2
@@ -80,17 +80,25 @@ for q in range(1,no_quadrants+1):
         new_data.drop(['z'],axis=1,inplace=True)
         new_data['MC_Event_ID']=str(bl)+str(q)+'-'+new_data['MCEvent'].astype(str)
         new_data['MC_Track']=new_data['MCEvent'].astype(str)+'-'+new_data['MCTrack'].astype(str)
-        new_data['Fiducial_Cut_x_LB']=new_data['Z'].min()
-        new_data['Fiducial_Cut_x_UB']=new_data['Z'].max()
+        new_data['Fiducial_Cut_z_LB']=new_data['Z'].min()
+        new_data['Fiducial_Cut_z_UB']=new_data['Z'].max()
         data=pd.concat([data,new_data])
         #new_data=pd.read_csv(input_file,header=0)
 data_agg=data.groupby(by=['MC_Track'])['Z'].min().reset_index()
 data_agg=data_agg.rename(columns={'Z': 'MC_Track_Start_Z'})
 data=pd.merge(data,data_agg,how='inner',on=['MC_Track'])
 data['MC_Mother_ID']=data.apply(MotherIDNorm,axis=1)
+data=data.rename(columns={'ID': 'Hit_ID'})
+data=data.rename(columns={'TX': 'tx'})
+data=data.rename(columns={'TY': 'ty'})
+data=data.rename(columns={'MCTrack': 'MC_Track_ID'})
+data=data.rename(columns={'PdgCode': 'PDG_ID'})
+data=data.rename(columns={'VertexS': 'FEDRA_Vertex_ID'})
+data=data.rename(columns={'VertexE': 'FEDRA_Secondary_Vertex_ID'})
+data=data.rename(columns={'Z': 'z'})
+data.drop(['MCEvent','MCMotherID','MC_Track_Start_Z'],axis=1,inplace=True)
 print(data)
 exit()
-
 #
 #
 #
