@@ -55,15 +55,15 @@ print(bcolors.HEADER+"##########################################################
 print(UF.TimeStamp(),bcolors.BOLD+'Stage 1:'+bcolors.ENDC+' Preparing the input data...')
 ######################################## Set variables  #############################################################
 
-# def MotherIDNorm(row):
-#         if row['AntiLink_Strenth']>0:
-#           return 1.16*(row['Link_Strength']+row['Seed_CNN_Fit'])/row['AntiLink_Strenth']
-#         else:
-#           return 100
+def MotherIDNorm(row):
+        if row['Z']>=row['Fiducial_Cut_x_LB'] and row['Z']<=row['Fiducial_Cut_x_UB']:
+          return row['Link_Strength']
+        else:
+          return 100
 
 input_file_location=args.f
 no_quadrants=1
-no_brick_layers=5
+no_brick_layers=2
 columns_to_extract=['ID','x','y','z','TX','TY','MCEvent','MCTrack','MCMotherID','P','MotherPDG','PdgCode', 'ProcID', 'FEDRATrackID']
 gap=int(args.Gap)
 data=None
@@ -86,6 +86,8 @@ for q in range(1,no_quadrants+1):
         #new_data=pd.read_csv(input_file,header=0)
 data_agg=data.groupby(by=['MC_Track'])['Z'].min().reset_index()
 data.agg=data_agg.rename(columns={'Z': 'MC_Track_Star_Z'})
+print(data_agg)
+exit()
 data=pd.merge(data,data_agg,how='inner',on=['MC_Track'])
 print(data)
 exit()
