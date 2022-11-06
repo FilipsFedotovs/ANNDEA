@@ -67,7 +67,7 @@ for q in range(1,no_quadrants+1):
         print(UF.TimeStamp(), 'Loading ',bcolors.OKBLUE+input_file+bcolors.ENDC)
         new_data=pd.read_csv(input_file,header=0,usecols=columns_to_extract)
         #new_data=pd.read_csv(input_file,header=0)
-        print(new_data.head())
+        print(new_data)
         exit()
 
 #
