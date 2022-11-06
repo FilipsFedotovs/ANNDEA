@@ -64,15 +64,16 @@ gap=int(args.Gap)
 data=None
 for q in range(1,no_quadrants+1):
     for bl in range(1,no_brick_layers+1):
-        input_file=input_file_location+'/b0000'+str(bl)+str(q)+'/brick'+str(bl)+str(q)+'.csv'
+        input_file=input_file_location+'b0000'+str(bl)+str(q)+'/brick'+str(bl)+str(q)+'.csv'
         print(UF.TimeStamp(), 'Loading ',bcolors.OKBLUE+input_file+bcolors.ENDC)
         new_data=pd.read_csv(input_file,header=0,usecols=columns_to_extract)
-        input_vx_file=input_file_location+'/b0000'+str(bl)+str(q)+'/brick'+str(bl)+str(q)+'_vertices.csv'
+        input_vx_file=input_file_location+'b0000'+str(bl)+str(q)+'/brick'+str(bl)+str(q)+'_vertices.csv'
         new_vx_data=pd.read_csv(input_vx_file,header=0)
         new_data=pd.merge(new_data,new_vx_data,how='left',on=['FEDRATrackID'])
         new_data['Brick_ID']=str(bl)+str(q)
-        new_data['Z']=(new_data['z']+(bl*(77585+gap)))
+        new_data['Z']=(new_data['z']+(bl*(77585+gap)))-gap
         print(new_data)
+        x=input()
         data=pd.concat([data,new_data])
         #new_data=pd.read_csv(input_file,header=0)
 print(data)
