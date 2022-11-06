@@ -73,7 +73,7 @@ for q in range(1,no_quadrants+1):
         new_data['Brick_ID']=str(bl)+str(q)
         new_data['Z']=(new_data['z']+(bl*(77585+gap)))-gap
         new_data.drop(['z'],axis=1,inplace=True)
-        new_data['MC Event ID']=str(bl)+str(q)+'-'+new_data['MC Event ID'].astype(str)
+        new_data['MC_Event_ID']=str(bl)+str(q)+'-'+new_data['MCEvent'].astype(str)
         print(new_data)
         x=input()
         data=pd.concat([data,new_data])
