@@ -58,8 +58,7 @@ print(UF.TimeStamp(),bcolors.BOLD+'Stage 1:'+bcolors.ENDC+' Preparing the input 
 input_file_location=args.f
 no_quadrants=4
 no_brick_layers=5
-print(UF.TimeStamp(), 'Loading ',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
-columns_to_extract=['ID','X','Y','Z','TX','TY','MCEvent','MCTrack','MCMotherID','P','PdgCode','MotherPDG', 'ProcID', 'FEDRATrackID']
+columns_to_extract=['ID','X','Y','Z','TX','TY','MCEvent','MCTrack','MCMotherID','P','MotherPDG', 'ProcID', 'FEDRATrackID']
 
 data=None
 for q in range(1,no_quadrants+1):
