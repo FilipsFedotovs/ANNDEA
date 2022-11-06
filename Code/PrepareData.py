@@ -55,9 +55,14 @@ print(bcolors.HEADER+"##########################################################
 print(UF.TimeStamp(),bcolors.BOLD+'Stage 1:'+bcolors.ENDC+' Preparing the input data...')
 ######################################## Set variables  #############################################################
 
+# def MotherIDNorm(row):
+#         if row['AntiLink_Strenth']>0:
+#           return 1.16*(row['Link_Strength']+row['Seed_CNN_Fit'])/row['AntiLink_Strenth']
+#         else:
+#           return 100
 
 input_file_location=args.f
-no_quadrants=4
+no_quadrants=1
 no_brick_layers=5
 columns_to_extract=['ID','x','y','z','TX','TY','MCEvent','MCTrack','MCMotherID','P','MotherPDG','PdgCode', 'ProcID', 'FEDRATrackID']
 gap=int(args.Gap)
@@ -77,11 +82,10 @@ for q in range(1,no_quadrants+1):
         new_data['MC_Track']=new_data['MCEvent'].astype(str)+'-'+new_data['MCTrack'].astype(str)
         new_data['Fiducial_Cut_x_LB']=new_data['Z'].min()
         new_data['Fiducial_Cut_x_UB']=new_data['Z'].max()
-        print(new_data)
-        x=input()
         data=pd.concat([data,new_data])
         #new_data=pd.read_csv(input_file,header=0)
-print(data)
+data_agg=data.groupby(by=['MC_Track'])['Z'].min().reset_index()
+print(data_agg)
 exit()
 
 #
