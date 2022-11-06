@@ -76,7 +76,7 @@ for q in range(1,no_quadrants+1):
         new_data['MC_Event_ID']=str(bl)+str(q)+'-'+new_data['MCEvent'].astype(str)
         new_data['MC_Track']=new_data['MCEvent'].astype(str)+'-'+new_data['MCTrack'].astype(str)
 
-        print(new_data['Z'].min)
+        print(new_data['Z'].min())
         x=input()
         data=pd.concat([data,new_data])
         #new_data=pd.read_csv(input_file,header=0)
