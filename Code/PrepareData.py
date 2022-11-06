@@ -75,9 +75,9 @@ for q in range(1,no_quadrants+1):
         new_data.drop(['z'],axis=1,inplace=True)
         new_data['MC_Event_ID']=str(bl)+str(q)+'-'+new_data['MCEvent'].astype(str)
         new_data['MC_Track']=new_data['MCEvent'].astype(str)+'-'+new_data['MCTrack'].astype(str)
-
-        print(new_data['Z'].min())
-        print(new_data['Z'].max())
+        new_data['Fiducial_Cut_x_LB']=new_data['Z'].min()
+        new_data['Fiducial_Cut_x_UB']=new_data['Z'].max()
+        print(new_data)
         x=input()
         data=pd.concat([data,new_data])
         #new_data=pd.read_csv(input_file,header=0)
