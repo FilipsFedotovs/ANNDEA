@@ -65,8 +65,8 @@ for q in range(1,no_quadrants+1):
     for bl in range(1,no_brick_layers+1):
         input_file=input_file_location+'/b0000'+str(bl)+str(q)+'/brick'+str(bl)+str(q)+'.csv'
         print(UF.TimeStamp(), 'Loading ',bcolors.OKBLUE+input_file+bcolors.ENDC)
-        #new_data=pd.read_csv(input_file,header=0,usecols=columns_to_extract)
-        new_data=pd.read_csv(input_file,header=0)
+        new_data=pd.read_csv(input_file,header=0,usecols=columns_to_extract)
+        #new_data=pd.read_csv(input_file,header=0)
         print(new_data.head())
         exit()
 
