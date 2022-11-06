@@ -59,14 +59,15 @@ input_file_location=args.f
 no_quadrants=4
 no_brick_layers=5
 print(UF.TimeStamp(), 'Loading ',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
-columns_to_extract=['ID','X','Y','Z','TX','TY','MC Event','MC Track','MC Mother ID','P','Pdg Code','Mother PDG', 'Proc ID', 'FEDRA Track ID']
+columns_to_extract=['ID','X','Y','Z','TX','TY','MCEvent','MCTrack','MCMotherID','P','Pdg Code','MotherPDG', 'ProcID', 'FEDRATrackID']
 
 data=None
 for q in range(1,no_quadrants+1):
     for bl in range(1,no_brick_layers+1):
         input_file=input_file_location+'/b0000'+str(bl)+str(q)+'/brick'+str(bl)+str(q)+'.csv'
-        #new_data=pd.read_csv(input_file,header=0,usecols=columns_to_extract)
-        new_data=pd.read_csv(input_file,header=0)
+        print(UF.TimeStamp(), 'Loading ',bcolors.OKBLUE+input_file+bcolors.ENDC)
+        new_data=pd.read_csv(input_file,header=0,usecols=columns_to_extract)
+        #new_data=pd.read_csv(input_file,header=0)
         print(new_data)
         exit()
 
