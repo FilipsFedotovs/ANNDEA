@@ -69,6 +69,9 @@ for q in range(1,no_quadrants+1):
         input_vx_file=input_file_location+'/b0000'+str(bl)+str(q)+'/brick'+str(bl)+str(q)+'_vertices.csv'
         new_vx_data=pd.read_csv(input_vx_file,header=0)
         new_data=pd.merge(new_data,new_vx_data,how='left',on=['FEDRATrackID'])
+        new_data['Brick_ID']=str(bl)+str(q)
+        print(new_data)
+        exit()
         data=pd.concat([data,new_data])
         #new_data=pd.read_csv(input_file,header=0)
 print(data)
