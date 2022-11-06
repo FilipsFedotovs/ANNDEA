@@ -71,7 +71,7 @@ for q in range(1,no_quadrants+1):
         new_vx_data=pd.read_csv(input_vx_file,header=0)
         new_data=pd.merge(new_data,new_vx_data,how='left',on=['FEDRATrackID'])
         new_data['Brick_ID']=str(bl)+str(q)
-        new_data['Z']=new_data['z']+(bl*(77585+offset))
+        new_data['Z']=(new_data['z']+(bl*(77585+offset))-offset)
         print(new_data)
         exit()
         data=pd.concat([data,new_data])
