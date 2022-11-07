@@ -91,6 +91,7 @@ for q in range(1,no_quadrants+1):
         new_data.drop(['MCEvent'],axis=1,inplace=True)
         data=pd.concat([data,new_data])
         print(data)
+        print(data.dtypes)
         print(data.memory_usage(index=True).sum()/(1024**2))
         print(round(process.memory_info().rss/(1024**2),0))
         exit()
