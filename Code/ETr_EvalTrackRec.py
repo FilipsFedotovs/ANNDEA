@@ -117,6 +117,7 @@ for RN in RecNames:
     print(UF.TimeStamp(),'Creating '+RN+' recombination metrics...')
     rec_data_comb=raw_data[[RN,PM.Hit_ID]]
     rec_data_comb.drop(rec_data_comb.index[(rec_data_comb[RN] == 'nan-nan')],inplace=True)
+    rec_data_comb=rec_data_comb[rec_data_comb[RN].str.contains("nan")==False]
     rec_data_comb=pd.merge(rec_data_comb,rec_data_comb[[PM.Hit_ID,RN]].rename(columns={PM.Hit_ID: "Right_Hit"}),how='inner', on = [RN])
     rec_data_comb.drop(rec_data_comb.index[rec_data_comb[PM.Hit_ID] == rec_data_comb["Right_Hit"]], inplace = True)
     rec_data_comb["Hit_Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(rec_data_comb[PM.Hit_ID], rec_data_comb["Right_Hit"])]
@@ -187,7 +188,7 @@ for RN in RecNames:
   print(UF.TimeStamp(),'Average track segmentation:',bcolors.BOLD+str(round(Segmentation,2))+bcolors.ENDC)
 print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
 print(UF.TimeStamp(),bcolors.BOLD+'Stage 4:'+bcolors.ENDC+' Writing the output...')
-output_file_location=EOS_DIR+'/ANNDEA/Data/TEST_SET/EH_TRACK_REC_STATS.csv'
+output_file_location=EOS_DIR+'/ANNDEA/Data/TEST_SET/ETr_TRACK_REC_STATS.csv'
 raw_data_mc.to_csv(output_file_location,index=False)
 print(UF.TimeStamp(), bcolors.OKGREEN+"The track reconstruction stats for further analysis are written there:"+bcolors.ENDC, bcolors.OKBLUE+output_file_location+bcolors.ENDC)
 print(bcolors.HEADER+"############################################# End of the program ################################################"+bcolors.ENDC)

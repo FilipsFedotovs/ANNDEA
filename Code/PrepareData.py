@@ -134,9 +134,11 @@ else:
     data=data.rename(columns={'TY': 'ty'})
     data=data.rename(columns={'MCTrack': 'MC_Track_ID'})
     data=data.rename(columns={'PdgCode': 'PDG_ID'})
+    data=data.rename(columns={'FEDRATrackID': 'FEDRA_Track_ID'})
     data=data.rename(columns={'VertexS': 'FEDRA_Vertex_ID'})
     data=data.rename(columns={'VertexE': 'FEDRA_Secondary_Vertex_ID'})
     data=data.rename(columns={'Z': 'z'})
+    data=data.rename(columns={'ProcID': 'Process_ID'})
     if Test:
         output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/SND_Raw_Data_Test.csv'
     else:
