@@ -9,7 +9,8 @@ import ast
 import pandas as pd #We use Panda for a routine data processing
 pd.options.mode.chained_assignment = None #Disable annoying Pandas warnings
 import os
-
+import psutil
+process = psutil.Process(os.getpid())
 class bcolors:   #We use it for the interface (Colour fonts and so on)
     HEADER = '\033[95m'
     OKBLUE = '\033[94m'
@@ -87,6 +88,8 @@ for q in range(1,no_quadrants+1):
         new_data['Fiducial_Cut_z_UB']=new_data['Z'].max()
         new_data.drop(['MCEvent'],axis=1,inplace=True)
         data=pd.concat([data,new_data])
+
+        print(process.memory_info().rss)
 
 print(1)
 data_agg=data.groupby(by=['MC_Track'])['Z'].min().reset_index()
