@@ -101,11 +101,9 @@ for q in range(1,no_quadrants+1):
         data['MCTrack']=data['MCTrack'].astype(np.int32)
         data['MCMotherID']=data['MCMotherID'].astype(np.int32)
         data['ID']=data['ID'].astype(np.int32)
-        print(data)
-        print(data.dtypes)
         print(data.memory_usage(index=True).sum()/(1024**2))
         print(round(process.memory_info().rss/(1024**2),0))
-        exit()
+
 
 print(0)
 print(round(process.memory_info().rss/(1024**2),0))
