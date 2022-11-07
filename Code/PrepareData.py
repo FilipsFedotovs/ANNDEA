@@ -97,7 +97,7 @@ for q in range(1,no_quadrants+1):
         data['MotherPDG']=data['MotherPDG'].astype(np.int8)
         data['ProcID']=data['ProcID'].astype(np.int8)
         data['VertexS']=data['VertexS'].fillna(-666).astype(np.int32)
-        data['VertexE']=data['VertexS]E'].fillna(-666).astype(np.int32)
+        data['VertexE']=data['VertexE'].fillna(-666).astype(np.int32)
         print(data)
         print(data.dtypes)
         print(data.memory_usage(index=True).sum()/(1024**2))
