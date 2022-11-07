@@ -89,7 +89,7 @@ for q in range(1,no_quadrants+1):
         new_data.drop(['MCEvent'],axis=1,inplace=True)
         data=pd.concat([data,new_data])
 
-        print(process.memory_info().rss)
+        print(process.memory_info().rss/(1024**2))
 
 print(1)
 data_agg=data.groupby(by=['MC_Track'])['Z'].min().reset_index()
