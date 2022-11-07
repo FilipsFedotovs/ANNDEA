@@ -70,7 +70,8 @@ no_quadrants=4
 no_brick_layers=5
 req_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/SND_Raw_Data_Agg.csv'
 if os.path.isfile(req_file_location):
-
+    print('here')
+    exit()
     columns_to_extract=['ID','x','y','z','TX','TY','MCEvent','MCTrack','MCMotherID','P','MotherPDG','PdgCode', 'ProcID', 'FEDRATrackID']
     gap=int(args.Gap)
     Test=args.Test=='Y'
@@ -173,26 +174,13 @@ else:
             data=pd.concat([data,new_data])
             print(data.memory_usage(index=True).sum()/(1024**2))
             print(round(process.memory_info().rss/(1024**2),0))
-
-
-    print(round(process.memory_info().rss/(1024**2),0))
     del new_data
     gc.collect()
-
-    print(round(process.memory_info().rss/(1024**2),0))
     data_agg=data.groupby(by=['MC_Track'])['Z'].min().reset_index()
-
-    print(round(process.memory_info().rss/(1024**2),0))
     data_agg=data_agg.rename(columns={'Z': 'MC_Track_Start_Z'})
-    print(data_agg)
-    exit()
-
-    print(round(process.memory_info().rss/(1024**2),0))
-
-    print(len(data))
     data_agg.to_csv(req_file_location,index=False)
-print(UF.TimeStamp(), bcolors.OKGREEN+"The data was written to :"+bcolors.ENDC, bcolors.OKBLUE+output_file_location+bcolors.ENDC)
-print(bcolors.HEADER+"############################################# End of the program ################################################"+bcolors.ENDC)
+    print(UF.TimeStamp(), bcolors.OKGREEN+"The data was written to :"+bcolors.ENDC, bcolors.OKBLUE+req_file_location+bcolors.ENDC)
+    print(bcolors.HEADER+"############################################# End of the program ################################################"+bcolors.ENDC)
 
 
 
