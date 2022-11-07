@@ -70,8 +70,6 @@ no_quadrants=4
 no_brick_layers=5
 req_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/SND_Raw_Data_Agg.csv'
 if os.path.isfile(req_file_location):
-    print('here')
-    exit()
     columns_to_extract=['ID','x','y','z','TX','TY','MCEvent','MCTrack','MCMotherID','P','MotherPDG','PdgCode', 'ProcID', 'FEDRATrackID']
     gap=int(args.Gap)
     Test=args.Test=='Y'
