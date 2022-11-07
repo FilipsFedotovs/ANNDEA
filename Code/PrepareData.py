@@ -88,12 +88,17 @@ for q in range(1,no_quadrants+1):
         new_data.drop(['MCEvent'],axis=1,inplace=True)
         data=pd.concat([data,new_data])
 
-
+print(1)
 data_agg=data.groupby(by=['MC_Track'])['Z'].min().reset_index()
+print(2)
 data_agg=data_agg.rename(columns={'Z': 'MC_Track_Start_Z'})
+print(3)
 data=pd.merge(data,data_agg,how='inner',on=['MC_Track'])
+print(4)
 data['MC_Mother_ID']=data.apply(MotherIDNorm,axis=1)
+print(5)
 data.drop(['MCMotherID','MC_Track_Start_Z'],axis=1,inplace=True)
+print(6)
 data=data.rename(columns={'ID': 'Hit_ID'})
 data=data.rename(columns={'TX': 'tx'})
 data=data.rename(columns={'TY': 'ty'})
@@ -102,7 +107,7 @@ data=data.rename(columns={'PdgCode': 'PDG_ID'})
 data=data.rename(columns={'VertexS': 'FEDRA_Vertex_ID'})
 data=data.rename(columns={'VertexE': 'FEDRA_Secondary_Vertex_ID'})
 data=data.rename(columns={'Z': 'z'})
-
+print(7)
 if Test:
     for tb in TestBricks:
       for q in range(1,no_quadrants+1):
