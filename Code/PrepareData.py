@@ -127,7 +127,7 @@ else:
                 new_data.drop(['MCEvent'],axis=1,inplace=True)
                 new_data=pd.merge(new_data,data_agg,how='inner',on=['MC_Track'])
                 new_data['MC_Mother_ID']=new_data.apply(MotherIDNorm,axis=1)
-                new_data.drop(['MCMotherID','MC_Track_Start_Z'],axis=1,inplace=True)
+                new_data.drop(['MCMotherID','MC_Track_Start_Z','MC_Track'],axis=1,inplace=True)
                 data=pd.concat([data,new_data])
     data=data.rename(columns={'ID': 'Hit_ID'})
     data=data.rename(columns={'TX': 'tx'})
