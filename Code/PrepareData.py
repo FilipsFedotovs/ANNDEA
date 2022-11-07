@@ -104,7 +104,7 @@ for q in range(1,no_quadrants+1):
         print(data.memory_usage(index=True).sum()/(1024**2))
         print(round(process.memory_info().rss/(1024**2),0))
 
-
+data.drop(['VertexE'],axis=1,inplace=True)
 print(0)
 print(round(process.memory_info().rss/(1024**2),0))
 del new_data
@@ -132,7 +132,7 @@ data=data.rename(columns={'TY': 'ty'})
 data=data.rename(columns={'MCTrack': 'MC_Track_ID'})
 data=data.rename(columns={'PdgCode': 'PDG_ID'})
 data=data.rename(columns={'VertexS': 'FEDRA_Vertex_ID'})
-data=data.rename(columns={'VertexE': 'FEDRA_Secondary_Vertex_ID'})
+#data=data.rename(columns={'VertexE': 'FEDRA_Secondary_Vertex_ID'})
 data=data.rename(columns={'Z': 'z'})
 print(7)
 print(round(process.memory_info().rss/(1024**2),0))
