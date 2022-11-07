@@ -90,7 +90,7 @@ for q in range(1,no_quadrants+1):
         new_data['Fiducial_Cut_z_LB']=new_data['Z'].min()
         new_data['Fiducial_Cut_z_UB']=new_data['Z'].max()
         new_data['VertexS']=new_data.fillna(0).astype(int)
-        new_data=new_data.replace(0, np.nan)
+        new_data['VertexS']=new_data['VertexS'].replace(0, np.nan)
         new_data.drop(['MCEvent'],axis=1,inplace=True)
         data=pd.concat([data,new_data])
         print(data)
