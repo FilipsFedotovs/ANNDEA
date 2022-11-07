@@ -92,8 +92,8 @@ for q in range(1,no_quadrants+1):
 
         new_data.drop(['MCEvent'],axis=1,inplace=True)
         data=pd.concat([data,new_data])
-        data['FEDRATrackID']=data['FEDRATrackID'].fillna(0).astype(int)
-        data['FEDRATrackID']=data['FEDRATrackID'].replace(0, np.nan)
+        data['FEDRATrackID']=data.FEDRATrackID.fillna(0).astype(int)
+        data['FEDRATrackID']=data.FEDRATrackID.replace(0, np.nan)
         print(data)
         print(data.dtypes)
         print(data.memory_usage(index=True).sum()/(1024**2))
