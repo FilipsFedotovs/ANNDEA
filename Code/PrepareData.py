@@ -69,72 +69,8 @@ input_file_location=args.f
 no_quadrants=4
 no_brick_layers=5
 req_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/SND_Raw_Data_Agg.csv'
-if os.path.isfile(req_file_location):
-    columns_to_extract=['ID','x','y','z','TX','TY','MCEvent','MCTrack','MCMotherID','P','MotherPDG','PdgCode', 'ProcID', 'FEDRATrackID']
-    gap=int(args.Gap)
-    Test=args.Test=='Y'
-    TestBricks=ast.literal_eval(args.TestBricks)
-    data=None
-    data_agg=pd.read_csv(req_file_location,header=0)
-    for q in range(1,no_quadrants+1):
-        for bl in range(1,no_brick_layers+1):
-            input_file=input_file_location+'b0000'+str(bl)+str(q)+'/brick'+str(bl)+str(q)+'.csv'
-            print(UF.TimeStamp(), 'Loading ',bcolors.OKBLUE+input_file+bcolors.ENDC)
-            new_data=pd.read_csv(input_file,header=0,usecols=columns_to_extract)
-            input_vx_file=input_file_location+'b0000'+str(bl)+str(q)+'/brick'+str(bl)+str(q)+'_vertices.csv'
-            new_vx_data=pd.read_csv(input_vx_file,header=0)
-            new_data=pd.merge(new_data,new_vx_data,how='left',on=['FEDRATrackID'])
 
-            new_data['Brick_ID']=str(bl)+str(q)
-            new_data['Z']=(new_data['z']+(bl*(77585+gap)))-gap
-            new_data.drop(['z'],axis=1,inplace=True)
-            new_data['MC_Event_ID']=str(bl)+str(q)+'-'+new_data['MCEvent'].astype(str)
-            new_data['MC_Track']=new_data['MCEvent'].astype(str)+'-'+new_data['MCTrack'].astype(str)
-            new_data['Fiducial_Cut_z_LB']=new_data['Z'].min()
-            new_data['Fiducial_Cut_z_UB']=new_data['Z'].max()
-            new_data.drop(['MCEvent'],axis=1,inplace=True)
-            new_data=pd.merge(new_data,data_agg,how='inner',on=['MC_Track'])
-            new_data['MC_Mother_ID']=new_data.apply(MotherIDNorm,axis=1)
-            new_data.drop(['MCMotherID','MC_Track_Start_Z'],axis=1,inplace=True)
-            print(new_data)
-            exit()
-            data=pd.concat([data,new_data])
-            # data['FEDRATrackID']=data['FEDRATrackID'].fillna(-666).astype(np.int32)
-            # data['PdgCode']=data['PdgCode'].astype(np.int8)
-            # data['MotherPDG']=data['MotherPDG'].astype(np.int8)
-            # data['ProcID']=data['ProcID'].astype(np.int8)
-            # data['VertexS']=data['VertexS'].fillna(-666).astype(np.int32)
-            # data['VertexE']=data['VertexE'].fillna(-666).astype(np.int32)
-            # data['MCTrack']=data['MCTrack'].astype(np.int32)
-            # data['MCMotherID']=data['MCMotherID'].astype(np.int32)
-            # data['ID']=data['ID'].astype(np.int32)
-
-    data=data.rename(columns={'ID': 'Hit_ID'})
-    data=data.rename(columns={'TX': 'tx'})
-    data=data.rename(columns={'TY': 'ty'})
-    data=data.rename(columns={'MCTrack': 'MC_Track_ID'})
-    data=data.rename(columns={'PdgCode': 'PDG_ID'})
-    data=data.rename(columns={'VertexS': 'FEDRA_Vertex_ID'})
-    #data=data.rename(columns={'VertexE': 'FEDRA_Secondary_Vertex_ID'})
-    data=data.rename(columns={'Z': 'z'})
-    print(7)
-    print(round(process.memory_info().rss/(1024**2),0))
-    if Test:
-        for tb in TestBricks:
-          for q in range(1,no_quadrants+1):
-            for bl in range(1,no_brick_layers+1):
-                data=data.drop(data.index[(data['Brick_ID'] != tb)])
-        output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/SND_Raw_Data_Test.csv'
-    else:
-        for tb in TestBricks:
-          for q in range(1,no_quadrants+1):
-            for bl in range(1,no_brick_layers+1):
-                data=data.drop(data.index[(data['Brick_ID'] == tb)])
-        output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/SND_Raw_Data_Train.csv'
-
-    print(len(data))
-    data.to_csv(output_file_location,index=False)
-else:
+if os.path.isfile(req_file_location)==False:
     columns_to_extract=['z','MCEvent','MCTrack']
     gap=int(args.Gap)
     Test=args.Test=='Y'
@@ -160,7 +96,57 @@ else:
     data_agg.to_csv(req_file_location,index=False)
     print(UF.TimeStamp(), bcolors.OKGREEN+"The data was written to :"+bcolors.ENDC, bcolors.OKBLUE+req_file_location+bcolors.ENDC)
     print(bcolors.HEADER+"############################################# End of the program ################################################"+bcolors.ENDC)
+else:
+    columns_to_extract=['ID','x','y','z','TX','TY','MCEvent','MCTrack','MCMotherID','P','MotherPDG','PdgCode', 'ProcID', 'FEDRATrackID']
+    gap=int(args.Gap)
+    Test=args.Test=='Y'
+    TestBricks=ast.literal_eval(args.TestBricks)
+    data=None
+    data_agg=pd.read_csv(req_file_location,header=0)
 
+    for q in range(1,no_quadrants+1):
+        for bl in range(1,no_brick_layers+1):
+            if Test and (str(bl)+str(q) in TestBricks)==False:
+                continue
+            elif Test==False and (str(bl)+str(q) in TestBricks):
+                continue
+            else:
+                input_file=input_file_location+'b0000'+str(bl)+str(q)+'/brick'+str(bl)+str(q)+'.csv'
+                print(UF.TimeStamp(), 'Loading ',bcolors.OKBLUE+input_file+bcolors.ENDC)
+                new_data=pd.read_csv(input_file,header=0,usecols=columns_to_extract)
+                input_vx_file=input_file_location+'b0000'+str(bl)+str(q)+'/brick'+str(bl)+str(q)+'_vertices.csv'
+                new_vx_data=pd.read_csv(input_vx_file,header=0)
+                new_data=pd.merge(new_data,new_vx_data,how='left',on=['FEDRATrackID'])
+                new_data['Brick_ID']=str(bl)+str(q)
+                new_data['Z']=(new_data['z']+(bl*(77585+gap)))-gap
+                new_data.drop(['z'],axis=1,inplace=True)
+                new_data['MC_Event_ID']=str(bl)+str(q)+'-'+new_data['MCEvent'].astype(str)
+                new_data['MC_Track']=new_data['MCEvent'].astype(str)+'-'+new_data['MCTrack'].astype(str)
+                new_data['Fiducial_Cut_z_LB']=new_data['Z'].min()
+                new_data['Fiducial_Cut_z_UB']=new_data['Z'].max()
+                new_data.drop(['MCEvent'],axis=1,inplace=True)
+                new_data=pd.merge(new_data,data_agg,how='inner',on=['MC_Track'])
+                new_data['MC_Mother_ID']=new_data.apply(MotherIDNorm,axis=1)
+                new_data.drop(['MCMotherID','MC_Track_Start_Z'],axis=1,inplace=True)
+                data=pd.concat([data,new_data])
+    data=data.rename(columns={'ID': 'Hit_ID'})
+    data=data.rename(columns={'TX': 'tx'})
+    data=data.rename(columns={'TY': 'ty'})
+    data=data.rename(columns={'MCTrack': 'MC_Track_ID'})
+    data=data.rename(columns={'PdgCode': 'PDG_ID'})
+    data=data.rename(columns={'VertexS': 'FEDRA_Vertex_ID'})
+    data=data.rename(columns={'VertexE': 'FEDRA_Secondary_Vertex_ID'})
+    data=data.rename(columns={'Z': 'z'})
+    print(round(process.memory_info().rss/(1024**2),0))
+    if Test:
+        output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/SND_Raw_Data_Test.csv'
+    else:
+        output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/SND_Raw_Data_Train.csv'
+
+    print(len(data))
+    data.to_csv(output_file_location,index=False)
+    print(UF.TimeStamp(), bcolors.OKGREEN+"The data was written to :"+bcolors.ENDC, bcolors.OKBLUE+req_file_location+bcolors.ENDC)
+    print(bcolors.HEADER+"############################################# End of the program ################################################"+bcolors.ENDC)
 
 
 
