@@ -137,13 +137,10 @@ else:
     data=data.rename(columns={'VertexS': 'FEDRA_Vertex_ID'})
     data=data.rename(columns={'VertexE': 'FEDRA_Secondary_Vertex_ID'})
     data=data.rename(columns={'Z': 'z'})
-    print(round(process.memory_info().rss/(1024**2),0))
     if Test:
         output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/SND_Raw_Data_Test.csv'
     else:
         output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/SND_Raw_Data_Train.csv'
-
-    print(len(data))
     data.to_csv(output_file_location,index=False)
     print(UF.TimeStamp(), bcolors.OKGREEN+"The data was written to :"+bcolors.ENDC, bcolors.OKBLUE+output_file_location+bcolors.ENDC)
     print(bcolors.HEADER+"############################################# End of the program ################################################"+bcolors.ENDC)
