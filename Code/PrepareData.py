@@ -92,7 +92,7 @@ for q in range(1,no_quadrants+1):
 
         new_data.drop(['MCEvent'],axis=1,inplace=True)
         data=pd.concat([data,new_data])
-        data['FEDRATrackID']=data.FEDRATrackID.astype(int,errors='ignore')
+        print(data['FEDRATrackID'].fillna(-1).astype(int,errors='ignore'))
 
         print(data)
         print(data.dtypes)
