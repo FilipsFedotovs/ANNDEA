@@ -145,7 +145,7 @@ else:
 
     print(len(data))
     data.to_csv(output_file_location,index=False)
-    print(UF.TimeStamp(), bcolors.OKGREEN+"The data was written to :"+bcolors.ENDC, bcolors.OKBLUE+req_file_location+bcolors.ENDC)
+    print(UF.TimeStamp(), bcolors.OKGREEN+"The data was written to :"+bcolors.ENDC, bcolors.OKBLUE+output_file_location+bcolors.ENDC)
     print(bcolors.HEADER+"############################################# End of the program ################################################"+bcolors.ENDC)
 
 
