@@ -10,6 +10,7 @@ import pandas as pd #We use Panda for a routine data processing
 pd.options.mode.chained_assignment = None #Disable annoying Pandas warnings
 import os
 import psutil
+import gc
 process = psutil.Process(os.getpid())
 class bcolors:   #We use it for the interface (Colour fonts and so on)
     HEADER = '\033[95m'
@@ -79,6 +80,7 @@ for q in range(1,no_quadrants+1):
         input_vx_file=input_file_location+'b0000'+str(bl)+str(q)+'/brick'+str(bl)+str(q)+'_vertices.csv'
         new_vx_data=pd.read_csv(input_vx_file,header=0)
         new_data=pd.merge(new_data,new_vx_data,how='left',on=['FEDRATrackID'])
+
         new_data['Brick_ID']=str(bl)+str(q)
         new_data['Z']=(new_data['z']+(bl*(77585+gap)))-gap
         new_data.drop(['z'],axis=1,inplace=True)
@@ -88,20 +90,32 @@ for q in range(1,no_quadrants+1):
         new_data['Fiducial_Cut_z_UB']=new_data['Z'].max()
         new_data.drop(['MCEvent'],axis=1,inplace=True)
         data=pd.concat([data,new_data])
+        print(data)
+        print(data.memory_usage(index=True).sum())
+        print(round(process.memory_info().rss/(1024**2),0))
+        exit()
 
-        print(process.memory_info().rss/(1024**2))
-
+print(0)
+print(round(process.memory_info().rss/(1024**2),0))
+del new_data
+gc.collect()
 print(1)
+print(round(process.memory_info().rss/(1024**2),0))
 data_agg=data.groupby(by=['MC_Track'])['Z'].min().reset_index()
 print(2)
+print(round(process.memory_info().rss/(1024**2),0))
 data_agg=data_agg.rename(columns={'Z': 'MC_Track_Start_Z'})
 print(3)
+print(round(process.memory_info().rss/(1024**2),0))
 data=pd.merge(data,data_agg,how='inner',on=['MC_Track'])
 print(4)
+print(round(process.memory_info().rss/(1024**2),0))
 data['MC_Mother_ID']=data.apply(MotherIDNorm,axis=1)
 print(5)
+print(round(process.memory_info().rss/(1024**2),0))
 data.drop(['MCMotherID','MC_Track_Start_Z'],axis=1,inplace=True)
 print(6)
+print(round(process.memory_info().rss/(1024**2),0))
 data=data.rename(columns={'ID': 'Hit_ID'})
 data=data.rename(columns={'TX': 'tx'})
 data=data.rename(columns={'TY': 'ty'})
@@ -111,6 +125,7 @@ data=data.rename(columns={'VertexS': 'FEDRA_Vertex_ID'})
 data=data.rename(columns={'VertexE': 'FEDRA_Secondary_Vertex_ID'})
 data=data.rename(columns={'Z': 'z'})
 print(7)
+print(round(process.memory_info().rss/(1024**2),0))
 if Test:
     for tb in TestBricks:
       for q in range(1,no_quadrants+1):
