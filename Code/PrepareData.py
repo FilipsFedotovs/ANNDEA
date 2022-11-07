@@ -60,9 +60,7 @@ print(UF.TimeStamp(),bcolors.BOLD+'Stage 1:'+bcolors.ENDC+' Preparing the input 
 ######################################## Set variables  #############################################################
 
 def MotherIDNorm(row):
-        print(row)
-        x=input()
-        if row['Z']>=row['Fiducial_Cut_z_LB'] and row['Z']<=row['Fiducial_Cut_z_UB']:
+        if row['MC_Track_Start_Z']>=row['Fiducial_Cut_z_LB'] and row['MC_Track_Start_Z']<=row['Fiducial_Cut_z_UB']:
           return row['MCMotherID']
         else:
           return -2
