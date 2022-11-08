@@ -63,6 +63,8 @@ print(UF.TimeStamp(),'Loading pre-selected data from ',input_file_location)
 
 data=pd.read_csv(input_file_location,header=0,
             usecols=["Hit_ID","x","y","z","tx","ty"])
+print(data)
+exit()
 data["x"] = pd.to_numeric(data["x"],downcast='float')
 data["y"] = pd.to_numeric(data["y"],downcast='float')
 data["z"] = pd.to_numeric(data["z"],downcast='float')
