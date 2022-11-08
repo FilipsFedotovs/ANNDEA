@@ -63,8 +63,7 @@ print(UF.TimeStamp(),'Loading pre-selected data from ',input_file_location)
 
 data=pd.read_csv(input_file_location,header=0,
             usecols=["Hit_ID","x","y","z","tx","ty"])
-print(data)
-exit()
+
 data["x"] = pd.to_numeric(data["x"],downcast='float')
 data["y"] = pd.to_numeric(data["y"],downcast='float')
 data["z"] = pd.to_numeric(data["z"],downcast='float')
@@ -74,6 +73,8 @@ data["Hit_ID"] = data["Hit_ID"].astype(str)
 data['z']=data['z']-z_offset
 x_max=data['x'].max()
 y_max=data['y'].max()
+print(data)
+exit()
 print(UF.TimeStamp(),'Creating clusters... ')
 data.drop(data.index[data['z'] >= ((Z_ID+1)*stepZ)], inplace = True)  #Keeping the relevant z slice
 data.drop(data.index[data['z'] < (Z_ID*stepZ)], inplace = True)  #Keeping the relevant z slice
