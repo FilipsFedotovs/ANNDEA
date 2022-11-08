@@ -1498,7 +1498,7 @@ def GenerateModel(ModelMeta,TrainParams=None):
          from torch_geometric.nn import global_mean_pool
 
          if ModelMeta.ModelArchitecture=='TCN':
-            from MH_IN import InteractionNetwork as IN
+            from MTr_IN import InteractionNetwork as IN
             class MLP(nn.Module):
                   def __init__(self, input_size, output_size, hidden_size):
                      super(MLP, self).__init__()
