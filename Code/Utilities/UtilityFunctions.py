@@ -139,6 +139,7 @@ class HitCluster:
            self.ClusterHits=[]
            self.ClusterHitIDs=[]
            __ClusterHitsTemp=[]
+           print(RawHits)
            for s in RawHits:
                print(s)
                exit()
