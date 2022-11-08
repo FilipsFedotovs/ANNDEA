@@ -73,7 +73,9 @@ data["Hit_ID"] = data["Hit_ID"].astype(str)
 data['z']=data['z']-z_offset
 x_max=data['x'].max()
 y_max=data['y'].max()
-
+print(data)
+print((X_ID+1)*stepX)
+x=input()
 print(UF.TimeStamp(),'Creating clusters... ')
 data.drop(data.index[data['z'] >= ((Z_ID+1)*stepZ)], inplace = True)  #Keeping the relevant z slice
 data.drop(data.index[data['z'] < (Z_ID*stepZ)], inplace = True)  #Keeping the relevant z slice
