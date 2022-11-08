@@ -81,7 +81,7 @@ if os.path.isfile(destination_output_file_location) and Mode!='RESET':
 
 ########################################     Phase 1 - Create compact source file    #########################################
 print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
-print(UF.TimeStamp(),bcolors.BOLD+'Stage 0:'+bcolors.ENDC+' Taking the file that has been supplied and creating the compact copies for the traing set generation...')
+print(UF.TimeStamp(),bcolors.BOLD+'Stage 0:'+bcolors.ENDC+' Taking the file that has been supplied and creating the compact copies for the training set generation...')
 output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MTr1_'+TrainSampleID+'_hits.csv'
 if os.path.isfile(output_file_location)==False or Mode=='RESET':
         print(UF.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
@@ -161,7 +161,7 @@ print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 0 has successfully completed'+bcolor
 ########################################     Preset framework parameters    #########################################
 
 print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
-print(UF.TimeStamp(),bcolors.BOLD+'Stage 1:'+bcolors.ENDC+' Creating Training sample meta data...')
+print(UF.TimeStamp(),bcolors.BOLD+'Stage 1:'+bcolors.ENDC+' Creating training sample meta data...')
 if os.path.isfile(TrainSampleOutputMeta)==False or Mode=='RESET':
     input_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MTr1_'+TrainSampleID+'_hits.csv'
     print(UF.TimeStamp(),'Loading preselected data from ',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
