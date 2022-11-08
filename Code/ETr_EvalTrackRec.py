@@ -74,7 +74,7 @@ if os.path.isfile(input_file_location)!=True:
                      print(UF.TimeStamp(), bcolors.FAIL+"Critical fail: file",input_file_location,'is missing, please check that the name/path is correct...'+bcolors.ENDC)
                      exit()
 
-raw_data=pd.read_csv(input_file_location,header=0,usecols=columns_to_extract)
+raw_data=pd.read_csv(input_file_location,header=0,usecols=columns_to_extract)[columns_to_extract]
 total_rows=len(raw_data.axes[0])
 print(UF.TimeStamp(),'The raw data has ',total_rows,' hits')
 
