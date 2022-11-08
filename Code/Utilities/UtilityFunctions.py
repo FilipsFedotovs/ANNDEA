@@ -139,10 +139,7 @@ class HitCluster:
            self.ClusterHits=[]
            self.ClusterHitIDs=[]
            __ClusterHitsTemp=[]
-           print(RawHits)
            for s in RawHits:
-               print(s)
-               exit()
                if s[1]>=self.ClusterID[0]*self.Step[0] and s[1]<((self.ClusterID[0]+1)*self.Step[0]):
                    if s[2]>=self.ClusterID[1]*self.Step[1] and s[2]<((self.ClusterID[1]+1)*self.Step[1]):
                        if s[3]>=self.ClusterID[2]*self.Step[2] and s[3]<((self.ClusterID[2]+1)*self.Step[2]):
