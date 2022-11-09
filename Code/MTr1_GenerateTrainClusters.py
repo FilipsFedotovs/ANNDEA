@@ -301,7 +301,8 @@ def Success(Finished):
             TrainSamples=[]
             ValSamples=[]
             TestSamples=[]
-            for i in range(1,Meta.no_sets+1):
+#            for i in range(1,Meta.no_sets+1):
+            for i in range(1,10):
                 flocation=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TTr_OUTPUT_'+str(i)+'.pkl'
                 print(UF.TimeStamp(),'Loading data from ',bcolors.OKBLUE+flocation+bcolors.ENDC)
                 TrainClusters=UF.PickleOperations(flocation,'r', 'N/A')
@@ -318,11 +319,11 @@ def Success(Finished):
                            if TrainClusters[smpl].ClusterGraph.num_edges>0 and Sampling>=random.random():
                              TestSamples.append(TrainClusters[smpl].ClusterGraph)
             output_train_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_SAMPLES'+'.pkl'
-            print(UF.PickleOperations(output_train_file_location,'w', TrainSamples))[1]
+            print(UF.PickleOperations(output_train_file_location,'w', TrainSamples)[1])
             output_val_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_SAMPLES'+'.pkl'
-            print(UF.PickleOperations(output_val_file_location,'w', ValSamples))[1]
+            print(UF.PickleOperations(output_val_file_location,'w', ValSamples)[1])
             output_test_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TEST_SAMPLES'+'.pkl'
-            print(UF.PickleOperations(output_test_file_location,'w', ValSamples))[1]
+            print(UF.PickleOperations(output_test_file_location,'w', ValSamples)[1])
             print(UF.TimeStamp(), bcolors.OKGREEN+"Train data has been re-generated successfully..."+bcolors.ENDC)
             print(UF.TimeStamp(),bcolors.OKGREEN+'Please run MTr2_TrainModel.py after this to create/train a model'+bcolors.ENDC)
             print(bcolors.HEADER+"############################################# End of the program ################################################"+bcolors.ENDC)
