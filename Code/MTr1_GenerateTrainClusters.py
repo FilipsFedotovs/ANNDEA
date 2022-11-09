@@ -73,9 +73,39 @@ cut_dr=PM.cut_dr
 testRatio=PM.testRatio
 valRatio=PM.valRatio
 TrainSampleOutputMeta=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_info.pkl'
-destination_output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TH_OUTPUT_1.pkl'
+destination_output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TTr_OUTPUT_1.pkl'
 if os.path.isfile(destination_output_file_location) and Mode!='RESET':
-    print(UF.TimeStamp(),bcolors.FAIL+'The training files seem to be generated with previous job. Please rerun with --Mode Restart.'+bcolors.ENDC)
+    TrainSampleInputMeta=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_info.pkl'
+    print(UF.TimeStamp(),'Loading the data file ',bcolors.OKBLUE+TrainSampleInputMeta+bcolors.ENDC)
+    MetaInput=UF.PickleOperations(TrainSampleInputMeta,'r', 'N/A')
+    print(MetaInput[1])
+    Meta=MetaInput[0]
+    TrainSamples=[]
+    ValSamples=[]
+    TestSamples=[]
+    for i in range(1,Meta.no_sets+1):
+        flocation=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TTr_OUTPUT_'+str(i)+'.pkl'
+        print(UF.TimeStamp(),'Loading data from ',bcolors.OKBLUE+flocation+bcolors.ENDC)
+        TrainClusters=UF.PickleOperations(flocation,'r', 'N/A')
+        TrainClusters=TrainClusters[0]
+        TrainFraction=int(math.floor(len(TrainClusters)*(1.0-(Meta.testRatio+Meta.valRatio))))
+        ValFraction=int(math.ceil(len(TrainClusters)*Meta.valRatio))
+        for smpl in range(0,TrainFraction):
+           if TrainClusters[smpl].ClusterGraph.num_edges>0:
+             TrainSamples.append(TrainClusters[smpl].ClusterGraph)
+        for smpl in range(TrainFraction,TrainFraction+ValFraction):
+            if TrainClusters[smpl].ClusterGraph.num_edges>0:
+             ValSamples.append(TrainClusters[smpl].ClusterGraph)
+        for smpl in range(TrainFraction+ValFraction,len(TrainClusters)):
+            if TrainClusters[smpl].ClusterGraph.num_edges>0:
+             TestSamples.append(TrainClusters[smpl].ClusterGraph)
+    output_train_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_SAMPLES'+'.pkl'
+    print(UF.PickleOperations(output_train_file_location,'w', TrainSamples))[1]
+    output_val_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_SAMPLES'+'.pkl'
+    print(UF.PickleOperations(output_val_file_location,'w', ValSamples))[1]
+    output_test_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TEST_SAMPLES'+'.pkl'
+    print(UF.PickleOperations(output_test_file_location,'w', ValSamples))[1]
+    print(UF.TimeStamp(), bcolors.OKGREEN+"Train data has been re-generated successfully..."+bcolors.ENDC)
     exit()
 
 
@@ -264,6 +294,37 @@ def Success(Finished):
             HTCondorTag="SoftUsed == \"ANNDEA-MTr-"+TrainSampleID+"\""
             UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MTr1_'+TrainSampleID, ['MTr1a_'+TrainSampleID,'ETr1_'+TrainSampleID,'MTr1_'+TrainSampleID], HTCondorTag)
             print(UF.TimeStamp(),bcolors.OKGREEN+'Training samples are ready for the model creation/training'+bcolors.ENDC)
+            TrainSampleInputMeta=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_info.pkl'
+            print(UF.TimeStamp(),'Loading the data file ',bcolors.OKBLUE+TrainSampleInputMeta+bcolors.ENDC)
+            MetaInput=UF.PickleOperations(TrainSampleInputMeta,'r', 'N/A')
+            print(MetaInput[1])
+            Meta=MetaInput[0]
+            TrainSamples=[]
+            ValSamples=[]
+            TestSamples=[]
+            for i in range(1,Meta.no_sets+1):
+                flocation=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TTr_OUTPUT_'+str(i)+'.pkl'
+                print(UF.TimeStamp(),'Loading data from ',bcolors.OKBLUE+flocation+bcolors.ENDC)
+                TrainClusters=UF.PickleOperations(flocation,'r', 'N/A')
+                TrainClusters=TrainClusters[0]
+                TrainFraction=int(math.floor(len(TrainClusters)*(1.0-(Meta.testRatio+Meta.valRatio))))
+                ValFraction=int(math.ceil(len(TrainClusters)*Meta.valRatio))
+                for smpl in range(0,TrainFraction):
+                   if TrainClusters[smpl].ClusterGraph.num_edges>0:
+                     TrainSamples.append(TrainClusters[smpl].ClusterGraph)
+                for smpl in range(TrainFraction,TrainFraction+ValFraction):
+                    if TrainClusters[smpl].ClusterGraph.num_edges>0:
+                     ValSamples.append(TrainClusters[smpl].ClusterGraph)
+                for smpl in range(TrainFraction+ValFraction,len(TrainClusters)):
+                    if TrainClusters[smpl].ClusterGraph.num_edges>0:
+                     TestSamples.append(TrainClusters[smpl].ClusterGraph)
+            output_train_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_SAMPLES'+'.pkl'
+            print(UF.PickleOperations(output_train_file_location,'w', TrainSamples))[1]
+            output_val_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_SAMPLES'+'.pkl'
+            print(UF.PickleOperations(output_val_file_location,'w', ValSamples))[1]
+            output_test_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TEST_SAMPLES'+'.pkl'
+            print(UF.PickleOperations(output_test_file_location,'w', ValSamples))[1]
+            print(UF.TimeStamp(), bcolors.OKGREEN+"Train data has been re-generated successfully..."+bcolors.ENDC)
             print(UF.TimeStamp(),bcolors.OKGREEN+'Please run MTr2_TrainModel.py after this to create/train a model'+bcolors.ENDC)
             print(bcolors.HEADER+"############################################# End of the program ################################################"+bcolors.ENDC)
         else:
