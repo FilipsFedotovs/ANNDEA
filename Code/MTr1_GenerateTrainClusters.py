@@ -83,7 +83,8 @@ if os.path.isfile(destination_output_file_location) and Mode!='RESET':
     TrainSamples=[]
     ValSamples=[]
     TestSamples=[]
-    for i in range(1,Meta.no_sets+1):
+#            for i in range(1,Meta.no_sets+1):
+    for i in range(1,10):
         flocation=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TTr_OUTPUT_'+str(i)+'.pkl'
         print(UF.TimeStamp(),'Loading data from ',bcolors.OKBLUE+flocation+bcolors.ENDC)
         TrainClusters=UF.PickleOperations(flocation,'r', 'N/A')
