@@ -212,15 +212,10 @@ def main(self):
     records=[]
     TrainSampleSize=len(TrainSamples)
     fraction_size=math.ceil(TrainSampleSize/TrainParams[3])
-    print(TrainSampleSize)
-    print(fraction_size)
     for epoch in range(0, TrainParams[2]):
        for fraction in range(0, TrainParams[3]):
          sp=fraction*fraction_size
          ep=min((fraction+1)*fraction_size,TrainSampleSize)
-         print(sp)
-         print(ep)
-         exit()
          train_loss, itr= train(model, device,TrainSamples[sp:ep], optimizer)
          thld, val_loss,val_acc = validate(model, device, ValSamples)
          test_loss, test_acc = test(model, device,TestSamples, thld)
