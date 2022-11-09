@@ -93,11 +93,11 @@ if os.path.isfile(destination_output_file_location) and Mode!='RESET':
         for smpl in range(0,TrainFraction):
                    if TrainClusters[smpl].ClusterGraph.num_edges>0 and Sampling>=random.random():
                      TrainSamples.append(TrainClusters[smpl].ClusterGraph)
-        for smpl in range(TrainFraction,TrainFraction+ValFraction) and Sampling>=random.random():
-                   if TrainClusters[smpl].ClusterGraph.num_edges>0:
+        for smpl in range(TrainFraction,TrainFraction+ValFraction):
+                   if TrainClusters[smpl].ClusterGraph.num_edges>0 and Sampling>=random.random():
                      ValSamples.append(TrainClusters[smpl].ClusterGraph)
-        for smpl in range(TrainFraction+ValFraction,len(TrainClusters)) and Sampling>=random.random():
-                   if TrainClusters[smpl].ClusterGraph.num_edges>0:
+        for smpl in range(TrainFraction+ValFraction,len(TrainClusters)):
+                   if TrainClusters[smpl].ClusterGraph.num_edges>0 and Sampling>=random.random():
                      TestSamples.append(TrainClusters[smpl].ClusterGraph)
     output_train_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_SAMPLES'+'.pkl'
     print(UF.PickleOperations(output_train_file_location,'w', TrainSamples))[1]
@@ -309,14 +309,14 @@ def Success(Finished):
                 TrainFraction=int(math.floor(len(TrainClusters)*(1.0-(Meta.testRatio+Meta.valRatio))))
                 ValFraction=int(math.ceil(len(TrainClusters)*Meta.valRatio))
                 for smpl in range(0,TrainFraction):
-                   if TrainClusters[smpl].ClusterGraph.num_edges>0 and Sampling>=random.random():
-                     TrainSamples.append(TrainClusters[smpl].ClusterGraph)
-                for smpl in range(TrainFraction,TrainFraction+ValFraction) and Sampling>=random.random():
-                    if TrainClusters[smpl].ClusterGraph.num_edges>0:
-                     ValSamples.append(TrainClusters[smpl].ClusterGraph)
-                for smpl in range(TrainFraction+ValFraction,len(TrainClusters)) and Sampling>=random.random():
-                    if TrainClusters[smpl].ClusterGraph.num_edges>0:
-                     TestSamples.append(TrainClusters[smpl].ClusterGraph)
+                           if TrainClusters[smpl].ClusterGraph.num_edges>0 and Sampling>=random.random():
+                             TrainSamples.append(TrainClusters[smpl].ClusterGraph)
+                for smpl in range(TrainFraction,TrainFraction+ValFraction):
+                           if TrainClusters[smpl].ClusterGraph.num_edges>0 and Sampling>=random.random():
+                             ValSamples.append(TrainClusters[smpl].ClusterGraph)
+                for smpl in range(TrainFraction+ValFraction,len(TrainClusters)):
+                           if TrainClusters[smpl].ClusterGraph.num_edges>0 and Sampling>=random.random():
+                             TestSamples.append(TrainClusters[smpl].ClusterGraph)
             output_train_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_SAMPLES'+'.pkl'
             print(UF.PickleOperations(output_train_file_location,'w', TrainSamples))[1]
             output_val_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_SAMPLES'+'.pkl'
