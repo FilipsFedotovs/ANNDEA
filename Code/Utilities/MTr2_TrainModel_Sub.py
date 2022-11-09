@@ -29,7 +29,7 @@ class bcolors:
 ########################## Setting the parser ################################################
 parser = argparse.ArgumentParser(description='select cut parameters')
 parser.add_argument('--ModelParams',help="Please enter the model params: '[<Number of MLP layers>, <'MLP hidden size'>, <Number of IN layers>, <'IN hidden size'>]'", default='[3,80,3,80]')
-parser.add_argument('--TrainParams',help="Please enter the train params: '[<Session No>, <Learning Rate>, <Batch size>, <Epochs>]'", default='[1, 0.0001, 4, 10]')
+parser.add_argument('--TrainParams',help="Please enter the train params: '[<Learning Rate>, <Batch size>, <Epochs>, <Fraction>]'", default='[ 0.0001, 4, 10 ,1]')
 parser.add_argument('--AFS',help="Please enter the user afs directory", default='.')
 parser.add_argument('--EOS',help="Please enter the user eos directory", default='.')
 parser.add_argument('--TrainSampleID',help="Give name of the training ", default='SHIP_TrainSample_v1')
@@ -201,8 +201,18 @@ def main(self):
     except:
            print(UF.TimeStamp(), bcolors.WARNING+"Model/state data files are missing, skipping this step..." +bcolors.ENDC)
     records=[]
+    TrainSampleSize=len(TrainSamples)
+    fraction_size=math.ceil(TrainSampleSize/TrainParams[3])
+    print(TrainSampleSize)
+    print(fraction_size)
     for epoch in range(0, TrainParams[2]):
-         train_loss, itr= train(model, device,TrainSamples, optimizer)
+       for fraction in range(0, TrainParams[3]):
+         sp=fraction*fraction_size
+         ep=min((fraction+1)*fraction_size,TrainSampleSize)
+         print(sp)
+         print(ep)
+         exit()
+         train_loss, itr= train(model, device,TrainSamples[sp:ep], optimizer)
          thld, val_loss,val_acc = validate(model, device, ValSamples)
          test_loss, test_acc = test(model, device,TestSamples, thld)
          scheduler.step()

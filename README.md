@@ -42,12 +42,12 @@ All modules
 3) **tmux**
 4) **kinit username@CERN.CH -l 24h00m**
 5) Enter your lxplus password
-6) **python3 MTr1_GenerateTrainClusters.py --TrainSampleID Test_Sample --Xmin 50000 --Xmax 55000 --Ymin 50000 --Ymax 55000**
+6) **python3 MTr1_GenerateTrainClusters.py --TrainSampleID Training_Sample --Xmin 200000 --Xmax 300000 --Ymin 0 --Ymax 70000**
 7) After few minutes the script will ask for the user option (Warning, there are still x HTCondor jobs remaining). Type **R** and press **Enter**. The script will submit the subscript jobs and go to the autopilot mode.
 8) Exit tmux (by using **ctrl + b** and then typing  **d**). It can take up to few hours for HTCondor jobs to finish.
 9) Enter the same tmux session after some period (after overnight job for example) by logging to the same lxplus machine and then typing  **tmux a -t 0**. The program should finish with the message *'Training samples are ready for the model creation/training'*
 
-### 1.3 Reconstructing a hit data using the new model 
+### 1.3 Training a new model by using previously generated model
 *This part is only needed if a new model is required*
 1) Go to ANNDEA directory on AFS
 2) **cd Code**

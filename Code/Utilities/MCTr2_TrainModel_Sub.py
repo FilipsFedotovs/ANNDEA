@@ -10,6 +10,7 @@ import math
 import ast
 import os
 import copy
+import random
 # import torch
 # from torch import optim
 # from torch.optim.lr_scheduler import StepLR
@@ -32,6 +33,7 @@ parser = argparse.ArgumentParser(description='select cut parameters')
 parser.add_argument('--TrainParams',help="Please enter the train params: '[<Session No>, <Learning Rate>, <Batch size>, <Epochs>]'", default='[1, 0.0001, 4, 10]')
 parser.add_argument('--AFS',help="Please enter the user afs directory", default='.')
 parser.add_argument('--EOS',help="Please enter the user eos directory", default='.')
+parser.add_argument('--Sampling',help="How much sampling?", default='1.0')
 parser.add_argument('--BatchID',help="Give name of the training ", default='SHIP_TrainSample_v1')
 parser.add_argument('--TrainSampleID',help="Train Sample ID", default='1T_MC_1_model')
 parser.add_argument('--i',help="Set number", default='1')
@@ -107,7 +109,6 @@ def CNNvalidate(model, Sample, Batches,num_classes):
         EndSeed=StartSeed+TrainParams[1]-1
         BatchImages=UF.LoadRenderImages(Sample,StartSeed,EndSeed,num_classes)
         v=model.test_on_batch(BatchImages[0],BatchImages[1],reset_metrics=False)
-        print(v)
     return v
 
 

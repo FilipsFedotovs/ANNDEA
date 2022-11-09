@@ -23,7 +23,7 @@ class bcolors:   #We use it for the interface
 print('                                                                                                                                    ')
 print('                                                                                                                                    ')
 print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
-print(bcolors.HEADER+"######################     Initialising ANNDEA Train Cluster Generation module   #####################"+bcolors.ENDC)
+print(bcolors.HEADER+"######################     Initialising ANNDEA Train Cluster Generation module     #####################"+bcolors.ENDC)
 print(bcolors.HEADER+"#########################              Written by Filips Fedotovs              #########################"+bcolors.ENDC)
 print(bcolors.HEADER+"#########################                 PhD Student at UCL                   #########################"+bcolors.ENDC)
 print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
@@ -33,7 +33,7 @@ parser.add_argument('--Mode', help='Script will continue from the last checkpoin
 parser.add_argument('--TrainSampleID',help="Give name to this train sample", default='SHIP_TrainSample_v1')
 parser.add_argument('--Sampling',help="How much sampling?", default='1.0')
 parser.add_argument('--Patience',help="How many checks before resubmitting the job?", default='15')
-parser.add_argument('--f',help="Please enter the full path to the file with track reconstruction", default='/afs/cern.ch/work/f/ffedship/public/SHIP/Source_Data/SHIP_Emulsion_FEDRA_Raw_UR.csv')
+parser.add_argument('--f',help="Please enter the full path to the file with track reconstruction", default='/eos/user/f/ffedship/ANNDEA/Data/REC_SET/SND_Emulsion_FEDRA_Raw_B11_B21_B51_B12B52_B13B53_B14B54.csv')
 parser.add_argument('--Xmin',help="This option restricts data to only those events that have tracks with hits x-coordinates that are above this value", default='0')
 parser.add_argument('--Xmax',help="This option restricts data to only those events that have tracks with hits x-coordinates that are below this value", default='0')
 parser.add_argument('--Ymin',help="This option restricts data to only those events that have tracks with hits y-coordinates that are above this value", default='0')
@@ -183,7 +183,6 @@ if os.path.isfile(TrainSampleOutputMeta)==False or Mode=='RESET':
        Zsteps=math.ceil((z_max)/stepZ)
     else:
        Zsteps=(math.ceil((z_max)/stepZ)*(Z_overlap))-1
-
     TrainDataMeta=UF.TrainingSampleMeta(TrainSampleID)
     TrainDataMeta.IniHitClusterMetaData(stepX,stepY,stepZ,cut_dt,cut_dr,testRatio,valRatio,z_offset,y_offset,x_offset, Xsteps, Zsteps,X_overlap, Y_overlap, Z_overlap)
     print(UF.PickleOperations(TrainSampleOutputMeta,'w', TrainDataMeta)[1])
