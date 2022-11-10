@@ -1,3 +1,5 @@
+# Part of  ANNDEA  package.
+# The purpose of this script to create samples for the Tracking model training
 #Made by Filips Fedotovs
 
 
@@ -23,21 +25,21 @@ class bcolors:   #We use it for the interface
 print('                                                                                                                                    ')
 print('                                                                                                                                    ')
 print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
-print(bcolors.HEADER+"######################     Initialising ANNDEA Train Cluster Generation module     #####################"+bcolors.ENDC)
+print(bcolors.HEADER+"######################     Initialising ANNDEA Tracking Train Sample Generation module     #############"+bcolors.ENDC)
 print(bcolors.HEADER+"#########################              Written by Filips Fedotovs              #########################"+bcolors.ENDC)
 print(bcolors.HEADER+"#########################                 PhD Student at UCL                   #########################"+bcolors.ENDC)
 print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
-#Setting the parser - this script is usually not run directly, but is used by a Master version Counterpart that passes the required arguments
 parser = argparse.ArgumentParser(description='This script prepares training data for training the tracking model')
 parser.add_argument('--Mode', help='Script will continue from the last checkpoint, unless you want to start from the scratch, then type "Reset"',default='')
-parser.add_argument('--TrainSampleID',help="Give name to this train sample", default='SHIP_TrainSample_v1')
-parser.add_argument('--Sampling',help="How much sampling?", default='1.0')
-parser.add_argument('--Patience',help="How many checks before resubmitting the job?", default='15')
+parser.add_argument('--TrainSampleID',help="Give name to this train sample batch", default='MH_SND_Raw_Train_Data_6_6_12_All')
+parser.add_argument('--Sampling',help="If the data is large, sampling helps to keep it manageable. If this script fails consider reducing this parameter.", default='1.0')
+parser.add_argument('--Patience',help="How many HTCondor checks to perform before resubmitting the job?", default='15')
 parser.add_argument('--f',help="Please enter the full path to the file with track reconstruction", default='/eos/user/f/ffedship/ANNDEA/Data/REC_SET/SND_Emulsion_FEDRA_Raw_B11_B21_B51_B12B52_B13B53_B14B54.csv')
 parser.add_argument('--Xmin',help="This option restricts data to only those events that have tracks with hits x-coordinates that are above this value", default='0')
 parser.add_argument('--Xmax',help="This option restricts data to only those events that have tracks with hits x-coordinates that are below this value", default='0')
 parser.add_argument('--Ymin',help="This option restricts data to only those events that have tracks with hits y-coordinates that are above this value", default='0')
 parser.add_argument('--Ymax',help="This option restricts data to only those events that have tracks with hits y-coordinates that are below this value", default='0')
+#The bellow are not important for the training smaples but if you want to augment the training data set above 1
 parser.add_argument('--Z_overlap',help="Enter the level of overlap in integer number between reconstruction blocks along z-axis.", default='1')
 parser.add_argument('--Y_overlap',help="Enter the level of overlap in integer number between reconstruction blocks along y-axis.", default='1')
 parser.add_argument('--X_overlap',help="Enter the level of overlap in integer number between reconstruction blocks along x-axis.", default='1')
@@ -65,19 +67,19 @@ import sys
 sys.path.insert(1, AFS_DIR+'/Code/Utilities/')
 import UtilityFunctions as UF #This is where we keep routine utility functions
 import Parameters as PM #This is where we keep framework global parameters
-stepX=PM.stepX
-stepY=PM.stepY
-stepZ=PM.stepZ
-cut_dt=PM.cut_dt
+stepX=PM.stepX #Size of the individual reconstruction volumes along the x-axis
+stepY=PM.stepY #Size of the individual reconstruction volumes along the y-axis
+stepZ=PM.stepZ #Size of the individual reconstruction volumes along the z-axis
+cut_dt=PM.cut_dt #This cust help to discard hit pairs that are likely do not have a common mother track
 cut_dr=PM.cut_dr
-testRatio=PM.testRatio
-valRatio=PM.valRatio
-TrainSampleOutputMeta=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_info.pkl'
-destination_output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TTr_OUTPUT_1.pkl'
-if os.path.isfile(destination_output_file_location) and Mode!='RESET':
+testRatio=PM.testRatio #Usually about 5%
+valRatio=PM.valRatio #Usually about 10%
+TrainSampleOutputMeta=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_info.pkl' #For each training sample batch we create an individual meta file.
+destination_output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TTr_OUTPUT_1.pkl' #The desired output
+if os.path.isfile(destination_output_file_location) and Mode!='RESET': #If we have it, we don't have to start from the scratch.
     TrainSampleInputMeta=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_info.pkl'
     print(UF.TimeStamp(),'Loading the data file ',bcolors.OKBLUE+TrainSampleInputMeta+bcolors.ENDC)
-    MetaInput=UF.PickleOperations(TrainSampleInputMeta,'r', 'N/A')
+    MetaInput=UF.PickleOperations(TrainSampleInputMeta,'r', 'N/A') #Reading the meta file
     print(MetaInput[1])
     Meta=MetaInput[0]
     TrainSamples=[]
@@ -85,22 +87,22 @@ if os.path.isfile(destination_output_file_location) and Mode!='RESET':
     TestSamples=[]
 #            for i in range(1,Meta.no_sets+1):
     for i in range(1,Meta.no_sets+1):
-        flocation=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TTr_OUTPUT_'+str(i)+'.pkl'
+        flocation=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TTr_OUTPUT_'+str(i)+'.pkl' #Looking for constituent input file
         print(UF.TimeStamp(),'Loading data from ',bcolors.OKBLUE+flocation+bcolors.ENDC)
-        TrainClusters=UF.PickleOperations(flocation,'r', 'N/A')
-        TrainClusters=TrainClusters[0]
-        TrainFraction=int(math.floor(len(TrainClusters)*(1.0-(Meta.testRatio+Meta.valRatio))))
-        ValFraction=int(math.ceil(len(TrainClusters)*Meta.valRatio))
+        TrainClusters=UF.PickleOperations(flocation,'r', 'N/A') #Loading the file
+        TrainClusters=TrainClusters[0] #Reading the actual data bit
+        TrainFraction=int(math.floor(len(TrainClusters)*(1.0-(Meta.testRatio+Meta.valRatio)))) #Calculating the size of the training sample pool
+        ValFraction=int(math.ceil(len(TrainClusters)*Meta.valRatio)) #Calculating the size of the validation sample pool
         for smpl in range(0,TrainFraction):
-                   if TrainClusters[smpl].ClusterGraph.num_edges>0 and Sampling>=random.random():
-                     TrainSamples.append(TrainClusters[smpl].ClusterGraph)
+                   if TrainClusters[smpl].ClusterGraph.num_edges>0 and Sampling>=random.random(): #Not all generated graphs will contain edges - we can discard them + we apply sampling
+                     TrainSamples.append(TrainClusters[smpl].ClusterGraph) #If Graph has edges and passes sampling then we add to the output
         for smpl in range(TrainFraction,TrainFraction+ValFraction):
                    if TrainClusters[smpl].ClusterGraph.num_edges>0 and Sampling>=random.random():
                      ValSamples.append(TrainClusters[smpl].ClusterGraph)
         for smpl in range(TrainFraction+ValFraction,len(TrainClusters)):
                    if TrainClusters[smpl].ClusterGraph.num_edges>0 and Sampling>=random.random():
                      TestSamples.append(TrainClusters[smpl].ClusterGraph)
-        print(len(TrainSamples))
+    #Write the final output
     output_train_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_SAMPLES'+'.pkl'
     print(UF.PickleOperations(output_train_file_location,'w', TrainSamples)[1])
     output_val_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_SAMPLES'+'.pkl'
@@ -114,22 +116,22 @@ if os.path.isfile(destination_output_file_location) and Mode!='RESET':
 ########################################     Phase 1 - Create compact source file    #########################################
 print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
 print(UF.TimeStamp(),bcolors.BOLD+'Stage 0:'+bcolors.ENDC+' Taking the file that has been supplied and creating the compact copies for the training set generation...')
-output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MTr1_'+TrainSampleID+'_hits.csv'
+output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MTr1_'+TrainSampleID+'_hits.csv' #This is the compact data file that contains only relevant columns and rows
 if os.path.isfile(output_file_location)==False or Mode=='RESET':
         print(UF.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
         data=pd.read_csv(input_file_location,
                     header=0,
                     usecols=[PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty])[[PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty]]
         total_rows=len(data.axes[0])
-        data[PM.Hit_ID] = data[PM.Hit_ID].astype(str)
+        data[PM.Hit_ID] = data[PM.Hit_ID].astype(str) #We try to keep HIT ids as strings
         print(UF.TimeStamp(),'The raw data has ',total_rows,' hits')
         print(UF.TimeStamp(),'Removing unreconstructed hits...')
-        data=data.dropna()
+        data=data.dropna() #Removing nulls (not really applicable for this module but I put it just in case)
         final_rows=len(data.axes[0])
         print(UF.TimeStamp(),'The cleaned data has ',final_rows,' hits')
         data[PM.Hit_ID] = data[PM.Hit_ID].astype(int)
-        data[PM.Hit_ID] = data[PM.Hit_ID].astype(str)
-        if SliceData:
+        data[PM.Hit_ID] = data[PM.Hit_ID].astype(str) #Why I am doing this twice, need to investigate?
+        if SliceData: #Keeping only the relevant slice. Only works if we set at least one parameter (Xmin for instance) to non-zero
              print(UF.TimeStamp(),'Slicing the data...')
              data=data.drop(data.index[(data[PM.x] > Xmax) | (data[PM.x] < Xmin) | (data[PM.y] > Ymax) | (data[PM.y] < Ymin)])
              final_rows=len(data.axes[0])
@@ -145,7 +147,7 @@ if os.path.isfile(output_file_location)==False or Mode=='RESET':
 
 
 ###################### Phase 2 - Eval Data ######################################################
-output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/ETr1_'+TrainSampleID+'_hits.csv'
+output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/ETr1_'+TrainSampleID+'_hits.csv' #This is similar to one above but also contains MC data
 if os.path.isfile(output_file_location)==False or Mode=='RESET':
     print(UF.TimeStamp(),'Creating Evaluation file...')
     print(UF.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
@@ -175,7 +177,7 @@ if os.path.isfile(output_file_location)==False or Mode=='RESET':
     track_no_data=track_no_data.drop([PM.y,PM.z,PM.tx,PM.ty,PM.Hit_ID],axis=1)
     track_no_data=track_no_data.rename(columns={PM.x: "MC_Track_No"})
     new_combined_data=pd.merge(data, track_no_data, how="left", on=['MC_Mother_Track_ID'])
-    new_combined_data = new_combined_data[new_combined_data.MC_Track_No >= PM.MinHitsTrack]
+    new_combined_data = new_combined_data[new_combined_data.MC_Track_No >= PM.MinHitsTrack]  #We are only interested in MC Tracks that have a certain number of hits
     new_combined_data = new_combined_data.drop(["MC_Track_No"],axis=1)
     new_combined_data=new_combined_data.sort_values(['MC_Mother_Track_ID',PM.z],ascending=[1,1])
     grand_final_rows=len(new_combined_data.axes[0])
