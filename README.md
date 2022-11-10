@@ -54,8 +54,8 @@ All modules
 3) **tmux**
 4) **kinit username@CERN.CH -l 24h00m**
 5) Enter your lxplus password
-6) **python3 MTr2_TrainModel.py --TrainSampleID Test_Sample --ModelName Test_Model --ModelParams '[1,20,1,20]'**
-7) The script will submit the subscript jobs and go to the autopilot mode.
+6) **python3 MTr2_TrainModel.py --TrainSampleID Training_Sample --ModelName Test_Model --ModelParams '[1,20,1,20]' --TrainParams "[0.1,4,10,1]"**
+7) The script will submit the subscript jobs and ask for your next steps. Enter 600 and press **Enter**
 8) Exit tmux (by using **ctrl + b** and then typing  **d**). Script will keep running in the autopilot mode until all the steps in the hit reconstruction process have been completed.
 9) Enter the same tmux session (after overnight job for example) by logging to the same lxplus machine and then typing  **tmux a -t 0**. The program should finish with the message *'Training is finished then, thank you and goodbye'*
 

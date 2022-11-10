@@ -66,7 +66,7 @@ else:
        print(UF.TimeStamp(),bcolors.WARNING+'Fail! No existing meta files have been found, exiting now'+bcolors.ENDC)
 Model_Meta_csv=EOSsubModelDIR+'/'+args.ModelName+'_Out.csv'
 UF.LogOperations(Model_Meta_csv,'w', New_Data)
-print(UF.TimeStamp(),bcolors.OKGREEN+'CSV output has been saved as '+bcolors.ENDC+bcolors.OKBLUE+Model_Meta_csv+bcolors.ENDC)
+print(UF.TimeStamp(),bcolors.OKGREEN+'Csv output has been saved as '+bcolors.ENDC+bcolors.OKBLUE+Model_Meta_csv+bcolors.ENDC)
 print(bcolors.HEADER+"############################################# End of the program ################################################"+bcolors.ENDC)
 exit()
 
