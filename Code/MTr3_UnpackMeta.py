@@ -37,7 +37,7 @@ import sys
 sys.path.insert(1, AFS_DIR+'/Code/Utilities/')
 import UtilityFunctions as UF
 print(bcolors.HEADER+"####################################################################################################"+bcolors.ENDC)
-print(bcolors.HEADER+"#########################  Initialising ANNDEA model training module      #########################"+bcolors.ENDC)
+print(bcolors.HEADER+"#########################  Initialising ANNDEA model meta unpacking        #########################"+bcolors.ENDC)
 print(bcolors.HEADER+"#########################            Written by Filips Fedotovs            #########################"+bcolors.ENDC)
 print(bcolors.HEADER+"#########################               PhD Student at UCL                 #########################"+bcolors.ENDC)
 print(bcolors.HEADER+"###################### For troubleshooting please contact filips.fedotovs@cern.ch ##################"+bcolors.ENDC)
@@ -50,7 +50,11 @@ if os.path.isfile(Model_Meta_Path):
        Model_Meta_Raw=UF.PickleOperations(Model_Meta_Path, 'r', 'N/A')
        print(Model_Meta_Raw[1])
        Model_Meta=Model_Meta_Raw[0]
-       Header=Model_Meta.TrainSessionsData[0][0]+['Train Sample ID','LR','Batch Size','Normalised Epochs']
+       try:
+         Header=Model_Meta.TrainSessionsData[0][0]+['Train Sample ID','LR','Batch Size','Normalised Epochs']
+       except:
+         print(UF.TimeStamp(),bcolors.FAIL+'Fail! Meta file is empty. Please wait until at least one training session is completed.'+bcolors.ENDC)
+         exit()
        New_Data=[Header]
        counter=0
        for TSD in range(len(Model_Meta.TrainSessionsData)):
