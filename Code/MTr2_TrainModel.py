@@ -17,10 +17,10 @@ class bcolors:
 
 #Set the parsing module
 parser = argparse.ArgumentParser(description='Enter training job parameters')
-parser.add_argument('--ModelName',help="Which model would you like to use as a base for training (please enter N if you want to train a new model from scratch)", default='Default')
-parser.add_argument('--ModelParams',help="Please enter the model params: '[<Number of MLP layers>, <'MLP hidden size'>, <Number of IN layers>, <'IN hidden size'>]'", default='[3,80,3,80]')
-parser.add_argument('--TrainParams',help="Please enter the train params: '[<Learning Rate>, <Batch size>, <Epochs>]'", default='[0.0001, 4, 10]')
-parser.add_argument('--TrainSampleID',help="Give name to this train sample", default='SHIP_TrainSample_v1')
+parser.add_argument('--ModelName',help="Please enter the name of the model that you want to train", default='MH_SND_Tracking_1_20_1_20_Meta')
+parser.add_argument('--ModelParams',help="Please enter the model params: '[<Number of MLP layers>, <'MLP hidden size'>, <Number of IN layers>, <'IN hidden size'>]'", default='[1,20,1,20]')
+parser.add_argument('--TrainParams',help="Please enter the train params: '[<Learning Rate>, <Batch size>, <Epochs>, <Epoch fractions>]'", default='[0.0001, 4, 10, 1]')
+parser.add_argument('--TrainSampleID',help="What training sample would you like to use?", default='MH_SND_Raw_Train_Data_6_6_12_All')
 parser.add_argument('--Mode',help="Please enter 'Reset' if you want to overwrite the existing model", default='')
 args = parser.parse_args()
 
@@ -53,7 +53,7 @@ import UtilityFunctions as UF
 import Parameters as PM
 import datetime
 print(bcolors.HEADER+"####################################################################################################"+bcolors.ENDC)
-print(bcolors.HEADER+"#########################  Initialising ANNDEA model training module     #########################"+bcolors.ENDC)
+print(bcolors.HEADER+"#########################  Initialising ANNDEA model training module       #########################"+bcolors.ENDC)
 print(bcolors.HEADER+"#########################            Written by Filips Fedotovs            #########################"+bcolors.ENDC)
 print(bcolors.HEADER+"#########################               PhD Student at UCL                 #########################"+bcolors.ENDC)
 print(bcolors.HEADER+"###################### For troubleshooting please contact filips.fedotovs@cern.ch ##################"+bcolors.ENDC)
@@ -98,7 +98,7 @@ def AutoPilot(wait_min, interval_min, max_interval_tolerance):
               exit()
            else:
                  print(UF.TimeStamp(), bcolors.OKGREEN+"Training is finished, starting another session..."+bcolors.ENDC)
-                 HTCondorTag="SoftUsed == \"ANNDEA-MTr-"+ModelName+"\""
+                 HTCondorTag="SoftUsed == \"ANNDEA-MTr2-"+ModelName+"\""
                  UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MTr2', ['N/A'], HTCondorTag)
                  OptionHeader = [' --TrainParams ', ' --AFS ', ' --EOS ', " --TrainSampleID ", " --ModelName "]
                  OptionLine = [TrainParamsStr,  AFS_DIR, EOS_DIR, TrainSampleID, ModelName]
@@ -130,7 +130,7 @@ def AutoPilot(wait_min, interval_min, max_interval_tolerance):
     return True
 
 if Mode=='RESET':
- HTCondorTag="SoftUsed == \"ANNDEA-MTr-"+ModelName+"\""
+ HTCondorTag="SoftUsed == \"ANNDEA-MTr2-"+ModelName+"\""
  UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MTr2', [ModelName], HTCondorTag)
  OptionHeader = [' --ModelParams ', ' --TrainParams ', ' --AFS ', ' --EOS ', " --TrainSampleID ", " --ModelName "]
  OptionLine = [ModelParamsStr, TrainParamsStr,  AFS_DIR, EOS_DIR, TrainSampleID, ModelName]
