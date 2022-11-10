@@ -97,7 +97,7 @@ def AutoPilot(wait_min, interval_min, max_interval_tolerance):
               print(UF.TimeStamp(),'Aborting the training...')
               exit()
            else:
-                 print(UF.TimeStamp(), bcolors.OKGREEN+"Training is finished, starting another session..."+bcolors.ENDC)
+                 print(UF.TimeStamp(), bcolors.OKGREEN+"Training session has been completed, starting another session..."+bcolors.ENDC)
                  HTCondorTag="SoftUsed == \"ANNDEA-MTr2-"+ModelName+"\""
                  UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MTr2', ['N/A'], HTCondorTag)
                  OptionHeader = [' --TrainParams ', ' --AFS ', ' --EOS ', " --TrainSampleID ", " --ModelName "]
