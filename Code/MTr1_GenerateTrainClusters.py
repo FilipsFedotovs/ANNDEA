@@ -172,6 +172,7 @@ if os.path.isfile(output_file_location)==False or Mode=='RESET':
          data=data.drop(data.index[(data[PM.x] > Xmax) | (data[PM.x] < Xmin) | (data[PM.y] > Ymax) | (data[PM.y] < Ymin)])
          final_rows=len(data.axes[0])
          print(UF.TimeStamp(),'The sliced data has ',final_rows,' hits')
+    #Even if particle leaves one hit it is still assigned MC Track ID - we cannot reconstruct these so we discard them so performance metrics are not skewed
     print(UF.TimeStamp(),'Removing tracks which have less than',PM.MinHitsTrack,'hits...')
     track_no_data=data.groupby(['MC_Mother_Track_ID'],as_index=False).count()
     track_no_data=track_no_data.drop([PM.y,PM.z,PM.tx,PM.ty,PM.Hit_ID],axis=1)
@@ -223,6 +224,7 @@ if os.path.isfile(TrainSampleOutputMeta)==False or Mode=='RESET': #A case of gen
 
 elif os.path.isfile(TrainSampleOutputMeta)==True:
     print(UF.TimeStamp(),'Loading previously saved data from ',bcolors.OKBLUE+TrainSampleOutputMeta+bcolors.ENDC)
+    #Loading parameters from the Meta file if exists.
     MetaInput=UF.PickleOperations(TrainSampleOutputMeta,'r', 'N/A')
     Meta=MetaInput[0]
     stepX=Meta.stepX
@@ -242,10 +244,11 @@ elif os.path.isfile(TrainSampleOutputMeta)==True:
     X_overlap=Meta.X_overlap
     Z_overlap=Meta.Z_overlap
 print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 1 has successfully completed'+bcolors.ENDC)
+#The function bellow manages HTCondor jobs - so we don't have to do manually
 def AutoPilot(wait_min, interval_min, max_interval_tolerance):
     print(UF.TimeStamp(),'Going on an autopilot mode for ',wait_min, 'minutes while checking HTCondor every',interval_min,'min',bcolors.ENDC)
     wait_sec=wait_min*60
-    interval_sec=interval_min*60
+    interval_sec=interval_min*60 #Converting min to sec as this time.sleep takes as an argument
     intervals=int(math.ceil(wait_sec/interval_sec))
     for interval in range(1,intervals+1):
         time.sleep(interval_sec)
@@ -253,20 +256,22 @@ def AutoPilot(wait_min, interval_min, max_interval_tolerance):
         print(UF.TimeStamp(),"Scheduled job checkup...") #Progress display
         for k in range(0,Zsteps):
          for i in range(0,Xsteps):
+              #Preparing HTCondor submission
               OptionHeader = [' --Z_ID ', ' --stepX ',' --stepY ',' --stepZ ', ' --EOS ', " --AFS ", " --zOffset ", " --xOffset ", " --yOffset ", ' --cut_dt ', ' --cut_dr ', ' --testRatio ', ' --valRatio ', ' --X_ID ',' --TrainSampleID ',' --Y_overlap ',' --X_overlap ',' --Z_overlap ']
               OptionLine = [k, stepX,stepY,stepZ, EOS_DIR, AFS_DIR, z_offset, x_offset, y_offset, cut_dt,cut_dr,testRatio,valRatio, i,TrainSampleID,Y_overlap,X_overlap,Z_overlap]
               required_output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MTr1a_'+TrainSampleID+'_SelectedTrainClusters_'+str(k)+'_'+str(i)+'.pkl'
               SHName = AFS_DIR + '/HTCondor/SH/SH_MTr1_'+ TrainSampleID+'_' + str(k) + '_' + str(i) + '.sh'
               SUBName = AFS_DIR + '/HTCondor/SUB/SUB_MTr1_'+ TrainSampleID+'_'+ str(k) + '_' + str(i) + '.sub'
               MSGName = AFS_DIR + '/HTCondor/MSG/MSG_MTr1_' + TrainSampleID+'_' + str(k) + '_' + str(i)
+              #The actual training sample generation is done by the script bellow
               ScriptName = AFS_DIR + '/Code/Utilities/MTr1_GenerateTrainClusters_Sub.py '
-              if os.path.isfile(required_output_file_location)!=True:
+              if os.path.isfile(required_output_file_location)!=True: #Calculating the number of unfinished jobs
                  bad_pop.append([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, 1, 'ANNDEA-MTr1-'+TrainSampleID, False,False])
         if len(bad_pop)>0:
               print(UF.TimeStamp(),bcolors.WARNING+'Autopilot status update: There are still', len(bad_pop), 'HTCondor jobs remaining'+bcolors.ENDC)
-              if interval%max_interval_tolerance==0:
+              if interval%max_interval_tolerance==0: #If jobs are not received after fixed number of check-ups we resubmit. Jobs sometimes fail on HTCondor for various reasons.
                  for bp in bad_pop:
-                     UF.SubmitJobs2Condor(bp)
+                     UF.SubmitJobs2Condor(bp) #Sumbitting all missing jobs
                  print(UF.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
         else:
              return True
@@ -295,7 +300,7 @@ def Success(Finished):
             MetaInput[0].UpdateHitClusterMetaData(SampleCount,NodeFeatures,EdgeFeatures,count)
             print(UF.PickleOperations(TrainSampleOutputMeta,'w', MetaInput[0])[1])
             HTCondorTag="SoftUsed == \"ANNDEA-MTr-"+TrainSampleID+"\""
-            UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MTr1_'+TrainSampleID, ['MTr1a_'+TrainSampleID,'ETr1_'+TrainSampleID,'MTr1_'+TrainSampleID], HTCondorTag)
+            UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MTr1_'+TrainSampleID, ['MTr1a_'+TrainSampleID,'ETr1_'+TrainSampleID,'MTr1_'+TrainSampleID], HTCondorTag) #If successful we delete all temp files created by the process
             print(UF.TimeStamp(),bcolors.OKGREEN+'Training samples are ready for the model creation/training'+bcolors.ENDC)
             TrainSampleInputMeta=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_info.pkl'
             print(UF.TimeStamp(),'Loading the data file ',bcolors.OKBLUE+TrainSampleInputMeta+bcolors.ENDC)
@@ -313,7 +318,7 @@ def Success(Finished):
                 TrainFraction=int(math.floor(len(TrainClusters)*(1.0-(Meta.testRatio+Meta.valRatio))))
                 ValFraction=int(math.ceil(len(TrainClusters)*Meta.valRatio))
                 for smpl in range(0,TrainFraction):
-                           if TrainClusters[smpl].ClusterGraph.num_edges>0 and Sampling>=random.random():
+                           if TrainClusters[smpl].ClusterGraph.num_edges>0 and Sampling>=random.random(): #Only graph clusters with edges are kept + sampled
                              TrainSamples.append(TrainClusters[smpl].ClusterGraph)
                 for smpl in range(TrainFraction,TrainFraction+ValFraction):
                            if TrainClusters[smpl].ClusterGraph.num_edges>0 and Sampling>=random.random():
@@ -336,7 +341,7 @@ def Success(Finished):
 
 if Mode=='RESET':
    HTCondorTag="SoftUsed == \"ANNDEA-MTr1-"+TrainSampleID+"\""
-   UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MTr1_'+TrainSampleID, ['MTr1a_'+TrainSampleID,TrainSampleID+'_TTr_OUTPUT_'], HTCondorTag)
+   UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MTr1_'+TrainSampleID, ['MTr1a_'+TrainSampleID,TrainSampleID+'_TTr_OUTPUT_'], HTCondorTag) #If we do total reset we want to delete all temp files left by a possible previous attempt
    print(UF.TimeStamp(),'Performing the cleanup... ',bcolors.ENDC)
 bad_pop=[]
 Status=False
@@ -361,7 +366,7 @@ if len(bad_pop)==0:
     Success(True)
 
 
-if (Zsteps*Xsteps)==len(bad_pop):
+if (Zsteps*Xsteps)==len(bad_pop): #Scenario where all jobs are missing - doing a batch submission to save time
     print(UF.TimeStamp(),bcolors.WARNING+'Warning, there are still', len(bad_pop), 'HTCondor jobs remaining'+bcolors.ENDC)
     print(bcolors.BOLD+'If you would like to wait and exit please enter E'+bcolors.ENDC)
     print(bcolors.BOLD+'If you would like to wait please enter enter the maximum wait time in minutes'+bcolors.ENDC)
@@ -385,7 +390,7 @@ if (Zsteps*Xsteps)==len(bad_pop):
     else:
         Success(AutoPilot(120,10,Patience))
 
-elif len(bad_pop)>0:
+elif len(bad_pop)>0: #If some jobs have been complited, the missing jobs are submitted individually to avoidf overloading HTCondor for nothing
       print(UF.TimeStamp(),bcolors.WARNING+'Warning, there are still', len(bad_pop), 'HTCondor jobs remaining'+bcolors.ENDC)
       print(bcolors.BOLD+'If you would like to wait and exit please enter E'+bcolors.ENDC)
       print(bcolors.BOLD+'If you would like to wait please enter enter the maximum wait time in minutes'+bcolors.ENDC)

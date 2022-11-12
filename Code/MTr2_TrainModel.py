@@ -195,8 +195,8 @@ else:
            else:
                  print(UF.TimeStamp(),bcolors.WARNING+'The training session has been completed'+bcolors.ENDC)
                  print(bcolors.BOLD+'If you would like to stop training and exit please enter E'+bcolors.ENDC)
-                 print(bcolors.BOLD+'If you would like to submit another one and exit enter S'+bcolors.ENDC)
-                 print(bcolors.BOLD+'If you would like to continue training on autopilot please type waiting time in minutes'+bcolors.ENDC)
+                 print(bcolors.BOLD+'If you would like to submit another one and exit, enter S'+bcolors.ENDC)
+                 print(bcolors.BOLD+'If you would like to submit another one and continue training on the autopilot please type waiting time in minutes'+bcolors.ENDC)
                  UserAnswer=input(bcolors.BOLD+"Please, enter your option\n"+bcolors.ENDC)
                  if UserAnswer=='E':
                   print(UF.TimeStamp(),'OK, exiting now then')
@@ -272,7 +272,7 @@ else:
                  UF.SubmitJobs2Condor([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, 1, 'ANNDEA-MTr2-'+ModelName, True,False])
                  print(bcolors.BOLD+"The job has been submitted..."+bcolors.ENDC)
                  AutoPilot(600,30,5)
-print(UF.TimeStamp(),bcolors.OKGREEN+'Training is finished then, thank you and goodbye'+bcolors.ENDC)
+print(UF.TimeStamp(),bcolors.OKGREEN+'Exiting the program...'+bcolors.ENDC)
 print(bcolors.HEADER+"############################################# End of the program ################################################"+bcolors.ENDC)
 exit()
 
