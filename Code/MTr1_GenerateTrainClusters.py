@@ -1,5 +1,5 @@
 # Part of  ANNDEA  package.
-# The purpose of this script to create samples for the Tracking model training
+# The purpose of this script to create samples for the tracking model training
 #Made by Filips Fedotovs
 
 
@@ -94,7 +94,7 @@ if os.path.isfile(destination_output_file_location) and Mode!='RESET': #If we ha
         TrainFraction=int(math.floor(len(TrainClusters)*(1.0-(Meta.testRatio+Meta.valRatio)))) #Calculating the size of the training sample pool
         ValFraction=int(math.ceil(len(TrainClusters)*Meta.valRatio)) #Calculating the size of the validation sample pool
         for smpl in range(0,TrainFraction):
-                   if TrainClusters[smpl].ClusterGraph.num_edges>0 and Sampling>=random.random(): #Not all generated graphs will contain edges - we can discard them + we apply sampling
+                   if TrainClusters[smpl].ClusterGraph.num_edges>0 and Sampling>=random.random(): #Not all generated graphs will contain edges: we can discard them + we apply sampling
                      TrainSamples.append(TrainClusters[smpl].ClusterGraph) #If Graph has edges and passes sampling then we add to the output
         for smpl in range(TrainFraction,TrainFraction+ValFraction):
                    if TrainClusters[smpl].ClusterGraph.num_edges>0 and Sampling>=random.random():
@@ -130,7 +130,7 @@ if os.path.isfile(output_file_location)==False or Mode=='RESET':
         final_rows=len(data.axes[0])
         print(UF.TimeStamp(),'The cleaned data has ',final_rows,' hits')
         data[PM.Hit_ID] = data[PM.Hit_ID].astype(int)
-        data[PM.Hit_ID] = data[PM.Hit_ID].astype(str) #Why I am doing this twice, need to investigate?
+        data[PM.Hit_ID] = data[PM.Hit_ID].astype(str) #Why I am doing this twice? Need to investigate
         if SliceData: #Keeping only the relevant slice. Only works if we set at least one parameter (Xmin for instance) to non-zero
              print(UF.TimeStamp(),'Slicing the data...')
              data=data.drop(data.index[(data[PM.x] > Xmax) | (data[PM.x] < Xmin) | (data[PM.y] > Ymax) | (data[PM.y] < Ymin)])
@@ -158,13 +158,13 @@ if os.path.isfile(output_file_location)==False or Mode=='RESET':
     total_rows=len(data.axes[0])
     print(UF.TimeStamp(),'The raw data has ',total_rows,' hits')
     print(UF.TimeStamp(),'Removing unreconstructed hits...')
-    data=data.dropna()
+    data=data.dropna() #Unlikely to have in the hit data but keeping here just in case to prevent potential problems downstream
     final_rows=len(data.axes[0])
     print(UF.TimeStamp(),'The cleaned data has ',final_rows,' hits')
     data[PM.MC_Event_ID] = data[PM.MC_Event_ID].astype(str)
     data[PM.MC_Track_ID] = data[PM.MC_Track_ID].astype(str)
     data[PM.Hit_ID] = data[PM.Hit_ID].astype(str)
-    data['MC_Mother_Track_ID'] = data[PM.MC_Event_ID] + '-' + data[PM.MC_Track_ID]
+    data['MC_Mother_Track_ID'] = data[PM.MC_Event_ID] + '-' + data[PM.MC_Track_ID] #Track IDs are not unique and repeat for each event: crea
     data=data.drop([PM.MC_Event_ID],axis=1)
     data=data.drop([PM.MC_Track_ID],axis=1)
     if SliceData:
@@ -196,22 +196,22 @@ print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 0 has successfully completed'+bcolor
 
 print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
 print(UF.TimeStamp(),bcolors.BOLD+'Stage 1:'+bcolors.ENDC+' Creating training sample meta data...')
-if os.path.isfile(TrainSampleOutputMeta)==False or Mode=='RESET':
+if os.path.isfile(TrainSampleOutputMeta)==False or Mode=='RESET': #A case of generating samples from scratch
     input_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MTr1_'+TrainSampleID+'_hits.csv'
     print(UF.TimeStamp(),'Loading preselected data from ',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
     data=pd.read_csv(input_file_location,header=0,usecols=['z','x','y'])
     print(UF.TimeStamp(),'Analysing data... ',bcolors.ENDC)
     z_offset=data['z'].min()
-    data['z']=data['z']-z_offset
+    data['z']=data['z']-z_offset #Reseting the coordinate origin to zero for this data set
     z_max=data['z'].max()
     y_offset=data['y'].min()
     x_offset=data['x'].min()
-    data['x']=data['x']-x_offset
-    x_max=data['x'].max()
+    data['x']=data['x']-x_offset #Reseting the coordinate origin to zero for this data set
+    x_max=data['x'].max() #We need it to calculate how many clusters to create
     if X_overlap==1:
-       Xsteps=math.ceil((x_max)/stepX)
+       Xsteps=math.ceil((x_max)/stepX) #No of clusters in x-direction
     else:
-       Xsteps=(math.ceil((x_max)/stepX)*(X_overlap))-1
+       Xsteps=(math.ceil((x_max)/stepX)*(X_overlap))-1 #This is the scenario where
 
     if Z_overlap==1:
        Zsteps=math.ceil((z_max)/stepZ)
@@ -305,7 +305,6 @@ def Success(Finished):
             TrainSamples=[]
             ValSamples=[]
             TestSamples=[]
-#            for i in range(1,Meta.no_sets+1):
             for i in range(1,Meta.no_sets+1):
                 flocation=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TTr_OUTPUT_'+str(i)+'.pkl'
                 print(UF.TimeStamp(),'Loading data from ',bcolors.OKBLUE+flocation+bcolors.ENDC)
