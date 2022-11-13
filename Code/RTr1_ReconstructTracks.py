@@ -590,7 +590,6 @@ while status<5:
                       print(UF.TimeStamp(),'OK, exiting now then')
                       exit()
                  if UserAnswer=='R':
-                     for i in range(0,Xsteps):
                          for j in range(0,Ysteps):
                                ptionHeader = [' --Z_ID_Max ',' --Y_ID ', ' --X_ID ', ' --EOS ', " --AFS ", ' --RecBatchID ']
                                OptionLine = [Zsteps, j, '$1', EOS_DIR, AFS_DIR, RecBatchID]
@@ -648,8 +647,7 @@ while status<5:
         else:
             if (Xsteps*Ysteps)==len(bad_pop):
                  print(UF.TimeStamp(),'Submitting jobs to HTCondor... ',bcolors.ENDC)
-                 for i in range(0,Xsteps):
-                         for j in range(0,Ysteps):
+                 for j in range(0,Ysteps):
                                ptionHeader = [' --Z_ID_Max ',' --Y_ID ', ' --X_ID ', ' --EOS ', " --AFS ", ' --RecBatchID ']
                                OptionLine = [Zsteps, j, '$1', EOS_DIR, AFS_DIR, RecBatchID]
                                SHName = AFS_DIR + '/HTCondor/SH/SH_RTr1b_'+ RecBatchID+ '_' + str(j) + '.sh'
@@ -714,8 +712,7 @@ while status<5:
                       print(UF.TimeStamp(),'OK, exiting now then')
                       exit()
                  if UserAnswer=='R':
-                     for i in range(0,Xsteps):
-                               ptionHeader = [' --Y_ID_Max ', ' --X_ID ', ' --EOS ', " --AFS ", ' --RecBatchID ']
+                               OptionHeader = [' --Y_ID_Max ', ' --X_ID ', ' --EOS ', " --AFS ", ' --RecBatchID ']
                                OptionLine = [Ysteps, '$1', EOS_DIR, AFS_DIR, RecBatchID]
                                SHName = AFS_DIR + '/HTCondor/SH/SH_RTr1c_'+ RecBatchID+ '.sh'
                                SUBName = AFS_DIR + '/HTCondor/SUB/SUB_RTr1c_'+ RecBatchID+'.sub'
@@ -771,14 +768,13 @@ while status<5:
         else:
             if (Xsteps)==len(bad_pop):
                  print(UF.TimeStamp(),'Submitting jobs to HTCondor... ',bcolors.ENDC)
-                 for i in range(0,Xsteps):
-                               ptionHeader = [' --Y_ID_Max ', ' --X_ID ', ' --EOS ', " --AFS ", ' --RecBatchID ']
-                               OptionLine = [Ysteps, '$1', EOS_DIR, AFS_DIR, RecBatchID]
-                               SHName = AFS_DIR + '/HTCondor/SH/SH_RTr1c_'+ RecBatchID+ '.sh'
-                               SUBName = AFS_DIR + '/HTCondor/SUB/SUB_RTr1c_'+ RecBatchID+'.sub'
-                               MSGName = AFS_DIR + '/HTCondor/MSG/MSG_RTr1c_' + RecBatchID
-                               ScriptName = AFS_DIR + '/Code/Utilities/RTr1c_LinkSegmentsY_Sub.py '
-                               UF.SubmitJobs2Condor([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, Xsteps, 'ANNDEA-RTr-'+RecBatchID, False,False])
+                 OptionHeader = [' --Y_ID_Max ', ' --X_ID ', ' --EOS ', " --AFS ", ' --RecBatchID ']
+                 OptionLine = [Ysteps, '$1', EOS_DIR, AFS_DIR, RecBatchID]
+                 SHName = AFS_DIR + '/HTCondor/SH/SH_RTr1c_'+ RecBatchID+ '.sh'
+                 SUBName = AFS_DIR + '/HTCondor/SUB/SUB_RTr1c_'+ RecBatchID+'.sub'
+                 MSGName = AFS_DIR + '/HTCondor/MSG/MSG_RTr1c_' + RecBatchID
+                 ScriptName = AFS_DIR + '/Code/Utilities/RTr1c_LinkSegmentsY_Sub.py '
+                 UF.SubmitJobs2Condor([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, Xsteps, 'ANNDEA-RTr-'+RecBatchID, False,False])
                  if AutoPilot2(600,10,Patience):
                         FreshStart=False
                         print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 2 has successfully completed'+bcolors.ENDC)
