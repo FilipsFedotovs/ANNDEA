@@ -38,6 +38,7 @@ parser.add_argument('--ModelName',help="WHat GNN model would you like to use?", 
 parser.add_argument('--Patience',help="How many checks to do before resubmitting the job?", default='15')
 parser.add_argument('--Log',help="Would you like to log the performance: No, MC, Kalman? (Only available if you have MC Truth or Kalman track reconstruction data)", default='No')
 parser.add_argument('--RecBatchID',help="Give this reconstruction batch an ID", default='SHIP_UR_v1')
+parser.add_argument('--GentleOnCondor',help="What time gap between sumbission gaps should be?", default='0')
 parser.add_argument('--f',help="Please enter the full path to the file with track reconstruction", default='/afs/cern.ch/work/f/ffedship/public/SHIP/Source_Data/SHIP_Emulsion_FEDRA_Raw_UR.csv')
 parser.add_argument('--Xmin',help="This option restricts data to only those events that have tracks with hits x-coordinates that are above this value", default='0')
 parser.add_argument('--Xmax',help="This option restricts data to only those events that have tracks with hits x-coordinates that are below this value", default='0')
@@ -54,6 +55,7 @@ Log=args.Log.upper()
 ModelName=args.ModelName
 RecBatchID=args.RecBatchID
 Patience=int(args.Patience)
+GentleOnCondor=int(args.GentleOnCondor)
 input_file_location=args.f
 Xmin,Xmax,Ymin,Ymax=float(args.Xmin),float(args.Xmax),float(args.Ymin),float(args.Ymax)
 Z_overlap,Y_overlap,X_overlap=int(args.Z_overlap),int(args.Y_overlap),int(args.X_overlap)
@@ -99,7 +101,7 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
          print(UF.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
          data=pd.read_csv(input_file_location,
                      header=0,
-                     usecols=[PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty])
+                     usecols=[PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty])[[PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty]]
          total_rows=len(data.axes[0])
          data[PM.Hit_ID] = data[PM.Hit_ID].astype(str)
          print(UF.TimeStamp(),'The raw data has ',total_rows,' hits')
@@ -130,7 +132,7 @@ if Log!='NO':
      print(UF.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
      data=pd.read_csv(input_file_location,
                  header=0,
-                 usecols=[PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty,PM.MC_Track_ID,PM.MC_Event_ID])
+                 usecols=[PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty,PM.MC_Track_ID,PM.MC_Event_ID])[[PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty,PM.MC_Track_ID,PM.MC_Event_ID]]
 
      total_rows=len(data.axes[0])
      print(UF.TimeStamp(),'The raw data has ',total_rows,' hits')
@@ -175,7 +177,7 @@ if Log=='KALMAN':
         print(UF.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
         data=pd.read_csv(input_file_location,
                     header=0,
-                    usecols=[PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty,PM.FEDRA_Track_ID,PM.FEDRA_Track_QUADRANT])
+                    usecols=[PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty,PM.Rec_Track_ID,PM.Rec_Track_Domain])[[PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty,PM.Rec_Track_ID,PM.Rec_Track_Domain]]
 
         total_rows=len(data.axes[0])
         print(UF.TimeStamp(),'The raw data has ',total_rows,' hits')
@@ -183,25 +185,25 @@ if Log=='KALMAN':
         data=data.dropna()
         final_rows=len(data.axes[0])
         print(UF.TimeStamp(),'The cleaned data has ',final_rows,' hits')
-        data[PM.FEDRA_Track_QUADRANT] = data[PM.FEDRA_Track_QUADRANT].astype(str)
-        data[PM.FEDRA_Track_ID] = data[PM.FEDRA_Track_ID].astype(str)
+        data[PM.Rec_Track_Domain] = data[PM.Rec_Track_Domain].astype(str)
+        data[PM.Rec_Track_ID] = data[PM.Rec_Track_ID].astype(str)
         data[PM.Hit_ID] = data[PM.Hit_ID].astype(str)
-        data['FEDRA_Track_ID'] = data[PM.FEDRA_Track_QUADRANT] + '-' + data[PM.FEDRA_Track_ID]
-        data=data.drop([PM.FEDRA_Track_QUADRANT],axis=1)
-        data=data.drop([PM.FEDRA_Track_ID],axis=1)
+        data['Rec_Track_ID'] = data[PM.Rec_Track_Domain] + '-' + data[PM.Rec_Track_ID]
+        data=data.drop([PM.Rec_Track_Domain],axis=1)
+        data=data.drop([PM.Rec_Track_ID],axis=1)
         if SliceData:
              print(UF.TimeStamp(),'Slicing the data...')
              data=data.drop(data.index[(data[PM.x] > Xmax) | (data[PM.x] < Xmin) | (data[PM.y] > Ymax) | (data[PM.y] < Ymin)])
              final_rows=len(data.axes[0])
              print(UF.TimeStamp(),'The sliced data has ',final_rows,' hits')
         print(UF.TimeStamp(),'Removing tracks which have less than',PM.MinHitsTrack,'hits...')
-        track_no_data=data.groupby(['FEDRA_Track_ID'],as_index=False).count()
+        track_no_data=data.groupby(['Rec_Track_ID'],as_index=False).count()
         track_no_data=track_no_data.drop([PM.y,PM.z,PM.tx,PM.ty,PM.Hit_ID],axis=1)
-        track_no_data=track_no_data.rename(columns={PM.x: "FEDRA_Track_No"})
-        new_combined_data=pd.merge(data, track_no_data, how="left", on=['FEDRA_Track_ID'])
-        new_combined_data = new_combined_data[new_combined_data.FEDRA_Track_No >= PM.MinHitsTrack]
-        new_combined_data = new_combined_data.drop(["FEDRA_Track_No"],axis=1)
-        new_combined_data=new_combined_data.sort_values(['FEDRA_Track_ID',PM.z],ascending=[1,1])
+        track_no_data=track_no_data.rename(columns={PM.x: "Rec_Track_No"})
+        new_combined_data=pd.merge(data, track_no_data, how="left", on=['Rec_Track_ID'])
+        new_combined_data = new_combined_data[new_combined_data.Rec_Track_No >= PM.MinHitsTrack]
+        new_combined_data = new_combined_data.drop(["Rec_Track_No"],axis=1)
+        new_combined_data=new_combined_data.sort_values(['Rec_Track_ID',PM.z],ascending=[1,1])
         grand_final_rows=len(new_combined_data.axes[0])
         print(UF.TimeStamp(),'The cleaned data has ',grand_final_rows,' hits')
         new_combined_data=new_combined_data.rename(columns={PM.x: "x"})
@@ -533,6 +535,7 @@ while status<5:
                                MSGName = AFS_DIR + '/HTCondor/MSG/MSG_RTr1a_' + RecBatchID+'_' + str(k) + '_' + str(j)
                                ScriptName = AFS_DIR + '/Code/Utilities/RTr1a_ReconstructHits_Sub.py '
                                UF.SubmitJobs2Condor([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, Xsteps, 'ANNDEA-RTr1-'+RecBatchID, False,False])
+                               time.sleep(60*GentleOnCondor)
 
                  if AutoPilot0(600,10,Patience):
                         FreshStart=False

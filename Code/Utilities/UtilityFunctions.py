@@ -562,31 +562,31 @@ class HitCluster:
             self.RecHits=_Rec_Hits_Pool
             # checkpoint_2=datetime.datetime.now()
             # print(checkpoint_2-checkpoint_1)
-      def TestKalmanHits(self,FEDRAdata_list,MCdata_list):
+      def TestKalmanHits(self,Recdata_list,MCdata_list):
           import pandas as pd
           _Tot_Hits_df=pd.DataFrame(self.ClusterHits, columns = ['HitID','x','y','z','tx','ty'])[['HitID','z']]
           _Tot_Hits_df["z"] = pd.to_numeric(_Tot_Hits_df["z"],downcast='float')
 
           _MCClusterHits=[]
-          _FEDRAClusterHits=[]
+          _RecClusterHits=[]
           StatFakeValues=[]
           StatTruthValues=[]
-          StatLabels=['Initial # of combinations','Delete self-permutations','Enforce positive directionality','Fedra Track Reconstruction']
+          StatLabels=['Initial # of combinations','Delete self-permutations','Enforce positive directionality','Kalman Track Reconstruction']
           for s in MCdata_list:
              if s[1]>=self.ClusterID[0]*self.Step[0] and s[1]<((self.ClusterID[0]+1)*self.Step[0]):
                     if s[2]>=self.ClusterID[1]*self.Step[1] and s[2]<((self.ClusterID[1]+1)*self.Step[1]):
                         if s[3]>=self.ClusterID[2]*self.Step[2] and s[3]<((self.ClusterID[2]+1)*self.Step[2]):
                            _MCClusterHits.append([s[0],s[6]])
-          for s in FEDRAdata_list:
+          for s in Recdata_list:
              if s[1]>=self.ClusterID[0]*self.Step[0] and s[1]<((self.ClusterID[0]+1)*self.Step[0]):
                     if s[2]>=self.ClusterID[1]*self.Step[1] and s[2]<((self.ClusterID[1]+1)*self.Step[1]):
                         if s[3]>=self.ClusterID[2]*self.Step[2] and s[3]<((self.ClusterID[2]+1)*self.Step[2]):
-                           _FEDRAClusterHits.append([s[0],s[6]])
+                           _RecClusterHits.append([s[0],s[6]])
           #Preparing Raw and MC combined data 1
           _l_MCHits=pd.DataFrame(_MCClusterHits, columns = ['l_HitID','l_MC_ID'])
           _r_MCHits=pd.DataFrame(_MCClusterHits, columns = ['r_HitID','r_MC_ID'])
-          _l_FHits=pd.DataFrame(_FEDRAClusterHits, columns = ['l_HitID','l_FEDRA_ID'])
-          _r_FHits=pd.DataFrame(_FEDRAClusterHits, columns = ['r_HitID','r_FEDRA_ID'])
+          _l_FHits=pd.DataFrame(_RecClusterHits, columns = ['l_HitID','l_Rec_ID'])
+          _r_FHits=pd.DataFrame(_RecClusterHits, columns = ['r_HitID','r_Rec_ID'])
           _l_Hits=_Tot_Hits_df.rename(columns={"z": "l_z","HitID": "l_HitID" })
           _r_Hits=_Tot_Hits_df.rename(columns={"z": "r_z","HitID": "r_HitID" })
           #Join hits + MC truth
@@ -611,7 +611,7 @@ class HitCluster:
           StatFakeValues.append(len(_Tot_Hits.axes[0])-len(_Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['l_MC_ID'] != _Tot_Hits['r_MC_ID']]).axes[0]))
           StatTruthValues.append(len(_Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['l_MC_ID'] != _Tot_Hits['r_MC_ID']]).axes[0]))
 
-          _Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['r_FEDRA_ID'] != _Tot_Hits['l_FEDRA_ID']], inplace = True)
+          _Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['r_Rec_ID'] != _Tot_Hits['l_Rec_ID']], inplace = True)
           StatFakeValues.append(len(_Tot_Hits.axes[0])-len(_Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['l_MC_ID'] != _Tot_Hits['r_MC_ID']]).axes[0]))
           StatTruthValues.append(len(_Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['l_MC_ID'] != _Tot_Hits['r_MC_ID']]).axes[0]))
           self.KalmanRecStats=[StatLabels,StatFakeValues,StatTruthValues]

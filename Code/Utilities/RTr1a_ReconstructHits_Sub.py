@@ -61,7 +61,7 @@ print(UF.TimeStamp(), "Modules Have been imported successfully...")
 print(UF.TimeStamp(),'Loading pre-selected data from ',input_file_location)
 
 data=pd.read_csv(input_file_location,header=0,
-            usecols=["Hit_ID","x","y","z","tx","ty"])
+            usecols=["Hit_ID","x","y","z","tx","ty"])[["Hit_ID","x","y","z","tx","ty",'Rec_Track_ID']]
 data["x"] = pd.to_numeric(data["x"],downcast='float')
 data["y"] = pd.to_numeric(data["y"],downcast='float')
 data["z"] = pd.to_numeric(data["z"],downcast='float')
@@ -82,7 +82,7 @@ if Log!='NO':
     input_file_location=EOS_DIR+'/ANNDEA/Data/TEST_SET/ETr1_'+RecBatchID+'_hits.csv'
     print(UF.TimeStamp(),'Loading pre-selected data from ',input_file_location)
     MCdata=pd.read_csv(input_file_location,header=0,
-                                usecols=["Hit_ID","x","y","z","tx","ty",'MC_Mother_Track_ID'])
+                                usecols=["Hit_ID","x","y","z","tx","ty",'MC_Mother_Track_ID'])[["Hit_ID","x","y","z","tx","ty",'Rec_Track_ID']]
     MCdata["x"] = pd.to_numeric(MCdata["x"],downcast='float')
     MCdata["y"] = pd.to_numeric(MCdata["y"],downcast='float')
     MCdata["z"] = pd.to_numeric(MCdata["z"],downcast='float')
@@ -102,7 +102,7 @@ if Log=='KALMAN':
     input_file_location=EOS_DIR+'/ANNDEA/Data/TEST_SET/KTr1_'+RecBatchID+'_hits.csv'
     print(UF.TimeStamp(),'Loading pre-selected data from ',input_file_location)
     FEDRAdata=pd.read_csv(input_file_location,header=0,
-                                usecols=["Hit_ID","x","y","z","tx","ty",'FEDRA_Track_ID'])
+                                usecols=["Hit_ID","x","y","z","tx","ty",'Rec_Track_ID'])[["Hit_ID","x","y","z","tx","ty",'Rec_Track_ID']]
     FEDRAdata["x"] = pd.to_numeric(FEDRAdata["x"],downcast='float')
     FEDRAdata["y"] = pd.to_numeric(FEDRAdata["y"],downcast='float')
     FEDRAdata["z"] = pd.to_numeric(FEDRAdata["z"],downcast='float')
