@@ -894,7 +894,7 @@ while status<5:
                   CutData=Data.drop(Data.index[(Data[PM.x] > Xmax) | (Data[PM.x] < Xmin) | (Data[PM.y] > Ymax) | (Data[PM.y] < Ymin)])
                   OtherData=Data.drop(Data.index[(Data[PM.x] <= Xmax) | (Data[PM.x] >= Xmin) | (Data[PM.y] <= Ymax) | (Data[PM.y] >= Ymin)])
            try:
-             CutData.drop(['ANN_Brick_ID','ANN_Track_ID'],axis=1,inplace=True)
+             CutData.drop(['ANN_Brick_ID','ANN_Track_ID'],axis=1,inplace=True) #Removing old ANNDEA reconstruction results so we can overwrite with the new ones
            except Exception as e: print(UF.TimeStamp(), bcolors.WARNING+str(e)+bcolors.ENDC)
 
            CutData=pd.merge(CutData,TrackMap,how='left', left_on=[PM.Hit_ID], right_on=['HitID'])
@@ -905,6 +905,7 @@ while status<5:
            print(UF.TimeStamp(), bcolors.OKGREEN+"The tracked data has been written to"+bcolors.ENDC, bcolors.OKBLUE+output_file_location+bcolors.ENDC)
 
            if Log!='NO':
+                        #Calculating recombination accuracy stats, useful for diagnostics but it does allow to determine the high level of tracking - there is a dedicated module for that
                         print(UF.TimeStamp(),'Since the logging was requested, ANN average recombination performance across the clusters is being calculated...')
                         fake_results_1=[]
                         fake_results_2=[]
@@ -988,7 +989,7 @@ while status<5:
                             headers=['Step', 'Avg # Fake edges', 'Avg # of Genuine edges', 'Avg precision', 'Precision std','Avg recall', 'Recall std' ], tablefmt='orgtbl'))
 
            if Log=='KALMAN':
-                        print(UF.TimeStamp(),'Since the logging was requested, FEDRA average recombination performance across the clusters is being calculated...')
+                        print(UF.TimeStamp(),'Since the logging was requested, Kalman filter average recombination performance across the clusters is being calculated...')
                         fake_results_1=[]
                         fake_results_2=[]
                         fake_results_3=[]

@@ -1,3 +1,4 @@
+#This is the training module for the tracker. This script is the master script that just manages HTCondor submissions
 #import libraries
 import argparse
 import ast
@@ -22,17 +23,18 @@ parser.add_argument('--ModelParams',help="Please enter the model params: '[<Numb
 parser.add_argument('--TrainParams',help="Please enter the train params: '[<Learning Rate>, <Batch size>, <Epochs>, <Epoch fractions>]'", default='[0.0001, 4, 10, 1]')
 parser.add_argument('--TrainSampleID',help="What training sample would you like to use?", default='MH_SND_Raw_Train_Data_6_6_12_All')
 parser.add_argument('--Mode',help="Please enter 'Reset' if you want to overwrite the existing model", default='')
+parser.add_argument('--Patience',help="How many HTCondor checks to perform before resubmitting the job?", default='15')
 args = parser.parse_args()
 
 #setting main learning parameters
 Mode=args.Mode.upper()
 ModelName=args.ModelName
-ModelParamsStr='"'+args.ModelParams+'"'
-TrainParamsStr='"'+args.TrainParams+'"'
-ModelParams=ast.literal_eval(args.ModelParams)
-TrainParams=ast.literal_eval(args.TrainParams)
+ModelParamsStr='"'+args.ModelParams+'"' #Add apostrophies so command is passed correctly to the submission script
+TrainParamsStr='"'+args.TrainParams+'"' #Add apostrophies so command is passed correctly to the submission script
+ModelParams=ast.literal_eval(args.ModelParams) #Here we converting parsed list string to list type so we can work with it
+TrainParams=ast.literal_eval(args.TrainParams) #Here we converting parsed list string to list type so we can work with it
 TrainSampleID=args.TrainSampleID
-
+Patience=int(args.Patience)
 #Loading Directory locations
 csv_reader=open('../config',"r")
 config = list(csv.reader(csv_reader))
@@ -61,6 +63,7 @@ print(bcolors.HEADER+"##########################################################
 print(UF.TimeStamp(), bcolors.OKGREEN+"Modules Have been imported successfully..."+bcolors.ENDC)
 #This code fragment covers the Algorithm logic on the first run
 
+#The funsction bellow measures the slope of the loss/accuracy line. If it gets too flat (determined by PM.TST parameter) we stop the training. Useful for automation
 def ModelTrainingSaturation(Meta):
     LossDataForChecking=[]
     AccDataForChecking=[]
@@ -70,7 +73,7 @@ def ModelTrainingSaturation(Meta):
     LossGrad=UF.GetEquationOfLine(LossDataForChecking)[0]
     AccGrad=UF.GetEquationOfLine(AccDataForChecking)[0]
     return LossGrad>=-PM.TST and AccGrad<=PM.TST
-
+#The function bellow monitors and manages the HTCondor submission
 def AutoPilot(wait_min, interval_min, max_interval_tolerance):
     print(UF.TimeStamp(),'Going on an autopilot mode for ',wait_min, 'minutes while checking HTCondor every',interval_min,'min',bcolors.ENDC)
     wait_sec=wait_min*60
@@ -167,7 +170,7 @@ else:
        Model_Meta=Model_Meta_Raw[0]
        completion=None
        for did in range(len(Model_Meta.TrainSessionsDataID)-1,-1,-1):
-           if Model_Meta.TrainSessionsDataID[did]==TrainSampleID:
+           if Model_Meta.TrainSessionsDataID[did]==TrainSampleID: #Testing training sessions vs results. If completed they are equal
                completion=did
                break
        if len(Model_Meta.TrainSessionsDataID)==len(Model_Meta.TrainSessionsData):
@@ -223,7 +226,7 @@ else:
                      print(UF.PickleOperations(Model_Meta_Path, 'w', Model_Meta)[1])
                      UF.SubmitJobs2Condor([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, 1, 'ANNDEA-MTr2-'+ModelName, True,False])
                      print(bcolors.BOLD+"The job has been submitted..."+bcolors.ENDC)
-                     AutoPilot(int(UserAnswer),30,5)
+                     AutoPilot(int(UserAnswer),30,Patience)
 
        else:
            print(UF.TimeStamp(),bcolors.WARNING+'Warning, the training has not been completed.'+bcolors.ENDC)
@@ -248,7 +251,7 @@ else:
                  print(UF.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
                  exit()
            else:
-              AutoPilot(int(UserAnswer),30,5)
+              AutoPilot(int(UserAnswer),30,Patience)
      else:
                  print(UF.TimeStamp(),bcolors.WARNING+'Warning! No existing meta files have been found, starting everything from the scratch.'+bcolors.ENDC)
                  HTCondorTag="SoftUsed == \"ANNDEA-MTr2-"+ModelName+"\""
@@ -266,12 +269,12 @@ else:
                  Meta=MetaInput[0]
                  Model_Meta_Path=EOSsubModelDIR+'/'+args.ModelName+'_Meta'
                  ModelMeta=UF.ModelMeta(ModelName)
-                 ModelMeta.IniModelMeta(ModelParams, 'PyTorch', Meta, 'TCN', 'GNN')
+                 ModelMeta.IniModelMeta(ModelParams, 'PyTorch', Meta, 'TCN', 'GNN') #For tracking only this type of GNN is used.
                  ModelMeta.IniTrainingSession(TrainSampleID, datetime.datetime.now(), TrainParams)
                  print(UF.PickleOperations(Model_Meta_Path, 'w', ModelMeta)[1])
                  UF.SubmitJobs2Condor([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, 1, 'ANNDEA-MTr2-'+ModelName, True,False])
                  print(bcolors.BOLD+"The job has been submitted..."+bcolors.ENDC)
-                 AutoPilot(600,30,5)
+                 AutoPilot(600,30,Patience)
 print(UF.TimeStamp(),bcolors.OKGREEN+'Exiting the program...'+bcolors.ENDC)
 print(bcolors.HEADER+"############################################# End of the program ################################################"+bcolors.ENDC)
 exit()
