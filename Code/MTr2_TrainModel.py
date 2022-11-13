@@ -63,7 +63,7 @@ print(bcolors.HEADER+"##########################################################
 print(UF.TimeStamp(), bcolors.OKGREEN+"Modules Have been imported successfully..."+bcolors.ENDC)
 #This code fragment covers the Algorithm logic on the first run
 
-#The funsction bellow measures the slope of the loss/accuracy line. If it gets too flat (determined by PM.TST parameter) we stop the training. Useful for automation
+#The function bellow measures the slope of the loss/accuracy line. If it gets too flat (determined by PM.TST parameter) we stop the training. Useful for automation
 def ModelTrainingSaturation(Meta):
     LossDataForChecking=[]
     AccDataForChecking=[]

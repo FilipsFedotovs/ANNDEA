@@ -60,9 +60,13 @@ print(bcolors.HEADER+"#########################              Written by Filips F
 print(bcolors.HEADER+"#########################                 PhD Student at UCL                   #########################"+bcolors.ENDC)
 print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
 print(UF.TimeStamp(), bcolors.OKGREEN+"Modules Have been imported successfully..."+bcolors.ENDC)
+
+#Ptotect from division by zero
 def zero_divide(a, b):
     if (b==0): return 0
     return a/b
+
+#The function bellow calculates binary classification stats
 def binary_classification_stats(output, y, thld):
     TP = torch.sum((y==1) & (output>thld))
     TN = torch.sum((y==0) & (output<thld))
@@ -84,17 +88,13 @@ def train(model, device, sample, optimizer):
         data = HC.to(device)
         if (len(data.x)==0 or len(data.edge_index)==0): continue
 
-#        try:
         iterator+=1
         w = model(data.x, data.edge_index, data.edge_attr)
         y, w = data.y.float(), w.squeeze(1)
-        # except:
-        #     print('Erroneus data set: ',data.x, data.edge_index, data.edge_attr, 'skipping these samples...')
-        #     continue
         #edge weight loss
         loss_w = F.binary_cross_entropy(w, y, reduction='mean')
         # optimize total loss
-        if iterator%TrainParams[1]==0:
+        if iterator%TrainParams[1]==0: #Update gradients by batch
            optimizer.zero_grad()
            loss_w.backward()
            optimizer.step()
@@ -104,8 +104,9 @@ def train(model, device, sample, optimizer):
     loss_w = np.nanmean(losses_w)
     return loss_w,iterator
 
+#Deriving validation metrics. Please note that in this function the optimal acceptance is calculated. This is unique to the tracker module
 def validate(model, device, sample):
-    model.eval()
+    model.eval() #Specific feature of pytorch - it has 2 modes eval and train that need to be selected depending on the evaluation.
     opt_thlds, accs, losses = [], [], []
     for HC in sample:
         data = HC.to(device)
@@ -122,7 +123,6 @@ def validate(model, device, sample):
             print('Erroneus data set: ',data.x, data.edge_index, data.edge_attr, 'skipping these samples...')
             continue
         diff, opt_thld, opt_acc = 100, 0, 0
-        best_tpr, best_tnr = 0, 0
         for thld in np.arange(0.01, 0.6, 0.01):
             acc, TPR, TNR = binary_classification_stats(output, y, thld)
             delta = abs(TPR-TNR)
@@ -133,6 +133,7 @@ def validate(model, device, sample):
         losses.append(loss)
     return np.nanmean(opt_thlds),np.nanmean(losses),np.nanmean(accs)
 
+#Deriving testing metrics
 def test(model, device, sample, thld):
     model.eval()
     losses, accs = [], []
@@ -155,7 +156,7 @@ def test(model, device, sample, thld):
             losses.append(loss.item())
     return np.nanmean(losses), np.nanmean(accs)
 
-
+#Keep bellow just in case,but if not needed will be scrapped
 # TrainSampleInputMeta=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_info.pkl'
 # print(UF.TimeStamp(),'Loading the data file ',bcolors.OKBLUE+TrainSampleInputMeta+bcolors.ENDC)
 # MetaInput=UF.PickleOperations(TrainSampleInputMeta,'r', 'N/A')
