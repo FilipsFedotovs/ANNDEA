@@ -61,7 +61,7 @@ print(UF.TimeStamp(), "Modules Have been imported successfully...")
 print(UF.TimeStamp(),'Loading pre-selected data from ',input_file_location)
 
 data=pd.read_csv(input_file_location,header=0,
-            usecols=["Hit_ID","x","y","z","tx","ty"])[["Hit_ID","x","y","z","tx","ty",'Rec_Track_ID']]
+            usecols=["Hit_ID","x","y","z","tx","ty"])[["Hit_ID","x","y","z","tx","ty"]]
 data["x"] = pd.to_numeric(data["x"],downcast='float')
 data["y"] = pd.to_numeric(data["y"],downcast='float')
 data["z"] = pd.to_numeric(data["z"],downcast='float')
@@ -82,7 +82,7 @@ if Log!='NO':
     input_file_location=EOS_DIR+'/ANNDEA/Data/TEST_SET/ETr1_'+RecBatchID+'_hits.csv'
     print(UF.TimeStamp(),'Loading pre-selected data from ',input_file_location)
     MCdata=pd.read_csv(input_file_location,header=0,
-                                usecols=["Hit_ID","x","y","z","tx","ty",'MC_Mother_Track_ID'])[["Hit_ID","x","y","z","tx","ty",'Rec_Track_ID']]
+                                usecols=["Hit_ID","x","y","z","tx","ty",'MC_Mother_Track_ID'])[["Hit_ID","x","y","z","tx","ty",'MC_Mother_Track_ID']]
     MCdata["x"] = pd.to_numeric(MCdata["x"],downcast='float')
     MCdata["y"] = pd.to_numeric(MCdata["y"],downcast='float')
     MCdata["z"] = pd.to_numeric(MCdata["z"],downcast='float')
