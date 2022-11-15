@@ -2279,6 +2279,55 @@ def SubmitJobs2Condor(job):
     subprocess.call(['condor_submit', SUBName])
     print(TotalLine, " has been successfully submitted")
 
+def SubmitJobs2Local(job):
+    print(job)
+    exit()
+    SHName = job[2]
+    SUBName = job[3]
+    if job[8]:
+        MSGName=job[4]
+    OptionLine = job[0][0]+str(job[1][0])
+    for line in range(1,len(job[0])):
+        OptionLine+=job[0][line]
+        OptionLine+=str(job[1][line])
+    f = open(SUBName, "w")
+    f.write("executable = " + SHName)
+    f.write("\n")
+    if job[8]:
+        f.write("output ="+MSGName+".out")
+        f.write("\n")
+        f.write("error ="+MSGName+".err")
+        f.write("\n")
+        f.write("log ="+MSGName+".log")
+        f.write("\n")
+    f.write('requirements = (CERNEnvironment =!= "qa")')
+    f.write("\n")
+    if job[9]:
+        f.write('request_gpus = 1')
+        f.write("\n")
+    f.write('arguments = $(Process)')
+    f.write("\n")
+    f.write('+SoftUsed = '+'"'+job[7]+'"')
+    f.write("\n")
+    f.write('transfer_output_files = ""')
+    f.write("\n")
+    f.write('+JobFlavour = "workday"')
+    f.write("\n")
+    f.write('queue ' + str(job[6]))
+    f.write("\n")
+    f.close()
+    TotalLine = 'python3 ' + job[5] + OptionLine
+    f = open(SHName, "w")
+    f.write("#!/bin/bash")
+    f.write("\n")
+    f.write("set -ux")
+    f.write("\n")
+    f.write(TotalLine)
+    f.write("\n")
+    f.close()
+    subprocess.call(['condor_submit', SUBName])
+    print(TotalLine, " has been successfully submitted")
+
 def ErrorOperations(a,b,a_e,b_e,mode):
     if mode=='+' or mode == '-':
         c_e=math.sqrt((a_e**2) + (b_e**2))

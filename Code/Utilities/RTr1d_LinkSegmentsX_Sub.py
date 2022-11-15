@@ -68,10 +68,8 @@ for i in range(1,X_ID_Max):
     FileClean=FileClean.drop(['Segment_No_x','Segment_No_y','Segment_No_z',"Segment_No_Tot_x","Segment_No_Tot_y","Segment_No_Tot_z"],axis=1)
     FileClean=FileClean.sort_values(["Master_Segment_ID","Segment_No"],ascending=[1,0])
 
-    #FileClean.to_csv('FileClean1.csv',index=False)
     FileClean.drop_duplicates(subset=["Master_Segment_ID"],keep='first',inplace=True)
-    #FileClean=FileClean.drop(['Segment_No'],axis=1)
-    #FileClean.to_csv('FileClean2.csv',index=False)
+
 
     FileClean=pd.merge(FileClean,SecondFileTable,how='right', on=['Segment_ID'])
     FileCleanOrlp=FileClean.dropna(subset=["Master_Segment_ID"])
