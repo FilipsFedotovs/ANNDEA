@@ -39,6 +39,7 @@ parser.add_argument('--Patience',help="How many checks to do before resubmitting
 parser.add_argument('--Log',help="Would you like to log the performance: No, MC, Kalman? (Only available if you have MC Truth or Kalman track reconstruction data)", default='No')
 parser.add_argument('--RecBatchID',help="Give this reconstruction batch an ID", default='SHIP_UR_v1')
 parser.add_argument('--GentleOnCondor',help="What time gap between sumbission gaps should be?", default='0')
+parser.add_argument('--LocalSub',help="Local submission?", default='N')
 parser.add_argument('--f',help="Please enter the full path to the file with track reconstruction", default='/afs/cern.ch/work/f/ffedship/public/SHIP/Source_Data/SHIP_Emulsion_FEDRA_Raw_UR.csv')
 parser.add_argument('--Xmin',help="This option restricts data to only those events that have tracks with hits x-coordinates that are above this value", default='0')
 parser.add_argument('--Xmax',help="This option restricts data to only those events that have tracks with hits x-coordinates that are below this value", default='0')
@@ -56,6 +57,7 @@ ModelName=args.ModelName
 RecBatchID=args.RecBatchID
 Patience=int(args.Patience)
 GentleOnCondor=int(args.GentleOnCondor)
+LocalSub=args.LocalSub=='Y'
 input_file_location=args.f
 Xmin,Xmax,Ymin,Ymax=float(args.Xmin),float(args.Xmax),float(args.Ymin),float(args.Ymax)
 Z_overlap,Y_overlap,X_overlap=int(args.Z_overlap),int(args.Y_overlap),int(args.X_overlap)
@@ -620,7 +622,7 @@ while status<5:
                        exit()
                    if UserAnswer=='R':
                       for bp in bad_pop:
-                           UF.SubmitJobs2Condor(bp)
+                           UF.SubmitJobs2Condor(bp,LocalSub)
                       print(UF.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
                       if AutoPilot1(600,10,Patience):
                           FreshStart=False
