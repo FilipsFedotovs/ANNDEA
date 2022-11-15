@@ -2239,7 +2239,8 @@ def SubmitJobs2Condor(job,local=False):
             OptionLine+=job[0][line]
             OptionLine+=str(job[1][line])
         TotalLine = 'python3 ' + job[5] + OptionLine
-        subprocess.call(TotalLine)
+        TotalLine = 'python3 ' + job[5] + OptionLine
+        subprocess.call(['python3',job[5],OptionLine])
         print(TotalLine, " has been successfully executed")
     else:
         SHName = job[2]
