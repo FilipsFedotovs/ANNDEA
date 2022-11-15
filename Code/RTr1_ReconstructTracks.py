@@ -57,7 +57,7 @@ ModelName=args.ModelName
 RecBatchID=args.RecBatchID
 Patience=int(args.Patience)
 GentleOnCondor=int(args.GentleOnCondor)
-LocalSub=args.LocalSub=='Y'
+LocalSub=(args.LocalSub=='Y')
 input_file_location=args.f
 Xmin,Xmax,Ymin,Ymax=float(args.Xmin),float(args.Xmax),float(args.Ymin),float(args.Ymax)
 Z_overlap,Y_overlap,X_overlap=int(args.Z_overlap),int(args.Y_overlap),int(args.X_overlap)
@@ -329,7 +329,7 @@ def AutoPilot0(wait_min, interval_min, max_interval_tolerance):
                print(UF.TimeStamp(),bcolors.WARNING+'Autopilot status update: There are still', len(bad_pop), 'HTCondor jobs remaining'+bcolors.ENDC)
                if interval%max_interval_tolerance==0:
                   for bp in bad_pop:
-                      UF.SubmitJobs2Condor(bp)
+                      UF.SubmitJobs2Condor(bp,LocalSub)
                   print(UF.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
          else:
               return True
@@ -361,7 +361,7 @@ def AutoPilot1(wait_min, interval_min, max_interval_tolerance):
                print(UF.TimeStamp(),bcolors.WARNING+'Autopilot status update: There are still', len(bad_pop), 'HTCondor jobs remaining'+bcolors.ENDC)
                if interval%max_interval_tolerance==0:
                   for bp in bad_pop:
-                      UF.SubmitJobs2Condor(bp)
+                      UF.SubmitJobs2Condor(bp,LocalSub)
                   print(UF.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
          else:
               return True
@@ -392,7 +392,7 @@ def AutoPilot2(wait_min, interval_min, max_interval_tolerance):
                print(UF.TimeStamp(),bcolors.WARNING+'Autopilot status update: There are still', len(bad_pop), 'HTCondor jobs remaining'+bcolors.ENDC)
                if interval%max_interval_tolerance==0:
                   for bp in bad_pop:
-                      UF.SubmitJobs2Condor(bp)
+                      UF.SubmitJobs2Condor(bp,LocalSub)
                   print(UF.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
          else:
               return True
@@ -419,7 +419,7 @@ def AutoPilot3(wait_min, interval_min, max_interval_tolerance):
                print(UF.TimeStamp(),bcolors.WARNING+'Autopilot status update: There are still', len(bad_pop), 'HTCondor jobs remaining'+bcolors.ENDC)
                if interval%max_interval_tolerance==0:
                   for bp in bad_pop:
-                      UF.SubmitJobs2Condor(bp)
+                      UF.SubmitJobs2Condor(bp,LocalSub)
                   print(UF.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
          else:
               return True
@@ -506,7 +506,7 @@ while status<5:
                        exit()
                    if UserAnswer=='R':
                       for bp in bad_pop:
-                           UF.SubmitJobs2Condor(bp)
+                           UF.SubmitJobs2Condor(bp,LocalSub)
                       print(UF.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
                       if AutoPilot0(600,10,Patience):
                           FreshStart=False
@@ -551,7 +551,7 @@ while status<5:
 
             elif len(bad_pop)>0:
                       for bp in bad_pop:
-                           UF.SubmitJobs2Condor(bp)
+                           UF.SubmitJobs2Condor(bp,LocalSub)
                       if AutoPilot0(600,10,Patience):
                           FreshStart=False
                           print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 0 has successfully completed'+bcolors.ENDC)
@@ -669,7 +669,7 @@ while status<5:
 
             elif len(bad_pop)>0:
                       for bp in bad_pop:
-                           UF.SubmitJobs2Condor(bp)
+                           UF.SubmitJobs2Condor(bp,LocalSub)
                       if AutoPilot1(600,10,Patience):
                           FreshStart=False
                           print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 1 has successfully completed'+bcolors.ENDC)
@@ -742,7 +742,7 @@ while status<5:
                        exit()
                    if UserAnswer=='R':
                       for bp in bad_pop:
-                           UF.SubmitJobs2Condor(bp)
+                           UF.SubmitJobs2Condor(bp,LocalSub)
                       print(UF.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
                       if AutoPilot2(600,10,Patience):
                          FreshStart=False
@@ -788,7 +788,7 @@ while status<5:
 
             elif len(bad_pop)>0:
                       for bp in bad_pop:
-                           UF.SubmitJobs2Condor(bp)
+                           UF.SubmitJobs2Condor(bp,LocalSub)
                       print(UF.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
                       if AutoPilot2(600,10,Patience):
                          FreshStart=False
@@ -830,7 +830,7 @@ while status<5:
                        exit()
                    if UserAnswer=='R':
                       for bp in bad_pop:
-                           UF.SubmitJobs2Condor(bp)
+                           UF.SubmitJobs2Condor(bp,LocalSub)
                       print(UF.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
                       if AutoPilot3(600,10,Patience):
                          FreshStart=False
@@ -859,7 +859,7 @@ while status<5:
         else:
             if len(bad_pop)>0:
                       for bp in bad_pop:
-                           UF.SubmitJobs2Condor(bp)
+                           UF.SubmitJobs2Condor(bp,LocalSub)
                       print(UF.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
                       if AutoPilot3(600,10,Patience):
                          FreshStart=False
