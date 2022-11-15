@@ -2234,7 +2234,12 @@ def CreateCondorJobs(AFS,EOS,path,o,pfx,sfx,ID,loop_params,OptionHeader,OptionLi
    return []
 def SubmitJobs2Condor(job,local=False):
     if local:
-        print(job)
+        OptionLine = job[0][0]+str(job[1][0])
+        for line in range(1,len(job[0])):
+            OptionLine+=job[0][line]
+            OptionLine+=str(job[1][line])
+        TotalLine = 'python3 ' + job[5] + OptionLine
+        print(TotalLine)
         exit()
     else:
         SHName = job[2]
