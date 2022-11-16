@@ -2234,17 +2234,20 @@ def CreateCondorJobs(AFS,EOS,path,o,pfx,sfx,ID,loop_params,OptionHeader,OptionLi
    return []
 def SubmitJobs2Condor(job,local=False):
     if local:
-        OptionLine = job[0][0]+str(job[1][0])
-        for line in range(1,len(job[0])):
-            OptionLine+=job[0][line]
-            OptionLine+=str(job[1][line])
-        TotalLine = 'python3 ' + job[5] + OptionLine
-        print('python3 '+job[5][:-1]+OptionLine)
-        print(job)
-        exit()
+       OptionLine = job[0][0]+str(job[1][0])
+       for line in range(1,len(job[0])):
+                OptionLine+=job[0][line]
+                OptionLine+=str(job[1][line])
+                TotalLine = 'python3 ' + job[5] + OptionLine
+       submission_line='python3 '+job[5][:-1]+OptionLine
+       if job[6]>1:
+         submission_line=submission_line.replace('$1',str(job[6]))
+       print(submission_line)
+       print(job)
+       exit()
 
-        subprocess.call(['python3 '+job[5][:-1]+OptionLine],shell=True)
-        print(bcolors.OKGREEN+" has been successfully executed"+bcolors.ENDC)
+       subprocess.call(['python3 '+job[5][:-1]+OptionLine],shell=True)
+       print(bcolors.OKGREEN+" has been successfully executed"+bcolors.ENDC)
     else:
         SHName = job[2]
         SUBName = job[3]
