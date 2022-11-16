@@ -2240,14 +2240,11 @@ def SubmitJobs2Condor(job,local=False):
                 OptionLine+=str(job[1][line])
                 TotalLine = 'python3 ' + job[5] + OptionLine
        submission_line='python3 '+job[5][:-1]+OptionLine
-       if job[6]>1:
-         submission_line=submission_line.replace('$1',str(job[6]))
-       print(submission_line)
-       print(job)
-       exit()
-
-       subprocess.call(['python3 '+job[5][:-1]+OptionLine],shell=True)
-       print(bcolors.OKGREEN+" has been successfully executed"+bcolors.ENDC)
+       
+       for j in range(job[6]):
+         submission_line=submission_line.replace('$1',str(j))
+         subprocess.call([submission_line],shell=True)
+         print(bcolors.OKGREEN+submission_line+" has been successfully executed"+bcolors.ENDC)
     else:
         SHName = job[2]
         SUBName = job[3]
