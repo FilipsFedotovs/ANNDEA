@@ -599,7 +599,7 @@ while status<5:
                                SUBName = AFS_DIR + '/HTCondor/SUB/SUB_RTr1b_'+ RecBatchID+'_' + str(j) + '.sub'
                                MSGName = AFS_DIR + '/HTCondor/MSG/MSG_RTr1b_' + RecBatchID+ '_' + str(j)
                                ScriptName = AFS_DIR + '/Code/Utilities/RTr1b_LinkSegmentsZ_Sub.py '
-                               UF.SubmitJobs2Condor([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, Xsteps, 'ANNDEA-RTr1-'+RecBatchID, False,False])
+                               UF.SubmitJobs2Condor([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, Xsteps, 'ANNDEA-RTr1-'+RecBatchID, False,False],LocalSub)
                  else:
 
                     if AutoPilot1(120,10,Patience):
@@ -656,7 +656,7 @@ while status<5:
                                SUBName = AFS_DIR + '/HTCondor/SUB/SUB_RTr1b_'+ RecBatchID+'_' + str(j) + '.sub'
                                MSGName = AFS_DIR + '/HTCondor/MSG/MSG_RTr1b_' + RecBatchID+ '_' + str(j)
                                ScriptName = AFS_DIR + '/Code/Utilities/RTr1b_LinkSegmentsZ_Sub.py '
-                               UF.SubmitJobs2Condor([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, Xsteps, 'ANNDEA-RTr1-'+RecBatchID, False,False])
+                               UF.SubmitJobs2Condor([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, Xsteps, 'ANNDEA-RTr1-'+RecBatchID, False,False],LocalSub)
 
                  if AutoPilot1(600,10,Patience):
                        FreshStart=False
