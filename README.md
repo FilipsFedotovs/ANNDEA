@@ -1,4 +1,4 @@
-# ANNADEA
+# ANNDEA
 Artificial Neural Network Driven Emulsion Analysis.
 This README just serves as a very short user guide, the documentation will be written much later.
 
@@ -28,39 +28,39 @@ All modules
 
 ### 1.1 Installation steps
 1) go to your home directory in afs where you would like to install the package
-2) **git clone https://github.com/FilipsFedotovs/ANNADEA/**
-3) **cd ANNADEA/**
-4) **python setup.py**
+2) **git clone https://github.com/FilipsFedotovs/ANNDEA/**
+3) **cd ANNDEA/**
+4) **python3 setup.py**
 5) The installation will require an EOS directory, please enter the location on EOS where you would like to keep data and the models. An example of the input is /eos/experiment/ship/user/username (but create the directory there first).
 6) The installation will ask whether you want to copy default training and validation files (that were prepared earlier). Unless you have your own, please enter **Y**.     The installer will copy and analyse existing data, it might take 5-10 minutes
-7) if the message *'ANNADEA setup is successfully completed'* is displayed, it means that the package is ready for work
+7) if the message *'ANNDEA setup is successfully completed'* is displayed, it means that the package is ready for work
 
 ### 1.2 Creating training files 
 *This part is only needed if a new model is required*
-1) Go to ANNADEA directory on AFS
+1) Go to ANNDEA directory on AFS
 2) **cd Code**
 3) **tmux**
 4) **kinit username@CERN.CH -l 24h00m**
 5) Enter your lxplus password
-6) **python3 MH1_GenerateTrainClusters.py --TrainSampleID Test_Sample --Xmin 50000 --Xmax 55000 --Ymin 50000 --Ymax 55000**
+6) **python3 MTr1_GenerateTrainClusters.py --TrainSampleID Training_Sample --Xmin 200000 --Xmax 300000 --Ymin 0 --Ymax 70000**
 7) After few minutes the script will ask for the user option (Warning, there are still x HTCondor jobs remaining). Type **R** and press **Enter**. The script will submit the subscript jobs and go to the autopilot mode.
 8) Exit tmux (by using **ctrl + b** and then typing  **d**). It can take up to few hours for HTCondor jobs to finish.
 9) Enter the same tmux session after some period (after overnight job for example) by logging to the same lxplus machine and then typing  **tmux a -t 0**. The program should finish with the message *'Training samples are ready for the model creation/training'*
 
-### 1.3 Reconstructing a hit data using the new model 
+### 1.3 Training a new model by using previously generated model
 *This part is only needed if a new model is required*
-1) Go to ANNADEA directory on AFS
+1) Go to ANNDEA directory on AFS
 2) **cd Code**
 3) **tmux**
 4) **kinit username@CERN.CH -l 24h00m**
 5) Enter your lxplus password
-6) **python3 MH2_TrainModel.py --TrainSampleID Test_Sample --ModelName Test_Model --ModelParams '[1,20,1,20]'**
-7) The script will submit the subscript jobs and go to the autopilot mode.
+6) **python3 MTr2_TrainModel.py --TrainSampleID Training_Sample --ModelName Test_Model --ModelParams '[1,20,1,20]' --TrainParams "[0.1,4,10,1]"**
+7) The script will submit the subscript jobs and ask for your next steps. Enter 600 and press **Enter**
 8) Exit tmux (by using **ctrl + b** and then typing  **d**). Script will keep running in the autopilot mode until all the steps in the hit reconstruction process have been completed.
 9) Enter the same tmux session (after overnight job for example) by logging to the same lxplus machine and then typing  **tmux a -t 0**. The program should finish with the message *'Training is finished then, thank you and goodbye'*
 
 ### 1.4 Reconstructing a hit data using the new model 
-1) Go to ANNADEA directory on AFS
+1) Go to ANNDEA directory on AFS
 2) **cd Code**
 3) **tmux**
 4) **kinit username@CERN.CH -l 24h00m**

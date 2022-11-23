@@ -1,5 +1,5 @@
 #This simple connects hits in the data to produce tracks
-#Tracking Module of the ANNADEA package
+#Tracking Module of the ANNDEA package
 #Made by Filips Fedotovs
 
 
@@ -27,7 +27,7 @@ class bcolors:   #We use it for the interface
 print('                                                                                                                                    ')
 print('                                                                                                                                    ')
 print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
-print(bcolors.HEADER+"######################     Initialising ANNADEA Hit Tracking module               #####################"+bcolors.ENDC)
+print(bcolors.HEADER+"######################        Initialising ANNDEA Hit Tracking module              #####################"+bcolors.ENDC)
 print(bcolors.HEADER+"#########################              Written by Filips Fedotovs              #########################"+bcolors.ENDC)
 print(bcolors.HEADER+"#########################                 PhD Student at UCL                   #########################"+bcolors.ENDC)
 print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
@@ -38,6 +38,8 @@ parser.add_argument('--ModelName',help="WHat GNN model would you like to use?", 
 parser.add_argument('--Patience',help="How many checks to do before resubmitting the job?", default='15')
 parser.add_argument('--Log',help="Would you like to log the performance: No, MC, Kalman? (Only available if you have MC Truth or Kalman track reconstruction data)", default='No')
 parser.add_argument('--RecBatchID',help="Give this reconstruction batch an ID", default='SHIP_UR_v1')
+parser.add_argument('--GentleOnCondor',help="What time gap between sumbission gaps should be?", default='0')
+parser.add_argument('--LocalSub',help="Local submission?", default='N')
 parser.add_argument('--f',help="Please enter the full path to the file with track reconstruction", default='/afs/cern.ch/work/f/ffedship/public/SHIP/Source_Data/SHIP_Emulsion_FEDRA_Raw_UR.csv')
 parser.add_argument('--Xmin',help="This option restricts data to only those events that have tracks with hits x-coordinates that are above this value", default='0')
 parser.add_argument('--Xmax',help="This option restricts data to only those events that have tracks with hits x-coordinates that are below this value", default='0')
@@ -54,6 +56,8 @@ Log=args.Log.upper()
 ModelName=args.ModelName
 RecBatchID=args.RecBatchID
 Patience=int(args.Patience)
+GentleOnCondor=int(args.GentleOnCondor)
+LocalSub=(args.LocalSub=='Y')
 input_file_location=args.f
 Xmin,Xmax,Ymin,Ymax=float(args.Xmin),float(args.Xmax),float(args.Ymin),float(args.Ymax)
 Z_overlap,Y_overlap,X_overlap=int(args.Z_overlap),int(args.Y_overlap),int(args.X_overlap)
@@ -74,7 +78,7 @@ import UtilityFunctions as UF #This is where we keep routine utility functions
 import Parameters as PM #This is where we keep framework global parameters
 
 #Establishing paths
-EOSsubDIR=EOS_DIR+'/'+'ANNADEA'
+EOSsubDIR=EOS_DIR+'/'+'ANNDEA'
 EOSsubModelDIR=EOSsubDIR+'/'+'Models'
 Model_Meta_Path=EOSsubModelDIR+'/'+args.ModelName+'_Meta'
 print(UF.TimeStamp(),bcolors.BOLD+'Preparation 1/3:'+bcolors.ENDC+' Setting up metafiles...')
@@ -94,12 +98,12 @@ else:
 
 ########################################     Phase 1 - Create compact source file    #########################################
 print(UF.TimeStamp(),bcolors.BOLD+'Preparation 2/3:'+bcolors.ENDC+' Preparing the source data...')
-required_file_location=EOS_DIR+'/ANNADEA/Data/REC_SET/RH1_'+RecBatchID+'_hits.csv'
+required_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RTr1_'+RecBatchID+'_hits.csv'
 if os.path.isfile(required_file_location)==False or Mode=='RESET':
          print(UF.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
          data=pd.read_csv(input_file_location,
                      header=0,
-                     usecols=[PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty])
+                     usecols=[PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty])[[PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty]]
          total_rows=len(data.axes[0])
          data[PM.Hit_ID] = data[PM.Hit_ID].astype(str)
          print(UF.TimeStamp(),'The raw data has ',total_rows,' hits')
@@ -124,13 +128,13 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
          print(UF.TimeStamp(), bcolors.OKGREEN+"The segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+required_file_location+bcolors.ENDC)
 
 if Log!='NO':
-  required_file_location=EOS_DIR+'/ANNADEA/Data/TEST_SET/EH1_'+RecBatchID+'_hits.csv'
+  required_file_location=EOS_DIR+'/ANNDEA/Data/TEST_SET/ETr1_'+RecBatchID+'_hits.csv'
   if os.path.isfile(required_file_location)==False or Mode=='RESET':
      print(UF.TimeStamp(),'Creating Evaluation file...')
      print(UF.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
      data=pd.read_csv(input_file_location,
                  header=0,
-                 usecols=[PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty,PM.MC_Track_ID,PM.MC_Event_ID])
+                 usecols=[PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty,PM.MC_Track_ID,PM.MC_Event_ID])[[PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty,PM.MC_Track_ID,PM.MC_Event_ID]]
 
      total_rows=len(data.axes[0])
      print(UF.TimeStamp(),'The raw data has ',total_rows,' hits')
@@ -170,12 +174,12 @@ if Log!='NO':
      print(UF.TimeStamp(), bcolors.OKGREEN+"The track segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+required_file_location+bcolors.ENDC)
 
 if Log=='KALMAN':
-   required_file_location=EOS_DIR+'/ANNADEA/Data/TEST_SET/KH1_'+RecBatchID+'_hits.csv'
+   required_file_location=EOS_DIR+'/ANNDEA/Data/TEST_SET/KTr1_'+RecBatchID+'_hits.csv'
    if os.path.isfile(required_file_location)==False or Mode=='RESET':
         print(UF.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
         data=pd.read_csv(input_file_location,
                     header=0,
-                    usecols=[PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty,PM.FEDRA_Track_ID,PM.FEDRA_Track_QUADRANT])
+                    usecols=[PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty,PM.Rec_Track_ID,PM.Rec_Track_Domain])[[PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty,PM.Rec_Track_ID,PM.Rec_Track_Domain]]
 
         total_rows=len(data.axes[0])
         print(UF.TimeStamp(),'The raw data has ',total_rows,' hits')
@@ -183,25 +187,25 @@ if Log=='KALMAN':
         data=data.dropna()
         final_rows=len(data.axes[0])
         print(UF.TimeStamp(),'The cleaned data has ',final_rows,' hits')
-        data[PM.FEDRA_Track_QUADRANT] = data[PM.FEDRA_Track_QUADRANT].astype(str)
-        data[PM.FEDRA_Track_ID] = data[PM.FEDRA_Track_ID].astype(str)
+        data[PM.Rec_Track_Domain] = data[PM.Rec_Track_Domain].astype(str)
+        data[PM.Rec_Track_ID] = data[PM.Rec_Track_ID].astype(str)
         data[PM.Hit_ID] = data[PM.Hit_ID].astype(str)
-        data['FEDRA_Track_ID'] = data[PM.FEDRA_Track_QUADRANT] + '-' + data[PM.FEDRA_Track_ID]
-        data=data.drop([PM.FEDRA_Track_QUADRANT],axis=1)
-        data=data.drop([PM.FEDRA_Track_ID],axis=1)
+        data['Rec_Track_ID'] = data[PM.Rec_Track_Domain] + '-' + data[PM.Rec_Track_ID]
+        data=data.drop([PM.Rec_Track_Domain],axis=1)
+        data=data.drop([PM.Rec_Track_ID],axis=1)
         if SliceData:
              print(UF.TimeStamp(),'Slicing the data...')
              data=data.drop(data.index[(data[PM.x] > Xmax) | (data[PM.x] < Xmin) | (data[PM.y] > Ymax) | (data[PM.y] < Ymin)])
              final_rows=len(data.axes[0])
              print(UF.TimeStamp(),'The sliced data has ',final_rows,' hits')
         print(UF.TimeStamp(),'Removing tracks which have less than',PM.MinHitsTrack,'hits...')
-        track_no_data=data.groupby(['FEDRA_Track_ID'],as_index=False).count()
+        track_no_data=data.groupby(['Rec_Track_ID'],as_index=False).count()
         track_no_data=track_no_data.drop([PM.y,PM.z,PM.tx,PM.ty,PM.Hit_ID],axis=1)
-        track_no_data=track_no_data.rename(columns={PM.x: "FEDRA_Track_No"})
-        new_combined_data=pd.merge(data, track_no_data, how="left", on=['FEDRA_Track_ID'])
-        new_combined_data = new_combined_data[new_combined_data.FEDRA_Track_No >= PM.MinHitsTrack]
-        new_combined_data = new_combined_data.drop(["FEDRA_Track_No"],axis=1)
-        new_combined_data=new_combined_data.sort_values(['FEDRA_Track_ID',PM.z],ascending=[1,1])
+        track_no_data=track_no_data.rename(columns={PM.x: "Rec_Track_No"})
+        new_combined_data=pd.merge(data, track_no_data, how="left", on=['Rec_Track_ID'])
+        new_combined_data = new_combined_data[new_combined_data.Rec_Track_No >= PM.MinHitsTrack]
+        new_combined_data = new_combined_data.drop(["Rec_Track_No"],axis=1)
+        new_combined_data=new_combined_data.sort_values(['Rec_Track_ID',PM.z],ascending=[1,1])
         grand_final_rows=len(new_combined_data.axes[0])
         print(UF.TimeStamp(),'The cleaned data has ',grand_final_rows,' hits')
         new_combined_data=new_combined_data.rename(columns={PM.x: "x"})
@@ -215,7 +219,7 @@ if Log=='KALMAN':
         print(UF.TimeStamp(), bcolors.OKGREEN+"The track segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+required_file_location+bcolors.ENDC)
 
 # ########################################     Preset framework parameters    #########################################
-input_file_location=EOS_DIR+'/ANNADEA/Data/REC_SET/RH1_'+RecBatchID+'_hits.csv'
+input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RTr1_'+RecBatchID+'_hits.csv'
 print(UF.TimeStamp(),'Loading preselected data from ',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
 data=pd.read_csv(input_file_location,header=0,usecols=['z','x','y'])
 print(UF.TimeStamp(),'Analysing data... ',bcolors.ENDC)
@@ -251,19 +255,19 @@ def CheckStatus():
     print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
     print(UF.TimeStamp(),bcolors.BOLD+'Preparation 3/3:'+bcolors.ENDC+' Working out the scope of the upcoming work...')
     #First of all lets check that the output of reconstruction is completed
-    required_output_file_location=EOS_DIR+'/ANNADEA/Data/REC_SET/'+RecBatchID+'_RH_OUTPUT.pkl'
+    required_output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_RTr_OUTPUT.pkl'
     if os.path.isfile(required_output_file_location):
         return 5
     else:
         #Reconstruction output hasn't been produced - lets check the previous step result and so on
-        required_output_file_location=EOS_DIR+'/ANNADEA/Data/REC_SET/RH1d_'+RecBatchID+'_hit_cluster_rec_x_set.pkl'
+        required_output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RTr1d_'+RecBatchID+'_hit_cluster_rec_x_set.pkl'
         if os.path.isfile(required_output_file_location):
            return 4
         else:
            bad_pop=0
            with alive_bar(Xsteps,force_tty=True, title='Checking the Y-shift results from HTCondor') as bar:
              for i in range(0,Xsteps):
-                  required_output_file_location=EOS_DIR+'/ANNADEA/Data/REC_SET/RH1c_'+RecBatchID+'_hit_cluster_rec_y_set_' +str(i)+'.pkl'
+                  required_output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RTr1c_'+RecBatchID+'_hit_cluster_rec_y_set_' +str(i)+'.pkl'
                   bar.text = f'-> Checking whether the file : {required_output_file_location}, exists...'
                   bar()
                   if os.path.isfile(required_output_file_location)!=True:
@@ -275,7 +279,7 @@ def CheckStatus():
                 with alive_bar(Ysteps*Xsteps,force_tty=True, title='Checking the Z-shift results from HTCondor') as bar:
                         for j in range(0,Ysteps):
                              for i in range(0,Xsteps):
-                                  required_output_file_location=EOS_DIR+'/ANNADEA/Data/REC_SET/RH1b_'+RecBatchID+'_hit_cluster_rec_z_set_'+str(j)+'_' +str(i)+'.pkl'
+                                  required_output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RTr1b_'+RecBatchID+'_hit_cluster_rec_z_set_'+str(j)+'_' +str(i)+'.pkl'
                                   bar.text = f'-> Checking whether the file : {required_output_file_location}, exists...'
                                   bar()
                                   if os.path.isfile(required_output_file_location)!=True:
@@ -288,7 +292,7 @@ def CheckStatus():
                         for k in range(0,Zsteps):
                             for j in range(0,Ysteps):
                                  for i in range(0,Xsteps):
-                                      required_output_file_location=EOS_DIR+'/ANNADEA/Data/REC_SET/RH1a_'+RecBatchID+'_hit_cluster_rec_set_'+str(k)+'_' +str(j)+'_' +str(i)+'.pkl'
+                                      required_output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RTr1a_'+RecBatchID+'_hit_cluster_rec_set_'+str(k)+'_' +str(j)+'_' +str(i)+'.pkl'
                                       bar.text = f'-> Checking whether the file : {required_output_file_location}, exists...'
                                       bar()
                                       if os.path.isfile(required_output_file_location)!=True:
@@ -310,22 +314,22 @@ def AutoPilot0(wait_min, interval_min, max_interval_tolerance):
              for k in range(0,Zsteps):
                for j in range(0,Ysteps):
                    for i in range(0,Xsteps):
-                      required_output_file_location=EOS_DIR+'/ANNADEA/Data/REC_SET/RH1a_'+RecBatchID+'_hit_cluster_rec_set_'+str(k)+'_' +str(j)+'_' +str(i)+'.pkl'
+                      required_output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RTr1a_'+RecBatchID+'_hit_cluster_rec_set_'+str(k)+'_' +str(j)+'_' +str(i)+'.pkl'
                       bar.text = f'-> Checking whether the file : {required_output_file_location}, exists...'
                       bar()
                       OptionHeader = [' --Z_ID ',' --Y_ID ', ' --X_ID ', ' --stepZ ', ' --stepY ', ' --stepX ', ' --EOS ', " --AFS ", " --zOffset ", " --yOffset ", " --xOffset ", ' --cut_dt ', ' --cut_dr ', ' --ModelName ', ' --Log ',' --RecBatchID ',' --Z_overlap ',' --Y_overlap ',' --X_overlap ']
                       OptionLine = [k, j, i, stepZ,stepY,stepX, EOS_DIR, AFS_DIR, z_offset, y_offset, x_offset, cut_dt,cut_dr, ModelName ,Log,RecBatchID,Z_overlap,Y_overlap,X_overlap]
-                      SHName = AFS_DIR + '/HTCondor/SH/SH_RH1a_'+ RecBatchID+'_' + str(k) + '_' + str(j) + '_' + str(i) +'.sh'
-                      SUBName = AFS_DIR + '/HTCondor/SUB/SUB_RH1a_'+ RecBatchID+'_'+ str(k) + '_' + str(j) + '_' + str(i) + '.sub'
-                      MSGName = AFS_DIR + '/HTCondor/MSG/MSG_RH1a_' + RecBatchID+'_' + str(k) + '_' + str(j) + '_' + str(i)
-                      ScriptName = AFS_DIR + '/Code/Utilities/RH1a_ReconstructHits_Sub.py '
+                      SHName = AFS_DIR + '/HTCondor/SH/SH_RTr1a_'+ RecBatchID+'_' + str(k) + '_' + str(j) + '_' + str(i) +'.sh'
+                      SUBName = AFS_DIR + '/HTCondor/SUB/SUB_RTr1a_'+ RecBatchID+'_'+ str(k) + '_' + str(j) + '_' + str(i) + '.sub'
+                      MSGName = AFS_DIR + '/HTCondor/MSG/MSG_RTr1a_' + RecBatchID+'_' + str(k) + '_' + str(j) + '_' + str(i)
+                      ScriptName = AFS_DIR + '/Code/Utilities/RTr1a_ReconstructHits_Sub.py '
                       if os.path.isfile(required_output_file_location)!=True:
-                         bad_pop.append([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, 1, 'ANNADEA-RH-'+RecBatchID, False,False])
+                         bad_pop.append([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, 1, 'ANNDEA-RTr1-'+RecBatchID, False,False])
          if len(bad_pop)>0:
                print(UF.TimeStamp(),bcolors.WARNING+'Autopilot status update: There are still', len(bad_pop), 'HTCondor jobs remaining'+bcolors.ENDC)
                if interval%max_interval_tolerance==0:
                   for bp in bad_pop:
-                      UF.SubmitJobs2Condor(bp)
+                      UF.SubmitJobs2Condor(bp,LocalSub)
                   print(UF.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
          else:
               return True
@@ -342,22 +346,22 @@ def AutoPilot1(wait_min, interval_min, max_interval_tolerance):
          with alive_bar(Ysteps*Xsteps,force_tty=True, title='Checking the Z-shift results from HTCondor') as bar:
             for j in range(0,Ysteps):
                  for i in range(0,Xsteps):
-                      required_output_file_location=EOS_DIR+'/ANNADEA/Data/REC_SET/RH1b_'+RecBatchID+'_hit_cluster_rec_z_set_'+str(j)+'_' +str(i)+'.pkl'
+                      required_output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RTr1b_'+RecBatchID+'_hit_cluster_rec_z_set_'+str(j)+'_' +str(i)+'.pkl'
                       bar.text = f'-> Checking whether the file : {required_output_file_location}, exists...'
                       bar()
                       OptionHeader = [' --Z_ID_Max ',' --Y_ID ', ' --X_ID ', ' --EOS ', " --AFS ", ' --RecBatchID ']
                       OptionLine = [Zsteps, j, i, EOS_DIR, AFS_DIR, RecBatchID]
-                      SHName = AFS_DIR + '/HTCondor/SH/SH_RH1b_'+ RecBatchID+ '_' + str(j) + '_' + str(i) +'.sh'
-                      SUBName = AFS_DIR + '/HTCondor/SUB/SUB_RH1b_'+ RecBatchID+ '_' + str(j) + '_' + str(i) + '.sub'
-                      MSGName = AFS_DIR + '/HTCondor/MSG/MSG_RH1b_' + RecBatchID+ '_' + str(j) + '_' + str(i)
-                      ScriptName = AFS_DIR + '/Code/Utilities/RH1b_LinkSegmentsZ_Sub.py '
+                      SHName = AFS_DIR + '/HTCondor/SH/SH_RTr1b_'+ RecBatchID+ '_' + str(j) + '_' + str(i) +'.sh'
+                      SUBName = AFS_DIR + '/HTCondor/SUB/SUB_RTr1b_'+ RecBatchID+ '_' + str(j) + '_' + str(i) + '.sub'
+                      MSGName = AFS_DIR + '/HTCondor/MSG/MSG_RTr1b_' + RecBatchID+ '_' + str(j) + '_' + str(i)
+                      ScriptName = AFS_DIR + '/Code/Utilities/RTr1b_LinkSegmentsZ_Sub.py '
                       if os.path.isfile(required_output_file_location)!=True:
-                         bad_pop.append([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, 1, 'ANNADEA-RH-'+RecBatchID, False,False])
+                         bad_pop.append([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, 1, 'ANNDEA-RTr1-'+RecBatchID, False,False])
          if len(bad_pop)>0:
                print(UF.TimeStamp(),bcolors.WARNING+'Autopilot status update: There are still', len(bad_pop), 'HTCondor jobs remaining'+bcolors.ENDC)
                if interval%max_interval_tolerance==0:
                   for bp in bad_pop:
-                      UF.SubmitJobs2Condor(bp)
+                      UF.SubmitJobs2Condor(bp,LocalSub)
                   print(UF.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
          else:
               return True
@@ -373,22 +377,22 @@ def AutoPilot2(wait_min, interval_min, max_interval_tolerance):
          print(UF.TimeStamp(),"Scheduled job checkup...") #Progress display
          with alive_bar(Ysteps*Xsteps,force_tty=True, title='Checking the Y-shift results from HTCondor') as bar:
                    for i in range(0,Xsteps):
-                      required_output_file_location=EOS_DIR+'/ANNADEA/Data/REC_SET/RH1c_'+RecBatchID+'_hit_cluster_rec_y_set_' +str(i)+'.pkl'
+                      required_output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RTr1c_'+RecBatchID+'_hit_cluster_rec_y_set_' +str(i)+'.pkl'
                       bar.text = f'-> Checking whether the file : {required_output_file_location}, exists...'
                       bar()
                       OptionHeader = [' --Y_ID_Max ', ' --X_ID ', ' --EOS ', " --AFS ", ' --RecBatchID ']
                       OptionLine = [Ysteps, i, EOS_DIR, AFS_DIR, RecBatchID]
-                      SHName = AFS_DIR + '/HTCondor/SH/SH_RH1c_'+ RecBatchID+ '_'  + str(i) +'.sh'
-                      SUBName = AFS_DIR + '/HTCondor/SUB/SUB_RH1c_'+ RecBatchID+ '_' + str(i) + '.sub'
-                      MSGName = AFS_DIR + '/HTCondor/MSG/MSG_RH1c_' + RecBatchID+ '_' + str(i)
-                      ScriptName = AFS_DIR + '/Code/Utilities/RH1c_LinkSegmentsY_Sub.py '
+                      SHName = AFS_DIR + '/HTCondor/SH/SH_RTr1c_'+ RecBatchID+ '_'  + str(i) +'.sh'
+                      SUBName = AFS_DIR + '/HTCondor/SUB/SUB_RTr1c_'+ RecBatchID+ '_' + str(i) + '.sub'
+                      MSGName = AFS_DIR + '/HTCondor/MSG/MSG_RTr1c_' + RecBatchID+ '_' + str(i)
+                      ScriptName = AFS_DIR + '/Code/Utilities/RTr1c_LinkSegmentsY_Sub.py '
                       if os.path.isfile(required_output_file_location)!=True:
-                         bad_pop.append([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, 1, 'ANNADEA-RH-'+RecBatchID, False,False])
+                         bad_pop.append([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, 1, 'ANNDEA-RTr1-'+RecBatchID, False,False])
          if len(bad_pop)>0:
                print(UF.TimeStamp(),bcolors.WARNING+'Autopilot status update: There are still', len(bad_pop), 'HTCondor jobs remaining'+bcolors.ENDC)
                if interval%max_interval_tolerance==0:
                   for bp in bad_pop:
-                      UF.SubmitJobs2Condor(bp)
+                      UF.SubmitJobs2Condor(bp,LocalSub)
                   print(UF.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
          else:
               return True
@@ -402,20 +406,20 @@ def AutoPilot3(wait_min, interval_min, max_interval_tolerance):
          time.sleep(interval_sec)
          bad_pop=[]
          print(UF.TimeStamp(),"Scheduled job checkup...") #Progress display
-         required_output_file_location=EOS_DIR+'/ANNADEA/Data/REC_SET/RH1d_'+RecBatchID+'_hit_cluster_rec_x_set.pkl'
+         required_output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RTr1d_'+RecBatchID+'_hit_cluster_rec_x_set.pkl'
          OptionHeader = [' --X_ID_Max ', ' --EOS ', " --AFS ", ' --RecBatchID ']
          OptionLine = [Xsteps, EOS_DIR, AFS_DIR, RecBatchID]
-         SHName = AFS_DIR + '/HTCondor/SH/SH_RH1d_'+RecBatchID+'.sh'
-         SUBName = AFS_DIR + '/HTCondor/SUB/SUB_RH1d_'+RecBatchID+'.sub'
-         MSGName = AFS_DIR + '/HTCondor/MSG/MSG_RH1d_' + RecBatchID
-         ScriptName = AFS_DIR + '/Code/Utilities/RH1d_LinkSegmentsX_Sub.py '
+         SHName = AFS_DIR + '/HTCondor/SH/SH_RTr1d_'+RecBatchID+'.sh'
+         SUBName = AFS_DIR + '/HTCondor/SUB/SUB_RTr1d_'+RecBatchID+'.sub'
+         MSGName = AFS_DIR + '/HTCondor/MSG/MSG_RTr1d_' + RecBatchID
+         ScriptName = AFS_DIR + '/Code/Utilities/RTr1d_LinkSegmentsX_Sub.py '
          if os.path.isfile(required_output_file_location)!=True:
-            bad_pop.append([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, 1, 'ANNADEA-RH-'+RecBatchID, False,False])
+            bad_pop.append([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, 1, 'ANNDEA-RTr1-'+RecBatchID, False,False])
          if len(bad_pop)>0:
                print(UF.TimeStamp(),bcolors.WARNING+'Autopilot status update: There are still', len(bad_pop), 'HTCondor jobs remaining'+bcolors.ENDC)
                if interval%max_interval_tolerance==0:
                   for bp in bad_pop:
-                      UF.SubmitJobs2Condor(bp)
+                      UF.SubmitJobs2Condor(bp,LocalSub)
                   print(UF.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
          else:
               return True
@@ -423,8 +427,8 @@ def AutoPilot3(wait_min, interval_min, max_interval_tolerance):
 
 if Mode=='RESET':
     print(UF.TimeStamp(),'Performing the cleanup... ',bcolors.ENDC)
-    HTCondorTag="SoftUsed == \"ANNADEA-RH-"+RecBatchID+"\""
-    UF.RecCleanUp(AFS_DIR, EOS_DIR, 'RH1_'+RecBatchID, ['RH1a','RH1b','RH1c','RH1d',RecBatchID+'_RH_OUTPUT.pkl'], HTCondorTag)
+    HTCondorTag="SoftUsed == \"ANNDEA-RTr-"+RecBatchID+"\""
+    UF.RecCleanUp(AFS_DIR, EOS_DIR, 'RTr1_'+RecBatchID, ['RTr1a','RTr1b','RTr1c','RTr1d',RecBatchID+'_RTr_OUTPUT.pkl'], HTCondorTag)
     status=0
     FreshStart=False
 else:
@@ -443,17 +447,17 @@ while status<5:
             for k in range(0,Zsteps):
                 for j in range(0,Ysteps):
                      for i in range(0,Xsteps):
-                          required_output_file_location=EOS_DIR+'/ANNADEA/Data/REC_SET/RH1a_'+RecBatchID+'_hit_cluster_rec_set_'+str(k)+'_' +str(j)+'_' +str(i)+'.pkl'
+                          required_output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RTr1a_'+RecBatchID+'_hit_cluster_rec_set_'+str(k)+'_' +str(j)+'_' +str(i)+'.pkl'
                           bar.text = f'-> Checking whether the file : {required_output_file_location}, exists...'
                           bar()
                           OptionHeader = [' --Z_ID ',' --Y_ID ', ' --X_ID ', ' --stepZ ', ' --stepY ', ' --stepX ', ' --EOS ', " --AFS ", " --zOffset ", " --yOffset ", " --xOffset ", ' --cut_dt ', ' --cut_dr ', ' --ModelName ', ' --Log ',' --RecBatchID ',' --Z_overlap ',' --Y_overlap ',' --X_overlap ']
                           OptionLine = [k, j, i, stepZ,stepY,stepX, EOS_DIR, AFS_DIR, z_offset, y_offset, x_offset, cut_dt,cut_dr, ModelName ,Log,RecBatchID,Z_overlap,Y_overlap,X_overlap]
-                          SHName = AFS_DIR + '/HTCondor/SH/SH_RH1a_'+ RecBatchID+'_' + str(k) + '_' + str(j) + '_' + str(i) +'.sh'
-                          SUBName = AFS_DIR + '/HTCondor/SUB/SUB_RH1a_'+ RecBatchID+'_'+ str(k) + '_' + str(j) + '_' + str(i) + '.sub'
-                          MSGName = AFS_DIR + '/HTCondor/MSG/MSG_RH1a_' + RecBatchID+'_' + str(k) + '_' + str(j) + '_' + str(i)
-                          ScriptName = AFS_DIR + '/Code/Utilities/RH1a_ReconstructHits_Sub.py '
+                          SHName = AFS_DIR + '/HTCondor/SH/SH_RTr1a_'+ RecBatchID+'_' + str(k) + '_' + str(j) + '_' + str(i) +'.sh'
+                          SUBName = AFS_DIR + '/HTCondor/SUB/SUB_RTr1a_'+ RecBatchID+'_'+ str(k) + '_' + str(j) + '_' + str(i) + '.sub'
+                          MSGName = AFS_DIR + '/HTCondor/MSG/MSG_RTr1a_' + RecBatchID+'_' + str(k) + '_' + str(j) + '_' + str(i)
+                          ScriptName = AFS_DIR + '/Code/Utilities/RTr1a_ReconstructHits_Sub.py '
                           if os.path.isfile(required_output_file_location)!=True:
-                             bad_pop.append([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, 1, 'ANNADEA-RH-'+RecBatchID, False,False])
+                             bad_pop.append([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, 1, 'ANNDEA-RTr1-'+RecBatchID, False,False])
         if len(bad_pop)==0:
              FreshStart=False
              print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 0 has successfully completed'+bcolors.ENDC)
@@ -476,11 +480,11 @@ while status<5:
                          for j in range(0,Ysteps):
                                OptionHeader = [' --Z_ID ',' --Y_ID ', ' --X_ID ', ' --stepZ ', ' --stepY ', ' --stepX ', ' --EOS ', " --AFS ", " --zOffset ", " --yOffset ", " --xOffset ", ' --cut_dt ', ' --cut_dr ', ' --ModelName ', ' --Log ',' --RecBatchID ',' --Z_overlap ',' --Y_overlap ',' --X_overlap ']
                                OptionLine = [k, j, '$1', stepZ,stepY,stepX, EOS_DIR, AFS_DIR, z_offset, y_offset, x_offset, cut_dt,cut_dr, ModelName ,Log,RecBatchID,Z_overlap,Y_overlap,X_overlap]
-                               SHName = AFS_DIR + '/HTCondor/SH/SH_RH1a_'+ RecBatchID+'_' + str(k) + '_' + str(j) + '.sh'
-                               SUBName = AFS_DIR + '/HTCondor/SUB/SUB_RH1a_'+ RecBatchID+'_'+ str(k) + '_' + str(j) + '.sub'
-                               MSGName = AFS_DIR + '/HTCondor/MSG/MSG_RH1a_' + RecBatchID+'_' + str(k) + '_' + str(j)
-                               ScriptName = AFS_DIR + '/Code/Utilities/RH1a_ReconstructHits_Sub.py '
-                               UF.SubmitJobs2Condor([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, Xsteps, 'ANNADEA-RH-'+RecBatchID, False,False])
+                               SHName = AFS_DIR + '/HTCondor/SH/SH_RTr1a_'+ RecBatchID+'_' + str(k) + '_' + str(j) + '.sh'
+                               SUBName = AFS_DIR + '/HTCondor/SUB/SUB_RTr1a_'+ RecBatchID+'_'+ str(k) + '_' + str(j) + '.sub'
+                               MSGName = AFS_DIR + '/HTCondor/MSG/MSG_RTr1a_' + RecBatchID+'_' + str(k) + '_' + str(j)
+                               ScriptName = AFS_DIR + '/Code/Utilities/RTr1a_ReconstructHits_Sub.py '
+                               UF.SubmitJobs2Condor([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, Xsteps, 'ANNDEA-RTr1-'+RecBatchID, False,False],LocalSub)
                  else:
                     if AutoPilot0(600,10,Patience):
                         FreshStart=False
@@ -502,7 +506,7 @@ while status<5:
                        exit()
                    if UserAnswer=='R':
                       for bp in bad_pop:
-                           UF.SubmitJobs2Condor(bp)
+                           UF.SubmitJobs2Condor(bp,LocalSub)
                       print(UF.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
                       if AutoPilot0(600,10,Patience):
                           FreshStart=False
@@ -528,11 +532,13 @@ while status<5:
                          for j in range(0,Ysteps):
                                OptionHeader = [' --Z_ID ',' --Y_ID ', ' --X_ID ', ' --stepZ ', ' --stepY ', ' --stepX ', ' --EOS ', " --AFS ", " --zOffset ", " --yOffset ", " --xOffset ", ' --cut_dt ', ' --cut_dr ', ' --ModelName ', ' --Log ',' --RecBatchID ',' --Z_overlap ',' --Y_overlap ',' --X_overlap ']
                                OptionLine = [k, j, '$1', stepZ,stepY,stepX, EOS_DIR, AFS_DIR, z_offset, y_offset, x_offset, cut_dt,cut_dr, ModelName ,Log,RecBatchID,Z_overlap,Y_overlap,X_overlap]
-                               SHName = AFS_DIR + '/HTCondor/SH/SH_RH1a_'+ RecBatchID+'_' + str(k) + '_' + str(j) + '.sh'
-                               SUBName = AFS_DIR + '/HTCondor/SUB/SUB_RH1a_'+ RecBatchID+'_'+ str(k) + '_' + str(j) + '.sub'
-                               MSGName = AFS_DIR + '/HTCondor/MSG/MSG_RH1a_' + RecBatchID+'_' + str(k) + '_' + str(j)
-                               ScriptName = AFS_DIR + '/Code/Utilities/RH1a_ReconstructHits_Sub.py '
-                               UF.SubmitJobs2Condor([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, Xsteps, 'ANNADEA-RH-'+RecBatchID, False,False])
+                               SHName = AFS_DIR + '/HTCondor/SH/SH_RTr1a_'+ RecBatchID+'_' + str(k) + '_' + str(j) + '.sh'
+                               SUBName = AFS_DIR + '/HTCondor/SUB/SUB_RTr1a_'+ RecBatchID+'_'+ str(k) + '_' + str(j) + '.sub'
+                               MSGName = AFS_DIR + '/HTCondor/MSG/MSG_RTr1a_' + RecBatchID+'_' + str(k) + '_' + str(j)
+                               ScriptName = AFS_DIR + '/Code/Utilities/RTr1a_ReconstructHits_Sub.py '
+                               UF.SubmitJobs2Condor([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, Xsteps, 'ANNDEA-RTr1-'+RecBatchID, False,False],LocalSub)
+                               print(UF.TimeStamp(),'Waiting ',str(GentleOnCondor),' minutes to relieve congestion on HTCondor...',bcolors.ENDC)
+                               time.sleep(60*GentleOnCondor)
 
                  if AutoPilot0(600,10,Patience):
                         FreshStart=False
@@ -545,7 +551,7 @@ while status<5:
 
             elif len(bad_pop)>0:
                       for bp in bad_pop:
-                           UF.SubmitJobs2Condor(bp)
+                           UF.SubmitJobs2Condor(bp,LocalSub)
                       if AutoPilot0(600,10,Patience):
                           FreshStart=False
                           print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 0 has successfully completed'+bcolors.ENDC)
@@ -562,17 +568,17 @@ while status<5:
         with alive_bar(Ysteps*Xsteps,force_tty=True, title='Checking the Z-shift results from HTCondor') as bar:
             for j in range(0,Ysteps):
                  for i in range(0,Xsteps):
-                      required_output_file_location=EOS_DIR+'/ANNADEA/Data/REC_SET/RH1b_'+RecBatchID+'_hit_cluster_rec_z_set_'+str(j)+'_' +str(i)+'.pkl'
+                      required_output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RTr1b_'+RecBatchID+'_hit_cluster_rec_z_set_'+str(j)+'_' +str(i)+'.pkl'
                       bar.text = f'-> Checking whether the file : {required_output_file_location}, exists...'
                       bar()
                       OptionHeader = [' --Z_ID_Max ',' --Y_ID ', ' --X_ID ', ' --EOS ', " --AFS ", ' --RecBatchID ']
                       OptionLine = [Zsteps, j, i, EOS_DIR, AFS_DIR, RecBatchID]
-                      SHName = AFS_DIR + '/HTCondor/SH/SH_RH1b_'+ RecBatchID+ '_' + str(j) + '_' + str(i) +'.sh'
-                      SUBName = AFS_DIR + '/HTCondor/SUB/SUB_RH1b_'+ RecBatchID+ '_' + str(j) + '_' + str(i) + '.sub'
-                      MSGName = AFS_DIR + '/HTCondor/MSG/MSG_RH1b_' + RecBatchID+ '_' + str(j) + '_' + str(i)
-                      ScriptName = AFS_DIR + '/Code/Utilities/RH1b_LinkSegmentsZ_Sub.py '
+                      SHName = AFS_DIR + '/HTCondor/SH/SH_RTr1b_'+ RecBatchID+ '_' + str(j) + '_' + str(i) +'.sh'
+                      SUBName = AFS_DIR + '/HTCondor/SUB/SUB_RTr1b_'+ RecBatchID+ '_' + str(j) + '_' + str(i) + '.sub'
+                      MSGName = AFS_DIR + '/HTCondor/MSG/MSG_RTr1b_' + RecBatchID+ '_' + str(j) + '_' + str(i)
+                      ScriptName = AFS_DIR + '/Code/Utilities/RTr1b_LinkSegmentsZ_Sub.py '
                       if os.path.isfile(required_output_file_location)!=True:
-                         bad_pop.append([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, 1, 'ANNADEA-RH-'+RecBatchID, False,False])
+                         bad_pop.append([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, 1, 'ANNDEA-RTr1-'+RecBatchID, False,False])
 
         if FreshStart:
             if (Xsteps*Ysteps)==len(bad_pop):
@@ -586,15 +592,14 @@ while status<5:
                       print(UF.TimeStamp(),'OK, exiting now then')
                       exit()
                  if UserAnswer=='R':
-                     for i in range(0,Xsteps):
                          for j in range(0,Ysteps):
                                ptionHeader = [' --Z_ID_Max ',' --Y_ID ', ' --X_ID ', ' --EOS ', " --AFS ", ' --RecBatchID ']
                                OptionLine = [Zsteps, j, '$1', EOS_DIR, AFS_DIR, RecBatchID]
-                               SHName = AFS_DIR + '/HTCondor/SH/SH_RH1b_'+ RecBatchID+ '_' + str(j) + '.sh'
-                               SUBName = AFS_DIR + '/HTCondor/SUB/SUB_RH1b_'+ RecBatchID+'_' + str(j) + '.sub'
-                               MSGName = AFS_DIR + '/HTCondor/MSG/MSG_RH1b_' + RecBatchID+ '_' + str(j)
-                               ScriptName = AFS_DIR + '/Code/Utilities/RH1b_LinkSegmentsZ_Sub.py '
-                               UF.SubmitJobs2Condor([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, Xsteps, 'ANNADEA-RH-'+RecBatchID, False,False])
+                               SHName = AFS_DIR + '/HTCondor/SH/SH_RTr1b_'+ RecBatchID+ '_' + str(j) + '.sh'
+                               SUBName = AFS_DIR + '/HTCondor/SUB/SUB_RTr1b_'+ RecBatchID+'_' + str(j) + '.sub'
+                               MSGName = AFS_DIR + '/HTCondor/MSG/MSG_RTr1b_' + RecBatchID+ '_' + str(j)
+                               ScriptName = AFS_DIR + '/Code/Utilities/RTr1b_LinkSegmentsZ_Sub.py '
+                               UF.SubmitJobs2Condor([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, Xsteps, 'ANNDEA-RTr1-'+RecBatchID, False,False],LocalSub)
                  else:
 
                     if AutoPilot1(120,10,Patience):
@@ -617,7 +622,7 @@ while status<5:
                        exit()
                    if UserAnswer=='R':
                       for bp in bad_pop:
-                           UF.SubmitJobs2Condor(bp)
+                           UF.SubmitJobs2Condor(bp,LocalSub)
                       print(UF.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
                       if AutoPilot1(600,10,Patience):
                           FreshStart=False
@@ -644,15 +649,14 @@ while status<5:
         else:
             if (Xsteps*Ysteps)==len(bad_pop):
                  print(UF.TimeStamp(),'Submitting jobs to HTCondor... ',bcolors.ENDC)
-                 for i in range(0,Xsteps):
-                         for j in range(0,Ysteps):
+                 for j in range(0,Ysteps):
                                ptionHeader = [' --Z_ID_Max ',' --Y_ID ', ' --X_ID ', ' --EOS ', " --AFS ", ' --RecBatchID ']
                                OptionLine = [Zsteps, j, '$1', EOS_DIR, AFS_DIR, RecBatchID]
-                               SHName = AFS_DIR + '/HTCondor/SH/SH_RH1b_'+ RecBatchID+ '_' + str(j) + '.sh'
-                               SUBName = AFS_DIR + '/HTCondor/SUB/SUB_RH1b_'+ RecBatchID+'_' + str(j) + '.sub'
-                               MSGName = AFS_DIR + '/HTCondor/MSG/MSG_RH1b_' + RecBatchID+ '_' + str(j)
-                               ScriptName = AFS_DIR + '/Code/Utilities/RH1b_LinkSegmentsZ_Sub.py '
-                               UF.SubmitJobs2Condor([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, Xsteps, 'ANNADEA-RH-'+RecBatchID, False,False])
+                               SHName = AFS_DIR + '/HTCondor/SH/SH_RTr1b_'+ RecBatchID+ '_' + str(j) + '.sh'
+                               SUBName = AFS_DIR + '/HTCondor/SUB/SUB_RTr1b_'+ RecBatchID+'_' + str(j) + '.sub'
+                               MSGName = AFS_DIR + '/HTCondor/MSG/MSG_RTr1b_' + RecBatchID+ '_' + str(j)
+                               ScriptName = AFS_DIR + '/Code/Utilities/RTr1b_LinkSegmentsZ_Sub.py '
+                               UF.SubmitJobs2Condor([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, Xsteps, 'ANNDEA-RTr1-'+RecBatchID, False,False],LocalSub)
 
                  if AutoPilot1(600,10,Patience):
                        FreshStart=False
@@ -665,7 +669,7 @@ while status<5:
 
             elif len(bad_pop)>0:
                       for bp in bad_pop:
-                           UF.SubmitJobs2Condor(bp)
+                           UF.SubmitJobs2Condor(bp,LocalSub)
                       if AutoPilot1(600,10,Patience):
                           FreshStart=False
                           print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 1 has successfully completed'+bcolors.ENDC)
@@ -686,17 +690,17 @@ while status<5:
         bad_pop=[]
         with alive_bar(Xsteps,force_tty=True, title='Checking the Y-shift results from HTCondor') as bar:
             for i in range(0,Xsteps):
-                      required_output_file_location=EOS_DIR+'/ANNADEA/Data/REC_SET/RH1c_'+RecBatchID+'_hit_cluster_rec_y_set_' +str(i)+'.pkl'
+                      required_output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RTr1c_'+RecBatchID+'_hit_cluster_rec_y_set_' +str(i)+'.pkl'
                       bar.text = f'-> Checking whether the file : {required_output_file_location}, exists...'
                       bar()
                       OptionHeader = [' --Y_ID_Max ', ' --X_ID ', ' --EOS ', " --AFS ", ' --RecBatchID ']
                       OptionLine = [Ysteps, i, EOS_DIR, AFS_DIR, RecBatchID]
-                      SHName = AFS_DIR + '/HTCondor/SH/SH_RH1c_'+ RecBatchID+ '_'  + str(i) +'.sh'
-                      SUBName = AFS_DIR + '/HTCondor/SUB/SUB_RH1c_'+ RecBatchID+ '_' + str(i) + '.sub'
-                      MSGName = AFS_DIR + '/HTCondor/MSG/MSG_RH1c_' + RecBatchID+ '_' + str(i)
-                      ScriptName = AFS_DIR + '/Code/Utilities/RH1c_LinkSegmentsY_Sub.py '
+                      SHName = AFS_DIR + '/HTCondor/SH/SH_RTr1c_'+ RecBatchID+ '_'  + str(i) +'.sh'
+                      SUBName = AFS_DIR + '/HTCondor/SUB/SUB_RTr1c_'+ RecBatchID+ '_' + str(i) + '.sub'
+                      MSGName = AFS_DIR + '/HTCondor/MSG/MSG_RTr1c_' + RecBatchID+ '_' + str(i)
+                      ScriptName = AFS_DIR + '/Code/Utilities/RTr1c_LinkSegmentsY_Sub.py '
                       if os.path.isfile(required_output_file_location)!=True:
-                         bad_pop.append([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, 1, 'ANNADEA-RH-'+RecBatchID, False,False])
+                         bad_pop.append([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, 1, 'ANNDEA-RTr1-'+RecBatchID, False,False])
 
         if FreshStart:
             if (Xsteps)==len(bad_pop):
@@ -710,14 +714,13 @@ while status<5:
                       print(UF.TimeStamp(),'OK, exiting now then')
                       exit()
                  if UserAnswer=='R':
-                     for i in range(0,Xsteps):
-                               ptionHeader = [' --Y_ID_Max ', ' --X_ID ', ' --EOS ', " --AFS ", ' --RecBatchID ']
+                               OptionHeader = [' --Y_ID_Max ', ' --X_ID ', ' --EOS ', " --AFS ", ' --RecBatchID ']
                                OptionLine = [Ysteps, '$1', EOS_DIR, AFS_DIR, RecBatchID]
-                               SHName = AFS_DIR + '/HTCondor/SH/SH_RH1c_'+ RecBatchID+ '.sh'
-                               SUBName = AFS_DIR + '/HTCondor/SUB/SUB_RH1c_'+ RecBatchID+'.sub'
-                               MSGName = AFS_DIR + '/HTCondor/MSG/MSG_RH1c_' + RecBatchID
-                               ScriptName = AFS_DIR + '/Code/Utilities/RH1c_LinkSegmentsY_Sub.py '
-                               UF.SubmitJobs2Condor([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, Xsteps, 'ANNADEA-RH-'+RecBatchID, False,False])
+                               SHName = AFS_DIR + '/HTCondor/SH/SH_RTr1c_'+ RecBatchID+ '.sh'
+                               SUBName = AFS_DIR + '/HTCondor/SUB/SUB_RTr1c_'+ RecBatchID+'.sub'
+                               MSGName = AFS_DIR + '/HTCondor/MSG/MSG_RTr1c_' + RecBatchID
+                               ScriptName = AFS_DIR + '/Code/Utilities/RTr1c_LinkSegmentsY_Sub.py '
+                               UF.SubmitJobs2Condor([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, Xsteps, 'ANNDEA-RTr1-'+RecBatchID, False,False],LocalSub)
                  else:
                     if AutoPilot2(600,10,Patience):
                         FreshStart=False
@@ -739,7 +742,7 @@ while status<5:
                        exit()
                    if UserAnswer=='R':
                       for bp in bad_pop:
-                           UF.SubmitJobs2Condor(bp)
+                           UF.SubmitJobs2Condor(bp,LocalSub)
                       print(UF.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
                       if AutoPilot2(600,10,Patience):
                          FreshStart=False
@@ -767,14 +770,13 @@ while status<5:
         else:
             if (Xsteps)==len(bad_pop):
                  print(UF.TimeStamp(),'Submitting jobs to HTCondor... ',bcolors.ENDC)
-                 for i in range(0,Xsteps):
-                               ptionHeader = [' --Y_ID_Max ', ' --X_ID ', ' --EOS ', " --AFS ", ' --RecBatchID ']
-                               OptionLine = [Ysteps, '$1', EOS_DIR, AFS_DIR, RecBatchID]
-                               SHName = AFS_DIR + '/HTCondor/SH/SH_RH1c_'+ RecBatchID+ '.sh'
-                               SUBName = AFS_DIR + '/HTCondor/SUB/SUB_RH1c_'+ RecBatchID+'.sub'
-                               MSGName = AFS_DIR + '/HTCondor/MSG/MSG_RH1c_' + RecBatchID
-                               ScriptName = AFS_DIR + '/Code/Utilities/RH1c_LinkSegmentsY_Sub.py '
-                               UF.SubmitJobs2Condor([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, Xsteps, 'ANNADEA-RH-'+RecBatchID, False,False])
+                 OptionHeader = [' --Y_ID_Max ', ' --X_ID ', ' --EOS ', " --AFS ", ' --RecBatchID ']
+                 OptionLine = [Ysteps, '$1', EOS_DIR, AFS_DIR, RecBatchID]
+                 SHName = AFS_DIR + '/HTCondor/SH/SH_RTr1c_'+ RecBatchID+ '.sh'
+                 SUBName = AFS_DIR + '/HTCondor/SUB/SUB_RTr1c_'+ RecBatchID+'.sub'
+                 MSGName = AFS_DIR + '/HTCondor/MSG/MSG_RTr1c_' + RecBatchID
+                 ScriptName = AFS_DIR + '/Code/Utilities/RTr1c_LinkSegmentsY_Sub.py '
+                 UF.SubmitJobs2Condor([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, Xsteps, 'ANNDEA-RTr-'+RecBatchID, False,False],LocalSub)
                  if AutoPilot2(600,10,Patience):
                         FreshStart=False
                         print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 2 has successfully completed'+bcolors.ENDC)
@@ -786,7 +788,7 @@ while status<5:
 
             elif len(bad_pop)>0:
                       for bp in bad_pop:
-                           UF.SubmitJobs2Condor(bp)
+                           UF.SubmitJobs2Condor(bp,LocalSub)
                       print(UF.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
                       if AutoPilot2(600,10,Patience):
                          FreshStart=False
@@ -807,15 +809,15 @@ while status<5:
         print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
         print(UF.TimeStamp(),bcolors.BOLD+'Stage 3:'+bcolors.ENDC+' Sending hit cluster to the HTCondor, so the reconstructed clusters can be merged along x-axis')
         bad_pop=[]
-        required_output_file_location=EOS_DIR+'/ANNADEA/Data/REC_SET/RH1d_'+RecBatchID+'_hit_cluster_rec_x_set.pkl'
+        required_output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RTr1d_'+RecBatchID+'_hit_cluster_rec_x_set.pkl'
         OptionHeader = [' --X_ID_Max ', ' --EOS ', " --AFS ", ' --RecBatchID ']
         OptionLine = [Xsteps, EOS_DIR, AFS_DIR, RecBatchID]
-        SHName = AFS_DIR + '/HTCondor/SH/SH_RH1d_'+RecBatchID+'.sh'
-        SUBName = AFS_DIR + '/HTCondor/SUB/SUB_RH1d_'+RecBatchID+'.sub'
-        MSGName = AFS_DIR + '/HTCondor/MSG/MSG_RH1d_' + RecBatchID
-        ScriptName = AFS_DIR + '/Code/Utilities/RH1d_LinkSegmentsX_Sub.py '
+        SHName = AFS_DIR + '/HTCondor/SH/SH_RTr1d_'+RecBatchID+'.sh'
+        SUBName = AFS_DIR + '/HTCondor/SUB/SUB_RTr1d_'+RecBatchID+'.sub'
+        MSGName = AFS_DIR + '/HTCondor/MSG/MSG_RTr1d_' + RecBatchID
+        ScriptName = AFS_DIR + '/Code/Utilities/RTr1d_LinkSegmentsX_Sub.py '
         if os.path.isfile(required_output_file_location)!=True:
-            bad_pop.append([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, 1, 'ANNADEA-RH-'+RecBatchID, False,False])
+            bad_pop.append([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, 1, 'ANNDEA-RTr-'+RecBatchID, False,False])
         if FreshStart:
             if len(bad_pop)>0:
                    print(UF.TimeStamp(),bcolors.WARNING+'Warning, there are still', len(bad_pop), 'HTCondor job remaining'+bcolors.ENDC)
@@ -828,7 +830,7 @@ while status<5:
                        exit()
                    if UserAnswer=='R':
                       for bp in bad_pop:
-                           UF.SubmitJobs2Condor(bp)
+                           UF.SubmitJobs2Condor(bp,LocalSub)
                       print(UF.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
                       if AutoPilot3(600,10,Patience):
                          FreshStart=False
@@ -857,7 +859,7 @@ while status<5:
         else:
             if len(bad_pop)>0:
                       for bp in bad_pop:
-                           UF.SubmitJobs2Condor(bp)
+                           UF.SubmitJobs2Condor(bp,LocalSub)
                       print(UF.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
                       if AutoPilot3(600,10,Patience):
                          FreshStart=False
@@ -877,7 +879,7 @@ while status<5:
        print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
        print(UF.TimeStamp(),bcolors.BOLD+'Stage 4:'+bcolors.ENDC+' Using the results from previous steps to map merged trackIDs to the original reconstruction file')
        try:
-           FirstFile=EOS_DIR+'/ANNADEA/Data/REC_SET/RH1d_'+RecBatchID+'_hit_cluster_rec_x_set.pkl'
+           FirstFile=EOS_DIR+'/ANNDEA/Data/REC_SET/RTr1d_'+RecBatchID+'_hit_cluster_rec_x_set.pkl'
            print(UF.TimeStamp(),'Loading the object ',bcolors.OKBLUE+FirstFile+bcolors.ENDC)
            FirstFileRaw=UF.PickleOperations(FirstFile,'r', 'N/A')
            FirstFile=FirstFileRaw[0]
@@ -890,17 +892,18 @@ while status<5:
                   CutData=Data.drop(Data.index[(Data[PM.x] > Xmax) | (Data[PM.x] < Xmin) | (Data[PM.y] > Ymax) | (Data[PM.y] < Ymin)])
                   OtherData=Data.drop(Data.index[(Data[PM.x] <= Xmax) | (Data[PM.x] >= Xmin) | (Data[PM.y] <= Ymax) | (Data[PM.y] >= Ymin)])
            try:
-             CutData.drop(['ANN_Brick_ID','ANN_Track_ID'],axis=1,inplace=True)
+             CutData.drop(['ANN_Brick_ID','ANN_Track_ID'],axis=1,inplace=True) #Removing old ANNDEA reconstruction results so we can overwrite with the new ones
            except Exception as e: print(UF.TimeStamp(), bcolors.WARNING+str(e)+bcolors.ENDC)
 
            CutData=pd.merge(CutData,TrackMap,how='left', left_on=[PM.Hit_ID], right_on=['HitID'])
            CutData.drop(['HitID'],axis=1,inplace=True)
            Data=pd.concat([CutData,OtherData])
-           output_file_location=EOS_DIR+'/ANNADEA/Data/REC_SET/'+RecBatchID+'_RH_OUTPUT.csv'
+           output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_RTr_OUTPUT.csv'
            Data.to_csv(output_file_location,index=False)
            print(UF.TimeStamp(), bcolors.OKGREEN+"The tracked data has been written to"+bcolors.ENDC, bcolors.OKBLUE+output_file_location+bcolors.ENDC)
 
            if Log!='NO':
+                        #Calculating recombination accuracy stats, useful for diagnostics but it does allow to determine the high level of tracking - there is a dedicated module for that
                         print(UF.TimeStamp(),'Since the logging was requested, ANN average recombination performance across the clusters is being calculated...')
                         fake_results_1=[]
                         fake_results_2=[]
@@ -935,7 +938,7 @@ while status<5:
                                 for j in range(0,Ysteps):
                                     for i in range(0,Xsteps):
                                         bar()
-                                        input_file_location=EOS_DIR+'/ANNADEA/Data/REC_SET/RH1a_'+RecBatchID+'_hit_cluster_rec_set_'+str(k)+'_' +str(j)+'_' +str(i)+'.pkl'
+                                        input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RTr1a_'+RecBatchID+'_hit_cluster_rec_set_'+str(k)+'_' +str(j)+'_' +str(i)+'.pkl'
                                         cluster_data_raw=UF.PickleOperations(input_file_location, 'r', 'N/A')
                                         cluster_data=cluster_data_raw[0]
                                         result_temp=cluster_data.RecStats
@@ -984,7 +987,7 @@ while status<5:
                             headers=['Step', 'Avg # Fake edges', 'Avg # of Genuine edges', 'Avg precision', 'Precision std','Avg recall', 'Recall std' ], tablefmt='orgtbl'))
 
            if Log=='KALMAN':
-                        print(UF.TimeStamp(),'Since the logging was requested, FEDRA average recombination performance across the clusters is being calculated...')
+                        print(UF.TimeStamp(),'Since the logging was requested, Kalman filter average recombination performance across the clusters is being calculated...')
                         fake_results_1=[]
                         fake_results_2=[]
                         fake_results_3=[]
@@ -1006,7 +1009,7 @@ while status<5:
                                 for j in range(0,Ysteps):
                                     for i in range(0,Xsteps):
                                         bar()
-                                        input_file_location=EOS_DIR+'/ANNADEA/Data/REC_SET/RH1a_'+RecBatchID+'_hit_cluster_rec_set_'+str(k)+'_' +str(j)+'_' +str(i)+'.pkl'
+                                        input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RTr1a_'+RecBatchID+'_hit_cluster_rec_set_'+str(k)+'_' +str(j)+'_' +str(i)+'.pkl'
                                         cluster_data_raw=UF.PickleOperations(input_file_location, 'r', 'N/A')
                                         cluster_data=cluster_data_raw[0]
                                         result_temp=cluster_data.KalmanRecStats

@@ -37,9 +37,10 @@ import UtilityFunctions as UF #This is where we keep routine utility functions
 import Parameters as PM #This is where we keep framework global parameters
 
 #Setting the parser
-parser = argparse.ArgumentParser(description='This script compares the ouput of the previous step with the output of ANNADEA reconstructed data to calculate reconstruction performance.')
+parser = argparse.ArgumentParser(description='This script compares the ouput of the previous step with the output of ANNDEA reconstructed data to calculate reconstruction performance.')
 parser.add_argument('--f',help="Please enter the full path to the file with track reconstruction", default='/afs/cern.ch/work/f/ffedship/public/SHIP/Source_Data/SHIP_Emulsion_FEDRA_Raw_UR.csv')
 parser.add_argument('--TrackID',help="Name of the control track", default="[['quarter','FEDRA_Track_ID']]")
+parser.add_argument('--SkipRcmb',help="Skip recombination calculations (to reduce CPU load)", default="N")
 parser.add_argument('--MCCategories',help="What MC categories present in the MC data would you like to split by?", default="[]")
 parser.add_argument('--RecNames',help="What Names would you like to assign to the reconstruction methods that generated the tracks?", default="[]")
 parser.add_argument('--Xmin',help="This option restricts data to only those events that have tracks with hits x-coordinates that are above this value", default='0')
@@ -62,6 +63,7 @@ TrackID=ast.literal_eval(args.TrackID)
 MCCategories=ast.literal_eval(args.MCCategories)
 RecNames=ast.literal_eval(args.RecNames)
 input_file_location=args.f
+SkipRcmb=args.SkipRcmb=='N'
 Xmin,Xmax,Ymin,Ymax=float(args.Xmin),float(args.Xmax),float(args.Ymin),float(args.Ymax)
 SliceData=max(Xmin,Xmax,Ymin,Ymax)>0 #We don't slice data if all values are set to zero simultaneousy (which is the default setting)
 
@@ -74,7 +76,7 @@ if os.path.isfile(input_file_location)!=True:
                      print(UF.TimeStamp(), bcolors.FAIL+"Critical fail: file",input_file_location,'is missing, please check that the name/path is correct...'+bcolors.ENDC)
                      exit()
 
-raw_data=pd.read_csv(input_file_location,header=0,usecols=columns_to_extract)
+raw_data=pd.read_csv(input_file_location,header=0,usecols=columns_to_extract)[columns_to_extract]
 total_rows=len(raw_data.axes[0])
 print(UF.TimeStamp(),'The raw data has ',total_rows,' hits')
 
@@ -98,45 +100,47 @@ for rn in range(len(RecNames)):
     raw_data[TrackID[rn][1]] = raw_data[TrackID[rn][1]].astype(str)
     raw_data[RecNames[rn]] = raw_data[TrackID[rn][0]] + '-' + raw_data[TrackID[rn][1]]
     raw_data.drop([TrackID[rn][0],TrackID[rn][1]],axis=1,inplace=True)
-print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
-print(UF.TimeStamp(),bcolors.BOLD+'Stage 2:'+bcolors.ENDC+' Calculating recombination metrics...')
+if SkipRcmb:
+    print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
+    print(UF.TimeStamp(),bcolors.BOLD+'Stage 2:'+bcolors.ENDC+' Calculating recombination metrics...')
 
 
-eval_data_comb=raw_data[['MC_Mother_Track_ID',PM.Hit_ID]]
-eval_data_comb=pd.merge(eval_data_comb,eval_data_comb[[PM.Hit_ID,'MC_Mother_Track_ID']].rename(columns={PM.Hit_ID: "Right_Hit"}),how='inner', on = ['MC_Mother_Track_ID'])
+    eval_data_comb=raw_data[['MC_Mother_Track_ID',PM.Hit_ID]]
+    eval_data_comb=pd.merge(eval_data_comb,eval_data_comb[[PM.Hit_ID,'MC_Mother_Track_ID']].rename(columns={PM.Hit_ID: "Right_Hit"}),how='inner', on = ['MC_Mother_Track_ID'])
 
-eval_data_comb.drop(eval_data_comb.index[eval_data_comb[PM.Hit_ID] == eval_data_comb["Right_Hit"]], inplace = True)
-eval_data_comb["Hit_Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(eval_data_comb[PM.Hit_ID], eval_data_comb["Right_Hit"])]
-eval_data_comb.drop_duplicates(subset="Hit_Seed_ID",keep='first',inplace=True)
-eval_data_comb.drop(['MC_Mother_Track_ID',PM.Hit_ID,'Right_Hit'],axis=1,inplace=True)
-TruthHitSeedCount=len(eval_data_comb)
+    eval_data_comb.drop(eval_data_comb.index[eval_data_comb[PM.Hit_ID] == eval_data_comb["Right_Hit"]], inplace = True)
+    eval_data_comb["Hit_Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(eval_data_comb[PM.Hit_ID], eval_data_comb["Right_Hit"])]
+    eval_data_comb.drop_duplicates(subset="Hit_Seed_ID",keep='first',inplace=True)
+    eval_data_comb.drop(['MC_Mother_Track_ID',PM.Hit_ID,'Right_Hit'],axis=1,inplace=True)
+    TruthHitSeedCount=len(eval_data_comb)
 
 
-print(UF.TimeStamp(),'Total 2-hit combinations are expected according to Monte Carlo:',TruthHitSeedCount)
-for RN in RecNames:
-    print(UF.TimeStamp(),'Creating '+RN+' recombination metrics...')
-    rec_data_comb=raw_data[[RN,PM.Hit_ID]]
-    rec_data_comb.drop(rec_data_comb.index[(rec_data_comb[RN] == 'nan-nan')],inplace=True)
-    rec_data_comb=pd.merge(rec_data_comb,rec_data_comb[[PM.Hit_ID,RN]].rename(columns={PM.Hit_ID: "Right_Hit"}),how='inner', on = [RN])
-    rec_data_comb.drop(rec_data_comb.index[rec_data_comb[PM.Hit_ID] == rec_data_comb["Right_Hit"]], inplace = True)
-    rec_data_comb["Hit_Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(rec_data_comb[PM.Hit_ID], rec_data_comb["Right_Hit"])]
-    rec_data_comb.drop_duplicates(subset="Hit_Seed_ID",keep='first',inplace=True)
-    rec_data_comb.drop([RN,PM.Hit_ID,'Right_Hit'],axis=1,inplace=True)
-    RecHitSeedCount=len(rec_data_comb)
-    OverlapHitSeedCount=len(pd.merge(eval_data_comb,rec_data_comb,how='inner', on=["Hit_Seed_ID"]))
-    if TruthHitSeedCount==0:
-        Recall=0
-    else:
-        Recall=round((float(OverlapHitSeedCount)/float(TruthHitSeedCount))*100,2)
-    if OverlapHitSeedCount==0:
-        Precision=0
-    else:
-        Precision=round((float(OverlapHitSeedCount)/float(RecHitSeedCount))*100,2)
-    print(UF.TimeStamp(), bcolors.OKGREEN+'Recombination metrics for ',bcolors.BOLD+RN+bcolors.ENDC,' are ready and listed bellow:'+bcolors.ENDC)
-    print(UF.TimeStamp(),'Total 2-hit combinations were reconstructed by '+RN+':',RecHitSeedCount)
-    print(UF.TimeStamp(),'Correct combinations were reconstructed by '+RN+':',OverlapHitSeedCount)
-    print(UF.TimeStamp(),'Therefore the recall of the '+RN+': is' ,bcolors.BOLD+str(Recall), '%'+bcolors.ENDC)
-    print(UF.TimeStamp(),'And the precision of the '+RN+': is',bcolors.BOLD+str(Precision), '%'+bcolors.ENDC)
+    print(UF.TimeStamp(),'Total 2-hit combinations are expected according to Monte Carlo:',TruthHitSeedCount)
+    for RN in RecNames:
+        print(UF.TimeStamp(),'Creating '+RN+' recombination metrics...')
+        rec_data_comb=raw_data[[RN,PM.Hit_ID]]
+        rec_data_comb.drop(rec_data_comb.index[(rec_data_comb[RN] == 'nan-nan')],inplace=True)
+        rec_data_comb=rec_data_comb[rec_data_comb[RN].str.contains("nan")==False]
+        rec_data_comb=pd.merge(rec_data_comb,rec_data_comb[[PM.Hit_ID,RN]].rename(columns={PM.Hit_ID: "Right_Hit"}),how='inner', on = [RN])
+        rec_data_comb.drop(rec_data_comb.index[rec_data_comb[PM.Hit_ID] == rec_data_comb["Right_Hit"]], inplace = True)
+        rec_data_comb["Hit_Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(rec_data_comb[PM.Hit_ID], rec_data_comb["Right_Hit"])]
+        rec_data_comb.drop_duplicates(subset="Hit_Seed_ID",keep='first',inplace=True)
+        rec_data_comb.drop([RN,PM.Hit_ID,'Right_Hit'],axis=1,inplace=True)
+        RecHitSeedCount=len(rec_data_comb)
+        OverlapHitSeedCount=len(pd.merge(eval_data_comb,rec_data_comb,how='inner', on=["Hit_Seed_ID"]))
+        if TruthHitSeedCount==0:
+            Recall=0
+        else:
+            Recall=round((float(OverlapHitSeedCount)/float(TruthHitSeedCount))*100,2)
+        if OverlapHitSeedCount==0:
+            Precision=0
+        else:
+            Precision=round((float(OverlapHitSeedCount)/float(RecHitSeedCount))*100,2)
+        print(UF.TimeStamp(), bcolors.OKGREEN+'Recombination metrics for ',bcolors.BOLD+RN+bcolors.ENDC,' are ready and listed bellow:'+bcolors.ENDC)
+        print(UF.TimeStamp(),'Total 2-hit combinations were reconstructed by '+RN+':',RecHitSeedCount)
+        print(UF.TimeStamp(),'Correct combinations were reconstructed by '+RN+':',OverlapHitSeedCount)
+        print(UF.TimeStamp(),'Therefore the recall of the '+RN+': is' ,bcolors.BOLD+str(Recall), '%'+bcolors.ENDC)
+        print(UF.TimeStamp(),'And the precision of the '+RN+': is',bcolors.BOLD+str(Precision), '%'+bcolors.ENDC)
 
 
 
@@ -187,7 +191,7 @@ for RN in RecNames:
   print(UF.TimeStamp(),'Average track segmentation:',bcolors.BOLD+str(round(Segmentation,2))+bcolors.ENDC)
 print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
 print(UF.TimeStamp(),bcolors.BOLD+'Stage 4:'+bcolors.ENDC+' Writing the output...')
-output_file_location=EOS_DIR+'/ANNADEA/Data/TEST_SET/EH_TRACK_REC_STATS.csv'
+output_file_location=EOS_DIR+'/ANNDEA/Data/TEST_SET/ETr_TRACK_REC_STATS.csv'
 raw_data_mc.to_csv(output_file_location,index=False)
 print(UF.TimeStamp(), bcolors.OKGREEN+"The track reconstruction stats for further analysis are written there:"+bcolors.ENDC, bcolors.OKBLUE+output_file_location+bcolors.ENDC)
 print(bcolors.HEADER+"############################################# End of the program ################################################"+bcolors.ENDC)

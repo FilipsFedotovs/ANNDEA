@@ -55,13 +55,13 @@ RecBatchID=args.RecBatchID
 import UtilityFunctions as UF #This is where we keep routine utility functions
 
 #Specifying the full path to input/output files
-input_file_location=EOS_DIR+'/ANNADEA/Data/REC_SET/RH1_'+RecBatchID+'_hits.csv'
+input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RTr1_'+RecBatchID+'_hits.csv'
 
 print(UF.TimeStamp(), "Modules Have been imported successfully...")
 print(UF.TimeStamp(),'Loading pre-selected data from ',input_file_location)
 
 data=pd.read_csv(input_file_location,header=0,
-            usecols=["Hit_ID","x","y","z","tx","ty"])
+            usecols=["Hit_ID","x","y","z","tx","ty"])[["Hit_ID","x","y","z","tx","ty"]]
 data["x"] = pd.to_numeric(data["x"],downcast='float')
 data["y"] = pd.to_numeric(data["y"],downcast='float')
 data["z"] = pd.to_numeric(data["z"],downcast='float')
@@ -69,7 +69,7 @@ data['x']=data['x']-x_offset
 data['y']=data['y']-y_offset
 data["Hit_ID"] = data["Hit_ID"].astype(str)
 data['z']=data['z']-z_offset
-print(UF.TimeStamp(),'Creating clusters... ')
+print(UF.TimeStamp(),'Preparing data... ')
 data.drop(data.index[data['z'] >= ((Z_ID+1)*stepZ)], inplace = True)  #Keeping the relevant z slice
 data.drop(data.index[data['z'] < (Z_ID*stepZ)], inplace = True)  #Keeping the relevant z slice
 data.drop(data.index[data['x'] >= ((X_ID+1)*stepX)], inplace = True)  #Keeping the relevant z slice
@@ -79,10 +79,11 @@ data.drop(data.index[data['y'] < (Y_ID*stepY)], inplace = True)  #Keeping the re
 data_list=data.values.tolist()
 
 if Log!='NO':
-    input_file_location=EOS_DIR+'/ANNADEA/Data/TEST_SET/EH1_'+RecBatchID+'_hits.csv'
+    print(UF.TimeStamp(),'Preparing MC data... ')
+    input_file_location=EOS_DIR+'/ANNDEA/Data/TEST_SET/ETr1_'+RecBatchID+'_hits.csv'
     print(UF.TimeStamp(),'Loading pre-selected data from ',input_file_location)
     MCdata=pd.read_csv(input_file_location,header=0,
-                                usecols=["Hit_ID","x","y","z","tx","ty",'MC_Mother_Track_ID'])
+                                usecols=["Hit_ID","x","y","z","tx","ty",'MC_Mother_Track_ID'])[["Hit_ID","x","y","z","tx","ty",'MC_Mother_Track_ID']]
     MCdata["x"] = pd.to_numeric(MCdata["x"],downcast='float')
     MCdata["y"] = pd.to_numeric(MCdata["y"],downcast='float')
     MCdata["z"] = pd.to_numeric(MCdata["z"],downcast='float')
@@ -99,10 +100,11 @@ if Log!='NO':
     MCdata_list=MCdata.values.tolist()
 
 if Log=='KALMAN':
-    input_file_location=EOS_DIR+'/ANNADEA/Data/TEST_SET/KH1_'+RecBatchID+'_hits.csv'
+    print(UF.TimeStamp(),'Preparing KALMAN data... ')
+    input_file_location=EOS_DIR+'/ANNDEA/Data/TEST_SET/KTr1_'+RecBatchID+'_hits.csv'
     print(UF.TimeStamp(),'Loading pre-selected data from ',input_file_location)
     FEDRAdata=pd.read_csv(input_file_location,header=0,
-                                usecols=["Hit_ID","x","y","z","tx","ty",'FEDRA_Track_ID'])
+                                usecols=["Hit_ID","x","y","z","tx","ty",'Rec_Track_ID'])[["Hit_ID","x","y","z","tx","ty",'Rec_Track_ID']]
     FEDRAdata["x"] = pd.to_numeric(FEDRAdata["x"],downcast='float')
     FEDRAdata["y"] = pd.to_numeric(FEDRAdata["y"],downcast='float')
     FEDRAdata["z"] = pd.to_numeric(FEDRAdata["z"],downcast='float')
@@ -118,8 +120,9 @@ if Log=='KALMAN':
     FEDRAdata.drop(FEDRAdata.index[FEDRAdata['y'] < (Y_ID*stepY)], inplace = True)  #Keeping the relevant z slice
     FEDRAdata_list=FEDRAdata.values.tolist()
 
+print(UF.TimeStamp(),'Preparing the model')
 import torch
-EOSsubDIR=EOS_DIR+'/'+'ANNADEA'
+EOSsubDIR=EOS_DIR+'/'+'ANNDEA'
 EOSsubModelDIR=EOSsubDIR+'/'+'Models'
 Model_Meta_Path=EOSsubModelDIR+'/'+args.ModelName+'_Meta'
 Model_Path=EOSsubModelDIR+'/'+args.ModelName
@@ -129,24 +132,31 @@ device = torch.device('cpu')
 model = UF.GenerateModel(ModelMeta).to(device)
 model.load_state_dict(torch.load(Model_Path))
 model.eval()
+print(UF.TimeStamp(),'Creating the clusters')
 HC=UF.HitCluster([X_ID,Y_ID,Z_ID],[stepX,stepY,stepZ])
+print(UF.TimeStamp(),'Decorating the clusters')
 HC.LoadClusterHits(data_list)
+print(UF.TimeStamp(),'Generating the edges...')
 GraphStatus = HC.GenerateEdges(cut_dt, cut_dr)
 combined_weight_list=[]
 if HC.ClusterGraph.num_edges>0:
+            print(UF.TimeStamp(),'Classifying the edges...')
             w = model(HC.ClusterGraph.x, HC.ClusterGraph.edge_index, HC.ClusterGraph.edge_attr)
             w=w.tolist()
             for edge in range(len(HC.edges)):
                 combined_weight_list.append(HC.edges[edge]+w[edge])
 if Log!='NO':
+                print(UF.TimeStamp(),'Tracking the cluster...')
                 HC.LinkHits(combined_weight_list,True,MCdata_list,cut_dt,cut_dr,Acceptance)
                 if Log=='KALMAN':
                        HC.TestKalmanHits(FEDRAdata_list,MCdata_list)
 
 else:
+    print(UF.TimeStamp(),'Tracking the cluster...')
     HC.LinkHits(combined_weight_list,False,[],cut_dt,cut_dr,Acceptance)
 HC.UnloadClusterGraph()
-output_file_location=EOS_DIR+'/ANNADEA/Data/REC_SET/RH1a_'+RecBatchID+'_hit_cluster_rec_set_'+str(Z_ID_n)+'_' +str(Y_ID_n)+'_' +str(X_ID_n)+'.pkl'
+print(UF.TimeStamp(),'Writing the output...')
+output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RTr1a_'+RecBatchID+'_hit_cluster_rec_set_'+str(Z_ID_n)+'_' +str(Y_ID_n)+'_' +str(X_ID_n)+'.pkl'
 UF.PickleOperations(output_file_location,'w', HC)
 #End of the script
 

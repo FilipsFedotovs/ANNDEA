@@ -35,7 +35,7 @@ import sys
 sys.path.insert(1, AFS_DIR+'/Code/Utilities/')
 import UtilityFunctions as UF
 #Load data configuration
-EOSsubDIR=EOS_DIR+'/'+'ANNADEA'
+EOSsubDIR=EOS_DIR+'/'+'ANNDEA'
 EOSsubDataDIR=EOSsubDIR+'/'+'Data'
 X_ID_Max=int(args.X_ID_Max)
 ##############################################################################################################################
@@ -45,13 +45,13 @@ def zero_divide(a, b):
     if (b==0): return 0
     return a/b
 
-FirstFile=EOS_DIR+'/ANNADEA/Data/REC_SET/RH1c_'+RecBatchID+'_hit_cluster_rec_y_set_' +str(0)+'.pkl'
+FirstFile=EOS_DIR+'/ANNDEA/Data/REC_SET/RTr1c_'+RecBatchID+'_hit_cluster_rec_y_set_' +str(0)+'.pkl'
 FirstFileRaw=UF.PickleOperations(FirstFile,'r', 'N/A')
 FirstFile=FirstFileRaw[0]
 ZContractedTable=FirstFile.RecSegments
 #ZContractedTable.to_csv('FirstFile.csv',index=False)
 for i in range(1,X_ID_Max):
-    SecondFile=EOS_DIR+'/ANNADEA/Data/REC_SET/RH1c_'+RecBatchID+'_hit_cluster_rec_y_set_'+str(i)+'.pkl'
+    SecondFile=EOS_DIR+'/ANNDEA/Data/REC_SET/RTr1c_'+RecBatchID+'_hit_cluster_rec_y_set_'+str(i)+'.pkl'
     SecondFileRaw=UF.PickleOperations(SecondFile,'r', 'N/A')
     print(SecondFileRaw[1])
     SecondFile=SecondFileRaw[0]
@@ -68,10 +68,8 @@ for i in range(1,X_ID_Max):
     FileClean=FileClean.drop(['Segment_No_x','Segment_No_y','Segment_No_z',"Segment_No_Tot_x","Segment_No_Tot_y","Segment_No_Tot_z"],axis=1)
     FileClean=FileClean.sort_values(["Master_Segment_ID","Segment_No"],ascending=[1,0])
 
-    #FileClean.to_csv('FileClean1.csv',index=False)
     FileClean.drop_duplicates(subset=["Master_Segment_ID"],keep='first',inplace=True)
-    #FileClean=FileClean.drop(['Segment_No'],axis=1)
-    #FileClean.to_csv('FileClean2.csv',index=False)
+
 
     FileClean=pd.merge(FileClean,SecondFileTable,how='right', on=['Segment_ID'])
     FileCleanOrlp=FileClean.dropna(subset=["Master_Segment_ID"])
@@ -115,7 +113,7 @@ ZContractedTable=pd.merge(ZContractedTable,ZContractedTableIDs,how='inner',on=["
 ZContractedTable.drop(['Master_z',"Master_Segment_ID"],axis=1,inplace=True)
 ZContractedTable['ANN_Brick_ID']=RecBatchID
 FirstFile.RecTracks=ZContractedTable
-OutputFile=EOS_DIR+'/ANNADEA/Data/REC_SET/RH1d_'+RecBatchID+'_hit_cluster_rec_x_set.pkl'
+OutputFile=EOS_DIR+'/ANNDEA/Data/REC_SET/RTr1d_'+RecBatchID+'_hit_cluster_rec_x_set.pkl'
 print(UF.PickleOperations(OutputFile, 'w', FirstFile)[1])
 exit()
 

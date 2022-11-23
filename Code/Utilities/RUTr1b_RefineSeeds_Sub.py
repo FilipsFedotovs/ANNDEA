@@ -58,12 +58,23 @@ for m in ModelName:
         import tensorflow as tf
         from tensorflow import keras
         Models.append(tf.keras.models.load_model(Model_Path))
+    if ModelMeta.ModelFramework=='PyTorch':
+        import torch
+        from torch import optim
+        Model_Meta_Path=EOSsubModelDIR+'/'+m+'_Meta'
+        Model_Path=EOSsubModelDIR+'/'+m
+        ModelMeta=UF.PickleOperations(Model_Meta_Path, 'r', 'N/A')[0]
+        device = torch.device('cpu')
+        model = UF.GenerateModel(ModelMeta).to(device)
+        model.load_state_dict(torch.load(Model_Path))
+        Models.append(model)
+
 MaxDOCA=float(args.MaxDOCA)
 MaxSTG=float(args.MaxSTG)
 MaxSLG=float(args.MaxSLG)
 MaxAngle=float(args.MaxAngle)
-input_segment_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MUTr1_'+BatchID+'_TRACK_SEGMENTS.csv'
-input_track_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MUTr1a_'+BatchID+'_SelectedSeeds_'+str(i)+'_'+str(j)+'_'+str(k)+'.csv'
+input_segment_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1_'+BatchID+'_TRACK_SEGMENTS.csv'
+input_track_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1a_'+BatchID+'_SelectedSeeds_'+str(i)+'_'+str(j)+'_'+str(k)+'.csv'
 output_file_location=EOS_DIR+'/'+p+'/'+pfx+'_'+BatchID+'_'+o+'_'+str(i)+'_'+str(j)+'_'+str(k)+sfx
 print(UF.TimeStamp(),'Loading the data')
 tracks=pd.read_csv(input_track_file_location)
@@ -84,7 +95,7 @@ segments["tx"] = pd.to_numeric(segments["tx"],downcast='float')
 segments["ty"] = pd.to_numeric(segments["ty"],downcast='float')
 
 # reorder the columns
-segments = segments[['x','y','z','tx','ty', 'Rec_Seg_ID', 'MC_Mother_Track_ID', 'Seed_Type']]
+segments = segments[['x','y','z','tx','ty', 'Rec_Seg_ID']]
 segments = segments.values.tolist() #Convirting the result to List data type
 tracks = tracks.values.tolist() #Convirting the result to List data type
 
@@ -101,15 +112,9 @@ print(UF.TimeStamp(),'Beginning the sample generation part...')
 for s in range(0,limit):
      track=tracks.pop(0)
 
-     label=track[2]
      track=EMO(track[:2])
 
 
-     if label:
-         num_label = 1
-     else:
-         num_label = 0
-     track.LabelSeed(num_label)
      track.Decorate(segments)
      try:
        track.GetTrInfo()

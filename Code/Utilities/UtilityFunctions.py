@@ -8,6 +8,7 @@ import datetime
 import numpy as np
 import copy
 from statistics import mean
+import ast
 class bcolors:
     HEADER = '\033[95m'
     OKBLUE = '\033[94m'
@@ -46,20 +47,31 @@ class TrainingSampleMeta:
           self.X_overlap=X_overlap
           self.Y_overlap=Y_overlap
           self.Z_overlap=Z_overlap
-      def IniTrackSeedMetaData(self,MaxSLG,MaxSTG,MaxDOCA,MaxAngle,JobSets,MaxSegments,VetoMotherTrack):
+      def IniTrackMetaData(self,ClassHeaders,ClassNames,ClassValues,MaxSegments,JobSets):
+          self.ClassHeaders=ClassHeaders
+          self.ClassNames=ClassNames
+          self.ClassValues=ClassValues
+          self.MaxSegments=MaxSegments
+          self.JobSets=JobSets
+      def IniTrackSeedMetaData(self,MaxSLG,MaxSTG,MaxDOCA,MaxAngle,JobSets,MaxSegments,VetoMotherTrack,MaxSeeds):
           self.MaxSLG=MaxSLG
           self.MaxSTG=MaxSTG
           self.MaxDOCA=MaxDOCA
           self.MaxAngle=MaxAngle
           self.JobSets=JobSets
           self.MaxSegments=MaxSegments
+          self.MaxSeeds=MaxSeeds
           self.VetoMotherTrack=VetoMotherTrack
-
       def UpdateHitClusterMetaData(self,NoS,NoNF,NoEF,NoSets):
           self.num_node_features=NoNF
           self.num_edge_features=NoEF
           self.tot_sample_size=NoS
           self.no_sets=NoSets
+      def UpdateStatus(self, status):
+          if hasattr(self,'Status'):
+            self.Status.append(status)
+          else:
+            self.Status=[status]
 def GetEquationOfLine(Data):
           x=[]
           for i in range(0,len(Data)):
@@ -82,6 +94,13 @@ class ModelMeta:
           self.TrainSessionsDateTime=[]
           self.TrainSessionsParameters=[]
           self.TrainSessionsData=[]
+          if hasattr(DataMeta,'ClassHeaders'):
+              self.ClassHeaders=DataMeta.ClassHeaders
+          if hasattr(DataMeta,'ClassNames'):
+              self.ClassNames=DataMeta.ClassNames
+          if hasattr(DataMeta,'ClassValues'):
+              self.ClassValues=DataMeta.ClassValues
+
           if (self.ModelFramework=='PyTorch') and (self.ModelArchitecture=='TCN'):
               self.num_node_features=DataMeta.num_node_features
               self.num_edge_features=DataMeta.num_edge_features
@@ -90,6 +109,16 @@ class ModelMeta:
               self.stepZ=DataMeta.stepZ
               self.cut_dt=DataMeta.cut_dt
               self.cut_dr=DataMeta.cut_dr
+          else:
+              if hasattr(DataMeta,'MaxSLG'):
+                  self.MaxSLG=DataMeta.MaxSLG
+              if hasattr(DataMeta,'MaxSTG'):
+                  self.MaxSTG=DataMeta.MaxSTG
+              if hasattr(DataMeta,'MaxDOCA'):
+                  self.MaxDOCA=DataMeta.MaxDOCA
+              if hasattr(DataMeta,'MaxAngle'):
+                  self.MaxAngle=DataMeta.MaxAngle
+
       def IniTrainingSession(self, TrainDataID, DateTime, TrainParameters):
           self.TrainSessionsDataID.append(TrainDataID)
           self.TrainSessionsDateTime.append(DateTime)
@@ -533,31 +562,31 @@ class HitCluster:
             self.RecHits=_Rec_Hits_Pool
             # checkpoint_2=datetime.datetime.now()
             # print(checkpoint_2-checkpoint_1)
-      def TestKalmanHits(self,FEDRAdata_list,MCdata_list):
+      def TestKalmanHits(self,Recdata_list,MCdata_list):
           import pandas as pd
           _Tot_Hits_df=pd.DataFrame(self.ClusterHits, columns = ['HitID','x','y','z','tx','ty'])[['HitID','z']]
           _Tot_Hits_df["z"] = pd.to_numeric(_Tot_Hits_df["z"],downcast='float')
 
           _MCClusterHits=[]
-          _FEDRAClusterHits=[]
+          _RecClusterHits=[]
           StatFakeValues=[]
           StatTruthValues=[]
-          StatLabels=['Initial # of combinations','Delete self-permutations','Enforce positive directionality','Fedra Track Reconstruction']
+          StatLabels=['Initial # of combinations','Delete self-permutations','Enforce positive directionality','Kalman Track Reconstruction']
           for s in MCdata_list:
              if s[1]>=self.ClusterID[0]*self.Step[0] and s[1]<((self.ClusterID[0]+1)*self.Step[0]):
                     if s[2]>=self.ClusterID[1]*self.Step[1] and s[2]<((self.ClusterID[1]+1)*self.Step[1]):
                         if s[3]>=self.ClusterID[2]*self.Step[2] and s[3]<((self.ClusterID[2]+1)*self.Step[2]):
                            _MCClusterHits.append([s[0],s[6]])
-          for s in FEDRAdata_list:
+          for s in Recdata_list:
              if s[1]>=self.ClusterID[0]*self.Step[0] and s[1]<((self.ClusterID[0]+1)*self.Step[0]):
                     if s[2]>=self.ClusterID[1]*self.Step[1] and s[2]<((self.ClusterID[1]+1)*self.Step[1]):
                         if s[3]>=self.ClusterID[2]*self.Step[2] and s[3]<((self.ClusterID[2]+1)*self.Step[2]):
-                           _FEDRAClusterHits.append([s[0],s[6]])
+                           _RecClusterHits.append([s[0],s[6]])
           #Preparing Raw and MC combined data 1
           _l_MCHits=pd.DataFrame(_MCClusterHits, columns = ['l_HitID','l_MC_ID'])
           _r_MCHits=pd.DataFrame(_MCClusterHits, columns = ['r_HitID','r_MC_ID'])
-          _l_FHits=pd.DataFrame(_FEDRAClusterHits, columns = ['l_HitID','l_FEDRA_ID'])
-          _r_FHits=pd.DataFrame(_FEDRAClusterHits, columns = ['r_HitID','r_FEDRA_ID'])
+          _l_FHits=pd.DataFrame(_RecClusterHits, columns = ['l_HitID','l_Rec_ID'])
+          _r_FHits=pd.DataFrame(_RecClusterHits, columns = ['r_HitID','r_Rec_ID'])
           _l_Hits=_Tot_Hits_df.rename(columns={"z": "l_z","HitID": "l_HitID" })
           _r_Hits=_Tot_Hits_df.rename(columns={"z": "r_z","HitID": "r_HitID" })
           #Join hits + MC truth
@@ -582,7 +611,7 @@ class HitCluster:
           StatFakeValues.append(len(_Tot_Hits.axes[0])-len(_Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['l_MC_ID'] != _Tot_Hits['r_MC_ID']]).axes[0]))
           StatTruthValues.append(len(_Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['l_MC_ID'] != _Tot_Hits['r_MC_ID']]).axes[0]))
 
-          _Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['r_FEDRA_ID'] != _Tot_Hits['l_FEDRA_ID']], inplace = True)
+          _Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['r_Rec_ID'] != _Tot_Hits['l_Rec_ID']], inplace = True)
           StatFakeValues.append(len(_Tot_Hits.axes[0])-len(_Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['l_MC_ID'] != _Tot_Hits['r_MC_ID']]).axes[0]))
           StatTruthValues.append(len(_Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['l_MC_ID'] != _Tot_Hits['r_MC_ID']]).axes[0]))
           self.KalmanRecStats=[StatLabels,StatFakeValues,StatTruthValues]
@@ -651,6 +680,8 @@ class EMO:
              self.Hits[Hit]=sorted(self.Hits[Hit],key=lambda x: float(x[2]),reverse=False)
       def LabelSeed(self,label):
           self.Label=label
+      def LabelTrack(self,label):
+          self.Label=label
       def GetTrInfo(self):
           if hasattr(self,'Hits'):
              if self.Partition==2:
@@ -692,10 +723,515 @@ class EMO:
                 raise ValueError("Method 'DecorateTrackGeoInfo' works only if 'Decorate' method has been acted upon the seed before")
       def TrackQualityCheck(self,MaxDoca,MaxSLG, MaxSTG,MaxAngle):
                     return (self.DOCA<=MaxDoca and self.SLG<=MaxSLG and self.STG<=(MaxSTG+(self.SLG*0.96)) and abs(self.Opening_Angle)<=MaxAngle)
+
+      def PrepareSeedPrint(self,MM):
+          __TempTrack=copy.deepcopy(self.Hits)
+
+          self.Resolution=MM.ModelParameters[11][3]
+          self.bX=int(round(MM.ModelParameters[11][0]/self.Resolution,0))
+          self.bY=int(round(MM.ModelParameters[11][1]/self.Resolution,0))
+          self.bZ=int(round(MM.ModelParameters[11][2]/self.Resolution,0))
+          self.H=(self.bX)*2
+          self.W=(self.bY)*2
+          self.L=(self.bZ)
+          __StartTrackZ=6666666666
+          __EndTrackZ=-6666666666
+          for __Track in __TempTrack:
+            __CurrentZ=float(__Track[0][2])
+            if __CurrentZ<=__StartTrackZ:
+                __StartTrackZ=__CurrentZ
+                __FinX=float(__Track[0][0])
+                __FinY=float(__Track[0][1])
+                __FinZ=float(__Track[0][2])
+                self.PrecedingTrackInd=__TempTrack.index(__Track)
+            if __CurrentZ>=__EndTrackZ:
+                __EndTrackZ=__CurrentZ
+                self.LagTrackInd=__TempTrack.index(__Track)
+          for __Tracks in __TempTrack:
+              for __Hits in __Tracks:
+                  __Hits[0]=float(__Hits[0])-__FinX
+                  __Hits[1]=float(__Hits[1])-__FinY
+                  __Hits[2]=float(__Hits[2])-__FinZ
+
+          if MM.ModelArchitecture=='CNN-E':
+
+              #Lon Rotate x
+              __Track=__TempTrack[self.LagTrackInd]
+              __Vardiff=float(__Track[len(__Track)-1][0])
+              __Zdiff=float(__Track[len(__Track)-1][2])
+              __vector_1 = [__Zdiff, 0]
+              __vector_2 = [__Zdiff, __Vardiff]
+              __Angle=EMO.angle_between(__vector_1, __vector_2)
+              if np.isnan(__Angle)==True:
+                        __Angle=0.0
+              for __Tracks in __TempTrack:
+                for __hits in __Tracks:
+                     __Z=float(__hits[2])
+                     __Pos=float(__hits[0])
+                     __hits[2]=(__Z*math.cos(-__Angle)) - (__Pos * math.sin(-__Angle))
+                     __hits[0]=(__Z*math.sin(-__Angle)) + (__Pos * math.cos(-__Angle))
+              #Lon Rotate y
+              __Track=__TempTrack[self.LagTrackInd]
+              __Vardiff=float(__Track[len(__Track)-1][1])
+              __Zdiff=float(__Track[len(__Track)-1][2])
+              __vector_1 = [__Zdiff, 0]
+              __vector_2 = [__Zdiff, __Vardiff]
+              __Angle=EMO.angle_between(__vector_1, __vector_2)
+              if np.isnan(__Angle)==True:
+                         __Angle=0.0
+              for __Tracks in __TempTrack:
+                for __hits in __Tracks:
+                     __Z=float(__hits[2])
+                     __Pos=float(__hits[1])
+                     __hits[2]=(__Z*math.cos(-__Angle)) - (__Pos * math.sin(-__Angle))
+                     __hits[1]=(__Z*math.sin(-__Angle)) + (__Pos * math.cos(-__Angle))
+             #  Phi rotate print
+
+              __LongestDistance=0.0
+              for __Track in __TempTrack:
+                     __X=float(__Track[len(__Track)-1][0])
+                     __Y=float(__Track[len(__Track)-1][1])
+                     __Distance=math.sqrt((__X**2)+(__Y**2))
+                     if __Distance>=__LongestDistance:
+                      __LongestDistance=__Distance
+                      __vector_1 = [__Distance, 0]
+                      __vector_2 = [__X, __Y]
+                      __Angle=-EMO.angle_between(__vector_1,__vector_2)
+              if np.isnan(__Angle)==True:
+                         __Angle=0.0
+              for __Tracks in __TempTrack:
+                 for __hits in __Tracks:
+                     __X=float(__hits[0])
+                     __Y=float(__hits[1])
+                     __hits[0]=(__X*math.cos(__Angle)) - (__Y * math.sin(__Angle))
+                     __hits[1]=(__X*math.sin(__Angle)) + (__Y * math.cos(__Angle))
+
+              __X=[]
+              __Y=[]
+              __Z=[]
+              for __Tracks in __TempTrack:
+                 for __hits in __Tracks:
+                     __X.append(__hits[0])
+                     __Y.append(__hits[1])
+                     __Z.append(__hits[2])
+              __dUpX=MM.ModelParameters[11][0]-max(__X)
+              __dDownX=MM.ModelParameters[11][0]+min(__X)
+              __dX=(__dUpX+__dDownX)/2
+              __xshift=__dUpX-__dX
+              __X=[]
+              for __Tracks in __TempTrack:
+                 for __hits in __Tracks:
+                     __hits[0]=__hits[0]+__xshift
+                     __X.append(__hits[0])
+             ##########Y
+              __dUpY=MM.ModelParameters[11][1]-max(__Y)
+              __dDownY=MM.ModelParameters[11][1]+min(__Y)
+              __dY=(__dUpY+__dDownY)/2
+              __yshift=__dUpY-__dY
+              __Y=[]
+              for __Tracks in __TempTrack:
+                 for __hits in __Tracks:
+                     __hits[1]=__hits[1]+__yshift
+                     __Y.append(__hits[1])
+              __min_scale=max(max(__X)/(MM.ModelParameters[11][0]-(2*self.Resolution)),max(__Y)/(MM.ModelParameters[11][1]-(2*self.Resolution)), max(__Z)/(MM.ModelParameters[11][2]-(2*self.Resolution)))
+              for __Tracks in __TempTrack:
+                 for __hits in __Tracks:
+                     __hits[0]=int(round(__hits[0]/__min_scale,0))
+                     __hits[1]=int(round(__hits[1]/__min_scale,0))
+                     __hits[2]=int(round(__hits[2]/__min_scale,0))
+          else:
+            for __Tracks in __TempTrack:
+                  for __Hits in __Tracks:
+                      __Hits[2]=__Hits[2]*self.Resolution/1315
+          __TempEnchTrack=[]
+          for __Tracks in __TempTrack:
+               for h in range(0,len(__Tracks)-1):
+                   __deltaX=float(__Tracks[h+1][0])-float(__Tracks[h][0])
+                   __deltaZ=float(__Tracks[h+1][2])-float(__Tracks[h][2])
+                   __deltaY=float(__Tracks[h+1][1])-float(__Tracks[h][1])
+                   try:
+                    __vector_1 = [__deltaZ,0]
+                    __vector_2 = [__deltaZ, __deltaX]
+                    __ThetaAngle=EMO.Opening_Angle(__vector_1, __vector_2)
+                   except:
+                     __ThetaAngle=0.0
+                   try:
+                     __vector_1 = [__deltaZ,0]
+                     __vector_2 = [__deltaZ, __deltaY]
+                     __PhiAngle=EMO.Opening_Angle(__vector_1, __vector_2)
+                   except:
+                     __PhiAngle=0.0
+                   __TotalDistance=math.sqrt((__deltaX**2)+(__deltaY**2)+(__deltaZ**2))
+                   __Distance=(float(self.Resolution)/3)
+                   if __Distance>=0 and __Distance<1:
+                      __Distance=1.0
+                   if __Distance<0 and __Distance>-1:
+                      __Distance=-1.0
+                   __Iterations=int(round(__TotalDistance/__Distance,0))
+                   for i in range(1,__Iterations):
+                       __New_Hit=[]
+                       if math.isnan(float(__Tracks[h][0])+float(i)*__Distance*math.sin(__ThetaAngle)):
+                          continue
+                       if math.isnan(float(__Tracks[h][1])+float(i)*__Distance*math.sin(__PhiAngle)):
+                          continue
+                       if math.isnan(float(__Tracks[h][2])+float(i)*__Distance*math.cos(__ThetaAngle)):
+                          continue
+                       __New_Hit.append(float(__Tracks[h][0])+float(i)*__Distance*math.sin(__ThetaAngle))
+                       __New_Hit.append(float(__Tracks[h][1])+float(i)*__Distance*math.sin(__PhiAngle))
+                       __New_Hit.append(float(__Tracks[h][2])+float(i)*__Distance*math.cos(__ThetaAngle))
+                       __TempEnchTrack.append(__New_Hit)
+
+
+          self.TrackPrint=[]
+          for __Tracks in __TempTrack:
+               for __Hits in __Tracks:
+                   __Hits[0]=int(round(float(__Hits[0])/self.Resolution,0))
+                   __Hits[1]=int(round(float(__Hits[1])/self.Resolution,0))
+                   __Hits[2]=int(round(float(__Hits[2])/self.Resolution,0))
+                   self.TrackPrint.append(str(__Hits[:3]))
+          for __Hits in __TempEnchTrack:
+                   __Hits[0]=int(round(float(__Hits[0])/self.Resolution,0))
+                   __Hits[1]=int(round(float(__Hits[1])/self.Resolution,0))
+                   __Hits[2]=int(round(float(__Hits[2])/self.Resolution,0))
+                   self.TrackPrint.append(str(__Hits[:3]))
+          self.TrackPrint=list(set(self.TrackPrint))
+          for p in range(len(self.TrackPrint)):
+               self.TrackPrint[p]=ast.literal_eval(self.TrackPrint[p])
+          self.TrackPrint=[p for p in self.TrackPrint if (abs(p[0])<self.bX and abs(p[1])<self.bY and abs(p[2])<self.bZ)]
+          del __TempEnchTrack
+          del __TempTrack
+      def AssignANNTrUID(self,ID):
+          self.UTrID=ID
+      def PrepareSeedGraph(self,MM):
+          if MM.ModelArchitecture=='GCN-4N-FC':
+
+                      __TempTrack=copy.deepcopy(self.Hits)
+                      for __Tracks in __TempTrack:
+                              for h in range(len(__Tracks)):
+                                  __Tracks[h]=__Tracks[h][:3]
+
+                      __LongestDistance=0.0
+                      for __Track in __TempTrack:
+                        __Xdiff=float(__Track[len(__Track)-1][0])-float(__Track[0][0])
+                        __Ydiff=float(__Track[len(__Track)-1][1])-float(__Track[0][1])
+                        __Zdiff=float(__Track[len(__Track)-1][2])-float(__Track[0][2])
+                        __Distance=math.sqrt(__Xdiff**2+__Ydiff**2+__Zdiff**2)
+                        if __Distance>=__LongestDistance:
+                            __LongestDistance=__Distance
+                            __FinX=float(__Track[0][0])
+                            __FinY=float(__Track[0][1])
+                            __FinZ=float(__Track[0][2])
+                            self.LongestTrackInd=__TempTrack.index(__Track)
+                      # Shift
+                      for __Tracks in __TempTrack:
+                          for h in range(len(__Tracks)):
+                              __Tracks[h][0]=float(__Tracks[h][0])-__FinX
+                              __Tracks[h][1]=float(__Tracks[h][1])-__FinY
+                              __Tracks[h][2]=float(__Tracks[h][2])-__FinZ
+
+                      # Rescale
+                      for __Tracks in __TempTrack:
+                              for h in range(len(__Tracks)):
+                                  __Tracks[h][0]=__Tracks[h][0]/MM.ModelParameters[11][0]
+                                  __Tracks[h][1]=__Tracks[h][1]/MM.ModelParameters[11][1]
+                                  __Tracks[h][2]=__Tracks[h][2]/MM.ModelParameters[11][2]
+
+                      import pandas as pd
+# Graph representation v2 (fully connected)
+                      for el in range(len(__TempTrack[0])):
+                         __TempTrack[0][el].append('0')
+                         __TempTrack[0][el].append(el)
+
+                      try:
+                          for el in range(len(__TempTrack[1])):
+                             __TempTrack[1][el].append('1')
+                             __TempTrack[1][el].append(el)
+
+                          __graphData_x =__TempTrack[0]+__TempTrack[1]
+                      except:
+                          __graphData_x =__TempTrack[0]
+
+                      __graphData_x = pd.DataFrame (__graphData_x, columns = ['x', 'y', 'z', 'TrackID', 'NodeIndex'])
+                      __graphData_x['dummy'] = 'dummy'
+                      __graphData_x_r = __graphData_x
+
+                      __graphData_join = pd.merge(
+                      __graphData_x,
+                      __graphData_x_r,
+                      how="inner",
+                      on="dummy",
+                      suffixes=('_l','_r'),
+                      )
+                      __graphData_join = __graphData_join.drop(__graphData_join.index[__graphData_join['TrackID_l']==__graphData_join['TrackID_r']] & __graphData_join.index[__graphData_join['NodeIndex_l']==__graphData_join['NodeIndex_r']])
+
+                      __graphData_join['d_z'] = np.sqrt((__graphData_join['z_l'] - __graphData_join['z_r'])**2)
+                      __graphData_join['d_xy'] = np.sqrt((__graphData_join['x_l'] - __graphData_join['x_r'])**2 + (__graphData_join['y_l'] - __graphData_join['y_r'])**2)
+                      __graphData_join['d_xyz'] = np.sqrt((__graphData_join['x_l'] - __graphData_join['x_r'])**2 + (__graphData_join['y_l'] - __graphData_join['y_r'])**2 + (__graphData_join['z_l'] - __graphData_join['z_r'])**2)
+                      __graphData_join['ConnectionType'] = __graphData_join['TrackID_l'] == __graphData_join['TrackID_r']
+                      __graphData_join.drop(['x_l', 'y_l', 'z_l', 'x_r', 'y_r', 'z_r', 'dummy'], axis = 1, inplace = True)
+
+                      __graphData_join[['ConnectionType']] = __graphData_join[['ConnectionType']].astype(float)
+                      __graphData_join[['NodeIndex_l']] = __graphData_join[['NodeIndex_l']].astype(str)
+                      __graphData_join[['NodeIndex_r']] = __graphData_join[['NodeIndex_r']].astype(str)
+
+                      __graphData_join['LeftKey'] = __graphData_join['TrackID_l'] +'-'+ __graphData_join['NodeIndex_l']
+                      __graphData_join['RightKey'] = __graphData_join['TrackID_r'] +'-'+ __graphData_join['NodeIndex_r']
+
+                      __graphData_join.drop(['NodeIndex_l', 'TrackID_l', 'NodeIndex_r', 'TrackID_r'], axis = 1, inplace = True)
+
+                      __graphData_list = __graphData_join.values.tolist()
+
+
+                      try:
+                        __graphData_nodes =__TempTrack[0]+__TempTrack[1]
+                      except:
+                        __graphData_nodes =__TempTrack[0]
+
+                    # position of nodes
+                      __graphData_pos = []
+                      for node in __graphData_nodes:
+                        __graphData_pos.append(node[0:3])
+
+                      for g in __graphData_nodes:
+                        g.append(g[3]+'-'+str(g[4]))
+                        g[3]=float(g[3])
+
+
+                      Data_x = []
+                      for g in __graphData_nodes:
+                        Data_x.append(g[:4])
+
+
+                      node_ind_list=[]
+                      for g in __graphData_nodes:
+                        node_ind_list.append(g[5])
+
+
+                      top_edge = []
+                      bottom_edge = []
+                      edge_attr = []
+
+
+
+                      for h in __graphData_list:
+                        top_edge.append(node_ind_list.index(h[5]))
+
+                      for h in __graphData_list:
+                        bottom_edge.append(node_ind_list.index(h[4]))
+
+                      for h in __graphData_list:
+                        edge_attr.append(h[:4])
+
+
+                      try:
+                          __y=[]
+                          for i in range(MM.ModelParameters[10][1]):
+                            if self.Label==i:
+                                __y.append(1)
+                            else:
+                                __y.append(0)
+                          __graphData_y = (__y)
+                          import torch
+                          import torch_geometric
+                          from torch_geometric.data import Data
+                          self.GraphSeed = Data(x=torch.Tensor(Data_x), edge_index = torch.Tensor([top_edge, bottom_edge]).long(), edge_attr = torch.Tensor(edge_attr),y=torch.Tensor([__graphData_y]), pos = torch.Tensor(__graphData_pos))
+                      except:
+                          import torch
+                          import torch_geometric
+                          from torch_geometric.data import Data
+                          self.GraphSeed = Data(x=torch.Tensor(Data_x), edge_index = torch.Tensor([top_edge, bottom_edge]).long(), edge_attr = torch.Tensor(edge_attr), pos = torch.Tensor(__graphData_pos))
+      def Plot(self,PlotType):
+        if PlotType=='XZ' or PlotType=='ZX':
+          __InitialData=[]
+          __Index=-1
+          for x in range(-self.bX,self.bX):
+             for z in range(0,self.bZ):
+                 __InitialData.append(0.0)
+          __Matrix = np.array(__InitialData)
+          __Matrix=np.reshape(__Matrix,(self.H,self.L))
+          for __Hits in self.TrackPrint:
+                   __Matrix[int(__Hits[0])+self.bX][int(__Hits[2])]=1
+          import matplotlib as plt
+          from matplotlib.colors import LogNorm
+          from matplotlib import pyplot as plt
+          plt.title('Seed '+':'.join(self.Header))
+          plt.xlabel('Z [microns /'+str(int(self.Resolution))+']')
+          plt.ylabel('X [microns /'+str(int(self.Resolution))+']')
+          __image=plt.imshow(__Matrix,cmap='gray_r',extent=[0,self.bZ,self.bX,-self.bX])
+          plt.gca().invert_yaxis()
+          plt.show()
+        elif PlotType=='YZ' or PlotType=='ZY':
+          __InitialData=[]
+          __Index=-1
+          for y in range(-self.bY,self.bY):
+             for z in range(0,self.bZ):
+                 __InitialData.append(0.0)
+          __Matrix = np.array(__InitialData)
+          __Matrix=np.reshape(__Matrix,(self.W,self.L))
+          for __Hits in self.TrackPrint:
+                   __Matrix[int(__Hits[1])+self.bY][int(__Hits[2])]=1
+          import matplotlib as plt
+          from matplotlib.colors import LogNorm
+          from matplotlib import pyplot as plt
+          plt.title('Seed '+':'.join(self.Header))
+          plt.xlabel('Z [microns /'+str(int(self.Resolution))+']')
+          plt.ylabel('Y [microns /'+str(int(self.Resolution))+']')
+          __image=plt.imshow(__Matrix,cmap='gray_r',extent=[0,self.bZ,self.bY,-self.bY])
+          plt.gca().invert_yaxis()
+          plt.show()
+        elif PlotType=='XY' or PlotType=='YX':
+          __InitialData=[]
+          __Index=-1
+          for x in range(-self.bX,self.bX):
+             for y in range(-self.bY,self.bY):
+                 __InitialData.append(0.0)
+          __Matrix = np.array(__InitialData)
+          __Matrix=np.reshape(__Matrix,(self.H,self.W))
+          for __Hits in self.TrackPrint:
+                   __Matrix[int(__Hits[0])+self.bX][int(__Hits[1]+self.bY)]=1
+          import matplotlib as plt
+          from matplotlib.colors import LogNorm
+          from matplotlib import pyplot as plt
+          plt.title('Seed '+':'.join(self.Header))
+          plt.xlabel('Y [microns /'+str(int(self.Resolution))+']')
+          plt.ylabel('X [microns /'+str(int(self.Resolution))+']')
+          __image=plt.imshow(__Matrix,cmap='gray_r',extent=[-self.bY,self.bY,self.bX,-self.bX])
+          plt.gca().invert_yaxis()
+          plt.show()
+        else:
+          print('Invalid plot type input value! Should be XZ, YZ or XY')
+
+      def FitSeed(self,Mmeta,M):
+          if Mmeta.ModelType=='CNN':
+             EMO.PrepareSeedPrint(self,Mmeta)
+             __Image=LoadRenderImages([self],1,1)[0]
+             self.Fit=M.predict(__Image)[0][1]
+             self.FIT=[self.Fit,self.Fit]
+             del __Image
+          elif Mmeta.ModelType=='GNN':
+             EMO.PrepareSeedGraph(self,Mmeta)
+             M.eval()
+             import torch
+             graph = self.GraphSeed
+             graph.batch = torch.zeros(len(graph.x),dtype=torch.int64)
+             self.Fit=M(graph.x, graph.edge_index, graph.edge_attr,graph.batch)[0][1].item()
+             self.FIT=[self.Fit,self.Fit]
+          return self.Fit>=0.5
+      def ClassifySeed(self,Mmeta,M):
+          if Mmeta.ModelType=='CNN':
+             EMO.PrepareSeedPrint(self,Mmeta)
+             __Image=LoadRenderImages([self],1,1)[0]
+             self.Class=M.predict(__Image)[0]
+             self.ClassHeaders=Mmeta.ClassHeaders.append('Other')
+             del __Image
+          elif Mmeta.ModelType=='GNN':
+             EMO.PrepareSeedGraph(self,Mmeta)
+             M.eval()
+             import torch
+             graph = self.GraphSeed
+             graph.batch = torch.zeros(len(graph.x),dtype=torch.int64)
+             #self.Fit=M(graph.x, graph.edge_index, graph.edge_attr,graph.batch)[0][1].item()
+             self.Class=M(graph.x, graph.edge_index, graph.edge_attr,graph.batch).tolist()[0]
+             self.ClassHeaders=Mmeta.ClassHeaders+['Other']
+      def InjectTrackSeed(self,OtherSeed):
+          self_matx=EMO.DensityMatrix(OtherSeed.Header,self.Header)
+          if EMO.Overlap(self_matx)==False:
+              return EMO.Overlap(self_matx)
+
+          new_seed_header=EMO.ProjectVectorElements(self_matx,self.Header)
+          new_self_hits=EMO.ProjectVectorElements(self_matx,self.Hits)
+          new_self_fit=EMO.ProjectVectorElements(self_matx,self.FIT)
+          remain_1_s = EMO.GenerateInverseVector(self.Header,new_seed_header)
+          remain_1_o = EMO.GenerateInverseVector(OtherSeed.Header,new_seed_header)
+          OtherSeed.Header=EMO.ProjectVectorElements([remain_1_o],OtherSeed.Header)
+          self.Header=EMO.ProjectVectorElements([remain_1_s],self.Header)
+          OtherSeed.Hits=EMO.ProjectVectorElements([remain_1_o],OtherSeed.Hits)
+          self.Hits=EMO.ProjectVectorElements([remain_1_s],self.Hits)
+          OtherSeed.FIT=EMO.ProjectVectorElements([remain_1_o],OtherSeed.FIT)
+          self.FIT=EMO.ProjectVectorElements([remain_1_s],self.FIT)
+          if (len(OtherSeed.Header))==0:
+              self.Header+=new_seed_header
+              self.Hits+=new_self_hits
+              self.FIT+=new_self_fit
+              self.Fit=sum(self.FIT)/len(self.FIT)
+              self.Partition=len(self.Header)
+              if len(self.FIT)!=len(self.Header):
+                  raise Exception('Fit error')
+                  exit()
+
+              return True
+          if (len(self.Header))==0:
+              self.Header+=new_seed_header
+              self.Hits+=new_self_hits
+              self.FIT+=new_self_fit
+              self.Header+=OtherSeed.Header
+              self.Hits+=OtherSeed.Hits
+              self.FIT+=OtherSeed.FIT
+              self.Fit=sum(self.FIT)/len(self.FIT)
+              self.Partition=len(self.Header)
+              if len(self.FIT)!=len(self.Header):
+                  raise Exception('Fit error')
+                  exit()
+              return True
+          self_2_matx=EMO.DensityMatrix(OtherSeed.Hits,self.Hits)
+          other_2_matx=EMO.DensityMatrix(self.Hits,OtherSeed.Hits)
+          #print('Test',self_2_matx,self_2_matx)
+          last_s_seed_header=EMO.ProjectVectorElements(self_2_matx,self.Header)
+          last_o_seed_header=EMO.ProjectVectorElements(other_2_matx,OtherSeed.Header)
+          remain_2_s = EMO.GenerateInverseVector(self.Header,last_s_seed_header)
+          remain_2_o = EMO.GenerateInverseVector(OtherSeed.Header,last_o_seed_header)
+
+          new_seed_header+=EMO.ProjectVectorElements([remain_2_s],self.Header)
+          new_seed_header+=EMO.ProjectVectorElements([remain_2_o],OtherSeed.Header)
+          new_self_fit+=EMO.ProjectVectorElements([remain_2_s],self.FIT)
+          new_self_fit+=EMO.ProjectVectorElements([remain_2_o],OtherSeed.FIT)
+          new_self_hits+=EMO.ProjectVectorElements([remain_2_s],self.Hits)
+          new_self_hits+=EMO.ProjectVectorElements([remain_2_o],OtherSeed.Hits)
+
+
+          last_remain_headers_s = EMO.GenerateInverseVector(self.Header,new_seed_header)
+          last_remain_headers_o = EMO.GenerateInverseVector(OtherSeed.Header,new_seed_header)
+          last_self_headers=EMO.ProjectVectorElements([last_remain_headers_s],self.Header)
+          last_other_headers=EMO.ProjectVectorElements([last_remain_headers_o],OtherSeed.Header)
+          if (len(last_other_headers))==0:
+              self.Header=new_seed_header
+              self.Hits=new_self_hits
+              self.FIT=new_self_fit
+              self.Fit=sum(self.FIT)/len(self.FIT)
+              self.Partition=len(self.Header)
+              if len(self.FIT)!=len(self.Header):
+                  raise Exception('Fit error')
+                  exit()
+              return True
+
+          last_self_hits=EMO.ProjectVectorElements([last_remain_headers_s],self.Hits)
+          last_other_hits=EMO.ProjectVectorElements([last_remain_headers_o],OtherSeed.Hits)
+          last_self_fits=EMO.ProjectVectorElements([last_remain_headers_s],self.FIT)
+          last_other_fits=EMO.ProjectVectorElements([last_remain_headers_o],OtherSeed.FIT)
+          last_remain_matr=EMO.DensityMatrix(last_other_hits,last_self_hits)
+
+          new_seed_header+=EMO.ReplaceWeakerTracks(last_remain_matr,last_other_headers,last_self_headers,last_other_fits,last_self_fits)
+          new_self_fit+=EMO.ReplaceWeakerFits(new_seed_header,last_self_headers,last_other_headers,last_other_fits,last_self_fits)[0:len(EMO.ReplaceWeakerFits(new_seed_header,last_self_headers,last_other_headers,last_other_fits,last_self_fits))]
+          new_self_hits+=EMO.ReplaceWeakerTracks(last_remain_matr,last_other_hits,last_self_hits,last_other_fits,last_self_fits)
+          self.Header=new_seed_header
+          self.Hits=new_self_hits
+          self.FIT=new_self_fit
+          self.Avg_Fit=sum(self.FIT)/len(self.FIT)
+          self.Partition=len(self.Header)
+          if len(self.FIT)!=len(self.Header):
+                  raise Exception('Fit error')
+                  exit()
+
+          return True
       @staticmethod
       def unit_vector(vector):
           return vector / np.linalg.norm(vector)
-
+      def Overlap(a):
+            overlap=0
+            for j in a:
+                for i in j:
+                    overlap+=i
+            return(overlap>0)
       def angle_between(v1, v2):
             v1_u = EMO.unit_vector(v1)
             v2_u = EMO.unit_vector(v2)
@@ -815,17 +1351,154 @@ class EMO:
                     pA = a0 + (_A * dot)
             return pA,pB,np.linalg.norm(pA-pB)
       
-
-def GenerateModel(ModelMeta):
+      def Product(a,b):
+         if type(a) is str:
+             if type(b) is str:
+                 return(int(a==b))
+             if type(b) is int:
+                 return(b)
+         if type(b) is str:
+             if type(a) is str:
+                 return(int(a==b))
+             if type(a) is int:
+                 return(a)
+         if type(a) is list:
+             if type(b) is list:
+                 a_temp=[]
+                 b_temp=[]
+                 for el in a:
+                     a_temp.append(el[2])
+                 for el in b:
+                     b_temp.append(el[2])
+                 min_a=min(a_temp)
+                 min_b=min(b_temp)
+                 max_a=max(a_temp)
+                 max_b=max(b_temp)
+                 if (min_b>=min_a) and (max_b<=max_a):
+                     return(1)
+                 elif (min_a>=min_b) and (max_a<=max_b):
+                     return(1)
+                 elif (max_a>min_b) and (max_a<max_b):
+                     return(1)
+                 elif (max_b>min_a) and (max_b<max_a):
+                     return(1)
+                 return(0)
+             elif b==1:
+                 return(a)
+             elif b==0:
+                 return(b)
+             else:
+                 raise Exception('Value incompatibility error')
+         if type(b) is list:
+             if type(a) is list:
+                 a_temp=[]
+                 b_temp=[]
+                 for el in a:
+                     a_temp.append(el[2])
+                 for el in b:
+                     b_temp.append(el[2])
+                 min_a=min(a_temp)
+                 min_b=min(b_temp)
+                 max_a=max(a_temp)
+                 max_b=max(b_temp)
+                 if (min_b>=min_a) and (max_b<=max_a):
+                     return(1)
+                 elif (min_a>=min_b) and (max_a<=max_b):
+                     return(1)
+                 elif (max_a>min_b) and (max_a<max_b):
+                     return(1)
+                 elif (max_b>min_a) and (max_b<max_a):
+                     return(1)
+                 return(0)
+             elif a==1:
+                 return(b)
+             elif a==0:
+                 return(a)
+             else:
+                 raise Exception('Value incompatibility error')
+         if type(b) is int and type(a) is int:
+             return(a*b)
+         elif type(b) is int and ((type(a) is float) or (type(a) is np.float32)):
+             return(a*b)
+         elif type(a) is int and ((type(b) is float) or (type(b) is np.float32)):
+             return(a*b)
+      def DensityMatrix(m,f):
+            matrix=[]
+            for j in m:
+                row=[]
+                for i in f:
+                    row.append(EMO.Product(j,i))
+                matrix.append(row)
+            return matrix
+      def ReplaceWeakerTracks(matx,m,f,m_fit,f_fit):
+                      res_vector=[]
+                      delete_vec=[]
+                      for j in range(len(m)):
+                          accumulative_fit_f=0
+                          accumulative_fit_m=m_fit[j]
+                          del_temp_vec=[]
+                          counter=0
+                          for i in range(len(matx[j])):
+                                  if matx[j][i]==1:
+                                      accumulative_fit_f+=f_fit[i]
+                                      del_temp_vec.append(f[i])
+                                      counter+=1
+                          if (accumulative_fit_m>accumulative_fit_f/counter):
+                              res_vector.append(m[j])
+                              delete_vec+=del_temp_vec
+                          else:
+                              res_vector+=del_temp_vec
+                      final_vector=[]
+                      for mel in m:
+                          if (mel in res_vector):
+                             final_vector.append(mel)
+                      for fel in f:
+                          if (fel in delete_vec)==False:
+                             final_vector.append(fel)
+                      return(final_vector)
+      def ReplaceWeakerFits(h,l_f,l_m,m_fit,f_fit):
+                      new_h=l_f+l_m
+                      new_fit=f_fit+m_fit
+                      res_fits=[]
+                      for hd in range(len(new_h)):
+                          if (new_h[hd] in h):
+                              res_fits.append(new_fit[hd])
+                      return res_fits
+      def ProjectVectorElements(m,v):
+                  if (len(m[0])!=len(v)):
+                      raise Exception('Number of vector columns is not equal to number of acting matrix rows')
+                  else:
+                      res_vector=[]
+                      for j in m:
+                          for i in range(len(j)):
+                              if (EMO.Product(j[i],v[i]))==1:
+                                  res_vector.append(v[i])
+                              elif (EMO.Product(j[i],v[i]))==v[i]:
+                                  res_vector.append(v[i])
+                      return(res_vector)
+      def GenerateInverseVector(ov,v):
+            inv_vector=[]
+            for el in ov:
+               if (el in v) == False:
+                   inv_vector.append(1)
+               elif (el in v):
+                   inv_vector.append(0)
+            return(inv_vector)
+def GenerateModel(ModelMeta,TrainParams=None):
       if ModelMeta.ModelFramework=='PyTorch':
          import torch
          import torch.nn as nn
-         from torch.nn import Sequential as Seq, Linear, ReLU, Sigmoid
+
+         from torch.nn import Sequential as Seq, Linear, ReLU, Sigmoid,Softmax
+         import torch.nn.functional as F
+
          from torch import Tensor
          import torch_geometric
          from torch_geometric.nn import MessagePassing
-         from MH_IN import InteractionNetwork as IN
+         from torch_geometric.nn import global_mean_pool
+
          if ModelMeta.ModelArchitecture=='TCN':
+            from MTr_IN import InteractionNetwork as IN
             class MLP(nn.Module):
                   def __init__(self, input_size, output_size, hidden_size):
                      super(MLP, self).__init__()
@@ -1180,8 +1853,98 @@ def GenerateModel(ModelMeta):
                      return edge_weights
             model = TCN(ModelMeta.num_node_features, ModelMeta.num_edge_features, ModelMeta.ModelParameters[3])
             return model
+         elif ModelMeta.ModelArchitecture=='GCN-4N-FC':
+            from torch_geometric.nn import GCNConv
+            HiddenLayer=[]
+            OutputLayer=[]
+            for el in ModelMeta.ModelParameters:
+              if ModelMeta.ModelParameters.index(el)<=4 and len(el)>0:
+                 HiddenLayer.append(el)
+              elif ModelMeta.ModelParameters.index(el)==10:
+                 OutputLayer=el
 
+            class GCN(torch.nn.Module):
+                def __init__(self):
+                    super(GCN, self).__init__()
+                    torch.manual_seed(12345)
+                    if len(HiddenLayer)==3:
+                        self.conv1 = GCNConv(4 , HiddenLayer[0][0])
+                        self.conv2 = GCNConv(HiddenLayer[0][0],HiddenLayer[1][0])
+                        self.conv3 = GCNConv(HiddenLayer[1][0],HiddenLayer[2][0])
+                        self.lin = Linear(HiddenLayer[2][0],OutputLayer[1])
+                    self.softmax = Softmax(dim=-1)
 
+                def forward(self, x, edge_index, edge_attr, batch):
+                    # 1. Obtain node embeddings
+                    if len(HiddenLayer)==3:
+
+                        x = self.conv1(x, edge_index)
+                        x = x.relu()
+                        x = self.conv2(x, edge_index)
+                        x = x.relu()
+                        x = self.conv3(x, edge_index)
+
+                    # 2. Readout layer
+                    x = global_mean_pool(x, batch)  # [batch_size, hidden_channels]
+
+                    # 3. Apply a final classifier
+                    x = F.dropout(x, p=0.5, training=self.training)
+                    x = self.lin(x)
+                    x = self.softmax(x)
+                    return x
+            return GCN()
+
+      elif ModelMeta.ModelFramework=='Tensorflow':
+          if ModelMeta.ModelType=='CNN':
+            act_fun_list=['N/A','linear','exponential','elu','relu', 'selu','sigmoid','softmax','softplus','softsign','tanh']
+            import tensorflow as tf
+            from tensorflow import keras
+            from keras.models import Sequential
+            from keras.layers import Dense, Flatten, Conv3D, MaxPooling3D, Dropout, BatchNormalization
+            from keras.optimizers import Adam
+            from keras import callbacks
+            from keras import backend as K
+            HiddenLayer=[]
+            FullyConnectedLayer=[]
+            OutputLayer=[]
+            ImageLayer=[]
+            for el in ModelMeta.ModelParameters:
+              if ModelMeta.ModelParameters.index(el)<=4 and len(el)>0:
+                 HiddenLayer.append(el)
+              elif ModelMeta.ModelParameters.index(el)<=9 and len(el)>0:
+                 FullyConnectedLayer.append(el)
+              elif ModelMeta.ModelParameters.index(el)==10:
+                 OutputLayer=el
+              elif ModelMeta.ModelParameters.index(el)==11:
+                 ImageLayer=el
+            H=int(round(ImageLayer[0]/ImageLayer[3],0))*2
+            W=int(round(ImageLayer[1]/ImageLayer[3],0))*2
+            L=int(round(ImageLayer[2]/ImageLayer[3],0))
+            model = Sequential()
+            for HL in HiddenLayer:
+                     Nodes=HL[0]*16
+                     KS=(HL[2]*2)+1
+                     PS=HL[3]
+                     DR=float(HL[6]-1)/10.0
+                     if HiddenLayer.index(HL)==0:
+                        model.add(Conv3D(Nodes, activation=act_fun_list[HL[1]],kernel_size=(KS,KS,KS),kernel_initializer='he_uniform', input_shape=(H,W,L,1)))
+                     else:
+                        model.add(Conv3D(Nodes, activation=act_fun_list[HL[1]],kernel_size=(KS,KS,KS),kernel_initializer='he_uniform'))
+                     if PS>1:
+                        model.add(MaxPooling3D(pool_size=(PS, PS, PS)))
+                     model.add(BatchNormalization(center=HL[4]>1, scale=HL[5]>1))
+                     model.add(Dropout(DR))
+            model.add(Flatten())
+            for FC in FullyConnectedLayer:
+                         Nodes=4**FC[0]
+                         DR=float(FC[2]-1)/10.0
+                         model.add(Dense(Nodes, activation=act_fun_list[FC[1]], kernel_initializer='he_uniform'))
+                         model.add(Dropout(DR))
+            model.add(Dense(OutputLayer[1], activation=act_fun_list[OutputLayer[0]]))
+            opt = Adam(learning_rate=TrainParams[0])
+     # Compile the model
+            model.compile(loss='categorical_crossentropy',optimizer=opt,metrics=['accuracy'])
+            return model
 def CleanFolder(folder,key):
     if key=='':
       for the_file in os.listdir(folder):
@@ -1236,7 +1999,7 @@ def PickleOperations(flocation,mode, message):
 
 def RecCleanUp(AFS_DIR, EOS_DIR, Process, FileNames, ProcessId):
       subprocess.call(['condor_rm', '-constraint', ProcessId])
-      EOSsubDIR=EOS_DIR+'/'+'ANNADEA'
+      EOSsubDIR=EOS_DIR+'/'+'ANNDEA'
       EOSsubModelDIR=EOSsubDIR+'/'+'Data/REC_SET'
       folder =  EOSsubModelDIR
       for f in FileNames:
@@ -1250,7 +2013,7 @@ def RecCleanUp(AFS_DIR, EOS_DIR, Process, FileNames, ProcessId):
 
 def EvalCleanUp(AFS_DIR, EOS_DIR, Process, FileNames, ProcessId):
       subprocess.call(['condor_rm', '-constraint', ProcessId])
-      EOSsubDIR=EOS_DIR+'/'+'ANNADEA'
+      EOSsubDIR=EOS_DIR+'/'+'ANNDEA'
       EOSsubModelDIR=EOSsubDIR+'/'+'Data/TEST_SET'
       folder =  EOSsubModelDIR
       for f in FileNames:
@@ -1264,7 +2027,7 @@ def EvalCleanUp(AFS_DIR, EOS_DIR, Process, FileNames, ProcessId):
 
 def TrainCleanUp(AFS_DIR, EOS_DIR, Process, FileNames, ProcessId):
       subprocess.call(['condor_rm', '-constraint', ProcessId])
-      EOSsubDIR=EOS_DIR+'/'+'ANNADEA'
+      EOSsubDIR=EOS_DIR+'/'+'ANNDEA'
       EOSsubModelDIR=EOSsubDIR+'/'+'Data/TRAIN_SET'
       folder =  EOSsubModelDIR
       for f in FileNames:
@@ -1285,7 +2048,6 @@ def CreateCondorJobs(AFS,EOS,path,o,pfx,sfx,ID,loop_params,OptionHeader,OptionLi
     if batch_sub==False:
         from alive_progress import alive_bar
         bad_pop=[]
-        print(loop_params)
         TotJobs=0
         if type(loop_params) is int:
             nest_lvl=1
@@ -1307,12 +2069,12 @@ def CreateCondorJobs(AFS,EOS,path,o,pfx,sfx,ID,loop_params,OptionHeader,OptionLi
                                required_output_file_location=EOS+'/'+path+'/'+pfx+'_'+ID+'_'+o+'_'+str(i)+'_'+str(j)+sfx
                                bar.text = f'-> Checking whether the file : {required_output_file_location}, exists...'
                                bar()
-                               SHName = AFS + '/HTCondor/SH/SH_'+pfx+'_'+'_'+ ID+'_' + str(i) + '_' + str(j) + '.sh'
-                               SUBName = AFS + '/HTCondor/SUB/SUB_'+pfx+'_'+'_'+ ID+'_' + str(i) + '_' + str(j) + '.sub'
-                               MSGName = AFS + '/HTCondor/MSG/MSG_'+pfx+'_'+'_'+ ID+'_' + str(i) + '_' + str(j)
+                               SHName = AFS + '/HTCondor/SH/SH_'+pfx+'_'+ ID+'_' + str(i) + '_' + str(j) + '.sh'
+                               SUBName = AFS + '/HTCondor/SUB/SUB_'+pfx+'_'+ ID+'_' + str(i) + '_' + str(j) + '.sub'
+                               MSGName = AFS + '/HTCondor/MSG/MSG_'+pfx+'_'+ ID+'_' + str(i) + '_' + str(j)
                                ScriptName = AFS + '/Code/Utilities/'+Sub_File
                                if os.path.isfile(required_output_file_location)!=True:
-                                  bad_pop.append([OptionHeader+[' --i ', ' --j ', ' --p ', ' --o ',' --pfx ', ' --sfx ', Exception[0]], OptionLine+[i, j, path,o, pfx, sfx, Exception[1][j][0]], SHName, SUBName, MSGName, ScriptName, 1, 'ANNADEA-'+pfx+'-'+ID, False,False])
+                                  bad_pop.append([OptionHeader+[' --i ', ' --j ', ' --p ', ' --o ',' --pfx ', ' --sfx ', Exception[0]], OptionLine+[i, j, path,o, pfx, sfx, Exception[1][j][0]], SHName, SUBName, MSGName, ScriptName, 1, 'ANNDEA-'+pfx+'-'+ID, False,False])
 
              if nest_lvl==3:
                  for i in range(len(loop_params)):
@@ -1321,17 +2083,16 @@ def CreateCondorJobs(AFS,EOS,path,o,pfx,sfx,ID,loop_params,OptionHeader,OptionLi
                                required_output_file_location=EOS+'/'+path+'/'+pfx+'_'+ID+'_'+o+'_'+str(i)+'_'+str(j)+sfx
                                bar.text = f'-> Checking whether the file : {required_output_file_location}, exists...'
                                bar()
-                               SHName = AFS + '/HTCondor/SH/SH_'+pfx+'_'+'_'+ ID+'_' + str(i) + '_' + str(j) + '_' + str(k) +'.sh'
-                               SUBName = AFS + '/HTCondor/SUB/SUB_'+pfx+'_'+'_'+ ID+'_' + str(i) + '_' + str(j) + '_' + str(k) +'.sub'
-                               MSGName = AFS + '/HTCondor/MSG/MSG_'+pfx+'_'+'_'+ ID+'_' + str(i) + '_' + str(j) + '_' + str(j)
+                               SHName = AFS + '/HTCondor/SH/SH_'+pfx+'_'+ ID+'_' + str(i) + '_' + str(j) + '_' + str(k) +'.sh'
+                               SUBName = AFS + '/HTCondor/SUB/SUB_'+pfx+'_'+ ID+'_' + str(i) + '_' + str(j) + '_' + str(k) +'.sub'
+                               MSGName = AFS + '/HTCondor/MSG/MSG_'+pfx+'_'+ ID+'_' + str(i) + '_' + str(j) + '_' + str(j)
                                ScriptName = AFS + '/Code/Utilities/'+Sub_File
                                if os.path.isfile(required_output_file_location)!=True:
-                                  bad_pop.append([OptionHeader+[' --i ', ' --j ',' --k ', ' --p ', ' --o ',' --pfx ', ' --sfx ', Exception[0]], OptionLine+[i, j,k, path,o, pfx, sfx, Exception[1][j][0]], SHName, SUBName, MSGName, ScriptName, 1, 'ANNADEA-'+pfx+'-'+ID, False,False])
+                                  bad_pop.append([OptionHeader+[' --i ', ' --j ',' --k ', ' --p ', ' --o ',' --pfx ', ' --sfx ', Exception[0]], OptionLine+[i, j,k, path,o, pfx, sfx, Exception[1][j][0]], SHName, SUBName, MSGName, ScriptName, 1, 'ANNDEA-'+pfx+'-'+ID, False,False])
         return(bad_pop)
     else:
         from alive_progress import alive_bar
         bad_pop=[]
-        print(loop_params)
         TotJobs=0
         if type(loop_params) is int:
             nest_lvl=1
@@ -1351,27 +2112,26 @@ def CreateCondorJobs(AFS,EOS,path,o,pfx,sfx,ID,loop_params,OptionHeader,OptionLi
                  for i in range(len(loop_params)):
                                bar.text = f'-> Preparing batch submission...'
                                bar()
-                               SHName = AFS + '/HTCondor/SH/SH_'+pfx+'_'+'_'+ ID+'_' + str(i) + '.sh'
-                               SUBName = AFS + '/HTCondor/SUB/SUB_'+pfx+'_'+'_'+ ID+'_' + str(i) + '.sub'
-                               MSGName = AFS + '/HTCondor/MSG/MSG_'+pfx+'_'+'_'+ ID+'_' + str(i)
+                               SHName = AFS + '/HTCondor/SH/SH_'+pfx+'_'+ ID+'_' + str(i) + '.sh'
+                               SUBName = AFS + '/HTCondor/SUB/SUB_'+pfx+'_'+ ID+'_' + str(i) + '.sub'
+                               MSGName = AFS + '/HTCondor/MSG/MSG_'+pfx+'_'+ ID+'_' + str(i)
                                ScriptName = AFS + '/Code/Utilities/'+Sub_File
-                               bad_pop.append([OptionHeader+[' --i ', ' --j ', ' --p ', ' --o ',' --pfx ', ' --sfx ', Exception[0]], OptionLine+[i, '$1', path,o, pfx, sfx, Exception[1][i][0]], SHName, SUBName, MSGName, ScriptName, loop_params[i], 'ANNADEA-'+pfx+'-'+ID, False,False])
+                               bad_pop.append([OptionHeader+[' --i ', ' --j ', ' --p ', ' --o ',' --pfx ', ' --sfx ', Exception[0]], OptionLine+[i, '$1', path,o, pfx, sfx, Exception[1][i][0]], SHName, SUBName, MSGName, ScriptName, loop_params[i], 'ANNDEA-'+pfx+'-'+ID, False,False])
              if nest_lvl==3:
                  for i in range(len(loop_params)):
                      for j in range(loop_params[i]):
                                bar.text = f'-> Preparing batch submission...'
                                bar()
-                               SHName = AFS + '/HTCondor/SH/SH_'+pfx+'_'+'_'+ ID+'_' + str(i) + '.sh'
-                               SUBName = AFS + '/HTCondor/SUB/SUB_'+pfx+'_'+'_'+ ID+'_' + str(i) +'_' + str(j)+'.sub'
-                               MSGName = AFS + '/HTCondor/MSG/MSG_'+pfx+'_'+'_'+ ID+'_' + str(i) +'_' + str(j)
+                               SHName = AFS + '/HTCondor/SH/SH_'+pfx+'_'+ ID+'_' + str(i) + '.sh'
+                               SUBName = AFS + '/HTCondor/SUB/SUB_'+pfx+'_'+ ID+'_' + str(i) +'_' + str(j)+'.sub'
+                               MSGName = AFS + '/HTCondor/MSG/MSG_'+pfx+'_'+ ID+'_' + str(i) +'_' + str(j)
                                ScriptName = AFS + '/Code/Utilities/'+Sub_File
-                               bad_pop.append([OptionHeader+[' --i ', ' --j ',' --k ', ' --p ', ' --o ',' --pfx ', ' --sfx ', Exception[0]], OptionLine+[i, j, '$1', path,o, pfx, sfx, Exception[1][i][0]], SHName, SUBName, MSGName, ScriptName, loop_params[i], 'ANNADEA-'+pfx+'-'+ID, False,False])
+                               bad_pop.append([OptionHeader+[' --i ', ' --j ',' --k ', ' --p ', ' --o ',' --pfx ', ' --sfx ', Exception[0]], OptionLine+[i, j, '$1', path,o, pfx, sfx, Exception[1][i][0]], SHName, SUBName, MSGName, ScriptName, loop_params[i], 'ANNDEA-'+pfx+'-'+ID, False,False])
         return(bad_pop)
    else:
     if batch_sub==False:
         from alive_progress import alive_bar
         bad_pop=[]
-        print(loop_params)
         TotJobs=0
         if type(loop_params) is int:
             nest_lvl=1
@@ -1387,18 +2147,29 @@ def CreateCondorJobs(AFS,EOS,path,o,pfx,sfx,ID,loop_params,OptionHeader,OptionLi
         OptionLine+=[EOS, AFS, ID]
         TotJobs=int(TotJobs)
         with alive_bar(TotJobs,force_tty=True, title='Checking the results from HTCondor') as bar:
+             if nest_lvl==1:
+                 for i in range(loop_params):
+                               required_output_file_location=EOS+'/'+path+'/'+pfx+'_'+ID+'_'+o+'_'+str(i)+sfx
+                               bar.text = f'-> Checking whether the file : {required_output_file_location}, exists...'
+                               bar()
+                               SHName = AFS + '/HTCondor/SH/SH_'+pfx+'_'+ ID+'_' + str(i) + '.sh'
+                               SUBName = AFS + '/HTCondor/SUB/SUB_'+pfx+'_'+ ID+'_' + str(i) + '.sub'
+                               MSGName = AFS + '/HTCondor/MSG/MSG_'+pfx+'_'+ ID+'_' + str(i)
+                               ScriptName = AFS + '/Code/Utilities/'+Sub_File
+                               if os.path.isfile(required_output_file_location)!=True:
+                                  bad_pop.append([OptionHeader+[' --i ', ' --p ', ' --o ',' --pfx ', ' --sfx '], OptionLine+[i, path,o, pfx, sfx], SHName, SUBName, MSGName, ScriptName, 1, 'ANNDEA-'+pfx+'-'+ID, Log,GPU])
              if nest_lvl==2:
                  for i in range(len(loop_params)):
                      for j in range(loop_params[i]):
                                required_output_file_location=EOS+'/'+path+'/'+pfx+'_'+ID+'_'+o+'_'+str(i)+'_'+str(j)+sfx
                                bar.text = f'-> Checking whether the file : {required_output_file_location}, exists...'
                                bar()
-                               SHName = AFS + '/HTCondor/SH/SH_'+pfx+'_'+'_'+ ID+'_' + str(i) + '_' + str(j) + '.sh'
-                               SUBName = AFS + '/HTCondor/SUB/SUB_'+pfx+'_'+'_'+ ID+'_' + str(i) + '_' + str(j) + '.sub'
-                               MSGName = AFS + '/HTCondor/MSG/MSG_'+pfx+'_'+'_'+ ID+'_' + str(i) + '_' + str(j)
+                               SHName = AFS + '/HTCondor/SH/SH_'+pfx+'_'+ ID+'_' + str(i) + '_' + str(j) + '.sh'
+                               SUBName = AFS + '/HTCondor/SUB/SUB_'+pfx+'_'+ ID+'_' + str(i) + '_' + str(j) + '.sub'
+                               MSGName = AFS + '/HTCondor/MSG/MSG_'+pfx+'_'+ ID+'_' + str(i) + '_' + str(j)
                                ScriptName = AFS + '/Code/Utilities/'+Sub_File
                                if os.path.isfile(required_output_file_location)!=True:
-                                  bad_pop.append([OptionHeader+[' --i ', ' --j ', ' --p ', ' --o ',' --pfx ', ' --sfx '], OptionLine+[i, j, path,o, pfx, sfx], SHName, SUBName, MSGName, ScriptName, 1, 'ANNADEA-'+pfx+'-'+ID, False,False])
+                                  bad_pop.append([OptionHeader+[' --i ', ' --j ', ' --p ', ' --o ',' --pfx ', ' --sfx '], OptionLine+[i, j, path,o, pfx, sfx], SHName, SUBName, MSGName, ScriptName, 1, 'ANNDEA-'+pfx+'-'+ID, False,False])
 
              if nest_lvl==3:
                  for i in range(len(loop_params)):
@@ -1407,17 +2178,16 @@ def CreateCondorJobs(AFS,EOS,path,o,pfx,sfx,ID,loop_params,OptionHeader,OptionLi
                                required_output_file_location=EOS+'/'+path+'/'+pfx+'_'+ID+'_'+o+'_'+str(i)+'_'+str(j) + '_' + str(k)+sfx
                                bar.text = f'-> Checking whether the file : {required_output_file_location}, exists...'
                                bar()
-                               SHName = AFS + '/HTCondor/SH/SH_'+pfx+'_'+'_'+ ID+'_' + str(i) + '_' + str(j) + '_' + str(k) +'.sh'
-                               SUBName = AFS + '/HTCondor/SUB/SUB_'+pfx+'_'+'_'+ ID+'_' + str(i) + '_' + str(j) + '_' + str(k) +'.sub'
-                               MSGName = AFS + '/HTCondor/MSG/MSG_'+pfx+'_'+'_'+ ID+'_' + str(i) + '_' + str(j) + '_' + str(j)
+                               SHName = AFS + '/HTCondor/SH/SH_'+pfx+'_'+ ID+'_' + str(i) + '_' + str(j) + '_' + str(k) +'.sh'
+                               SUBName = AFS + '/HTCondor/SUB/SUB_'+pfx+'_'+ ID+'_' + str(i) + '_' + str(j) + '_' + str(k) +'.sub'
+                               MSGName = AFS + '/HTCondor/MSG/MSG_'+pfx+'_'+ ID+'_' + str(i) + '_' + str(j) + '_' + str(j)
                                ScriptName = AFS + '/Code/Utilities/'+Sub_File
                                if os.path.isfile(required_output_file_location)!=True:
-                                  bad_pop.append([OptionHeader+[' --i ', ' --j ',' --k ', ' --p ', ' --o ',' --pfx ', ' --sfx '], OptionLine+[i, j,k, path,o, pfx, sfx], SHName, SUBName, MSGName, ScriptName, 1, 'ANNADEA-'+pfx+'-'+ID, False,False])
+                                  bad_pop.append([OptionHeader+[' --i ', ' --j ',' --k ', ' --p ', ' --o ',' --pfx ', ' --sfx '], OptionLine+[i, j,k, path,o, pfx, sfx], SHName, SUBName, MSGName, ScriptName, 1, 'ANNDEA-'+pfx+'-'+ID, False,False])
         return(bad_pop)
     else:
         from alive_progress import alive_bar
         bad_pop=[]
-        print(loop_params)
         TotJobs=0
         if type(loop_params) is int:
             nest_lvl=1
@@ -1437,69 +2207,91 @@ def CreateCondorJobs(AFS,EOS,path,o,pfx,sfx,ID,loop_params,OptionHeader,OptionLi
                  for i in range(len(loop_params)):
                                bar.text = f'-> Preparing batch submission...'
                                bar()
-                               SHName = AFS + '/HTCondor/SH/SH_'+pfx+'_'+'_'+ ID+'_' + str(i) + '.sh'
-                               SUBName = AFS + '/HTCondor/SUB/SUB_'+pfx+'_'+'_'+ ID+'_' + str(i) + '.sub'
-                               MSGName = AFS + '/HTCondor/MSG/MSG_'+pfx+'_'+'_'+ ID+'_' + str(i)
+                               SHName = AFS + '/HTCondor/SH/SH_'+pfx+'_'+ ID+'_' + str(i) + '.sh'
+                               SUBName = AFS + '/HTCondor/SUB/SUB_'+pfx+'_'+ ID+'_' + str(i) + '.sub'
+                               MSGName = AFS + '/HTCondor/MSG/MSG_'+pfx+'_'+ ID+'_' + str(i)
                                ScriptName = AFS + '/Code/Utilities/'+Sub_File
-                               bad_pop.append([OptionHeader+[' --i ', ' --j ', ' --p ', ' --o ',' --pfx ', ' --sfx '], OptionLine+[i, '$1', path,o, pfx, sfx], SHName, SUBName, MSGName, ScriptName, loop_params[i], 'ANNADEA-'+pfx+'-'+ID, False,False])
+                               bad_pop.append([OptionHeader+[' --i ', ' --j ', ' --p ', ' --o ',' --pfx ', ' --sfx '], OptionLine+[i, '$1', path,o, pfx, sfx], SHName, SUBName, MSGName, ScriptName, loop_params[i], 'ANNDEA-'+pfx+'-'+ID, False,False])
              if nest_lvl==3:
                  for i in range(len(loop_params)):
                      for j in range(len(loop_params[i])):
                                bar.text = f'-> Preparing batch submission...'
                                bar()
-                               SHName = AFS + '/HTCondor/SH/SH_'+pfx+'_'+'_'+ ID+'_' + str(i) + '.sh'
-                               SUBName = AFS + '/HTCondor/SUB/SUB_'+pfx+'_'+'_'+ ID+'_' + str(i) +'_' + str(j)+'.sub'
-                               MSGName = AFS + '/HTCondor/MSG/MSG_'+pfx+'_'+'_'+ ID+'_' + str(i) +'_' + str(j)
+                               SHName = AFS + '/HTCondor/SH/SH_'+pfx+'_'+ ID+'_' + str(i) + '.sh'
+                               SUBName = AFS + '/HTCondor/SUB/SUB_'+pfx+'_'+ ID+'_' + str(i) +'_' + str(j)+'.sub'
+                               MSGName = AFS + '/HTCondor/MSG/MSG_'+pfx+'_'+ ID+'_' + str(i) +'_' + str(j)
                                ScriptName = AFS + '/Code/Utilities/'+Sub_File
-                               bad_pop.append([OptionHeader+[' --i ', ' --j ',' --k ', ' --p ', ' --o ',' --pfx ', ' --sfx '], OptionLine+[i, j, '$1', path,o, pfx, sfx], SHName, SUBName, MSGName, ScriptName, loop_params[i][j], 'ANNADEA-'+pfx+'-'+ID, False,False])
+                               bad_pop.append([OptionHeader+[' --i ', ' --j ',' --k ', ' --p ', ' --o ',' --pfx ', ' --sfx '], OptionLine+[i, j, '$1', path,o, pfx, sfx], SHName, SUBName, MSGName, ScriptName, loop_params[i][j], 'ANNDEA-'+pfx+'-'+ID, False,False])
+             if nest_lvl==1:
+                               bar.text = f'-> Preparing batch submission...'
+                               bar()
+                               SHName = AFS + '/HTCondor/SH/SH_'+pfx+'_'+ ID+'.sh'
+                               SUBName = AFS + '/HTCondor/SUB/SUB_'+pfx+'_'+ ID+'.sub'
+                               MSGName = AFS + '/HTCondor/MSG/MSG_'+pfx+'_'+ ID
+                               ScriptName = AFS + '/Code/Utilities/'+Sub_File
+                               bad_pop.append([OptionHeader+[' --i ', ' --p ', ' --o ',' --pfx ', ' --sfx '], OptionLine+['$1', path,o, pfx, sfx], SHName, SUBName, MSGName, ScriptName, loop_params, 'ANNDEA-'+pfx+'-'+ID, False,False])
         return(bad_pop)
    return []
-def SubmitJobs2Condor(job):
-    SHName = job[2]
-    SUBName = job[3]
-    if job[8]:
-        MSGName=job[4]
-    OptionLine = job[0][0]+str(job[1][0])
-    for line in range(1,len(job[0])):
-        OptionLine+=job[0][line]
-        OptionLine+=str(job[1][line])
-    f = open(SUBName, "w")
-    f.write("executable = " + SHName)
-    f.write("\n")
-    if job[8]:
-        f.write("output ="+MSGName+".out")
+def SubmitJobs2Condor(job,local=False):
+    if local:
+       OptionLine = job[0][0]+str(job[1][0])
+       for line in range(1,len(job[0])):
+                OptionLine+=job[0][line]
+                OptionLine+=str(job[1][line])
+                TotalLine = 'python3 ' + job[5] + OptionLine
+       submission_line='python3 '+job[5][:-1]+OptionLine
+       for j in range(0,job[6]):
+         act_submission_line=submission_line.replace('$1',str(j))
+         subprocess.call([act_submission_line],shell=True)
+         print(bcolors.OKGREEN+act_submission_line+" has been successfully executed"+bcolors.ENDC)
+    else:
+        SHName = job[2]
+        SUBName = job[3]
+        if job[8]:
+            MSGName=job[4]
+        OptionLine = job[0][0]+str(job[1][0])
+        for line in range(1,len(job[0])):
+            OptionLine+=job[0][line]
+            OptionLine+=str(job[1][line])
+        f = open(SUBName, "w")
+        f.write("executable = " + SHName)
         f.write("\n")
-        f.write("error ="+MSGName+".err")
+        if job[8]:
+            f.write("output ="+MSGName+".out")
+            f.write("\n")
+            f.write("error ="+MSGName+".err")
+            f.write("\n")
+            f.write("log ="+MSGName+".log")
+            f.write("\n")
+        f.write('requirements = (CERNEnvironment =!= "qa")')
         f.write("\n")
-        f.write("log ="+MSGName+".log")
+        if job[9]:
+            f.write('request_gpus = 1')
+            f.write("\n")
+        f.write('arguments = $(Process)')
         f.write("\n")
-    f.write('requirements = (CERNEnvironment =!= "qa")')
-    f.write("\n")
-    if job[9]:
-        f.write('request_gpus = 1')
+        f.write('+SoftUsed = '+'"'+job[7]+'"')
         f.write("\n")
-    f.write('arguments = $(Process)')
-    f.write("\n")
-    f.write('+SoftUsed = '+'"'+job[7]+'"')
-    f.write("\n")
-    f.write('transfer_output_files = ""')
-    f.write("\n")
-    f.write('+JobFlavour = "workday"')
-    f.write("\n")
-    f.write('queue ' + str(job[6]))
-    f.write("\n")
-    f.close()
-    TotalLine = 'python3 ' + job[5] + OptionLine
-    f = open(SHName, "w")
-    f.write("#!/bin/bash")
-    f.write("\n")
-    f.write("set -ux")
-    f.write("\n")
-    f.write(TotalLine)
-    f.write("\n")
-    f.close()
-    subprocess.call(['condor_submit', SUBName])
-    print(TotalLine, " has been successfully submitted")
+        f.write('transfer_output_files = ""')
+        f.write("\n")
+        f.write('+JobFlavour = "workday"')
+        f.write("\n")
+        f.write('queue ' + str(job[6]))
+        f.write("\n")
+        f.close()
+        TotalLine = 'python3 ' + job[5] + OptionLine
+        f = open(SHName, "w")
+        f.write("#!/bin/bash")
+        f.write("\n")
+        f.write("set -ux")
+        f.write("\n")
+        f.write(TotalLine)
+        f.write("\n")
+        f.close()
+        subprocess.call(['condor_submit', SUBName])
+        print(TotalLine, " has been successfully submitted")
+
+
 
 def ErrorOperations(a,b,a_e,b_e,mode):
     if mode=='+' or mode == '-':
@@ -1511,3 +2303,28 @@ def ErrorOperations(a,b,a_e,b_e,mode):
     if mode=='/':
         c_e=(a/b)*math.sqrt(((a_e/a)**2) + ((b_e/b)**2))
         return(c_e)
+
+def LoadRenderImages(Seeds,StartSeed,EndSeed,num_classes=2):
+    import tensorflow as tf
+    NewSeeds=Seeds[StartSeed-1:min(EndSeed,len(Seeds))]
+    ImagesY=np.empty([len(NewSeeds),1])
+
+    ImagesX=np.empty([len(NewSeeds),NewSeeds[0].H,NewSeeds[0].W,NewSeeds[0].L],dtype=np.bool)
+    for im in range(len(NewSeeds)):
+        if hasattr(NewSeeds[im],'Label'):
+           ImagesY[im]=int(float(NewSeeds[im].Label))
+        else:
+           ImagesY[im]=0
+        BlankRenderedImage=[]
+        for x in range(-NewSeeds[im].bX,NewSeeds[im].bX):
+          for y in range(-NewSeeds[im].bY,NewSeeds[im].bY):
+            for z in range(0,NewSeeds[im].bZ):
+             BlankRenderedImage.append(0)
+        RenderedImage = np.array(BlankRenderedImage)
+        RenderedImage = np.reshape(RenderedImage,(NewSeeds[im].H,NewSeeds[im].W,NewSeeds[im].L))
+        for Hits in NewSeeds[im].TrackPrint:
+                   RenderedImage[Hits[0]+NewSeeds[im].bX][Hits[1]+NewSeeds[im].bY][Hits[2]]=1
+        ImagesX[im]=RenderedImage
+    ImagesX= ImagesX[..., np.newaxis]
+    ImagesY=tf.keras.utils.to_categorical(ImagesY,num_classes)
+    return (ImagesX,ImagesY)

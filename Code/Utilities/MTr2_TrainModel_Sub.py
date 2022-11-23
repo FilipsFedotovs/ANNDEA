@@ -29,7 +29,7 @@ class bcolors:
 ########################## Setting the parser ################################################
 parser = argparse.ArgumentParser(description='select cut parameters')
 parser.add_argument('--ModelParams',help="Please enter the model params: '[<Number of MLP layers>, <'MLP hidden size'>, <Number of IN layers>, <'IN hidden size'>]'", default='[3,80,3,80]')
-parser.add_argument('--TrainParams',help="Please enter the train params: '[<Session No>, <Learning Rate>, <Batch size>, <Epochs>]'", default='[1, 0.0001, 4, 10]')
+parser.add_argument('--TrainParams',help="Please enter the train params: '[<Learning Rate>, <Batch size>, <Epochs>, <Fraction>]'", default='[ 0.0001, 4, 10 ,1]')
 parser.add_argument('--AFS',help="Please enter the user afs directory", default='.')
 parser.add_argument('--EOS',help="Please enter the user eos directory", default='.')
 parser.add_argument('--TrainSampleID',help="Give name of the training ", default='SHIP_TrainSample_v1')
@@ -48,21 +48,25 @@ import sys
 sys.path.insert(1, AFS_DIR+'/Code/Utilities/')
 import UtilityFunctions as UF
 #Load data configuration
-EOSsubDIR=EOS_DIR+'/'+'ANNADEA'
+EOSsubDIR=EOS_DIR+'/'+'ANNDEA'
 EOSsubModelDIR=EOSsubDIR+'/'+'Models'
 
 
 ##############################################################################################################################
 ######################################### Starting the program ################################################################
 print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
-print(bcolors.HEADER+"#########################  Initialising     ANNADEA   model creation module   #########################"+bcolors.ENDC)
+print(bcolors.HEADER+"#########################  Initialising     ANNDEA   model creation module     #########################"+bcolors.ENDC)
 print(bcolors.HEADER+"#########################              Written by Filips Fedotovs              #########################"+bcolors.ENDC)
 print(bcolors.HEADER+"#########################                 PhD Student at UCL                   #########################"+bcolors.ENDC)
 print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
 print(UF.TimeStamp(), bcolors.OKGREEN+"Modules Have been imported successfully..."+bcolors.ENDC)
+
+#Ptotect from division by zero
 def zero_divide(a, b):
     if (b==0): return 0
     return a/b
+
+#The function bellow calculates binary classification stats
 def binary_classification_stats(output, y, thld):
     TP = torch.sum((y==1) & (output>thld))
     TN = torch.sum((y==0) & (output<thld))
@@ -84,17 +88,13 @@ def train(model, device, sample, optimizer):
         data = HC.to(device)
         if (len(data.x)==0 or len(data.edge_index)==0): continue
 
-#        try:
         iterator+=1
         w = model(data.x, data.edge_index, data.edge_attr)
         y, w = data.y.float(), w.squeeze(1)
-        # except:
-        #     print('Erroneus data set: ',data.x, data.edge_index, data.edge_attr, 'skipping these samples...')
-        #     continue
         #edge weight loss
         loss_w = F.binary_cross_entropy(w, y, reduction='mean')
         # optimize total loss
-        if iterator%TrainParams[1]==0:
+        if iterator%TrainParams[1]==0: #Update gradients by batch
            optimizer.zero_grad()
            loss_w.backward()
            optimizer.step()
@@ -104,8 +104,9 @@ def train(model, device, sample, optimizer):
     loss_w = np.nanmean(losses_w)
     return loss_w,iterator
 
+#Deriving validation metrics. Please note that in this function the optimal acceptance is calculated. This is unique to the tracker module
 def validate(model, device, sample):
-    model.eval()
+    model.eval() #Specific feature of pytorch - it has 2 modes eval and train that need to be selected depending on the evaluation.
     opt_thlds, accs, losses = [], [], []
     for HC in sample:
         data = HC.to(device)
@@ -122,7 +123,6 @@ def validate(model, device, sample):
             print('Erroneus data set: ',data.x, data.edge_index, data.edge_attr, 'skipping these samples...')
             continue
         diff, opt_thld, opt_acc = 100, 0, 0
-        best_tpr, best_tnr = 0, 0
         for thld in np.arange(0.01, 0.6, 0.01):
             acc, TPR, TNR = binary_classification_stats(output, y, thld)
             delta = abs(TPR-TNR)
@@ -133,6 +133,7 @@ def validate(model, device, sample):
         losses.append(loss)
     return np.nanmean(opt_thlds),np.nanmean(losses),np.nanmean(accs)
 
+#Deriving testing metrics
 def test(model, device, sample, thld):
     model.eval()
     losses, accs = [], []
@@ -155,32 +156,41 @@ def test(model, device, sample, thld):
             losses.append(loss.item())
     return np.nanmean(losses), np.nanmean(accs)
 
+#Keep bellow just in case,but if not needed will be scrapped
+# TrainSampleInputMeta=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_info.pkl'
+# print(UF.TimeStamp(),'Loading the data file ',bcolors.OKBLUE+TrainSampleInputMeta+bcolors.ENDC)
+# MetaInput=UF.PickleOperations(TrainSampleInputMeta,'r', 'N/A')
+# print(MetaInput[1])
+# Meta=MetaInput[0]
+# TrainSamples=[]
+# ValSamples=[]
+# TestSamples=[]
+# for i in range(1,Meta.no_sets+1):
+#         flocation=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TTr_OUTPUT_'+str(i)+'.pkl'
+#         print(UF.TimeStamp(),'Loading data from ',bcolors.OKBLUE+flocation+bcolors.ENDC)
+#         TrainClusters=UF.PickleOperations(flocation,'r', 'N/A')
+#         TrainClusters=TrainClusters[0]
+#         TrainFraction=int(math.floor(len(TrainClusters)*(1.0-(Meta.testRatio+Meta.valRatio))))
+#         ValFraction=int(math.ceil(len(TrainClusters)*Meta.valRatio))
+#         for smpl in range(0,TrainFraction):
+#            if TrainClusters[smpl].ClusterGraph.num_edges>0:
+#              TrainSamples.append(TrainClusters[smpl].ClusterGraph)
+#         for smpl in range(TrainFraction,TrainFraction+ValFraction):
+#             if TrainClusters[smpl].ClusterGraph.num_edges>0:
+#              ValSamples.append(TrainClusters[smpl].ClusterGraph)
+#         for smpl in range(TrainFraction+ValFraction,len(TrainClusters)):
+#             if TrainClusters[smpl].ClusterGraph.num_edges>0:
+#              TestSamples.append(TrainClusters[smpl].ClusterGraph)
+# print(UF.TimeStamp(), bcolors.OKGREEN+"Train data has loaded and analysed successfully..."+bcolors.ENDC)
 
-TrainSampleInputMeta=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/'+TrainSampleID+'_info.pkl'
-print(UF.TimeStamp(),'Loading the data file ',bcolors.OKBLUE+TrainSampleInputMeta+bcolors.ENDC)
-MetaInput=UF.PickleOperations(TrainSampleInputMeta,'r', 'N/A')
-print(MetaInput[1])
-Meta=MetaInput[0]
-TrainSamples=[]
-ValSamples=[]
-TestSamples=[]
-for i in range(1,Meta.no_sets+1):
-        flocation=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/'+TrainSampleID+'_TH_OUTPUT_'+str(i)+'.pkl'
-        print(UF.TimeStamp(),'Loading data from ',bcolors.OKBLUE+flocation+bcolors.ENDC)
-        TrainClusters=UF.PickleOperations(flocation,'r', 'N/A')
-        TrainClusters=TrainClusters[0]
-        TrainFraction=int(math.floor(len(TrainClusters)*(1.0-(Meta.testRatio+Meta.valRatio))))
-        ValFraction=int(math.ceil(len(TrainClusters)*Meta.valRatio))
-        for smpl in range(0,TrainFraction):
-           if TrainClusters[smpl].ClusterGraph.num_edges>0:
-             TrainSamples.append(TrainClusters[smpl].ClusterGraph)
-        for smpl in range(TrainFraction,TrainFraction+ValFraction):
-            if TrainClusters[smpl].ClusterGraph.num_edges>0:
-             ValSamples.append(TrainClusters[smpl].ClusterGraph)
-        for smpl in range(TrainFraction+ValFraction,len(TrainClusters)):
-            if TrainClusters[smpl].ClusterGraph.num_edges>0:
-             TestSamples.append(TrainClusters[smpl].ClusterGraph)
-print(UF.TimeStamp(), bcolors.OKGREEN+"Train data has loaded and analysed successfully..."+bcolors.ENDC)
+
+output_train_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_SAMPLES'+'.pkl'
+TrainSamples=UF.PickleOperations(output_train_file_location,'r', 'N/A')[0]
+output_val_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_SAMPLES'+'.pkl'
+ValSamples=UF.PickleOperations(output_val_file_location,'r', 'N/A')[0]
+output_test_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TEST_SAMPLES'+'.pkl'
+TestSamples=UF.PickleOperations(output_test_file_location,'r', 'N/A')[0]
+
 
 def main(self):
     print(UF.TimeStamp(),'Starting the training process... ')
@@ -201,8 +211,13 @@ def main(self):
     except:
            print(UF.TimeStamp(), bcolors.WARNING+"Model/state data files are missing, skipping this step..." +bcolors.ENDC)
     records=[]
+    TrainSampleSize=len(TrainSamples)
+    fraction_size=math.ceil(TrainSampleSize/TrainParams[3])
     for epoch in range(0, TrainParams[2]):
-         train_loss, itr= train(model, device,TrainSamples, optimizer)
+       for fraction in range(0, TrainParams[3]):
+         sp=fraction*fraction_size
+         ep=min((fraction+1)*fraction_size,TrainSampleSize)
+         train_loss, itr= train(model, device,TrainSamples[sp:ep], optimizer)
          thld, val_loss,val_acc = validate(model, device, ValSamples)
          test_loss, test_acc = test(model, device,TestSamples, thld)
          scheduler.step()
