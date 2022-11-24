@@ -85,7 +85,7 @@ print(bcolors.HEADER+"##########################################################
 print(UF.TimeStamp(),bcolors.BOLD+'Stage 0:'+bcolors.ENDC+' Taking the file that has been supplied and creating the compact copies for the traing set generation...')
 output_file_location=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/MH1_'+TrainSampleID+'_hits.csv'
 if os.path.isfile(output_file_location)==False or Mode=='RESET':
-    data = PandasUtility.load_data()
+    data = PandasUtility.load_data(input_file_location)
     usecols=[PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty]
     data = PandasUtility.select_columns(data, usecols)
     data = PandasUtility.remove_unreconstructed_hits(data)
@@ -110,7 +110,6 @@ if os.path.isfile(output_file_location)==False or Mode=='RESET':
     data = PandasUtility.convert_ID_to_string(data)
     if SliceData:
         data = PandasUtility.slice_hit_data(data, Xmin, Xmax, Ymin, Ymax)
-
     data = PandasUtility.remove_ill_mc_tracks(data)  
     PandasUtility.save_data(data, output_file_location)
 

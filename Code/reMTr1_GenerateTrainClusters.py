@@ -120,81 +120,42 @@ print(bcolors.HEADER+"##########################################################
 print(UF.TimeStamp(),bcolors.BOLD+'Stage 0:'+bcolors.ENDC+' Taking the file that has been supplied and creating the compact copies for the training set generation...')
 output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MTr1_'+TrainSampleID+'_hits.csv' #This is the compact data file that contains only relevant columns and rows
 if os.path.isfile(output_file_location)==False or Mode=='RESET':
-        print(UF.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
-        data=pd.read_csv(input_file_location,
-                    header=0,
-                    usecols=[PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty])[[PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty]]
-        total_rows=len(data.axes[0])
-        data[PM.Hit_ID] = data[PM.Hit_ID].astype(str) #We try to keep HIT ids as strings
-        print(UF.TimeStamp(),'The raw data has ',total_rows,' hits')
-        print(UF.TimeStamp(),'Removing unreconstructed hits...')
-        data=data.dropna() #Removing nulls (not really applicable for this module but I put it just in case)
-        final_rows=len(data.axes[0])
-        print(UF.TimeStamp(),'The cleaned data has ',final_rows,' hits')
-        data[PM.Hit_ID] = data[PM.Hit_ID].astype(int)
-        data[PM.Hit_ID] = data[PM.Hit_ID].astype(str) #Why I am doing this twice? Need to investigate
-        if SliceData: #Keeping only the relevant slice. Only works if we set at least one parameter (Xmin for instance) to non-zero
-             print(UF.TimeStamp(),'Slicing the data...')
-             data=data.drop(data.index[(data[PM.x] > Xmax) | (data[PM.x] < Xmin) | (data[PM.y] > Ymax) | (data[PM.y] < Ymin)])
-             final_rows=len(data.axes[0])
-             print(UF.TimeStamp(),'The sliced data has ',final_rows,' hits')
-        data=data.rename(columns={PM.x: "x"})
-        data=data.rename(columns={PM.y: "y"})
-        data=data.rename(columns={PM.z: "z"})
-        data=data.rename(columns={PM.tx: "tx"})
-        data=data.rename(columns={PM.ty: "ty"})
-        data=data.rename(columns={PM.Hit_ID: "Hit_ID"})
-        data.to_csv(output_file_location,index=False)
-        print(UF.TimeStamp(), bcolors.OKGREEN+"The segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+output_file_location+bcolors.ENDC)
+    data = PandasUtility.load_data(input_file_location)
+    usecols=[PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty]
+    data = PandasUtility.select_columns(data, usecols)
+    data = PandasUtility.remove_unreconstructed_hits(data)
+
+    data = PandasUtility.rename_hit_columns(data)
+    data = PandasUtility.convert_ID_to_string(data)
+    if SliceData:
+        data = PandasUtility.slice_hit_data(data, Xmin, Xmax, Ymin, Ymax)
+    PrintingUtility.print_message("Saving segment data...")
+    PandasUtility.save_data(data, output_file_location)
 
 
 ###################### Phase 2 - Eval Data ######################################################
-output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/ETr1_'+TrainSampleID+'_hits.csv' #This is similar to one above but also contains MC data
+#This is similar to one above but also contains MC data
+output_file_location=EOS_DIR+'/ANNADEA/Data/TRAIN_SET/ETr1_'+TrainSampleID+'_hits.csv' 
 if os.path.isfile(output_file_location)==False or Mode=='RESET':
     print(UF.TimeStamp(),'Creating Evaluation file...')
-    print(UF.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
-    data=pd.read_csv(input_file_location,
-                header=0,
-                usecols=[PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty,PM.MC_Track_ID,PM.MC_Event_ID])[[PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty,PM.MC_Track_ID,PM.MC_Event_ID]]
 
-    total_rows=len(data.axes[0])
-    print(UF.TimeStamp(),'The raw data has ',total_rows,' hits')
-    print(UF.TimeStamp(),'Removing unreconstructed hits...')
-    data=data.dropna() #Unlikely to have in the hit data but keeping here just in case to prevent potential problems downstream
-    final_rows=len(data.axes[0])
-    print(UF.TimeStamp(),'The cleaned data has ',final_rows,' hits')
-    data[PM.MC_Event_ID] = data[PM.MC_Event_ID].astype(str)
-    data[PM.MC_Track_ID] = data[PM.MC_Track_ID].astype(str)
-    data[PM.Hit_ID] = data[PM.Hit_ID].astype(str)
-    data['MC_Mother_Track_ID'] = data[PM.MC_Event_ID] + '-' + data[PM.MC_Track_ID] #Track IDs are not unique and repeat for each event: crea
-    data=data.drop([PM.MC_Event_ID],axis=1)
-    data=data.drop([PM.MC_Track_ID],axis=1)
+    data = PandasUtility.load_data(input_file_location)
+    usecols=[PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty,PM.MC_Track_ID,PM.MC_Event_ID]
+    data = PandasUtility.select_columns(data, usecols)
+    data = PandasUtility.remove_unreconstructed_hits(data)
+    data = PandasUtility.rename_hit_columns(data)
+    data = PandasUtility.convert_ID_to_string(data)
     if SliceData:
-         print(UF.TimeStamp(),'Slicing the data...')
-         data=data.drop(data.index[(data[PM.x] > Xmax) | (data[PM.x] < Xmin) | (data[PM.y] > Ymax) | (data[PM.y] < Ymin)])
-         final_rows=len(data.axes[0])
-         print(UF.TimeStamp(),'The sliced data has ',final_rows,' hits')
+        data = PandasUtility.slice_hit_data(data, Xmin, Xmax, Ymin, Ymax)
+
     #Even if particle leaves one hit it is still assigned MC Track ID - we cannot reconstruct these so we discard them so performance metrics are not skewed
-    print(UF.TimeStamp(),'Removing tracks which have less than',PM.MinHitsTrack,'hits...')
-    track_no_data=data.groupby(['MC_Mother_Track_ID'],as_index=False).count()
-    track_no_data=track_no_data.drop([PM.y,PM.z,PM.tx,PM.ty,PM.Hit_ID],axis=1)
-    track_no_data=track_no_data.rename(columns={PM.x: "MC_Track_No"})
-    new_combined_data=pd.merge(data, track_no_data, how="left", on=['MC_Mother_Track_ID'])
-    new_combined_data = new_combined_data[new_combined_data.MC_Track_No >= PM.MinHitsTrack]  #We are only interested in MC Tracks that have a certain number of hits
-    new_combined_data = new_combined_data.drop(["MC_Track_No"],axis=1)
-    new_combined_data=new_combined_data.sort_values(['MC_Mother_Track_ID',PM.z],ascending=[1,1])
-    grand_final_rows=len(new_combined_data.axes[0])
-    print(UF.TimeStamp(),'The cleaned data has ',grand_final_rows,' hits')
-    new_combined_data=new_combined_data.rename(columns={PM.x: "x"})
-    new_combined_data=new_combined_data.rename(columns={PM.y: "y"})
-    new_combined_data=new_combined_data.rename(columns={PM.z: "z"})
-    new_combined_data=new_combined_data.rename(columns={PM.tx: "tx"})
-    new_combined_data=new_combined_data.rename(columns={PM.ty: "ty"})
-    new_combined_data=new_combined_data.rename(columns={PM.Hit_ID: "Hit_ID"})
-    new_combined_data.to_csv(output_file_location,index=False)
-    print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
-    print(UF.TimeStamp(), bcolors.OKGREEN+"The track segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+output_file_location+bcolors.ENDC)
+    #We are only interested in MC Tracks that have a certain number of hits
+    data = PandasUtility.remove_ill_mc_tracks(data)  
+    PandasUtility.save_data(data, output_file_location)
+
+print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
 print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 0 has successfully completed'+bcolors.ENDC)
+
 ########################################     Preset framework parameters    #########################################
 
 print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)

@@ -78,7 +78,7 @@ def save_data(dataFrame, output_file_location):
         bcolors.ENDC
     )
 
-
+# remove tracks with less than some number of hits
 def remove_ill_mc_tracks(dataFrame)
     Printing.print_message(
         'Removing tracks which have less than'+
