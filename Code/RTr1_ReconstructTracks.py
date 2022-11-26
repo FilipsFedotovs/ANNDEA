@@ -457,7 +457,7 @@ while status<5:
         for k in range(0,Zsteps):
                 JobSets.append([])
                 for j in range(0,Ysteps):
-                     JobSets[k].append([Xsteps])
+                     JobSets[k].append(Xsteps)
                      # for i in range(0,Xsteps):
                      #         JobSets[k][j].append(i)
 
