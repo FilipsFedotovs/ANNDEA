@@ -73,6 +73,8 @@ for c in config:
     if c[0]=='PY_DIR':
         PY_DIR=c[1]
 csv_reader.close()
+import sys
+sys.path.insert(1, AFS_DIR+'/Code/Utilities/')
 import UtilityFunctions as UF #This is where we keep routine utility functions
 import Parameters as PM #This is where we keep framework global parameters
 
