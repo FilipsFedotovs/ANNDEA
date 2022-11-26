@@ -2045,7 +2045,7 @@ def TrainCleanUp(AFS_DIR, EOS_DIR, Process, FileNames, ProcessId):
       folder =  AFS_DIR+'/HTCondor/MSG'
       CleanFolder(folder,'MSG_'+Process+'_')
 
-def CreateCondorJobs(AFS,EOS,path,o,pfx,sfx,ID,loop_params,OptionHeader,OptionLine,Sub_File,batch_sub=False,Exception=['',''], Log=False, GPU=False):
+def CreateCondorJobs(AFS,EOS,PY,path,o,pfx,sfx,ID,loop_params,OptionHeader,OptionLine,Sub_File,batch_sub=False,Exception=['',''], Log=False, GPU=False):
    if Exception[0]==" --PlateZ ":
     if batch_sub==False:
         from alive_progress import alive_bar
@@ -2061,8 +2061,8 @@ def CreateCondorJobs(AFS,EOS,path,o,pfx,sfx,ID,loop_params,OptionHeader,OptionLi
             nest_lvl=3
             for lp in loop_params:
                 TotJobs+=np.sum(lp)
-        OptionHeader+=[' --EOS '," --AFS ", " --BatchID "]
-        OptionLine+=[EOS, AFS, ID]
+        OptionHeader+=[' --EOS '," --AFS ", " --PY ", " --BatchID "]
+        OptionLine+=[EOS, AFS, PY, ID]
         TotJobs=int(TotJobs)
         with alive_bar(TotJobs,force_tty=True, title='Checking the results from HTCondor') as bar:
              if nest_lvl==2:
@@ -2106,8 +2106,8 @@ def CreateCondorJobs(AFS,EOS,path,o,pfx,sfx,ID,loop_params,OptionHeader,OptionLi
             nest_lvl=3
             for lp in loop_params:
                 TotJobs+=np.sum(lp)
-        OptionHeader+=[' --EOS '," --AFS ", " --BatchID "]
-        OptionLine+=[EOS, AFS, ID]
+        OptionHeader+=[' --EOS '," --AFS ", " --PY ", " --BatchID "]
+        OptionLine+=[EOS, AFS, PY, ID]
         TotJobs=int(TotJobs)
         with alive_bar(TotJobs,force_tty=True, title='Checking the results from HTCondor') as bar:
              if nest_lvl==2:
@@ -2145,8 +2145,8 @@ def CreateCondorJobs(AFS,EOS,path,o,pfx,sfx,ID,loop_params,OptionHeader,OptionLi
             nest_lvl=3
             for lp in loop_params:
                 TotJobs+=np.sum(lp)
-        OptionHeader+=[' --EOS '," --AFS ", " --BatchID "]
-        OptionLine+=[EOS, AFS, ID]
+        OptionHeader+=[' --EOS '," --AFS ", " --PY ", " --BatchID "]
+        OptionLine+=[EOS, AFS, PY, ID]
         TotJobs=int(TotJobs)
         with alive_bar(TotJobs,force_tty=True, title='Checking the results from HTCondor') as bar:
              if nest_lvl==1:
@@ -2201,8 +2201,8 @@ def CreateCondorJobs(AFS,EOS,path,o,pfx,sfx,ID,loop_params,OptionHeader,OptionLi
             nest_lvl=3
             for lp in loop_params:
                 TotJobs+=np.sum(lp)
-        OptionHeader+=[' --EOS '," --AFS ", " --BatchID "]
-        OptionLine+=[EOS, AFS, ID]
+        OptionHeader+=[' --EOS '," --AFS ", " --PY ", " --BatchID "]
+        OptionLine+=[EOS, AFS, PY, ID]
         TotJobs=int(TotJobs)
         with alive_bar(TotJobs,force_tty=True, title='Checking the results from HTCondor') as bar:
              if nest_lvl==2:
