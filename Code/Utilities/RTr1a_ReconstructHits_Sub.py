@@ -39,8 +39,6 @@ if PY_DIR!='':
     sys.path=[PY_DIR]
 sys.path.append(AFS_DIR+'/Code/Utilities')
 import pandas as pd #We use Panda for a routine data processing
-print(sys.path)
-exit()
 ######################################## Set variables  #############################################################
 Z_overlap=int(args.Z_overlap)
 Y_overlap=int(args.Y_overlap)
@@ -70,6 +68,7 @@ import UtilityFunctions as UF #This is where we keep routine utility functions
 input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RTr1_'+RecBatchID+'_hits.csv'
 
 print(UF.TimeStamp(), "Modules Have been imported successfully...")
+exit()
 print(UF.TimeStamp(),'Loading pre-selected data from ',input_file_location)
 
 data=pd.read_csv(input_file_location,header=0,
