@@ -18,6 +18,7 @@ parser.add_argument('--stepY',help="Enter Y step size", default='0')
 parser.add_argument('--stepZ',help="Enter Z step size", default='0')
 parser.add_argument('--EOS',help="EOS directory location", default='.')
 parser.add_argument('--AFS',help="AFS directory location", default='.')
+parser.add_argument('--PY',help="Python libraries directory location", default='.')
 parser.add_argument('--zOffset',help="Data offset on z", default='0.0')
 parser.add_argument('--yOffset',help="Data offset on y", default='0.0')
 parser.add_argument('--xOffset',help="Data offset on x", default='0.0')
@@ -30,6 +31,11 @@ parser.add_argument('--RecBatchID',help="Give name to this train sample", defaul
 #Working out where are the Py libraries
 args = parser.parse_args()
 print(sys.path)
+#Loading Directory locations
+EOS_DIR=args.EOS
+AFS_DIR=args.AFS
+PY_DIR=args.PY
+print(PY_DIR)
 exit()
 import pandas as pd #We use Panda for a routine data processing
 ######################################## Set variables  #############################################################
@@ -53,9 +59,7 @@ cut_dr=float(args.cut_dr)
 Log=args.Log.upper()
 ModelName=args.ModelName
 RecBatchID=args.RecBatchID
-#Loading Directory locations
-EOS_DIR=args.EOS
-AFS_DIR=args.AFS
+
 RecBatchID=args.RecBatchID
 import UtilityFunctions as UF #This is where we keep routine utility functions
 
