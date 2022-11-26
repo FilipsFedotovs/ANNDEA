@@ -474,20 +474,20 @@ while status<5:
                                     'RTr1a_ReconstructTracks_Sub.py',
                                     True)
 
-        print(bad_pop)
-        exit()
-        for k in range(0,Zsteps):
-                for j in range(0,Ysteps):
-                     for i in range(0,Xsteps):
-                          required_output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RTr1a_'+RecBatchID+'_hit_cluster_rec_set_'+str(k)+'_' +str(j)+'_' +str(i)+'.pkl'
-                          OptionHeader = [' --Z_ID ',' --Y_ID ', ' --X_ID ', ' --stepZ ', ' --stepY ', ' --stepX ', ' --EOS ', " --AFS ", " --zOffset ", " --yOffset ", " --xOffset ", ' --cut_dt ', ' --cut_dr ', ' --ModelName ', ' --Log ',' --RecBatchID ',' --Z_overlap ',' --Y_overlap ',' --X_overlap ']
-                          OptionLine = [k, j, i, stepZ,stepY,stepX, EOS_DIR, AFS_DIR, z_offset, y_offset, x_offset, cut_dt,cut_dr, ModelName ,Log,RecBatchID,Z_overlap,Y_overlap,X_overlap]
-                          SHName = AFS_DIR + '/HTCondor/SH/SH_RTr1a_'+ RecBatchID+'_' + str(k) + '_' + str(j) + '_' + str(i) +'.sh'
-                          SUBName = AFS_DIR + '/HTCondor/SUB/SUB_RTr1a_'+ RecBatchID+'_'+ str(k) + '_' + str(j) + '_' + str(i) + '.sub'
-                          MSGName = AFS_DIR + '/HTCondor/MSG/MSG_RTr1a_' + RecBatchID+'_' + str(k) + '_' + str(j) + '_' + str(i)
-                          ScriptName = AFS_DIR + '/Code/Utilities/RTr1a_ReconstructHits_Sub.py '
-                          if os.path.isfile(required_output_file_location)!=True:
-                             bad_pop.append([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, 1, 'ANNDEA-RTr1-'+RecBatchID, False,False])
+        # print(bad_pop)
+        # exit()
+        # for k in range(0,Zsteps):
+        #         for j in range(0,Ysteps):
+        #              for i in range(0,Xsteps):
+        #                   required_output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RTr1a_'+RecBatchID+'_hit_cluster_rec_set_'+str(k)+'_' +str(j)+'_' +str(i)+'.pkl'
+        #                   OptionHeader = [' --Z_ID ',' --Y_ID ', ' --X_ID ', ' --stepZ ', ' --stepY ', ' --stepX ', ' --EOS ', " --AFS ", " --zOffset ", " --yOffset ", " --xOffset ", ' --cut_dt ', ' --cut_dr ', ' --ModelName ', ' --Log ',' --RecBatchID ',' --Z_overlap ',' --Y_overlap ',' --X_overlap ']
+        #                   OptionLine = [k, j, i, stepZ,stepY,stepX, EOS_DIR, AFS_DIR, z_offset, y_offset, x_offset, cut_dt,cut_dr, ModelName ,Log,RecBatchID,Z_overlap,Y_overlap,X_overlap]
+        #                   SHName = AFS_DIR + '/HTCondor/SH/SH_RTr1a_'+ RecBatchID+'_' + str(k) + '_' + str(j) + '_' + str(i) +'.sh'
+        #                   SUBName = AFS_DIR + '/HTCondor/SUB/SUB_RTr1a_'+ RecBatchID+'_'+ str(k) + '_' + str(j) + '_' + str(i) + '.sub'
+        #                   MSGName = AFS_DIR + '/HTCondor/MSG/MSG_RTr1a_' + RecBatchID+'_' + str(k) + '_' + str(j) + '_' + str(i)
+        #                   ScriptName = AFS_DIR + '/Code/Utilities/RTr1a_ReconstructHits_Sub.py '
+        #                   if os.path.isfile(required_output_file_location)!=True:
+        #                      bad_pop.append([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, 1, 'ANNDEA-RTr1-'+RecBatchID, False,False])
         if len(bad_pop)==0:
              FreshStart=False
              print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 0 has successfully completed'+bcolors.ENDC)
@@ -506,15 +506,9 @@ while status<5:
                       print(UF.TimeStamp(),'OK, exiting now then')
                       exit()
                  if UserAnswer=='R':
-                     for k in range(0,Zsteps):
-                         for j in range(0,Ysteps):
-                               OptionHeader = [' --Z_ID ',' --Y_ID ', ' --X_ID ', ' --stepZ ', ' --stepY ', ' --stepX ', ' --EOS ', " --AFS ", " --zOffset ", " --yOffset ", " --xOffset ", ' --cut_dt ', ' --cut_dr ', ' --ModelName ', ' --Log ',' --RecBatchID ',' --Z_overlap ',' --Y_overlap ',' --X_overlap ']
-                               OptionLine = [k, j, '$1', stepZ,stepY,stepX, EOS_DIR, AFS_DIR, z_offset, y_offset, x_offset, cut_dt,cut_dr, ModelName ,Log,RecBatchID,Z_overlap,Y_overlap,X_overlap]
-                               SHName = AFS_DIR + '/HTCondor/SH/SH_RTr1a_'+ RecBatchID+'_' + str(k) + '_' + str(j) + '.sh'
-                               SUBName = AFS_DIR + '/HTCondor/SUB/SUB_RTr1a_'+ RecBatchID+'_'+ str(k) + '_' + str(j) + '.sub'
-                               MSGName = AFS_DIR + '/HTCondor/MSG/MSG_RTr1a_' + RecBatchID+'_' + str(k) + '_' + str(j)
-                               ScriptName = AFS_DIR + '/Code/Utilities/RTr1a_ReconstructHits_Sub.py '
-                               UF.SubmitJobs2Condor([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, Xsteps, 'ANNDEA-RTr1-'+RecBatchID, False,False],LocalSub)
+                      for bp in bad_pop:
+                          UF.SubmitJobs2Condor(bp)
+                          exit()
                  else:
                     if AutoPilot0(600,10,Patience):
                         FreshStart=False
