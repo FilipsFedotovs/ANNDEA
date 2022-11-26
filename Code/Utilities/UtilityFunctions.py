@@ -2145,7 +2145,7 @@ def CreateCondorJobs(AFS,EOS,path,o,pfx,sfx,ID,loop_params,OptionHeader,OptionLi
             nest_lvl=3
             for lp in loop_params:
                 TotJobs+=np.sum(lp)
-        print(loop_params)
+        print(loop_params[0][0])
         exit()
         OptionHeader+=[' --EOS '," --AFS ", " --BatchID "]
         OptionLine+=[EOS, AFS, ID]
