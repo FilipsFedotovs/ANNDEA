@@ -117,6 +117,7 @@ string_to_write.append('EOS_DIR')
 string_to_write.append(EOSDir)
 dir_writer.writerow(string_to_write)
 print(bcolors.OKGREEN + 'Updated the directory mapping file with EOS location' + bcolors.ENDC)
+string_to_write = []
 string_to_write.append('PY_DIR')
 string_to_write.append(PyPath)
 dir_writer.writerow(string_to_write)
