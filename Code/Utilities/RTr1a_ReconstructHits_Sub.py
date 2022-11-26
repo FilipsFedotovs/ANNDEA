@@ -38,9 +38,9 @@ PY_DIR=args.PY
 if PY_DIR!='':
     sys.path=[PY_DIR]
 sys.path.append(AFS_DIR+'/Code/Utilities')
+import pandas as pd #We use Panda for a routine data processing
 print(sys.path)
 exit()
-import pandas as pd #We use Panda for a routine data processing
 ######################################## Set variables  #############################################################
 Z_overlap=int(args.Z_overlap)
 Y_overlap=int(args.Y_overlap)
