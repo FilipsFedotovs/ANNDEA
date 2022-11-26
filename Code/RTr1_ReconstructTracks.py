@@ -456,8 +456,6 @@ while status<5:
                           ScriptName = AFS_DIR + '/Code/Utilities/RTr1a_ReconstructHits_Sub.py '
                           if os.path.isfile(required_output_file_location)!=True:
                              bad_pop.append([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, 1, 'ANNDEA-RTr1-'+RecBatchID, False,False])
-        print(bad_pop[0])
-        exit()
         if len(bad_pop)==0:
              FreshStart=False
              print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 0 has successfully completed'+bcolors.ENDC)
