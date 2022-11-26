@@ -35,12 +35,14 @@ print(
     bcolors.HEADER + "#########################                 PhD Student at UCL                   #########################" + bcolors.ENDC)
 print(
     bcolors.HEADER + "########################################################################################################" + bcolors.ENDC)
-
-######################################## Work out whether user wants to uninstall the config ################
+##############
 parser = argparse.ArgumentParser(description='Setup creation parameters')
+######################################## Work out whether user wants to uninstall the config ##
 parser.add_argument('--REMOVE', help="If you want to uninstall please enter Y", default='N')
+parser.add_argument('--PyPath', help="Would yuo like to change the existing Python system path to external one?", default='')
 args = parser.parse_args()
 UserChoice = args.REMOVE.upper()
+PyPath=args.PyPath
 
 
 ######################################## Create some functions to simplify the code   #######################
@@ -115,6 +117,9 @@ string_to_write.append('EOS_DIR')
 string_to_write.append(EOSDir)
 dir_writer.writerow(string_to_write)
 print(bcolors.OKGREEN + 'Updated the directory mapping file with EOS location' + bcolors.ENDC)
+string_to_write.append('PY_DIR')
+string_to_write.append(PyPath)
+print(bcolors.OKGREEN + 'Updated the directory mapping file with Python Path location' + bcolors.ENDC)
 
 ########################################     Create sub-directories on EOS    #########################################
 EOSsubDIR = EOSDir + '/' + 'ANNDEA'
