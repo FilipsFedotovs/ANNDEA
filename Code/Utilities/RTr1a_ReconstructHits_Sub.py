@@ -35,7 +35,10 @@ print(sys.path)
 EOS_DIR=args.EOS
 AFS_DIR=args.AFS
 PY_DIR=args.PY
-print(PY_DIR)
+if PY_DIR!='':
+    sys.path=[PY_DIR]
+sys.path.append(AFS_DIR+'/Code/Utilities')
+print(sys.path)
 exit()
 import pandas as pd #We use Panda for a routine data processing
 ######################################## Set variables  #############################################################
