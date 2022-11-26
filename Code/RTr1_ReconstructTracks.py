@@ -4,15 +4,9 @@
 
 
 ########################################    Import libraries    #############################################
-import csv
+import sys
+
 import argparse
-import pandas as pd #We use Panda for a routine data processing
-import math #We use it for data manipulation
-import numpy as np
-import os
-from tabulate import tabulate
-import time
-from alive_progress import alive_bar
 
 class bcolors:   #We use it for the interface
     HEADER = '\033[95m'
@@ -62,6 +56,7 @@ Z_overlap,Y_overlap,X_overlap=int(args.Z_overlap),int(args.Y_overlap),int(args.X
 SliceData=max(Xmin,Xmax,Ymin,Ymax)>0 #We don't slice data if all values are set to zero simultaneousy (which is the default setting)
 
 #Loading Directory locations
+import csv
 csv_reader=open('../config',"r")
 config = list(csv.reader(csv_reader))
 for c in config:
@@ -72,8 +67,21 @@ for c in config:
     if c[0]=='PY_DIR':
         PY_DIR=c[1]
 csv_reader.close()
-import sys
-sys.path.insert(1, AFS_DIR+'/Code/Utilities/')
+if PY_DIR!='':
+     sys.path=[PY_DIR]
+     sys.path.append('/usr/lib64/python36.zip')
+     sys.path.append('/usr/lib64/python3.6')
+     sys.path.append('/usr/lib64/python3.6/lib-dynload')
+sys.path.append(AFS_DIR+'/Code/Utilities')
+
+import pandas as pd #We use Panda for a routine data processing
+import math #We use it for data manipulation
+import numpy as np
+import os
+from tabulate import tabulate
+import time
+from alive_progress import alive_bar
+
 import UtilityFunctions as UF #This is where we keep routine utility functions
 import Parameters as PM #This is where we keep framework global parameters
 
