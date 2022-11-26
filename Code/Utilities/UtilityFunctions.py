@@ -1,8 +1,10 @@
 ###This file contains the utility functions that are commonly used in EDER_VIANN packages
 import sys
+
+sys.path.append('/usr/lib64/python36.zip')
 print(sys.path)
-exit()
 import csv
+exit()
 import math
 import os
 import subprocess
