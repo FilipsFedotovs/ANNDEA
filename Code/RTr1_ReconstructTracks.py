@@ -464,7 +464,7 @@ while status<5:
         OptionLine =   [stepZ,stepY,stepX,z_offset, y_offset, x_offset, cut_dt,cut_dr, ModelName ,Log,Z_overlap,Y_overlap,X_overlap]
         bad_pop=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,
                                     '/ANNDEA/Data/REC_SET/',
-                                    'ClassifiedTrackSamples',
+                                    'hit_cluster_rec_set',
                                     'RTr1a',
                                     '.pkl',
                                     RecBatchID,
