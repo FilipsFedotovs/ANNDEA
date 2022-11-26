@@ -25,7 +25,7 @@ import numpy as np
 import copy
 from statistics import mean
 import ast
-exit()
+
 class bcolors:
     HEADER = '\033[95m'
     OKBLUE = '\033[94m'

@@ -30,7 +30,6 @@ parser.add_argument('--RecBatchID',help="Give name to this train sample", defaul
 
 #Working out where are the Py libraries
 args = parser.parse_args()
-print(sys.path)
 #Loading Directory locations
 EOS_DIR=args.EOS
 AFS_DIR=args.AFS

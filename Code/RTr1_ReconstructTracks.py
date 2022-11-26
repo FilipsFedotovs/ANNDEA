@@ -38,7 +38,6 @@ parser.add_argument('--ModelName',help="WHat GNN model would you like to use?", 
 parser.add_argument('--Patience',help="How many checks to do before resubmitting the job?", default='15')
 parser.add_argument('--Log',help="Would you like to log the performance: No, MC, Kalman? (Only available if you have MC Truth or Kalman track reconstruction data)", default='No')
 parser.add_argument('--RecBatchID',help="Give this reconstruction batch an ID", default='SHIP_UR_v1')
-parser.add_argument('--GentleOnCondor',help="What time gap between sumbission gaps should be?", default='0')
 parser.add_argument('--LocalSub',help="Local submission?", default='N')
 parser.add_argument('--f',help="Please enter the full path to the file with track reconstruction", default='/afs/cern.ch/work/f/ffedship/public/SHIP/Source_Data/SHIP_Emulsion_FEDRA_Raw_UR.csv')
 parser.add_argument('--Xmin',help="This option restricts data to only those events that have tracks with hits x-coordinates that are above this value", default='0')
@@ -56,7 +55,6 @@ Log=args.Log.upper()
 ModelName=args.ModelName
 RecBatchID=args.RecBatchID
 Patience=int(args.Patience)
-GentleOnCondor=int(args.GentleOnCondor)
 LocalSub=(args.LocalSub=='Y')
 input_file_location=args.f
 Xmin,Xmax,Ymin,Ymax=float(args.Xmin),float(args.Xmax),float(args.Ymin),float(args.Ymax)
@@ -71,6 +69,8 @@ for c in config:
         AFS_DIR=c[1]
     if c[0]=='EOS_DIR':
         EOS_DIR=c[1]
+    if c[0]=='PY_DIR':
+        PY_DIR=c[1]
 csv_reader.close()
 import sys
 sys.path.insert(1, AFS_DIR+'/Code/Utilities/')
@@ -442,14 +442,11 @@ while status<5:
     if status==0:
         print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
         print(UF.TimeStamp(),bcolors.BOLD+'Stage 0:'+bcolors.ENDC+' Sending hit cluster to the HTCondor, so the model assigns weights between hits')
-        bad_pop=[]
-        with alive_bar(Zsteps*Ysteps*Xsteps,force_tty=True, title='Checking the results from HTCondor') as bar:
-            for k in range(0,Zsteps):
+
+        for k in range(0,Zsteps):
                 for j in range(0,Ysteps):
                      for i in range(0,Xsteps):
                           required_output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RTr1a_'+RecBatchID+'_hit_cluster_rec_set_'+str(k)+'_' +str(j)+'_' +str(i)+'.pkl'
-                          bar.text = f'-> Checking whether the file : {required_output_file_location}, exists...'
-                          bar()
                           OptionHeader = [' --Z_ID ',' --Y_ID ', ' --X_ID ', ' --stepZ ', ' --stepY ', ' --stepX ', ' --EOS ', " --AFS ", " --zOffset ", " --yOffset ", " --xOffset ", ' --cut_dt ', ' --cut_dr ', ' --ModelName ', ' --Log ',' --RecBatchID ',' --Z_overlap ',' --Y_overlap ',' --X_overlap ']
                           OptionLine = [k, j, i, stepZ,stepY,stepX, EOS_DIR, AFS_DIR, z_offset, y_offset, x_offset, cut_dt,cut_dr, ModelName ,Log,RecBatchID,Z_overlap,Y_overlap,X_overlap]
                           SHName = AFS_DIR + '/HTCondor/SH/SH_RTr1a_'+ RecBatchID+'_' + str(k) + '_' + str(j) + '_' + str(i) +'.sh'
@@ -458,6 +455,8 @@ while status<5:
                           ScriptName = AFS_DIR + '/Code/Utilities/RTr1a_ReconstructHits_Sub.py '
                           if os.path.isfile(required_output_file_location)!=True:
                              bad_pop.append([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, 1, 'ANNDEA-RTr1-'+RecBatchID, False,False])
+        print(bad_pop[0])
+        exit()
         if len(bad_pop)==0:
              FreshStart=False
              print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 0 has successfully completed'+bcolors.ENDC)
