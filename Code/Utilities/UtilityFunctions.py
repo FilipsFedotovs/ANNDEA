@@ -1,12 +1,10 @@
 ###This file contains the utility functions that are commonly used in EDER_VIANN packages
 import sys
 
-sys.path.append('/usr/lib64/python36.zip')
-sys.path.append('/usr/lib64/python3.6')
-sys.path.append('/usr/lib64/python3.6/lib-dynload')
-print(sys.path)
+
+
 import csv
-exit()
+
 import math
 import os
 import subprocess
@@ -15,6 +13,7 @@ import numpy as np
 import copy
 from statistics import mean
 import ast
+exit()
 class bcolors:
     HEADER = '\033[95m'
     OKBLUE = '\033[94m'
