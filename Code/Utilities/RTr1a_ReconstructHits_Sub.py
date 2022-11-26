@@ -1,7 +1,10 @@
-#Current version 1.0
+#Current version 1.1 - add change sys path capability
 
 ########################################    Import libraries    #############################################
 import argparse
+import sys
+print(sys.path)
+exit()
 import pandas as pd #We use Panda for a routine data processing
 
 #Setting the parser - this script is usually not run directly, but is used by a Master version Counterpart that passes the required arguments
