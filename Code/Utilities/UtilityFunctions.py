@@ -2,6 +2,7 @@
 import sys
 
 sys.path.append('/usr/lib64/python36.zip')
+sys.path.append('/usr/lib64/python3.6')
 print(sys.path)
 import csv
 exit()
