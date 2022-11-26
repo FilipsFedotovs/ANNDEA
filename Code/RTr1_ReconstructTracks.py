@@ -443,7 +443,7 @@ while status<5:
     if status==0:
         print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
         print(UF.TimeStamp(),bcolors.BOLD+'Stage 0:'+bcolors.ENDC+' Sending hit cluster to the HTCondor, so the model assigns weights between hits')
-
+        bad_pop=[]
         for k in range(0,Zsteps):
                 for j in range(0,Ysteps):
                      for i in range(0,Xsteps):
