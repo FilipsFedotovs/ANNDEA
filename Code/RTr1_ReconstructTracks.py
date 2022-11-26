@@ -443,7 +443,27 @@ while status<5:
     if status==0:
         print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
         print(UF.TimeStamp(),bcolors.BOLD+'Stage 0:'+bcolors.ENDC+' Sending hit cluster to the HTCondor, so the model assigns weights between hits')
+        JobSets=[]
+        # for i in range(len(loop_params)):
+        #              for j in range(len(loop_params[i])):
+        #                  for k in range(loop_params[i][j]):
+        #                        required_output_file_location=EOS+'/'+path+'/'+pfx+'_'+ID+'_'+o+'_'+str(i)+'_'+str(j)+sfx
+        #                        bar.text = f'-> Checking whether the file : {required_output_file_location}, exists...'
+        #                        bar()
+        #                        SHName = AFS + '/HTCondor/SH/SH_'+pfx+'_'+ ID+'_' + str(i) + '_' + str(j) + '_' + str(k) +'.sh'
+        #                        SUBName = AFS + '/HTCondor/SUB/SUB_'+pfx+'_'+ ID+'_' + str(i) + '_' + str(j) + '_' + str(k) +'.sub'
+        #                        MSGName = AFS + '/HTCondor/MSG/MSG_'+pfx+'_'+ ID+'_' + str(i) + '_' + str(j) + '_' + str(j)
+        #                        ScriptName = AFS + '/Code/Utilities/'+Sub_File
+        for k in range(0,Zsteps):
+                JobSets.append([])
+                for j in range(0,Ysteps):
+                     JobSets[k].append([])
+                     for i in range(0,Xsteps):
+                             JobSets[k][j].append(i)
+        print(JobSets)
+        exit()
         bad_pop=[]
+
         for k in range(0,Zsteps):
                 for j in range(0,Ysteps):
                      for i in range(0,Xsteps):
