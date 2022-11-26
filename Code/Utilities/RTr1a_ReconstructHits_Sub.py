@@ -1,11 +1,9 @@
 #Current version 1.1 - add change sys path capability
 
-########################################    Import libraries    #############################################
+########################################    Import essential libriries    #############################################
 import argparse
 import sys
-print(sys.path)
-exit()
-import pandas as pd #We use Panda for a routine data processing
+
 
 #Setting the parser - this script is usually not run directly, but is used by a Master version Counterpart that passes the required arguments
 parser = argparse.ArgumentParser(description='select cut parameters')
@@ -29,8 +27,12 @@ parser.add_argument('--Log',help="Pull out stats?", default='No')
 parser.add_argument('--ModelName',help="Name of the model to use?", default='0')
 parser.add_argument('--RecBatchID',help="Give name to this train sample", default='')
 
-######################################## Set variables  #############################################################
+#Working out where are the Py libraries
 args = parser.parse_args()
+print(sys.path)
+exit()
+import pandas as pd #We use Panda for a routine data processing
+######################################## Set variables  #############################################################
 Z_overlap=int(args.Z_overlap)
 Y_overlap=int(args.Y_overlap)
 X_overlap=int(args.X_overlap)
