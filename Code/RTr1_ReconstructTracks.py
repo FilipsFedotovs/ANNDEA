@@ -457,9 +457,9 @@ while status<5:
         for k in range(0,Zsteps):
                 JobSets.append([])
                 for j in range(0,Ysteps):
-                     JobSets[k].append([])
-                     for i in range(0,Xsteps):
-                             JobSets[k][j].append(i)
+                     JobSets[k].append([Xsteps])
+                     # for i in range(0,Xsteps):
+                     #         JobSets[k][j].append(i)
 
         OptionHeader = [' --stepZ ', ' --stepY ', ' --stepX ', " --zOffset ", " --yOffset ", " --xOffset ", ' --cut_dt ', ' --cut_dr ', ' --ModelName ', ' --Log ',' --Z_overlap ',' --Y_overlap ',' --X_overlap ']
         OptionLine =   [stepZ,stepY,stepX,z_offset, y_offset, x_offset, cut_dt,cut_dr, ModelName ,Log,Z_overlap,Y_overlap,X_overlap]
