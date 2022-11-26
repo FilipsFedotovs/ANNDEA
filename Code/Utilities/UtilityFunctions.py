@@ -1,7 +1,7 @@
 ###This file contains the utility functions that are commonly used in ANNDEA packages
 import sys
 import csv
-csv_reader=open('../config',"r")
+csv_reader=open('../../config',"r")
 config = list(csv.reader(csv_reader))
 for c in config:
     if c[0]=='AFS_DIR':
