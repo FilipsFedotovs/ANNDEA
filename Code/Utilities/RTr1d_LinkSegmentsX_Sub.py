@@ -6,7 +6,7 @@
 
 ########################################    Import libraries    ########################################################
 import argparse
-import pandas as pd
+import sys
 ########################## Visual Formatting #################################################
 class bcolors:
     HEADER = '\033[95m'
@@ -27,13 +27,22 @@ parser.add_argument('--X_ID_Max',help="Enter X id", default='0')
 
 ########################################     Initialising Variables    #########################################
 args = parser.parse_args()
+RecBatchID=args.RecBatchID
 ##################################   Loading Directory locations   ##################################################
 AFS_DIR=args.AFS
 EOS_DIR=args.EOS
-RecBatchID=args.RecBatchID
-import sys
-sys.path.insert(1, AFS_DIR+'/Code/Utilities/')
+PY_DIR=args.PY
+if PY_DIR!='':
+    sys.path=[PY_DIR]
+    sys.path.append('/usr/lib64/python36.zip')
+    sys.path.append('/usr/lib64/python3.6')
+    sys.path.append('/usr/lib64/python3.6/lib-dynload')
+sys.path.append(AFS_DIR+'/Code/Utilities')
+
+#import the rest of the libraries
+import pandas as pd
 import UtilityFunctions as UF
+
 #Load data configuration
 EOSsubDIR=EOS_DIR+'/'+'ANNDEA'
 EOSsubDataDIR=EOSsubDIR+'/'+'Data'

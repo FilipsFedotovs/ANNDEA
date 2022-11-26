@@ -1,14 +1,15 @@
-#Current version 1.0
+#Current version 1.1 - add change sys path capability
 
-########################################    Import libraries    #############################################
+########################################    Import essential libriries    #############################################
 import argparse
-import pandas as pd #We use Panda for a routine data processing
+import sys
+
 
 #Setting the parser - this script is usually not run directly, but is used by a Master version Counterpart that passes the required arguments
 parser = argparse.ArgumentParser(description='select cut parameters')
-parser.add_argument('--Z_ID',help="Enter Z id", default='0')
-parser.add_argument('--Y_ID',help="Enter Y id", default='0')
-parser.add_argument('--X_ID',help="Enter X id", default='0')
+parser.add_argument('--i',help="Set number", default='1')
+parser.add_argument('--j',help="Subset number", default='1')
+parser.add_argument('--k',help="SubSubset number", default='1')
 parser.add_argument('--Z_overlap',help="Enter Z id", default='1')
 parser.add_argument('--Y_overlap',help="Enter Y id", default='1')
 parser.add_argument('--X_overlap',help="Enter X id", default='1')
@@ -17,6 +18,7 @@ parser.add_argument('--stepY',help="Enter Y step size", default='0')
 parser.add_argument('--stepZ',help="Enter Z step size", default='0')
 parser.add_argument('--EOS',help="EOS directory location", default='.')
 parser.add_argument('--AFS',help="AFS directory location", default='.')
+parser.add_argument('--PY',help="Python libraries directory location", default='.')
 parser.add_argument('--zOffset',help="Data offset on z", default='0.0')
 parser.add_argument('--yOffset',help="Data offset on y", default='0.0')
 parser.add_argument('--xOffset',help="Data offset on x", default='0.0')
@@ -24,19 +26,40 @@ parser.add_argument('--cut_dt',help="Cut on angle difference", default='1.0')
 parser.add_argument('--cut_dr',help="Cut on angle difference", default='4000')
 parser.add_argument('--Log',help="Pull out stats?", default='No')
 parser.add_argument('--ModelName',help="Name of the model to use?", default='0')
-parser.add_argument('--RecBatchID',help="Give name to this train sample", default='')
+parser.add_argument('--BatchID',help="Give name to this train sample", default='')
+parser.add_argument('--p',help="Path to the output file", default='')
+parser.add_argument('--o',help="Path to the output file name", default='')
+parser.add_argument('--pfx',help="Path to the output file name", default='')
+parser.add_argument('--sfx',help="Path to the output file name", default='')
+
+#Working out where are the Py libraries
+args = parser.parse_args()
+#Loading Directory locations
+EOS_DIR=args.EOS
+AFS_DIR=args.AFS
+PY_DIR=args.PY
+print(sys.path)
+import pandas as pd #We use Panda for a routine data processing
+if PY_DIR!='':
+    sys.path=['',PY_DIR]
+    sys.path.append('/usr/lib64/python36.zip')
+    sys.path.append('/usr/lib64/python3.6')
+    sys.path.append('/usr/lib64/python3.6/lib-dynload')
+    sys.path.append('/usr/lib64/python3.6/site-packages')
+    sys.path.append('/usr/lib/python3.6/site-packages')
+sys.path.append(AFS_DIR+'/Code/Utilities')
+print(sys.path)
 
 ######################################## Set variables  #############################################################
-args = parser.parse_args()
 Z_overlap=int(args.Z_overlap)
 Y_overlap=int(args.Y_overlap)
 X_overlap=int(args.X_overlap)
-Z_ID=int(args.Z_ID)/Z_overlap
-Y_ID=int(args.Y_ID)/Y_overlap
-X_ID=int(args.X_ID)/X_overlap
-Z_ID_n=int(args.Z_ID)
-Y_ID_n=int(args.Y_ID)
-X_ID_n=int(args.X_ID)
+Z_ID=int(args.k)/Z_overlap
+Y_ID=int(args.j)/Y_overlap
+X_ID=int(args.i)/X_overlap
+Z_ID_n=int(args.k)
+Y_ID_n=int(args.j)
+X_ID_n=int(args.i)
 stepX=float(args.stepX) #The coordinate of the st plate in the current scope
 stepZ=float(args.stepZ)
 stepY=float(args.stepY)
@@ -47,21 +70,22 @@ cut_dt=float(args.cut_dt)
 cut_dr=float(args.cut_dr)
 Log=args.Log.upper()
 ModelName=args.ModelName
-RecBatchID=args.RecBatchID
-#Loading Directory locations
-EOS_DIR=args.EOS
-AFS_DIR=args.AFS
-RecBatchID=args.RecBatchID
+RecBatchID=args.BatchID
+p=args.p
+o=args.o
+sfx=args.sfx
+pfx=args.pfx
+
 import UtilityFunctions as UF #This is where we keep routine utility functions
 
 #Specifying the full path to input/output files
 input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RTr1_'+RecBatchID+'_hits.csv'
+output_file_location=EOS_DIR+p+'/'+pfx+'_'+RecBatchID+'_hit_cluster_rec_set_'+str(Z_ID_n)+'_' +str(Y_ID_n)+'_'+str(X_ID_n)+sfx
 
 print(UF.TimeStamp(), "Modules Have been imported successfully...")
 print(UF.TimeStamp(),'Loading pre-selected data from ',input_file_location)
 
-data=pd.read_csv(input_file_location,header=0,
-            usecols=["Hit_ID","x","y","z","tx","ty"])[["Hit_ID","x","y","z","tx","ty"]]
+data=pd.read_csv(input_file_location,header=0,usecols=["Hit_ID","x","y","z","tx","ty"])[["Hit_ID","x","y","z","tx","ty"]]
 data["x"] = pd.to_numeric(data["x"],downcast='float')
 data["y"] = pd.to_numeric(data["y"],downcast='float')
 data["z"] = pd.to_numeric(data["z"],downcast='float')
@@ -156,7 +180,6 @@ else:
     HC.LinkHits(combined_weight_list,False,[],cut_dt,cut_dr,Acceptance)
 HC.UnloadClusterGraph()
 print(UF.TimeStamp(),'Writing the output...')
-output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RTr1a_'+RecBatchID+'_hit_cluster_rec_set_'+str(Z_ID_n)+'_' +str(Y_ID_n)+'_' +str(X_ID_n)+'.pkl'
 UF.PickleOperations(output_file_location,'w', HC)
 #End of the script
 
