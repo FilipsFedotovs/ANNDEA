@@ -1,5 +1,7 @@
 ###This file contains the utility functions that are commonly used in EDER_VIANN packages
-
+import sys
+print(sys.path)
+exit()
 import csv
 import math
 import os
