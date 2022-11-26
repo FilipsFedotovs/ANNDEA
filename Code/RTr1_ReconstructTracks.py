@@ -73,7 +73,7 @@ if PY_DIR!='':
      sys.path.append('/usr/lib64/python3.6')
      sys.path.append('/usr/lib64/python3.6/lib-dynload')
 sys.path.append(AFS_DIR+'/Code/Utilities')
-
+import alive progress
 import pandas as pd #We use Panda for a routine data processing
 import math #We use it for data manipulation
 import numpy as np
