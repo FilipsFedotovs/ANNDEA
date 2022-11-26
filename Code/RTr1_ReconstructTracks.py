@@ -462,7 +462,7 @@ while status<5:
 
         OptionHeader = [' --stepZ ', ' --stepY ', ' --stepX ', " --zOffset ", " --yOffset ", " --xOffset ", ' --cut_dt ', ' --cut_dr ', ' --ModelName ', ' --Log ',' --Z_overlap ',' --Y_overlap ',' --X_overlap ']
         OptionLine =   [stepZ,stepY,stepX,z_offset, y_offset, x_offset, cut_dt,cut_dr, ModelName ,Log,Z_overlap,Y_overlap,X_overlap]
-        bad_pop=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,
+        bad_pop=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,PY_DIR,
                                     '/ANNDEA/Data/REC_SET/',
                                     'hit_cluster_rec_set',
                                     'RTr1a',
