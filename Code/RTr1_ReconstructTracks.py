@@ -5,7 +5,13 @@
 
 ########################################    Import libraries    #############################################
 import sys
-
+import pandas as pd #We use Panda for a routine data processing
+import math #We use it for data manipulation
+import numpy as np
+import os
+from tabulate import tabulate
+import time
+from alive_progress import alive_bar
 import argparse
 
 class bcolors:   #We use it for the interface
@@ -73,15 +79,6 @@ if PY_DIR!='':
      sys.path.append('/usr/lib64/python3.6')
      sys.path.append('/usr/lib64/python3.6/lib-dynload')
 sys.path.append(AFS_DIR+'/Code/Utilities')
-import alive_progress
-import pandas as pd #We use Panda for a routine data processing
-import math #We use it for data manipulation
-import numpy as np
-import os
-from tabulate import tabulate
-import time
-from alive_progress import alive_bar
-
 import UtilityFunctions as UF #This is where we keep routine utility functions
 import Parameters as PM #This is where we keep framework global parameters
 
