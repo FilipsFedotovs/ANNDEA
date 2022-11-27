@@ -47,6 +47,7 @@ if PY_DIR!='':
     sys.path.append('/usr/lib64/python3.6')
     sys.path.append('/usr/lib64/python3.6/lib-dynload')
     sys.path.append('/usr/lib64/python3.6/site-packages')
+    sys.path.append('/usr/lib/python3.6/site-packages')
 sys.path.append(AFS_DIR+'/Code/Utilities')
 print(sys.path)
 import pandas as pd #We use Panda for a routine data processing
