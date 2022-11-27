@@ -39,7 +39,7 @@ EOS_DIR=args.EOS
 AFS_DIR=args.AFS
 PY_DIR=args.PY
 print(sys.path)
-
+import pandas as pd #We use Panda for a routine data processing
 if PY_DIR!='':
     sys.path=[PY_DIR]
     sys.path.append('.')
@@ -50,7 +50,7 @@ if PY_DIR!='':
     sys.path.append('/usr/lib/python3.6/site-packages')
 sys.path.append(AFS_DIR+'/Code/Utilities')
 print(sys.path)
-import pandas as pd #We use Panda for a routine data processing
+
 ######################################## Set variables  #############################################################
 Z_overlap=int(args.Z_overlap)
 Y_overlap=int(args.Y_overlap)
