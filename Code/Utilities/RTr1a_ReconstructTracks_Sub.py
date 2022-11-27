@@ -38,6 +38,8 @@ args = parser.parse_args()
 EOS_DIR=args.EOS
 AFS_DIR=args.AFS
 PY_DIR=args.PY
+print(sys.path)
+exit()
 if PY_DIR!='':
     sys.path=[PY_DIR]
     sys.path.append('.')
