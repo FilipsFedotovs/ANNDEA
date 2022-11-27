@@ -42,7 +42,7 @@ print(sys.path)
 import pandas as pd #We use Panda for a routine data processing
 if PY_DIR!='':
     sys.path=[PY_DIR]
-    sys.path.append('.')
+    sys.path.append('')
     sys.path.append('/usr/lib64/python36.zip')
     sys.path.append('/usr/lib64/python3.6')
     sys.path.append('/usr/lib64/python3.6/lib-dynload')
