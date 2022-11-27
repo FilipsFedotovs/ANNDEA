@@ -40,6 +40,7 @@ AFS_DIR=args.AFS
 PY_DIR=args.PY
 if PY_DIR!='':
     sys.path=[PY_DIR]
+    sys.path.append('.')
     sys.path.append('/usr/lib64/python36.zip')
     sys.path.append('/usr/lib64/python3.6')
     sys.path.append('/usr/lib64/python3.6/lib-dynload')
