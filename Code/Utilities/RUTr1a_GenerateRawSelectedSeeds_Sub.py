@@ -5,11 +5,7 @@
 
 ########################################    Import libraries    #############################################
 import argparse
-import pandas as pd #We use Panda for a routine data processing
-import math #We use it for data manipulation
-import gc  #Helps to clear memory
-import numpy as np
-import ast
+import sys
 
 
 
@@ -28,6 +24,7 @@ parser.add_argument('--MaxSLG',help="Maximum allowed longitudinal gap value betw
 parser.add_argument('--MaxSTG',help="Maximum allowed transverse gap value between segments per SLG length", default='1000')
 parser.add_argument('--EOS',help="EOS directory location", default='.')
 parser.add_argument('--AFS',help="AFS directory location", default='.')
+parser.add_argument('--PY',help="Python libraries directory location", default='.')
 parser.add_argument('--BatchID',help="Give this training sample batch an ID", default='SHIP_UR_v1')
 parser.add_argument('--MaxSegments',help="A maximum number of track combinations that will be used in a particular HTCondor job for this script", default='20000')
 
@@ -50,9 +47,19 @@ MaxSegments=int(args.MaxSegments)
 #Loading Directory locations
 EOS_DIR=args.EOS
 AFS_DIR=args.AFS
-
+if PY_DIR!='': #Temp solution
+    sys.path=['',PY_DIR]
+    sys.path.append('/usr/lib64/python36.zip')
+    sys.path.append('/usr/lib64/python3.6')
+    sys.path.append('/usr/lib64/python3.6/lib-dynload')
+    sys.path.append('/usr/lib64/python3.6/site-packages')
+    sys.path.append('/usr/lib/python3.6/site-packages')
+sys.path.append(AFS_DIR+'/Code/Utilities')
 import UtilityFunctions as UF #This is where we keep routine utility functions
-
+import pandas as pd #We use Panda for a routine data processing
+import math #We use it for data manipulation
+import gc  #Helps to clear memory
+import numpy as np
 #Specifying the full path to input/output files
 input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1_'+BatchID+'_TRACK_SEGMENTS.csv'
 output_file_location=EOS_DIR+p+'/'+pfx+'_'+BatchID+'_RawSeeds_'+str(i)+'_'+str(j)+sfx

@@ -38,9 +38,8 @@ args = parser.parse_args()
 EOS_DIR=args.EOS
 AFS_DIR=args.AFS
 PY_DIR=args.PY
-print(sys.path)
-import pandas as pd #We use Panda for a routine data processing
-if PY_DIR!='':
+
+if PY_DIR!='': #Temp solution
     sys.path=['',PY_DIR]
     sys.path.append('/usr/lib64/python36.zip')
     sys.path.append('/usr/lib64/python3.6')
@@ -48,8 +47,7 @@ if PY_DIR!='':
     sys.path.append('/usr/lib64/python3.6/site-packages')
     sys.path.append('/usr/lib/python3.6/site-packages')
 sys.path.append(AFS_DIR+'/Code/Utilities')
-print(sys.path)
-
+import pandas as pd #We use Panda for a routine data processing
 ######################################## Set variables  #############################################################
 Z_overlap=int(args.Z_overlap)
 Y_overlap=int(args.Y_overlap)
@@ -80,7 +78,7 @@ import UtilityFunctions as UF #This is where we keep routine utility functions
 
 #Specifying the full path to input/output files
 input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RTr1_'+RecBatchID+'_hits.csv'
-output_file_location=EOS_DIR+p+'/'+pfx+'_'+RecBatchID+'_hit_cluster_rec_set_'+str(Z_ID_n)+'_' +str(Y_ID_n)+'_'+str(X_ID_n)+sfx
+output_file_location=EOS_DIR+p+'/'+pfx+'_'+RecBatchID+'_hit_cluster_rec_set_'+str(X_ID_n)+'_'+str(Y_ID_n)+'_'+str(Z_ID_n)+sfx
 
 print(UF.TimeStamp(), "Modules Have been imported successfully...")
 print(UF.TimeStamp(),'Loading pre-selected data from ',input_file_location)
@@ -144,44 +142,49 @@ if Log=='KALMAN':
     FEDRAdata.drop(FEDRAdata.index[FEDRAdata['y'] < (Y_ID*stepY)], inplace = True)  #Keeping the relevant z slice
     FEDRAdata_list=FEDRAdata.values.tolist()
 
-print(UF.TimeStamp(),'Preparing the model')
-import torch
-EOSsubDIR=EOS_DIR+'/'+'ANNDEA'
-EOSsubModelDIR=EOSsubDIR+'/'+'Models'
-Model_Meta_Path=EOSsubModelDIR+'/'+args.ModelName+'_Meta'
-Model_Path=EOSsubModelDIR+'/'+args.ModelName
-ModelMeta=UF.PickleOperations(Model_Meta_Path, 'r', 'N/A')[0]
-Acceptance=ModelMeta.TrainSessionsData[-1][-1][3]
-device = torch.device('cpu')
-model = UF.GenerateModel(ModelMeta).to(device)
-model.load_state_dict(torch.load(Model_Path))
-model.eval()
+
 print(UF.TimeStamp(),'Creating the clusters')
 HC=UF.HitCluster([X_ID,Y_ID,Z_ID],[stepX,stepY,stepZ])
 print(UF.TimeStamp(),'Decorating the clusters')
 HC.LoadClusterHits(data_list)
-print(UF.TimeStamp(),'Generating the edges...')
-GraphStatus = HC.GenerateEdges(cut_dt, cut_dr)
-combined_weight_list=[]
-if HC.ClusterGraph.num_edges>0:
-            print(UF.TimeStamp(),'Classifying the edges...')
-            w = model(HC.ClusterGraph.x, HC.ClusterGraph.edge_index, HC.ClusterGraph.edge_attr)
-            w=w.tolist()
-            for edge in range(len(HC.edges)):
-                combined_weight_list.append(HC.edges[edge]+w[edge])
-if Log!='NO':
-                print(UF.TimeStamp(),'Tracking the cluster...')
-                HC.LinkHits(combined_weight_list,True,MCdata_list,cut_dt,cut_dr,Acceptance)
-                if Log=='KALMAN':
-                       HC.TestKalmanHits(FEDRAdata_list,MCdata_list)
+if len(HC.RawClusterGraph)>1:
+    print(UF.TimeStamp(),'Generating the edges...')
+    GraphStatus = HC.GenerateEdges(cut_dt, cut_dr)
+    combined_weight_list=[]
+    if GraphStatus:
+        if HC.ClusterGraph.num_edges>0:
+                    print(UF.TimeStamp(),'Classifying the edges...')
+                    print(UF.TimeStamp(),'Preparing the model')
+                    import torch
+                    EOSsubDIR=EOS_DIR+'/'+'ANNDEA'
+                    EOSsubModelDIR=EOSsubDIR+'/'+'Models'
+                    Model_Meta_Path=EOSsubModelDIR+'/'+args.ModelName+'_Meta'
+                    Model_Path=EOSsubModelDIR+'/'+args.ModelName
+                    ModelMeta=UF.PickleOperations(Model_Meta_Path, 'r', 'N/A')[0]
+                    Acceptance=ModelMeta.TrainSessionsData[-1][-1][3]
+                    device = torch.device('cpu')
+                    model = UF.GenerateModel(ModelMeta).to(device)
+                    model.load_state_dict(torch.load(Model_Path))
+                    model.eval()
+                    w = model(HC.ClusterGraph.x, HC.ClusterGraph.edge_index, HC.ClusterGraph.edge_attr)
+                    w=w.tolist()
+                    for edge in range(len(HC.edges)):
+                        combined_weight_list.append(HC.edges[edge]+w[edge])
+        if Log!='NO':
+                    print(UF.TimeStamp(),'Tracking the cluster...')
+                    HC.LinkHits(combined_weight_list,True,MCdata_list,cut_dt,cut_dr,Acceptance)
+                    if Log=='KALMAN':
+                           HC.TestKalmanHits(FEDRAdata_list,MCdata_list)
 
-else:
-    print(UF.TimeStamp(),'Tracking the cluster...')
-    HC.LinkHits(combined_weight_list,False,[],cut_dt,cut_dr,Acceptance)
-HC.UnloadClusterGraph()
+        else:
+            print(UF.TimeStamp(),'Tracking the cluster...')
+            HC.LinkHits(combined_weight_list,False,[],cut_dt,cut_dr,Acceptance)
+        HC.UnloadClusterGraph()
+        print(UF.TimeStamp(),'Writing the output...')
+        print(UF.PickleOperations(output_file_location,'w', HC)[1])
+        exit()
+HC.RecHits=pd.DataFrame([], columns = ['HitID','z','Segment_ID'])
 print(UF.TimeStamp(),'Writing the output...')
-UF.PickleOperations(output_file_location,'w', HC)
-#End of the script
-
+print(UF.PickleOperations(output_file_location,'w', HC)[1])
 
 

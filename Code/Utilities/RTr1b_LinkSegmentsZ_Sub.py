@@ -24,8 +24,8 @@ parser.add_argument('--AFS',help="Please enter the user afs directory", default=
 parser.add_argument('--EOS',help="Please enter the user eos directory", default='.')
 parser.add_argument('--PY',help="Python libraries directory location", default='.')
 parser.add_argument('--RecBatchID',help="Give this reconstruction batch an ID", default='Test_Slider')
-parser.add_argument('--Y_ID',help="Enter Y id", default='0')
-parser.add_argument('--X_ID',help="Enter X id", default='0')
+parser.add_argument('--j',help="Enter Y id", default='0')
+parser.add_argument('--i',help="Enter X id", default='0')
 parser.add_argument('--Z_ID_Max',help="Enter Max Z id", default='2')
 ########################################     Initialising Variables    #########################################
 args = parser.parse_args()
@@ -33,11 +33,13 @@ args = parser.parse_args()
 AFS_DIR=args.AFS
 EOS_DIR=args.EOS
 PY_DIR=args.PY
-if PY_DIR!='':
-    sys.path=[PY_DIR]
+if PY_DIR!='': #Temp solution
+    sys.path=['',PY_DIR]
     sys.path.append('/usr/lib64/python36.zip')
     sys.path.append('/usr/lib64/python3.6')
     sys.path.append('/usr/lib64/python3.6/lib-dynload')
+    sys.path.append('/usr/lib64/python3.6/site-packages')
+    sys.path.append('/usr/lib/python3.6/site-packages')
 sys.path.append(AFS_DIR+'/Code/Utilities')
 #import other libraries
 import pandas as pd
@@ -46,8 +48,8 @@ import UtilityFunctions as UF
 #Load data configuration
 EOSsubDIR=EOS_DIR+'/'+'ANNDEA'
 EOSsubDataDIR=EOSsubDIR+'/'+'Data'
-Y_ID=int(args.Y_ID)
-X_ID=int(args.X_ID)
+Y_ID=int(args.j)
+X_ID=int(args.i)
 Z_ID_Max=int(args.Z_ID_Max)
 ##############################################################################################################################
 ######################################### Starting the program ################################################################

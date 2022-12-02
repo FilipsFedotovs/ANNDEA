@@ -25,7 +25,7 @@ This README just serves as a very short user guide, the documentation will be wr
 The tracking module takes hits as an input and assigns the common ID - hence it clusters them into tracks.
 All modules 
 ### Requirements
-
+1) Install PyTorch: **/eos/user/<your username first letter>/<your username>/libs**
 ### 1.1 Installation steps
 1) go to your home directory in afs where you would like to install the package
 2) **git clone https://github.com/FilipsFedotovs/ANNDEA/**
