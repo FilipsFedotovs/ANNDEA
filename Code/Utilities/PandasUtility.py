@@ -50,7 +50,7 @@ def rename_hit_columns(dataFrame):
 
 
 def slice_hit_data(dataFrame, Xmin, Xmax, Ymin, Ymax):
-    print(UF.TimeStamp(),'Slicing the data...')
+    Printing.print_message('Slicing the data...')
     data=dataFrame.drop(data.index[(data["x"] > Xmax) | (data["x"] < Xmin) | (data["y"] > Ymax) | (data["y"] < Ymin)])
     n_rows=len(data.axes[0])
     Printing.print_message('The sliced data has '+str(n_rows)+' hits')
@@ -95,5 +95,24 @@ def remove_ill_mc_tracks(dataFrame)
     data = data.drop(['hits_per_track'],axis=1)
     data= data.sort_values(['MC_Mother_Track_ID','z'],ascending=[1,1])
     n_rows=len(data.axes[0])
-    print(UF.TimeStamp(),'The cleaned data has ',grand_final_rows,' hits')
+    Printing.print_message(
+        'The cleaned data has '+
+        grand_final_rows+
+        ' hits'
+    )
     return data
+
+
+def reset_origin(dataFrame):
+    Printing.print_message('Analysing data... '+bcolors.ENDC)
+    data = dataFrame
+    x_offset = data['x'].min()
+    y_offset = data['y'].min()
+    z_offset = data['z'].min()
+    data['x']=data['x']-x_offset
+    data['y']=data['y']-y_offset
+    data['z']=data['z']-z_offset
+    return data
+
+def 
+
