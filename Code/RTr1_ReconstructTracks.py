@@ -444,16 +444,6 @@ while status<5:
         print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
         print(UF.TimeStamp(),bcolors.BOLD+'Stage 0:'+bcolors.ENDC+' Sending hit cluster to the HTCondor, so the model assigns weights between hits')
         JobSets=[]
-        # for i in range(len(loop_params)):
-        #              for j in range(len(loop_params[i])):
-        #                  for k in range(loop_params[i][j]):
-        #                        required_output_file_location=EOS+'/'+path+'/'+pfx+'_'+ID+'_'+o+'_'+str(i)+'_'+str(j)+sfx
-        #                        bar.text = f'-> Checking whether the file : {required_output_file_location}, exists...'
-        #                        bar()
-        #                        SHName = AFS + '/HTCondor/SH/SH_'+pfx+'_'+ ID+'_' + str(i) + '_' + str(j) + '_' + str(k) +'.sh'
-        #                        SUBName = AFS + '/HTCondor/SUB/SUB_'+pfx+'_'+ ID+'_' + str(i) + '_' + str(j) + '_' + str(k) +'.sub'
-        #                        MSGName = AFS + '/HTCondor/MSG/MSG_'+pfx+'_'+ ID+'_' + str(i) + '_' + str(j) + '_' + str(j)
-        #                        ScriptName = AFS + '/Code/Utilities/'+Sub_File
         for k in range(0,Zsteps):
                 JobSets.append([])
                 for j in range(0,Ysteps):
@@ -551,19 +541,27 @@ while status<5:
                           break
         else:
             if (Zsteps*Xsteps*Ysteps)==len(bad_pop):
-                 print(UF.TimeStamp(),'Submitting jobs to HTCondor... ',bcolors.ENDC)
+                 JobSets=[]
                  for k in range(0,Zsteps):
-                         for j in range(0,Ysteps):
-                               OptionHeader = [' --Z_ID ',' --Y_ID ', ' --X_ID ', ' --stepZ ', ' --stepY ', ' --stepX ', ' --EOS ', " --AFS ", " --zOffset ", " --yOffset ", " --xOffset ", ' --cut_dt ', ' --cut_dr ', ' --ModelName ', ' --Log ',' --RecBatchID ',' --Z_overlap ',' --Y_overlap ',' --X_overlap ']
-                               OptionLine = [k, j, '$1', stepZ,stepY,stepX, EOS_DIR, AFS_DIR, z_offset, y_offset, x_offset, cut_dt,cut_dr, ModelName ,Log,RecBatchID,Z_overlap,Y_overlap,X_overlap]
-                               SHName = AFS_DIR + '/HTCondor/SH/SH_RTr1a_'+ RecBatchID+'_' + str(k) + '_' + str(j) + '.sh'
-                               SUBName = AFS_DIR + '/HTCondor/SUB/SUB_RTr1a_'+ RecBatchID+'_'+ str(k) + '_' + str(j) + '.sub'
-                               MSGName = AFS_DIR + '/HTCondor/MSG/MSG_RTr1a_' + RecBatchID+'_' + str(k) + '_' + str(j)
-                               ScriptName = AFS_DIR + '/Code/Utilities/RTr1a_ReconstructHits_Sub.py '
-                               UF.SubmitJobs2Condor([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, Xsteps, 'ANNDEA-RTr1-'+RecBatchID, False,False],LocalSub)
-                               print(UF.TimeStamp(),'Waiting ',str(GentleOnCondor),' minutes to relieve congestion on HTCondor...',bcolors.ENDC)
-                               time.sleep(60*GentleOnCondor)
+                    JobSets.append([])
+                    for j in range(0,Ysteps):
+                        JobSets[k].append(Xsteps)
+                 print(UF.TimeStamp(),'Submitting jobs to HTCondor... ',bcolors.ENDC)
 
+                 OptionHeader = [' --stepZ ', ' --stepY ', ' --stepX ', " --zOffset ", " --yOffset ", " --xOffset ", ' --cut_dt ', ' --cut_dr ', ' --ModelName ', ' --Log ',' --Z_overlap ',' --Y_overlap ',' --X_overlap ']
+                 OptionLine =   [stepZ,stepY,stepX,z_offset, y_offset, x_offset, cut_dt,cut_dr, ModelName ,Log,Z_overlap,Y_overlap,X_overlap]
+                 bad_pop=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,PY_DIR,
+                                    '/ANNDEA/Data/REC_SET/',
+                                    'hit_cluster_rec_set',
+                                    'RTr1a',
+                                    '.pkl',
+                                    RecBatchID,
+                                    JobSets,
+                                    OptionHeader,
+                                    OptionLine,
+                                    'RTr1a_ReconstructTracks_Sub.py',
+                                    True)
+                 UF.SubmitJobs2Condor(bp,LocalSub)
                  if AutoPilot0(600,10,Patience):
                         FreshStart=False
                         print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 0 has successfully completed'+bcolors.ENDC)

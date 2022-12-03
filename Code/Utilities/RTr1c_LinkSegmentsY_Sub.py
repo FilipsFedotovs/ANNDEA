@@ -33,11 +33,13 @@ args = parser.parse_args()
 AFS_DIR=args.AFS
 EOS_DIR=args.EOS
 PY_DIR=args.PY
-if PY_DIR!='':
-    sys.path=[PY_DIR]
+if PY_DIR!='': #Temp solution
+    sys.path=['',PY_DIR]
     sys.path.append('/usr/lib64/python36.zip')
     sys.path.append('/usr/lib64/python3.6')
     sys.path.append('/usr/lib64/python3.6/lib-dynload')
+    sys.path.append('/usr/lib64/python3.6/site-packages')
+    sys.path.append('/usr/lib/python3.6/site-packages')
 sys.path.append(AFS_DIR+'/Code/Utilities')
 RecBatchID=args.RecBatchID
 #import the rest of the libraries
