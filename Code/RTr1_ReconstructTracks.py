@@ -463,7 +463,7 @@ while status<5:
                                     OptionLine,
                                     'RTr1a_ReconstructTracks_Sub.py',
                                     False)
-        print(bad_pop)
+        print(len(bad_pop))
         exit()
         if len(bad_pop)==0:
              FreshStart=False
