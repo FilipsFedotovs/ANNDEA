@@ -2242,7 +2242,7 @@ def SubmitJobs2Condor(job,local=False):
                 OptionLine+=job[0][line]
                 OptionLine+=str(job[1][line])
                 TotalLine = 'python3 ' + job[5] + OptionLine
-       submission_line='python3 '+job[5][:-1]+OptionLine
+       submission_line='python3 '+job[5]+OptionLine
        for j in range(0,job[6]):
          act_submission_line=submission_line.replace('$1',str(j))
          subprocess.call([act_submission_line],shell=True)
