@@ -553,7 +553,8 @@ while status<5:
                                     OptionLine,
                                     'RTr1a_ReconstructTracks_Sub.py',
                                     True)
-                 UF.SubmitJobs2Condor(bp,LocalSub)
+                 for bp in bad_pop:
+                    UF.SubmitJobs2Condor(bp,LocalSub)
                  if AutoPilot0(600,10,Patience):
                         FreshStart=False
                         print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 0 has successfully completed'+bcolors.ENDC)
