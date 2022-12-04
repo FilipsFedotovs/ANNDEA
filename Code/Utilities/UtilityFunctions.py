@@ -2204,7 +2204,7 @@ def CreateCondorJobs(AFS,EOS,PY,path,o,pfx,sfx,ID,loop_params,OptionHeader,Optio
         OptionHeader+=[' --EOS '," --AFS ", " --PY ", " --BatchID "]
         OptionLine+=[EOS, AFS, PY, ID]
         TotJobs=int(TotJobs)
-        print(nest_lvl)
+        print(loop_params)
         exit()
         with alive_bar(TotJobs,force_tty=True, title='Checking the results from HTCondor') as bar:
              if nest_lvl==2:
