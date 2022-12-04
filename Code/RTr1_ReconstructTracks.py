@@ -471,11 +471,6 @@ while status<5:
 
         if FreshStart:
             if (Zsteps*Xsteps*Ysteps)==len(bad_pop):
-                 print(UF.TimeStamp(),bcolors.WARNING+'Warning, there are still', len(bad_pop), 'HTCondor jobs remaining'+bcolors.ENDC)
-                 print(bcolors.BOLD+'If you would like to wait and exit please enter E'+bcolors.ENDC)
-                 print(bcolors.BOLD+'If you would like to wait please enter enter the maximum wait time in minutes'+bcolors.ENDC)
-                 print(bcolors.BOLD+'If you would like to resubmit please enter R'+bcolors.ENDC)
-                 UserAnswer=input(bcolors.BOLD+"Please, enter your option\n"+bcolors.ENDC)
                  OptionHeader = [' --stepZ ', ' --stepY ', ' --stepX ', " --zOffset ", " --yOffset ", " --xOffset ", ' --cut_dt ', ' --cut_dr ', ' --ModelName ', ' --Log ',' --Z_overlap ',' --Y_overlap ',' --X_overlap ']
                  OptionLine =   [stepZ,stepY,stepX,z_offset, y_offset, x_offset, cut_dt,cut_dr, ModelName ,Log,Z_overlap,Y_overlap,X_overlap]
                  bad_pop=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,PY_DIR,
@@ -490,19 +485,13 @@ while status<5:
                                     'RTr1a_ReconstructTracks_Sub.py',
                                     True)
                  print(UF.TimeStamp(),'Submitting jobs to HTCondor... ',bcolors.ENDC)
-                 if UserAnswer=='E':
-                      print(UF.TimeStamp(),'OK, exiting now then')
-                      exit()
-                 if UserAnswer=='R':
-                      for bp in bad_pop:
+                 for bp in bad_pop:
                           UF.SubmitJobs2Condor(bp,LocalSub)
-                          exit()
-                 else:
-                    if AutoPilot0(600,10,Patience):
+                 if AutoPilot0(600,10,Patience):
                         FreshStart=False
                         print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 0 has successfully completed'+bcolors.ENDC)
                         status=1
-                    else:
+                 else:
                         print(UF.TimeStamp(),bcolors.FAIL+'Stage 0 is uncompleted...'+bcolors.ENDC)
                         status=6
                         break
