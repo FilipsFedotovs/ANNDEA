@@ -178,7 +178,8 @@ else:
     HC.LinkHits(combined_weight_list,False,[],cut_dt,cut_dr,Acceptance)
 HC.UnloadClusterGraph()
 print(UF.TimeStamp(),'Writing the output...')
-UF.PickleOperations(output_file_location,'w', HC)
+print(output_file_location)
+print(UF.PickleOperations(output_file_location,'w', HC))
 #End of the script
 
 
