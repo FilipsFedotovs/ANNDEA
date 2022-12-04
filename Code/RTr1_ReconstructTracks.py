@@ -463,8 +463,6 @@ while status<5:
                                     OptionLine,
                                     'RTr1a_ReconstructTracks_Sub.py',
                                     False)
-        print(len(bad_pop))
-        exit()
         if len(bad_pop)==0:
              FreshStart=False
              print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 0 has successfully completed'+bcolors.ENDC)
@@ -478,13 +476,26 @@ while status<5:
                  print(bcolors.BOLD+'If you would like to wait please enter enter the maximum wait time in minutes'+bcolors.ENDC)
                  print(bcolors.BOLD+'If you would like to resubmit please enter R'+bcolors.ENDC)
                  UserAnswer=input(bcolors.BOLD+"Please, enter your option\n"+bcolors.ENDC)
+                 OptionHeader = [' --stepZ ', ' --stepY ', ' --stepX ', " --zOffset ", " --yOffset ", " --xOffset ", ' --cut_dt ', ' --cut_dr ', ' --ModelName ', ' --Log ',' --Z_overlap ',' --Y_overlap ',' --X_overlap ']
+                 OptionLine =   [stepZ,stepY,stepX,z_offset, y_offset, x_offset, cut_dt,cut_dr, ModelName ,Log,Z_overlap,Y_overlap,X_overlap]
+                 bad_pop=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,PY_DIR,
+                                    '/ANNDEA/Data/REC_SET/',
+                                    'hit_cluster_rec_set',
+                                    'RTr1a',
+                                    '.pkl',
+                                    RecBatchID,
+                                    JobSets,
+                                    OptionHeader,
+                                    OptionLine,
+                                    'RTr1a_ReconstructTracks_Sub.py',
+                                    True)
                  print(UF.TimeStamp(),'Submitting jobs to HTCondor... ',bcolors.ENDC)
                  if UserAnswer=='E':
                       print(UF.TimeStamp(),'OK, exiting now then')
                       exit()
                  if UserAnswer=='R':
                       for bp in bad_pop:
-                          UF.SubmitJobs2Condor(bp)
+                          UF.SubmitJobs2Condor(bp,LocalSub)
                           exit()
                  else:
                     if AutoPilot0(600,10,Patience):
@@ -528,13 +539,7 @@ while status<5:
                           break
         else:
             if (Zsteps*Xsteps*Ysteps)==len(bad_pop):
-                 JobSets=[]
-                 for k in range(0,Zsteps):
-                    JobSets.append([])
-                    for j in range(0,Ysteps):
-                        JobSets[k].append(Xsteps)
                  print(UF.TimeStamp(),'Submitting jobs to HTCondor... ',bcolors.ENDC)
-
                  OptionHeader = [' --stepZ ', ' --stepY ', ' --stepX ', " --zOffset ", " --yOffset ", " --xOffset ", ' --cut_dt ', ' --cut_dr ', ' --ModelName ', ' --Log ',' --Z_overlap ',' --Y_overlap ',' --X_overlap ']
                  OptionLine =   [stepZ,stepY,stepX,z_offset, y_offset, x_offset, cut_dt,cut_dr, ModelName ,Log,Z_overlap,Y_overlap,X_overlap]
                  bad_pop=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,PY_DIR,
