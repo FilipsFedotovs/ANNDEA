@@ -444,10 +444,10 @@ while status<5:
         print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
         print(UF.TimeStamp(),bcolors.BOLD+'Stage 0:'+bcolors.ENDC+' Sending hit cluster to the HTCondor, so the model assigns weights between hits')
         JobSets=[]
-        for k in range(0,Zsteps):
+        for i in range(0,Xsteps):
                 JobSets.append([])
                 for j in range(0,Ysteps):
-                     JobSets[k].append(Xsteps)
+                     JobSets[i].append(Zsteps)
 
 
         OptionHeader = [' --stepZ ', ' --stepY ', ' --stepX ', " --zOffset ", " --yOffset ", " --xOffset ", ' --cut_dt ', ' --cut_dr ', ' --ModelName ', ' --Log ',' --Z_overlap ',' --Y_overlap ',' --X_overlap ']
