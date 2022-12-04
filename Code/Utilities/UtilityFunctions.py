@@ -2183,10 +2183,12 @@ def CreateCondorJobs(AFS,EOS,PY,path,o,pfx,sfx,ID,loop_params,OptionHeader,Optio
                                bar()
                                SHName = AFS + '/HTCondor/SH/SH_'+pfx+'_'+ ID+'_' + str(i) + '_' + str(j) + '_' + str(k) +'.sh'
                                SUBName = AFS + '/HTCondor/SUB/SUB_'+pfx+'_'+ ID+'_' + str(i) + '_' + str(j) + '_' + str(k) +'.sub'
-                               MSGName = AFS + '/HTCondor/MSG/MSG_'+pfx+'_'+ ID+'_' + str(i) + '_' + str(j) + '_' + str(j)
+                               MSGName = AFS + '/HTCondor/MSG/MSG_'+pfx+'_'+ ID+'_' + str(i) + '_' + str(j) + '_' + str(k)
                                ScriptName = AFS + '/Code/Utilities/'+Sub_File
                                if os.path.isfile(required_output_file_location)!=True:
                                   bad_pop.append([OptionHeader+[' --i ', ' --j ',' --k ', ' --p ', ' --o ',' --pfx ', ' --sfx '], OptionLine+[i, j,k, path,o, pfx, sfx], SHName, SUBName, MSGName, ScriptName, 1, 'ANNDEA-'+pfx+'-'+ID, False,False])
+                                  print(required_output_file_location)
+                                  x=input()
         return(bad_pop)
     else:
         from alive_progress import alive_bar
