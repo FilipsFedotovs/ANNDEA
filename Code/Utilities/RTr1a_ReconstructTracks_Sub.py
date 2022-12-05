@@ -143,17 +143,17 @@ if Log=='KALMAN':
     FEDRAdata_list=FEDRAdata.values.tolist()
 
 print(UF.TimeStamp(),'Preparing the model')
-import torch
-EOSsubDIR=EOS_DIR+'/'+'ANNDEA'
-EOSsubModelDIR=EOSsubDIR+'/'+'Models'
-Model_Meta_Path=EOSsubModelDIR+'/'+args.ModelName+'_Meta'
-Model_Path=EOSsubModelDIR+'/'+args.ModelName
-ModelMeta=UF.PickleOperations(Model_Meta_Path, 'r', 'N/A')[0]
-Acceptance=ModelMeta.TrainSessionsData[-1][-1][3]
-device = torch.device('cpu')
-model = UF.GenerateModel(ModelMeta).to(device)
-model.load_state_dict(torch.load(Model_Path))
-model.eval()
+# import torch
+# EOSsubDIR=EOS_DIR+'/'+'ANNDEA'
+# EOSsubModelDIR=EOSsubDIR+'/'+'Models'
+# Model_Meta_Path=EOSsubModelDIR+'/'+args.ModelName+'_Meta'
+# Model_Path=EOSsubModelDIR+'/'+args.ModelName
+# ModelMeta=UF.PickleOperations(Model_Meta_Path, 'r', 'N/A')[0]
+# Acceptance=ModelMeta.TrainSessionsData[-1][-1][3]
+# device = torch.device('cpu')
+# model = UF.GenerateModel(ModelMeta).to(device)
+# model.load_state_dict(torch.load(Model_Path))
+# model.eval()
 print(UF.TimeStamp(),'Creating the clusters')
 HC=UF.HitCluster([X_ID,Y_ID,Z_ID],[stepX,stepY,stepZ])
 
@@ -163,6 +163,9 @@ print(HC.RawClusterGraph)
 if len(HC.RawClusterGraph)>1:
     print(UF.TimeStamp(),'Generating the edges...')
     GraphStatus = HC.GenerateEdges(cut_dt, cut_dr)
+    print(HC.ClusterGraph.edge_index)
+    print(GraphStatus)
+    exit()
     combined_weight_list=[]
     if GraphStatus:
         if HC.ClusterGraph.num_edges>0:
