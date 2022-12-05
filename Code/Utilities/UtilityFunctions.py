@@ -149,10 +149,11 @@ class HitCluster:
                           self.ClusterHitIDs.append(s[0])
                           self.ClusterHits.append(s)
            self.ClusterSize=len(__ClusterHitsTemp)
-           import torch
-           import torch_geometric
-           from torch_geometric.data import Data
-           self.ClusterGraph=Data(x=torch.Tensor(__ClusterHitsTemp), edge_index=None, y=None)
+           self.RawClusterGraph=__ClusterHitsTemp #Avoiding importing torch without a good reason (reduce load on the HTCOndor initiative)
+           # import torch
+           # import torch_geometric
+           # from torch_geometric.data import Data
+           # self.ClusterGraph=Data(x=torch.Tensor(__ClusterHitsTemp), edge_index=None, y=None)
            del __ClusterHitsTemp
       def GenerateTrainData(self, MCHits,cut_dt, cut_dr): #Decorate hit information
            import pandas as pd
@@ -262,17 +263,22 @@ class HitCluster:
            _Tot_Hits = _Tot_Hits.drop(['r_x','r_y','r_z','l_x','l_y','l_z'],axis=1)
            _Tot_Hits=_Tot_Hits[['l_HitID','r_HitID','label','d_l','d_t','d_z','d_tx','d_ty']]
            _Tot_Hits=_Tot_Hits.values.tolist()
-           import torch
-           self.ClusterGraph.edge_index=torch.tensor((HitCluster.GenerateLinks(_Tot_Hits,self.ClusterHitIDs)))
-           self.ClusterGraph.edge_attr=torch.tensor((HitCluster.GenerateEdgeAttributes(_Tot_Hits)))
-           self.edges=[]
-           for r in _Tot_Hits:
-               self.edges.append(r[:2])
-           if len(self.ClusterGraph.edge_attr)>0:
-               return True
+           if len(_Tot_Hits)>0:
+               import torch
+               import torch_geometric
+               from torch_geometric.data import Data
+               self.ClusterGraph=Data(x=torch.Tensor(self.RawClusterGraph), edge_index=None, y=None)
+               self.ClusterGraph.edge_index=torch.tensor((HitCluster.GenerateLinks(_Tot_Hits,self.ClusterHitIDs)))
+               self.ClusterGraph.edge_attr=torch.tensor((HitCluster.GenerateEdgeAttributes(_Tot_Hits)))
+               self.edges=[]
+               for r in _Tot_Hits:
+                   self.edges.append(r[:2])
+               if len(self.ClusterGraph.edge_attr)>0:
+                   return True
+               else:
+                   return False
            else:
                return False
-
       def LinkHits(self,hits,GiveStats,MCHits,cut_dt,cut_dr, Acceptance):
           self.HitLinks=hits
           import pandas as pd
@@ -562,8 +568,6 @@ class HitCluster:
             #Join hits + MC truth
             _Rec_Hits_Pool=pd.merge(_Hits_df, _Rec_Hits_Pool, how="right", on=['HitID'])
             self.RecHits=_Rec_Hits_Pool
-            # checkpoint_2=datetime.datetime.now()
-            # print(checkpoint_2-checkpoint_1)
       def TestKalmanHits(self,Recdata_list,MCdata_list):
           import pandas as pd
           _Tot_Hits_df=pd.DataFrame(self.ClusterHits, columns = ['HitID','x','y','z','tx','ty'])[['HitID','z']]

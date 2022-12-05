@@ -156,31 +156,40 @@ model.load_state_dict(torch.load(Model_Path))
 model.eval()
 print(UF.TimeStamp(),'Creating the clusters')
 HC=UF.HitCluster([X_ID,Y_ID,Z_ID],[stepX,stepY,stepZ])
+
 print(UF.TimeStamp(),'Decorating the clusters')
 HC.LoadClusterHits(data_list)
+print(len(HC))
+print(HC)
+exit()
 print(UF.TimeStamp(),'Generating the edges...')
 GraphStatus = HC.GenerateEdges(cut_dt, cut_dr)
 combined_weight_list=[]
-if HC.ClusterGraph.num_edges>0:
-            print(UF.TimeStamp(),'Classifying the edges...')
-            w = model(HC.ClusterGraph.x, HC.ClusterGraph.edge_index, HC.ClusterGraph.edge_attr)
-            w=w.tolist()
-            for edge in range(len(HC.edges)):
-                combined_weight_list.append(HC.edges[edge]+w[edge])
-if Log!='NO':
+if GraphStatus:
+    if HC.ClusterGraph.num_edges>0:
+                print(UF.TimeStamp(),'Classifying the edges...')
+                w = model(HC.ClusterGraph.x, HC.ClusterGraph.edge_index, HC.ClusterGraph.edge_attr)
+                w=w.tolist()
+                for edge in range(len(HC.edges)):
+                    combined_weight_list.append(HC.edges[edge]+w[edge])
+    if Log!='NO':
                 print(UF.TimeStamp(),'Tracking the cluster...')
                 HC.LinkHits(combined_weight_list,True,MCdata_list,cut_dt,cut_dr,Acceptance)
                 if Log=='KALMAN':
                        HC.TestKalmanHits(FEDRAdata_list,MCdata_list)
 
+    else:
+        print(UF.TimeStamp(),'Tracking the cluster...')
+        HC.LinkHits(combined_weight_list,False,[],cut_dt,cut_dr,Acceptance)
+    HC.UnloadClusterGraph()
+    print(UF.TimeStamp(),'Writing the output...')
+    print(output_file_location)
+    print(UF.PickleOperations(output_file_location,'w', HC))
 else:
-    print(UF.TimeStamp(),'Tracking the cluster...')
-    HC.LinkHits(combined_weight_list,False,[],cut_dt,cut_dr,Acceptance)
-HC.UnloadClusterGraph()
-print(UF.TimeStamp(),'Writing the output...')
-print(output_file_location)
-print(UF.PickleOperations(output_file_location,'w', HC))
-#End of the script
+    HC=[]
+    print(UF.TimeStamp(),'Writing the output...')
+    print(output_file_location)
+    print(UF.PickleOperations(output_file_location,'w', HC))
 
 
 
