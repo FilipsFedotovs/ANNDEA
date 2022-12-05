@@ -185,7 +185,6 @@ if len(HC.RawClusterGraph)>1:
         exit()
 HC.RecHits=pd.DataFrame([], columns = ['HitID','z','Segment_ID'])
 print(UF.TimeStamp(),'Writing the output...')
-print(output_file_location)
-print(UF.PickleOperations(output_file_location,'w', HC))
+print(UF.PickleOperations(output_file_location,'w', HC)[1])
 
 
