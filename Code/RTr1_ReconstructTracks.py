@@ -483,6 +483,8 @@ while status<5:
                                     OptionHeader,
                                     OptionLine,
                                     'RTr1a_ReconstructTracks_Sub.py',
+                                    True
+                                    ['',''],
                                     True)
                  print(UF.TimeStamp(),'Submitting jobs to HTCondor... ',bcolors.ENDC)
                  for bp in bad_pop:

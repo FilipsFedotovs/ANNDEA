@@ -358,15 +358,11 @@ class HitCluster:
             _Tot_Hits=pd.merge(_Tot_Hits,_Loc_Hits_r, how='inner', on=['r_z'])
             _Tot_Hits=pd.merge(_Tot_Hits,_Loc_Hits_l, how='inner', on=['l_z'])
             _Tot_Hits=_Tot_Hits[['_r_HitID','_l_HitID','r_index','l_index','link_strength']]
-
             _Tot_Hits.sort_values(by = ['_r_HitID', 'l_index','link_strength'], ascending=[True,True, False],inplace=True)
             _Tot_Hits.drop_duplicates(subset=['_r_HitID', 'l_index','link_strength'], keep='first', inplace=True)
-
             _Tot_Hits.sort_values(by = ['_l_HitID', 'r_index','link_strength'], ascending=[True,True, False],inplace=True)
             _Tot_Hits.drop_duplicates(subset=['_l_HitID', 'r_index','link_strength'], keep='first', inplace=True)
-
             _Tot_Hits=_Tot_Hits.values.tolist()
-
             _Temp_Tot_Hits=[]
             for el in _Tot_Hits:
                 _Temp_Tot_Hit_El = [[],[]]
