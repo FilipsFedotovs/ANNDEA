@@ -486,6 +486,8 @@ while status<5:
                                     True
                                     ['',''],
                                     True)
+                 print(bad_pop)
+                 exit()
                  print(UF.TimeStamp(),'Submitting jobs to HTCondor... ',bcolors.ENDC)
                  for bp in bad_pop:
                           UF.SubmitJobs2Condor(bp,LocalSub)
