@@ -483,11 +483,7 @@ while status<5:
                                     OptionHeader,
                                     OptionLine,
                                     'RTr1a_ReconstructTracks_Sub.py',
-                                    True
-                                    ['',''],
                                     True)
-                 print(bad_pop)
-                 exit()
                  print(UF.TimeStamp(),'Submitting jobs to HTCondor... ',bcolors.ENDC)
                  for bp in bad_pop:
                           UF.SubmitJobs2Condor(bp,LocalSub)
@@ -545,8 +541,6 @@ while status<5:
                                     OptionHeader,
                                     OptionLine,
                                     'RTr1a_ReconstructTracks_Sub.py',
-                                    True,
-                                    ['',''],
                                     True)
                  for bp in bad_pop:
                     UF.SubmitJobs2Condor(bp,LocalSub)
