@@ -545,6 +545,8 @@ while status<5:
                                     OptionHeader,
                                     OptionLine,
                                     'RTr1a_ReconstructTracks_Sub.py',
+                                    True,
+                                    ['',''],
                                     True)
                  for bp in bad_pop:
                     UF.SubmitJobs2Condor(bp,LocalSub)
