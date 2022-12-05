@@ -147,13 +147,9 @@ print(UF.TimeStamp(),'Creating the clusters')
 HC=UF.HitCluster([X_ID,Y_ID,Z_ID],[stepX,stepY,stepZ])
 print(UF.TimeStamp(),'Decorating the clusters')
 HC.LoadClusterHits(data_list)
-print(HC.RawClusterGraph)
 if len(HC.RawClusterGraph)>1:
     print(UF.TimeStamp(),'Generating the edges...')
     GraphStatus = HC.GenerateEdges(cut_dt, cut_dr)
-    print(HC.ClusterGraph.edge_index)
-    print(GraphStatus)
-
     combined_weight_list=[]
     if GraphStatus:
         if HC.ClusterGraph.num_edges>0:
@@ -183,14 +179,12 @@ if len(HC.RawClusterGraph)>1:
         else:
             print(UF.TimeStamp(),'Tracking the cluster...')
             HC.LinkHits(combined_weight_list,False,[],cut_dt,cut_dr,Acceptance)
-        print(HC.RecHits)
         HC.UnloadClusterGraph()
         print(UF.TimeStamp(),'Writing the output...')
         print(output_file_location)
         print(UF.PickleOperations(output_file_location,'w', HC))
         exit()
 HC.RecHits=pd.DataFrame([], columns = ['HitID','z','Segment_ID'])
-print(HC.RecHits)
 print(UF.TimeStamp(),'Writing the output...')
 print(output_file_location)
 print(UF.PickleOperations(output_file_location,'w', HC))
