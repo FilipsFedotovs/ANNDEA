@@ -153,7 +153,7 @@ if len(HC.RawClusterGraph)>1:
     GraphStatus = HC.GenerateEdges(cut_dt, cut_dr)
     print(HC.ClusterGraph.edge_index)
     print(GraphStatus)
- 
+
     combined_weight_list=[]
     if GraphStatus:
         if HC.ClusterGraph.num_edges>0:
@@ -189,7 +189,8 @@ if len(HC.RawClusterGraph)>1:
         print(output_file_location)
         print(UF.PickleOperations(output_file_location,'w', HC))
         exit()
-HC.RecHits=[]
+HC.RecHits=pd.DataFrame([], columns = ['HitID','z','Segment_ID'])
+print(HC.RecHits)
 print(UF.TimeStamp(),'Writing the output...')
 print(output_file_location)
 print(UF.PickleOperations(output_file_location,'w', HC))
