@@ -159,8 +159,7 @@ HC=UF.HitCluster([X_ID,Y_ID,Z_ID],[stepX,stepY,stepZ])
 
 print(UF.TimeStamp(),'Decorating the clusters')
 HC.LoadClusterHits(data_list)
-print(len(HC))
-print(HC)
+print(HC.RawClusterGraph)
 exit()
 print(UF.TimeStamp(),'Generating the edges...')
 GraphStatus = HC.GenerateEdges(cut_dt, cut_dr)
@@ -186,7 +185,7 @@ if GraphStatus:
     print(output_file_location)
     print(UF.PickleOperations(output_file_location,'w', HC))
 else:
-    HC=[]
+    HC.RecHits=[]
     print(UF.TimeStamp(),'Writing the output...')
     print(output_file_location)
     print(UF.PickleOperations(output_file_location,'w', HC))
