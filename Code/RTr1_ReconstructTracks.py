@@ -568,6 +568,11 @@ while status<5:
     if status==1:
         print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
         print(UF.TimeStamp(),bcolors.BOLD+'Stage 1:'+bcolors.ENDC+' Sending hit cluster to the HTCondor, so the reconstructed clusters can be merged along z-axis')
+        JobSets=[]
+        for i in range(0,Xsteps):
+                     JobSets.append(Ysteps)
+        print(JobSets)
+        exit()
         bad_pop=[]
         with alive_bar(Ysteps*Xsteps,force_tty=True, title='Checking the Z-shift results from HTCondor') as bar:
             for j in range(0,Ysteps):
