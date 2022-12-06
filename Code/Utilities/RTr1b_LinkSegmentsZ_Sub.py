@@ -24,8 +24,8 @@ parser.add_argument('--AFS',help="Please enter the user afs directory", default=
 parser.add_argument('--EOS',help="Please enter the user eos directory", default='.')
 parser.add_argument('--PY',help="Python libraries directory location", default='.')
 parser.add_argument('--RecBatchID',help="Give this reconstruction batch an ID", default='Test_Slider')
-parser.add_argument('--Y_ID',help="Enter Y id", default='0')
-parser.add_argument('--X_ID',help="Enter X id", default='0')
+parser.add_argument('--j',help="Enter Y id", default='0')
+parser.add_argument('--i',help="Enter X id", default='0')
 parser.add_argument('--Z_ID_Max',help="Enter Max Z id", default='2')
 ########################################     Initialising Variables    #########################################
 args = parser.parse_args()
@@ -48,8 +48,8 @@ import UtilityFunctions as UF
 #Load data configuration
 EOSsubDIR=EOS_DIR+'/'+'ANNDEA'
 EOSsubDataDIR=EOSsubDIR+'/'+'Data'
-Y_ID=int(args.Y_ID)
-X_ID=int(args.X_ID)
+Y_ID=int(args.j)
+X_ID=int(args.i)
 Z_ID_Max=int(args.Z_ID_Max)
 ##############################################################################################################################
 ######################################### Starting the program ################################################################
