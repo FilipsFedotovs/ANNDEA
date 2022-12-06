@@ -572,7 +572,6 @@ while status<5:
         for i in range(0,Xsteps):
                      JobSets.append(Ysteps)
         print(JobSets)
-        exit()
         OptionHeader = [' --Z_ID_Max ',' --j ', ' --i ']
         OptionLine =   [stepZ,stepY,stepX]
         bad_pop=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,PY_DIR,
