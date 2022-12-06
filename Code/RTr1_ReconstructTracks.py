@@ -573,21 +573,40 @@ while status<5:
                      JobSets.append(Ysteps)
         print(JobSets)
         exit()
-        bad_pop=[]
-        with alive_bar(Ysteps*Xsteps,force_tty=True, title='Checking the Z-shift results from HTCondor') as bar:
-            for j in range(0,Ysteps):
-                 for i in range(0,Xsteps):
-                      required_output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RTr1b_'+RecBatchID+'_hit_cluster_rec_z_set_'+str(j)+'_' +str(i)+'.pkl'
-                      bar.text = f'-> Checking whether the file : {required_output_file_location}, exists...'
-                      bar()
-                      OptionHeader = [' --Z_ID_Max ',' --Y_ID ', ' --X_ID ', ' --EOS ', " --AFS ", ' --RecBatchID ']
-                      OptionLine = [Zsteps, j, i, EOS_DIR, AFS_DIR, RecBatchID]
-                      SHName = AFS_DIR + '/HTCondor/SH/SH_RTr1b_'+ RecBatchID+ '_' + str(j) + '_' + str(i) +'.sh'
-                      SUBName = AFS_DIR + '/HTCondor/SUB/SUB_RTr1b_'+ RecBatchID+ '_' + str(j) + '_' + str(i) + '.sub'
-                      MSGName = AFS_DIR + '/HTCondor/MSG/MSG_RTr1b_' + RecBatchID+ '_' + str(j) + '_' + str(i)
-                      ScriptName = AFS_DIR + '/Code/Utilities/RTr1b_LinkSegmentsZ_Sub.py '
-                      if os.path.isfile(required_output_file_location)!=True:
-                         bad_pop.append([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, 1, 'ANNDEA-RTr1-'+RecBatchID, False,False])
+        OptionHeader = [' --Z_ID_Max ',' --j ', ' --i ']
+        OptionLine =   [stepZ,stepY,stepX]
+        bad_pop=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,PY_DIR,
+                                    '/ANNDEA/Data/REC_SET/',
+                                    'hit_cluster_rec_z_set',
+                                    'RTr1b',
+                                    '.pkl',
+                                    RecBatchID,
+                                    JobSets,
+                                    OptionHeader,
+                                    OptionLine,
+                                    'RTr1b_ReconstructSegmentsZ_Sub.py',
+                                    False)
+        print(bad_pop)
+        exit()
+        if len(bad_pop)==0:
+             FreshStart=False
+             print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 1 has successfully completed'+bcolors.ENDC)
+             status=2
+        # bad_pop=[]
+        # with alive_bar(Ysteps*Xsteps,force_tty=True, title='Checking the Z-shift results from HTCondor') as bar:
+        #     for j in range(0,Ysteps):
+        #          for i in range(0,Xsteps):
+        #               required_output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RTr1b_'+RecBatchID+'_hit_cluster_rec_z_set_'+str(j)+'_' +str(i)+'.pkl'
+        #               bar.text = f'-> Checking whether the file : {required_output_file_location}, exists...'
+        #               bar()
+        #               OptionHeader = [' --Z_ID_Max ',' --Y_ID ', ' --X_ID ', ' --EOS ', " --AFS ", ' --RecBatchID ']
+        #               OptionLine = [Zsteps, j, i, EOS_DIR, AFS_DIR, RecBatchID]
+        #               SHName = AFS_DIR + '/HTCondor/SH/SH_RTr1b_'+ RecBatchID+ '_' + str(j) + '_' + str(i) +'.sh'
+        #               SUBName = AFS_DIR + '/HTCondor/SUB/SUB_RTr1b_'+ RecBatchID+ '_' + str(j) + '_' + str(i) + '.sub'
+        #               MSGName = AFS_DIR + '/HTCondor/MSG/MSG_RTr1b_' + RecBatchID+ '_' + str(j) + '_' + str(i)
+        #               ScriptName = AFS_DIR + '/Code/Utilities/RTr1b_LinkSegmentsZ_Sub.py '
+        #               if os.path.isfile(required_output_file_location)!=True:
+        #                  bad_pop.append([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, 1, 'ANNDEA-RTr1-'+RecBatchID, False,False])
 
         if FreshStart:
             if (Xsteps*Ysteps)==len(bad_pop):
