@@ -284,7 +284,7 @@ def AutoPilot(wait_min, interval_min, max_interval_tolerance,program):
      return False,False
 def StandardProcess(program,status,freshstart):
         print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
-        print(UF.TimeStamp(),bcolors.BOLD+'Stage '+status+':'+bcolors.ENDC+str(program[status][0]))
+        print(UF.TimeStamp(),bcolors.BOLD+'Stage '+str(status)+':'+bcolors.ENDC+str(program[status][0]))
         batch_sub=program[status][4]>1
         bad_pop=UF.CreateCondorJobs(program[status][1][0],
                                     program[status][1][1],
