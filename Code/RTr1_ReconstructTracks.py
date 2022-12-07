@@ -431,7 +431,7 @@ print(UF.TimeStamp(),'Current stage has a code',Status,bcolors.ENDC)
 
 while Status<len(Program):
     if Program[Status]!='Custom':
-        Result=StandardProcess(Program,Status)
+        Result=StandardProcess(Program,Status,FreshStart)
         if Result[0]:
             FreshStart=Result[1]
             Status+=1
