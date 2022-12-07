@@ -280,9 +280,9 @@ def AutoPilot(wait_min, interval_min, max_interval_tolerance,program):
                       UF.SubmitJobs2Condor(bp,LocalSub)
                   print(UF.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
          else:
-              return True
-     return False
-def StandardProcess(program,status):
+              return True,False
+     return False,False
+def StandardProcess(program,status,freshstart):
         print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
         print(UF.TimeStamp(),bcolors.BOLD+'Stage '+status':'+bcolors.ENDC+program[status][0])
         batch_sub=program[status][4]>1
@@ -301,8 +301,7 @@ def StandardProcess(program,status):
                                     False)
         if len(bad_pop)==0:
              print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+status+' has successfully completed'+bcolors.ENDC)
-             FreshStart=False
-             return True
+             return True,False
 
 
         elif (program[status][4])==len(bad_pop):
@@ -324,15 +323,14 @@ def StandardProcess(program,status):
                           UF.SubmitJobs2Condor(bp,LocalSub)
                  if AutoPilot(600,10,Patience,program[status]):
                         print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
-                        FreshStart=False
-                        return True
+                        return True,False
                  else:
                         print(UF.TimeStamp(),bcolors.FAIL+'Stage '+str(status)+' is uncompleted...'+bcolors.ENDC)
-                        return False
+                        return False,False
 
 
         elif len(bad_pop)>0:
-            if FreshStart:
+            if freshstart:
                    print(UF.TimeStamp(),bcolors.WARNING+'Warning, there are still', len(bad_pop), 'HTCondor jobs remaining'+bcolors.ENDC)
                    print(bcolors.BOLD+'If you would like to wait and exit please enter E'+bcolors.ENDC)
                    print(bcolors.BOLD+'If you would like to wait please enter enter the maximum wait time in minutes'+bcolors.ENDC)
@@ -346,30 +344,27 @@ def StandardProcess(program,status):
                            UF.SubmitJobs2Condor(bp,LocalSub)
                       print(UF.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
                       if AutoPilot(600,10,Patience,program[status]):
-                          FreshStart=False
                           print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+ 'has successfully completed'+bcolors.ENDC)
-                          return True
+                          return True,False
                       else:
                           print(UF.TimeStamp(),bcolors.FAIL+'Stage '+str(status)+' is uncompleted...'+bcolors.ENDC)
-                          return False
+                          return False,False
                    else:
                       if AutoPilot(int(UserAnswer),10,Patience,program[status]):
-                          FreshStart=False
                           print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+ 'has successfully completed'+bcolors.ENDC)
-                          return True
+                          return True,False
                       else:
                           print(UF.TimeStamp(),bcolors.FAIL+'Stage '+str(status)+' is uncompleted...'+bcolors.ENDC)
-                          return False
+                          return False,False
             else:
                       for bp in bad_pop:
                            UF.SubmitJobs2Condor(bp,LocalSub)
                       if AutoPilot(600,10,Patience,program[status]):
-                           FreshStart=False
                            print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+ 'has successfully completed'+bcolors.ENDC)
-                           return True
+                           return True,False
                       else:
                           print(UF.TimeStamp(),bcolors.FAIL+'Stage '+str(status)+' is uncompleted...'+bcolors.ENDC)
-                          return False
+                          return False,False
 
 
 if Mode=='RESET':
@@ -435,7 +430,9 @@ print(UF.TimeStamp(),'Current stage has a code',Status,bcolors.ENDC)
 
 while Status<len(Program):
     if Program[Status]!='Custom':
-        if StandardProcess(Program,Status):
+        Result=StandardProcess(Program,Status)
+        if Result[0]:
+            FreshStart=Result[1]
             Status+=1
             continue
         else:
