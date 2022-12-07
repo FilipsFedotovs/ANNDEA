@@ -4,7 +4,26 @@
 
 
 ########################################    Import libraries    #############################################
-
+import csv
+csv_reader=open('../config',"r")
+config = list(csv.reader(csv_reader))
+for c in config:
+    if c[0]=='AFS_DIR':
+        AFS_DIR=c[1]
+    if c[0]=='EOS_DIR':
+        EOS_DIR=c[1]
+    if c[0]=='PY_DIR':
+        PY_DIR=c[1]
+csv_reader.close()
+import sys
+if PY_DIR!='': #Temp solution - the decision was made to move all libraries to EOS drive as AFS get locked during heavy HTCondor submission loads
+    sys.path=['',PY_DIR]
+    sys.path.append('/usr/lib64/python36.zip')
+    sys.path.append('/usr/lib64/python3.6')
+    sys.path.append('/usr/lib64/python3.6/lib-dynload')
+    sys.path.append('/usr/lib64/python3.6/site-packages')
+    sys.path.append('/usr/lib/python3.6/site-packages')
+sys.path.append(AFS_DIR+'/Code/Utilities')
 import pandas as pd #We use Panda for a routine data processing
 import math #We use it for data manipulation
 import numpy as np
@@ -13,7 +32,6 @@ from tabulate import tabulate
 import time
 from alive_progress import alive_bar
 import argparse
-
 class bcolors:   #We use it for the interface
     HEADER = '\033[95m'
     OKBLUE = '\033[94m'
@@ -34,12 +52,13 @@ print(bcolors.HEADER+"##########################################################
 #Setting the parser - this script is usually not run directly, but is used by a Master version Counterpart that passes the required arguments
 parser = argparse.ArgumentParser(description='This script prepares training data for training the tracking model')
 parser.add_argument('--Mode', help='Script will continue from the last checkpoint, unless you want to start from the scratch, then type "Reset"',default='')
-parser.add_argument('--ModelName',help="WHat GNN model would you like to use?", default='MH_GNN_5FTR_4_120_4_120')
-parser.add_argument('--Patience',help="How many checks to do before resubmitting the job?", default='15')
+parser.add_argument('--ModelName',help="WHat GNN model would you like to use?", default='MH_GNN_5FTR_5_80_5_80')
+parser.add_argument('--Patience',help="How many checks to do before resubmitting the job?", default='30')
+parser.add_argument('--SubPause',help="How long to wait in minutes after submitting 10000 jobs?", default='60')
 parser.add_argument('--Log',help="Would you like to log the performance: No, MC, Kalman? (Only available if you have MC Truth or Kalman track reconstruction data)", default='No')
-parser.add_argument('--RecBatchID',help="Give this reconstruction batch an ID", default='SHIP_UR_v1')
+parser.add_argument('--RecBatchID',help="Give this reconstruction batch an ID", default='Test_Batch')
 parser.add_argument('--LocalSub',help="Local submission?", default='N')
-parser.add_argument('--f',help="Please enter the full path to the file with track reconstruction", default='/afs/cern.ch/work/f/ffedship/public/SHIP/Source_Data/SHIP_Emulsion_FEDRA_Raw_UR.csv')
+parser.add_argument('--f',help="Please enter the full path to the file with track reconstruction", default='/eos/experiment/ship/ANNDEA/Data')
 parser.add_argument('--Xmin',help="This option restricts data to only those events that have tracks with hits x-coordinates that are above this value", default='0')
 parser.add_argument('--Xmax',help="This option restricts data to only those events that have tracks with hits x-coordinates that are below this value", default='0')
 parser.add_argument('--Ymin',help="This option restricts data to only those events that have tracks with hits y-coordinates that are above this value", default='0')
@@ -55,6 +74,7 @@ Log=args.Log.upper()
 ModelName=args.ModelName
 RecBatchID=args.RecBatchID
 Patience=int(args.Patience)
+SubPause=int(args.SubPause)*60
 LocalSub=(args.LocalSub=='Y')
 input_file_location=args.f
 Xmin,Xmax,Ymin,Ymax=float(args.Xmin),float(args.Xmax),float(args.Ymin),float(args.Ymax)
@@ -239,6 +259,7 @@ x_max=data['x'].max()
 y_max=data['y'].max()
 FreshStart=True
 Program=[]
+#Calculating the number of volumes that will be sent to HTCondor for reconstruction
 if X_overlap==1:
     Xsteps=math.ceil((x_max)/stepX)
 else:
@@ -251,7 +272,7 @@ else:
 
 #Defining handy functions to make the code little cleaner
 
-
+#The function bellow helps to monitor the HTCondor jobs and keep the submission flow
 def AutoPilot(wait_min, interval_min, max_interval_tolerance,program):
      print(UF.TimeStamp(),'Going on an autopilot mode for ',wait_min, 'minutes while checking HTCondor every',interval_min,'min',bcolors.ENDC)
      wait_sec=wait_min*60
@@ -277,11 +298,17 @@ def AutoPilot(wait_min, interval_min, max_interval_tolerance,program):
                print(UF.TimeStamp(),bcolors.WARNING+'Autopilot status update: There are still', len(bad_pop), 'HTCondor jobs remaining'+bcolors.ENDC)
                if interval%max_interval_tolerance==0:
                   for bp in bad_pop:
+                      HTCondorTag="SoftUsed == \"ANNDEA-RTr-"+RecBatchID+"\""
+                      UF.RecCleanUp(AFS_DIR, EOS_DIR, 'RTr1a_'+RecBatchID, [], HTCondorTag)
+                      UF.RecCleanUp(AFS_DIR, EOS_DIR, 'RTr1b_'+RecBatchID, [], HTCondorTag)
+                      UF.RecCleanUp(AFS_DIR, EOS_DIR, 'RTr1c_'+RecBatchID, [], HTCondorTag)
+                      UF.RecCleanUp(AFS_DIR, EOS_DIR, 'RTr1d_'+RecBatchID, [], HTCondorTag)
                       UF.SubmitJobs2Condor(bp,LocalSub)
                   print(UF.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
          else:
               return True,False
      return False,False
+#The function bellow helps to automate the submission process
 def StandardProcess(program,status,freshstart):
         print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
         print(UF.TimeStamp(),bcolors.BOLD+'Stage '+str(status)+':'+bcolors.ENDC+str(program[status][0]))
@@ -298,9 +325,9 @@ def StandardProcess(program,status,freshstart):
                                     program[status][2],
                                     program[status][3],
                                     program[status][1][9],
-                                    False)
+                                    False,['',''],True)
         if len(bad_pop)==0:
-             print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+status+' has successfully completed'+bcolors.ENDC)
+             print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
              return True,False
 
 
@@ -317,10 +344,17 @@ def StandardProcess(program,status,freshstart):
                                     program[status][2],
                                     program[status][3],
                                     program[status][1][9],
-                                    batch_sub)
+                                    batch_sub,['',''],True)
                  print(UF.TimeStamp(),'Submitting jobs to HTCondor... ',bcolors.ENDC)
+                 _cnt=0
                  for bp in bad_pop:
+                          if _cnt>PM.SubPauseGap:
+                              print(UF.TimeStamp(),'Pausing submissions for  ',str(SubPause/60), 'minutes to relieve congestion...',bcolors.ENDC)
+                              time.sleep(SubPause)
+                              _cnt=0
                           UF.SubmitJobs2Condor(bp,LocalSub)
+                          _cnt+=bp[6]
+
                  if AutoPilot(600,10,Patience,program[status]):
                         print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
                         return True,False
@@ -366,7 +400,8 @@ def StandardProcess(program,status,freshstart):
                           print(UF.TimeStamp(),bcolors.FAIL+'Stage '+str(status)+' is uncompleted...'+bcolors.ENDC)
                           return False,False
 
-
+#If we chose reset mode we do a full cleanup.
+# #Reconstructing a single brick can cause in gereation of 100s of thousands of files - need to make sure that we remove them.
 if Mode=='RESET':
     print(UF.TimeStamp(),'Performing the cleanup... ',bcolors.ENDC)
     HTCondorTag="SoftUsed == \"ANNDEA-RTr-"+RecBatchID+"\""
@@ -374,7 +409,7 @@ if Mode=='RESET':
     FreshStart=False
 
 Status=0
-
+################ Set the execution sequence for the script
 ###### Stage 0
 prog_entry=[]
 job_sets=[]
@@ -388,6 +423,9 @@ prog_entry.append([' --stepZ ', ' --stepY ', ' --stepX ', " --zOffset ", " --yOf
 prog_entry.append([stepZ,stepY,stepX,z_offset, y_offset, x_offset, cut_dt,cut_dr, ModelName ,Log,Z_overlap,Y_overlap,X_overlap])
 prog_entry.append(Xsteps*Ysteps*Zsteps)
 Program.append(prog_entry)
+if Mode=='RESET':
+   print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Delete'))
+print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Create'))
 
 ###### Stage 1
 prog_entry=[]
@@ -400,7 +438,9 @@ prog_entry.append([' --Z_ID_Max ',' --j ', ' --i '])
 prog_entry.append([Zsteps,Ysteps,Xsteps])
 prog_entry.append(Xsteps*Ysteps)
 Program.append(prog_entry)
-
+if Mode=='RESET':
+   print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Delete'))
+print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Create'))
 ###### Stage 2
 prog_entry=[]
 job_sets=Xsteps
@@ -410,16 +450,22 @@ prog_entry.append([' --Y_ID_Max ', ' --i '])
 prog_entry.append([Ysteps,Xsteps])
 prog_entry.append(Xsteps)
 Program.append(prog_entry)
+if Mode=='RESET':
+   print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Delete'))
+print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Create'))
 
 ###### Stage 3
 prog_entry=[]
-job_sets=Xsteps
+job_sets=1
 prog_entry.append(' Sending hit cluster to the HTCondor, so the reconstructed clusters can be merged along x-axis')
-prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','hit_cluster_rec_y_set','RTr1d','.pkl',RecBatchID,job_sets,'RTr1d_LinkSegmentsX_Sub.py'])
+prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','hit_cluster_rec_x_set','RTr1d','.pkl',RecBatchID,job_sets,'RTr1d_LinkSegmentsX_Sub.py'])
 prog_entry.append([' --X_ID_Max '])
 prog_entry.append([Xsteps])
 prog_entry.append(1)
 Program.append(prog_entry)
+if Mode=='RESET':
+   print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Delete'))
+print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Create'))
 
 ###### Stage 4
 Program.append('Custom')
@@ -431,41 +477,52 @@ print(UF.TimeStamp(),'Current stage has a code',Status,bcolors.ENDC)
 
 while Status<len(Program):
     if Program[Status]!='Custom':
+        #Standard process here
         Result=StandardProcess(Program,Status,FreshStart)
         if Result[0]:
             FreshStart=Result[1]
             Status+=1
+            #Cleaning HTCondor submission files
             continue
         else:
             Status=len(Program)+1
             break
+
     elif Status==4:
+       #Non standard processes (don't follow the general pattern) have been coded here
        print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
        print(UF.TimeStamp(),bcolors.BOLD+'Stage 4:'+bcolors.ENDC+' Using the results from previous steps to map merged trackIDs to the original reconstruction file')
        try:
-           FirstFile=EOS_DIR+'/ANNDEA/Data/REC_SET/RTr1d_'+RecBatchID+'_hit_cluster_rec_x_set.pkl'
+           #Read the output with hit- ANN Track map
+           FirstFile=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RTr1d_'+RecBatchID+'_0'+'/RTr1d_'+RecBatchID+'_hit_cluster_rec_x_set_0.pkl'
            print(UF.TimeStamp(),'Loading the object ',bcolors.OKBLUE+FirstFile+bcolors.ENDC)
            FirstFileRaw=UF.PickleOperations(FirstFile,'r', 'N/A')
            FirstFile=FirstFileRaw[0]
            TrackMap=FirstFile.RecTracks
            input_file_location=args.f
            print(UF.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
+           #Reading the original file with Raw hits
            Data=pd.read_csv(input_file_location,header=0)
            Data[PM.Hit_ID] = Data[PM.Hit_ID].astype(str)
-           if SliceData:
-                  CutData=Data.drop(Data.index[(Data[PM.x] > Xmax) | (Data[PM.x] < Xmin) | (Data[PM.y] > Ymax) | (Data[PM.y] < Ymin)])
-                  OtherData=Data.drop(Data.index[(Data[PM.x] <= Xmax) | (Data[PM.x] >= Xmin) | (Data[PM.y] <= Ymax) | (Data[PM.y] >= Ymin)])
-           try:
-             CutData.drop(['ANN_Brick_ID','ANN_Track_ID'],axis=1,inplace=True) #Removing old ANNDEA reconstruction results so we can overwrite with the new ones
-           except Exception as e: print(UF.TimeStamp(), bcolors.WARNING+str(e)+bcolors.ENDC)
 
+           if SliceData: #If we want to perform reconstruction on the fraction of the Brick
+                  CutData=Data.drop(Data.index[(Data[PM.x] > Xmax) | (Data[PM.x] < Xmin) | (Data[PM.y] > Ymax) | (Data[PM.y] < Ymin)]) #The focus area where we reconstruct
+                  OtherData=Data.drop(Data.index[(Data[PM.x] <= Xmax) | (Data[PM.x] >= Xmin) | (Data[PM.y] <= Ymax) | (Data[PM.y] >= Ymin)]) #The rest of the volume
+           else:
+               CutData=Data #If we reconstruct the whole brick we jsut take the whole data. No need to separate.
+
+           CutData.drop(['ANN_Brick_ID','ANN_Track_ID'],axis=1,inplace=True,errors='ignore') #Removing old ANNDEA reconstruction results so we can overwrite with the new ones
+           #Map reconstructed ANN tracks to hits in the Raw file - this is in essesne the final output of the Tracking.
            CutData=pd.merge(CutData,TrackMap,how='left', left_on=[PM.Hit_ID], right_on=['HitID'])
-           CutData.drop(['HitID'],axis=1,inplace=True)
-           Data=pd.concat([CutData,OtherData])
-           output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_RTr_OUTPUT.csv'
+           CutData.drop(['HitID'],axis=1,inplace=True) #Make sure that HitID is not the Hit ID name in the raw data.
+           if SliceData:
+            Data=pd.concat([CutData,OtherData]) #If we slice the data we do the of Reconstructed and Unreconstructed subset of the brick.
+           else:
+            Data=CutData
+           output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_RTr_OUTPUT.csv' #Final output. We can use this file for further operations
            Data.to_csv(output_file_location,index=False)
            print(UF.TimeStamp(), bcolors.OKGREEN+"The tracked data has been written to"+bcolors.ENDC, bcolors.OKBLUE+output_file_location+bcolors.ENDC)
-
+           #The code bellow displays the Cluster level reconstruction stats. Only available if MC and FEDRA (Optional) rec stats are available. Is not recomended for big jobs.
            if Log!='NO':
                         #Calculating recombination accuracy stats, useful for diagnostics but it does allow to determine the high level of tracking - there is a dedicated module for that
                         print(UF.TimeStamp(),'Since the logging was requested, ANN average recombination performance across the clusters is being calculated...')
@@ -549,7 +606,6 @@ while Status<len(Program):
                             [label[5], np.average(fake_results_6), np.average(truth_results_6), np.sum(truth_results_6)/(np.sum(fake_results_6)+np.sum(truth_results_6)), np.std(precision_results_6), np.average(recall_results_6), np.std(recall_results_6)], \
                             [label[6], np.average(fake_results_7), np.average(truth_results_7), np.sum(truth_results_7)/(np.sum(fake_results_7)+np.sum(truth_results_3)), np.std(precision_results_7), np.average(recall_results_7), np.std(recall_results_7)]], \
                             headers=['Step', 'Avg # Fake edges', 'Avg # of Genuine edges', 'Avg precision', 'Precision std','Avg recall', 'Recall std' ], tablefmt='orgtbl'))
-
            if Log=='KALMAN':
                         print(UF.TimeStamp(),'Since the logging was requested, Kalman filter average recombination performance across the clusters is being calculated...')
                         fake_results_1=[]
@@ -606,13 +662,20 @@ while Status<len(Program):
                         [label[2], np.average(fake_results_3), np.average(truth_results_3), np.sum(truth_results_3)/(np.sum(fake_results_3)+np.sum(truth_results_3)), np.std(precision_results_3), np.average(recall_results_3), np.std(recall_results_3)], \
                         [label[3], np.average(fake_results_4), np.average(truth_results_4), np.sum(truth_results_4)/(np.sum(fake_results_4)+np.sum(truth_results_4)), np.std(precision_results_4), np.average(recall_results_4), np.std(recall_results_4)]],\
                         headers=['Step', 'Avg # Fake edges', 'Avg # of Genuine edges', 'Avg precision', 'Precision std','Avg recall', 'Recall std' ], tablefmt='orgtbl'))
+
            print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 4 has successfully completed'+bcolors.ENDC)
            Status=5
        except Exception as e:
-           print(UF.TimeStamp(),bcolors.FAIL+'Stage 4 is uncompleted due to...',+e+bcolors.ENDC)
-           Status=6
-           break
+          print(UF.TimeStamp(),bcolors.FAIL+'Stage 4 is uncompleted due to...',+e+bcolors.ENDC)
+          Status=6
+          break
 if Status==5:
+    print(UF.TimeStamp(),'Performing the cleanup... ',bcolors.ENDC)
+    HTCondorTag="SoftUsed == \"ANNDEA-RTr-"+RecBatchID+"\""
+    UF.RecCleanUp(AFS_DIR, EOS_DIR, 'RTr1_'+RecBatchID, ['RTr1a','RTr1b','RTr1c','RTr1d',RecBatchID+'_RTr_OUTPUT.pkl'], HTCondorTag)
+    for p in Program:
+        if p!='Custom':
+           print(UF.TimeStamp(),UF.ManageTempFolders(p,'Delete'))
     print(UF.TimeStamp(), bcolors.OKGREEN+"Reconstruction has been completed"+bcolors.ENDC)
     exit()
 else:

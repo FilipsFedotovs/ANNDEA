@@ -23,10 +23,14 @@ parser = argparse.ArgumentParser(description='select cut parameters')
 parser.add_argument('--AFS',help="Please enter the user afs directory", default='.')
 parser.add_argument('--EOS',help="Please enter the user eos directory", default='.')
 parser.add_argument('--PY',help="Python libraries directory location", default='.')
-parser.add_argument('--RecBatchID',help="Give this reconstruction batch an ID", default='Test_Slider')
+parser.add_argument('--BatchID',help="Give this reconstruction batch an ID", default='Test_Slider')
 parser.add_argument('--j',help="Enter Y id", default='0')
 parser.add_argument('--i',help="Enter X id", default='0')
 parser.add_argument('--Z_ID_Max',help="Enter Max Z id", default='2')
+parser.add_argument('--p',help="Path to the output file", default='')
+parser.add_argument('--o',help="Path to the output file name", default='')
+parser.add_argument('--pfx',help="Path to the output file name", default='')
+parser.add_argument('--sfx',help="Path to the output file name", default='')
 ########################################     Initialising Variables    #########################################
 args = parser.parse_args()
 ##################################   Loading Directory locations   ##################################################
@@ -43,7 +47,7 @@ if PY_DIR!='': #Temp solution
 sys.path.append(AFS_DIR+'/Code/Utilities')
 #import other libraries
 import pandas as pd
-RecBatchID=args.RecBatchID
+RecBatchID=args.BatchID
 import UtilityFunctions as UF
 #Load data configuration
 EOSsubDIR=EOS_DIR+'/'+'ANNDEA'
@@ -51,6 +55,10 @@ EOSsubDataDIR=EOSsubDIR+'/'+'Data'
 Y_ID=int(args.j)
 X_ID=int(args.i)
 Z_ID_Max=int(args.Z_ID_Max)
+p=args.p
+o=args.o
+sfx=args.sfx
+pfx=args.pfx
 ##############################################################################################################################
 ######################################### Starting the program ################################################################
 print(UF.TimeStamp(), bcolors.OKGREEN+"Modules Have been imported successfully..."+bcolors.ENDC)
@@ -58,13 +66,13 @@ def zero_divide(a, b):
     if (b==0): return 0
     return a/b
 
-FirstFile=EOS_DIR+'/ANNDEA/Data/REC_SET/RTr1a_'+RecBatchID+'_hit_cluster_rec_set_'+str(0)+'_' +str(Y_ID)+'_' +str(X_ID)+'.pkl'
+FirstFile=EOS_DIR+p+'/Temp_'+'RTr1a'+'_'+RecBatchID+'_'+str(X_ID)+'/'+'RTr1a'+'_'+RecBatchID+'_'+'hit_cluster_rec_set'+'_'+str(X_ID)+'_'+str(Y_ID)+'_'+str(0)+sfx
 FirstFileRaw=UF.PickleOperations(FirstFile,'r', 'N/A')
 FirstFile=FirstFileRaw[0]
 ZContractedTable=FirstFile.RecHits.rename(columns={"Segment_ID": "Master_Segment_ID","z": "Master_z" })
-#ZContractedTable.to_csv('FirstFile.csv',index=False)
 for i in range(1,Z_ID_Max):
-    SecondFile=EOS_DIR+'/ANNDEA/Data/REC_SET//RTr1a_'+RecBatchID+'_hit_cluster_rec_set_'+str(i)+'_' +str(Y_ID)+'_' +str(X_ID)+'.pkl'
+    SecondFile=EOS_DIR+p+'/Temp_'+'RTr1a'+'_'+RecBatchID+'_'+str(X_ID)+'/'+'RTr1a'+'_'+RecBatchID+'_'+'hit_cluster_rec_set'+'_'+str(X_ID)+'_'+str(Y_ID)+'_'+str(i)+sfx
+    print('Opening ',SecondFile)
     SecondFileRaw=UF.PickleOperations(SecondFile,'r', 'N/A')
     SecondFile=SecondFileRaw[0]
     SecondFileTable=SecondFile.RecHits
@@ -81,8 +89,8 @@ for i in range(1,Z_ID_Max):
     ZContractedTable=pd.concat([ZContractedTable,FileClean])
     ZContractedTable.drop_duplicates(subset=["Master_Segment_ID","HitID",'Master_z'],keep='first',inplace=True)
 FirstFile.RecSegments=ZContractedTable.sort_values(["Master_Segment_ID",'Master_z'],ascending=[1,1])
-OutputFile=EOS_DIR+'/ANNDEA/Data/REC_SET/RTr1b_'+RecBatchID+'_hit_cluster_rec_z_set_'+str(Y_ID)+'_' +str(X_ID)+'.pkl'
-print(UF.PickleOperations(OutputFile, 'w', FirstFile)[1])
+output_file_location=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(X_ID)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(X_ID)+'_'+str(Y_ID)+sfx
+print(UF.PickleOperations(output_file_location, 'w', FirstFile)[1])
 exit()
 
 
