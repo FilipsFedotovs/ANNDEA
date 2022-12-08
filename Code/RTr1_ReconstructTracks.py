@@ -443,7 +443,7 @@ while Status<len(Program):
        print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
        print(UF.TimeStamp(),bcolors.BOLD+'Stage 4:'+bcolors.ENDC+' Using the results from previous steps to map merged trackIDs to the original reconstruction file')
        try:
-           FirstFile=EOS_DIR+'/ANNDEA/Data/REC_SET/RTr1d_'+RecBatchID+'_hit_cluster_rec_x_set.pkl'
+           FirstFile=EOS_DIR+'/ANNDEA/Data/REC_SET/RTr1d_'+RecBatchID+'_hit_cluster_rec_x_set_0.pkl'
            print(UF.TimeStamp(),'Loading the object ',bcolors.OKBLUE+FirstFile+bcolors.ENDC)
            FirstFileRaw=UF.PickleOperations(FirstFile,'r', 'N/A')
            FirstFile=FirstFileRaw[0]
