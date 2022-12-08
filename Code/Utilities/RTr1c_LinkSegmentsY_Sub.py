@@ -23,7 +23,7 @@ parser = argparse.ArgumentParser(description='select cut parameters')
 parser.add_argument('--AFS',help="Please enter the user afs directory", default='.')
 parser.add_argument('--EOS',help="Please enter the user eos directory", default='.')
 parser.add_argument('--PY',help="Python libraries directory location", default='.')
-parser.add_argument('--RecBatchID',help="Give this reconstruction batch an ID", default='Test_Slider')
+parser.add_argument('--BatchID',help="Give this reconstruction batch an ID", default='Test_Slider')
 parser.add_argument('--i',help="Enter X id", default='0')
 parser.add_argument('--Y_ID_Max',help="Enter Y id", default='0')
 parser.add_argument('--p',help="Path to the output file", default='')
@@ -45,7 +45,7 @@ if PY_DIR!='': #Temp solution
     sys.path.append('/usr/lib64/python3.6/site-packages')
     sys.path.append('/usr/lib/python3.6/site-packages')
 sys.path.append(AFS_DIR+'/Code/Utilities')
-RecBatchID=args.RecBatchID
+RecBatchID=args.BatchID
 #import the rest of the libraries
 import pandas as pd
 import UtilityFunctions as UF
