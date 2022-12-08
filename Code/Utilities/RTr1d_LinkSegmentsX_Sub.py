@@ -54,6 +54,7 @@ import UtilityFunctions as UF
 EOSsubDIR=EOS_DIR+'/'+'ANNDEA'
 EOSsubDataDIR=EOSsubDIR+'/'+'Data'
 X_ID_Max=int(args.X_ID_Max)
+X_ID=int(args.i)
 p=args.p
 o=args.o
 sfx=args.sfx
@@ -132,7 +133,7 @@ ZContractedTable=pd.merge(ZContractedTable,ZContractedTableIDs,how='inner',on=["
 ZContractedTable.drop(['Master_z',"Master_Segment_ID"],axis=1,inplace=True)
 ZContractedTable['ANN_Brick_ID']=RecBatchID
 FirstFile.RecTracks=ZContractedTable
-output_file_location=EOS_DIR+p+'/'+pfx+'_'+RecBatchID+'_'+o+sfx
+output_file_location=EOS_DIR+p+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(X_ID)+sfx
 print(UF.PickleOperations(output_file_location, 'w', FirstFile)[1])
 exit()
 
