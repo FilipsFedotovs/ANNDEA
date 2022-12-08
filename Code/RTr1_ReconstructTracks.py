@@ -446,6 +446,7 @@ while Status<len(Program):
            FirstFile=EOS_DIR+'/ANNDEA/Data/REC_SET/RTr1d_'+RecBatchID+'_hit_cluster_rec_x_set_0.pkl'
            print(UF.TimeStamp(),'Loading the object ',bcolors.OKBLUE+FirstFile+bcolors.ENDC)
            FirstFileRaw=UF.PickleOperations(FirstFile,'r', 'N/A')
+           print(FirstFileRaw)
            FirstFile=FirstFileRaw[0]
            TrackMap=FirstFile.RecTracks
            input_file_location=args.f
