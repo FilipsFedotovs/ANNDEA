@@ -49,7 +49,6 @@ sys.path.append(AFS_DIR+'/Code/Utilities')
 #import the rest of the libraries
 import pandas as pd
 import UtilityFunctions as UF
-print(pd.__version__)
 #Load data configuration
 EOSsubDIR=EOS_DIR+'/'+'ANNDEA'
 EOSsubDataDIR=EOSsubDIR+'/'+'Data'
