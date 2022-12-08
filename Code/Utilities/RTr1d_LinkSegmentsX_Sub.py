@@ -24,6 +24,7 @@ parser.add_argument('--AFS',help="Please enter the user afs directory", default=
 parser.add_argument('--EOS',help="Please enter the user eos directory", default='.')
 parser.add_argument('--PY',help="Python libraries directory location", default='.')
 parser.add_argument('--BatchID',help="Give this reconstruction batch an ID", default='Test_Slider')
+parser.add_argument('--i',help="Enter X id", default='0') #Dummy argument, just put there because the Standard Program framework requires it
 parser.add_argument('--X_ID_Max',help="Enter X id", default='0')
 parser.add_argument('--p',help="Path to the output file", default='')
 parser.add_argument('--o',help="Path to the output file name", default='')
