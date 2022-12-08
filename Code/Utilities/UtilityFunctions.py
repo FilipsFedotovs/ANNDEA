@@ -1,26 +1,7 @@
 ###This file contains the utility functions that are commonly used in ANNDEA packages
 
 import csv
-csv_reader=open('../config',"r")
-config = list(csv.reader(csv_reader))
-for c in config:
-    if c[0]=='AFS_DIR':
-        AFS_DIR=c[1]
-    if c[0]=='EOS_DIR':
-        EOS_DIR=c[1]
-    if c[0]=='PY_DIR':
-        PY_DIR=c[1]
-csv_reader.close()
 import sys
-if PY_DIR!='': #Temp solution
-    sys.path=['',PY_DIR]
-    sys.path.append('/usr/lib64/python36.zip')
-    sys.path.append('/usr/lib64/python3.6')
-    sys.path.append('/usr/lib64/python3.6/lib-dynload')
-    sys.path.append('/usr/lib64/python3.6/site-packages')
-    sys.path.append('/usr/lib/python3.6/site-packages')
-sys.path.append(AFS_DIR+'/Code/Utilities')
-
 import math
 import os
 import subprocess
