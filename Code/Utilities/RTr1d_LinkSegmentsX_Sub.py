@@ -23,9 +23,12 @@ parser = argparse.ArgumentParser(description='select cut parameters')
 parser.add_argument('--AFS',help="Please enter the user afs directory", default='.')
 parser.add_argument('--EOS',help="Please enter the user eos directory", default='.')
 parser.add_argument('--PY',help="Python libraries directory location", default='.')
-parser.add_argument('--RecBatchID',help="Give this reconstruction batch an ID", default='Test_Slider')
+parser.add_argument('--BatchID',help="Give this reconstruction batch an ID", default='Test_Slider')
 parser.add_argument('--X_ID_Max',help="Enter X id", default='0')
-
+parser.add_argument('--p',help="Path to the output file", default='')
+parser.add_argument('--o',help="Path to the output file name", default='')
+parser.add_argument('--pfx',help="Path to the output file name", default='')
+parser.add_argument('--sfx',help="Path to the output file name", default='')
 ########################################     Initialising Variables    #########################################
 args = parser.parse_args()
 RecBatchID=args.RecBatchID
@@ -50,6 +53,10 @@ import UtilityFunctions as UF
 EOSsubDIR=EOS_DIR+'/'+'ANNDEA'
 EOSsubDataDIR=EOSsubDIR+'/'+'Data'
 X_ID_Max=int(args.X_ID_Max)
+p=args.p
+o=args.o
+sfx=args.sfx
+pfx=args.pfx
 ##############################################################################################################################
 ######################################### Starting the program ################################################################
 print(UF.TimeStamp(), bcolors.OKGREEN+"Modules Have been imported successfully..."+bcolors.ENDC)
@@ -79,7 +86,6 @@ for i in range(1,X_ID_Max):
     FileClean['Segment_No_Tot']=FileClean['Segment_No_Tot_x']+FileClean['Segment_No_Tot_y']+FileClean['Segment_No_Tot_z']
     FileClean=FileClean.drop(['Segment_No_x','Segment_No_y','Segment_No_z',"Segment_No_Tot_x","Segment_No_Tot_y","Segment_No_Tot_z"],axis=1)
     FileClean=FileClean.sort_values(["Master_Segment_ID","Segment_No"],ascending=[1,0])
-
     FileClean.drop_duplicates(subset=["Master_Segment_ID"],keep='first',inplace=True)
 
 
@@ -125,8 +131,8 @@ ZContractedTable=pd.merge(ZContractedTable,ZContractedTableIDs,how='inner',on=["
 ZContractedTable.drop(['Master_z',"Master_Segment_ID"],axis=1,inplace=True)
 ZContractedTable['ANN_Brick_ID']=RecBatchID
 FirstFile.RecTracks=ZContractedTable
-OutputFile=EOS_DIR+'/ANNDEA/Data/REC_SET/RTr1d_'+RecBatchID+'_hit_cluster_rec_x_set.pkl'
-print(UF.PickleOperations(OutputFile, 'w', FirstFile)[1])
+output_file_location=EOS_DIR+p+'/'+pfx+'_'+RecBatchID+'_'+o+sfx
+print(UF.PickleOperations(output_file_location, 'w', FirstFile)[1])
 exit()
 
 
