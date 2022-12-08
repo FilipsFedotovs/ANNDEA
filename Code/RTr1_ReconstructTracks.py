@@ -413,7 +413,7 @@ Program.append(prog_entry)
 
 ###### Stage 3
 prog_entry=[]
-job_sets=Xsteps
+job_sets=1
 prog_entry.append(' Sending hit cluster to the HTCondor, so the reconstructed clusters can be merged along x-axis')
 prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','hit_cluster_rec_y_set','RTr1d','.pkl',RecBatchID,job_sets,'RTr1d_LinkSegmentsX_Sub.py'])
 prog_entry.append([' --X_ID_Max '])
