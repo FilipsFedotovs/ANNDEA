@@ -13,7 +13,7 @@ from tabulate import tabulate
 import time
 from alive_progress import alive_bar
 import argparse
-
+print(pd.__version__)
 class bcolors:   #We use it for the interface
     HEADER = '\033[95m'
     OKBLUE = '\033[94m'
