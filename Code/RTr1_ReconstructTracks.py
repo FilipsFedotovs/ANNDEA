@@ -300,7 +300,7 @@ def StandardProcess(program,status,freshstart):
                                     program[status][1][9],
                                     False)
         if len(bad_pop)==0:
-             print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+status+' has successfully completed'+bcolors.ENDC)
+             print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
              return True,False
 
 
