@@ -440,9 +440,9 @@ while Status<len(Program):
             Status=len(Program)+1
             break
     elif Status==4:
-       print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
-       print(UF.TimeStamp(),bcolors.BOLD+'Stage 4:'+bcolors.ENDC+' Using the results from previous steps to map merged trackIDs to the original reconstruction file')
-       try:
+           print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
+           print(UF.TimeStamp(),bcolors.BOLD+'Stage 4:'+bcolors.ENDC+' Using the results from previous steps to map merged trackIDs to the original reconstruction file')
+      # try:
            FirstFile=EOS_DIR+'/ANNDEA/Data/REC_SET/RTr1d_'+RecBatchID+'_hit_cluster_rec_x_set_0.pkl'
            print(UF.TimeStamp(),'Loading the object ',bcolors.OKBLUE+FirstFile+bcolors.ENDC)
            FirstFileRaw=UF.PickleOperations(FirstFile,'r', 'N/A')
@@ -609,10 +609,10 @@ while Status<len(Program):
                         headers=['Step', 'Avg # Fake edges', 'Avg # of Genuine edges', 'Avg precision', 'Precision std','Avg recall', 'Recall std' ], tablefmt='orgtbl'))
            print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 4 has successfully completed'+bcolors.ENDC)
            Status=5
-       except Exception as e:
-           print(UF.TimeStamp(),bcolors.FAIL+'Stage 4 is uncompleted due to...',+e+bcolors.ENDC)
-           Status=6
-           break
+       #except Exception as e:
+       #    print(UF.TimeStamp(),bcolors.FAIL+'Stage 4 is uncompleted due to...',+e+bcolors.ENDC)
+       #    Status=6
+       #    break
 if Status==5:
     print(UF.TimeStamp(), bcolors.OKGREEN+"Reconstruction has been completed"+bcolors.ENDC)
     exit()
