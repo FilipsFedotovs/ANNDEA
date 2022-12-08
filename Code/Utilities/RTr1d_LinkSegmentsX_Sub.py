@@ -32,7 +32,7 @@ parser.add_argument('--pfx',help="Path to the output file name", default='')
 parser.add_argument('--sfx',help="Path to the output file name", default='')
 ########################################     Initialising Variables    #########################################
 args = parser.parse_args()
-RecBatchID=args.RecBatchID
+RecBatchID=args.BatchID
 ##################################   Loading Directory locations   ##################################################
 AFS_DIR=args.AFS
 EOS_DIR=args.EOS
