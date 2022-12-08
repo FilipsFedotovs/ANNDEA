@@ -78,7 +78,7 @@ import UtilityFunctions as UF #This is where we keep routine utility functions
 
 #Specifying the full path to input/output files
 input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RTr1_'+RecBatchID+'_hits.csv'
-output_file_location=EOS_DIR+p+'/'+pfx+'_'+RecBatchID+'_hit_cluster_rec_set_'+str(X_ID_n)+'_'+str(Y_ID_n)+'_'+str(Z_ID_n)+sfx
+output_file_location=EOS_DIR+p+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(X_ID_n)+'_'+str(Y_ID_n)+'_'+str(Z_ID_n)+sfx
 
 print(UF.TimeStamp(), "Modules Have been imported successfully...")
 print(UF.TimeStamp(),'Loading pre-selected data from ',input_file_location)
