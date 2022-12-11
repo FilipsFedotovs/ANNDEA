@@ -2,7 +2,6 @@
 #Tracking Module of the ANNDEA package
 #Made by Filips Fedotovs
 
-
 ########################################    Import libraries    #############################################
 import csv
 import argparse
