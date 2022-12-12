@@ -295,6 +295,11 @@ def AutoPilot(wait_min, interval_min, max_interval_tolerance,program):
                print(UF.TimeStamp(),bcolors.WARNING+'Autopilot status update: There are still', len(bad_pop), 'HTCondor jobs remaining'+bcolors.ENDC)
                if interval%max_interval_tolerance==0:
                   for bp in bad_pop:
+                      HTCondorTag="SoftUsed == \"ANNDEA-RTr-"+RecBatchID+"\""
+                      UF.RecCleanUp(AFS_DIR, EOS_DIR, 'RTr1a_'+RecBatchID, [], HTCondorTag)
+                      UF.RecCleanUp(AFS_DIR, EOS_DIR, 'RTr1b_'+RecBatchID, [], HTCondorTag)
+                      UF.RecCleanUp(AFS_DIR, EOS_DIR, 'RTr1c_'+RecBatchID, [], HTCondorTag)
+                      UF.RecCleanUp(AFS_DIR, EOS_DIR, 'RTr1d_'+RecBatchID, [], HTCondorTag)
                       UF.SubmitJobs2Condor(bp,LocalSub)
                   print(UF.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
          else:
@@ -337,7 +342,10 @@ def StandardProcess(program,status,freshstart):
                                     program[status][1][9],
                                     batch_sub)
                  print(UF.TimeStamp(),'Submitting jobs to HTCondor... ',bcolors.ENDC)
+
                  for bp in bad_pop:
+                          print(bp)
+                          exit()
                           UF.SubmitJobs2Condor(bp,LocalSub)
                  if AutoPilot(600,10,Patience,program[status]):
                         print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
@@ -358,6 +366,11 @@ def StandardProcess(program,status,freshstart):
                        print(UF.TimeStamp(),'OK, exiting now then')
                        exit()
                    if UserAnswer=='R':
+                      HTCondorTag="SoftUsed == \"ANNDEA-RTr-"+RecBatchID+"\""
+                      UF.RecCleanUp(AFS_DIR, EOS_DIR, 'RTr1a_'+RecBatchID, [], HTCondorTag)
+                      UF.RecCleanUp(AFS_DIR, EOS_DIR, 'RTr1b_'+RecBatchID, [], HTCondorTag)
+                      UF.RecCleanUp(AFS_DIR, EOS_DIR, 'RTr1c_'+RecBatchID, [], HTCondorTag)
+                      UF.RecCleanUp(AFS_DIR, EOS_DIR, 'RTr1d_'+RecBatchID, [], HTCondorTag)
                       for bp in bad_pop:
                            UF.SubmitJobs2Condor(bp,LocalSub)
                       print(UF.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
