@@ -344,7 +344,7 @@ def StandardProcess(program,status,freshstart):
                  print(UF.TimeStamp(),'Submitting jobs to HTCondor... ',bcolors.ENDC)
 
                  for bp in bad_pop:
-                          print(bp)
+                          print(bp[6])
                           exit()
                           UF.SubmitJobs2Condor(bp,LocalSub)
                  if AutoPilot(600,10,Patience,program[status]):
