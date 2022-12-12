@@ -491,7 +491,10 @@ while Status<len(Program):
 
            CutData=pd.merge(CutData,TrackMap,how='left', left_on=[PM.Hit_ID], right_on=['HitID'])
            CutData.drop(['HitID'],axis=1,inplace=True)
-           Data=pd.concat([CutData,OtherData])
+           if SliceData:
+            Data=pd.concat([CutData,OtherData])
+           else:
+            Data=CutData
            output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_RTr_OUTPUT.csv'
            Data.to_csv(output_file_location,index=False)
            print(UF.TimeStamp(), bcolors.OKGREEN+"The tracked data has been written to"+bcolors.ENDC, bcolors.OKBLUE+output_file_location+bcolors.ENDC)
