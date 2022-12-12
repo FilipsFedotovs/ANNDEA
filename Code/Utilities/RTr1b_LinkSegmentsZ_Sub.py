@@ -72,6 +72,7 @@ FirstFile=FirstFileRaw[0]
 ZContractedTable=FirstFile.RecHits.rename(columns={"Segment_ID": "Master_Segment_ID","z": "Master_z" })
 for i in range(1,Z_ID_Max):
     SecondFile=EOS_DIR+'/ANNDEA/Data/REC_SET//RTr1a_'+RecBatchID+'_hit_cluster_rec_set_'+str(X_ID)+'_' +str(Y_ID)+'_' +str(i)+'.pkl'
+    print('Opening ',SecondFile)
     SecondFileRaw=UF.PickleOperations(SecondFile,'r', 'N/A')
     SecondFile=SecondFileRaw[0]
     SecondFileTable=SecondFile.RecHits
