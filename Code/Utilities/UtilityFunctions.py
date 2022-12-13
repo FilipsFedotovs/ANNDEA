@@ -2342,19 +2342,19 @@ def ManageTempFolders(spi,op_type):
            try:
               os.mkdir(spi[1][1]+spi[1][3]+'Temp_'+spi[1][5]+'_'+spi[1][7]+'_'+str(i))
            except OSError as error:
-              print(error)
+              continue
            try:
               os.mkdir(spi[1][0]+'/HTCondor/SUB/Temp_'+spi[1][5]+'_'+spi[1][7]+'_'+str(i))
            except OSError as error:
-              print(error)
+              continue
            try:
               os.mkdir(spi[1][0]+'/HTCondor/SH/Temp_'+spi[1][5]+'_'+spi[1][7]+'_'+str(i))
            except OSError as error:
-              print(error)
+              continue
            try:
               os.mkdir(spi[1][0]+'/HTCondor/MSG/Temp_'+spi[1][5]+'_'+spi[1][7]+'_'+str(i))
            except OSError as error:
-              print(error)
+              continue
        return 'Temporary folders have been created'
     if op_type=='Delete':
        for i in range(_tot):
