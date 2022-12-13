@@ -10,6 +10,7 @@ import numpy as np
 import copy
 from statistics import mean
 import ast
+import shutil
 
 class bcolors:
     HEADER = '\033[95m'
@@ -2336,5 +2337,10 @@ def ManageTempFolders(spi,type):
     if type=='Create':
        for i in range(len(spi[1][8])):
            os.mkdir(spi[1][1]+spi[1][3]+'Temp_'+spi[1][5]+'_'+spi[1][7]+'_'+str(i))
+       #return spi[1][8]
+       return spi[1]
+    if type=='Delete':
+       for i in range(len(spi[1][8])):
+           shutil.rmtree(spi[1][1]+spi[1][3]+'Temp_'+spi[1][5]+'_'+spi[1][7]+'_'+str(i))
        #return spi[1][8]
        return spi[1]
