@@ -25,7 +25,15 @@ This README just serves as a very short user guide, the documentation will be wr
 The tracking module takes hits as an input and assigns the common ID - hence it clusters them into tracks.
 All modules 
 ### Requirements
-1) Install PyTorch: **/eos/user/<your username first letter>/<your username>/libs**
+Install PyTorch: 
+1) pip3 install torch==1.9.0+cpu torchvision==0.10.0+cpu -f https://download.pytorch.org/whl/torch_stable.htmlhttps://download.pytorch.org/whl/torch_stable.html --target **/eos/user/<your username first letter>/<your username>/libs**
+2) pip3 install torch-scatter -f https://data.pyg.org/whl/torch-1.9.0+cpu.htmlhttps://data.pyg.org/whl/torch-1.9.0+cpu.html --target **/eos/user/<your username first letter>/<your username>/libs**
+3) pip3 install torch-sparse -f https://data.pyg.org/whl/torch-1.9.0+cpu.html --target **/eos/user/<your username first letter>/<your username>/libs**
+4) pip3 install torch-geometric --target **/eos/user/<your username first letter>/<your username>/libs**
+
+Install Pandas:
+1) pip3 install pandas --target **/eos/user/<your username first letter>/<your username>/libs**
+
 ### 1.1 Installation steps
 1) go to your home directory in afs where you would like to install the package
 2) **git clone https://github.com/FilipsFedotovs/ANNDEA/**
@@ -65,7 +73,7 @@ All modules
 3) **tmux**
 4) **kinit username@CERN.CH -l 24h00m**
 5) Enter your lxplus password
-6) **python3 RH1_ReconstructHits.py --Log KALMAN --ModelName Test_Model --Xmin 50000 --Xmax 550000 --Ymin 50000 --Ymax 55000 --X_overlap 1 --Y_overlap 1 --Z_overlap 1 --RecBatchID Test_Batch**
+6) **python3 RH1_ReconstructHits.py --Log KALMAN --ModelName MH_SND_Tracking_5_80_5_80 --Xmin 200000 --Xmax 230000 --Ymin 20000 --Ymax 40000 --X_overlap 1 --Y_overlap 1 --Z_overlap 1 --RecBatchID Test_Batch**
 7) The script will submit the subscript jobs and go to the autopilot mode.
 8) Exit tmux (by using **ctrl + b** and then typing  **d**). Script will keep running in the autopilot mode until all the steps in the hit reconstruction process have been completed.
 9) Enter the same tmux session (after overnight job for example) by logging to the same lxplus machine and then typing  **tmux a -t 0**. The program should finish with the message *'Reconstruction has been completed'*

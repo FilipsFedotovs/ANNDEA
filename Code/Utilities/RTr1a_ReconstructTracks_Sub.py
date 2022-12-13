@@ -100,6 +100,7 @@ data.drop(data.index[data['y'] >= ((Y_ID+1)*stepY)], inplace = True)  #Keeping t
 data.drop(data.index[data['y'] < (Y_ID*stepY)], inplace = True)  #Keeping the relevant z slice
 data_list=data.values.tolist()
 
+#Additional options to include reconstruction stats. Require MC and possibly FEDRA reconstruction.
 if Log!='NO':
     print(UF.TimeStamp(),'Preparing MC data... ')
     input_file_location=EOS_DIR+'/ANNDEA/Data/TEST_SET/ETr1_'+RecBatchID+'_hits.csv'
@@ -120,7 +121,6 @@ if Log!='NO':
     MCdata.drop(MCdata.index[MCdata['y'] >= ((Y_ID+1)*stepY)], inplace = True)  #Keeping the relevant z slice
     MCdata.drop(MCdata.index[MCdata['y'] < (Y_ID*stepY)], inplace = True)  #Keeping the relevant z slice
     MCdata_list=MCdata.values.tolist()
-
 if Log=='KALMAN':
     print(UF.TimeStamp(),'Preparing KALMAN data... ')
     input_file_location=EOS_DIR+'/ANNDEA/Data/TEST_SET/KTr1_'+RecBatchID+'_hits.csv'
@@ -144,10 +144,10 @@ if Log=='KALMAN':
 
 
 print(UF.TimeStamp(),'Creating the clusters')
-HC=UF.HitCluster([X_ID,Y_ID,Z_ID],[stepX,stepY,stepZ])
+HC=UF.HitCluster([X_ID,Y_ID,Z_ID],[stepX,stepY,stepZ]) #Initializing the cluster
 print(UF.TimeStamp(),'Decorating the clusters')
-HC.LoadClusterHits(data_list)
-if len(HC.RawClusterGraph)>1:
+HC.LoadClusterHits(data_list) #Decorating the Clusters with Hit information
+if len(HC.RawClusterGraph)>1: #If we have at least 2 Hits in the cluster that can create
     print(UF.TimeStamp(),'Generating the edges...')
     GraphStatus = HC.GenerateEdges(cut_dt, cut_dr)
     combined_weight_list=[]
