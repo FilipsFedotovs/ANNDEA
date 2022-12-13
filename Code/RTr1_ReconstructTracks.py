@@ -54,6 +54,7 @@ parser = argparse.ArgumentParser(description='This script prepares training data
 parser.add_argument('--Mode', help='Script will continue from the last checkpoint, unless you want to start from the scratch, then type "Reset"',default='')
 parser.add_argument('--ModelName',help="WHat GNN model would you like to use?", default='MH_GNN_5FTR_4_120_4_120')
 parser.add_argument('--Patience',help="How many checks to do before resubmitting the job?", default='15')
+parser.add_argument('--SubPause',help="How long to wait in minutes after submitting 10000 jobs?", default='60')
 parser.add_argument('--Log',help="Would you like to log the performance: No, MC, Kalman? (Only available if you have MC Truth or Kalman track reconstruction data)", default='No')
 parser.add_argument('--RecBatchID',help="Give this reconstruction batch an ID", default='SHIP_UR_v1')
 parser.add_argument('--LocalSub',help="Local submission?", default='N')
@@ -73,6 +74,7 @@ Log=args.Log.upper()
 ModelName=args.ModelName
 RecBatchID=args.RecBatchID
 Patience=int(args.Patience)
+SubPause=int(args.SubPause)*60
 LocalSub=(args.LocalSub=='Y')
 input_file_location=args.f
 Xmin,Xmax,Ymin,Ymax=float(args.Xmin),float(args.Xmax),float(args.Ymin),float(args.Ymax)
@@ -342,11 +344,15 @@ def StandardProcess(program,status,freshstart):
                                     program[status][1][9],
                                     batch_sub)
                  print(UF.TimeStamp(),'Submitting jobs to HTCondor... ',bcolors.ENDC)
-
+                 _cnt=0
                  for bp in bad_pop:
-                          print(bp[6])
-                          exit()
+                          if _cnt>PM.SubPauseGap:
+                              print(UF.TimeStamp(),'Pausing submissions for  ',SubPause, 'minutes to relieve congestion...',bcolors.ENDC)
+                              time.sleep(SubPause)
+                              _cnt=0
                           UF.SubmitJobs2Condor(bp,LocalSub)
+                          _cnt+=bp[6]
+
                  if AutoPilot(600,10,Patience,program[status]):
                         print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
                         return True,False
