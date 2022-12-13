@@ -2178,12 +2178,12 @@ def CreateCondorJobs(AFS,EOS,PY,path,o,pfx,sfx,ID,loop_params,OptionHeader,Optio
                  for i in range(len(loop_params)):
                      for j in range(len(loop_params[i])):
                          for k in range(loop_params[i][j]):
-                               required_output_file_location=EOS+'/'+path+'/Temp_'+pfx+'_'+ID+'/'+pfx+'_'+ID+'_'+o+'_'+str(i)+'_'+str(j) + '_' + str(k)+sfx
+                               required_output_file_location=EOS+'/'+path+'/Temp_'+pfx+'_'+ID+'_'+str(i)+'/'+pfx+'_'+ID+'_'+o+'_'+str(i)+'_'+str(j) + '_' + str(k)+sfx
                                bar.text = f'-> Checking whether the file : {required_output_file_location}, exists...'
                                bar()
-                               SHName = AFS + '/HTCondor/SH/Temp_'+pfx+'_'+ID+'/SH_'+pfx+'_'+ ID+'_' + str(i) + '_' + str(j) + '_' + str(k) +'.sh'
-                               SUBName = AFS + '/HTCondor/SUB/Temp_'+pfx+'_'+ID+'/SUB_'+pfx+'_'+ ID+'_' + str(i) + '_' + str(j) + '_' + str(k) +'.sub'
-                               MSGName = AFS + '/HTCondor/MSG/Temp_'+pfx+'_'+ID+'/MSG_'+pfx+'_'+ ID+'_' + str(i) + '_' + str(j) + '_' + str(k)
+                               SHName = AFS + '/HTCondor/SH/Temp_'+pfx+'_'+ID+'_'+str(i)+'/SH_'+pfx+'_'+ ID+'_' + str(i) + '_' + str(j) + '_' + str(k) +'.sh'
+                               SUBName = AFS + '/HTCondor/SUB/Temp_'+pfx+'_'+ID+'_'+str(i)+'/SUB_'+pfx+'_'+ ID+'_' + str(i) + '_' + str(j) + '_' + str(k) +'.sub'
+                               MSGName = AFS + '/HTCondor/MSG/Temp_'+pfx+'_'+ID+'_'+str(i)+'/MSG_'+pfx+'_'+ ID+'_' + str(i) + '_' + str(j) + '_' + str(k)
                                ScriptName = AFS + '/Code/Utilities/'+Sub_File
                                if os.path.isfile(required_output_file_location)!=True:
                                   bad_pop.append([OptionHeader+[' --i ', ' --j ',' --k ', ' --p ', ' --o ',' --pfx ', ' --sfx '], OptionLine+[i, j,k, path,o, pfx, sfx], SHName, SUBName, MSGName, ScriptName, 1, 'ANNDEA-'+pfx+'-'+ID, Log,GPU])
@@ -2220,9 +2220,9 @@ def CreateCondorJobs(AFS,EOS,PY,path,o,pfx,sfx,ID,loop_params,OptionHeader,Optio
                      for j in range(len(loop_params[i])):
                                bar.text = f'-> Preparing batch submission...'
                                bar()
-                               SHName = AFS + '/HTCondor/SH/Temp_'+pfx+'_'+ID+'/SH_'+pfx+'_'+ ID+'_' + str(i) + '_' + str(j)+'.sh'
-                               SUBName = AFS + '/HTCondor/SUB/Temp_'+pfx+'_'+ID+'/SUB_'+pfx+'_'+ ID+'_' + str(i) +'_' + str(j)+'.sub'
-                               MSGName = AFS + '/HTCondor/MSG/Temp_'+pfx+'_'+ID+'/MSG_'+pfx+'_'+ ID+'_' + str(i) +'_' + str(j)
+                               SHName = AFS + '/HTCondor/SH/Temp_'+pfx+'_'+ID+'_'+str(i)+'/SH_'+pfx+'_'+ ID+'_' + str(i) + '_' + str(j)+'.sh'
+                               SUBName = AFS + '/HTCondor/SUB/Temp_'+pfx+'_'+ID+'_'+str(i)+'/SUB_'+pfx+'_'+ ID+'_' + str(i) +'_' + str(j)+'.sub'
+                               MSGName = AFS + '/HTCondor/MSG/Temp_'+pfx+'_'+ID+'_'+str(i)+'/MSG_'+pfx+'_'+ ID+'_' + str(i) +'_' + str(j)
                                ScriptName = AFS + '/Code/Utilities/'+Sub_File
                                bad_pop.append([OptionHeader+[' --i ', ' --j ',' --k ', ' --p ', ' --o ',' --pfx ', ' --sfx '], OptionLine+[i, j, '$1', path,o, pfx, sfx], SHName, SUBName, MSGName, ScriptName, loop_params[i][j], 'ANNDEA-'+pfx+'-'+ID, Log,GPU])
              if nest_lvl==1:
@@ -2333,8 +2333,12 @@ def LoadRenderImages(Seeds,StartSeed,EndSeed,num_classes=2):
     return (ImagesX,ImagesY)
 
 def ManageTempFolders(spi,type):
+    if type(spi[1][8]) is int:
+       _tot=spi[1][8]
+    else:
+       _tot=len(spi[1][8])
     if type=='Create':
-       for i in range(len(spi[1][8])):
+       for i in range(_tot):
            try:
               os.mkdir(spi[1][1]+spi[1][3]+'Temp_'+spi[1][5]+'_'+spi[1][7]+'_'+str(i))
            except OSError as error:
@@ -2353,7 +2357,7 @@ def ManageTempFolders(spi,type):
               print(error)
        return 'Temporary folders have been created'
     if type=='Delete':
-       for i in range(len(spi[1][8])):
+       for i in range(_tot):
            shutil.rmtree(spi[1][1]+spi[1][3]+'Temp_'+spi[1][5]+'_'+spi[1][7]+'_'+str(i),True)
            shutil.rmtree(spi[1][0]+'/HTCondor/SUB/Temp_'+spi[1][5]+'_'+spi[1][7]+'_'+str(i),True)
            shutil.rmtree(spi[1][0]+'/HTCondor/SH/Temp_'+spi[1][5]+'_'+spi[1][7]+'_'+str(i),True)
