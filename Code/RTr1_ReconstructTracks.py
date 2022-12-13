@@ -433,7 +433,8 @@ prog_entry.append([' --stepZ ', ' --stepY ', ' --stepX ', " --zOffset ", " --yOf
 prog_entry.append([stepZ,stepY,stepX,z_offset, y_offset, x_offset, cut_dt,cut_dr, ModelName ,Log,Z_overlap,Y_overlap,X_overlap])
 prog_entry.append(Xsteps*Ysteps*Zsteps)
 Program.append(prog_entry)
-
+print(UF.ManageTempFolders(prog_entry,'Create'))
+exit()
 ###### Stage 1
 prog_entry=[]
 job_sets=[]
