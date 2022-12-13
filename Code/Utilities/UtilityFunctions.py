@@ -2336,9 +2336,14 @@ def LoadRenderImages(Seeds,StartSeed,EndSeed,num_classes=2):
 def ManageTempFolders(spi,type):
     if type=='Create':
        for i in range(len(spi[1][8])):
-           #os.mkdir(spi[1][1]+spi[1][3]+'Temp_'+spi[1][5]+'_'+spi[1][7]+'_'+str(i))
-           #os.mkdir(spi[1][0]+spi[1][3]+'Temp_'+spi[1][5]+'_'+spi[1][7]+'_'+str(i))
-           print(spi[1][0]+'/HTCondor/SUB/Temp_'+spi[1][5]+'_'+spi[1][7]+'_'+str(i))
+           try:
+              os.mkdir(spi[1][1]+spi[1][3]+'Temp_'+spi[1][5]+'_'+spi[1][7]+'_'+str(i))
+           except OSError as error:
+              print(error)
+           try:
+              os.mkdir(spi[1][0]+'/HTCondor/SUB/Temp_'+spi[1][5]+'_'+spi[1][7]+'_'+str(i))
+           except OSError as error:
+              print(error)
        #return spi[1][8]
        return spi[1]
     if type=='Delete':
