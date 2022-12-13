@@ -347,7 +347,7 @@ def StandardProcess(program,status,freshstart):
                  _cnt=0
                  for bp in bad_pop:
                           if _cnt>PM.SubPauseGap:
-                              print(UF.TimeStamp(),'Pausing submissions for  ',SubPause, 'minutes to relieve congestion...',bcolors.ENDC)
+                              print(UF.TimeStamp(),'Pausing submissions for  ',str(SubPause/60), 'minutes to relieve congestion...',bcolors.ENDC)
                               time.sleep(SubPause)
                               _cnt=0
                           UF.SubmitJobs2Condor(bp,LocalSub)
