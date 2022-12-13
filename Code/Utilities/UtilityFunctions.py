@@ -2334,5 +2334,7 @@ def LoadRenderImages(Seeds,StartSeed,EndSeed,num_classes=2):
 
 def ManageTempFolders(spi,type):
     if type=='Create':
+       for i in range(spi[1][8]):
+           print(spi[1]+spi[3]+spi+'Temp_'+spi[5]+'_'+spi[7])
        #return spi[1][8]
        return spi[1]
