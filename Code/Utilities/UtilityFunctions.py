@@ -2332,12 +2332,12 @@ def LoadRenderImages(Seeds,StartSeed,EndSeed,num_classes=2):
     ImagesY=tf.keras.utils.to_categorical(ImagesY,num_classes)
     return (ImagesX,ImagesY)
 
-def ManageTempFolders(spi,type):
+def ManageTempFolders(spi,op_type):
     if type(spi[1][8]) is int:
        _tot=spi[1][8]
     else:
        _tot=len(spi[1][8])
-    if type=='Create':
+    if op_type=='Create':
        for i in range(_tot):
            try:
               os.mkdir(spi[1][1]+spi[1][3]+'Temp_'+spi[1][5]+'_'+spi[1][7]+'_'+str(i))
@@ -2356,7 +2356,7 @@ def ManageTempFolders(spi,type):
            except OSError as error:
               print(error)
        return 'Temporary folders have been created'
-    if type=='Delete':
+    if op_type=='Delete':
        for i in range(_tot):
            shutil.rmtree(spi[1][1]+spi[1][3]+'Temp_'+spi[1][5]+'_'+spi[1][7]+'_'+str(i),True)
            shutil.rmtree(spi[1][0]+'/HTCondor/SUB/Temp_'+spi[1][5]+'_'+spi[1][7]+'_'+str(i),True)
