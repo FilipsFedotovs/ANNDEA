@@ -450,7 +450,7 @@ prog_entry.append([' --Y_ID_Max ', ' --i '])
 prog_entry.append([Ysteps,Xsteps])
 prog_entry.append(Xsteps)
 Program.append(prog_entry)
-if Mode=='Reset':
+if Mode=='RESET':
    print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Delete'))
 print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Create'))
 
@@ -463,7 +463,7 @@ prog_entry.append([' --X_ID_Max '])
 prog_entry.append([Xsteps])
 prog_entry.append(1)
 Program.append(prog_entry)
-if Mode=='Reset':
+if Mode=='RESET':
    print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Delete'))
 print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Create'))
 
