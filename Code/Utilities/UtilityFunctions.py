@@ -2165,6 +2165,7 @@ def CreateCondorJobs(AFS,EOS,PY,path,o,pfx,sfx,ID,loop_params,OptionHeader,Optio
                  for i in range(len(loop_params)):
                      for j in range(loop_params[i]):
                                required_output_file_location=EOS+'/'+path+'/Temp_'+pfx+'_'+ID+'_'+str(i)+'/'+pfx+'_'+ID+'_'+o+'_'+str(i)+'_'+str(j)+sfx
+                               print(required_output_file_location)
                                bar.text = f'-> Checking whether the file : {required_output_file_location}, exists...'
                                bar()
                                SHName = AFS + '/HTCondor/SH/Temp_'+pfx+'_'+ID+'_'+str(i)+'/SH_'+pfx+'_'+ ID+'_' + str(i) + '_' + str(j) + '.sh'
