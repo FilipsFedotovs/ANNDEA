@@ -280,6 +280,7 @@ def AutoPilot(wait_min, interval_min, max_interval_tolerance,program):
      intervals=int(math.ceil(wait_sec/interval_sec))
      for interval in range(1,intervals+1):
          time.sleep(interval_sec)
+         bad_pop=[]
          print(UF.TimeStamp(),"Scheduled job checkup...") #Progress display
          bad_pop=UF.CreateCondorJobs(program[1][0],
                                     program[1][1],
@@ -325,7 +326,7 @@ def StandardProcess(program,status,freshstart):
                                     program[status][2],
                                     program[status][3],
                                     program[status][1][9],
-                                    False,['',''],True)
+                                    False)
         if len(bad_pop)==0:
              print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
              return True,False
@@ -344,7 +345,7 @@ def StandardProcess(program,status,freshstart):
                                     program[status][2],
                                     program[status][3],
                                     program[status][1][9],
-                                    batch_sub,['',''],True)
+                                    batch_sub)
                  print(UF.TimeStamp(),'Submitting jobs to HTCondor... ',bcolors.ENDC)
                  _cnt=0
                  for bp in bad_pop:
@@ -671,7 +672,7 @@ while Status<len(Program):
           break
 if Status==5:
     print(UF.TimeStamp(),'Performing the cleanup... ',bcolors.ENDC)
-    HTCondorTag="SoftUsed == \"ANNDEA-RTr-"+RecBatchID+"\""
+    HTCondorTag="SoftUsed == \"ANNDEA-RTr1a-"+RecBatchID+"\""
     UF.RecCleanUp(AFS_DIR, EOS_DIR, 'RTr1_'+RecBatchID, ['RTr1a','RTr1b','RTr1c','RTr1d',RecBatchID+'_RTr_OUTPUT.pkl'], HTCondorTag)
     for p in Program:
         if p!='Custom':
