@@ -423,9 +423,9 @@ prog_entry.append([' --stepZ ', ' --stepY ', ' --stepX ', " --zOffset ", " --yOf
 prog_entry.append([stepZ,stepY,stepX,z_offset, y_offset, x_offset, cut_dt,cut_dr, ModelName ,Log,Z_overlap,Y_overlap,X_overlap])
 prog_entry.append(Xsteps*Ysteps*Zsteps)
 Program.append(prog_entry)
-if Mode=='Reset':
+if Mode=='RESET':
    print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Delete'))
-#print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Create'))
+print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Create'))
 
 ###### Stage 1
 prog_entry=[]
@@ -438,9 +438,9 @@ prog_entry.append([' --Z_ID_Max ',' --j ', ' --i '])
 prog_entry.append([Zsteps,Ysteps,Xsteps])
 prog_entry.append(Xsteps*Ysteps)
 Program.append(prog_entry)
-if Mode=='Reset':
+if Mode=='RESET':
    print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Delete'))
-#print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Create'))
+print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Create'))
 ###### Stage 2
 prog_entry=[]
 job_sets=Xsteps
@@ -452,7 +452,7 @@ prog_entry.append(Xsteps)
 Program.append(prog_entry)
 if Mode=='RESET':
    print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Delete'))
-#print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Create'))
+print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Create'))
 
 ###### Stage 3
 prog_entry=[]
@@ -465,8 +465,8 @@ prog_entry.append(1)
 Program.append(prog_entry)
 if Mode=='RESET':
    print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Delete'))
-#print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Create'))
-exit()
+print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Create'))
+
 ###### Stage 4
 Program.append('Custom')
 
