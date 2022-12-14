@@ -66,12 +66,12 @@ def zero_divide(a, b):
     if (b==0): return 0
     return a/b
 
-FirstFile=EOS_DIR+p+'/Temp_'+'RTr1a'+'_'+RecBatchID+'_'+str(X_ID)+'/'+'RTr1a'+'_'+RecBatchID+'_'+'hit_cluster_rec_z_set'+'_'+str(X_ID)+'_'+str(Y_ID)+'_'+str(0)+sfx
+FirstFile=EOS_DIR+p+'/Temp_'+'RTr1a'+'_'+RecBatchID+'_'+str(X_ID)+'/'+'RTr1a'+'_'+RecBatchID+'_'+'hit_cluster_rec_set'+'_'+str(X_ID)+'_'+str(Y_ID)+'_'+str(0)+sfx
 FirstFileRaw=UF.PickleOperations(FirstFile,'r', 'N/A')
 FirstFile=FirstFileRaw[0]
 ZContractedTable=FirstFile.RecHits.rename(columns={"Segment_ID": "Master_Segment_ID","z": "Master_z" })
 for i in range(1,Z_ID_Max):
-    SecondFile=EOS_DIR+p+'/Temp_'+'RTr1a'+'_'+RecBatchID+'_'+str(X_ID)+'/'+'RTr1a'+'_'+RecBatchID+'_'+'hit_cluster_rec_z_set'+'_'+str(X_ID)+'_'+str(Y_ID)+'_'+str(i)+sfx
+    SecondFile=EOS_DIR+p+'/Temp_'+'RTr1a'+'_'+RecBatchID+'_'+str(X_ID)+'/'+'RTr1a'+'_'+RecBatchID+'_'+'hit_cluster_rec_set'+'_'+str(X_ID)+'_'+str(Y_ID)+'_'+str(i)+sfx
     print('Opening ',SecondFile)
     SecondFileRaw=UF.PickleOperations(SecondFile,'r', 'N/A')
     SecondFile=SecondFileRaw[0]
