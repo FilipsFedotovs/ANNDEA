@@ -511,7 +511,7 @@ while Status<len(Program):
            else:
                CutData=Data #If we reconstruct the whole brick we jsut take the whole data. No need to separate.
 
-           CutData.drop(['ANN_Brick_ID','ANN_Track_ID'],axis=1,inplace=True) #Removing old ANNDEA reconstruction results so we can overwrite with the new ones
+           CutData.drop(['ANN_Brick_ID','ANN_Track_ID'],axis=1,inplace=True,errors='ignore') #Removing old ANNDEA reconstruction results so we can overwrite with the new ones
            #Map reconstructed ANN tracks to hits in the Raw file - this is in essesne the final output of the Tracking.
            CutData=pd.merge(CutData,TrackMap,how='left', left_on=[PM.Hit_ID], right_on=['HitID'])
            CutData.drop(['HitID'],axis=1,inplace=True) #Make sutre that HitID is not the Hit ID name in the raw data.
