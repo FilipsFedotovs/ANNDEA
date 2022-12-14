@@ -405,7 +405,7 @@ def StandardProcess(program,status,freshstart):
 # #Reconstructing a single brick can cause in gereation of 100s of thousands of files - need to make sure that we remove them.
 if Mode=='RESET':
     print(UF.TimeStamp(),'Performing the cleanup... ',bcolors.ENDC)
-    HTCondorTag="SoftUsed == \"ANNDEA-RTr-"+RecBatchID+"\""
+    HTCondorTag="SoftUsed == \"ANNDEA-RTr1a-"+RecBatchID+"\""
     UF.RecCleanUp(AFS_DIR, EOS_DIR, 'RTr1_'+RecBatchID, ['RTr1a','RTr1b','RTr1c','RTr1d',RecBatchID+'_RTr_OUTPUT.pkl'], HTCondorTag)
     FreshStart=False
 
