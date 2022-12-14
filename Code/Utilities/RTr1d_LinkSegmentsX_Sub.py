@@ -71,7 +71,7 @@ FirstFile=FirstFileRaw[0]
 ZContractedTable=FirstFile.RecSegments
 #ZContractedTable.to_csv('FirstFile.csv',index=False)
 for i in range(1,X_ID_Max):
-    SecondFile=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RTr1c_'+RecBatchID+'_'+str(i)+'/RTr1c_'+RecBatchID+'_hit_cluster_rec_y_set_'+str(i)+'.pkl'
+    SecondFile=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RTr1c_'+RecBatchID+'_'+str(0)+'/RTr1c_'+RecBatchID+'_hit_cluster_rec_y_set_'+str(i)+'.pkl'
     SecondFileRaw=UF.PickleOperations(SecondFile,'r', 'N/A')
     print(SecondFileRaw[1])
     SecondFile=SecondFileRaw[0]

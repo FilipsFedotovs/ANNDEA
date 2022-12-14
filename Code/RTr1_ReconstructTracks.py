@@ -514,7 +514,7 @@ while Status<len(Program):
            CutData.drop(['ANN_Brick_ID','ANN_Track_ID'],axis=1,inplace=True,errors='ignore') #Removing old ANNDEA reconstruction results so we can overwrite with the new ones
            #Map reconstructed ANN tracks to hits in the Raw file - this is in essesne the final output of the Tracking.
            CutData=pd.merge(CutData,TrackMap,how='left', left_on=[PM.Hit_ID], right_on=['HitID'])
-           CutData.drop(['HitID'],axis=1,inplace=True) #Make sutre that HitID is not the Hit ID name in the raw data.
+           CutData.drop(['HitID'],axis=1,inplace=True) #Make sure that HitID is not the Hit ID name in the raw data.
            if SliceData:
             Data=pd.concat([CutData,OtherData]) #If we slice the data we do the of Reconstructed and Unreconstructed subset of the brick.
            else:
