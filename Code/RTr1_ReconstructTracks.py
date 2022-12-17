@@ -482,7 +482,7 @@ Program.append('Custom')
 print(UF.TimeStamp(),'There are '+str(len(Program)+1)+' stages (0-'+str(len(Program)+1)+' of this script',bcolors.ENDC)
 print(UF.TimeStamp(),'Current stage has a code',Status,bcolors.ENDC)
 
-print(Program[0])
+print(Program[0][4])
 exit()
 while Status<len(Program):
     if Program[Status]!='Custom':
