@@ -352,7 +352,7 @@ def StandardProcess(program,status,freshstart):
                               print(UF.TimeStamp(),'Pausing submissions for  ',str(SubPause/60), 'minutes to relieve congestion...',bcolors.ENDC)
                               time.sleep(SubPause)
                               _cnt=0
-                          UF.SubmitJobs2Condor(bp,program[status][4])
+                          UF.SubmitJobs2Condor(bp,program[status][5])
                           _cnt+=bp[6]
 
                  if AutoPilot(600,10,Patience,program[status]):
@@ -375,7 +375,7 @@ def StandardProcess(program,status,freshstart):
                        exit()
                    if UserAnswer=='R':
                       for bp in bad_pop:
-                           UF.SubmitJobs2Condor(bp,program[status][4])
+                           UF.SubmitJobs2Condor(bp,program[status][5])
                       print(UF.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
                       if AutoPilot(600,10,Patience,program[status]):
                           print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+ 'has successfully completed'+bcolors.ENDC)
@@ -392,7 +392,7 @@ def StandardProcess(program,status,freshstart):
                           return False,False
             else:
                       for bp in bad_pop:
-                           UF.SubmitJobs2Condor(bp,program[status][4])
+                           UF.SubmitJobs2Condor(bp,program[status][5])
                       if AutoPilot(600,10,Patience,program[status]):
                            print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+ 'has successfully completed'+bcolors.ENDC)
                            return True,False
