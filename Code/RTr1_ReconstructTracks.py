@@ -303,7 +303,7 @@ def AutoPilot(wait_min, interval_min, max_interval_tolerance,program):
                       UF.RecCleanUp(AFS_DIR, EOS_DIR, 'RTr1b_'+RecBatchID, [], HTCondorTag)
                       UF.RecCleanUp(AFS_DIR, EOS_DIR, 'RTr1c_'+RecBatchID, [], HTCondorTag)
                       UF.RecCleanUp(AFS_DIR, EOS_DIR, 'RTr1d_'+RecBatchID, [], HTCondorTag)
-                      UF.SubmitJobs2Condor(bp,program[4])
+                      UF.SubmitJobs2Condor(bp,program[5])
                   print(UF.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
          else:
               return True,False
@@ -349,7 +349,7 @@ def StandardProcess(program,status,freshstart):
                  _cnt=0
                  for bp in bad_pop:
                           if _cnt>PM.SubPauseGap:
-                              print(UF.TimeStamp(),'Pausing submissions for  ',str(SubPause/60), 'minutes to relieve congestion...',bcolors.ENDC)
+                              print(UF.TimeStamp(),'Pausing submissions for  ',str(int(SubPause/60)), 'minutes to relieve congestion...',bcolors.ENDC)
                               time.sleep(SubPause)
                               _cnt=0
                           UF.SubmitJobs2Condor(bp,program[status][5])
