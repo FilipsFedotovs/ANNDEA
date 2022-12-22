@@ -58,6 +58,7 @@ parser.add_argument('--SubPause',help="How long to wait in minutes after submitt
 parser.add_argument('--Log',help="Would you like to log the performance: No, MC, Kalman? (Only available if you have MC Truth or Kalman track reconstruction data)", default='No')
 parser.add_argument('--RecBatchID',help="Give this reconstruction batch an ID", default='Test_Batch')
 parser.add_argument('--LocalSub',help="Local submission?", default='N')
+parser.add_argument('--RequestExtCPU',help="Would you like to request extra CPUs?", default='N')
 parser.add_argument('--f',help="Please enter the full path to the file with track reconstruction", default='/eos/experiment/ship/ANNDEA/Data')
 parser.add_argument('--Xmin',help="This option restricts data to only those events that have tracks with hits x-coordinates that are above this value", default='0')
 parser.add_argument('--Xmax',help="This option restricts data to only those events that have tracks with hits x-coordinates that are below this value", default='0')
@@ -76,6 +77,7 @@ RecBatchID=args.RecBatchID
 Patience=int(args.Patience)
 SubPause=int(args.SubPause)*60
 LocalSub=(args.LocalSub=='Y')
+RequestExtCPU=(args.RequestExtCPU=='Y')
 input_file_location=args.f
 Xmin,Xmax,Ymin,Ymax=float(args.Xmin),float(args.Xmax),float(args.Ymin),float(args.Ymax)
 Z_overlap,Y_overlap,X_overlap=int(args.Z_overlap),int(args.Y_overlap),int(args.X_overlap)
@@ -298,12 +300,7 @@ def AutoPilot(wait_min, interval_min, max_interval_tolerance,program):
                print(UF.TimeStamp(),bcolors.WARNING+'Autopilot status update: There are still', len(bad_pop), 'HTCondor jobs remaining'+bcolors.ENDC)
                if interval%max_interval_tolerance==0:
                   for bp in bad_pop:
-                      HTCondorTag="SoftUsed == \"ANNDEA-RTr-"+RecBatchID+"\""
-                      UF.RecCleanUp(AFS_DIR, EOS_DIR, 'RTr1a_'+RecBatchID, [], HTCondorTag)
-                      UF.RecCleanUp(AFS_DIR, EOS_DIR, 'RTr1b_'+RecBatchID, [], HTCondorTag)
-                      UF.RecCleanUp(AFS_DIR, EOS_DIR, 'RTr1c_'+RecBatchID, [], HTCondorTag)
-                      UF.RecCleanUp(AFS_DIR, EOS_DIR, 'RTr1d_'+RecBatchID, [], HTCondorTag)
-                      UF.SubmitJobs2Condor(bp,program[5])
+                      UF.SubmitJobs2Condor(bp,program[5],RequestExtCPU)
                   print(UF.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
          else:
               return True,False
@@ -352,7 +349,7 @@ def StandardProcess(program,status,freshstart):
                               print(UF.TimeStamp(),'Pausing submissions for  ',str(int(SubPause/60)), 'minutes to relieve congestion...',bcolors.ENDC)
                               time.sleep(SubPause)
                               _cnt=0
-                          UF.SubmitJobs2Condor(bp,program[status][5])
+                          UF.SubmitJobs2Condor(bp,program[status][5],RequestExtCPU)
                           _cnt+=bp[6]
 
                  if AutoPilot(600,10,Patience,program[status]):
@@ -375,7 +372,7 @@ def StandardProcess(program,status,freshstart):
                        exit()
                    if UserAnswer=='R':
                       for bp in bad_pop:
-                           UF.SubmitJobs2Condor(bp,program[status][5])
+                           UF.SubmitJobs2Condor(bp,program[status][5],RequestExtCPU)
                       print(UF.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
                       if AutoPilot(600,10,Patience,program[status]):
                           print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+ 'has successfully completed'+bcolors.ENDC)
@@ -392,7 +389,7 @@ def StandardProcess(program,status,freshstart):
                           return False,False
             else:
                       for bp in bad_pop:
-                           UF.SubmitJobs2Condor(bp,program[status][5])
+                           UF.SubmitJobs2Condor(bp,program[status][5],RequestExtCPU)
                       if AutoPilot(600,10,Patience,program[status]):
                            print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+ 'has successfully completed'+bcolors.ENDC)
                            return True,False
@@ -479,7 +476,7 @@ print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Create'))
 Program.append('Custom')
 
 
-print(UF.TimeStamp(),'There are '+str(len(Program)+1)+' stages (0-'+str(len(Program)+1)+' of this script',bcolors.ENDC)
+print(UF.TimeStamp(),'There are '+str(len(Program)+1)+' stages (0-'+str(len(Program)+1)+') of this script',bcolors.ENDC)
 print(UF.TimeStamp(),'Current stage has a code',Status,bcolors.ENDC)
 
 while Status<len(Program):

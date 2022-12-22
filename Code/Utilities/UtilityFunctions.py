@@ -2235,7 +2235,7 @@ def CreateCondorJobs(AFS,EOS,PY,path,o,pfx,sfx,ID,loop_params,OptionHeader,Optio
                                bad_pop.append([OH+[' --i ', ' --p ', ' --o ',' --pfx ', ' --sfx '], OL+['$1', path,o, pfx, sfx], SHName, SUBName, MSGName, ScriptName, loop_params, 'ANNDEA-'+pfx+'-'+ID, Log,GPU])
         return(bad_pop)
    return []
-def SubmitJobs2Condor(job,local=False):
+def SubmitJobs2Condor(job,local=False,ExtCPU=False):
     if local:
        OptionLine = job[0][0]+str(job[1][0])
        for line in range(1,len(job[0])):
@@ -2270,6 +2270,9 @@ def SubmitJobs2Condor(job,local=False):
         f.write("\n")
         if job[9]:
             f.write('request_gpus = 1')
+            f.write("\n")
+        if ExtCPU and job[9]==False:
+            f.write('RequestCpus = 4')
             f.write("\n")
         f.write('arguments = $(Process)')
         f.write("\n")
