@@ -2235,7 +2235,7 @@ def CreateCondorJobs(AFS,EOS,PY,path,o,pfx,sfx,ID,loop_params,OptionHeader,Optio
                                bad_pop.append([OH+[' --i ', ' --p ', ' --o ',' --pfx ', ' --sfx '], OL+['$1', path,o, pfx, sfx], SHName, SUBName, MSGName, ScriptName, loop_params, 'ANNDEA-'+pfx+'-'+ID, Log,GPU])
         return(bad_pop)
    return []
-def SubmitJobs2Condor(job,local=False,ExtCPU=False):
+def SubmitJobs2Condor(job,local=False,ExtCPU=False,JobFlavour='workday'):
     if local:
        OptionLine = job[0][0]+str(job[1][0])
        for line in range(1,len(job[0])):
@@ -2280,7 +2280,7 @@ def SubmitJobs2Condor(job,local=False,ExtCPU=False):
         f.write("\n")
         f.write('transfer_output_files = ""')
         f.write("\n")
-        f.write('+JobFlavour = "workday"')
+        f.write('+JobFlavour = "'+JobFlavour+'"')
         f.write("\n")
         f.write('queue ' + str(job[6]))
         f.write("\n")
