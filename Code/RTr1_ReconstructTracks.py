@@ -82,7 +82,7 @@ LocalSub=(args.LocalSub=='Y')
 if LocalSub:
    time_int=0
 else:
-    time_int =`10
+    time_int=10
 JobFlavour=args.JobFlavour
 RequestExtCPU=(args.RequestExtCPU=='Y')
 input_file_location=args.f
