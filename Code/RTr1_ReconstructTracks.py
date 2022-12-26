@@ -58,6 +58,7 @@ parser.add_argument('--SubPause',help="How long to wait in minutes after submitt
 parser.add_argument('--Log',help="Would you like to log the performance: No, MC, Kalman? (Only available if you have MC Truth or Kalman track reconstruction data)", default='No')
 parser.add_argument('--RecBatchID',help="Give this reconstruction batch an ID", default='Test_Batch')
 parser.add_argument('--LocalSub',help="Local submission?", default='N')
+parser.add_argument('--ForceStatus',help="Would you like the program run from specific status number? (Only for advance users)", default='0')
 parser.add_argument('--RequestExtCPU',help="Would you like to request extra CPUs?", default='N')
 parser.add_argument('--JobFlavour',help="Specifying the length of the HTCondor job walltime. Currently at 'workday' which is 8 hours.", default='workday')
 parser.add_argument('--f',help="Please enter the full path to the file with track reconstruction", default='/eos/experiment/ship/ANNDEA/Data')
@@ -407,7 +408,7 @@ if Mode=='RESET':
     UF.RecCleanUp(AFS_DIR, EOS_DIR, 'RTr1_'+RecBatchID, ['RTr1a','RTr1b','RTr1c','RTr1d',RecBatchID+'_RTr_OUTPUT.pkl'], HTCondorTag)
     FreshStart=False
 
-Status=0
+Status=int(args.ForceStatus)
 ################ Set the execution sequence for the script
 ###### Stage 0
 prog_entry=[]
