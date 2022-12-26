@@ -79,6 +79,10 @@ RecBatchID=args.RecBatchID
 Patience=int(args.Patience)
 SubPause=int(args.SubPause)*60
 LocalSub=(args.LocalSub=='Y')
+if LocalSub:
+   time_int=0
+else:
+    time_int =`10
 JobFlavour=args.JobFlavour
 RequestExtCPU=(args.RequestExtCPU=='Y')
 input_file_location=args.f
@@ -355,7 +359,7 @@ def StandardProcess(program,status,freshstart):
                           UF.SubmitJobs2Condor(bp,program[status][5],RequestExtCPU,JobFlavour)
                           _cnt+=bp[6]
 
-                 if AutoPilot(600,10,Patience,program[status]):
+                 if AutoPilot(600,time_int,Patience,program[status]):
                         print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
                         return True,False
                  else:
@@ -377,14 +381,14 @@ def StandardProcess(program,status,freshstart):
                       for bp in bad_pop:
                            UF.SubmitJobs2Condor(bp,program[status][5],RequestExtCPU,JobFlavour)
                       print(UF.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
-                      if AutoPilot(600,10,Patience,program[status]):
+                      if AutoPilot(600,time_int,Patience,program[status]):
                           print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+ 'has successfully completed'+bcolors.ENDC)
                           return True,False
                       else:
                           print(UF.TimeStamp(),bcolors.FAIL+'Stage '+str(status)+' is uncompleted...'+bcolors.ENDC)
                           return False,False
                    else:
-                      if AutoPilot(int(UserAnswer),10,Patience,program[status]):
+                      if AutoPilot(int(UserAnswer),time_int,Patience,program[status]):
                           print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+ 'has successfully completed'+bcolors.ENDC)
                           return True,False
                       else:
@@ -393,7 +397,7 @@ def StandardProcess(program,status,freshstart):
             else:
                       for bp in bad_pop:
                            UF.SubmitJobs2Condor(bp,program[status][5],RequestExtCPU,JobFlavour)
-                      if AutoPilot(600,10,Patience,program[status]):
+                      if AutoPilot(600,time_int,Patience,program[status]):
                            print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+ 'has successfully completed'+bcolors.ENDC)
                            return True,False
                       else:
