@@ -66,9 +66,8 @@ input_file_location=args.f
 SkipRcmb=args.SkipRcmb=='N'
 Xmin,Xmax,Ymin,Ymax=float(args.Xmin),float(args.Xmax),float(args.Ymin),float(args.Ymax)
 SliceData=max(Xmin,Xmax,Ymin,Ymax)>0 #We don't slice data if all values are set to zero simultaneousy (which is the default setting)
-se=(args.f.rfind('/'))
-print(args.f[se+1:-4])
-exit()
+ofn=(args.f[(args.f.rfind('/'))+1:-4])
+
 print(UF.TimeStamp(), 'Loading ',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
 columns_to_extract=[PM.x,PM.y,PM.z,PM.Hit_ID,PM.MC_Event_ID,PM.MC_Track_ID]
 for col in TrackID:
@@ -193,7 +192,7 @@ for RN in RecNames:
   print(UF.TimeStamp(),'Average track segmentation:',bcolors.BOLD+str(round(Segmentation,2))+bcolors.ENDC)
 print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
 print(UF.TimeStamp(),bcolors.BOLD+'Stage 4:'+bcolors.ENDC+' Writing the output...')
-output_file_location=EOS_DIR+'/ANNDEA/Data/TEST_SET/ETr_TRACK_REC_STATS.csv'
+output_file_location=EOS_DIR+'/ANNDEA/Data/TEST_SET/'+ofn+'_ETr_rec_stats.csv'
 raw_data_mc.to_csv(output_file_location,index=False)
 print(UF.TimeStamp(), bcolors.OKGREEN+"The track reconstruction stats for further analysis are written there:"+bcolors.ENDC, bcolors.OKBLUE+output_file_location+bcolors.ENDC)
 print(bcolors.HEADER+"############################################# End of the program ################################################"+bcolors.ENDC)
