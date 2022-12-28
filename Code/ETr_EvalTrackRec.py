@@ -66,7 +66,9 @@ input_file_location=args.f
 SkipRcmb=args.SkipRcmb=='N'
 Xmin,Xmax,Ymin,Ymax=float(args.Xmin),float(args.Xmax),float(args.Ymin),float(args.Ymax)
 SliceData=max(Xmin,Xmax,Ymin,Ymax)>0 #We don't slice data if all values are set to zero simultaneousy (which is the default setting)
-
+for l in range(len(f),0,-1):
+    print(l)
+exit()
 print(UF.TimeStamp(), 'Loading ',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
 columns_to_extract=[PM.x,PM.y,PM.z,PM.Hit_ID,PM.MC_Event_ID,PM.MC_Track_ID]
 for col in TrackID:
