@@ -358,8 +358,10 @@ def StandardProcess(program,status,freshstart):
                               _cnt=0
                           UF.SubmitJobs2Condor(bp,program[status][5],RequestExtCPU,JobFlavour)
                           _cnt+=bp[6]
-
-                 if AutoPilot(600,time_int,Patience,program[status]):
+                 if program[status][5]:
+                    print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
+                    return True,False
+                 elif AutoPilot(600,time_int,Patience,program[status]):
                         print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
                         return True,False
                  else:
@@ -381,14 +383,20 @@ def StandardProcess(program,status,freshstart):
                       for bp in bad_pop:
                            UF.SubmitJobs2Condor(bp,program[status][5],RequestExtCPU,JobFlavour)
                       print(UF.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
-                      if AutoPilot(600,time_int,Patience,program[status]):
+                      if program[status][5]:
+                          print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
+                          return True,False
+                      elif AutoPilot(600,time_int,Patience,program[status]):
                           print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+ 'has successfully completed'+bcolors.ENDC)
                           return True,False
                       else:
                           print(UF.TimeStamp(),bcolors.FAIL+'Stage '+str(status)+' is uncompleted...'+bcolors.ENDC)
                           return False,False
                    else:
-                      if AutoPilot(int(UserAnswer),time_int,Patience,program[status]):
+                      if program[status][5]:
+                         print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
+                            return True,False
+                      elif AutoPilot(int(UserAnswer),time_int,Patience,program[status]):
                           print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+ 'has successfully completed'+bcolors.ENDC)
                           return True,False
                       else:
@@ -397,7 +405,10 @@ def StandardProcess(program,status,freshstart):
             else:
                       for bp in bad_pop:
                            UF.SubmitJobs2Condor(bp,program[status][5],RequestExtCPU,JobFlavour)
-                      if AutoPilot(600,time_int,Patience,program[status]):
+                      if program[status][5]:
+                           print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
+                           return True,False
+                      elif AutoPilot(600,time_int,Patience,program[status]):
                            print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+ 'has successfully completed'+bcolors.ENDC)
                            return True,False
                       else:
