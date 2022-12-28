@@ -413,7 +413,8 @@ if Mode=='RESET':
     FreshStart=False
 if Mode=='CLEANUP':
     Status=5
-Status=int(args.ForceStatus)
+else:
+    Status=int(args.ForceStatus)
 ################ Set the execution sequence for the script
 ###### Stage 0
 prog_entry=[]
@@ -493,9 +494,11 @@ while Status<len(Program):
         Result=StandardProcess(Program,Status,FreshStart)
         if Result[0]:
             FreshStart=Result[1]
-            Status+=1
-            #Cleaning HTCondor submission files
-            continue
+            if int(args.ForceStatus)==0:
+                Status+=1
+                continue
+            else:
+                exit()
         else:
             Status=len(Program)+1
             break
@@ -694,7 +697,7 @@ if Status==5:
     print(UF.TimeStamp(), bcolors.OKGREEN+"Reconstruction has been completed"+bcolors.ENDC)
     exit()
 else:
-    print(UF.TimeStamp(), bcolors.FAIL+"Reconstruction has not been completed as one of the processes has timed out. Please run the script again (without Reset Mode)."+bcolors.ENDC)
+    print(UF.TimeStamp(), bcolors.FAIL+"Reconstruction has not been completed as one of the processes has timed out or --ForceStatus!=0 option was chosen. Please run the script again (without Reset Mode)."+bcolors.ENDC)
     exit()
 
 
