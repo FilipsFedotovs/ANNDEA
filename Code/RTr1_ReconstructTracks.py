@@ -394,8 +394,8 @@ def StandardProcess(program,status,freshstart):
                           return False,False
                    else:
                       if program[status][5]:
-                         print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
-                            return True,False
+                          print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
+                          return True,False
                       elif AutoPilot(int(UserAnswer),time_int,Patience,program[status]):
                           print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+ 'has successfully completed'+bcolors.ENDC)
                           return True,False
