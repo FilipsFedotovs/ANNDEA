@@ -119,7 +119,7 @@ if Log!='NO':
     MCdata.drop(MCdata.index[MCdata['x'] < (X_ID*stepX)], inplace = True)  #Keeping the relevant z slice
     MCdata.drop(MCdata.index[MCdata['y'] >= ((Y_ID+1)*stepY)], inplace = True)  #Keeping the relevant z slice
     MCdata.drop(MCdata.index[MCdata['y'] < (Y_ID*stepY)], inplace = True)  #Keeping the relevant z slice
-    MCdata_list=MCdata.values.tolist()
+
 if Log=='KALMAN':
     print(UF.TimeStamp(),'Preparing KALMAN data... ')
     input_file_location=EOS_DIR+'/ANNDEA/Data/TEST_SET/KTr1_'+RecBatchID+'_hits.csv'
@@ -133,13 +133,12 @@ if Log=='KALMAN':
     FEDRAdata['z']=FEDRAdata['z']-z_offset
     FEDRAdata['x']=FEDRAdata['x']-x_offset
     FEDRAdata['y']=FEDRAdata['y']-y_offset
-    FEDRAdata.drop(FEDRAdata.index[FEDRAdata['z'] >= ((Z_ID+1)*stepZ)], inplace = True)  #Keeping the relevant z slice
-    FEDRAdata.drop(FEDRAdata.index[FEDRAdata['z'] < (Z_ID*stepZ)], inplace = True)  #Keeping the relevant z slice
+
     FEDRAdata.drop(FEDRAdata.index[FEDRAdata['x'] >= ((X_ID+1)*stepX)], inplace = True)  #Keeping the relevant z slice
     FEDRAdata.drop(FEDRAdata.index[FEDRAdata['x'] < (X_ID*stepX)], inplace = True)  #Keeping the relevant z slice
     FEDRAdata.drop(FEDRAdata.index[FEDRAdata['y'] >= ((Y_ID+1)*stepY)], inplace = True)  #Keeping the relevant z slice
     FEDRAdata.drop(FEDRAdata.index[FEDRAdata['y'] < (Y_ID*stepY)], inplace = True)  #Keeping the relevant z slice
-    FEDRAdata_list=FEDRAdata.values.tolist()
+
 
 for k in range(0,Z_ID_Max):
     Z_ID=int(k)/Z_overlap
@@ -148,16 +147,19 @@ for k in range(0,Z_ID_Max):
     print(data)
     temp_data=data.drop(data.index[data['z'] >= ((Z_ID+1)*stepZ)])  #Keeping the relevant z slice
     temp_data=temp_data.drop(temp_data.index[temp_data['z'] < (Z_ID*stepZ)])  #Keeping the relevant z slice
-    print(temp_data)
-    exit()
     temp_data_list=temp_data.values.tolist()
     if Log!='NO':
-       MCdata.drop(MCdata.index[MCdata['z'] >= ((Z_ID+1)*stepZ)], inplace = True)  #Keeping the relevant z slice
-       MCdata.drop(MCdata.index[MCdata['z'] < (Z_ID*stepZ)], inplace = True)  #Keeping the relevant z slice
+       temp_MCData=MCdata.drop(MCdata.index[MCdata['z'] >= ((Z_ID+1)*stepZ)])  #Keeping the relevant z slice
+       temp_MCData=temp_MCData.drop(temp_MCData.index[temp_MCData['z'] < (Z_ID*stepZ)])  #Keeping the relevant z slice
+       temp_MCdata_list=MCdata.values.tolist()
+    if Log=='KALMAN':
+       temp_FEDRAdata=FEDRAdata.drop(FEDRAdata.index[FEDRAdata['z'] >= ((Z_ID+1)*stepZ)])  #Keeping the relevant z slice
+       temp_FEDRAdata=FEDRAdata.drop(temp_FEDRAdata.index[temp_FEDRAdata['z'] < (Z_ID*stepZ)])  #Keeping the relevant z slice
+       FEDRAdata_list=FEDRAdata.values.tolist()
     print(UF.TimeStamp(),'Creating the cluster', X_ID,Y_ID,k)
     HC=UF.HitCluster([X_ID,Y_ID,k],[stepX,stepY,stepZ]) #Initializing the cluster
     print(UF.TimeStamp(),'Decorating the clusters')
-    exit()
+    continue
     HC.LoadClusterHits(temp_data_list) #Decorating the Clusters with Hit information
     if len(HC.RawClusterGraph)>1: #If we have at least 2 Hits in the cluster that can create
         print(UF.TimeStamp(),'Generating the edges...')
@@ -199,6 +201,7 @@ for k in range(0,Z_ID_Max):
             print(UF.TimeStamp(),'Writing the output...')
             print(UF.PickleOperations(output_file_location,'w', HC)[1])
             continue
+exit()
 HC.RecHits=pd.DataFrame([], columns = ['HitID','z','Segment_ID'])
 print(UF.TimeStamp(),'Writing the output...')
 print(UF.PickleOperations(output_file_location,'w', HC)[1])
