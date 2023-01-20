@@ -9,7 +9,7 @@ import sys
 parser = argparse.ArgumentParser(description='select cut parameters')
 parser.add_argument('--i',help="Set number", default='1')
 parser.add_argument('--j',help="Subset number", default='1')
-parser.add_argument('--k',help="SubSubset number", default='1')
+parser.add_argument('--Z_ID_Max',help="SubSubset number", default='1')
 parser.add_argument('--Z_overlap',help="Enter Z id", default='1')
 parser.add_argument('--Y_overlap',help="Enter Y id", default='1')
 parser.add_argument('--X_overlap',help="Enter X id", default='1')
@@ -52,7 +52,8 @@ import pandas as pd #We use Panda for a routine data processing
 Z_overlap=int(args.Z_overlap)
 Y_overlap=int(args.Y_overlap)
 X_overlap=int(args.X_overlap)
-Z_ID=int(args.k)/Z_overlap
+Z_ID_Max=int(args.Z_ID_Max)
+
 Y_ID=int(args.j)/Y_overlap
 X_ID=int(args.i)/X_overlap
 Z_ID_n=int(args.k)
@@ -94,13 +95,12 @@ data["Hit_ID"] = data["Hit_ID"].astype(str)
 data['z']=data['z']-z_offset
 print(UF.TimeStamp(),'Preparing data... ')
 #Keeping only sections of the Hit data relevant to the volume being reconstructed to use less memory
-data.drop(data.index[data['z'] >= ((Z_ID+1)*stepZ)], inplace = True)  #Keeping the relevant z slice
-data.drop(data.index[data['z'] < (Z_ID*stepZ)], inplace = True)  #Keeping the relevant z slice
+
 data.drop(data.index[data['x'] >= ((X_ID+1)*stepX)], inplace = True)  #Keeping the relevant z slice
 data.drop(data.index[data['x'] < (X_ID*stepX)], inplace = True)  #Keeping the relevant z slice
 data.drop(data.index[data['y'] >= ((Y_ID+1)*stepY)], inplace = True)  #Keeping the relevant z slice
 data.drop(data.index[data['y'] < (Y_ID*stepY)], inplace = True)  #Keeping the relevant z slice
-data_list=data.values.tolist()
+
 
 #Additional options to include reconstruction stats. Require MC and possibly FEDRA reconstruction.
 if Log!='NO':
@@ -116,8 +116,7 @@ if Log!='NO':
     MCdata['z']=MCdata['z']-z_offset
     MCdata['x']=MCdata['x']-x_offset
     MCdata['y']=MCdata['y']-y_offset
-    MCdata.drop(MCdata.index[MCdata['z'] >= ((Z_ID+1)*stepZ)], inplace = True)  #Keeping the relevant z slice
-    MCdata.drop(MCdata.index[MCdata['z'] < (Z_ID*stepZ)], inplace = True)  #Keeping the relevant z slice
+
     MCdata.drop(MCdata.index[MCdata['x'] >= ((X_ID+1)*stepX)], inplace = True)  #Keeping the relevant z slice
     MCdata.drop(MCdata.index[MCdata['x'] < (X_ID*stepX)], inplace = True)  #Keeping the relevant z slice
     MCdata.drop(MCdata.index[MCdata['y'] >= ((Y_ID+1)*stepY)], inplace = True)  #Keeping the relevant z slice
@@ -144,51 +143,63 @@ if Log=='KALMAN':
     FEDRAdata.drop(FEDRAdata.index[FEDRAdata['y'] < (Y_ID*stepY)], inplace = True)  #Keeping the relevant z slice
     FEDRAdata_list=FEDRAdata.values.tolist()
 
+for k in range(0,Z_ID_Max):
+    Z_ID=int(k)/Z_overlap
+    print(Z_ID)
+    print(temp_data)
+    temp_data=data.drop(data.index[data['z'] >= ((Z_ID+1)*stepZ)])  #Keeping the relevant z slice
+    temp_data=data.drop(data.index[data['z'] < (Z_ID*stepZ)])  #Keeping the relevant z slice
+    print(temp_data)
+    exit()
+    temp_data_list=temp_data.values.tolist()
+    if Log!='NO':
+       MCdata.drop(MCdata.index[MCdata['z'] >= ((Z_ID+1)*stepZ)], inplace = True)  #Keeping the relevant z slice
+       MCdata.drop(MCdata.index[MCdata['z'] < (Z_ID*stepZ)], inplace = True)  #Keeping the relevant z slice
+    print(UF.TimeStamp(),'Creating the cluster', X_ID,Y_ID,k)
+    HC=UF.HitCluster([X_ID,Y_ID,k],[stepX,stepY,stepZ]) #Initializing the cluster
+    print(UF.TimeStamp(),'Decorating the clusters')
+    exit()
+    HC.LoadClusterHits(temp_data_list) #Decorating the Clusters with Hit information
+    if len(HC.RawClusterGraph)>1: #If we have at least 2 Hits in the cluster that can create
+        print(UF.TimeStamp(),'Generating the edges...')
+        GraphStatus = HC.GenerateEdges(cut_dt, cut_dr)
+        combined_weight_list=[]
+        if GraphStatus:
+            if HC.ClusterGraph.num_edges>0: #We only bring torch and GNN if we have some edges to classify
+                        print(UF.TimeStamp(),'Classifying the edges...')
+                        print(UF.TimeStamp(),'Preparing the model')
+                        import torch
+                        EOSsubDIR=EOS_DIR+'/'+'ANNDEA'
+                        EOSsubModelDIR=EOSsubDIR+'/'+'Models'
+                        #Load the model meta file
+                        Model_Meta_Path=EOSsubModelDIR+'/'+args.ModelName+'_Meta'
+                        #Specify the model path
+                        Model_Path=EOSsubModelDIR+'/'+args.ModelName
+                        ModelMeta=UF.PickleOperations(Model_Meta_Path, 'r', 'N/A')[0]
+                        #Meta file contatins training session stats. They also record the optimal acceptance.
+                        Acceptance=ModelMeta.TrainSessionsData[-1][-1][3]
+                        device = torch.device('cpu')
+                        #In PyTorch we don't save the actual model like in Tensorflow. We just save the weights, hence we have to regenerate the model again. The recepy is in the Model Meta file
+                        model = UF.GenerateModel(ModelMeta).to(device)
+                        model.load_state_dict(torch.load(Model_Path))
+                        model.eval() #In Pytorch this function sets the model into the evaluation mode.
+                        w = model(HC.ClusterGraph.x, HC.ClusterGraph.edge_index, HC.ClusterGraph.edge_attr) #Here we use the model to assign the weights between Hit edges
+                        w=w.tolist()
+                        for edge in range(len(HC.edges)):
+                            combined_weight_list.append(HC.edges[edge]+w[edge])
+            if Log!='NO':
+                        print(UF.TimeStamp(),'Tracking the cluster...')
+                        HC.LinkHits(combined_weight_list,True,MCdata_list,cut_dt,cut_dr,Acceptance) #We use the weights assigned by the model to perform microtracking within the volume
+                        if Log=='KALMAN':
+                               HC.TestKalmanHits(FEDRAdata_list,MCdata_list)
 
-print(UF.TimeStamp(),'Creating the clusters')
-HC=UF.HitCluster([X_ID,Y_ID,Z_ID],[stepX,stepY,stepZ]) #Initializing the cluster
-print(UF.TimeStamp(),'Decorating the clusters')
-HC.LoadClusterHits(data_list) #Decorating the Clusters with Hit information
-if len(HC.RawClusterGraph)>1: #If we have at least 2 Hits in the cluster that can create
-    print(UF.TimeStamp(),'Generating the edges...')
-    GraphStatus = HC.GenerateEdges(cut_dt, cut_dr)
-    combined_weight_list=[]
-    if GraphStatus:
-        if HC.ClusterGraph.num_edges>0: #We only bring torch and GNN if we have some edges to classify
-                    print(UF.TimeStamp(),'Classifying the edges...')
-                    print(UF.TimeStamp(),'Preparing the model')
-                    import torch
-                    EOSsubDIR=EOS_DIR+'/'+'ANNDEA'
-                    EOSsubModelDIR=EOSsubDIR+'/'+'Models'
-                    #Load the model meta file
-                    Model_Meta_Path=EOSsubModelDIR+'/'+args.ModelName+'_Meta'
-                    #Specify the model path
-                    Model_Path=EOSsubModelDIR+'/'+args.ModelName
-                    ModelMeta=UF.PickleOperations(Model_Meta_Path, 'r', 'N/A')[0]
-                    #Meta file contatins training session stats. They also record the optimal acceptance.
-                    Acceptance=ModelMeta.TrainSessionsData[-1][-1][3]
-                    device = torch.device('cpu')
-                    #In PyTorch we don't save the actual model like in Tensorflow. We just save the weights, hence we have to regenerate the model again. The recepy is in the Model Meta file
-                    model = UF.GenerateModel(ModelMeta).to(device)
-                    model.load_state_dict(torch.load(Model_Path))
-                    model.eval() #In Pytorch this function sets the model into the evaluation mode.
-                    w = model(HC.ClusterGraph.x, HC.ClusterGraph.edge_index, HC.ClusterGraph.edge_attr) #Here we use the model to assign the weights between Hit edges
-                    w=w.tolist()
-                    for edge in range(len(HC.edges)):
-                        combined_weight_list.append(HC.edges[edge]+w[edge])
-        if Log!='NO':
-                    print(UF.TimeStamp(),'Tracking the cluster...')
-                    HC.LinkHits(combined_weight_list,True,MCdata_list,cut_dt,cut_dr,Acceptance) #We use the weights assigned by the model to perform microtracking within the volume
-                    if Log=='KALMAN':
-                           HC.TestKalmanHits(FEDRAdata_list,MCdata_list)
-
-        else:
-            print(UF.TimeStamp(),'Tracking the cluster...')
-            HC.LinkHits(combined_weight_list,False,[],cut_dt,cut_dr,Acceptance) #We use the weights assigned by the model to perform microtracking within the volume
-        HC.UnloadClusterGraph() #Remove the Graph that we do not need anymore to reduce the object size
-        print(UF.TimeStamp(),'Writing the output...')
-        print(UF.PickleOperations(output_file_location,'w', HC)[1])
-        exit()
+            else:
+                print(UF.TimeStamp(),'Tracking the cluster...')
+                HC.LinkHits(combined_weight_list,False,[],cut_dt,cut_dr,Acceptance) #We use the weights assigned by the model to perform microtracking within the volume
+            HC.UnloadClusterGraph() #Remove the Graph that we do not need anymore to reduce the object size
+            print(UF.TimeStamp(),'Writing the output...')
+            print(UF.PickleOperations(output_file_location,'w', HC)[1])
+            continue
 HC.RecHits=pd.DataFrame([], columns = ['HitID','z','Segment_ID'])
 print(UF.TimeStamp(),'Writing the output...')
 print(UF.PickleOperations(output_file_location,'w', HC)[1])
