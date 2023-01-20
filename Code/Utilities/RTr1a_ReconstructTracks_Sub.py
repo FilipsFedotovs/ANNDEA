@@ -147,7 +147,7 @@ for k in range(0,Z_ID_Max):
     print((Z_ID+1)*stepZ)
     print(data)
     temp_data=data.drop(data.index[data['z'] >= ((Z_ID+1)*stepZ)])  #Keeping the relevant z slice
-    temp_data=temp_data.drop(temp_data.index[data['z'] < (Z_ID*stepZ)])  #Keeping the relevant z slice
+    temp_data=temp_data.drop(temp_data.index[temp_data['z'] < (Z_ID*stepZ)])  #Keeping the relevant z slice
     print(temp_data)
     exit()
     temp_data_list=temp_data.values.tolist()
