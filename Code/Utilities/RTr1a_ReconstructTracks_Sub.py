@@ -144,7 +144,7 @@ if Log=='KALMAN':
 for k in range(0,Z_ID_Max):
     Z_ID=int(k)/Z_overlap
     print(Z_ID)
-    print(temp_data)
+    print(data)
     temp_data=data.drop(data.index[data['z'] >= ((Z_ID+1)*stepZ)])  #Keeping the relevant z slice
     temp_data=data.drop(data.index[data['z'] < (Z_ID*stepZ)])  #Keeping the relevant z slice
     print(temp_data)
