@@ -431,16 +431,16 @@ else:
 prog_entry=[]
 job_sets=[]
 for i in range(0,Xsteps):
-                job_sets.append([])
-                for j in range(0,Ysteps):
-                     job_sets[i].append(Zsteps)
+                job_sets.append([Ysteps])
 prog_entry.append(' Sending hit cluster to the HTCondor, so the model assigns weights between hits')
 prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','hit_cluster_rec_set','RTr1a','.pkl',RecBatchID,job_sets,'RTr1a_ReconstructTracks_Sub.py'])
-prog_entry.append([' --stepZ ', ' --stepY ', ' --stepX ', " --zOffset ", " --yOffset ", " --xOffset ", ' --cut_dt ', ' --cut_dr ', ' --ModelName ', ' --Log ',' --Z_overlap ',' --Y_overlap ',' --X_overlap '])
-prog_entry.append([stepZ,stepY,stepX,z_offset, y_offset, x_offset, cut_dt,cut_dr, ModelName ,Log,Z_overlap,Y_overlap,X_overlap])
-prog_entry.append(Xsteps*Ysteps*Zsteps)
+prog_entry.append([' --stepZ ', ' --stepY ', ' --stepX ', " --zOffset ", " --yOffset ", " --xOffset ", ' --cut_dt ', ' --cut_dr ', ' --ModelName ', ' --Log ',' --Z_overlap ',' --Y_overlap ',' --X_overlap ', ' --Z_ID_Max '])
+prog_entry.append([stepZ,stepY,stepX,z_offset, y_offset, x_offset, cut_dt,cut_dr, ModelName ,Log,Z_overlap,Y_overlap,X_overlap, Zsteps])
+prog_entry.append(Xsteps*Ysteps)
 prog_entry.append(LocalSub)
 Program.append(prog_entry)
+print(prog_entry)
+exit()
 if Mode=='RESET':
    print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Delete'))
 #Setting up folders for the output. The reconstruction of just one brick can easily generate >100k of files. Keeping all that blob in one directory can cause problems on lxplus.

@@ -1,5 +1,5 @@
-#This simple connects hits in the data to produce tracks
-#Tracking Module of the ANNDEA package
+#This simple generates training sample for the track segment merger
+#Track Segment Module of the ANNDEA package
 #Made by Filips Fedotovs
 
 
