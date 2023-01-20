@@ -31,7 +31,7 @@ Install PyTorch:
 3) pip3 install torch-sparse -f https://data.pyg.org/whl/torch-1.9.0+cpu.html --target **/eos/user/x/xyyyyy/libs**
 4) pip3 install torch-geometric --target **/eos/user/x/xyyyyy/libs**
 
-Please replace *x* and xyyyyy with 
+Please replace **x** and **xyyyyy** with first letter of your username and your username respectively.
 
 Install Pandas:
 1) pip3 install pandas --target **/eos/user/x/xyyyyy/libs**
