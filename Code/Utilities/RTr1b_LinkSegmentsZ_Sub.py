@@ -64,15 +64,12 @@ pfx=args.pfx
 print(UF.TimeStamp(), bcolors.OKGREEN+"Modules Have been imported successfully..."+bcolors.ENDC)
 
 #Load the first brick along z-axis
-FirstFile=EOS_DIR+p+'/Temp_'+'RTr1a'+'_'+RecBatchID+'_'+str(X_ID)+'/'+'RTr1a'+'_'+RecBatchID+'_'+'hit_cluster_rec_set'+'_'+str(X_ID)+'_'+str(Y_ID)+'_'+str(0)+sfx
-FirstFileRaw=UF.PickleOperations(FirstFile,'r', 'N/A')
-FirstFile=FirstFileRaw[0]
+MainFile=EOS_DIR+p+'/Temp_'+'RTr1a'+'_'+RecBatchID+'_'+str(X_ID)+'/'+'RTr1a'+'_'+RecBatchID+'_'+'hit_cluster_rec_set'+'_'+str(X_ID)+'_'+str(Y_ID)+'_'+str(0)+sfx
+MainFileRaw=UF.PickleOperations(MainFile,'r', 'N/A')
+FirstFile=MainFileRaw[0][0]
 ZContractedTable=FirstFile.RecHits.rename(columns={"Segment_ID": "Master_Segment_ID","z": "Master_z" })
 for i in range(1,Z_ID_Max):
-    SecondFile=EOS_DIR+p+'/Temp_'+'RTr1a'+'_'+RecBatchID+'_'+str(X_ID)+'/'+'RTr1a'+'_'+RecBatchID+'_'+'hit_cluster_rec_set'+'_'+str(X_ID)+'_'+str(Y_ID)+'_'+str(i)+sfx
-    print('Opening ',SecondFile)
-    SecondFileRaw=UF.PickleOperations(SecondFile,'r', 'N/A')
-    SecondFile=SecondFileRaw[0]
+    SecondFile=MainFileRaw[0][i]
     SecondFileTable=SecondFile.RecHits
     FileClean=pd.merge(ZContractedTable,SecondFileTable,how='inner', on=['HitID'])
     FileClean["Segment_No"]= FileClean["Segment_ID"]

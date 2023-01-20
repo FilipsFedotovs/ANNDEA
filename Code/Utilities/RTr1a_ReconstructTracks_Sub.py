@@ -139,6 +139,7 @@ if Log=='KALMAN':
     FEDRAdata.drop(FEDRAdata.index[FEDRAdata['y'] >= ((Y_ID+1)*stepY)], inplace = True)  #Keeping the relevant z slice
     FEDRAdata.drop(FEDRAdata.index[FEDRAdata['y'] < (Y_ID*stepY)], inplace = True)  #Keeping the relevant z slice
 
+torch_import=True
 cluster_output=[]
 for k in range(0,Z_ID_Max):
     Z_ID=int(k)/Z_overlap
@@ -165,7 +166,9 @@ for k in range(0,Z_ID_Max):
             if HC.ClusterGraph.num_edges>0: #We only bring torch and GNN if we have some edges to classify
                         print(UF.TimeStamp(),'Classifying the edges...')
                         print(UF.TimeStamp(),'Preparing the model')
-                        import torch
+                        if torch_import_trigger:
+                           import torch
+                           torch_import_trigger=False
                         EOSsubDIR=EOS_DIR+'/'+'ANNDEA'
                         EOSsubModelDIR=EOSsubDIR+'/'+'Models'
                         #Load the model meta file
