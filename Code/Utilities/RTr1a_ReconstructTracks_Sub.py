@@ -203,7 +203,10 @@ for k in range(0,Z_ID_Max):
     HC.RecHits=pd.DataFrame([], columns = ['HitID','z','Segment_ID'])
     cluster_output.append(HC)
 print(UF.TimeStamp(),'Writing the output...')
-print(cluster_output)
+print(len(cluster_output))
+for HC in cluster_output:
+    print(HC.RecHits)
+    x=input()
 #print(UF.PickleOperations(output_file_location,'w', HC)[1])
 
 
