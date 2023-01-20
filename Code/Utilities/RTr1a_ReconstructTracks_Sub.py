@@ -139,7 +139,7 @@ if Log=='KALMAN':
     FEDRAdata.drop(FEDRAdata.index[FEDRAdata['y'] >= ((Y_ID+1)*stepY)], inplace = True)  #Keeping the relevant z slice
     FEDRAdata.drop(FEDRAdata.index[FEDRAdata['y'] < (Y_ID*stepY)], inplace = True)  #Keeping the relevant z slice
 
-
+cluster_output=[]
 for k in range(0,Z_ID_Max):
     Z_ID=int(k)/Z_overlap
     print(Z_ID)
@@ -155,11 +155,10 @@ for k in range(0,Z_ID_Max):
     if Log=='KALMAN':
        temp_FEDRAdata=FEDRAdata.drop(FEDRAdata.index[FEDRAdata['z'] >= ((Z_ID+1)*stepZ)])  #Keeping the relevant z slice
        temp_FEDRAdata=FEDRAdata.drop(temp_FEDRAdata.index[temp_FEDRAdata['z'] < (Z_ID*stepZ)])  #Keeping the relevant z slice
-       FEDRAdata_list=FEDRAdata.values.tolist()
-    print(UF.TimeStamp(),'Creating the cluster', X_ID,Y_ID,k)
+       temp_FEDRAdata_list=FEDRAdata.values.tolist()
+    print(UF.TimeStamp(),'Creating the cluster', int(X_ID),int(Y_ID),k)
     HC=UF.HitCluster([X_ID,Y_ID,k],[stepX,stepY,stepZ]) #Initializing the cluster
     print(UF.TimeStamp(),'Decorating the clusters')
-    continue
     HC.LoadClusterHits(temp_data_list) #Decorating the Clusters with Hit information
     if len(HC.RawClusterGraph)>1: #If we have at least 2 Hits in the cluster that can create
         print(UF.TimeStamp(),'Generating the edges...')
@@ -190,20 +189,21 @@ for k in range(0,Z_ID_Max):
                             combined_weight_list.append(HC.edges[edge]+w[edge])
             if Log!='NO':
                         print(UF.TimeStamp(),'Tracking the cluster...')
-                        HC.LinkHits(combined_weight_list,True,MCdata_list,cut_dt,cut_dr,Acceptance) #We use the weights assigned by the model to perform microtracking within the volume
+                        HC.LinkHits(combined_weight_list,True,temp_MCdata_list,cut_dt,cut_dr,Acceptance) #We use the weights assigned by the model to perform microtracking within the volume
                         if Log=='KALMAN':
-                               HC.TestKalmanHits(FEDRAdata_list,MCdata_list)
+                               HC.TestKalmanHits(temp_FEDRAdata_list,temp_MCdata_list)
 
             else:
                 print(UF.TimeStamp(),'Tracking the cluster...')
                 HC.LinkHits(combined_weight_list,False,[],cut_dt,cut_dr,Acceptance) #We use the weights assigned by the model to perform microtracking within the volume
             HC.UnloadClusterGraph() #Remove the Graph that we do not need anymore to reduce the object size
-            print(UF.TimeStamp(),'Writing the output...')
-            print(UF.PickleOperations(output_file_location,'w', HC)[1])
+            print(UF.TimeStamp(),'Current cLuster tracking is finished, adding it to the output container...')
+            cluster_output.append(HC)
             continue
-exit()
-HC.RecHits=pd.DataFrame([], columns = ['HitID','z','Segment_ID'])
+    HC.RecHits=pd.DataFrame([], columns = ['HitID','z','Segment_ID'])
+    cluster_output.append(HC)
 print(UF.TimeStamp(),'Writing the output...')
-print(UF.PickleOperations(output_file_location,'w', HC)[1])
+print(cluster_output)
+#print(UF.PickleOperations(output_file_location,'w', HC)[1])
 
 
