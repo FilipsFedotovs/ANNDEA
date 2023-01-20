@@ -144,7 +144,6 @@ for k in range(0,Z_ID_Max):
     Z_ID=int(k)/Z_overlap
     print(Z_ID)
     print((Z_ID+1)*stepZ)
-    print(data)
     temp_data=data.drop(data.index[data['z'] >= ((Z_ID+1)*stepZ)])  #Keeping the relevant z slice
     temp_data=temp_data.drop(temp_data.index[temp_data['z'] < (Z_ID*stepZ)])  #Keeping the relevant z slice
     temp_data_list=temp_data.values.tolist()
@@ -203,10 +202,6 @@ for k in range(0,Z_ID_Max):
     HC.RecHits=pd.DataFrame([], columns = ['HitID','z','Segment_ID'])
     cluster_output.append(HC)
 print(UF.TimeStamp(),'Writing the output...')
-print(len(cluster_output))
-for HC in cluster_output:
-    print(HC.RecHits)
-    x=input()
-#print(UF.PickleOperations(output_file_location,'w', HC)[1])
+print(UF.PickleOperations(output_file_location,'w', cluster_output)[1])
 
 
