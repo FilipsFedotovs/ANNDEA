@@ -26,13 +26,13 @@ The tracking module takes hits as an input and assigns the common ID - hence it 
 All modules 
 ### Requirements
 Install PyTorch: 
-1) pip3 install torch==1.9.0+cpu torchvision==0.10.0+cpu -f https://download.pytorch.org/whl/torch_stable.htmlhttps://download.pytorch.org/whl/torch_stable.html --target **/eos/user/<your username first letter>/<your username>/libs**
-2) pip3 install torch-scatter -f https://data.pyg.org/whl/torch-1.9.0+cpu.htmlhttps://data.pyg.org/whl/torch-1.9.0+cpu.html --target **/eos/user/<your username first letter>/<your username>/libs**
-3) pip3 install torch-sparse -f https://data.pyg.org/whl/torch-1.9.0+cpu.html --target **/eos/user/<your username first letter>/<your username>/libs**
-4) pip3 install torch-geometric --target **/eos/user/<your username first letter>/<your username>/libs**
+1) pip3 install torch==1.9.0+cpu torchvision==0.10.0+cpu -f https://download.pytorch.org/whl/torch_stable.htmlhttps://download.pytorch.org/whl/torch_stable.html --target **/eos/user/x/xyyyyy/libs**
+2) pip3 install torch-scatter -f https://data.pyg.org/whl/torch-1.9.0+cpu.htmlhttps://data.pyg.org/whl/torch-1.9.0+cpu.html --target **/eos/user/x/xyyyy/libs**
+3) pip3 install torch-sparse -f https://data.pyg.org/whl/torch-1.9.0+cpu.html --target **/eos/user/x/xyyyyy/libs**
+4) pip3 install torch-geometric --target **/eos/user/x/xyyyyy/libs**
 
 Install Pandas:
-1) pip3 install pandas --target **/eos/user/<your username first letter>/<your username>/libs**
+1) pip3 install pandas --target **/eos/user/x/xyyyyy/libs**
 
 ### 1.1 Installation steps
 1) go to your home directory in afs where you would like to install the package
