@@ -209,7 +209,7 @@ for j in range(0,len(JobSets)):
 # ########################################     Preset framework parameters    #########################################
 FreshStart=True
 Program=[]
-exit()
+
 #Defining handy functions to make the code little cleaner
 def UpdateStatus(status):
     Meta.UpdateStatus(status)
