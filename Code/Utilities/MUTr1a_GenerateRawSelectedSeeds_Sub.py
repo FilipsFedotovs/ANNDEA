@@ -58,6 +58,7 @@ if PY_DIR!='': #Temp solution
     sys.path.append('/usr/lib64/python3.6/lib-dynload')
     sys.path.append('/usr/lib64/python3.6/site-packages')
     sys.path.append('/usr/lib/python3.6/site-packages')
+sys.path.append(AFS_DIR+'/Code/Utilities')
 import UtilityFunctions as UF #This is where we keep routine utility functions
 import pandas as pd #We use Panda for a routine data processing
 import math #We use it for data manipulation
