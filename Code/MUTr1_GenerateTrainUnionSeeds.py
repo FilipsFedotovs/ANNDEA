@@ -315,7 +315,7 @@ def StandardProcess(program,status,freshstart):
                        print(UF.TimeStamp(),'OK, exiting now then')
                        exit()
                    if UserAnswer=='R':
-                      print(program[status])
+                      print(program[status][1][5])
                       exit()
                       # HTCondorTag="SoftUsed == \"ANNDEA-MUTr1a-"+TrainSampleID+"\""
                       # UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MUTr1_'+TrainSampleID, [], HTCondorTag)
