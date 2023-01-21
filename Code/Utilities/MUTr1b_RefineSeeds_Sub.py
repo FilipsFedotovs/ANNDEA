@@ -2,7 +2,7 @@
 #This simple script prepares data for CNN
 ########################################    Import libraries    #############################################
 import sys
-
+import argparse
 class bcolors:
     HEADER = '\033[95m'
     OKBLUE = '\033[94m'
@@ -53,7 +53,7 @@ sys.path.append(AFS_DIR+'/Code/Utilities')
 import UtilityFunctions as UF
 from UtilityFunctions import EMO
 import ast
-import argparse
+
 import pandas as pd #We use Panda for a routine data processing
 import gc  #Helps to clear memory
 ModelName=ast.literal_eval(args.ModelName)
