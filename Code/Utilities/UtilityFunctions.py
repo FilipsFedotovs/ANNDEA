@@ -2340,7 +2340,7 @@ def ManageTempFolders(spi,op_type):
        _tot=spi[1][8]
     else:
        _tot=len(spi[1][8])
-    print(_tot)
+    print(spi)
     x=input()
     if op_type=='Create':
        for i in range(_tot):
