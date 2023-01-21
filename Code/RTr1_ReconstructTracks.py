@@ -302,7 +302,8 @@ def AutoPilot(wait_min, interval_min, max_interval_tolerance,program):
                                     program[2],
                                     program[3],
                                     program[1][9],
-                                    False)
+                                    False,
+                                    program[1][10])
          if len(bad_pop)>0:
                print(UF.TimeStamp(),bcolors.WARNING+'Autopilot status update: There are still', len(bad_pop), 'HTCondor jobs remaining'+bcolors.ENDC)
                if interval%max_interval_tolerance==0:
@@ -329,7 +330,8 @@ def StandardProcess(program,status,freshstart):
                                     program[status][2],
                                     program[status][3],
                                     program[status][1][9],
-                                    False)
+                                    False,
+                                    program[status][1][10])
         if len(bad_pop)==0:
              print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
              return True,False
@@ -348,7 +350,8 @@ def StandardProcess(program,status,freshstart):
                                     program[status][2],
                                     program[status][3],
                                     program[status][1][9],
-                                    batch_sub)
+                                    batch_sub,
+                                    program[status][1][10])
                  print(UF.TimeStamp(),'Submitting jobs to HTCondor... ',bcolors.ENDC)
                  _cnt=0
                  for bp in bad_pop:

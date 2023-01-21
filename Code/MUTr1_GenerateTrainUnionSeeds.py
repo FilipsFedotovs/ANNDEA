@@ -112,7 +112,7 @@ required_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MUTr1_'+TrainSampleID+'_T
 
 
 ########################################     Phase 1 - Create compact source file    #########################################
-print(UF.TimeStamp(),bcolors.BOLD+'Stage 0:'+bcolors.ENDC+' Preparing the source data...')
+print(UF.TimeStamp(),bcolors.BOLD+'Stage -1:'+bcolors.ENDC+' Preparing the source data...')
 
 if os.path.isfile(required_file_location)==False or Mode=='RESET':
         print(UF.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
@@ -188,7 +188,7 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         Meta.UpdateStatus(0)
         print(UF.PickleOperations(TrainSampleOutputMeta,'w', Meta)[1])
         print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
-        print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 0 has successfully completed'+bcolors.ENDC)
+        print(UF.TimeStamp(),bcolors.OKGREEN+'Stage -1 has successfully completed'+bcolors.ENDC)
 elif os.path.isfile(TrainSampleOutputMeta)==True:
     print(UF.TimeStamp(),'Loading previously saved data from ',bcolors.OKBLUE+TrainSampleOutputMeta+bcolors.ENDC)
     MetaInput=UF.PickleOperations(TrainSampleOutputMeta,'r', 'N/A')
@@ -358,7 +358,7 @@ if Mode=='RESET':
 if Mode=='CLEANUP':
     Status=5
 elif args.ForceStatus=='':
-    status=Meta.Status[-1]
+    Status=Meta.Status[-1]
 else:
    Status=int(args.ForceStatus)
 ################ Set the execution sequence for the script
@@ -377,20 +377,18 @@ elif type(job_sets[0]) is int:
 elif type(job_sets[0][0]) is int:
                         for lp in job_sets:
                             TotJobs+=np.sum(lp)
-prog_entry.append(' Sending hit cluster to the HTCondor, so the model assigns weights between hits')
+prog_entry.append(' Sending hit cluster to the HTCondor, so tack segment combination pairs can be formed...')
 prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/','RawSeedsRes','MUTr1a','.csv',TrainSampleID,job_sets,'MUTr1a_GenerateRawSelectedSeeds_Sub.py'])
 prog_entry.append([ " --MaxSegments ", " --MaxSLG "," --MaxSTG "," --VetoMotherTrack "])
 prog_entry.append([MaxSegments, MaxSLG, MaxSTG,'"'+str(VetoMotherTrack)+'"'])
 prog_entry.append(TotJobs)
 prog_entry.append(LocalSub)
+prog_entry.append([" --PlateZ ",job_sets])
 Program.append(prog_entry)
 if Mode=='RESET':
    print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Delete'))
 #Setting up folders for the output. The reconstruction of just one brick can easily generate >100k of files. Keeping all that blob in one directory can cause problems on lxplus.
 print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Create'))
-print(Meta.Status)
-print(Program)
-exit()
 ###### Stage 2
 Program.append('Custom')
 # prog_entry=[]
@@ -452,8 +450,9 @@ while Status<len(Program):
         Result=StandardProcess(Program,Status,FreshStart)
         if Result[0]:
             FreshStart=Result[1]
-            if int(args.ForceStatus)==0:
+            if args.ForceStatus=='':
                 Status+=1
+                UpdateStatus(Status)
                 continue
             else:
                 exit()
@@ -511,19 +510,20 @@ while Status<len(Program):
                 print(UF.PickleOperations(TrainSampleOutputMeta,'w', Meta)[1])
         FreshStart=False
         print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 2 has successfully completed'+bcolors.ENDC)
-        status=3
-if Status==5:
-    print(UF.TimeStamp(),'Performing the cleanup... ',bcolors.ENDC)
-    HTCondorTag="SoftUsed == \"ANNDEA-RTr1a-"+RecBatchID+"\""
-    UF.RecCleanUp(AFS_DIR, EOS_DIR, 'RTr1_'+RecBatchID, ['RTr1_'+RecBatchID,RecBatchID+'_RTr_OUTPUT.pkl'], HTCondorTag)
-    for p in Program:
-        if p!='Custom':
-           print(UF.TimeStamp(),UF.ManageTempFolders(p,'Delete'))
-    print(UF.TimeStamp(), bcolors.OKGREEN+"Reconstruction has been completed"+bcolors.ENDC)
-    exit()
-else:
-    print(UF.TimeStamp(), bcolors.FAIL+"Reconstruction has not been completed as one of the processes has timed out or --ForceStatus!=0 option was chosen. Please run the script again (without Reset Mode)."+bcolors.ENDC)
-    exit()
+        Status=2
+        UpdateStatus(Status)
+# if Status==5:
+#     print(UF.TimeStamp(),'Performing the cleanup... ',bcolors.ENDC)
+#     HTCondorTag="SoftUsed == \"ANNDEA-RTr1a-"+RecBatchID+"\""
+#     UF.RecCleanUp(AFS_DIR, EOS_DIR, 'RTr1_'+RecBatchID, ['RTr1_'+RecBatchID,RecBatchID+'_RTr_OUTPUT.pkl'], HTCondorTag)
+#     for p in Program:
+#         if p!='Custom':
+#            print(UF.TimeStamp(),UF.ManageTempFolders(p,'Delete'))
+#     print(UF.TimeStamp(), bcolors.OKGREEN+"Reconstruction has been completed"+bcolors.ENDC)
+#     exit()
+# else:
+#     print(UF.TimeStamp(), bcolors.FAIL+"Reconstruction has not been completed as one of the processes has timed out or --ForceStatus!=0 option was chosen. Please run the script again (without Reset Mode)."+bcolors.ENDC)
+#     exit()
 
 
 
