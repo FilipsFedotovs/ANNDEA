@@ -1,12 +1,8 @@
 
 #This simple script prepares data for CNN
 ########################################    Import libraries    #############################################
-import UtilityFunctions as UF
-from UtilityFunctions import EMO
-import ast
-import argparse
-import pandas as pd #We use Panda for a routine data processing
-import gc  #Helps to clear memory
+import sys
+
 class bcolors:
     HEADER = '\033[95m'
     OKBLUE = '\033[94m'
@@ -32,6 +28,7 @@ parser.add_argument('--EOS',help="EOS location", default='')
 parser.add_argument('--AFS',help="AFS location", default='')
 parser.add_argument('--ModelName',help="WHat ANN model would you like to use?", default="['MH_GNN_5FTR_4_120_4_120']")
 parser.add_argument('--BatchID',help="Give this training sample batch an ID", default='SHIP_UR_v1')
+parser.add_argument('--PY',help="Python libraries directory location", default='.')
 ########################################     Main body functions    #########################################
 args = parser.parse_args()
 i=int(args.i)    #This is just used to name the output file
@@ -43,6 +40,22 @@ sfx=args.sfx
 pfx=args.pfx
 AFS_DIR=args.AFS
 EOS_DIR=args.EOS
+PY_DIR=args.PY
+
+if PY_DIR!='': #Temp solution
+    sys.path=['',PY_DIR]
+    sys.path.append('/usr/lib64/python36.zip')
+    sys.path.append('/usr/lib64/python3.6')
+    sys.path.append('/usr/lib64/python3.6/lib-dynload')
+    sys.path.append('/usr/lib64/python3.6/site-packages')
+    sys.path.append('/usr/lib/python3.6/site-packages')
+sys.path.append(AFS_DIR+'/Code/Utilities')
+import UtilityFunctions as UF
+from UtilityFunctions import EMO
+import ast
+import argparse
+import pandas as pd #We use Panda for a routine data processing
+import gc  #Helps to clear memory
 ModelName=ast.literal_eval(args.ModelName)
 BatchID=args.BatchID
 Models=[]
