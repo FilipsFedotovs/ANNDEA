@@ -373,7 +373,6 @@ for i in range(len(JobSets)):
                 job_sets.append(int(JobSets[i][2]))
 TotJobs=0
 print(JobSets)
-exit()
 if type(job_sets) is int:
                         TotJobs=job_sets
 elif type(job_sets[0]) is int:
@@ -387,7 +386,7 @@ prog_entry.append([ " --MaxSegments ", " --MaxSLG "," --MaxSTG "," --VetoMotherT
 prog_entry.append([MaxSegments, MaxSLG, MaxSTG,'"'+str(VetoMotherTrack)+'"'])
 prog_entry.append(TotJobs)
 prog_entry.append(LocalSub)
-prog_entry.append([" --PlateZ ",job_sets])
+prog_entry.append([" --PlateZ ",JobSets])
 Program.append(prog_entry)
 if Mode=='RESET':
    print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Delete'))
