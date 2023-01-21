@@ -110,7 +110,7 @@ EOSsubModelDIR=EOSsubDIR+'/'+'Models'
 TrainSampleOutputMeta=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_info.pkl'
 required_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MUTr1_'+TrainSampleID+'_TRACK_SEGMENTS.csv'
 
-exit()
+
 ########################################     Phase 1 - Create compact source file    #########################################
 print(UF.TimeStamp(),bcolors.BOLD+'Stage 0:'+bcolors.ENDC+' Preparing the source data...')
 
@@ -209,7 +209,7 @@ for j in range(0,len(JobSets)):
 # ########################################     Preset framework parameters    #########################################
 FreshStart=True
 Program=[]
-
+exit()
 #Defining handy functions to make the code little cleaner
 def UpdateStatus(status):
     Meta.UpdateStatus(status)
@@ -353,7 +353,7 @@ def StandardProcess(program,status,freshstart):
 if Mode=='RESET':
     print(UF.TimeStamp(),'Performing the cleanup... ',bcolors.ENDC)
     HTCondorTag="SoftUsed == \"ANNDEA-MUTr1a-"+TrainSampleID+"\""
-    UF.RecCleanUp(AFS_DIR, EOS_DIR, 'RTr1_'+TrainSampleID, ['MUTr1a','RTr1b','RTr1c','RTr1d',T+'_RTr_OUTPUT.pkl'], HTCondorTag)
+    UF.RecCleanUp(AFS_DIR, EOS_DIR, 'MUTr1_'+TrainSampleID, ['MUTr1a','MUTr1b','MUTr1c','MUTr1d',TrainSampleID+'_MUTr_OUTPUT.pkl'], HTCondorTag)
     FreshStart=False
 if Mode=='CLEANUP':
     Status=5
@@ -365,27 +365,38 @@ exit()
 ###### Stage 0
 prog_entry=[]
 job_sets=[]
-for i in range(0,Xsteps):
-                job_sets.append([])
-                for j in range(0,Ysteps):
-                     job_sets[i].append(Zsteps)
+for i in range(len(JobSets)):
+                job_sets.append(int(JobSets[i][2]))
+TotJobs=0
+
+if type(job_sets) is int:
+                        TotJobs=job_sets
+elif type(job_sets[0]) is int:
+                        TotJobs=np.sum(job_sets)
+elif type(job_sets[0][0]) is int:
+                        for lp in job_sets:
+                            TotJobs+=np.sum(lp)
 prog_entry.append(' Sending hit cluster to the HTCondor, so the model assigns weights between hits')
-prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','hit_cluster_rec_set','RTr1a','.pkl',RecBatchID,job_sets,'RTr1a_ReconstructTracks_Sub.py'])
-prog_entry.append([' --stepZ ', ' --stepY ', ' --stepX ', " --zOffset ", " --yOffset ", " --xOffset ", ' --cut_dt ', ' --cut_dr ', ' --ModelName ', ' --Log ',' --Z_overlap ',' --Y_overlap ',' --X_overlap '])
-prog_entry.append([stepZ,stepY,stepX,z_offset, y_offset, x_offset, cut_dt,cut_dr, ModelName ,Log,Z_overlap,Y_overlap,X_overlap])
-prog_entry.append(Xsteps*Ysteps*Zsteps)
+prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/','RawSeedsRes','MUTr1a','.csv',TrainSampleID,job_sets,'MUTr1a_GenerateRawSelectedSeeds_Sub.py'])
+prog_entry.append([ " --MaxSegments ", " --MaxSLG "," --MaxSTG "," --VetoMotherTrack "])
+prog_entry.append([MaxSegments, MaxSLG, MaxSTG,'"'+str(VetoMotherTrack)+'"'])
+prog_entry.append(TotJobs)
 prog_entry.append(LocalSub)
 Program.append(prog_entry)
 if Mode=='RESET':
    print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Delete'))
 #Setting up folders for the output. The reconstruction of just one brick can easily generate >100k of files. Keeping all that blob in one directory can cause problems on lxplus.
 print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Create'))
-
+exit()
 ###### Stage 1
+Program.append('Custom')
+
+
 prog_entry=[]
 job_sets=[]
-for i in range(0,Xsteps):
-              job_sets.append(Ysteps)
+JobSet=[]
+for i in range(len(JobSets)):
+         JobSet.append(int(JobSets[i][2]))
 prog_entry.append(' Sending hit cluster to the HTCondor, so the reconstructed clusters can be merged along z-axis')
 prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','hit_cluster_rec_z_set','RTr1b','.pkl',RecBatchID,job_sets,'RTr1b_LinkSegmentsZ_Sub.py'])
 prog_entry.append([' --Z_ID_Max ',' --j ', ' --i '])
@@ -449,190 +460,57 @@ while Status<len(Program):
             Status=len(Program)+1
             break
 
-    elif Status==4:
+    elif Status==1:
        #Non standard processes (that don't follow the general pattern) have been coded here
-       print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
-       print(UF.TimeStamp(),bcolors.BOLD+'Stage 4:'+bcolors.ENDC+' Using the results from previous steps to map merged trackIDs to the original reconstruction file')
-       try:
-           #Read the output with hit- ANN Track map
-           FirstFile=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RTr1d_'+RecBatchID+'_0'+'/RTr1d_'+RecBatchID+'_hit_cluster_rec_x_set_0.pkl'
-           print(UF.TimeStamp(),'Loading the object ',bcolors.OKBLUE+FirstFile+bcolors.ENDC)
-           FirstFileRaw=UF.PickleOperations(FirstFile,'r', 'N/A')
-           FirstFile=FirstFileRaw[0]
-           TrackMap=FirstFile.RecTracks
-           input_file_location=args.f
-           print(UF.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
-           #Reading the original file with Raw hits
-           Data=pd.read_csv(input_file_location,header=0)
-           Data[PM.Hit_ID] = Data[PM.Hit_ID].astype(str)
+        print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
+        print(UF.TimeStamp(),bcolors.BOLD+'Stage 1:'+bcolors.ENDC+' Collecting and de-duplicating the results from stage 1')
+        min_i=0
+        for i in range(0,len(JobSets)): #//Temporarily measure to save space
+                   test_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MUTr1a_'+TrainSampleID+'_SelectedSeeds_'+str(i)+'_'+str(0)+'_'+str(0)+'.csv'
+                   if os.path.isfile(test_file_location):
+                        min_i=max(0,i-1)
+        with alive_bar(len(JobSets)-min_i,force_tty=True, title='Checking the results from HTCondor') as bar:
+            for i in range(min_i,len(JobSets)): #//Temporarily measure to save space
+                bar.text = f'-> Analysing set : {i}...'
+                bar()
+                Meta=UF.PickleOperations(TrainSampleOutputMeta,'r', 'N/A')[0]
+                MaxSLG=Meta.MaxSLG
+                JobSets=Meta.JobSets
+                if len(Meta.JobSets[i])>3:
+                   Meta.JobSets[i]=Meta.JobSets[i][:4]
+                   Meta.JobSets[i][3]=[]
+                else:
+                   Meta.JobSets[i].append([])
+                for j in range(0,int(JobSets[i][2])):
 
-           if SliceData: #If we want to perform reconstruction on the fraction of the Brick
-                  CutData=Data.drop(Data.index[(Data[PM.x] > Xmax) | (Data[PM.x] < Xmin) | (Data[PM.y] > Ymax) | (Data[PM.y] < Ymin)]) #The focus area where we reconstruct
-                  OtherData=Data.drop(Data.index[(Data[PM.x] <= Xmax) | (Data[PM.x] >= Xmin) | (Data[PM.y] <= Ymax) | (Data[PM.y] >= Ymin)]) #The rest of the volume
-           else:
-               CutData=Data #If we reconstruct the whole brick we jsut take the whole data. No need to separate.
+                   output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MUTr1a_'+TrainSampleID+'_RawSeeds_'+str(i)+'_'+str(j)+'.csv'
 
-           CutData.drop(['ANN_Brick_ID','ANN_Track_ID'],axis=1,inplace=True,errors='ignore') #Removing old ANNDEA reconstruction results so we can overwrite with the new ones
-           #Map reconstructed ANN tracks to hits in the Raw file - this is in essesne the final output of the Tracking.
-           CutData=pd.merge(CutData,TrackMap,how='left', left_on=[PM.Hit_ID], right_on=['HitID'])
-           CutData.drop(['HitID'],axis=1,inplace=True) #Make sure that HitID is not the Hit ID name in the raw data.
-           if SliceData:
-            Data=pd.concat([CutData,OtherData]) #If we slice the data we do the of Reconstructed and Unreconstructed subset of the brick.
-           else:
-            Data=CutData
-           output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_RTr_OUTPUT.csv' #Final output. We can use this file for further operations
-           Data.to_csv(output_file_location,index=False)
-           print(UF.TimeStamp(), bcolors.OKGREEN+"The tracked data has been written to"+bcolors.ENDC, bcolors.OKBLUE+output_file_location+bcolors.ENDC)
-           #The code bellow displays the Cluster level reconstruction stats. Only available if MC and FEDRA (Optional) rec stats are available. Is not recomended for big jobs.
-           if Log!='NO':
-                        #Calculating ANNDEA volume level recombination accuracy stats, useful for diagnostics but it does not allow to determine the high level of tracking - there is a dedicated module for that
-                        print(UF.TimeStamp(),'Since the logging was requested, ANN average recombination performance across the clusters is being calculated...')
-                        fake_results_1=[]
-                        fake_results_2=[]
-                        fake_results_3=[]
-                        fake_results_4=[]
-                        fake_results_5=[]
-                        fake_results_6=[]
-                        fake_results_7=[]
-                        truth_results_1=[]
-                        truth_results_2=[]
-                        truth_results_3=[]
-                        truth_results_4=[]
-                        truth_results_5=[]
-                        truth_results_6=[]
-                        truth_results_7=[]
-                        precision_results_1=[]
-                        precision_results_2=[]
-                        precision_results_3=[]
-                        precision_results_4=[]
-                        precision_results_5=[]
-                        precision_results_6=[]
-                        precision_results_7=[]
-                        recall_results_1=[]
-                        recall_results_2=[]
-                        recall_results_3=[]
-                        recall_results_4=[]
-                        recall_results_5=[]
-                        recall_results_6=[]
-                        recall_results_7=[]
-                        with alive_bar(Zsteps*Ysteps*Xsteps,force_tty=True, title='Collecting all clusters together...') as bar:
-                            for k in range(0,Zsteps):
-                                for j in range(0,Ysteps):
-                                    for i in range(0,Xsteps):
-                                        bar()
-                                        input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RTr1a_'+RecBatchID+str(i)+'/RTr1a_'+RecBatchID+'_hit_cluster_rec_set_'+str(k)+'_' +str(j)+'_' +str(i)+'.pkl'
-                                        cluster_data_raw=UF.PickleOperations(input_file_location, 'r', 'N/A')
-                                        cluster_data=cluster_data_raw[0]
-                                        result_temp=cluster_data.RecStats #If we enable the logging during the reconstruction, they will be recorded there.
-                                        fake_results_1.append(int(result_temp[1][0]))
-                                        fake_results_2.append(int(result_temp[1][1]))
-                                        fake_results_3.append(int(result_temp[1][2]))
-                                        fake_results_4.append(int(result_temp[1][3]))
-                                        fake_results_5.append(int(result_temp[1][4]))
-                                        fake_results_6.append(int(result_temp[1][5]))
-                                        fake_results_7.append(int(result_temp[1][6]))
-                                        truth_results_1.append(int(result_temp[2][0]))
-                                        truth_results_2.append(int(result_temp[2][1]))
-                                        truth_results_3.append(int(result_temp[2][2]))
-                                        truth_results_4.append(int(result_temp[2][3]))
-                                        truth_results_5.append(int(result_temp[2][4]))
-                                        truth_results_6.append(int(result_temp[2][5]))
-                                        truth_results_7.append(int(result_temp[2][6]))
-                                        #Calculating precision by using formula: Precision = TP/(FP+TP)
-                                        if (int(result_temp[2][6])+int(result_temp[1][6]))>0: #Avoiding division by zero
-                                            precision_results_1.append(int(result_temp[2][0])/(int(result_temp[2][0])+int(result_temp[1][0])))
-                                            precision_results_2.append(int(result_temp[2][1])/(int(result_temp[2][1])+int(result_temp[1][1])))
-                                            precision_results_3.append(int(result_temp[2][2])/(int(result_temp[2][2])+int(result_temp[1][2])))
-                                            precision_results_4.append(int(result_temp[2][3])/(int(result_temp[2][3])+int(result_temp[1][3])))
-                                            precision_results_5.append(int(result_temp[2][4])/(int(result_temp[2][4])+int(result_temp[1][4])))
-                                            precision_results_6.append(int(result_temp[2][5])/(int(result_temp[2][5])+int(result_temp[1][5])))
-                                            precision_results_7.append(int(result_temp[2][6])/(int(result_temp[2][6])+int(result_temp[1][6])))
-                                        #Calculating recall by using formula: Precision = TP/(FN+TP)
-                                        if int(result_temp[2][2])>0: #Avoiding division by zero
-                                            recall_results_1.append(int(result_temp[2][0])/(int(result_temp[2][2])))
-                                            recall_results_2.append(int(result_temp[2][1])/(int(result_temp[2][2])))
-                                            recall_results_3.append(int(result_temp[2][2])/(int(result_temp[2][2])))
-                                            recall_results_4.append(int(result_temp[2][3])/(int(result_temp[2][2])))
-                                            recall_results_5.append(int(result_temp[2][4])/(int(result_temp[2][2])))
-                                            recall_results_6.append(int(result_temp[2][5])/(int(result_temp[2][2])))
-                                            recall_results_7.append(int(result_temp[2][6])/(int(result_temp[2][2])))
-                                        else:
-                                               continue
-                                        label=result_temp[0]
-                                        label.append('Original # of valid Combinations')
-                            print(UF.TimeStamp(),bcolors.OKGREEN+'ANN reconstruction results have been compiled and presented bellow:'+bcolors.ENDC)
-                            print(tabulate([[label[0], np.average(fake_results_1), np.average(truth_results_1), np.sum(truth_results_1)/(np.sum(fake_results_1)+np.sum(truth_results_1)), np.std(precision_results_1), np.average(recall_results_1), np.std(recall_results_1)], \
-                            [label[1], np.average(fake_results_2), np.average(truth_results_2), np.sum(truth_results_2)/(np.sum(fake_results_2)+np.sum(truth_results_2)), np.std(precision_results_2), np.average(recall_results_2), np.std(recall_results_2)], \
-                            [label[2], np.average(fake_results_3), np.average(truth_results_3), np.sum(truth_results_3)/(np.sum(fake_results_3)+np.sum(truth_results_3)), np.std(precision_results_3), np.average(recall_results_3), np.std(recall_results_3)], \
-                            [label[3], np.average(fake_results_4), np.average(truth_results_4), np.sum(truth_results_4)/(np.sum(fake_results_4)+np.sum(truth_results_4)), np.std(precision_results_4), np.average(recall_results_4), np.std(recall_results_4)],\
-                            [label[4], np.average(fake_results_5), np.average(truth_results_5), np.sum(truth_results_5)/(np.sum(fake_results_5)+np.sum(truth_results_5)), np.std(precision_results_5), np.average(recall_results_5), np.std(recall_results_5)], \
-                            [label[5], np.average(fake_results_6), np.average(truth_results_6), np.sum(truth_results_6)/(np.sum(fake_results_6)+np.sum(truth_results_6)), np.std(precision_results_6), np.average(recall_results_6), np.std(recall_results_6)], \
-                            [label[6], np.average(fake_results_7), np.average(truth_results_7), np.sum(truth_results_7)/(np.sum(fake_results_7)+np.sum(truth_results_3)), np.std(precision_results_7), np.average(recall_results_7), np.std(recall_results_7)]], \
-                            headers=['Step', 'Avg # Fake edges', 'Avg # of Genuine edges', 'Avg precision', 'Precision std','Avg recall', 'Recall std' ], tablefmt='orgtbl'))
-           if Log=='KALMAN':
-                        #Similar logic as for MC but here we measure FEDRA reconstruction
-                        print(UF.TimeStamp(),'Since the logging was requested, Kalman filter average recombination performance across the clusters is being calculated...')
-                        fake_results_1=[]
-                        fake_results_2=[]
-                        fake_results_3=[]
-                        fake_results_4=[]
-                        truth_results_1=[]
-                        truth_results_2=[]
-                        truth_results_3=[]
-                        truth_results_4=[]
-                        precision_results_1=[]
-                        precision_results_2=[]
-                        precision_results_3=[]
-                        precision_results_4=[]
-                        recall_results_1=[]
-                        recall_results_2=[]
-                        recall_results_3=[]
-                        recall_results_4=[]
-                        with alive_bar(Zsteps*Ysteps*Xsteps,force_tty=True, title='Collating the results') as bar:
-                            for k in range(0,Zsteps):
-                                for j in range(0,Ysteps):
-                                    for i in range(0,Xsteps):
-                                        bar()
-                                        input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RTr1a_'+RecBatchID+'_hit_cluster_rec_set_'+str(k)+'_' +str(j)+'_' +str(i)+'.pkl'
-                                        cluster_data_raw=UF.PickleOperations(input_file_location, 'r', 'N/A')
-                                        cluster_data=cluster_data_raw[0]
-                                        result_temp=cluster_data.KalmanRecStats
-                                        fake_results_1.append(int(result_temp[1][0]))
-                                        fake_results_2.append(int(result_temp[1][1]))
-                                        fake_results_3.append(int(result_temp[1][2]))
-                                        fake_results_4.append(int(result_temp[1][3]))
-                                        truth_results_1.append(int(result_temp[2][0]))
-                                        truth_results_2.append(int(result_temp[2][1]))
-                                        truth_results_3.append(int(result_temp[2][2]))
-                                        truth_results_4.append(int(result_temp[2][3]))
-                                        if (int(result_temp[2][3])+int(result_temp[1][3]))>0:
-                                            precision_results_1.append(int(result_temp[2][0])/(int(result_temp[2][0])+int(result_temp[1][0])))
-                                            precision_results_2.append(int(result_temp[2][1])/(int(result_temp[2][1])+int(result_temp[1][1])))
-                                            precision_results_3.append(int(result_temp[2][2])/(int(result_temp[2][2])+int(result_temp[1][2])))
-                                            precision_results_4.append(int(result_temp[2][3])/(int(result_temp[2][3])+int(result_temp[1][3])))
-                                        if int(result_temp[2][2])>0:
-                                            recall_results_1.append(int(result_temp[2][0])/(int(result_temp[2][2])))
-                                            recall_results_2.append(int(result_temp[2][1])/(int(result_temp[2][2])))
-                                            recall_results_3.append(int(result_temp[2][2])/(int(result_temp[2][2])))
-                                            recall_results_4.append(int(result_temp[2][3])/(int(result_temp[2][2])))
-                                        else:
-                                               continue
-                                        label=result_temp[0]
-                                        label.append('Original # of valid Combinations')
-
-                        print(UF.TimeStamp(),bcolors.OKGREEN+'Fedra reconstruction results have been compiled and presented bellow:'+bcolors.ENDC)
-                        print(tabulate([[label[0], np.average(fake_results_1), np.average(truth_results_1), np.sum(truth_results_1)/(np.sum(fake_results_1)+np.sum(truth_results_1)), np.std(precision_results_1), np.average(recall_results_1), np.std(recall_results_1)], \
-                        [label[1], np.average(fake_results_2), np.average(truth_results_2), np.sum(truth_results_2)/(np.sum(fake_results_2)+np.sum(truth_results_2)), np.std(precision_results_2), np.average(recall_results_2), np.std(recall_results_2)], \
-                        [label[2], np.average(fake_results_3), np.average(truth_results_3), np.sum(truth_results_3)/(np.sum(fake_results_3)+np.sum(truth_results_3)), np.std(precision_results_3), np.average(recall_results_3), np.std(recall_results_3)], \
-                        [label[3], np.average(fake_results_4), np.average(truth_results_4), np.sum(truth_results_4)/(np.sum(fake_results_4)+np.sum(truth_results_4)), np.std(precision_results_4), np.average(recall_results_4), np.std(recall_results_4)]],\
-                        headers=['Step', 'Avg # Fake edges', 'Avg # of Genuine edges', 'Avg precision', 'Precision std','Avg recall', 'Recall std' ], tablefmt='orgtbl'))
-
-           print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 4 has successfully completed'+bcolors.ENDC)
-           Status=5
-       except Exception as e:
-          print(UF.TimeStamp(),bcolors.FAIL+'Stage 4 is uncompleted due to...',+e+bcolors.ENDC)
-          Status=6
-          break
+                   if os.path.isfile(output_file_location)==False:
+                      Meta.JobSets[j].append(0)
+                      continue #Skipping because not all jobs necesseraly produce the required file (if statistics are too low)
+                   else:
+                    result=pd.read_csv(output_file_location,names = ['Segment_1','Segment_2', 'Seed_Type'])
+                    Records=len(result)
+                    print(UF.TimeStamp(),'Set',str(i),'and subset', str(j), 'contains', Records, 'seeds',bcolors.ENDC)
+                    result["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(result['Segment_1'], result['Segment_2'])]
+                    result.drop_duplicates(subset="Seed_ID",keep='first',inplace=True)
+                    result.drop(result.index[result['Segment_1'] == result['Segment_2']], inplace = True)
+                    result.drop(["Seed_ID"],axis=1,inplace=True)
+                    Records_After_Compression=len(result)
+                    if Records>0:
+                      Compression_Ratio=int((Records_After_Compression/Records)*100)
+                    else:
+                      Compression_Ratio=0
+                    print(UF.TimeStamp(),'Set',str(i),'and subset', str(j), 'compression ratio is ', Compression_Ratio, ' %',bcolors.ENDC)
+                    fractions=int(math.ceil(Records_After_Compression/MaxSeeds))
+                    Meta.JobSets[i][3].append(fractions)
+                    for k in range(0,fractions):
+                     new_output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MUTr1a_'+TrainSampleID+'_SelectedSeeds_'+str(i)+'_'+str(j)+'_'+str(k)+'.csv'
+                     result[(k*MaxSeeds):min(Records_After_Compression,((k+1)*MaxSeeds))].to_csv(new_output_file_location,index=False)
+                print(UF.PickleOperations(TrainSampleOutputMeta,'w', Meta)[1])
+        FreshStart=False
+        print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 2 has successfully completed'+bcolors.ENDC)
+        status=3
 if Status==5:
     print(UF.TimeStamp(),'Performing the cleanup... ',bcolors.ENDC)
     HTCondorTag="SoftUsed == \"ANNDEA-RTr1a-"+RecBatchID+"\""
