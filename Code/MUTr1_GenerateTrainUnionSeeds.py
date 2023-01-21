@@ -262,7 +262,9 @@ def StandardProcess(program,status,freshstart):
                                     program[status][2],
                                     program[status][3],
                                     program[status][1][9],
-                                    False)
+                                    False,
+                                    program[status][1][10])
+        print(bad_pop)
         if len(bad_pop)==0:
              print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
              return True,False
@@ -281,7 +283,8 @@ def StandardProcess(program,status,freshstart):
                                     program[status][2],
                                     program[status][3],
                                     program[status][1][9],
-                                    batch_sub)
+                                    batch_sub,
+                                    program[status][1][10])
                  print(UF.TimeStamp(),'Submitting jobs to HTCondor... ',bcolors.ENDC)
                  _cnt=0
                  for bp in bad_pop:
