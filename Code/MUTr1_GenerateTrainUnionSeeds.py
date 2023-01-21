@@ -264,7 +264,6 @@ def StandardProcess(program,status,freshstart):
                                     program[status][1][9],
                                     False,
                                     program[status][6])
-        print(bad_pop)
         if len(bad_pop)==0:
              print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
              return True,False
@@ -372,7 +371,6 @@ job_sets=[]
 for i in range(len(JobSets)):
                 job_sets.append(int(JobSets[i][2]))
 TotJobs=0
-print(JobSets)
 if type(job_sets) is int:
                         TotJobs=job_sets
 elif type(job_sets[0]) is int:
