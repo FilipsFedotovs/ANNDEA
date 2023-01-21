@@ -5,11 +5,8 @@
 
 ########################################    Import libraries    #############################################
 import argparse
-import pandas as pd #We use Panda for a routine data processing
-import math #We use it for data manipulation
-import gc  #Helps to clear memory
-import numpy as np
-import ast
+import sys
+
 
 
 
@@ -31,7 +28,7 @@ parser.add_argument('--AFS',help="AFS directory location", default='.')
 parser.add_argument('--BatchID',help="Give this training sample batch an ID", default='SHIP_UR_v1')
 parser.add_argument('--MaxSegments',help="A maximum number of track combinations that will be used in a particular HTCondor job for this script", default='20000')
 parser.add_argument('--VetoMotherTrack',help="Skip Invalid Mother_IDs", default="[]")
-
+parser.add_argument('--PY',help="Python libraries directory location", default='.')
 
 ######################################## Set variables  #############################################################
 args = parser.parse_args()
@@ -45,16 +42,29 @@ pfx=args.pfx
 MaxSLG=float(args.MaxSLG)
 MaxSTG=float(args.MaxSTG)
 BatchID=args.BatchID
-VetoMotherTrack=ast.literal_eval(args.VetoMotherTrack)
+
 ########################################     Preset framework parameters    #########################################
 MaxRecords=10000000 #A set parameter that helps to manage memory load of this script (Please do not exceed 10000000)
 MaxSegments=int(args.MaxSegments)
 #Loading Directory locations
 EOS_DIR=args.EOS
 AFS_DIR=args.AFS
+PY_DIR=args.PY
 
+if PY_DIR!='': #Temp solution
+    sys.path=['',PY_DIR]
+    sys.path.append('/usr/lib64/python36.zip')
+    sys.path.append('/usr/lib64/python3.6')
+    sys.path.append('/usr/lib64/python3.6/lib-dynload')
+    sys.path.append('/usr/lib64/python3.6/site-packages')
+    sys.path.append('/usr/lib/python3.6/site-packages')
 import UtilityFunctions as UF #This is where we keep routine utility functions
-
+import pandas as pd #We use Panda for a routine data processing
+import math #We use it for data manipulation
+import gc  #Helps to clear memory
+import numpy as np
+import ast
+VetoMotherTrack=ast.literal_eval(args.VetoMotherTrack)
 #Specifying the full path to input/output files
 input_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MUTr1_'+BatchID+'_TRACK_SEGMENTS.csv'
 output_file_location=EOS_DIR+p+'/'+pfx+'_'+BatchID+'_RawSeeds_'+str(i)+'_'+str(j)+sfx
