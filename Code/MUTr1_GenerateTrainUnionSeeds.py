@@ -361,8 +361,7 @@ else:
     Status=int(args.ForceStatus)
 ################ Set the execution sequence for the script
 
-exit()
-###### Stage 0
+###### Stage 1
 prog_entry=[]
 job_sets=[]
 for i in range(len(JobSets)):
@@ -387,11 +386,10 @@ if Mode=='RESET':
    print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Delete'))
 #Setting up folders for the output. The reconstruction of just one brick can easily generate >100k of files. Keeping all that blob in one directory can cause problems on lxplus.
 print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Create'))
+print(Program)
 exit()
-###### Stage 1
+###### Stage 2
 Program.append('Custom')
-
-
 prog_entry=[]
 job_sets=[]
 JobSet=[]
