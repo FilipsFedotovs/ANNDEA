@@ -16,13 +16,13 @@ for c in config:
         PY_DIR=c[1]
 csv_reader.close()
 import sys
-if PY_DIR!='': #Temp solution - the decision was made to move all libraries to EOS drive as AFS get locked during heavy HTCondor submission loads
-    sys.path=['',PY_DIR]
-    sys.path.append('/usr/lib64/python36.zip')
-    sys.path.append('/usr/lib64/python3.6')
-    sys.path.append('/usr/lib64/python3.6/lib-dynload')
-    sys.path.append('/usr/lib64/python3.6/site-packages')
-    sys.path.append('/usr/lib/python3.6/site-packages')
+# if PY_DIR!='': #Temp solution - the decision was made to move all libraries to EOS drive as AFS get locked during heavy HTCondor submission loads
+#     sys.path=['',PY_DIR]
+#     sys.path.append('/usr/lib64/python36.zip')
+#     sys.path.append('/usr/lib64/python3.6')
+#     sys.path.append('/usr/lib64/python3.6/lib-dynload')
+#     sys.path.append('/usr/lib64/python3.6/site-packages')
+#     sys.path.append('/usr/lib/python3.6/site-packages')
 sys.path.append(AFS_DIR+'/Code/Utilities')
 import csv
 import argparse
