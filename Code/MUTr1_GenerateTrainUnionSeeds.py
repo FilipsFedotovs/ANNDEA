@@ -66,7 +66,7 @@ parser.add_argument('--Ymax',help="This option restricts data to only those even
 parser.add_argument('--Samples',help="How many samples? Please enter the number or ALL if you want to use all data", default='ALL')
 parser.add_argument('--LabelRatio',help="What is the desired proportion of genuine seeds in the training/validation sets", default='0.5')
 parser.add_argument('--TrainSampleSize',help="Maximum number of samples per Training file", default='50000')
-parser.add_argument('--ForceStatus',help="Would you like the program run from specific status number? (Only for advance users)", default='0')
+parser.add_argument('--ForceStatus',help="Would you like the program run from specific status number? (Only for advance users)", default='')
 parser.add_argument('--RequestExtCPU',help="Would you like to request extra CPUs?", default='N')
 parser.add_argument('--JobFlavour',help="Specifying the length of the HTCondor job walltime. Currently at 'workday' which is 8 hours.", default='workday')
 parser.add_argument('--LocalSub',help="Local submission?", default='N')
@@ -185,7 +185,7 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         print(UF.TimeStamp(), bcolors.OKGREEN+"The track segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+output_file_location+bcolors.ENDC)
         Meta=UF.TrainingSampleMeta(TrainSampleID)
         Meta.IniTrackSeedMetaData(PM.MaxSLG,PM.MaxSTG,PM.MaxDOCA,PM.MaxAngle,data,PM.MaxSegments,PM.VetoMotherTrack,PM.MaxSeeds)
-        Meta.UpdateStatus(1)
+        Meta.UpdateStatus(0)
         print(UF.PickleOperations(TrainSampleOutputMeta,'w', Meta)[1])
         print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
         print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 0 has successfully completed'+bcolors.ENDC)
@@ -357,8 +357,10 @@ if Mode=='RESET':
     FreshStart=False
 if Mode=='CLEANUP':
     Status=5
+elif args.ForceStatus=='':
+    status=Meta.Status[-1]
 else:
-    Status=int(args.ForceStatus)
+   Status=int(args.ForceStatus)
 ################ Set the execution sequence for the script
 
 ###### Stage 1
@@ -386,58 +388,59 @@ if Mode=='RESET':
    print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Delete'))
 #Setting up folders for the output. The reconstruction of just one brick can easily generate >100k of files. Keeping all that blob in one directory can cause problems on lxplus.
 print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Create'))
+print(Meta.status)
 print(Program)
 exit()
 ###### Stage 2
 Program.append('Custom')
-prog_entry=[]
-job_sets=[]
-JobSet=[]
-for i in range(len(JobSets)):
-         JobSet.append(int(JobSets[i][2]))
-prog_entry.append(' Sending hit cluster to the HTCondor, so the reconstructed clusters can be merged along z-axis')
-prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','hit_cluster_rec_z_set','RTr1b','.pkl',RecBatchID,job_sets,'RTr1b_LinkSegmentsZ_Sub.py'])
-prog_entry.append([' --Z_ID_Max ',' --j ', ' --i '])
-prog_entry.append([Zsteps,Ysteps,Xsteps])
-prog_entry.append(Xsteps*Ysteps)
-prog_entry.append(LocalSub)
-Program.append(prog_entry)
-if Mode=='RESET':
-   print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Delete'))
-#Setting up folders for the output. The reconstruction of just one brick can easily generate >100k of files. Keeping all that blob in one directory can cause problems on lxplus.
-print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Create'))
-###### Stage 2
-prog_entry=[]
-job_sets=Xsteps
-prog_entry.append(' Sending hit cluster to the HTCondor, so the reconstructed clusters can be merged along y-axis')
-prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','hit_cluster_rec_y_set','RTr1c','.pkl',RecBatchID,job_sets,'RTr1c_LinkSegmentsY_Sub.py'])
-prog_entry.append([' --Y_ID_Max ', ' --i '])
-prog_entry.append([Ysteps,Xsteps])
-prog_entry.append(Xsteps)
-prog_entry.append(LocalSub)
-Program.append(prog_entry)
-if Mode=='RESET':
-   print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Delete'))
-#Setting up folders for the output. The reconstruction of just one brick can easily generate >100k of files. Keeping all that blob in one directory can cause problems on lxplus.
-print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Create'))
-
-###### Stage 3
-prog_entry=[]
-job_sets=1
-prog_entry.append(' Sending hit cluster to the HTCondor, so the reconstructed clusters can be merged along x-axis')
-prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','hit_cluster_rec_x_set','RTr1d','.pkl',RecBatchID,job_sets,'RTr1d_LinkSegmentsX_Sub.py'])
-prog_entry.append([' --X_ID_Max '])
-prog_entry.append([Xsteps])
-prog_entry.append(1)
-prog_entry.append(True) #This part we can execute locally, no need for HTCondor
-Program.append(prog_entry)
-if Mode=='RESET':
-   print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Delete'))
-#Setting up folders for the output. The reconstruction of just one brick can easily generate >100k of files. Keeping all that blob in one directory can cause problems on lxplus.
-print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Create'))
-
-###### Stage 4
-Program.append('Custom')
+# prog_entry=[]
+# job_sets=[]
+# JobSet=[]
+# for i in range(len(JobSets)):
+#          JobSet.append(int(JobSets[i][2]))
+# prog_entry.append(' Sending hit cluster to the HTCondor, so the reconstructed clusters can be merged along z-axis')
+# prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','hit_cluster_rec_z_set','RTr1b','.pkl',RecBatchID,job_sets,'RTr1b_LinkSegmentsZ_Sub.py'])
+# prog_entry.append([' --Z_ID_Max ',' --j ', ' --i '])
+# prog_entry.append([Zsteps,Ysteps,Xsteps])
+# prog_entry.append(Xsteps*Ysteps)
+# prog_entry.append(LocalSub)
+# Program.append(prog_entry)
+# if Mode=='RESET':
+#    print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Delete'))
+# #Setting up folders for the output. The reconstruction of just one brick can easily generate >100k of files. Keeping all that blob in one directory can cause problems on lxplus.
+# print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Create'))
+# ###### Stage 2
+# prog_entry=[]
+# job_sets=Xsteps
+# prog_entry.append(' Sending hit cluster to the HTCondor, so the reconstructed clusters can be merged along y-axis')
+# prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','hit_cluster_rec_y_set','RTr1c','.pkl',RecBatchID,job_sets,'RTr1c_LinkSegmentsY_Sub.py'])
+# prog_entry.append([' --Y_ID_Max ', ' --i '])
+# prog_entry.append([Ysteps,Xsteps])
+# prog_entry.append(Xsteps)
+# prog_entry.append(LocalSub)
+# Program.append(prog_entry)
+# if Mode=='RESET':
+#    print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Delete'))
+# #Setting up folders for the output. The reconstruction of just one brick can easily generate >100k of files. Keeping all that blob in one directory can cause problems on lxplus.
+# print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Create'))
+#
+# ###### Stage 3
+# prog_entry=[]
+# job_sets=1
+# prog_entry.append(' Sending hit cluster to the HTCondor, so the reconstructed clusters can be merged along x-axis')
+# prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','hit_cluster_rec_x_set','RTr1d','.pkl',RecBatchID,job_sets,'RTr1d_LinkSegmentsX_Sub.py'])
+# prog_entry.append([' --X_ID_Max '])
+# prog_entry.append([Xsteps])
+# prog_entry.append(1)
+# prog_entry.append(True) #This part we can execute locally, no need for HTCondor
+# Program.append(prog_entry)
+# if Mode=='RESET':
+#    print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Delete'))
+# #Setting up folders for the output. The reconstruction of just one brick can easily generate >100k of files. Keeping all that blob in one directory can cause problems on lxplus.
+# print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Create'))
+#
+# ###### Stage 4
+# Program.append('Custom')
 
 
 print(UF.TimeStamp(),'There are '+str(len(Program)+1)+' stages (0-'+str(len(Program)+1)+') of this script',bcolors.ENDC)
