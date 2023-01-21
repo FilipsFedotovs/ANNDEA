@@ -380,8 +380,14 @@ def StandardProcess(program,status,freshstart):
                        print(UF.TimeStamp(),'OK, exiting now then')
                        exit()
                    if UserAnswer=='R':
+                      _cnt=0
                       for bp in bad_pop:
+                           if _cnt>PM.SubPauseGap:
+                              print(UF.TimeStamp(),'Pausing submissions for  ',str(int(SubPause/60)), 'minutes to relieve congestion...',bcolors.ENDC)
+                              time.sleep(SubPause)
+                              _cnt=0
                            UF.SubmitJobs2Condor(bp,program[status][5],RequestExtCPU,JobFlavour)
+                           _cnt+=bp[6]
                       print(UF.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
                       if program[status][5]:
                           print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
@@ -403,8 +409,14 @@ def StandardProcess(program,status,freshstart):
                           print(UF.TimeStamp(),bcolors.FAIL+'Stage '+str(status)+' is uncompleted...'+bcolors.ENDC)
                           return False,False
             else:
+                      _cnt=0
                       for bp in bad_pop:
+                           if _cnt>PM.SubPauseGap:
+                              print(UF.TimeStamp(),'Pausing submissions for  ',str(int(SubPause/60)), 'minutes to relieve congestion...',bcolors.ENDC)
+                              time.sleep(SubPause)
+                              _cnt=0
                            UF.SubmitJobs2Condor(bp,program[status][5],RequestExtCPU,JobFlavour)
+                           _cnt+=bp[6]
                       if program[status][5]:
                            print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
                            return True,False
