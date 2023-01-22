@@ -689,6 +689,9 @@ class EMO:
           if hasattr(self,'Hits'):
              if self.Partition==2:
                 __XZ1=EMO.GetEquationOfTrack(self.Hits[0])[0]
+                print(self.Hits)
+                print(self.Hits[0])
+                exit()
                 __XZ2=EMO.GetEquationOfTrack(self.Hits[1])[0]
                 __YZ1=EMO.GetEquationOfTrack(self.Hits[0])[1]
                 __YZ2=EMO.GetEquationOfTrack(self.Hits[1])[1]
