@@ -690,6 +690,7 @@ class EMO:
              if self.Partition==2:
                 __XZ1=EMO.GetEquationOfTrack(self.Hits[0])[0]
                 print(self.Hits)
+                print('----------------------------------------')
                 print(self.Hits[0])
                 print(__XZ1)
                 x=input()
