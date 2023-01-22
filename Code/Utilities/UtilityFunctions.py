@@ -689,16 +689,9 @@ class EMO:
           if hasattr(self,'Hits'):
              if self.Partition==2:
                 __XZ1=EMO.GetEquationOfTrack(self.Hits[0])[0]
-                print(self.Hits)
-                print('----------------------------------------')
-                print(self.Hits[1])
-                print(__XZ1)
-                x=input()
                 __XZ2=EMO.GetEquationOfTrack(self.Hits[1])[0]
                 __YZ1=EMO.GetEquationOfTrack(self.Hits[0])[1]
                 __YZ2=EMO.GetEquationOfTrack(self.Hits[1])[1]
-                __X1S=EMO.GetEquationOfTrack(self.Hits[0])[3]
-                __X2S=EMO.GetEquationOfTrack(self.Hits[1])[3]
                 __vector_1_st = np.array([np.polyval(__XZ1,self.Hits[0][0][2]),np.polyval(__YZ1,self.Hits[0][0][2]),self.Hits[0][0][2]])
                 __vector_1_end = np.array([np.polyval(__XZ1,self.Hits[0][len(self.Hits[0])-1][2]),np.polyval(__YZ1,self.Hits[0][len(self.Hits[0])-1][2]),self.Hits[0][len(self.Hits[0])-1][2]])
                 __vector_2_st = np.array([np.polyval(__XZ2,self.Hits[0][0][2]),np.polyval(__YZ2,self.Hits[0][0][2]),self.Hits[0][0][2]])
