@@ -167,22 +167,22 @@ for k in range(0,Z_ID_Max):
                         print(UF.TimeStamp(),'Classifying the edges...')
                         print(UF.TimeStamp(),'Preparing the model')
                         if torch_import:
-                           import torch
-                           torch_import=False
-                        EOSsubDIR=EOS_DIR+'/'+'ANNDEA'
-                        EOSsubModelDIR=EOSsubDIR+'/'+'Models'
-                        #Load the model meta file
-                        Model_Meta_Path=EOSsubModelDIR+'/'+args.ModelName+'_Meta'
-                        #Specify the model path
-                        Model_Path=EOSsubModelDIR+'/'+args.ModelName
-                        ModelMeta=UF.PickleOperations(Model_Meta_Path, 'r', 'N/A')[0]
-                        #Meta file contatins training session stats. They also record the optimal acceptance.
-                        Acceptance=ModelMeta.TrainSessionsData[-1][-1][3]
-                        device = torch.device('cpu')
-                        #In PyTorch we don't save the actual model like in Tensorflow. We just save the weights, hence we have to regenerate the model again. The recepy is in the Model Meta file
-                        model = UF.GenerateModel(ModelMeta).to(device)
-                        model.load_state_dict(torch.load(Model_Path))
-                        model.eval() #In Pytorch this function sets the model into the evaluation mode.
+                            import torch
+                            torch_import=False
+                            EOSsubDIR=EOS_DIR+'/'+'ANNDEA'
+                            EOSsubModelDIR=EOSsubDIR+'/'+'Models'
+                            #Load the model meta file
+                            Model_Meta_Path=EOSsubModelDIR+'/'+args.ModelName+'_Meta'
+                            #Specify the model path
+                            Model_Path=EOSsubModelDIR+'/'+args.ModelName
+                            ModelMeta=UF.PickleOperations(Model_Meta_Path, 'r', 'N/A')[0]
+                            #Meta file contatins training session stats. They also record the optimal acceptance.
+                            Acceptance=ModelMeta.TrainSessionsData[-1][-1][3]
+                            device = torch.device('cpu')
+                            #In PyTorch we don't save the actual model like in Tensorflow. We just save the weights, hence we have to regenerate the model again. The recepy is in the Model Meta file
+                            model = UF.GenerateModel(ModelMeta).to(device)
+                            model.load_state_dict(torch.load(Model_Path))
+                            model.eval() #In Pytorch this function sets the model into the evaluation mode.
                         w = model(HC.ClusterGraph.x, HC.ClusterGraph.edge_index, HC.ClusterGraph.edge_attr) #Here we use the model to assign the weights between Hit edges
                         w=w.tolist()
                         for edge in range(len(HC.edges)):
