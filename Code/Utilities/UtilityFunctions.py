@@ -691,6 +691,7 @@ class EMO:
                 __XZ1=EMO.GetEquationOfTrack(self.Hits[0])[0]
                 print(self.Hits)
                 print(self.Hits[0])
+                print(__XZ1)
                 x=input()
                 __XZ2=EMO.GetEquationOfTrack(self.Hits[1])[0]
                 __YZ1=EMO.GetEquationOfTrack(self.Hits[0])[1]
