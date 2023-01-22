@@ -166,9 +166,9 @@ for k in range(0,Z_ID_Max):
             if HC.ClusterGraph.num_edges>0: #We only bring torch and GNN if we have some edges to classify
                         print(UF.TimeStamp(),'Classifying the edges...')
                         print(UF.TimeStamp(),'Preparing the model')
-                        if torch_import_trigger:
+                        if torch_import:
                            import torch
-                           torch_import_trigger=False
+                           torch_import=False
                         EOSsubDIR=EOS_DIR+'/'+'ANNDEA'
                         EOSsubModelDIR=EOSsubDIR+'/'+'Models'
                         #Load the model meta file
