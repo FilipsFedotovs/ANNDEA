@@ -192,15 +192,16 @@ for k in range(0,Z_ID_Max):
                         HC.UnloadClusterGraph() #Remove the Graph that we do not need anymore to reduce the object size
                         print(UF.TimeStamp(),'Current cLuster tracking is finished, adding it to the output container...')
                         cluster_output.append(HC)
+                        if Log!='NO':
+                            print(UF.TimeStamp(),'Tracking the cluster...')
+                            HC.LinkHits(combined_weight_list,True,temp_MCdata_list,cut_dt,cut_dr,Acceptance) #We use the weights assigned by the model to perform microtracking within the volume
+                        if Log=='KALMAN':
+                               HC.TestKalmanHits(temp_FEDRAdata_list,temp_MCdata_list)
                         continue
             if HC.ClusterGraph.num_edges==0:
                  HC.RecHits=pd.DataFrame([], columns = ['HitID','z','Segment_ID'])
                  cluster_output.append(HC)
-            if Log!='NO':
-                        print(UF.TimeStamp(),'Tracking the cluster...')
-                        HC.LinkHits(combined_weight_list,True,temp_MCdata_list,cut_dt,cut_dr,Acceptance) #We use the weights assigned by the model to perform microtracking within the volume
-                        if Log=='KALMAN':
-                               HC.TestKalmanHits(temp_FEDRAdata_list,temp_MCdata_list)
+            
 
 
 
