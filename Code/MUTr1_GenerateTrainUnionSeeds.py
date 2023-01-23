@@ -538,7 +538,7 @@ while Status<len(Program):
         UpdateStatus(Status)
     elif Status==3:
         print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
-        print(UF.TimeStamp(),bcolors.BOLD+'Stage 4:'+bcolors.ENDC+' Analysing the training samples')
+        print(UF.TimeStamp(),bcolors.BOLD+'Stage 3:'+bcolors.ENDC+' Analysing the training samples')
         JobSet=[]
         for i in range(len(JobSets)):
              JobSet.append([])
@@ -584,6 +584,67 @@ while Status<len(Program):
         Status=4
         UpdateStatus(Status)
         continue
+    elif Status==4:
+           print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
+           print(UF.TimeStamp(),bcolors.BOLD+'Stage 4:'+bcolors.ENDC+' Resampling the results from the previous stage')
+           print(UF.TimeStamp(),'Sampling the required number of seeds',bcolors.ENDC)
+           Temp_Stats=UF.LogOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MUTr1c_'+TrainSampleID+'_Temp_Stats.csv','r', '_')
+           TotalImages=int(Temp_Stats[0][0])
+           TrueSeeds=int(Temp_Stats[0][1])
+           JobSet=[]
+           for i in range(len(JobSets)):
+             JobSet.append([])
+             for j in range(len(JobSets[i][3])):
+                 JobSet[i].append(JobSets[i][3][j])
+           if args.Samples=='ALL':
+               if TrueSeeds<=(float(args.LabelRatio)*TotalImages):
+                   RequiredTrueSeeds=TrueSeeds
+                   RequiredFakeSeeds=int(round((RequiredTrueSeeds/float(args.LabelRatio))-RequiredTrueSeeds,0))
+               else:
+                   RequiredFakeSeeds=TotalImages-TrueSeeds
+                   RequiredTrueSeeds=int(round((RequiredFakeSeeds/(1.0-float(args.LabelRatio)))-RequiredFakeSeeds,0))
+
+           else:
+               NormalisedTotSamples=int(args.Samples)
+               if TrueSeeds<=(float(args.LabelRatio)*NormalisedTotSamples):
+                   RequiredTrueSeeds=TrueSeeds
+                   RequiredFakeSeeds=int(round((RequiredTrueSeeds/float(args.LabelRatio))-RequiredTrueSeeds,0))
+               else:
+                   RequiredFakeSeeds=NormalisedTotSamples*(1.0-float(args.LabelRatio))
+                   RequiredTrueSeeds=int(round((RequiredFakeSeeds/(1.0-float(args.LabelRatio)))-RequiredFakeSeeds,0))
+           if TrueSeeds==0:
+               TrueSeedCorrection=0
+           else:
+              TrueSeedCorrection=RequiredTrueSeeds/TrueSeeds
+           if TotalImages-TrueSeeds>0:
+            FakeSeedCorrection=RequiredFakeSeeds/(TotalImages-TrueSeeds)
+           else:
+             FakeSeedCorrection=0
+           with alive_bar(len(JobSet),force_tty=True, title='Resampling the files...') as bar:
+            for i in range(0,len(JobSet)):
+              output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MUTr1d_'+TrainSampleID+'_SampledCompressedSeeds_'+str(i)+'.pkl'
+              input_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MUTr1c_'+TrainSampleID+'_CompressedSeeds_'+str(i)+'.pkl'
+              bar.text = f'-> Resampling the file : {input_file_location}, exists...'
+              bar()
+              if os.path.isfile(output_file_location)==False and os.path.isfile(input_file_location):
+                  base_data=UF.PickleOperations(input_file_location,'r','N/A')[0]
+                  ExtractedTruth=[im for im in base_data if im.Label == 1]
+                  ExtractedFake=[im for im in base_data if im.Label == 0]
+                  del base_data
+                  gc.collect()
+                  ExtractedTruth=random.sample(ExtractedTruth,int(round(TrueSeedCorrection*len(ExtractedTruth),0)))
+                  ExtractedFake=random.sample(ExtractedFake,int(round(FakeSeedCorrection*len(ExtractedFake),0)))
+                  TotalData=[]
+                  TotalData=ExtractedTruth+ExtractedFake
+                  print(UF.PickleOperations(output_file_location,'w',TotalData)[1])
+                  del TotalData
+                  del ExtractedTruth
+                  del ExtractedFake
+                  gc.collect()
+           print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 5 has successfully completed'+bcolors.ENDC)
+           Status=6
+           UpdateStatus(Status)
+           continue
 # if Status==5:
 #     print(UF.TimeStamp(),'Performing the cleanup... ',bcolors.ENDC)
 #     HTCondorTag="SoftUsed == \"ANNDEA-RTr1a-"+RecBatchID+"\""
