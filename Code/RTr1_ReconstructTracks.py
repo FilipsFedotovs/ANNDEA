@@ -55,6 +55,7 @@ parser.add_argument('--Mode', help='Script will continue from the last checkpoin
 parser.add_argument('--ModelName',help="WHat GNN model would you like to use?", default='MH_GNN_5FTR_5_80_5_80')
 parser.add_argument('--Patience',help="How many checks to do before resubmitting the job?", default='30')
 parser.add_argument('--SubPause',help="How long to wait in minutes after submitting 10000 jobs?", default='60')
+parser.add_argument('--SubGap',help="How long to wait in minutes after submitting 10000 jobs?", default='10000')
 parser.add_argument('--Log',help="Would you like to log the performance: No, MC, Kalman? (Only available if you have MC Truth or Kalman track reconstruction data)", default='No')
 parser.add_argument('--RecBatchID',help="Give this reconstruction batch an ID", default='Test_Batch')
 parser.add_argument('--LocalSub',help="Local submission?", default='N')
@@ -78,6 +79,7 @@ ModelName=args.ModelName
 RecBatchID=args.RecBatchID
 Patience=int(args.Patience)
 SubPause=int(args.SubPause)*60
+SubGap=int(args.SubGap)
 LocalSub=(args.LocalSub=='Y')
 if LocalSub:
    time_int=0
@@ -352,7 +354,7 @@ def StandardProcess(program,status,freshstart):
                  print(UF.TimeStamp(),'Submitting jobs to HTCondor... ',bcolors.ENDC)
                  _cnt=0
                  for bp in bad_pop:
-                          if _cnt>PM.SubPauseGap:
+                          if _cnt>SubGap:
                               print(UF.TimeStamp(),'Pausing submissions for  ',str(int(SubPause/60)), 'minutes to relieve congestion...',bcolors.ENDC)
                               time.sleep(SubPause)
                               _cnt=0
@@ -382,7 +384,7 @@ def StandardProcess(program,status,freshstart):
                    if UserAnswer=='R':
                       _cnt=0
                       for bp in bad_pop:
-                           if _cnt>PM.SubPauseGap:
+                           if _cnt>SubGap:
                               print(UF.TimeStamp(),'Pausing submissions for  ',str(int(SubPause/60)), 'minutes to relieve congestion...',bcolors.ENDC)
                               time.sleep(SubPause)
                               _cnt=0
@@ -411,7 +413,7 @@ def StandardProcess(program,status,freshstart):
             else:
                       _cnt=0
                       for bp in bad_pop:
-                           if _cnt>PM.SubPauseGap:
+                           if _cnt>SubGap:
                               print(UF.TimeStamp(),'Pausing submissions for  ',str(int(SubPause/60)), 'minutes to relieve congestion...',bcolors.ENDC)
                               time.sleep(SubPause)
                               _cnt=0

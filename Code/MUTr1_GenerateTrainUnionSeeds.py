@@ -71,6 +71,7 @@ parser.add_argument('--RequestExtCPU',help="Would you like to request extra CPUs
 parser.add_argument('--JobFlavour',help="Specifying the length of the HTCondor job walltime. Currently at 'workday' which is 8 hours.", default='workday')
 parser.add_argument('--LocalSub',help="Local submission?", default='N')
 parser.add_argument('--SubPause',help="How long to wait in minutes after submitting 10000 jobs?", default='60')
+parser.add_argument('--SubGap',help="How long to wait in minutes after submitting 10000 jobs?", default='10000')
 
 ######################################## Parsing argument values  #############################################################
 args = parser.parse_args()
@@ -82,6 +83,7 @@ TrainSampleSize=int(args.TrainSampleSize)
 input_file_location=args.f
 JobFlavour=args.JobFlavour
 SubPause=int(args.SubPause)*60
+SubGap=int(args.SubGap)
 RequestExtCPU=(args.RequestExtCPU=='Y')
 Xmin,Xmax,Ymin,Ymax=float(args.Xmin),float(args.Xmax),float(args.Ymin),float(args.Ymax)
 SliceData=max(Xmin,Xmax,Ymin,Ymax)>0 #We don't slice data if all values are set to zero simultaneousy (which is the default setting)
@@ -235,7 +237,8 @@ def AutoPilot(wait_min, interval_min, max_interval_tolerance,program):
                                     program[2],
                                     program[3],
                                     program[1][9],
-                                    False)
+                                    False,
+                                    program[6])
          if len(bad_pop)>0:
                print(UF.TimeStamp(),bcolors.WARNING+'Autopilot status update: There are still', len(bad_pop), 'HTCondor jobs remaining'+bcolors.ENDC)
                if interval%max_interval_tolerance==0:
@@ -287,7 +290,7 @@ def StandardProcess(program,status,freshstart):
                  print(UF.TimeStamp(),'Submitting jobs to HTCondor... ',bcolors.ENDC)
                  _cnt=0
                  for bp in bad_pop:
-                          if _cnt>PM.SubPauseGap:
+                          if _cnt>SubGap:
                               print(UF.TimeStamp(),'Pausing submissions for  ',str(int(SubPause/60)), 'minutes to relieve congestion...',bcolors.ENDC)
                               time.sleep(SubPause)
                               _cnt=0
@@ -340,6 +343,8 @@ def StandardProcess(program,status,freshstart):
                           print(UF.TimeStamp(),bcolors.FAIL+'Stage '+str(status)+' is uncompleted...'+bcolors.ENDC)
                           return False,False
             else:
+                      HTCondorTag="SoftUsed == \"ANNDEA-"+program[status][1][5]+"-"+TrainSampleID+"\""
+                      UF.TrainCleanUp(AFS_DIR, EOS_DIR, program[status][1][5]+'_'+TrainSampleID, [], HTCondorTag)
                       for bp in bad_pop:
                            UF.SubmitJobs2Condor(bp,program[status][5],RequestExtCPU,JobFlavour)
                       if program[status][5]:
@@ -425,7 +430,8 @@ if Mode=='RESET':
 print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Create'))
 
 
-# ###### Stage 2
+###### Stage 3
+Program.append('Custom')
 # prog_entry=[]
 # job_sets=Xsteps
 # prog_entry.append(' Sending hit cluster to the HTCondor, so the reconstructed clusters can be merged along y-axis')
@@ -530,6 +536,54 @@ while Status<len(Program):
         print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 1 has successfully completed'+bcolors.ENDC)
         Status=2
         UpdateStatus(Status)
+    elif Status==3:
+        print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
+        print(UF.TimeStamp(),bcolors.BOLD+'Stage 4:'+bcolors.ENDC+' Analysing the training samples')
+        JobSet=[]
+        for i in range(len(JobSets)):
+             JobSet.append([])
+             for j in range(len(JobSets[i][3])):
+                 JobSet[i].append(JobSets[i][3][j])
+        for i in range(0,len(JobSet)):
+             output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MUTr1c_'+TrainSampleID+'_CompressedSeeds_'+str(i)+'.pkl'
+             if os.path.isfile(output_file_location)==False:
+                if os.path.isfile(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MUTr1c_'+TrainSampleID+'_Temp_Stats.csv')==False:
+                   UF.LogOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MUTr1c_'+TrainSampleID+'_Temp_Stats.csv','w', [[0,0]])
+                Temp_Stats=UF.LogOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MUTr1c_'+TrainSampleID+'_Temp_Stats.csv','r', '_')
+
+                TotalImages=int(Temp_Stats[0][0])
+                TrueSeeds=int(Temp_Stats[0][1])
+                base_data = None
+                for j in range(len(JobSet[i])):
+                         for k in range(JobSet[i][j]):
+                              required_output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MUTr1b_'+TrainSampleID+'_'+'RefinedSeeds'+'_'+str(i)+'_'+str(j) + '_' + str(k)+'.pkl'
+                              new_data=UF.PickleOperations(required_output_file_location,'r','N/A')[0]
+                              if base_data == None:
+                                    base_data = new_data
+                              else:
+                                    base_data+=new_data
+                try:
+                    Records=len(base_data)
+                    print(UF.TimeStamp(),'Set',str(i),'contains', Records, 'raw images',bcolors.ENDC)
+
+                    base_data=list(set(base_data))
+                    Records_After_Compression=len(base_data)
+                    if Records>0:
+                              Compression_Ratio=int((Records_After_Compression/Records)*100)
+                    else:
+                              CompressionRatio=0
+                    TotalImages+=Records_After_Compression
+                    TrueSeeds+=sum(1 for im in base_data if im.Label == 1)
+                    print(UF.TimeStamp(),'Set',str(i),'compression ratio is ', Compression_Ratio, ' %',bcolors.ENDC)
+                    print(UF.PickleOperations(output_file_location,'w',base_data)[1])
+                except:
+                    continue
+                del new_data
+                UF.LogOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MUTr1c_'+TrainSampleID+'_Temp_Stats.csv','w', [[TotalImages,TrueSeeds]])
+        print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 4 has successfully completed'+bcolors.ENDC)
+        Status=4
+        UpdateStatus(Status)
+        continue
 # if Status==5:
 #     print(UF.TimeStamp(),'Performing the cleanup... ',bcolors.ENDC)
 #     HTCondorTag="SoftUsed == \"ANNDEA-RTr1a-"+RecBatchID+"\""
