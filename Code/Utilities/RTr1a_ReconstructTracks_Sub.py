@@ -154,8 +154,8 @@ for k in range(0,Z_ID_Max):
        temp_FEDRAdata=FEDRAdata.drop(FEDRAdata.index[FEDRAdata['z'] >= ((Z_ID+1)*stepZ)])  #Keeping the relevant z slice
        temp_FEDRAdata=FEDRAdata.drop(temp_FEDRAdata.index[temp_FEDRAdata['z'] < (Z_ID*stepZ)])  #Keeping the relevant z slice
        temp_FEDRAdata_list=FEDRAdata.values.tolist()
-    print(UF.TimeStamp(),'Creating the cluster', int(X_ID),int(Y_ID),k)
-    HC=UF.HitCluster([X_ID,Y_ID,k],[stepX,stepY,stepZ]) #Initializing the cluster
+    print(UF.TimeStamp(),'Creating the cluster', X_ID,Y_ID,Z_ID)
+    HC=UF.HitCluster([X_ID,Y_ID,Z_ID],[stepX,stepY,stepZ]) #Initializing the cluster
     print(UF.TimeStamp(),'Decorating the clusters')
     HC.LoadClusterHits(temp_data_list) #Decorating the Clusters with Hit information
     if len(HC.RawClusterGraph)>1: #If we have at least 2 Hits in the cluster that can create
@@ -168,7 +168,6 @@ for k in range(0,Z_ID_Max):
                         print(UF.TimeStamp(),'Preparing the model')
                         if torch_import:
                             import torch
-                            torch_import=False
                             EOSsubDIR=EOS_DIR+'/'+'ANNDEA'
                             EOSsubModelDIR=EOSsubDIR+'/'+'Models'
                             #Load the model meta file
@@ -183,6 +182,7 @@ for k in range(0,Z_ID_Max):
                             model = UF.GenerateModel(ModelMeta).to(device)
                             model.load_state_dict(torch.load(Model_Path))
                             model.eval() #In Pytorch this function sets the model into the evaluation mode.
+                            torch_import=False
                         w = model(HC.ClusterGraph.x, HC.ClusterGraph.edge_index, HC.ClusterGraph.edge_attr) #Here we use the model to assign the weights between Hit edges
                         w=w.tolist()
                         for edge in range(len(HC.edges)):
@@ -201,7 +201,7 @@ for k in range(0,Z_ID_Max):
             if HC.ClusterGraph.num_edges==0:
                  HC.RecHits=pd.DataFrame([], columns = ['HitID','z','Segment_ID'])
                  cluster_output.append(HC)
-            
+
 
 
 
