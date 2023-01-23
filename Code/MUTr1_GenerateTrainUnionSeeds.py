@@ -432,6 +432,10 @@ print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Create'))
 
 ###### Stage 3
 Program.append('Custom')
+###### Stage 4
+Program.append('Custom')
+###### Stage 5
+Program.append('Custom')
 # prog_entry=[]
 # job_sets=Xsteps
 # prog_entry.append(' Sending hit cluster to the HTCondor, so the reconstructed clusters can be merged along y-axis')
@@ -645,7 +649,7 @@ while Status<len(Program):
            Status=5
            UpdateStatus(Status)
            continue
-    elif status==5:
+    elif Status==5:
            print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
            print(UF.TimeStamp(),bcolors.BOLD+'Stage 6:'+bcolors.ENDC+' Preparing the final output')
            TotalData=[]
