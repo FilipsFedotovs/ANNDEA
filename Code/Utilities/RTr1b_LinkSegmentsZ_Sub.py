@@ -64,7 +64,7 @@ pfx=args.pfx
 print(UF.TimeStamp(), bcolors.OKGREEN+"Modules Have been imported successfully..."+bcolors.ENDC)
 
 #Load the first brick along z-axis
-MainFile=EOS_DIR+p+'/Temp_'+'RTr1a'+'_'+RecBatchID+'_'+str(X_ID)+'/'+'RTr1a'+'_'+RecBatchID+'_'+'hit_cluster_rec_set'+'_'+str(X_ID)+'_'+str(Y_ID)+'_'+str(0)+sfx
+MainFile=EOS_DIR+p+'/Temp_'+'RTr1a'+'_'+RecBatchID+'_'+str(X_ID)+'/'+'RTr1a'+'_'+RecBatchID+'_'+'hit_cluster_rec_set'+'_'+str(X_ID)+'_'+str(Y_ID)+sfx
 MainFileRaw=UF.PickleOperations(MainFile,'r', 'N/A')
 FirstFile=MainFileRaw[0][0]
 ZContractedTable=FirstFile.RecHits.rename(columns={"Segment_ID": "Master_Segment_ID","z": "Master_z" })
