@@ -413,6 +413,8 @@ except:
     for i in range(len(JobSets)):
                 job_sets.append(int(JobSets[i][2]))
 TotJobs=0
+print(job_sets)
+exit()
 if type(job_sets) is int:
                         TotJobs=job_sets
 elif type(job_sets[0]) is int:
