@@ -375,6 +375,7 @@ else:
 ###### Stage 0
 prog_entry=[]
 job_sets=[]
+JobSets=Meta.JobSets
 for i in range(len(JobSets)):
                 job_sets.append(int(JobSets[i][2]))
 TotJobs=0
