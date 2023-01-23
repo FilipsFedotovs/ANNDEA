@@ -372,8 +372,6 @@ def StandardProcess(program,status,freshstart):
 
 
         elif len(bad_pop)>0:
-            print(freshstart)
-            exit()
             if freshstart:
                    print(UF.TimeStamp(),bcolors.WARNING+'Warning, there are still', len(bad_pop), 'HTCondor jobs remaining'+bcolors.ENDC)
                    print(bcolors.BOLD+'If you would like to wait and exit please enter E'+bcolors.ENDC)
