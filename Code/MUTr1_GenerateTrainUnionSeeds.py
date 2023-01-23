@@ -436,38 +436,6 @@ Program.append('Custom')
 Program.append('Custom')
 ###### Stage 5
 Program.append('Custom')
-# prog_entry=[]
-# job_sets=Xsteps
-# prog_entry.append(' Sending hit cluster to the HTCondor, so the reconstructed clusters can be merged along y-axis')
-# prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','hit_cluster_rec_y_set','RTr1c','.pkl',RecBatchID,job_sets,'RTr1c_LinkSegmentsY_Sub.py'])
-# prog_entry.append([' --Y_ID_Max ', ' --i '])
-# prog_entry.append([Ysteps,Xsteps])
-# prog_entry.append(Xsteps)
-# prog_entry.append(LocalSub)
-# Program.append(prog_entry)
-# if Mode=='RESET':
-#    print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Delete'))
-# #Setting up folders for the output. The reconstruction of just one brick can easily generate >100k of files. Keeping all that blob in one directory can cause problems on lxplus.
-# print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Create'))
-#
-# ###### Stage 3
-# prog_entry=[]
-# job_sets=1
-# prog_entry.append(' Sending hit cluster to the HTCondor, so the reconstructed clusters can be merged along x-axis')
-# prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','hit_cluster_rec_x_set','RTr1d','.pkl',RecBatchID,job_sets,'RTr1d_LinkSegmentsX_Sub.py'])
-# prog_entry.append([' --X_ID_Max '])
-# prog_entry.append([Xsteps])
-# prog_entry.append(1)
-# prog_entry.append(True) #This part we can execute locally, no need for HTCondor
-# Program.append(prog_entry)
-# if Mode=='RESET':
-#    print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Delete'))
-# #Setting up folders for the output. The reconstruction of just one brick can easily generate >100k of files. Keeping all that blob in one directory can cause problems on lxplus.
-# print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Create'))
-#
-# ###### Stage 4
-# Program.append('Custom')
-
 
 print(UF.TimeStamp(),'There are '+str(len(Program)+1)+' stages (0-'+str(len(Program)+1)+') of this script',bcolors.ENDC)
 print(UF.TimeStamp(),'Current stage has a code',Status,bcolors.ENDC)
@@ -689,10 +657,12 @@ if Status==6:
            for p in Program:
             if p!='Custom':
                print(UF.TimeStamp(),UF.ManageTempFolders(p,'Delete'))
+           HTCondorTag="SoftUsed == \"ANNDEA-MUTr1-"+TrainSampleID+"\""
+           UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MUTr1_'+TrainSampleID, ['MUTr1'+TrainSampleID], HTCondorTag)
            HTCondorTag="SoftUsed == \"ANNDEA-MUTr1c-"+TrainSampleID+"\""
-           UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MUTr1c_'+TrainSampleID, ['MUTr1c'], HTCondorTag)
+           UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MUTr1c_'+TrainSampleID, ['MUTr1c'+TrainSampleID], HTCondorTag)
            HTCondorTag="SoftUsed == \"ANNDEA-MUTr1d-"+TrainSampleID+"\""
-           UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MUTr1d_'+TrainSampleID, ['MUTr1d'], HTCondorTag)
+           UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MUTr1d_'+TrainSampleID, ['MUTr1d'+TrainSampleID], HTCondorTag)
            print(UF.TimeStamp(), bcolors.OKGREEN+"Train sample generation has been completed"+bcolors.ENDC)
            exit()
 else:
