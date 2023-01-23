@@ -143,14 +143,9 @@ torch_import=True
 cluster_output=[]
 for k in range(0,Z_ID_Max):
     Z_ID=int(k)/Z_overlap
-    print(data)
-
-    print(Z_ID)
     temp_data=data.drop(data.index[data['z'] >= ((Z_ID+1)*stepZ)])  #Keeping the relevant z slice
     temp_data=temp_data.drop(temp_data.index[temp_data['z'] < (Z_ID*stepZ)])  #Keeping the relevant z slice
     temp_data_list=temp_data.values.tolist()
-    print(temp_data)
-    x=input()
     if Log!='NO':
        temp_MCData=MCdata.drop(MCdata.index[MCdata['z'] >= ((Z_ID+1)*stepZ)])  #Keeping the relevant z slice
        temp_MCData=temp_MCData.drop(temp_MCData.index[temp_MCData['z'] < (Z_ID*stepZ)])  #Keeping the relevant z slice
@@ -192,6 +187,9 @@ for k in range(0,Z_ID_Max):
                         w=w.tolist()
                         for edge in range(len(HC.edges)):
                             combined_weight_list.append(HC.edges[edge]+w[edge])
+            if HC.ClusterGraph.num_edges==0:
+                 HC.RecHits=pd.DataFrame([], columns = ['HitID','z','Segment_ID'])
+                 cluster_output.append(HC)
             if Log!='NO':
                         print(UF.TimeStamp(),'Tracking the cluster...')
                         HC.LinkHits(combined_weight_list,True,temp_MCdata_list,cut_dt,cut_dr,Acceptance) #We use the weights assigned by the model to perform microtracking within the volume
@@ -205,8 +203,9 @@ for k in range(0,Z_ID_Max):
             print(UF.TimeStamp(),'Current cLuster tracking is finished, adding it to the output container...')
             cluster_output.append(HC)
             continue
-    HC.RecHits=pd.DataFrame([], columns = ['HitID','z','Segment_ID'])
-    cluster_output.append(HC)
+    else:
+        HC.RecHits=pd.DataFrame([], columns = ['HitID','z','Segment_ID'])
+        cluster_output.append(HC)
 print(UF.TimeStamp(),'Writing the output...')
 print(UF.PickleOperations(output_file_location,'w', cluster_output)[1])
 
