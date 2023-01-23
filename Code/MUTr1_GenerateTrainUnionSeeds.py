@@ -410,6 +410,7 @@ try:
                  for j in range(len(JobSets[i][3])):
                      job_sets[i].append(JobSets[i][3][j])
 except:
+    job_sets=[]
     for i in range(len(JobSets)):
                 job_sets.append(int(JobSets[i][2]))
 TotJobs=0
