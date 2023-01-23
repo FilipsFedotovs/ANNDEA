@@ -403,6 +403,7 @@ Program.append('Custom')
 prog_entry=[]
 job_sets=[]
 JobSets=Meta.JobSets
+print(JobSets)
 for i in range(len(JobSets)):
              job_sets.append([])
              for j in range(len(JobSets[i][3])):
