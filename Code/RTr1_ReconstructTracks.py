@@ -372,6 +372,8 @@ def StandardProcess(program,status,freshstart):
 
 
         elif len(bad_pop)>0:
+            print(freshstart)
+            exit()
             if freshstart:
                    print(UF.TimeStamp(),bcolors.WARNING+'Warning, there are still', len(bad_pop), 'HTCondor jobs remaining'+bcolors.ENDC)
                    print(bcolors.BOLD+'If you would like to wait and exit please enter E'+bcolors.ENDC)
@@ -511,8 +513,6 @@ Program.append('Custom')
 
 print(UF.TimeStamp(),'There are '+str(len(Program)+1)+' stages (0-'+str(len(Program)+1)+') of this script',bcolors.ENDC)
 print(UF.TimeStamp(),'Current stage has a code',Status,bcolors.ENDC)
-print(FreshStart)
-exit()
 while Status<len(Program):
     if Program[Status]!='Custom':
         #Standard process here
