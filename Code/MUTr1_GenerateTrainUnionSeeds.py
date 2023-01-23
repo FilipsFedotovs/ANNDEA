@@ -365,7 +365,7 @@ if Mode=='RESET':
     UF.RecCleanUp(AFS_DIR, EOS_DIR, 'MUTr1_'+TrainSampleID, ['MUTr1a','MUTr1b','MUTr1c','MUTr1d',TrainSampleID+'_MUTr_OUTPUT.pkl'], HTCondorTag)
     FreshStart=False
 if Mode=='CLEANUP':
-    Status=5
+    Status=6
 elif args.ForceStatus=='':
     Status=Meta.Status[-1]
 else:
@@ -689,24 +689,12 @@ if Status==6:
            for p in Program:
             if p!='Custom':
                print(UF.TimeStamp(),UF.ManageTempFolders(p,'Delete'))
-           exit()
-           HTCondorTag="SoftUsed == \"ANNDEA-" \
-                       "MUTr1a-"+TrainSampleID+"\""
-           UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MUTr1a_'+TrainSampleID, ['MUTr1a'], HTCondorTag)
-           HTCondorTag="SoftUsed == \"ANNDEA-MUTr1b-"+TrainSampleID+"\""
-           UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MUTr1b_'+TrainSampleID, ['MUTr1b'], HTCondorTag)
            HTCondorTag="SoftUsed == \"ANNDEA-MUTr1c-"+TrainSampleID+"\""
            UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MUTr1c_'+TrainSampleID, ['MUTr1c'], HTCondorTag)
            HTCondorTag="SoftUsed == \"ANNDEA-MUTr1d-"+TrainSampleID+"\""
            UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MUTr1d_'+TrainSampleID, ['MUTr1d'], HTCondorTag)
-#     print(UF.TimeStamp(),'Performing the cleanup... ',bcolors.ENDC)
-#     HTCondorTag="SoftUsed == \"ANNDEA-RTr1a-"+RecBatchID+"\""
-#     UF.RecCleanUp(AFS_DIR, EOS_DIR, 'RTr1_'+RecBatchID, ['RTr1_'+RecBatchID,RecBatchID+'_RTr_OUTPUT.pkl'], HTCondorTag)
-#     for p in Program:
-#         if p!='Custom':
-#            print(UF.TimeStamp(),UF.ManageTempFolders(p,'Delete'))
-#     print(UF.TimeStamp(), bcolors.OKGREEN+"Reconstruction has been completed"+bcolors.ENDC)
-#     exit()
+           print(UF.TimeStamp(), bcolors.OKGREEN+"Train sample generation has been completed"+bcolors.ENDC)
+           exit()
 else:
     print(UF.TimeStamp(), bcolors.FAIL+"Reconstruction has not been completed as one of the processes has timed out or --ForceStatus!=0 option was chosen. Please run the script again (without Reset Mode)."+bcolors.ENDC)
     exit()
