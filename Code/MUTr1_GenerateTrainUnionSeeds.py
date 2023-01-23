@@ -315,10 +315,8 @@ def StandardProcess(program,status,freshstart):
                        print(UF.TimeStamp(),'OK, exiting now then')
                        exit()
                    if UserAnswer=='R':
-                      print(program[status][1][5])
-                      exit()
-                      # HTCondorTag="SoftUsed == \"ANNDEA-MUTr1a-"+TrainSampleID+"\""
-                      # UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MUTr1_'+TrainSampleID, [], HTCondorTag)
+                      HTCondorTag="SoftUsed == \"ANNDEA-"+program[status][1][5]+"-"+TrainSampleID+"\""
+                      UF.TrainCleanUp(AFS_DIR, EOS_DIR, program[status][1][5]+'_'+TrainSampleID, [], HTCondorTag)
                       for bp in bad_pop:
                            UF.SubmitJobs2Condor(bp,program[status][5],RequestExtCPU,JobFlavour)
                       print(UF.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
