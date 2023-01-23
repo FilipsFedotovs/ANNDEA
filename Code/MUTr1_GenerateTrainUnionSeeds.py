@@ -641,6 +641,50 @@ while Status<len(Program):
                   del ExtractedTruth
                   del ExtractedFake
                   gc.collect()
+           print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 4 has successfully completed'+bcolors.ENDC)
+           Status=5
+           UpdateStatus(Status)
+           continue
+    elif status==5:
+           print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
+           print(UF.TimeStamp(),bcolors.BOLD+'Stage 6:'+bcolors.ENDC+' Preparing the final output')
+           TotalData=[]
+           JobSet=[]
+           for i in range(len(JobSets)):
+             JobSet.append([])
+             for j in range(len(JobSets[i][3])):
+                 JobSet[i].append(JobSets[i][3][j])
+
+           for i in range(0,len(JobSet)):
+               input_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MUTr1d_'+TrainSampleID+'_SampledCompressedSeeds_'+str(i)+'.pkl'
+               if os.path.isfile(input_file_location):
+                  base_data=UF.PickleOperations(input_file_location,'r','N/A')[0]
+                  TotalData+=base_data
+           del base_data
+           gc.collect()
+           ValidationSampleSize=int(round(min((len(TotalData)*float(PM.valRatio)),PM.MaxValSampleSize),0))
+           random.shuffle(TotalData)
+           output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_TRACK_SEEDS_OUTPUT.pkl'
+           print(UF.PickleOperations(output_file_location,'w',TotalData[:ValidationSampleSize])[1])
+           TotalData=TotalData[ValidationSampleSize:]
+           print(UF.TimeStamp(), bcolors.OKGREEN+"Validation Set has been saved at ",bcolors.OKBLUE+output_file_location+bcolors.ENDC,bcolors.OKGREEN+'file...'+bcolors.ENDC)
+           No_Train_Files=int(math.ceil(len(TotalData)/TrainSampleSize))
+           with alive_bar(No_Train_Files,force_tty=True, title='Resampling the files...') as bar:
+               for SC in range(0,No_Train_Files):
+                 output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_TRACK_SEEDS_OUTPUT_'+str(SC+1)+'.pkl'
+                 print(UF.PickleOperations(output_file_location,'w',TotalData[(SC*TrainSampleSize):min(len(TotalData),((SC+1)*TrainSampleSize))])[1])
+                 bar.text = f'-> Saving the file : {output_file_location}...'
+                 bar()
+           print(UF.TimeStamp(),'Performing the cleanup... ',bcolors.ENDC)
+           exit()
+           HTCondorTag="SoftUsed == \"ANNDEA-MUTr1a-"+TrainSampleID+"\""
+           UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MUTr1a_'+TrainSampleID, ['MUTr1a'], HTCondorTag)
+           HTCondorTag="SoftUsed == \"ANNDEA-MUTr1b-"+TrainSampleID+"\""
+           UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MUTr1b_'+TrainSampleID, ['MUTr1b'], HTCondorTag)
+           HTCondorTag="SoftUsed == \"ANNDEA-MUTr1c-"+TrainSampleID+"\""
+           UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MUTr1c_'+TrainSampleID, ['MUTr1c'], HTCondorTag)
+           HTCondorTag="SoftUsed == \"ANNDEA-MUTr1d-"+TrainSampleID+"\""
+           UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MUTr1d_'+TrainSampleID, ['MUTr1d'], HTCondorTag)
            print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 5 has successfully completed'+bcolors.ENDC)
            Status=6
            UpdateStatus(Status)
