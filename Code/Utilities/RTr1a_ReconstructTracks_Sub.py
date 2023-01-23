@@ -146,9 +146,6 @@ for k in range(0,Z_ID_Max):
     temp_data=data.drop(data.index[data['z'] >= ((Z_ID+1)*stepZ)])  #Keeping the relevant z slice
     temp_data=temp_data.drop(temp_data.index[temp_data['z'] < (Z_ID*stepZ)])  #Keeping the relevant z slice
     temp_data_list=temp_data.values.tolist()
-    print(temp_data)
-    continue
-
     if Log!='NO':
        temp_MCData=MCdata.drop(MCdata.index[MCdata['z'] >= ((Z_ID+1)*stepZ)])  #Keeping the relevant z slice
        temp_MCData=temp_MCData.drop(temp_MCData.index[temp_MCData['z'] < (Z_ID*stepZ)])  #Keeping the relevant z slice
@@ -190,6 +187,12 @@ for k in range(0,Z_ID_Max):
                         w=w.tolist()
                         for edge in range(len(HC.edges)):
                             combined_weight_list.append(HC.edges[edge]+w[edge])
+                        print(UF.TimeStamp(),'Tracking the cluster...')
+                        HC.LinkHits(combined_weight_list,False,[],cut_dt,cut_dr,Acceptance) #We use the weights assigned by the model to perform microtracking within the volume
+                        HC.UnloadClusterGraph() #Remove the Graph that we do not need anymore to reduce the object size
+                        print(UF.TimeStamp(),'Current cLuster tracking is finished, adding it to the output container...')
+                        cluster_output.append(HC)
+                        continue
             if HC.ClusterGraph.num_edges==0:
                  HC.RecHits=pd.DataFrame([], columns = ['HitID','z','Segment_ID'])
                  cluster_output.append(HC)
@@ -199,16 +202,14 @@ for k in range(0,Z_ID_Max):
                         if Log=='KALMAN':
                                HC.TestKalmanHits(temp_FEDRAdata_list,temp_MCdata_list)
 
-            else:
-                print(UF.TimeStamp(),'Tracking the cluster...')
-                HC.LinkHits(combined_weight_list,False,[],cut_dt,cut_dr,Acceptance) #We use the weights assigned by the model to perform microtracking within the volume
-            HC.UnloadClusterGraph() #Remove the Graph that we do not need anymore to reduce the object size
-            print(UF.TimeStamp(),'Current cLuster tracking is finished, adding it to the output container...')
-            cluster_output.append(HC)
-            continue
+
+
     else:
         HC.RecHits=pd.DataFrame([], columns = ['HitID','z','Segment_ID'])
         cluster_output.append(HC)
+print(len(cluster_output))
+for hc in cluster_output:
+    print(HC.RecHits)
 print(UF.TimeStamp(),'Writing the output...')
 print(UF.PickleOperations(output_file_location,'w', cluster_output)[1])
 
