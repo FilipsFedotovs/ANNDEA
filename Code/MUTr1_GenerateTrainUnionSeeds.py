@@ -679,6 +679,12 @@ while Status<len(Program):
                  print(UF.PickleOperations(output_file_location,'w',TotalData[(SC*TrainSampleSize):min(len(TotalData),((SC+1)*TrainSampleSize))])[1])
                  bar.text = f'-> Saving the file : {output_file_location}...'
                  bar()
+
+           print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 5 has successfully completed'+bcolors.ENDC)
+           Status=6
+           UpdateStatus(Status)
+           continue
+if Status==6:
            print(UF.TimeStamp(),'Performing the cleanup... ',bcolors.ENDC)
            for p in Program:
             if p!='Custom':
@@ -693,11 +699,6 @@ while Status<len(Program):
            UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MUTr1c_'+TrainSampleID, ['MUTr1c'], HTCondorTag)
            HTCondorTag="SoftUsed == \"ANNDEA-MUTr1d-"+TrainSampleID+"\""
            UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MUTr1d_'+TrainSampleID, ['MUTr1d'], HTCondorTag)
-           print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 5 has successfully completed'+bcolors.ENDC)
-           Status=6
-           UpdateStatus(Status)
-           continue
-# if Status==5:
 #     print(UF.TimeStamp(),'Performing the cleanup... ',bcolors.ENDC)
 #     HTCondorTag="SoftUsed == \"ANNDEA-RTr1a-"+RecBatchID+"\""
 #     UF.RecCleanUp(AFS_DIR, EOS_DIR, 'RTr1_'+RecBatchID, ['RTr1_'+RecBatchID,RecBatchID+'_RTr_OUTPUT.pkl'], HTCondorTag)
@@ -706,9 +707,9 @@ while Status<len(Program):
 #            print(UF.TimeStamp(),UF.ManageTempFolders(p,'Delete'))
 #     print(UF.TimeStamp(), bcolors.OKGREEN+"Reconstruction has been completed"+bcolors.ENDC)
 #     exit()
-# else:
-#     print(UF.TimeStamp(), bcolors.FAIL+"Reconstruction has not been completed as one of the processes has timed out or --ForceStatus!=0 option was chosen. Please run the script again (without Reset Mode)."+bcolors.ENDC)
-#     exit()
+else:
+    print(UF.TimeStamp(), bcolors.FAIL+"Reconstruction has not been completed as one of the processes has timed out or --ForceStatus!=0 option was chosen. Please run the script again (without Reset Mode)."+bcolors.ENDC)
+    exit()
 
 
 
