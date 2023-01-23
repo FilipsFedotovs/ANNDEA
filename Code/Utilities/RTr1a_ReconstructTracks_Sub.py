@@ -146,6 +146,9 @@ for k in range(0,Z_ID_Max):
     temp_data=data.drop(data.index[data['z'] >= ((Z_ID+1)*stepZ)])  #Keeping the relevant z slice
     temp_data=temp_data.drop(temp_data.index[temp_data['z'] < (Z_ID*stepZ)])  #Keeping the relevant z slice
     temp_data_list=temp_data.values.tolist()
+    print(temp_data)
+    continue
+    
     if Log!='NO':
        temp_MCData=MCdata.drop(MCdata.index[MCdata['z'] >= ((Z_ID+1)*stepZ)])  #Keeping the relevant z slice
        temp_MCData=temp_MCData.drop(temp_MCData.index[temp_MCData['z'] < (Z_ID*stepZ)])  #Keeping the relevant z slice
