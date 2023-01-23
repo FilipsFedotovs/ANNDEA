@@ -680,8 +680,12 @@ while Status<len(Program):
                  bar.text = f'-> Saving the file : {output_file_location}...'
                  bar()
            print(UF.TimeStamp(),'Performing the cleanup... ',bcolors.ENDC)
+           for p in Program:
+            if p!='Custom':
+               print(UF.TimeStamp(),UF.ManageTempFolders(p,'Delete'))
            exit()
-           HTCondorTag="SoftUsed == \"ANNDEA-MUTr1a-"+TrainSampleID+"\""
+           HTCondorTag="SoftUsed == \"ANNDEA-" \
+                       "MUTr1a-"+TrainSampleID+"\""
            UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MUTr1a_'+TrainSampleID, ['MUTr1a'], HTCondorTag)
            HTCondorTag="SoftUsed == \"ANNDEA-MUTr1b-"+TrainSampleID+"\""
            UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MUTr1b_'+TrainSampleID, ['MUTr1b'], HTCondorTag)
