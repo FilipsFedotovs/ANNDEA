@@ -198,16 +198,18 @@ for k in range(0,Z_ID_Max):
                         if Log=='KALMAN':
                                HC.TestKalmanHits(temp_FEDRAdata_list,temp_MCdata_list)
                         continue
-            if HC.ClusterGraph.num_edges==0:
+            else:
                  HC.RecHits=pd.DataFrame([], columns = ['HitID','z','Segment_ID'])
                  cluster_output.append(HC)
-
-
-
-
+                 continue
+        else:
+            HC.RecHits=pd.DataFrame([], columns = ['HitID','z','Segment_ID'])
+            cluster_output.append(HC)
+            continue
     else:
         HC.RecHits=pd.DataFrame([], columns = ['HitID','z','Segment_ID'])
         cluster_output.append(HC)
+        continue
 print(len(cluster_output))
 for hc in cluster_output:
     print(HC.RecHits)

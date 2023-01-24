@@ -535,10 +535,7 @@ while Status<len(Program):
         prog_entry.append(TotJobs)
         prog_entry.append(LocalSub)
         prog_entry.append(['',''])
-        print(Program[2])
         Program[2]=prog_entry
-        print(Program[2])
-        exit()
         #############################
         FreshStart=False
         print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 1 has successfully completed'+bcolors.ENDC)
