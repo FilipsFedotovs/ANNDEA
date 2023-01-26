@@ -33,8 +33,9 @@ Install PyTorch:
 
 Please replace **x** and **xyyyyy** with first letter of your username and your username respectively.
 
-Install Pandas:
+Install Other libraries:
 1) pip3 install pandas --target **/eos/user/x/xyyyyy/libs**
+2) pip3 install tabulate --target **/eos/user/x/xyyyyy/libs**
 
 ### 1.1 Installation steps
 1) go to your home directory in afs where you would like to install the package
