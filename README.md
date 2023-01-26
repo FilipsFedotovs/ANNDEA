@@ -26,7 +26,7 @@ The tracking module takes hits as an input and assigns the common ID - hence it 
 All modules 
 ### Requirements
 Install PyTorch: 
-1) pip3 install torch==1.9.0+cpu torchvision==0.10.0+cpu -f https://download.pytorch.org/whl/torch_stable.htmlhttps://download.pytorch.org/whl/torch_stable.html --target **/eos/user/x/xyyyyy/libs**
+1) pip3 install torch==1.9.0+cpu torchvision==0.10.0+cpu -f https://download.pytorch.org/whl/torch_stable.html --target **/eos/user/x/xyyyyy/libs**
 2) pip3 install torch-scatter -f https://data.pyg.org/whl/torch-1.9.0+cpu.htmlhttps://data.pyg.org/whl/torch-1.9.0+cpu.html --target **/eos/user/x/xyyyy/libs**
 3) pip3 install torch-sparse -f https://data.pyg.org/whl/torch-1.9.0+cpu.html --target **/eos/user/x/xyyyyy/libs**
 4) pip3 install torch-geometric --target **/eos/user/x/xyyyyy/libs**
