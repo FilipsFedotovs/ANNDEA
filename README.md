@@ -40,7 +40,7 @@ Install Pandas:
 1) go to your home directory in afs where you would like to install the package
 2) **git clone https://github.com/FilipsFedotovs/ANNDEA/**
 3) **cd ANNDEA/**
-4) **python3 setup.py**
+4) **python3 setup.py --PyPath /eos/user/x/xyyyyy/libs**
 5) The installation will require an EOS directory, please enter the location on EOS where you would like to keep data and the models. An example of the input is /eos/experiment/ship/user/username (but create the directory there first).
 6) The installation will ask whether you want to copy default training and validation files (that were prepared earlier). Unless you have your own, please enter **Y**.     The installer will copy and analyse existing data, it might take 5-10 minutes
 7) if the message *'ANNDEA setup is successfully completed'* is displayed, it means that the package is ready for work
