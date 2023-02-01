@@ -26,19 +26,23 @@ The tracking module takes hits as an input and assigns the common ID - hence it 
 All modules 
 ### Requirements
 Install PyTorch: 
-1) pip3 install torch==1.9.0+cpu torchvision==0.10.0+cpu -f https://download.pytorch.org/whl/torch_stable.htmlhttps://download.pytorch.org/whl/torch_stable.html --target **/eos/user/<your username first letter>/<your username>/libs**
-2) pip3 install torch-scatter -f https://data.pyg.org/whl/torch-1.9.0+cpu.htmlhttps://data.pyg.org/whl/torch-1.9.0+cpu.html --target **/eos/user/<your username first letter>/<your username>/libs**
-3) pip3 install torch-sparse -f https://data.pyg.org/whl/torch-1.9.0+cpu.html --target **/eos/user/<your username first letter>/<your username>/libs**
-4) pip3 install torch-geometric --target **/eos/user/<your username first letter>/<your username>/libs**
+1) pip3 install torch==1.9.0+cpu torchvision==0.10.0+cpu -f https://download.pytorch.org/whl/torch_stable.html --target **/eos/user/x/xyyyyy/libs**
+2) pip3 install torch-scatter -f https://data.pyg.org/whl/torch-1.9.0+cpu.html --target **/eos/user/x/xyyyy/libs**
+3) pip3 install torch-sparse -f https://data.pyg.org/whl/torch-1.9.0+cpu.html --target **/eos/user/x/xyyyyy/libs**
+4) pip3 install torch-geometric --target **/eos/user/x/xyyyyy/libs**
 
-Install Pandas:
-1) pip3 install pandas --target **/eos/user/<your username first letter>/<your username>/libs**
+Please replace **x** and **xyyyyy** with first letter of your username and your username respectively.
+
+Install Other libraries:
+1) pip3 install pandas --target **/eos/user/x/xyyyyy/libs**
+2) pip3 install tabulate --target **/eos/user/x/xyyyyy/libs**
+3) pip3 install alive_progress --target **/eos/user/x/xyyyyy/libs**
 
 ### 1.1 Installation steps
 1) go to your home directory in afs where you would like to install the package
 2) **git clone https://github.com/FilipsFedotovs/ANNDEA/**
 3) **cd ANNDEA/**
-4) **python3 setup.py**
+4) **python3 setup.py --PyPath /eos/user/x/xyyyyy/libs**
 5) The installation will require an EOS directory, please enter the location on EOS where you would like to keep data and the models. An example of the input is /eos/experiment/ship/user/username (but create the directory there first).
 6) The installation will ask whether you want to copy default training and validation files (that were prepared earlier). Unless you have your own, please enter **Y**.     The installer will copy and analyse existing data, it might take 5-10 minutes
 7) if the message *'ANNDEA setup is successfully completed'* is displayed, it means that the package is ready for work
@@ -73,7 +77,7 @@ Install Pandas:
 3) **tmux**
 4) **kinit username@CERN.CH -l 24h00m**
 5) Enter your lxplus password
-6) **python3 RH1_ReconstructHits.py --Log KALMAN --ModelName MH_SND_Tracking_5_80_5_80 --Xmin 200000 --Xmax 230000 --Ymin 20000 --Ymax 40000 --X_overlap 1 --Y_overlap 1 --Z_overlap 1 --RecBatchID Test_Batch**
+6) **python3 RTr1_ReconstructTracks.py --Log KALMAN --ModelName MH_SND_Tracking_5_80_5_80 --Xmin 200000 --Xmax 230000 --Ymin 20000 --Ymax 40000 --X_overlap 1 --Y_overlap 1 --Z_overlap 1 --RecBatchID Test_Batch**
 7) The script will submit the subscript jobs and go to the autopilot mode.
 8) Exit tmux (by using **ctrl + b** and then typing  **d**). Script will keep running in the autopilot mode until all the steps in the hit reconstruction process have been completed.
 9) Enter the same tmux session (after overnight job for example) by logging to the same lxplus machine and then typing  **tmux a -t 0**. The program should finish with the message *'Reconstruction has been completed'*

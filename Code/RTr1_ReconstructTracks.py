@@ -58,12 +58,15 @@ parser.add_argument('--SubPause',help="How long to wait in minutes after submitt
 parser.add_argument('--Log',help="Would you like to log the performance: No, MC, Kalman? (Only available if you have MC Truth or Kalman track reconstruction data)", default='No')
 parser.add_argument('--RecBatchID',help="Give this reconstruction batch an ID", default='Test_Batch')
 parser.add_argument('--LocalSub',help="Local submission?", default='N')
-parser.add_argument('--f',help="Please enter the full path to the file with track reconstruction", default='/eos/experiment/ship/ANNDEA/Data')
+parser.add_argument('--ForceStatus',help="Would you like the program run from specific status number? (Only for advance users)", default='0')
+parser.add_argument('--RequestExtCPU',help="Would you like to request extra CPUs?", default='N')
+parser.add_argument('--JobFlavour',help="Specifying the length of the HTCondor job walltime. Currently at 'workday' which is 8 hours.", default='workday')
+parser.add_argument('--f',help="Please enter the full path to the file with track reconstruction", default='/eos/experiment/ship/ANNDEA/Data/SND_Emulsion_FEDRA_Raw_B31.csv')
 parser.add_argument('--Xmin',help="This option restricts data to only those events that have tracks with hits x-coordinates that are above this value", default='0')
 parser.add_argument('--Xmax',help="This option restricts data to only those events that have tracks with hits x-coordinates that are below this value", default='0')
 parser.add_argument('--Ymin',help="This option restricts data to only those events that have tracks with hits y-coordinates that are above this value", default='0')
 parser.add_argument('--Ymax',help="This option restricts data to only those events that have tracks with hits y-coordinates that are below this value", default='0')
-parser.add_argument('--Z_overlap',help="Enter the level of overlap in integer number between reconstruction blocks along z-axis. (In order to avoid segmentation this value should be more than 1)", default='2')
+parser.add_argument('--Z_overlap',help="Enter the level of overlap in integer number between reconstruction blocks along z-axis. (In order to avoid segmentation this value should be more than 1)", default='3')
 parser.add_argument('--Y_overlap',help="Enter the level of overlap in integer number between reconstruction blocks along y-axis. (In order to avoid segmentation this value should be more than 1)", default='2')
 parser.add_argument('--X_overlap',help="Enter the level of overlap in integer number between reconstruction blocks along x-axis. (In order to avoid segmentation this value should be more than 1)", default='2')
 
@@ -76,6 +79,12 @@ RecBatchID=args.RecBatchID
 Patience=int(args.Patience)
 SubPause=int(args.SubPause)*60
 LocalSub=(args.LocalSub=='Y')
+if LocalSub:
+   time_int=0
+else:
+    time_int=10
+JobFlavour=args.JobFlavour
+RequestExtCPU=(args.RequestExtCPU=='Y')
 input_file_location=args.f
 Xmin,Xmax,Ymin,Ymax=float(args.Xmin),float(args.Xmax),float(args.Ymin),float(args.Ymax)
 Z_overlap,Y_overlap,X_overlap=int(args.Z_overlap),int(args.Y_overlap),int(args.X_overlap)
@@ -259,7 +268,7 @@ x_max=data['x'].max()
 y_max=data['y'].max()
 FreshStart=True
 Program=[]
-#Calculating the number of volumes that will be sent to HTCondor for reconstruction
+#Calculating the number of volumes that will be sent to HTCondor for reconstruction. Account for overlap if specified.
 if X_overlap==1:
     Xsteps=math.ceil((x_max)/stepX)
 else:
@@ -298,12 +307,7 @@ def AutoPilot(wait_min, interval_min, max_interval_tolerance,program):
                print(UF.TimeStamp(),bcolors.WARNING+'Autopilot status update: There are still', len(bad_pop), 'HTCondor jobs remaining'+bcolors.ENDC)
                if interval%max_interval_tolerance==0:
                   for bp in bad_pop:
-                      HTCondorTag="SoftUsed == \"ANNDEA-RTr-"+RecBatchID+"\""
-                      UF.RecCleanUp(AFS_DIR, EOS_DIR, 'RTr1a_'+RecBatchID, [], HTCondorTag)
-                      UF.RecCleanUp(AFS_DIR, EOS_DIR, 'RTr1b_'+RecBatchID, [], HTCondorTag)
-                      UF.RecCleanUp(AFS_DIR, EOS_DIR, 'RTr1c_'+RecBatchID, [], HTCondorTag)
-                      UF.RecCleanUp(AFS_DIR, EOS_DIR, 'RTr1d_'+RecBatchID, [], HTCondorTag)
-                      UF.SubmitJobs2Condor(bp,LocalSub)
+                      UF.SubmitJobs2Condor(bp,program[5],RequestExtCPU,JobFlavour)
                   print(UF.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
          else:
               return True,False
@@ -325,7 +329,7 @@ def StandardProcess(program,status,freshstart):
                                     program[status][2],
                                     program[status][3],
                                     program[status][1][9],
-                                    False,['',''],True)
+                                    False)
         if len(bad_pop)==0:
              print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
              return True,False
@@ -344,18 +348,20 @@ def StandardProcess(program,status,freshstart):
                                     program[status][2],
                                     program[status][3],
                                     program[status][1][9],
-                                    batch_sub,['',''],True)
+                                    batch_sub)
                  print(UF.TimeStamp(),'Submitting jobs to HTCondor... ',bcolors.ENDC)
                  _cnt=0
                  for bp in bad_pop:
                           if _cnt>PM.SubPauseGap:
-                              print(UF.TimeStamp(),'Pausing submissions for  ',str(SubPause/60), 'minutes to relieve congestion...',bcolors.ENDC)
+                              print(UF.TimeStamp(),'Pausing submissions for  ',str(int(SubPause/60)), 'minutes to relieve congestion...',bcolors.ENDC)
                               time.sleep(SubPause)
                               _cnt=0
-                          UF.SubmitJobs2Condor(bp,LocalSub)
+                          UF.SubmitJobs2Condor(bp,program[status][5],RequestExtCPU,JobFlavour)
                           _cnt+=bp[6]
-
-                 if AutoPilot(600,10,Patience,program[status]):
+                 if program[status][5]:
+                    print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
+                    return True,False
+                 elif AutoPilot(600,time_int,Patience,program[status]):
                         print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
                         return True,False
                  else:
@@ -375,16 +381,22 @@ def StandardProcess(program,status,freshstart):
                        exit()
                    if UserAnswer=='R':
                       for bp in bad_pop:
-                           UF.SubmitJobs2Condor(bp,LocalSub)
+                           UF.SubmitJobs2Condor(bp,program[status][5],RequestExtCPU,JobFlavour)
                       print(UF.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
-                      if AutoPilot(600,10,Patience,program[status]):
+                      if program[status][5]:
+                          print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
+                          return True,False
+                      elif AutoPilot(600,time_int,Patience,program[status]):
                           print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+ 'has successfully completed'+bcolors.ENDC)
                           return True,False
                       else:
                           print(UF.TimeStamp(),bcolors.FAIL+'Stage '+str(status)+' is uncompleted...'+bcolors.ENDC)
                           return False,False
                    else:
-                      if AutoPilot(int(UserAnswer),10,Patience,program[status]):
+                      if program[status][5]:
+                          print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
+                          return True,False
+                      elif AutoPilot(int(UserAnswer),time_int,Patience,program[status]):
                           print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+ 'has successfully completed'+bcolors.ENDC)
                           return True,False
                       else:
@@ -392,8 +404,11 @@ def StandardProcess(program,status,freshstart):
                           return False,False
             else:
                       for bp in bad_pop:
-                           UF.SubmitJobs2Condor(bp,LocalSub)
-                      if AutoPilot(600,10,Patience,program[status]):
+                           UF.SubmitJobs2Condor(bp,program[status][5],RequestExtCPU,JobFlavour)
+                      if program[status][5]:
+                           print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
+                           return True,False
+                      elif AutoPilot(600,time_int,Patience,program[status]):
                            print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+ 'has successfully completed'+bcolors.ENDC)
                            return True,False
                       else:
@@ -404,11 +419,13 @@ def StandardProcess(program,status,freshstart):
 # #Reconstructing a single brick can cause in gereation of 100s of thousands of files - need to make sure that we remove them.
 if Mode=='RESET':
     print(UF.TimeStamp(),'Performing the cleanup... ',bcolors.ENDC)
-    HTCondorTag="SoftUsed == \"ANNDEA-RTr-"+RecBatchID+"\""
+    HTCondorTag="SoftUsed == \"ANNDEA-RTr1a-"+RecBatchID+"\""
     UF.RecCleanUp(AFS_DIR, EOS_DIR, 'RTr1_'+RecBatchID, ['RTr1a','RTr1b','RTr1c','RTr1d',RecBatchID+'_RTr_OUTPUT.pkl'], HTCondorTag)
     FreshStart=False
-
-Status=0
+if Mode=='CLEANUP':
+    Status=5
+else:
+    Status=int(args.ForceStatus)
 ################ Set the execution sequence for the script
 ###### Stage 0
 prog_entry=[]
@@ -422,9 +439,11 @@ prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','hit_cluster_r
 prog_entry.append([' --stepZ ', ' --stepY ', ' --stepX ', " --zOffset ", " --yOffset ", " --xOffset ", ' --cut_dt ', ' --cut_dr ', ' --ModelName ', ' --Log ',' --Z_overlap ',' --Y_overlap ',' --X_overlap '])
 prog_entry.append([stepZ,stepY,stepX,z_offset, y_offset, x_offset, cut_dt,cut_dr, ModelName ,Log,Z_overlap,Y_overlap,X_overlap])
 prog_entry.append(Xsteps*Ysteps*Zsteps)
+prog_entry.append(LocalSub)
 Program.append(prog_entry)
 if Mode=='RESET':
    print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Delete'))
+#Setting up folders for the output. The reconstruction of just one brick can easily generate >100k of files. Keeping all that blob in one directory can cause problems on lxplus.
 print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Create'))
 
 ###### Stage 1
@@ -437,9 +456,11 @@ prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','hit_cluster_r
 prog_entry.append([' --Z_ID_Max ',' --j ', ' --i '])
 prog_entry.append([Zsteps,Ysteps,Xsteps])
 prog_entry.append(Xsteps*Ysteps)
+prog_entry.append(LocalSub)
 Program.append(prog_entry)
 if Mode=='RESET':
    print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Delete'))
+#Setting up folders for the output. The reconstruction of just one brick can easily generate >100k of files. Keeping all that blob in one directory can cause problems on lxplus.
 print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Create'))
 ###### Stage 2
 prog_entry=[]
@@ -449,9 +470,11 @@ prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','hit_cluster_r
 prog_entry.append([' --Y_ID_Max ', ' --i '])
 prog_entry.append([Ysteps,Xsteps])
 prog_entry.append(Xsteps)
+prog_entry.append(LocalSub)
 Program.append(prog_entry)
 if Mode=='RESET':
    print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Delete'))
+#Setting up folders for the output. The reconstruction of just one brick can easily generate >100k of files. Keeping all that blob in one directory can cause problems on lxplus.
 print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Create'))
 
 ###### Stage 3
@@ -462,18 +485,19 @@ prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','hit_cluster_r
 prog_entry.append([' --X_ID_Max '])
 prog_entry.append([Xsteps])
 prog_entry.append(1)
+prog_entry.append(True) #This part we can execute locally, no need for HTCondor
 Program.append(prog_entry)
 if Mode=='RESET':
    print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Delete'))
+#Setting up folders for the output. The reconstruction of just one brick can easily generate >100k of files. Keeping all that blob in one directory can cause problems on lxplus.
 print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Create'))
 
 ###### Stage 4
 Program.append('Custom')
 
 
-print(UF.TimeStamp(),'There are '+str(len(Program)+1)+' stages (0-'+str(len(Program)+1)+' of this script',bcolors.ENDC)
+print(UF.TimeStamp(),'There are '+str(len(Program)+1)+' stages (0-'+str(len(Program)+1)+') of this script',bcolors.ENDC)
 print(UF.TimeStamp(),'Current stage has a code',Status,bcolors.ENDC)
-
 
 while Status<len(Program):
     if Program[Status]!='Custom':
@@ -481,15 +505,17 @@ while Status<len(Program):
         Result=StandardProcess(Program,Status,FreshStart)
         if Result[0]:
             FreshStart=Result[1]
-            Status+=1
-            #Cleaning HTCondor submission files
-            continue
+            if int(args.ForceStatus)==0:
+                Status+=1
+                continue
+            else:
+                exit()
         else:
             Status=len(Program)+1
             break
 
     elif Status==4:
-       #Non standard processes (don't follow the general pattern) have been coded here
+       #Non standard processes (that don't follow the general pattern) have been coded here
        print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
        print(UF.TimeStamp(),bcolors.BOLD+'Stage 4:'+bcolors.ENDC+' Using the results from previous steps to map merged trackIDs to the original reconstruction file')
        try:
@@ -524,7 +550,7 @@ while Status<len(Program):
            print(UF.TimeStamp(), bcolors.OKGREEN+"The tracked data has been written to"+bcolors.ENDC, bcolors.OKBLUE+output_file_location+bcolors.ENDC)
            #The code bellow displays the Cluster level reconstruction stats. Only available if MC and FEDRA (Optional) rec stats are available. Is not recomended for big jobs.
            if Log!='NO':
-                        #Calculating recombination accuracy stats, useful for diagnostics but it does allow to determine the high level of tracking - there is a dedicated module for that
+                        #Calculating ANNDEA volume level recombination accuracy stats, useful for diagnostics but it does not allow to determine the high level of tracking - there is a dedicated module for that
                         print(UF.TimeStamp(),'Since the logging was requested, ANN average recombination performance across the clusters is being calculated...')
                         fake_results_1=[]
                         fake_results_2=[]
@@ -559,10 +585,10 @@ while Status<len(Program):
                                 for j in range(0,Ysteps):
                                     for i in range(0,Xsteps):
                                         bar()
-                                        input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RTr1a_'+RecBatchID+'_hit_cluster_rec_set_'+str(k)+'_' +str(j)+'_' +str(i)+'.pkl'
+                                        input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RTr1a_'+RecBatchID+str(i)+'/RTr1a_'+RecBatchID+'_hit_cluster_rec_set_'+str(k)+'_' +str(j)+'_' +str(i)+'.pkl'
                                         cluster_data_raw=UF.PickleOperations(input_file_location, 'r', 'N/A')
                                         cluster_data=cluster_data_raw[0]
-                                        result_temp=cluster_data.RecStats
+                                        result_temp=cluster_data.RecStats #If we enable the logging during the reconstruction, they will be recorded there.
                                         fake_results_1.append(int(result_temp[1][0]))
                                         fake_results_2.append(int(result_temp[1][1]))
                                         fake_results_3.append(int(result_temp[1][2]))
@@ -577,7 +603,8 @@ while Status<len(Program):
                                         truth_results_5.append(int(result_temp[2][4]))
                                         truth_results_6.append(int(result_temp[2][5]))
                                         truth_results_7.append(int(result_temp[2][6]))
-                                        if (int(result_temp[2][6])+int(result_temp[1][6]))>0:
+                                        #Calculating precision by using formula: Precision = TP/(FP+TP)
+                                        if (int(result_temp[2][6])+int(result_temp[1][6]))>0: #Avoiding division by zero
                                             precision_results_1.append(int(result_temp[2][0])/(int(result_temp[2][0])+int(result_temp[1][0])))
                                             precision_results_2.append(int(result_temp[2][1])/(int(result_temp[2][1])+int(result_temp[1][1])))
                                             precision_results_3.append(int(result_temp[2][2])/(int(result_temp[2][2])+int(result_temp[1][2])))
@@ -585,7 +612,8 @@ while Status<len(Program):
                                             precision_results_5.append(int(result_temp[2][4])/(int(result_temp[2][4])+int(result_temp[1][4])))
                                             precision_results_6.append(int(result_temp[2][5])/(int(result_temp[2][5])+int(result_temp[1][5])))
                                             precision_results_7.append(int(result_temp[2][6])/(int(result_temp[2][6])+int(result_temp[1][6])))
-                                        if int(result_temp[2][2])>0:
+                                        #Calculating recall by using formula: Precision = TP/(FN+TP)
+                                        if int(result_temp[2][2])>0: #Avoiding division by zero
                                             recall_results_1.append(int(result_temp[2][0])/(int(result_temp[2][2])))
                                             recall_results_2.append(int(result_temp[2][1])/(int(result_temp[2][2])))
                                             recall_results_3.append(int(result_temp[2][2])/(int(result_temp[2][2])))
@@ -607,6 +635,7 @@ while Status<len(Program):
                             [label[6], np.average(fake_results_7), np.average(truth_results_7), np.sum(truth_results_7)/(np.sum(fake_results_7)+np.sum(truth_results_3)), np.std(precision_results_7), np.average(recall_results_7), np.std(recall_results_7)]], \
                             headers=['Step', 'Avg # Fake edges', 'Avg # of Genuine edges', 'Avg precision', 'Precision std','Avg recall', 'Recall std' ], tablefmt='orgtbl'))
            if Log=='KALMAN':
+                        #Similar logic as for MC but here we measure FEDRA reconstruction
                         print(UF.TimeStamp(),'Since the logging was requested, Kalman filter average recombination performance across the clusters is being calculated...')
                         fake_results_1=[]
                         fake_results_2=[]
@@ -671,15 +700,15 @@ while Status<len(Program):
           break
 if Status==5:
     print(UF.TimeStamp(),'Performing the cleanup... ',bcolors.ENDC)
-    HTCondorTag="SoftUsed == \"ANNDEA-RTr-"+RecBatchID+"\""
-    UF.RecCleanUp(AFS_DIR, EOS_DIR, 'RTr1_'+RecBatchID, ['RTr1a','RTr1b','RTr1c','RTr1d',RecBatchID+'_RTr_OUTPUT.pkl'], HTCondorTag)
+    HTCondorTag="SoftUsed == \"ANNDEA-RTr1a-"+RecBatchID+"\""
+    UF.RecCleanUp(AFS_DIR, EOS_DIR, 'RTr1_'+RecBatchID, ['RTr1_'+RecBatchID,RecBatchID+'_RTr_OUTPUT.pkl'], HTCondorTag)
     for p in Program:
         if p!='Custom':
            print(UF.TimeStamp(),UF.ManageTempFolders(p,'Delete'))
     print(UF.TimeStamp(), bcolors.OKGREEN+"Reconstruction has been completed"+bcolors.ENDC)
     exit()
 else:
-    print(UF.TimeStamp(), bcolors.FAIL+"Reconstruction has not been completed as one of the processes has timed out. Please run the script again (without Reset Mode)."+bcolors.ENDC)
+    print(UF.TimeStamp(), bcolors.FAIL+"Reconstruction has not been completed as one of the processes has timed out or --ForceStatus!=0 option was chosen. Please run the script again (without Reset Mode)."+bcolors.ENDC)
     exit()
 
 

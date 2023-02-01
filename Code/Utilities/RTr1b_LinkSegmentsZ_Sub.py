@@ -1,5 +1,5 @@
 ########################################################################################################################
-#######################################  This simple script prepares data for CNN  #####################################
+##################  This simple script merges tracks from different volumes along z-axis  ##############################
 
 
 
@@ -37,7 +37,7 @@ args = parser.parse_args()
 AFS_DIR=args.AFS
 EOS_DIR=args.EOS
 PY_DIR=args.PY
-if PY_DIR!='': #Temp solution
+if PY_DIR!='': #Temp solution to avoid importing libraries from AFS
     sys.path=['',PY_DIR]
     sys.path.append('/usr/lib64/python36.zip')
     sys.path.append('/usr/lib64/python3.6')
@@ -49,7 +49,7 @@ sys.path.append(AFS_DIR+'/Code/Utilities')
 import pandas as pd
 RecBatchID=args.BatchID
 import UtilityFunctions as UF
-#Load data configuration
+
 EOSsubDIR=EOS_DIR+'/'+'ANNDEA'
 EOSsubDataDIR=EOSsubDIR+'/'+'Data'
 Y_ID=int(args.j)
@@ -62,10 +62,8 @@ pfx=args.pfx
 ##############################################################################################################################
 ######################################### Starting the program ################################################################
 print(UF.TimeStamp(), bcolors.OKGREEN+"Modules Have been imported successfully..."+bcolors.ENDC)
-def zero_divide(a, b):
-    if (b==0): return 0
-    return a/b
 
+#Load the first brick along z-axis
 FirstFile=EOS_DIR+p+'/Temp_'+'RTr1a'+'_'+RecBatchID+'_'+str(X_ID)+'/'+'RTr1a'+'_'+RecBatchID+'_'+'hit_cluster_rec_set'+'_'+str(X_ID)+'_'+str(Y_ID)+'_'+str(0)+sfx
 FirstFileRaw=UF.PickleOperations(FirstFile,'r', 'N/A')
 FirstFile=FirstFileRaw[0]

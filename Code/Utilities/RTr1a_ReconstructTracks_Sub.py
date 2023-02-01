@@ -58,7 +58,7 @@ X_ID=int(args.i)/X_overlap
 Z_ID_n=int(args.k)
 Y_ID_n=int(args.j)
 X_ID_n=int(args.i)
-stepX=float(args.stepX) #The coordinate of the st plate in the current scope
+stepX=float(args.stepX)
 stepZ=float(args.stepZ)
 stepY=float(args.stepY)
 z_offset=float(args.zOffset)
@@ -83,6 +83,7 @@ output_file_location=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(X_ID_n)+'/'+p
 print(UF.TimeStamp(), "Modules Have been imported successfully...")
 print(UF.TimeStamp(),'Loading pre-selected data from ',input_file_location)
 
+#Load the file with Hit detailed information
 data=pd.read_csv(input_file_location,header=0,usecols=["Hit_ID","x","y","z","tx","ty"])[["Hit_ID","x","y","z","tx","ty"]]
 data["x"] = pd.to_numeric(data["x"],downcast='float')
 data["y"] = pd.to_numeric(data["y"],downcast='float')
@@ -92,6 +93,7 @@ data['y']=data['y']-y_offset
 data["Hit_ID"] = data["Hit_ID"].astype(str)
 data['z']=data['z']-z_offset
 print(UF.TimeStamp(),'Preparing data... ')
+#Keeping only sections of the Hit data relevant to the volume being reconstructed to use less memory
 data.drop(data.index[data['z'] >= ((Z_ID+1)*stepZ)], inplace = True)  #Keeping the relevant z slice
 data.drop(data.index[data['z'] < (Z_ID*stepZ)], inplace = True)  #Keeping the relevant z slice
 data.drop(data.index[data['x'] >= ((X_ID+1)*stepX)], inplace = True)  #Keeping the relevant z slice
@@ -152,34 +154,38 @@ if len(HC.RawClusterGraph)>1: #If we have at least 2 Hits in the cluster that ca
     GraphStatus = HC.GenerateEdges(cut_dt, cut_dr)
     combined_weight_list=[]
     if GraphStatus:
-        if HC.ClusterGraph.num_edges>0:
+        if HC.ClusterGraph.num_edges>0: #We only bring torch and GNN if we have some edges to classify
                     print(UF.TimeStamp(),'Classifying the edges...')
                     print(UF.TimeStamp(),'Preparing the model')
                     import torch
                     EOSsubDIR=EOS_DIR+'/'+'ANNDEA'
                     EOSsubModelDIR=EOSsubDIR+'/'+'Models'
+                    #Load the model meta file
                     Model_Meta_Path=EOSsubModelDIR+'/'+args.ModelName+'_Meta'
+                    #Specify the model path
                     Model_Path=EOSsubModelDIR+'/'+args.ModelName
                     ModelMeta=UF.PickleOperations(Model_Meta_Path, 'r', 'N/A')[0]
+                    #Meta file contatins training session stats. They also record the optimal acceptance.
                     Acceptance=ModelMeta.TrainSessionsData[-1][-1][3]
                     device = torch.device('cpu')
+                    #In PyTorch we don't save the actual model like in Tensorflow. We just save the weights, hence we have to regenerate the model again. The recepy is in the Model Meta file
                     model = UF.GenerateModel(ModelMeta).to(device)
                     model.load_state_dict(torch.load(Model_Path))
-                    model.eval()
-                    w = model(HC.ClusterGraph.x, HC.ClusterGraph.edge_index, HC.ClusterGraph.edge_attr)
+                    model.eval() #In Pytorch this function sets the model into the evaluation mode.
+                    w = model(HC.ClusterGraph.x, HC.ClusterGraph.edge_index, HC.ClusterGraph.edge_attr) #Here we use the model to assign the weights between Hit edges
                     w=w.tolist()
                     for edge in range(len(HC.edges)):
                         combined_weight_list.append(HC.edges[edge]+w[edge])
         if Log!='NO':
                     print(UF.TimeStamp(),'Tracking the cluster...')
-                    HC.LinkHits(combined_weight_list,True,MCdata_list,cut_dt,cut_dr,Acceptance)
+                    HC.LinkHits(combined_weight_list,True,MCdata_list,cut_dt,cut_dr,Acceptance) #We use the weights assigned by the model to perform microtracking within the volume
                     if Log=='KALMAN':
                            HC.TestKalmanHits(FEDRAdata_list,MCdata_list)
 
         else:
             print(UF.TimeStamp(),'Tracking the cluster...')
-            HC.LinkHits(combined_weight_list,False,[],cut_dt,cut_dr,Acceptance)
-        HC.UnloadClusterGraph()
+            HC.LinkHits(combined_weight_list,False,[],cut_dt,cut_dr,Acceptance) #We use the weights assigned by the model to perform microtracking within the volume
+        HC.UnloadClusterGraph() #Remove the Graph that we do not need anymore to reduce the object size
         print(UF.TimeStamp(),'Writing the output...')
         print(UF.PickleOperations(output_file_location,'w', HC)[1])
         exit()
