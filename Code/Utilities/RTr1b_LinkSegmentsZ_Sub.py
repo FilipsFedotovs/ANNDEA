@@ -68,7 +68,7 @@ MainFile=EOS_DIR+p+'/Temp_'+'RTr1a'+'_'+RecBatchID+'_'+str(X_ID)+'/'+'RTr1a'+'_'
 MainFileRaw=UF.PickleOperations(MainFile,'r', 'N/A')
 FirstFile=MainFileRaw[0][0]
 ZContractedTable=FirstFile.RecHits.rename(columns={"Segment_ID": "Master_Segment_ID","z": "Master_z" })
-for i in range(1,Z_ID_Max):
+for i in range(1,len(MainFileRaw[0])):
     SecondFile=MainFileRaw[0][i]
     SecondFileTable=SecondFile.RecHits
     FileClean=pd.merge(ZContractedTable,SecondFileTable,how='inner', on=['HitID'])
