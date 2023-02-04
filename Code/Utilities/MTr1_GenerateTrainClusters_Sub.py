@@ -30,6 +30,8 @@ parser.add_argument('--PY',help="Python libraries directory location", default='
 ######################################## Set variables  #############################################################
 args = parser.parse_args()
 PY_DIR=args.PY
+EOS_DIR=args.EOS
+AFS_DIR=args.AFS
 import sys
 if PY_DIR!='': #Temp solution
     sys.path=['',PY_DIR]
@@ -65,8 +67,7 @@ val_ratio=float(args.valRatio)
 test_ratio=float(args.testRatio)
 
 #Loading Directory locations
-EOS_DIR=args.EOS
-AFS_DIR=args.AFS
+
 TrainSampleID=args.TrainSampleID
 import UtilityFunctions as UF #This is where we keep routine utility functions
 
