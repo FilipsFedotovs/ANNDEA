@@ -76,7 +76,7 @@ OptionLine = [TrainParamsStr, TrainSampleID]
 prog_entry=[]
 job_sets=[1]
 prog_entry.append(' Sending hit cluster to the HTCondor, so the reconstructed clusters can be merged along z-axis')
-prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/','hit_cluster_rec_z_set','RTr1b','.pkl',ModelName,job_sets,''])
+prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/','hit_cluster_rec_z_set','MUTr2','.pkl',ModelName,job_sets,''])
 prog_entry.append([''])
 prog_entry.append([1])
 prog_entry.append(1)
