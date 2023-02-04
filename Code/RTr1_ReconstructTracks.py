@@ -55,6 +55,7 @@ parser.add_argument('--Mode', help='Script will continue from the last checkpoin
 parser.add_argument('--ModelName',help="WHat GNN model would you like to use?", default='MH_GNN_5FTR_5_80_5_80')
 parser.add_argument('--Patience',help="How many checks to do before resubmitting the job?", default='30')
 parser.add_argument('--SubPause',help="How long to wait in minutes after submitting 10000 jobs?", default='60')
+parser.add_argument('--SubGap',help="How long to wait in minutes after submitting 10000 jobs?", default='10000')
 parser.add_argument('--Log',help="Would you like to log the performance: No, MC, Kalman? (Only available if you have MC Truth or Kalman track reconstruction data)", default='No')
 parser.add_argument('--RecBatchID',help="Give this reconstruction batch an ID", default='Test_Batch')
 parser.add_argument('--LocalSub',help="Local submission?", default='N')
@@ -78,6 +79,7 @@ ModelName=args.ModelName
 RecBatchID=args.RecBatchID
 Patience=int(args.Patience)
 SubPause=int(args.SubPause)*60
+SubGap=int(args.SubGap)
 LocalSub=(args.LocalSub=='Y')
 if LocalSub:
    time_int=0
@@ -352,7 +354,7 @@ def StandardProcess(program,status,freshstart):
                  print(UF.TimeStamp(),'Submitting jobs to HTCondor... ',bcolors.ENDC)
                  _cnt=0
                  for bp in bad_pop:
-                          if _cnt>PM.SubPauseGap:
+                          if _cnt>SubGap:
                               print(UF.TimeStamp(),'Pausing submissions for  ',str(int(SubPause/60)), 'minutes to relieve congestion...',bcolors.ENDC)
                               time.sleep(SubPause)
                               _cnt=0
@@ -380,8 +382,14 @@ def StandardProcess(program,status,freshstart):
                        print(UF.TimeStamp(),'OK, exiting now then')
                        exit()
                    if UserAnswer=='R':
+                      _cnt=0
                       for bp in bad_pop:
+                           if _cnt>SubGap:
+                              print(UF.TimeStamp(),'Pausing submissions for  ',str(int(SubPause/60)), 'minutes to relieve congestion...',bcolors.ENDC)
+                              time.sleep(SubPause)
+                              _cnt=0
                            UF.SubmitJobs2Condor(bp,program[status][5],RequestExtCPU,JobFlavour)
+                           _cnt+=bp[6]
                       print(UF.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
                       if program[status][5]:
                           print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
@@ -403,8 +411,14 @@ def StandardProcess(program,status,freshstart):
                           print(UF.TimeStamp(),bcolors.FAIL+'Stage '+str(status)+' is uncompleted...'+bcolors.ENDC)
                           return False,False
             else:
+                      _cnt=0
                       for bp in bad_pop:
+                           if _cnt>SubGap:
+                              print(UF.TimeStamp(),'Pausing submissions for  ',str(int(SubPause/60)), 'minutes to relieve congestion...',bcolors.ENDC)
+                              time.sleep(SubPause)
+                              _cnt=0
                            UF.SubmitJobs2Condor(bp,program[status][5],RequestExtCPU,JobFlavour)
+                           _cnt+=bp[6]
                       if program[status][5]:
                            print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
                            return True,False
@@ -431,16 +445,15 @@ else:
 prog_entry=[]
 job_sets=[]
 for i in range(0,Xsteps):
-                job_sets.append([])
-                for j in range(0,Ysteps):
-                     job_sets[i].append(Zsteps)
+                job_sets.append(Ysteps)
 prog_entry.append(' Sending hit cluster to the HTCondor, so the model assigns weights between hits')
 prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','hit_cluster_rec_set','RTr1a','.pkl',RecBatchID,job_sets,'RTr1a_ReconstructTracks_Sub.py'])
-prog_entry.append([' --stepZ ', ' --stepY ', ' --stepX ', " --zOffset ", " --yOffset ", " --xOffset ", ' --cut_dt ', ' --cut_dr ', ' --ModelName ', ' --Log ',' --Z_overlap ',' --Y_overlap ',' --X_overlap '])
-prog_entry.append([stepZ,stepY,stepX,z_offset, y_offset, x_offset, cut_dt,cut_dr, ModelName ,Log,Z_overlap,Y_overlap,X_overlap])
-prog_entry.append(Xsteps*Ysteps*Zsteps)
+prog_entry.append([' --stepZ ', ' --stepY ', ' --stepX ', " --zOffset ", " --yOffset ", " --xOffset ", ' --cut_dt ', ' --cut_dr ', ' --ModelName ', ' --Log ',' --Z_overlap ',' --Y_overlap ',' --X_overlap ', ' --Z_ID_Max '])
+prog_entry.append([stepZ,stepY,stepX,z_offset, y_offset, x_offset, cut_dt,cut_dr, ModelName ,Log,Z_overlap,Y_overlap,X_overlap, Zsteps])
+prog_entry.append(Xsteps*Ysteps)
 prog_entry.append(LocalSub)
 Program.append(prog_entry)
+
 if Mode=='RESET':
    print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Delete'))
 #Setting up folders for the output. The reconstruction of just one brick can easily generate >100k of files. Keeping all that blob in one directory can cause problems on lxplus.
@@ -498,7 +511,6 @@ Program.append('Custom')
 
 print(UF.TimeStamp(),'There are '+str(len(Program)+1)+' stages (0-'+str(len(Program)+1)+') of this script',bcolors.ENDC)
 print(UF.TimeStamp(),'Current stage has a code',Status,bcolors.ENDC)
-
 while Status<len(Program):
     if Program[Status]!='Custom':
         #Standard process here
