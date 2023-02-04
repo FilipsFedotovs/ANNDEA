@@ -2,11 +2,9 @@
 #Part of ANNDEA package - this is the script that usually operates in HTCondor
 
 
+
 ########################################    Import libraries    #############################################
 import argparse
-import pandas as pd #We use Panda for a routine data processing
-import math #We use it for data manipulation
-import random
 
 #Setting the parser - this script is usually not run directly, but is used by a Master version Counterpart that passes the required arguments
 parser = argparse.ArgumentParser(description='select cut parameters')
@@ -28,10 +26,25 @@ parser.add_argument('--TrainSampleID',help="Give name to this train sample", def
 parser.add_argument('--Z_overlap',help="Enter the level of overlap in integer number between reconstruction blocks along z-axis.", default='1')
 parser.add_argument('--Y_overlap',help="Enter the level of overlap in integer number between reconstruction blocks along y-axis.", default='1')
 parser.add_argument('--X_overlap',help="Enter the level of overlap in integer number between reconstruction blocks along x-axis.", default='1')
-
+parser.add_argument('--PY',help="Python libraries directory location", default='.')
 ######################################## Set variables  #############################################################
 args = parser.parse_args()
-
+PY_DIR=args.PY
+import sys
+if PY_DIR!='': #Temp solution
+    sys.path=['',PY_DIR]
+    sys.path.append('/usr/lib64/python36.zip')
+    sys.path.append('/usr/lib64/python3.6')
+    sys.path.append('/usr/lib64/python3.6/lib-dynload')
+    sys.path.append('/usr/lib64/python3.6/site-packages')
+    sys.path.append('/usr/lib/python3.6/site-packages')
+sys.path.append(AFS_DIR+'/Code/Utilities')
+sys.path.insert(1, AFS_DIR+'/Code/Utilities/')
+########################################    Import libraries    #############################################
+import argparse
+import pandas as pd #We use Panda for a routine data processing
+import math #We use it for data manipulation
+import random
 Z_overlap,Y_overlap,X_overlap=int(args.Z_overlap),int(args.Y_overlap),int(args.X_overlap)
 
 Z_ID=int(args.Z_ID)/Z_overlap #Renormalising the index of the cluster along z-axis
