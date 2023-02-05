@@ -16,15 +16,7 @@ for c in config:
         PY_DIR=c[1]
 csv_reader.close()
 import sys
-# if PY_DIR!='': #Temp solution - the decision was made to move all libraries to EOS drive as AFS get locked during heavy HTCondor submission loads
-#     sys.path=['',PY_DIR]
-#     sys.path.append('/usr/lib64/python36.zip')
-#     sys.path.append('/usr/lib64/python3.6')
-#     sys.path.append('/usr/lib64/python3.6/lib-dynload')
-#     sys.path.append('/usr/lib64/python3.6/site-packages')
-#     sys.path.append('/usr/lib/python3.6/site-packages')
 sys.path.append(AFS_DIR+'/Code/Utilities')
-import csv
 import argparse
 import pandas as pd #We use Panda for a routine data processing
 import math #We use it for data manipulation
@@ -362,7 +354,7 @@ def StandardProcess(program,status,freshstart):
 if Mode=='RESET':
     print(UF.TimeStamp(),'Performing the cleanup... ',bcolors.ENDC)
     HTCondorTag="SoftUsed == \"ANNDEA-MUTr1a-"+TrainSampleID+"\""
-    UF.RecCleanUp(AFS_DIR, EOS_DIR, 'MUTr1_'+TrainSampleID, ['MUTr1a','MUTr1b','MUTr1c','MUTr1d',TrainSampleID+'_MUTr_OUTPUT.pkl'], HTCondorTag)
+    UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MUTr1_'+TrainSampleID, ['MUTr1a','MUTr1b','MUTr1c','MUTr1d',TrainSampleID+'_MUTr_OUTPUT'], HTCondorTag)
     FreshStart=False
 if Mode=='CLEANUP':
     Status=6
