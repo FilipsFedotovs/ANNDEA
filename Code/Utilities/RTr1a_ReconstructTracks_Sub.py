@@ -160,7 +160,11 @@ for k in range(0,Z_ID_Max):
     HC.LoadClusterHits(temp_data_list) #Decorating the Clusters with Hit information
     if len(HC.RawClusterGraph)>1: #If we have at least 2 Hits in the cluster that can create
         print(UF.TimeStamp(),'Generating the edges...')
+        print('Hit density is', len(HC.RawClusterGraph)/(0.6*0.6*1.2), 'hits per cm^3')
+        Before=UF.TimeStamp()
         GraphStatus = HC.GenerateEdges(cut_dt, cut_dr)
+        After=UF.TimeStamp()
+        print('Time lapse', After-Before)
         combined_weight_list=[]
         if GraphStatus:
             if HC.ClusterGraph.num_edges>0: #We only bring torch and GNN if we have some edges to classify
@@ -168,6 +172,7 @@ for k in range(0,Z_ID_Max):
                         print(UF.TimeStamp(),'Preparing the model')
                         if torch_import:
                             import torch
+
                             EOSsubDIR=EOS_DIR+'/'+'ANNDEA'
                             EOSsubModelDIR=EOSsubDIR+'/'+'Models'
                             #Load the model meta file
