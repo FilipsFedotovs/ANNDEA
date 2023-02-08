@@ -318,7 +318,7 @@ class HitCluster:
                   if HitCluster.JoinHits(l,r,cut_dt,cut_dr):
                       _Tot_Hits.append(l+r)
            import pandas as pd
-           _Tot_Hits=pd.DataFrame(_Tot_Hits, columns = ['l_HitID','l_x','l_y','l_z','r_HitID','r_x','r_y','r_z'])
+           _Tot_Hits=pd.DataFrame(_Tot_Hits, columns = ['l_HitID','l_x','l_y','l_z','l_tx','l_ty','r_HitID','r_x','r_y','r_z','r_tx','r_ty'])
            print('Optimised Memory usage after is ', process_memory(), 'Mb')
            _Tot_Hits['l_x']=_Tot_Hits['l_x']/self.Step[2]
            _Tot_Hits['l_y']=_Tot_Hits['l_y']/self.Step[2]
