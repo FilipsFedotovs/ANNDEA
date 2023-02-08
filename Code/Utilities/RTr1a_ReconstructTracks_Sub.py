@@ -170,10 +170,9 @@ for k in range(0,Z_ID_Max):
 
         Before=datetime.datetime.now()
         GraphStatus = HC.GenerateEdges(cut_dt, cut_dr)
-        GraphStatusAfter = HC.ExpressGenerateEdges(cut_dt, cut_dr)
+        #GraphStatusAfter = HC.ExpressGenerateEdges(cut_dt, cut_dr)
         After=datetime.datetime.now()
         print('Time lapse', After-Before)
-        exit()
         combined_weight_list=[]
         if GraphStatus:
             if HC.ClusterGraph.num_edges>0: #We only bring torch and GNN if we have some edges to classify

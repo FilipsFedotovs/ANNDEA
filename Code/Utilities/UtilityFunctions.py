@@ -225,48 +225,24 @@ class HitCluster:
            else:
                return False
       def GenerateEdges(self, cut_dt, cut_dr): #Decorate hit information
-           import pandas as pd
-           #Preparing Raw and MC combined data 1
-           _l_Hits=pd.DataFrame(self.ClusterHits, columns = ['l_HitID','l_x','l_y','l_z','l_tx','l_ty'])
-           #Join hits + MC truth
-           _l_Hits['join_key'] = 'join_key'
-           #Preparing Raw and MC combined data 2
-           _r_Hits=pd.DataFrame(self.ClusterHits, columns = ['r_HitID','r_x','r_y','r_z','r_tx','r_ty'])
-           #Join hits + MC truth
-           _r_Hits['join_key'] = 'join_key'
            import os
            import psutil
            def process_memory():
                 process = psutil.Process(os.getpid())
                 mem_info = process.memory_info()
                 return mem_info.rss/(1024**2)
-           print(_l_Hits)
-           print(_r_Hits)
-           print('Memory usage before is ', process_memory(), 'Mb')
+           #New workaround: instead of a painful Pandas outer join a loop over list is perfromed
+           _l_Hits=self.ClusterHits
+           _r_Hits=self.ClusterHits
            #Combining data 1 and 2
-           _Tot_Hits=pd.merge(_l_Hits, _r_Hits, how="inner", on=['join_key'])
-           print('Memory usage after is ', process_memory(), 'Mb')
-           _Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['l_HitID'] == _Tot_Hits['r_HitID']], inplace = True)
-
-           _Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['l_z'] <= _Tot_Hits['r_z']], inplace = True)
-
-           _Tot_Hits['d_tx'] = _Tot_Hits['l_tx']-_Tot_Hits['r_tx']
-           _Tot_Hits['d_tx'] = _Tot_Hits['d_tx'].abs()
-           _Tot_Hits['d_ty'] = _Tot_Hits['l_ty']-_Tot_Hits['r_ty']
-           _Tot_Hits['d_ty'] = _Tot_Hits['d_ty'].abs()
-           _Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['d_tx'] >= cut_dt], inplace = True)
-           _Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['d_ty'] >= cut_dt], inplace = True)
-
-           _Tot_Hits['d_x'] = (_Tot_Hits['r_x']-(_Tot_Hits['l_x']+(_Tot_Hits['l_tx']*(_Tot_Hits['r_z']-_Tot_Hits['l_z']))))
-           _Tot_Hits['d_x'] = _Tot_Hits['d_x'].abs()
-           _Tot_Hits['d_y'] = (_Tot_Hits['r_y']-(_Tot_Hits['l_y']+(_Tot_Hits['l_ty']*(_Tot_Hits['r_z']-_Tot_Hits['l_z']))))
-           _Tot_Hits['d_y'] = _Tot_Hits['d_y'].abs()
-           _Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['d_x'] >= cut_dr], inplace = True)
-           _Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['d_y'] >= cut_dr], inplace = True)
-
-           #_Tot_Hits = _Tot_Hits.drop(['d_tx','d_ty','d_x','d_y','join_key','l_tx','l_ty','r_tx','r_ty'],axis=1)
-           _Tot_Hits = _Tot_Hits.drop(['d_x','d_y','join_key','l_tx','l_ty','r_tx','r_ty'],axis=1)
-
+           _Tot_Hits=[]
+           for l in _l_Hits:
+               for r in _r_Hits:
+                  if HitCluster.JoinHits(l,r,cut_dt,cut_dr):
+                      _Tot_Hits.append(l+r)
+           import pandas as pd
+           _Tot_Hits=pd.DataFrame(_Tot_Hits, columns = ['l_HitID','l_x','l_y','l_z','l_tx','l_ty','r_HitID','r_x','r_y','r_z','r_tx','r_ty'])
+           print('Optimised Memory usage after is ', process_memory(), 'Mb')
            _Tot_Hits['l_x']=_Tot_Hits['l_x']/self.Step[2]
            _Tot_Hits['l_y']=_Tot_Hits['l_y']/self.Step[2]
            _Tot_Hits['l_z']=_Tot_Hits['l_z']/self.Step[2]
@@ -277,9 +253,12 @@ class HitCluster:
            _Tot_Hits['d_l'] = (np.sqrt(((_Tot_Hits['r_y']-_Tot_Hits['l_y'])**2) + ((_Tot_Hits['r_x']-_Tot_Hits['l_x'])**2) + ((_Tot_Hits['r_z']-_Tot_Hits['l_z'])**2)))
            _Tot_Hits['d_t'] = np.sqrt(((_Tot_Hits['r_y']-_Tot_Hits['l_y'])**2) + ((_Tot_Hits['r_x']-_Tot_Hits['l_x'])**2))
            _Tot_Hits['d_z'] = (_Tot_Hits['r_z']-_Tot_Hits['l_z']).abs()
+           _Tot_Hits['d_tx'] = _Tot_Hits['l_tx']-_Tot_Hits['r_tx']
+           _Tot_Hits['d_tx'] = _Tot_Hits['d_tx'].abs()
+           _Tot_Hits['d_ty'] = _Tot_Hits['l_ty']-_Tot_Hits['r_ty']
+           _Tot_Hits['d_ty'] = _Tot_Hits['d_ty'].abs()
            _Tot_Hits = _Tot_Hits.drop(['r_x','r_y','r_z','l_x','l_y','l_z'],axis=1)
            _Tot_Hits=_Tot_Hits[['l_HitID','r_HitID','label','d_l','d_t','d_z','d_tx','d_ty']]
-           print(_Tot_Hits)
            _Tot_Hits=_Tot_Hits.values.tolist()
            if len(_Tot_Hits)>0:
                import torch
