@@ -246,8 +246,8 @@ class HitCluster:
            #Combining data 1 and 2
            _Tot_Hits=pd.merge(_l_Hits, _r_Hits, how="inner", on=['join_key'])
            print('Memory usage after is ', process_memory(), 'Mb')
-           print(_Tot_Hits)
            _Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['l_HitID'] == _Tot_Hits['r_HitID']], inplace = True)
+           print(_Tot_Hits)
            _Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['l_z'] <= _Tot_Hits['r_z']], inplace = True)
            _Tot_Hits['d_tx'] = _Tot_Hits['l_tx']-_Tot_Hits['r_tx']
            _Tot_Hits['d_tx'] = _Tot_Hits['d_tx'].abs()
