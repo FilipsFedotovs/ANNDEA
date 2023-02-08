@@ -262,9 +262,8 @@ class HitCluster:
            _Tot_Hits['d_y'] = (_Tot_Hits['r_y']-(_Tot_Hits['l_y']+(_Tot_Hits['l_ty']*(_Tot_Hits['r_z']-_Tot_Hits['l_z']))))
            _Tot_Hits['d_y'] = _Tot_Hits['d_y'].abs()
            _Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['d_x'] >= cut_dr], inplace = True)
-           print(_Tot_Hits)
            _Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['d_y'] >= cut_dr], inplace = True)
-
+           print(_Tot_Hits)
            #_Tot_Hits = _Tot_Hits.drop(['d_tx','d_ty','d_x','d_y','join_key','l_tx','l_ty','r_tx','r_ty'],axis=1)
            _Tot_Hits = _Tot_Hits.drop(['d_x','d_y','join_key','l_tx','l_ty','r_tx','r_ty'],axis=1)
            _Tot_Hits['l_x']=_Tot_Hits['l_x']/self.Step[2]
@@ -737,7 +736,10 @@ class HitCluster:
                       _d_x = abs(_H2[1]-(_H1[1]+(_H1[4]*(_H2[3]-_H1[3]))))
                       if _d_x>=_cdr:
                          return False
-
+                      else:
+                          _d_y = abs(_H2[2]-(_H1[2]+(_H1[5]*(_H2[3]-_H1[3]))))
+                          if _d_y>=_cdr:
+                             return False
           return True
       def GenerateEdgeAttributes(_input):
           _EdgeAttr=[]
