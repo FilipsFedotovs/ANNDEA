@@ -242,7 +242,6 @@ class HitCluster:
                 return mem_info.rss/(1024**2)
            print(_l_Hits)
            print(_r_Hits)
-           exit()
            print('Memory usage before is ', process_memory(), 'Mb')
            #Combining data 1 and 2
            _Tot_Hits=pd.merge(_l_Hits, _r_Hits, how="inner", on=['join_key'])
