@@ -234,9 +234,16 @@ class HitCluster:
            _r_Hits=pd.DataFrame(self.ClusterHits, columns = ['r_HitID','r_x','r_y','r_z','r_tx','r_ty'])
            #Join hits + MC truth
            _r_Hits['join_key'] = 'join_key'
-
+           import os
+           import psutil
+           def process_memory():
+                process = psutil.Process(os.getpid())
+                mem_info = process.memory_info()
+                return mem_info.rss/(1024**2)
+           print('Memory usage before is ', process_memory(), 'Mb')
            #Combining data 1 and 2
            _Tot_Hits=pd.merge(_l_Hits, _r_Hits, how="inner", on=['join_key'])
+           print('Memory usage after is ', process_memory(), 'Mb')
            _Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['l_HitID'] == _Tot_Hits['r_HitID']], inplace = True)
            _Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['l_z'] <= _Tot_Hits['r_z']], inplace = True)
            _Tot_Hits['d_tx'] = _Tot_Hits['l_tx']-_Tot_Hits['r_tx']

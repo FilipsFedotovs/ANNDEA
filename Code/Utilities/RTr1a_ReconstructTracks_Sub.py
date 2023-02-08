@@ -162,22 +162,17 @@ for k in range(0,Z_ID_Max):
         print(UF.TimeStamp(),'Generating the edges...')
 
     # importing libraries
-        import os
-        import psutil
         import datetime
     # inner psutil function
-        def process_memory():
-            process = psutil.Process(os.getpid())
-            mem_info = process.memory_info()
-            return mem_info.rss/(1024**2)
+
 
         print('Hit density is', len(HC.RawClusterGraph)/(0.6*0.6*1.2), 'hits per cm^3')
-        print('Memory usage before is ', process_memory(), 'Mb')
+
         Before=datetime.datetime.now()
         GraphStatus = HC.GenerateEdges(cut_dt, cut_dr)
         After=datetime.datetime.now()
         print('Time lapse', After-Before)
-        print('Memory usage after is ', process_memory(), 'Mb')
+        
         combined_weight_list=[]
         if GraphStatus:
             if HC.ClusterGraph.num_edges>0: #We only bring torch and GNN if we have some edges to classify
