@@ -298,11 +298,9 @@ class HitCluster:
            #Preparing Raw and MC combined data 1
            _l_Hits=pd.DataFrame(self.ClusterHits, columns = ['l_HitID','l_x','l_y','l_z','l_tx','l_ty'])
            #Join hits + MC truth
-           _l_Hits['join_key'] = 'join_key'
            #Preparing Raw and MC combined data 2
            _r_Hits=pd.DataFrame(self.ClusterHits, columns = ['r_HitID','r_x','r_y','r_z','r_tx','r_ty'])
            #Join hits + MC truth
-           _r_Hits['join_key'] = 'join_key'
            import os
            import psutil
            def process_memory():
