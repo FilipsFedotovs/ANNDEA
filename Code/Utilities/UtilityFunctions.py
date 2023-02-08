@@ -311,8 +311,8 @@ class HitCluster:
                 mem_info = process.memory_info()
                 return mem_info.rss/(1024**2)
 
-           _l_Hits=_l_Hits.values.tolist()
-           _r_Hits=_r_Hits.values.tolist()
+           _l_Hits=self.ClusterHits
+           _r_Hits=self.ClusterHits
            # print(_l_Hits)
            # print(_r_Hits)
            _Tot_Hits=[]
