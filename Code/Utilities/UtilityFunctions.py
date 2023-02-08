@@ -718,7 +718,7 @@ class HitCluster:
           return [_Top,_Bottom]
 
       def JoinHits(_H1,_H2):
-          if _H1[0]==_H2[6]:
+          if _H1[0]==_H2[0]:
               return False
           return True
       def GenerateEdgeAttributes(_input):
