@@ -164,7 +164,7 @@ for k in range(0,Z_ID_Max):
     # importing libraries
         import os
         import psutil
-
+        import datetime
     # inner psutil function
         def process_memory():
             process = psutil.Process(os.getpid())
@@ -173,9 +173,9 @@ for k in range(0,Z_ID_Max):
 
         print('Hit density is', len(HC.RawClusterGraph)/(0.6*0.6*1.2), 'hits per cm^3')
         print('Memory usage before is ', process_memory(), 'Mb')
-        Before=UF.TimeStamp()
+        Before=datetime.datetime.now()
         GraphStatus = HC.GenerateEdges(cut_dt, cut_dr)
-        After=UF.TimeStamp()
+        After=datetime.datetime.now()
         print('Time lapse', After-Before)
         print('Memory usage after is ', process_memory(), 'Mb')
         combined_weight_list=[]
