@@ -245,10 +245,9 @@ class HitCluster:
            print('Memory usage before is ', process_memory(), 'Mb')
            #Combining data 1 and 2
            _Tot_Hits=pd.merge(_l_Hits, _r_Hits, how="inner", on=['join_key'])
-           print(_Tot_Hits)
            print('Memory usage after is ', process_memory(), 'Mb')
            _Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['l_HitID'] == _Tot_Hits['r_HitID']], inplace = True)
-
+           print(_Tot_Hits)
            _Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['l_z'] <= _Tot_Hits['r_z']], inplace = True)
            _Tot_Hits['d_tx'] = _Tot_Hits['l_tx']-_Tot_Hits['r_tx']
            _Tot_Hits['d_tx'] = _Tot_Hits['d_tx'].abs()
@@ -311,8 +310,8 @@ class HitCluster:
 
            _l_Hits=_l_Hits.values.tolist()
            _r_Hits=_r_Hits.values.tolist()
-           print(_l_Hits)
-           print(_r_Hits)
+           # print(_l_Hits)
+           # print(_r_Hits)
            NewList=[]
            for l in _l_Hits:
                for r in _r_Hits:
@@ -719,6 +718,8 @@ class HitCluster:
           return [_Top,_Bottom]
 
       def JoinHits(_H1,_H2):
+          if _H1[0]==_H2[6]:
+              return False
           return True
       def GenerateEdgeAttributes(_input):
           _EdgeAttr=[]
