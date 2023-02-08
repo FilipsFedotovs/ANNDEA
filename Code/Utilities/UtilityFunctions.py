@@ -225,16 +225,16 @@ class HitCluster:
            else:
                return False
       def GenerateEdges(self, cut_dt, cut_dr): #Decorate hit information
-           import os
-           import psutil
-           def process_memory():
-                process = psutil.Process(os.getpid())
-                mem_info = process.memory_info()
-                return mem_info.rss/(1024**2)
+           # import os
+           # import psutil
+           # def process_memory():
+           #      process = psutil.Process(os.getpid())
+           #      mem_info = process.memory_info()
+           #      return mem_info.rss/(1024**2)
            #New workaround: instead of a painful Pandas outer join a loop over list is perfromed
            _l_Hits=self.ClusterHits
            _r_Hits=self.ClusterHits
-           print('Optimised Memory usage before is ', process_memory(), 'Mb')
+           # print('Optimised Memory usage before is ', process_memory(), 'Mb')
            #Combining data 1 and 2
            _Tot_Hits=[]
            for l in _l_Hits:
@@ -243,7 +243,7 @@ class HitCluster:
                       _Tot_Hits.append(l+r)
            import pandas as pd
            _Tot_Hits=pd.DataFrame(_Tot_Hits, columns = ['l_HitID','l_x','l_y','l_z','l_tx','l_ty','r_HitID','r_x','r_y','r_z','r_tx','r_ty'])
-           print('Optimised Memory usage after is ', process_memory(), 'Mb')
+           # print('Optimised Memory usage after is ', process_memory(), 'Mb')
            _Tot_Hits['l_x']=_Tot_Hits['l_x']/self.Step[2]
            _Tot_Hits['l_y']=_Tot_Hits['l_y']/self.Step[2]
            _Tot_Hits['l_z']=_Tot_Hits['l_z']/self.Step[2]
