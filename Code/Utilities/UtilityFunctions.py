@@ -263,9 +263,10 @@ class HitCluster:
            _Tot_Hits['d_y'] = _Tot_Hits['d_y'].abs()
            _Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['d_x'] >= cut_dr], inplace = True)
            _Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['d_y'] >= cut_dr], inplace = True)
-           print(_Tot_Hits)
+
            #_Tot_Hits = _Tot_Hits.drop(['d_tx','d_ty','d_x','d_y','join_key','l_tx','l_ty','r_tx','r_ty'],axis=1)
            _Tot_Hits = _Tot_Hits.drop(['d_x','d_y','join_key','l_tx','l_ty','r_tx','r_ty'],axis=1)
+           print(_Tot_Hits)
            _Tot_Hits['l_x']=_Tot_Hits['l_x']/self.Step[2]
            _Tot_Hits['l_y']=_Tot_Hits['l_y']/self.Step[2]
            _Tot_Hits['l_z']=_Tot_Hits['l_z']/self.Step[2]
@@ -314,12 +315,13 @@ class HitCluster:
            _r_Hits=_r_Hits.values.tolist()
            # print(_l_Hits)
            # print(_r_Hits)
-           NewList=[]
+           _Tot_Hits=[]
            for l in _l_Hits:
                for r in _r_Hits:
                   if HitCluster.JoinHits(l,r,cut_dt,cut_dr):
-                      NewList.append(l+r)
-           print(len(NewList))
+                      _Tot_Hits.append(l[:4]+r[:4])
+           _Tot_Hits=pd.DataFrame(_Tot_Hits, columns = ['l_HitID','l_x','l_y','l_z','r_HitID','r_x','r_y','r_z'])
+           print(_Tot_Hits)
            exit()
            print('Optimised Memory usage before is ', process_memory(), 'Mb')
            #Combining data 1 and 2
