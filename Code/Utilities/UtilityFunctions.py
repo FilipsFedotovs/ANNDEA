@@ -317,7 +317,7 @@ class HitCluster:
            NewList=[]
            for l in _l_Hits:
                for r in _r_Hits:
-                  if HitCluster.JoinHits(l,r):
+                  if HitCluster.JoinHits(l,r,cut_dt):
                       NewList.append(l+r)
            print(len(NewList))
            exit()
