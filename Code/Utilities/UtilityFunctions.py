@@ -734,7 +734,7 @@ class HitCluster:
                   if _dty>=_cdt:
                       return False
                   else:
-                      _d_x = abs(_H2[1]-(_H1[1]+(_H1[4]*(_H1[3]-_H2[1]))))
+                      _d_x = abs(_H2[1]-(_H1[1]+(_H1[4]*(_H2[3]-_H1[1]))))
                       if _d_x>=_cdr:
                          return False
 
