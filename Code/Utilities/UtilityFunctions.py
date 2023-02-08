@@ -240,13 +240,14 @@ class HitCluster:
                 process = psutil.Process(os.getpid())
                 mem_info = process.memory_info()
                 return mem_info.rss/(1024**2)
+           print(_l_Hits)
+           print(_r_Hits)
+           exit()
            print('Memory usage before is ', process_memory(), 'Mb')
            #Combining data 1 and 2
            _Tot_Hits=pd.merge(_l_Hits, _r_Hits, how="inner", on=['join_key'])
            print('Memory usage after is ', process_memory(), 'Mb')
-           print(_l_Hits)
-           print(_r_Hits)
-           exit()
+
            _Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['l_HitID'] == _Tot_Hits['r_HitID']], inplace = True)
            _Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['l_z'] <= _Tot_Hits['r_z']], inplace = True)
            _Tot_Hits['d_tx'] = _Tot_Hits['l_tx']-_Tot_Hits['r_tx']
@@ -307,13 +308,14 @@ class HitCluster:
                 process = psutil.Process(os.getpid())
                 mem_info = process.memory_info()
                 return mem_info.rss/(1024**2)
-           print('Memory usage before is ', process_memory(), 'Mb')
-           #Combining data 1 and 2
-           _Tot_Hits=pd.merge(_l_Hits, _r_Hits, how="inner", on=['join_key'])
-           print('Memory usage after is ', process_memory(), 'Mb')
            print(_l_Hits)
            print(_r_Hits)
            exit()
+           print('Optimised Memory usage before is ', process_memory(), 'Mb')
+           #Combining data 1 and 2
+           _Tot_Hits=pd.merge(_l_Hits, _r_Hits, how="inner", on=['join_key'])
+           print('Optimised Memory usage after is ', process_memory(), 'Mb')
+
            _Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['l_HitID'] == _Tot_Hits['r_HitID']], inplace = True)
            _Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['l_z'] <= _Tot_Hits['r_z']], inplace = True)
            _Tot_Hits['d_tx'] = _Tot_Hits['l_tx']-_Tot_Hits['r_tx']
