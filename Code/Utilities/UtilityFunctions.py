@@ -535,20 +535,22 @@ class HitCluster:
                 _Tot_Hits_PCopy=copy.deepcopy(_Tot_Hits)
                 _Tot_Hits_Predator=[]
 
-                for Predator in _Tot_Hits_PCopy:
-                    for Prey in _Tot_Hits_PCopy:
-                          if Predator!=Prey:
-                           Predator=HitCluster.InjectHit(Predator,Prey,False)[0]
-                           print(Predator)
-                           x=input()
-                    _Tot_Hits_Predator.append(Predator)
-
-                # for prd in range(0,len(_Tot_Hits_PCopy)):
-                #     for pry in range(prd+1,len(_Tot_Hits_PCopy)):
-                #            Predator=HitCluster.InjectHit(_Tot_Hits_PCopy[prd],_Tot_Hits_PCopy[pry],False)[0]
+                # for Predator in _Tot_Hits_PCopy:
+                #     for Prey in _Tot_Hits_PCopy:
+                #           if Predator!=Prey:
+                #            Predator=HitCluster.InjectHit(Predator,Prey,False)[0]
                 #            print(Predator)
                 #            x=input()
                 #     _Tot_Hits_Predator.append(Predator)
+
+                for prd in range(0,len(_Tot_Hits_PCopy)):
+                    for pry in range(prd+1,len(_Tot_Hits_PCopy)):
+                           Predator=_Tot_Hits_PCopy[prd]
+                           Predator=HitCluster.InjectHit(Predator,_Tot_Hits_PCopy[pry],False)[0]
+                           print(Tot_Hits_PCopy[0])
+                           print(Predator)
+                           x=input()
+                    _Tot_Hits_Predator.append(Predator)
 
                 for s in _Tot_Hits_Predator:
                     s=s[0].append(mean(s.pop(1)))
