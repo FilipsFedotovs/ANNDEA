@@ -524,8 +524,7 @@ class HitCluster:
                         _Temp_Tot_Hit_El[1].append(0.0)
                 _Temp_Tot_Hits.append(_Temp_Tot_Hit_El)
             _Tot_Hits=_Temp_Tot_Hits
-            print(_Tot_Hits)
-            exit()
+
             _Rec_Hits_Pool=[]
             _intital_size=len(_Tot_Hits)
             print('Prep 2', datetime.datetime.now()-Before)
@@ -540,6 +539,8 @@ class HitCluster:
                           if Predator!=Prey:
                            Predator=HitCluster.InjectHit(Predator,Prey,False)[0]
                     _Tot_Hits_Predator.append(Predator)
+                print(_Tot_Hits_Predator)
+                exit()
                 for s in _Tot_Hits_Predator:
                     s=s[0].append(mean(s.pop(1)))
                 _Tot_Hits_Predator = [item for l in _Tot_Hits_Predator for item in l]
