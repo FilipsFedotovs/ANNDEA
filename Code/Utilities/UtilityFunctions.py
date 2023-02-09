@@ -281,13 +281,14 @@ class HitCluster:
       def LinkHits(self,hits,GiveStats,MCHits,cut_dt,cut_dr, Acceptance):
           self.HitLinks=hits
           import pandas as pd
-          _Hits_df=pd.DataFrame(self.ClusterHits, columns = ['_l_HitID','x','y','z','tx','ty'])
-          _Hits_df["x"] = pd.to_numeric(_Hits_df["x"],downcast='float')
-          _Hits_df["y"] = pd.to_numeric(_Hits_df["y"],downcast='float')
-          _Hits_df["z"] = pd.to_numeric(_Hits_df["z"],downcast='float')
-          _Hits_df["tx"] = pd.to_numeric(_Hits_df["tx"],downcast='float')
-          _Hits_df["ty"] = pd.to_numeric(_Hits_df["ty"],downcast='float')
+
           if GiveStats:
+            _Hits_df=pd.DataFrame(self.ClusterHits, columns = ['_l_HitID','x','y','z','tx','ty'])
+            _Hits_df["x"] = pd.to_numeric(_Hits_df["x"],downcast='float')
+            _Hits_df["y"] = pd.to_numeric(_Hits_df["y"],downcast='float')
+            _Hits_df["z"] = pd.to_numeric(_Hits_df["z"],downcast='float')
+            _Hits_df["tx"] = pd.to_numeric(_Hits_df["tx"],downcast='float')
+            _Hits_df["ty"] = pd.to_numeric(_Hits_df["ty"],downcast='float')
             _Hits_df['dummy_join']='dummy_join'
             _MCClusterHits=[]
             StatFakeValues=[]
@@ -452,25 +453,39 @@ class HitCluster:
           else:
             import datetime
             Before=datetime.datetime.now()
-            _Hits_df['dummy_join']='dummy_join'
-            _l_Hits=_Hits_df.rename(columns={"x": "l_x", "y": "l_y", "z": "l_z", "tx": "l_tx","ty": "l_ty"})
-            _r_Hits=_Hits_df[['_l_HitID', 'x', 'y', 'z', 'tx', 'ty', 'dummy_join']].rename(columns={"x": "r_x", "y": "r_y", "z": "r_z", "tx": "r_tx","ty": "r_ty","_l_HitID": "_r_HitID" })
-            _Tot_Hits=pd.merge(_l_Hits, _r_Hits, how="inner", on=["dummy_join"])
-            _Tot_Hits.drop_duplicates(subset=['_l_HitID','_r_HitID'],keep='first', inplace=True)
-            _Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['_l_HitID'] == _Tot_Hits['_r_HitID']], inplace = True)
-            _Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['l_z'] <= _Tot_Hits['r_z']], inplace = True)
-            _Tot_Hits['d_tx'] = _Tot_Hits['l_tx']-_Tot_Hits['r_tx']
-            _Tot_Hits['d_tx'] = _Tot_Hits['d_tx'].abs()
-            _Tot_Hits['d_ty'] = _Tot_Hits['l_ty']-_Tot_Hits['r_ty']
-            _Tot_Hits['d_ty'] = _Tot_Hits['d_ty'].abs()
-            _Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['d_tx'] >= cut_dt], inplace = True)
-            _Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['d_ty'] >= cut_dt], inplace = True)
-            _Tot_Hits['d_x'] = (_Tot_Hits['r_x']-(_Tot_Hits['l_x']+(_Tot_Hits['l_tx']*(_Tot_Hits['r_z']-_Tot_Hits['l_z']))))
-            _Tot_Hits['d_x'] = _Tot_Hits['d_x'].abs()
-            _Tot_Hits['d_y'] = (_Tot_Hits['r_y']-(_Tot_Hits['l_y']+(_Tot_Hits['l_ty']*(_Tot_Hits['r_z']-_Tot_Hits['l_z']))))
-            _Tot_Hits['d_y'] = _Tot_Hits['d_y'].abs()
-            _Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['d_x'] >= cut_dr], inplace = True)
-            _Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['d_y'] >= cut_dr], inplace = True)
+
+
+            _l_Hits=self.ClusterHits
+            _r_Hits=self.ClusterHits
+           # print('Optimised Memory usage before is ', process_memory(), 'Mb')
+           #Combining data 1 and 2
+            _Tot_Hits=[]
+            for l in _l_Hits:
+               for r in _r_Hits:
+                  if HitCluster.JoinHits(l,r,cut_dt,cut_dr):
+                      _Tot_Hits.append(l+r)
+            import pandas as pd
+            _Tot_Hits=pd.DataFrame(_Tot_Hits, columns = ['l_HitID','l_x','l_y','l_z','l_tx','l_ty','r_HitID','r_x','r_y','r_z','r_tx','r_ty'])
+
+            # _Hits_df['dummy_join']='dummy_join'
+            # _l_Hits=_Hits_df.rename(columns={"x": "l_x", "y": "l_y", "z": "l_z", "tx": "l_tx","ty": "l_ty"})
+            # _r_Hits=_Hits_df[['_l_HitID', 'x', 'y', 'z', 'tx', 'ty', 'dummy_join']].rename(columns={"x": "r_x", "y": "r_y", "z": "r_z", "tx": "r_tx","ty": "r_ty","_l_HitID": "_r_HitID" })
+            # _Tot_Hits=pd.merge(_l_Hits, _r_Hits, how="inner", on=["dummy_join"])
+            # _Tot_Hits.drop_duplicates(subset=['_l_HitID','_r_HitID'],keep='first', inplace=True)
+            # _Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['_l_HitID'] == _Tot_Hits['_r_HitID']], inplace = True)
+            # _Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['l_z'] <= _Tot_Hits['r_z']], inplace = True)
+            # _Tot_Hits['d_tx'] = _Tot_Hits['l_tx']-_Tot_Hits['r_tx']
+            # _Tot_Hits['d_tx'] = _Tot_Hits['d_tx'].abs()
+            # _Tot_Hits['d_ty'] = _Tot_Hits['l_ty']-_Tot_Hits['r_ty']
+            # _Tot_Hits['d_ty'] = _Tot_Hits['d_ty'].abs()
+            # _Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['d_tx'] >= cut_dt], inplace = True)
+            # _Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['d_ty'] >= cut_dt], inplace = True)
+            # _Tot_Hits['d_x'] = (_Tot_Hits['r_x']-(_Tot_Hits['l_x']+(_Tot_Hits['l_tx']*(_Tot_Hits['r_z']-_Tot_Hits['l_z']))))
+            # _Tot_Hits['d_x'] = _Tot_Hits['d_x'].abs()
+            # _Tot_Hits['d_y'] = (_Tot_Hits['r_y']-(_Tot_Hits['l_y']+(_Tot_Hits['l_ty']*(_Tot_Hits['r_z']-_Tot_Hits['l_z']))))
+            # _Tot_Hits['d_y'] = _Tot_Hits['d_y'].abs()
+            # _Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['d_x'] >= cut_dr], inplace = True)
+            # _Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['d_y'] >= cut_dr], inplace = True)
             _Map_df=pd.DataFrame(self.HitLinks, columns = ['_l_HitID','_r_HitID','link_strength'])
             _Tot_Hits=pd.merge(_Tot_Hits, _Map_df, how="inner", on=['_l_HitID','_r_HitID'])
             _Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['link_strength'] <= Acceptance], inplace = True)
@@ -495,6 +510,7 @@ class HitCluster:
             _Tot_Hits=_Tot_Hits.values.tolist()
             _Temp_Tot_Hits=[]
             print('Prep', datetime.datetime.now()-Before)
+            exit()
             for el in _Tot_Hits:
                 _Temp_Tot_Hit_El = [[],[]]
                 for pos in range(len(_Loc_Hits)):
