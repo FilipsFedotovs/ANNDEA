@@ -552,8 +552,10 @@ class HitCluster:
                            Predator=Result[0]
                            test_count+=int(Result[1])
                     _Tot_Hits_Predator.append(Predator)
-                    print(test_count)
-                    # print(_Tot_Hits_Predator)
+                    if test_count>40:
+                        print(Predator)
+                        print(test_count)
+                        print(_Tot_Hits_PCopy[1])
                     # exit()
                 exit()
                 for s in _Tot_Hits_Predator:
