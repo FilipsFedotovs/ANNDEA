@@ -450,6 +450,8 @@ class HitCluster:
             StatTruthValues.append(len(_Rec_Hits_Pool.drop(_Rec_Hits_Pool.index[_Rec_Hits_Pool['l_MC_ID'] != _Rec_Hits_Pool['r_MC_ID']]).axes[0]))
             self.RecStats=[StatLabels,StatFakeValues,StatTruthValues]
           else:
+            import datetime
+            Before=datetime.datetime.now()
             _Hits_df['dummy_join']='dummy_join'
             _l_Hits=_Hits_df.rename(columns={"x": "l_x", "y": "l_y", "z": "l_z", "tx": "l_tx","ty": "l_ty"})
             _r_Hits=_Hits_df[['_l_HitID', 'x', 'y', 'z', 'tx', 'ty', 'dummy_join']].rename(columns={"x": "r_x", "y": "r_y", "z": "r_z", "tx": "r_tx","ty": "r_ty","_l_HitID": "_r_HitID" })
@@ -492,6 +494,7 @@ class HitCluster:
             _Tot_Hits.drop_duplicates(subset=['_l_HitID', 'r_index','link_strength'], keep='first', inplace=True)
             _Tot_Hits=_Tot_Hits.values.tolist()
             _Temp_Tot_Hits=[]
+            print('Prep', datetime.datetime.now()-Before)
             for el in _Tot_Hits:
                 _Temp_Tot_Hit_El = [[],[]]
                 for pos in range(len(_Loc_Hits)):
@@ -508,8 +511,11 @@ class HitCluster:
             _Tot_Hits=_Temp_Tot_Hits
             _Rec_Hits_Pool=[]
             _intital_size=len(_Tot_Hits)
-
+            print('Prep 2', datetime.datetime.now()-Before)
+            cnt1=0
             while len(_Tot_Hits)>0:
+                cnt1+=1
+                print('Prep', datetime.datetime.now()-Before, cnt1)
                 _Tot_Hits_PCopy=copy.deepcopy(_Tot_Hits)
                 _Tot_Hits_Predator=[]
                 for Predator in _Tot_Hits_PCopy:
@@ -549,6 +555,7 @@ class HitCluster:
                             del _Tot_Hits[_itr]
                         else:
                             _itr+=1
+            print('Prep 3', datetime.datetime.now()-Before)
             #Transpose the rows
             _track_list=[]
             _segment_id=str(self.ClusterID[0])
@@ -561,6 +568,7 @@ class HitCluster:
             _Hits_df=pd.DataFrame(self.ClusterHits, columns = ['HitID','x','y','z','tx','ty'])
             _Hits_df=_Hits_df[['HitID','z']]
             #Join hits + MC truth
+            print('Prep 4', datetime.datetime.now()-Before)
             _Rec_Hits_Pool=pd.merge(_Hits_df, _Rec_Hits_Pool, how="right", on=['HitID'])
             self.RecHits=_Rec_Hits_Pool
       def TestKalmanHits(self,Recdata_list,MCdata_list):
