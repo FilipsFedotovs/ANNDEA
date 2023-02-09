@@ -550,8 +550,8 @@ class HitCluster:
                            Predator=HitCluster.InjectHit(Predator,_Tot_Hits_PCopy[pry],False)[0]
 
                     _Tot_Hits_Predator.append(Predator)
-                print(_Tot_Hits_Predator)
-                exit()
+                    print(_Tot_Hits_Predator)
+                    exit()
                 for s in _Tot_Hits_Predator:
                     s=s[0].append(mean(s.pop(1)))
                 _Tot_Hits_Predator = [item for l in _Tot_Hits_Predator for item in l]
