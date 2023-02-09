@@ -162,17 +162,12 @@ for k in range(0,Z_ID_Max):
         print(UF.TimeStamp(),'Generating the edges...')
 
     # importing libraries
-        import datetime
+
     # inner psutil function
 
 
         print('Hit density is', len(HC.RawClusterGraph)/(0.6*0.6*1.2), 'hits per cm^3')
-
-        Before=datetime.datetime.now()
         GraphStatus = HC.GenerateEdges(cut_dt, cut_dr)
-        #GraphStatusAfter = HC.ExpressGenerateEdges(cut_dt, cut_dr)
-        After=datetime.datetime.now()
-        print('Time lapse', After-Before)
         combined_weight_list=[]
         if GraphStatus:
             if HC.ClusterGraph.num_edges>0: #We only bring torch and GNN if we have some edges to classify
@@ -201,7 +196,12 @@ for k in range(0,Z_ID_Max):
                         for edge in range(len(HC.edges)):
                             combined_weight_list.append(HC.edges[edge]+w[edge])
                         print(UF.TimeStamp(),'Tracking the cluster...')
+                        import datetime
+                        Before=datetime.datetime.now()
                         HC.LinkHits(combined_weight_list,False,[],cut_dt,cut_dr,Acceptance) #We use the weights assigned by the model to perform microtracking within the volume
+                        After=datetime.datetime.now()
+                        print('Time lapse', After-Before)
+                        exit()
                         HC.UnloadClusterGraph() #Remove the Graph that we do not need anymore to reduce the object size
                         print(UF.TimeStamp(),'Current cLuster tracking is finished, adding it to the output container...')
                         cluster_output.append(HC)
