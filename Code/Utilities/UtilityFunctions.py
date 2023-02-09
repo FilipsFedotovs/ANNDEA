@@ -534,13 +534,15 @@ class HitCluster:
                 print('Prep', datetime.datetime.now()-Before, cnt1,len(_Tot_Hits))
                 _Tot_Hits_PCopy=copy.deepcopy(_Tot_Hits)
                 _Tot_Hits_Predator=[]
+
                 for Predator in _Tot_Hits_PCopy:
                     for Prey in _Tot_Hits_PCopy:
                           if Predator!=Prey:
                            Predator=HitCluster.InjectHit(Predator,Prey,False)[0]
+                           print(Predator)
+                           exit()
                     _Tot_Hits_Predator.append(Predator)
-                print(_Tot_Hits_Predator)
-                exit()
+
                 for s in _Tot_Hits_Predator:
                     s=s[0].append(mean(s.pop(1)))
                 _Tot_Hits_Predator = [item for l in _Tot_Hits_Predator for item in l]
