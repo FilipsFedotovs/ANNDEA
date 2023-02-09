@@ -546,17 +546,19 @@ class HitCluster:
 
                 for prd in range(0,len(_Tot_Hits_PCopy)):
                     Predator=_Tot_Hits_PCopy[prd]
-                    test_count=0
+                    # test_count=0
                     for pry in range(prd+1,len(_Tot_Hits_PCopy)):
                            Result=HitCluster.InjectHit(Predator,_Tot_Hits_PCopy[pry],False)
                            Predator=Result[0]
-                           test_count+=int(Result[1])
+                           # test_count+=int(Result[1])
                     _Tot_Hits_Predator.append(Predator)
-                    if test_count>40:
-                        print(Predator)
-                        print(test_count)
-                        print(_Tot_Hits_PCopy[1])
+                    # if test_count>40:
+                    #     print(Predator)
+                    #     print(test_count)
+                    #     print(_Tot_Hits_PCopy[1])
                     # exit()
+                print('Prep temp test', datetime.datetime.now()-Before, cnt1,len(_Tot_Hits))
+                print(_Tot_Hits_Predator)
                 exit()
                 for s in _Tot_Hits_Predator:
                     s=s[0].append(mean(s.pop(1)))
