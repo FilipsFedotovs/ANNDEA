@@ -515,7 +515,7 @@ class HitCluster:
             cnt1=0
             while len(_Tot_Hits)>0:
                 cnt1+=1
-                print('Prep', datetime.datetime.now()-Before, cnt1)
+                print('Prep', datetime.datetime.now()-Before, cnt1,len(_Tot_Hits))
                 _Tot_Hits_PCopy=copy.deepcopy(_Tot_Hits)
                 _Tot_Hits_Predator=[]
                 for Predator in _Tot_Hits_PCopy:
