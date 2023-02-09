@@ -510,7 +510,6 @@ class HitCluster:
             _Tot_Hits=_Tot_Hits.values.tolist()
             _Temp_Tot_Hits=[]
             print('Prep', datetime.datetime.now()-Before)
-            exit()
             for el in _Tot_Hits:
                 _Temp_Tot_Hit_El = [[],[]]
                 for pos in range(len(_Loc_Hits)):
@@ -525,6 +524,8 @@ class HitCluster:
                         _Temp_Tot_Hit_El[1].append(0.0)
                 _Temp_Tot_Hits.append(_Temp_Tot_Hit_El)
             _Tot_Hits=_Temp_Tot_Hits
+            print(_Tot_Hits)
+            exit()
             _Rec_Hits_Pool=[]
             _intital_size=len(_Tot_Hits)
             print('Prep 2', datetime.datetime.now()-Before)
