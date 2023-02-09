@@ -539,7 +539,7 @@ class HitCluster:
                     for Prey in _Tot_Hits_PCopy:
                           if Predator!=Prey:
                            Predator=HitCluster.InjectHit(Predator,Prey,False)[0]
-                           print(HitCluster.InjectHit(Predator,Prey,False))
+                           print(int(HitCluster.InjectHit(Predator,Prey,False)[1]))
                            exit()
                     _Tot_Hits_Predator.append(Predator)
                     print(_Tot_Hits_Predator)
