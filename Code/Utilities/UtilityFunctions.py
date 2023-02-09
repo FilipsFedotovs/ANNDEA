@@ -547,7 +547,7 @@ class HitCluster:
                     for pry in range(prd+1,len(_Tot_Hits_PCopy)):
                            Predator=_Tot_Hits_PCopy[prd]
                            Predator=HitCluster.InjectHit(Predator,_Tot_Hits_PCopy[pry],False)[0]
-                           print(Tot_Hits_PCopy[0])
+                           print(_Tot_Hits_PCopy[0])
                            print(Predator)
                            x=input()
                     _Tot_Hits_Predator.append(Predator)
