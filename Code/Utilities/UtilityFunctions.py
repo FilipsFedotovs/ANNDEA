@@ -535,14 +535,13 @@ class HitCluster:
                 _Tot_Hits_PCopy=copy.deepcopy(_Tot_Hits)
                 _Tot_Hits_Predator=[]
 
-                # for Predator in _Tot_Hits_PCopy:
-                #     for Prey in _Tot_Hits_PCopy:
-                #           if Predator!=Prey:
-                #            Predator=HitCluster.InjectHit(Predator,Prey,False)[0]
-                #            print(Predator)
-                #            x=input()
-                #     _Tot_Hits_Predator.append(Predator)
-
+                for Predator in _Tot_Hits_PCopy:
+                    for Prey in _Tot_Hits_PCopy:
+                          if Predator!=Prey:
+                           Predator=HitCluster.InjectHit(Predator,Prey,False)[0]
+                    _Tot_Hits_Predator.append(Predator)
+                    print(_Tot_Hits_Predator)
+                    exit()
                 for prd in range(0,len(_Tot_Hits_PCopy)):
                     Predator=_Tot_Hits_PCopy[prd]
                     for pry in range(prd+1,len(_Tot_Hits_PCopy)):
