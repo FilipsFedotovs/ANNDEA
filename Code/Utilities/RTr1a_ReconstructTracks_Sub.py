@@ -141,6 +141,8 @@ if Log=='KALMAN':
 
 torch_import=True
 cluster_output=[]
+import datetime
+Before=datetime.datetime.now()
 for k in range(0,Z_ID_Max):
     Z_ID=int(k)/Z_overlap
     temp_data=data.drop(data.index[data['z'] >= ((Z_ID+1)*stepZ)])  #Keeping the relevant z slice
@@ -196,12 +198,11 @@ for k in range(0,Z_ID_Max):
                         for edge in range(len(HC.edges)):
                             combined_weight_list.append(HC.edges[edge]+w[edge])
                         print(UF.TimeStamp(),'Tracking the cluster...')
-                        import datetime
-                        Before=datetime.datetime.now()
+                        
                         HC.LinkHits(combined_weight_list,False,[],cut_dt,cut_dr,Acceptance) #We use the weights assigned by the model to perform microtracking within the volume
                         After=datetime.datetime.now()
-                        print('Time lapse', After-Before)
-                        exit()
+                        
+                        #exit()
                         HC.UnloadClusterGraph() #Remove the Graph that we do not need anymore to reduce the object size
                         print(UF.TimeStamp(),'Current cLuster tracking is finished, adding it to the output container...')
                         cluster_output.append(HC)
@@ -210,11 +211,13 @@ for k in range(0,Z_ID_Max):
                             HC.LinkHits(combined_weight_list,True,temp_MCdata_list,cut_dt,cut_dr,Acceptance) #We use the weights assigned by the model to perform microtracking within the volume
                         if Log=='KALMAN':
                                HC.TestKalmanHits(temp_FEDRAdata_list,temp_MCdata_list)
+                        print('Time lapse - set', k, After-Before)
                         continue
             else:
                  HC.RecHits=pd.DataFrame([], columns = ['HitID','z','Segment_ID'])
                  cluster_output.append(HC)
                  continue
+                   
         else:
             HC.RecHits=pd.DataFrame([], columns = ['HitID','z','Segment_ID'])
             cluster_output.append(HC)
@@ -227,6 +230,8 @@ print(len(cluster_output))
 for hc in cluster_output:
     print(HC.RecHits)
 print(UF.TimeStamp(),'Writing the output...')
+After=datetime.datetime.now()
+print('Final Time lapse', After-Before)
 print(UF.PickleOperations(output_file_location,'w', cluster_output)[1])
 
 
