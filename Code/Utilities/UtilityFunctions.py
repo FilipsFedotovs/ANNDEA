@@ -528,9 +528,9 @@ class HitCluster:
             _Rec_Hits_Pool=[]
             _intital_size=len(_Tot_Hits)
             print('Prep 2', datetime.datetime.now()-Before)
-            # cnt1=0
+            cnt1=0
             while len(_Tot_Hits)>0:
-                # cnt1+=1
+                cnt1+=1
                 print('Prep', datetime.datetime.now()-Before, cnt1,len(_Tot_Hits))
                 _Tot_Hits_PCopy=copy.deepcopy(_Tot_Hits)
                 _Tot_Hits_Predator=[]
