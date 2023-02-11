@@ -205,51 +205,6 @@ if Log!='NO':
      print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
      print(UF.TimeStamp(), bcolors.OKGREEN+"The track segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+required_file_location+bcolors.ENDC)
 
-if Log=='KALMAN':
-   required_file_location=EOS_DIR+'/ANNDEA/Data/TEST_SET/KTr1_'+RecBatchID+'_hits.csv'
-   if os.path.isfile(required_file_location)==False or Mode=='RESET':
-        print(UF.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
-        data=pd.read_csv(input_file_location,
-                    header=0,
-                    usecols=[PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty,PM.Rec_Track_ID,PM.Rec_Track_Domain])[[PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty,PM.Rec_Track_ID,PM.Rec_Track_Domain]]
-
-        total_rows=len(data.axes[0])
-        print(UF.TimeStamp(),'The raw data has ',total_rows,' hits')
-        print(UF.TimeStamp(),'Removing unreconstructed hits...')
-        data=data.dropna()
-        final_rows=len(data.axes[0])
-        print(UF.TimeStamp(),'The cleaned data has ',final_rows,' hits')
-        data[PM.Rec_Track_Domain] = data[PM.Rec_Track_Domain].astype(str)
-        data[PM.Rec_Track_ID] = data[PM.Rec_Track_ID].astype(str)
-        data[PM.Hit_ID] = data[PM.Hit_ID].astype(str)
-        data['Rec_Track_ID'] = data[PM.Rec_Track_Domain] + '-' + data[PM.Rec_Track_ID]
-        data=data.drop([PM.Rec_Track_Domain],axis=1)
-        data=data.drop([PM.Rec_Track_ID],axis=1)
-        if SliceData:
-             print(UF.TimeStamp(),'Slicing the data...')
-             data=data.drop(data.index[(data[PM.x] > Xmax) | (data[PM.x] < Xmin) | (data[PM.y] > Ymax) | (data[PM.y] < Ymin)])
-             final_rows=len(data.axes[0])
-             print(UF.TimeStamp(),'The sliced data has ',final_rows,' hits')
-        print(UF.TimeStamp(),'Removing tracks which have less than',PM.MinHitsTrack,'hits...')
-        track_no_data=data.groupby(['Rec_Track_ID'],as_index=False).count()
-        track_no_data=track_no_data.drop([PM.y,PM.z,PM.tx,PM.ty,PM.Hit_ID],axis=1)
-        track_no_data=track_no_data.rename(columns={PM.x: "Rec_Track_No"})
-        new_combined_data=pd.merge(data, track_no_data, how="left", on=['Rec_Track_ID'])
-        new_combined_data = new_combined_data[new_combined_data.Rec_Track_No >= PM.MinHitsTrack]
-        new_combined_data = new_combined_data.drop(["Rec_Track_No"],axis=1)
-        new_combined_data=new_combined_data.sort_values(['Rec_Track_ID',PM.z],ascending=[1,1])
-        grand_final_rows=len(new_combined_data.axes[0])
-        print(UF.TimeStamp(),'The cleaned data has ',grand_final_rows,' hits')
-        new_combined_data=new_combined_data.rename(columns={PM.x: "x"})
-        new_combined_data=new_combined_data.rename(columns={PM.y: "y"})
-        new_combined_data=new_combined_data.rename(columns={PM.z: "z"})
-        new_combined_data=new_combined_data.rename(columns={PM.tx: "tx"})
-        new_combined_data=new_combined_data.rename(columns={PM.ty: "ty"})
-        new_combined_data=new_combined_data.rename(columns={PM.Hit_ID: "Hit_ID"})
-        new_combined_data.to_csv(required_file_location,index=False)
-        print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
-        print(UF.TimeStamp(), bcolors.OKGREEN+"The track segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+required_file_location+bcolors.ENDC)
-
 # ########################################     Preset framework parameters    #########################################
 input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RTr1_'+RecBatchID+'_hits.csv'
 print(UF.TimeStamp(),'Loading preselected data from ',bcolors.OKBLUE+input_file_location+bcolors.ENDC)

@@ -264,7 +264,7 @@ class HitCluster:
            _Tot_Hits=_Tot_Hits.values.tolist()
            if len(_Tot_Hits)>0:
                import torch
-               import torch_geometric
+               #import torch_geometric
                from torch_geometric.data import Data
                self.ClusterGraph=Data(x=torch.Tensor(self.RawClusterGraph), edge_index=None, y=None)
                self.ClusterGraph.edge_index=torch.tensor((HitCluster.GenerateLinks(_Tot_Hits,self.ClusterHitIDs)))

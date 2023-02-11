@@ -133,10 +133,6 @@ for k in range(0,Z_ID_Max):
        temp_MCData=MCdata.drop(MCdata.index[MCdata['z'] >= ((Z_ID+1)*stepZ)])  #Keeping the relevant z slice
        temp_MCData=temp_MCData.drop(temp_MCData.index[temp_MCData['z'] < (Z_ID*stepZ)])  #Keeping the relevant z slice
        temp_MCdata_list=MCdata.values.tolist()
-    if Log=='KALMAN':
-       temp_FEDRAdata=FEDRAdata.drop(FEDRAdata.index[FEDRAdata['z'] >= ((Z_ID+1)*stepZ)])  #Keeping the relevant z slice
-       temp_FEDRAdata=FEDRAdata.drop(temp_FEDRAdata.index[temp_FEDRAdata['z'] < (Z_ID*stepZ)])  #Keeping the relevant z slice
-       temp_FEDRAdata_list=FEDRAdata.values.tolist()
     print(UF.TimeStamp(),'Creating the cluster', X_ID,Y_ID,Z_ID)
     HC=UF.HitCluster([X_ID,Y_ID,Z_ID],[stepX,stepY,stepZ]) #Initializing the cluster
     print(UF.TimeStamp(),'Decorating the clusters')
