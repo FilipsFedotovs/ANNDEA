@@ -177,13 +177,12 @@ for k in range(0,2):
         GraphStatus = HC.GenerateEdges(cut_dt, cut_dr)
         combined_weight_list=[]
 
-        import os
-        import psutil
-        def process_memory():
-                 process = psutil.Process(os.getpid())
-                 mem_info = process.memory_info()
-                 return mem_info.rss/(1024**2)
-        print(process_memory())
+        # import os
+        # import psutil
+        # # def process_memory():
+        # #          process = psutil.Process(os.getpid())
+        # #          mem_info = process.memory_info()
+        # #          return mem_info.rss/(1024**2)
         if GraphStatus:
             if HC.ClusterGraph.num_edges>0: #We only bring torch and GNN if we have some edges to classify
                         print(UF.TimeStamp(),'Classifying the edges...')
@@ -222,8 +221,6 @@ for k in range(0,2):
 import gc
 gc.collect
 _Tot_Hits=pd.concat(z_clusters_results)
-print(z_clusters_results[0])
-print(_Tot_Hits)
 print(UF.TimeStamp(),'Collating the individual cluster results...')
 _Tot_Hits=pd.concat(z_clusters_results)
 ini_len=len(_Tot_Hits)
