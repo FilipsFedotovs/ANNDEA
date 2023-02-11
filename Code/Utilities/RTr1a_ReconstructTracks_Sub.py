@@ -326,12 +326,11 @@ else:
 print(_Rec_Hits_Pool)
 exit()
 
-print(len(cluster_output))
-for hc in cluster_output:
-    print(HC.RecHits)
 print(UF.TimeStamp(),'Writing the output...')
 After=datetime.datetime.now()
 print('Final Time lapse', After-Before)
-print(UF.PickleOperations(output_file_location,'w', cluster_output)[1])
+_Rec_Hits_Pool.to_csv(output_file_location,index=False)
+print(UF.TimeStamp(),'Output is written to ',output_file_location)
+exit()
 
 
