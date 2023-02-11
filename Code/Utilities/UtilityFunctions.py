@@ -8,7 +8,7 @@ import subprocess
 import datetime
 import numpy as np
 import copy
-from statistics import mean
+
 import ast
 import shutil
 
@@ -655,29 +655,7 @@ class HitCluster:
           del self.ClusterGraph
           del self.HitLinks
 
-      def InjectHit(Predator,Prey, Soft):
-          if Soft==False:
-             OverlapDetected=False
-             New_Predator=copy.deepcopy(Predator)
-             for el in range (len(Prey[0])):
-                 if Prey[0][el]!='_' and Predator[0][el]!='_' and Prey[0][el]==Predator[0][el]:
-                    OverlapDetected=True
-                    New_Predator[1][el]+=Prey[1][el]
-                 elif Prey[0][el]!='_' and Predator[0][el]!='_' and Prey[0][el]!=Predator[0][el]:
-                     return(Predator,False)
-                 elif Predator[0][el]=='_' and Prey[0][el]!=Predator[0][el]:
-                     New_Predator[0][el]=Prey[0][el]
-                     New_Predator[1][el]+=Prey[1][el]
-             if OverlapDetected:
-                return(New_Predator,True)
-             else:
-                return(Predator,False)
-          if Soft==True:
-             for el1 in Prey[0]:
-                 for el2 in Predator:
-                  if el1==el2:
-                     return True
-             return False
+
 
 class EMO:
       def __init__(self,parts):

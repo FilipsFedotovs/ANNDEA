@@ -3,8 +3,8 @@
 ########################################    Import essential libriries    #############################################
 import argparse
 import sys
-
-
+import copy
+from statistics import mean
 #Setting the parser - this script is usually not run directly, but is used by a Master version Counterpart that passes the required arguments
 parser = argparse.ArgumentParser(description='select cut parameters')
 parser.add_argument('--i',help="Set number", default='1')
@@ -74,6 +74,31 @@ sfx=args.sfx
 pfx=args.pfx
 
 import UtilityFunctions as UF #This is where we keep routine utility functions
+
+#This function is used for the actual tracking (combines hit-pairs into tracks
+def InjectHit(Predator,Prey, Soft):
+          if Soft==False:
+             OverlapDetected=False
+             New_Predator=copy.deepcopy(Predator)
+             for el in range (len(Prey[0])):
+                 if Prey[0][el]!='_' and Predator[0][el]!='_' and Prey[0][el]==Predator[0][el]:
+                    OverlapDetected=True
+                    New_Predator[1][el]+=Prey[1][el]
+                 elif Prey[0][el]!='_' and Predator[0][el]!='_' and Prey[0][el]!=Predator[0][el]:
+                     return(Predator,False)
+                 elif Predator[0][el]=='_' and Prey[0][el]!=Predator[0][el]:
+                     New_Predator[0][el]=Prey[0][el]
+                     New_Predator[1][el]+=Prey[1][el]
+             if OverlapDetected:
+                return(New_Predator,True)
+             else:
+                return(Predator,False)
+          if Soft==True:
+             for el1 in Prey[0]:
+                 for el2 in Predator:
+                  if el1==el2:
+                     return True
+             return False
 
 #Specifying the full path to input/output files
 input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RTr1_'+RecBatchID+'_hits.csv'
@@ -214,22 +239,104 @@ _Loc_Hits_r=_Tot_Hits[['r_z']].rename(columns={'r_z': 'z'})
 _Loc_Hits_l=_Tot_Hits[['l_z']].rename(columns={'l_z': 'z'})
 _Loc_Hits=pd.concat([_Loc_Hits_r,_Loc_Hits_l])
 _Loc_Hits.sort_values(by = ['z'], ascending=[True],inplace=True)
-print(_Loc_Hits)
+_Loc_Hits.drop_duplicates(subset=['z'], keep='first', inplace=True)
+_Loc_Hits=_Loc_Hits.reset_index(drop=True)
+_Loc_Hits=_Loc_Hits.reset_index()
+_Loc_Hits_r=_Loc_Hits.rename(columns={'index': 'r_index', 'z': 'r_z'})
+_Loc_Hits_l=_Loc_Hits.rename(columns={'index': 'l_index', 'z': 'l_z'})
+_Tot_Hits=pd.merge(_Tot_Hits,_Loc_Hits_r, how='inner', on=['r_z'])
+_Tot_Hits=pd.merge(_Tot_Hits,_Loc_Hits_l, how='inner', on=['l_z'])
+_Tot_Hits=_Tot_Hits[['r_HitID','l_HitID','r_index','l_index','link_strength']]
+_Tot_Hits.sort_values(by = ['r_HitID', 'l_index','link_strength'], ascending=[True,True, False],inplace=True)
+_Tot_Hits.drop_duplicates(subset=['_r_HitID', 'l_index','link_strength'], keep='first', inplace=True)
+_Tot_Hits.sort_values(by = ['l_HitID', 'r_index','link_strength'], ascending=[True,True, False],inplace=True)
+_Tot_Hits.drop_duplicates(subset=['l_HitID', 'r_index','link_strength'], keep='first', inplace=True)
+print(UF.TimeStamp(),'Tracking the cluster...')
+print(_Tot_Hits)
+_Tot_Hits=_Tot_Hits.values.tolist()
+_Temp_Tot_Hits=[]
+print('Prep', datetime.datetime.now()-Before)
+for el in _Tot_Hits:
+                _Temp_Tot_Hit_El = [[],[]]
+                for pos in range(len(_Loc_Hits)):
+                    if pos==el[2]:
+                        _Temp_Tot_Hit_El[0].append(el[0])
+                        _Temp_Tot_Hit_El[1].append(el[4])
+                    elif pos==el[3]:
+                        _Temp_Tot_Hit_El[0].append(el[1])
+                        _Temp_Tot_Hit_El[1].append(el[4])
+                    else:
+                        _Temp_Tot_Hit_El[0].append('_')
+                        _Temp_Tot_Hit_El[1].append(0.0)
+                _Temp_Tot_Hits.append(_Temp_Tot_Hit_El)
+_Tot_Hits=_Temp_Tot_Hits
+
+_Rec_Hits_Pool=[]
+_intital_size=len(_Tot_Hits)
+print('Prep 2', datetime.datetime.now()-Before)
+cnt1=0
+while len(_Tot_Hits)>0:
+                cnt1+=1
+                print('Prep', datetime.datetime.now()-Before, cnt1,len(_Tot_Hits))
+                _Tot_Hits_PCopy=copy.deepcopy(_Tot_Hits)
+                _Tot_Hits_Predator=[]
+                for prd in range(0,len(_Tot_Hits_PCopy)):
+                    Predator=_Tot_Hits_PCopy[prd]
+                    for pry in range(prd+1,len(_Tot_Hits_PCopy)):
+                           Result=InjectHit(Predator,_Tot_Hits_PCopy[pry],False)
+                           Predator=Result[0]
+                           # test_count+=int(Result[1])
+                    _Tot_Hits_Predator.append(Predator)
+                for s in _Tot_Hits_Predator:
+                    s=s[0].append(mean(s.pop(1)))
+                _Tot_Hits_Predator = [item for l in _Tot_Hits_Predator for item in l]
+                #_Tot_Hits_Predator_Mirror=[]
+                for s in range(len(_Tot_Hits_Predator)):
+                    for h in range(len(_Tot_Hits_Predator[s])):
+                        if _Tot_Hits_Predator[s][h] =='_':
+                            _Tot_Hits_Predator[s][h]='H_'+str(s)
+
+                column_no=len(_Tot_Hits_Predator[0])-1
+                columns=[]
+
+                for c in range(column_no):
+                    columns.append(str(c))
+                columns.append('average_link_strength')
+                _Tot_Hits_Predator=pd.DataFrame(_Tot_Hits_Predator, columns = columns)
+                _Tot_Hits_Predator.sort_values(by = ['average_link_strength'], ascending=[False],inplace=True)
+                for c in range(column_no):
+                    _Tot_Hits_Predator.drop_duplicates(subset=[str(c)], keep='first', inplace=True)
+                _Tot_Hits_Predator=_Tot_Hits_Predator.drop(['average_link_strength'],axis=1)
+
+                _Tot_Hits_Predator=_Tot_Hits_Predator.values.tolist()
+                for seg in range(len(_Tot_Hits_Predator)):
+                    _Tot_Hits_Predator[seg]=[s for s in _Tot_Hits_Predator[seg] if ('H' in s)==False]
+                _Rec_Hits_Pool+=_Tot_Hits_Predator
+                for seg in _Tot_Hits_Predator:
+                    _itr=0
+                    while _itr<len(_Tot_Hits):
+                        if InjectHit(seg,_Tot_Hits[_itr],True):
+                            del _Tot_Hits[_itr]
+                        else:
+                            _itr+=1
+print(_Rec_Hits_Pool)
 exit()
-                        # _Loc_Hits.drop_duplicates(subset=['z'], keep='first', inplace=True)
-                        # _Loc_Hits=_Loc_Hits.reset_index(drop=True)
-                        # _Loc_Hits=_Loc_Hits.reset_index()
-                        # _Loc_Hits_r=_Loc_Hits.rename(columns={'index': 'r_index', 'z': 'r_z'})
-                        # _Loc_Hits_l=_Loc_Hits.rename(columns={'index': 'l_index', 'z': 'l_z'})
-                        # _Tot_Hits=pd.merge(_Tot_Hits,_Loc_Hits_r, how='inner', on=['r_z'])
-                        # _Tot_Hits=pd.merge(_Tot_Hits,_Loc_Hits_l, how='inner', on=['l_z'])
-                        # _Tot_Hits=_Tot_Hits[['_r_HitID','_l_HitID','r_index','l_index','link_strength']]
-                        # _Tot_Hits.sort_values(by = ['_r_HitID', 'l_index','link_strength'], ascending=[True,True, False],inplace=True)
-                        # _Tot_Hits.drop_duplicates(subset=['_r_HitID', 'l_index','link_strength'], keep='first', inplace=True)
-                        # _Tot_Hits.sort_values(by = ['_l_HitID', 'r_index','link_strength'], ascending=[True,True, False],inplace=True)
-                        # _Tot_Hits.drop_duplicates(subset=['_l_HitID', 'r_index','link_strength'], keep='first', inplace=True)
-                        # print(UF.TimeStamp(),'Tracking the cluster...')
-                        # print(_Tot_Hits)
+# print('Prep 3', datetime.datetime.now()-Before)
+# #Transpose the rows
+# _track_list=[]
+# _segment_id=str(self.ClusterID[0])
+# for el in self.ClusterID:
+#     _segment_id+=('-'+str(el))
+# for t in range(len(_Rec_Hits_Pool)):
+#                 for h in _Rec_Hits_Pool[t]:
+#                     _track_list.append([_segment_id+'-'+str(t+1),h])
+#     _Rec_Hits_Pool=pd.DataFrame(_track_list, columns = ['Segment_ID','HitID'])
+#     _Hits_df=pd.DataFrame(self.ClusterHits, columns = ['HitID','x','y','z','tx','ty'])
+#     _Hits_df=_Hits_df[['HitID','z']]
+#             #Join hits + MC truth
+#             print('Prep 4', datetime.datetime.now()-Before)
+#             _Rec_Hits_Pool=pd.merge(_Hits_df, _Rec_Hits_Pool, how="right", on=['HitID'])
+#             self.RecHits=_Rec_Hits_Pool
                         # exit()
                         # HC.LinkHits(combined_weight_list,False,[],cut_dt,cut_dr,Acceptance) #We use the weights assigned by the model to perform microtracking within the volume
                         # After=datetime.datetime.now()
