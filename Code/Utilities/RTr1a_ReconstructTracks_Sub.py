@@ -86,8 +86,8 @@ def InjectHit(Predator,Prey, Soft):
                 _intersection=[value for value in _intersection if value != "_"]
                 print(Predator)
                 print(_intersection)
-                _index1 = Predator.index(_intersection[0])
-                _index2 = Predator.index(_intersection[1])
+                _index1 = Predator[0].index(_intersection[0])
+                _index2 = Predator[0].index(_intersection[1])
                 print(_index1,_index2)
                 x=input()
              New_Predator=copy.deepcopy(Predator)
