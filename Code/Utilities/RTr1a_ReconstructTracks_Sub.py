@@ -80,7 +80,7 @@ def InjectHit(Predator,Prey, Soft):
           if Soft==False:
              OverlapDetected=False
              New_Predator=copy.deepcopy(Predator)
-             # _prey_trigger_count=0
+             _prey_trigger_count=0
              for el in range (len(Prey[0])):
                  if Prey[0][el]!='_' and Predator[0][el]!='_':
                      if Prey[0][el]!=Predator[0][el]:
@@ -88,12 +88,12 @@ def InjectHit(Predator,Prey, Soft):
                      elif Prey[0][el]==Predator[0][el]:
                         OverlapDetected=True
                         New_Predator[1][el]+=Prey[1][el]
-                        # _prey_trigger_count+=1
+                        _prey_trigger_count+=1
                  elif Predator[0][el]=='_' and Prey[0][el]!=Predator[0][el]:
                      New_Predator[0][el]=Prey[0][el]
                      New_Predator[1][el]+=Prey[1][el]
-                 # if _prey_trigger_count>=2:
-                 #     break
+                 if _prey_trigger_count>=2:
+                     break
 
              if OverlapDetected:
                 return(New_Predator,True)
