@@ -312,19 +312,16 @@ if len(z_clusters_results)>0:
     #Transpose the rows
     _track_list=[]
     _segment_id=RecBatchID+'_'+str(X_ID_n)+'_'+str(Y_ID_n)
+    _no_tracks=len(_Rec_Hits_Pool)
     for t in range(len(_Rec_Hits_Pool)):
                   for h in _Rec_Hits_Pool[t]:
                          _track_list.append([_segment_id+'-'+str(t+1),h])
     _Rec_Hits_Pool=pd.DataFrame(_track_list, columns = ['Segment_ID','HitID'])
-    print(_Rec_Hits_Pool)
-    print(_z_map)
     _Rec_Hits_Pool=pd.merge(_z_map, _Rec_Hits_Pool, how="right", on=['HitID'])
+    print(UF.TimeStamp(),_no_tracks, 'have been reconstructed in this cluster set ...')
 else:
     print(UF.TimeStamp(),'No suitable hit pairs in the cluster set, just writing the empty one...')
     _Rec_Hits_Pool=pd.DataFrame([], columns = ['HitID','z','Segment_ID'])
-
-print(_Rec_Hits_Pool)
-exit()
 
 print(UF.TimeStamp(),'Writing the output...')
 After=datetime.datetime.now()
