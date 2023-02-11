@@ -80,7 +80,7 @@ def InjectHit(Predator,Prey, Soft):
           if Soft==False:
              OverlapDetected=False
              print(Predator[0])
-             pd=Predator[0].remove('_')
+             pd=[value for value in Predator[0] if value != "_"]
              print(pd)
              exit()
              _intersection=list(set(Predator[0].remove("_")) & set(Prey[0].remove("_")))
