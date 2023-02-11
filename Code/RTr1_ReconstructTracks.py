@@ -402,7 +402,7 @@ job_sets=[]
 for i in range(0,Xsteps):
                 job_sets.append(Ysteps)
 prog_entry.append(' Sending hit cluster to the HTCondor, so the model assigns weights between hits')
-prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','hit_cluster_rec_set','RTr1a','.pkl',RecBatchID,job_sets,'RTr1a_ReconstructTracks_Sub.py'])
+prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','hit_cluster_rec_set','RTr1a','.csv',RecBatchID,job_sets,'RTr1a_ReconstructTracks_Sub.py'])
 prog_entry.append([' --stepZ ', ' --stepY ', ' --stepX ', " --zOffset ", " --yOffset ", " --xOffset ", ' --cut_dt ', ' --cut_dr ', ' --ModelName ', ' --Log ',' --Z_overlap ',' --Y_overlap ',' --X_overlap ', ' --Z_ID_Max '])
 prog_entry.append([stepZ,stepY,stepX,z_offset, y_offset, x_offset, cut_dt,cut_dr, ModelName ,Log,Z_overlap,Y_overlap,X_overlap, Zsteps])
 prog_entry.append(Xsteps*Ysteps)
@@ -416,25 +416,9 @@ print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Create'))
 
 ###### Stage 1
 prog_entry=[]
-job_sets=[]
-for i in range(0,Xsteps):
-              job_sets.append(Ysteps)
-prog_entry.append(' Sending hit cluster to the HTCondor, so the reconstructed clusters can be merged along z-axis')
-prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','hit_cluster_rec_z_set','RTr1b','.pkl',RecBatchID,job_sets,'RTr1b_LinkSegmentsZ_Sub.py'])
-prog_entry.append([' --Z_ID_Max ',' --j ', ' --i '])
-prog_entry.append([Zsteps,Ysteps,Xsteps])
-prog_entry.append(Xsteps*Ysteps)
-prog_entry.append(LocalSub)
-Program.append(prog_entry)
-if Mode=='RESET':
-   print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Delete'))
-#Setting up folders for the output. The reconstruction of just one brick can easily generate >100k of files. Keeping all that blob in one directory can cause problems on lxplus.
-print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Create'))
-###### Stage 2
-prog_entry=[]
 job_sets=Xsteps
 prog_entry.append(' Sending hit cluster to the HTCondor, so the reconstructed clusters can be merged along y-axis')
-prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','hit_cluster_rec_y_set','RTr1c','.pkl',RecBatchID,job_sets,'RTr1c_LinkSegmentsY_Sub.py'])
+prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','hit_cluster_rec_y_set','RTr1b','.csv',RecBatchID,job_sets,'RTr1b_LinkSegmentsY_Sub.py'])
 prog_entry.append([' --Y_ID_Max ', ' --i '])
 prog_entry.append([Ysteps,Xsteps])
 prog_entry.append(Xsteps)
@@ -449,7 +433,7 @@ print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Create'))
 prog_entry=[]
 job_sets=1
 prog_entry.append(' Sending hit cluster to the HTCondor, so the reconstructed clusters can be merged along x-axis')
-prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','hit_cluster_rec_x_set','RTr1d','.pkl',RecBatchID,job_sets,'RTr1d_LinkSegmentsX_Sub.py'])
+prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','hit_cluster_rec_x_set','RTr1c','.csv',RecBatchID,job_sets,'RTr1c_LinkSegmentsX_Sub.py'])
 prog_entry.append([' --X_ID_Max '])
 prog_entry.append([Xsteps])
 prog_entry.append(1)
@@ -487,7 +471,7 @@ while Status<len(Program):
        print(UF.TimeStamp(),bcolors.BOLD+'Stage 4:'+bcolors.ENDC+' Using the results from previous steps to map merged trackIDs to the original reconstruction file')
        try:
            #Read the output with hit- ANN Track map
-           FirstFile=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RTr1d_'+RecBatchID+'_0'+'/RTr1d_'+RecBatchID+'_hit_cluster_rec_x_set_0.pkl'
+           FirstFile=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RTr1c_'+RecBatchID+'_0'+'/RTr1c_'+RecBatchID+'_hit_cluster_rec_x_set_0.csv'
            print(UF.TimeStamp(),'Loading the object ',bcolors.OKBLUE+FirstFile+bcolors.ENDC)
            FirstFileRaw=UF.PickleOperations(FirstFile,'r', 'N/A')
            FirstFile=FirstFileRaw[0]
@@ -668,7 +652,7 @@ while Status<len(Program):
 if Status==5:
     print(UF.TimeStamp(),'Performing the cleanup... ',bcolors.ENDC)
     HTCondorTag="SoftUsed == \"ANNDEA-RTr1a-"+RecBatchID+"\""
-    UF.RecCleanUp(AFS_DIR, EOS_DIR, 'RTr1_'+RecBatchID, ['RTr1_'+RecBatchID,RecBatchID+'_RTr_OUTPUT.pkl'], HTCondorTag)
+    UF.RecCleanUp(AFS_DIR, EOS_DIR, 'RTr1_'+RecBatchID, ['RTr1_'+RecBatchID,RecBatchID+'_RTr_OUTPUT.csv'], HTCondorTag)
     for p in Program:
         if p!='Custom':
            print(UF.TimeStamp(),UF.ManageTempFolders(p,'Delete'))
