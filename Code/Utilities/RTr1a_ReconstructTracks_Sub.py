@@ -155,6 +155,7 @@ for k in range(0,Z_ID_Max):
                  process = psutil.Process(os.getpid())
                  mem_info = process.memory_info()
                  return mem_info.rss/(1024**2)
+        print(process_memory())
         if GraphStatus:
             if HC.ClusterGraph.num_edges>0: #We only bring torch and GNN if we have some edges to classify
                         print(UF.TimeStamp(),'Classifying the edges...')
@@ -186,55 +187,45 @@ for k in range(0,Z_ID_Max):
                         _Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['link_strength'] <= Acceptance], inplace = True)
                         _Tot_Hits=_Tot_Hits[['r_HitID','l_HitID','r_z','l_z','link_strength']]
                         z_clusters_results.append(_Tot_Hits)
-                        print(process_memory())
-                        del HC
-                        print(process_memory())
-                        exit()
-                        _Tot_Hits.sort_values(by = ['_r_HitID', 'l_z','link_strength'], ascending=[True,True, False],inplace=True)
-                        _Loc_Hits_r=_Tot_Hits[['r_z']].rename(columns={'r_z': 'z'})
-                        _Loc_Hits_l=_Tot_Hits[['l_z']].rename(columns={'l_z': 'z'})
-                        _Loc_Hits=pd.concat([_Loc_Hits_r,_Loc_Hits_l])
-                        _Loc_Hits.sort_values(by = ['z'], ascending=[True],inplace=True)
-                        _Loc_Hits.drop_duplicates(subset=['z'], keep='first', inplace=True)
-                        _Loc_Hits=_Loc_Hits.reset_index(drop=True)
-                        _Loc_Hits=_Loc_Hits.reset_index()
-                        _Loc_Hits_r=_Loc_Hits.rename(columns={'index': 'r_index', 'z': 'r_z'})
-                        _Loc_Hits_l=_Loc_Hits.rename(columns={'index': 'l_index', 'z': 'l_z'})
-                        _Tot_Hits=pd.merge(_Tot_Hits,_Loc_Hits_r, how='inner', on=['r_z'])
-                        _Tot_Hits=pd.merge(_Tot_Hits,_Loc_Hits_l, how='inner', on=['l_z'])
-                        _Tot_Hits=_Tot_Hits[['_r_HitID','_l_HitID','r_index','l_index','link_strength']]
-                        _Tot_Hits.sort_values(by = ['_r_HitID', 'l_index','link_strength'], ascending=[True,True, False],inplace=True)
-                        _Tot_Hits.drop_duplicates(subset=['_r_HitID', 'l_index','link_strength'], keep='first', inplace=True)
-                        _Tot_Hits.sort_values(by = ['_l_HitID', 'r_index','link_strength'], ascending=[True,True, False],inplace=True)
-                        _Tot_Hits.drop_duplicates(subset=['_l_HitID', 'r_index','link_strength'], keep='first', inplace=True)
-                        print(UF.TimeStamp(),'Tracking the cluster...')
-                        print(_Tot_Hits)
-                        exit()
-                        HC.LinkHits(combined_weight_list,False,[],cut_dt,cut_dr,Acceptance) #We use the weights assigned by the model to perform microtracking within the volume
-                        After=datetime.datetime.now()
-                        
-                        #exit()
-                        HC.UnloadClusterGraph() #Remove the Graph that we do not need anymore to reduce the object size
-                        print(UF.TimeStamp(),'Current cLuster tracking is finished, adding it to the output container...')
-                        cluster_output.append(HC)
-                        if Log!='NO':
-                            print(UF.TimeStamp(),'Tracking the cluster...')
-                            HC.LinkHits(combined_weight_list,True,temp_MCdata_list,cut_dt,cut_dr,Acceptance) #We use the weights assigned by the model to perform microtracking within the volume
+
+                        #del HC
+                        print(k)
+                        print(z_clusters_results)
+                        # _Tot_Hits.sort_values(by = ['_r_HitID', 'l_z','link_strength'], ascending=[True,True, False],inplace=True)
+                        # _Loc_Hits_r=_Tot_Hits[['r_z']].rename(columns={'r_z': 'z'})
+                        # _Loc_Hits_l=_Tot_Hits[['l_z']].rename(columns={'l_z': 'z'})
+                        # _Loc_Hits=pd.concat([_Loc_Hits_r,_Loc_Hits_l])
+                        # _Loc_Hits.sort_values(by = ['z'], ascending=[True],inplace=True)
+                        # _Loc_Hits.drop_duplicates(subset=['z'], keep='first', inplace=True)
+                        # _Loc_Hits=_Loc_Hits.reset_index(drop=True)
+                        # _Loc_Hits=_Loc_Hits.reset_index()
+                        # _Loc_Hits_r=_Loc_Hits.rename(columns={'index': 'r_index', 'z': 'r_z'})
+                        # _Loc_Hits_l=_Loc_Hits.rename(columns={'index': 'l_index', 'z': 'l_z'})
+                        # _Tot_Hits=pd.merge(_Tot_Hits,_Loc_Hits_r, how='inner', on=['r_z'])
+                        # _Tot_Hits=pd.merge(_Tot_Hits,_Loc_Hits_l, how='inner', on=['l_z'])
+                        # _Tot_Hits=_Tot_Hits[['_r_HitID','_l_HitID','r_index','l_index','link_strength']]
+                        # _Tot_Hits.sort_values(by = ['_r_HitID', 'l_index','link_strength'], ascending=[True,True, False],inplace=True)
+                        # _Tot_Hits.drop_duplicates(subset=['_r_HitID', 'l_index','link_strength'], keep='first', inplace=True)
+                        # _Tot_Hits.sort_values(by = ['_l_HitID', 'r_index','link_strength'], ascending=[True,True, False],inplace=True)
+                        # _Tot_Hits.drop_duplicates(subset=['_l_HitID', 'r_index','link_strength'], keep='first', inplace=True)
+                        # print(UF.TimeStamp(),'Tracking the cluster...')
+                        # print(_Tot_Hits)
+                        # exit()
+                        # HC.LinkHits(combined_weight_list,False,[],cut_dt,cut_dr,Acceptance) #We use the weights assigned by the model to perform microtracking within the volume
+                        # After=datetime.datetime.now()
+                        #
+                        # #exit()
+                        # HC.UnloadClusterGraph() #Remove the Graph that we do not need anymore to reduce the object size
+                        # print(UF.TimeStamp(),'Current cLuster tracking is finished, adding it to the output container...')
+                        # cluster_output.append(HC)
+                        # if Log!='NO':
+                        #     print(UF.TimeStamp(),'Tracking the cluster...')
+                        #     HC.LinkHits(combined_weight_list,True,temp_MCdata_list,cut_dt,cut_dr,Acceptance) #We use the weights assigned by the model to perform microtracking within the volume
                         print('Time lapse - set', k, After-Before)
                         continue
-            else:
-                 HC.RecHits=pd.DataFrame([], columns = ['HitID','z','Segment_ID'])
-                 cluster_output.append(HC)
-                 continue
-                   
-        else:
-            HC.RecHits=pd.DataFrame([], columns = ['HitID','z','Segment_ID'])
-            cluster_output.append(HC)
-            continue
-    else:
-        HC.RecHits=pd.DataFrame([], columns = ['HitID','z','Segment_ID'])
-        cluster_output.append(HC)
-        continue
+print(process_memory())
+exit()
+
 print(len(cluster_output))
 for hc in cluster_output:
     print(HC.RecHits)
