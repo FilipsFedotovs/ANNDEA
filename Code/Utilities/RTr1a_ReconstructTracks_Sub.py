@@ -150,9 +150,7 @@ cluster_output=[]
 import datetime
 Before=datetime.datetime.now()
 z_clusters_results=[]
-for k in range(0,2):
-#for k in range(0,Z_ID_Max):
-
+for k in range(0,Z_ID_Max):
     Z_ID=int(k)/Z_overlap
     temp_data=data.drop(data.index[data['z'] >= ((Z_ID+1)*stepZ)])  #Keeping the relevant z slice
     temp_data=temp_data.drop(temp_data.index[temp_data['z'] < (Z_ID*stepZ)])  #Keeping the relevant z slice
@@ -167,16 +165,9 @@ for k in range(0,2):
     HC.LoadClusterHits(temp_data_list) #Decorating the Clusters with Hit information
     if len(HC.RawClusterGraph)>1: #If we have at least 2 Hits in the cluster that can create
         print(UF.TimeStamp(),'Generating the edges...')
-
-    # importing libraries
-
-    # inner psutil function
-
-
         print(UF.TimeStamp(),"Hit density of the Cluster",X_ID,Y_ID,Z_ID, "is  {} hits per cm\u00b3".format(round(len(HC.RawClusterGraph)/(0.6*0.6*1.2)),2))
         GraphStatus = HC.GenerateEdges(cut_dt, cut_dr)
         combined_weight_list=[]
-
         if GraphStatus:
             if HC.ClusterGraph.num_edges>0: #We only bring torch and GNN if we have some edges to classify
                         print(UF.TimeStamp(),'Classifying the edges...')
@@ -236,7 +227,6 @@ if len(z_clusters_results)>0:
     _z_map_l=_Tot_Hits[['l_HitID','l_z']].rename(columns={'l_z': 'z','l_HitID': 'HitID'})
     _z_map=pd.concat([_z_map_r,_z_map_l])
     _z_map.drop_duplicates(subset=['HitID','z'], keep='first', inplace=True)
-    print(_z_map)
 
     _Loc_Hits_r=_Loc_Hits.rename(columns={'index': 'r_index', 'z': 'r_z'})
     _Loc_Hits_l=_Loc_Hits.rename(columns={'index': 'l_index', 'z': 'l_z'})
