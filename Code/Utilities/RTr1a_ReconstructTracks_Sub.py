@@ -225,6 +225,9 @@ for k in range(0,Z_ID_Max):
                         #     HC.LinkHits(combined_weight_list,True,temp_MCdata_list,cut_dt,cut_dr,Acceptance) #We use the weights assigned by the model to perform microtracking within the volume
                         continue
 print(process_memory())
+import gc
+gc.collect
+print(process_memory())
 exit()
 
 print(len(cluster_output))
