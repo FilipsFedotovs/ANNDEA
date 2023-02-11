@@ -79,6 +79,8 @@ import UtilityFunctions as UF #This is where we keep routine utility functions
 def InjectHit(Predator,Prey, Soft):
           if Soft==False:
              OverlapDetected=False
+             print(Predator[0].remove("_"))
+             exit()
              _intersection=list(set(Predator[0].remove("_")) & set(Prey[0].remove("_")))
              print(_intersection)
              exit()
