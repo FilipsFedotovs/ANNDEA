@@ -124,7 +124,9 @@ torch_import=True
 cluster_output=[]
 import datetime
 Before=datetime.datetime.now()
+z_clusters_results=[]
 for k in range(0,Z_ID_Max):
+
     Z_ID=int(k)/Z_overlap
     temp_data=data.drop(data.index[data['z'] >= ((Z_ID+1)*stepZ)])  #Keeping the relevant z slice
     temp_data=temp_data.drop(temp_data.index[temp_data['z'] < (Z_ID*stepZ)])  #Keeping the relevant z slice
@@ -148,7 +150,7 @@ for k in range(0,Z_ID_Max):
         print(UF.TimeStamp(),"Hit density is of the Cluster",X_ID,Y_ID,Z_ID, "is  {} hits per cm\u00b3".format(len(HC.RawClusterGraph)/(0.6*0.6*1.2)))
         GraphStatus = HC.GenerateEdges(cut_dt, cut_dr)
         combined_weight_list=[]
-        z_clusters_results=[]
+
         import os
         import psutil
         def process_memory():
