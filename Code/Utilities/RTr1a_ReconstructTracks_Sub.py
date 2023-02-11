@@ -79,13 +79,9 @@ import UtilityFunctions as UF #This is where we keep routine utility functions
 def InjectHit(Predator,Prey, Soft):
           if Soft==False:
              OverlapDetected=False
-             print(Predator[0])
-             # pd=[value for value in Predator[0] if value != "_"]
-             # print(pd)
-             # exit()
              _intersection=list(set(Predator[0]) & set(Prey[0]))
-             print(_intersection)
-             exit()
+             print(len(_intersection))
+             x=input()
              New_Predator=copy.deepcopy(Predator)
              _prey_trigger_count=0
              for el in range (len(Prey[0])):
