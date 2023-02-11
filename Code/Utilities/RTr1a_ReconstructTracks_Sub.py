@@ -145,8 +145,7 @@ for k in range(0,Z_ID_Max):
     # inner psutil function
 
 
-        print("Hit density is of the Cluster",X_ID,Y_ID,Z_ID, "is  {}cm\u00b3".format(len(HC.RawClusterGraph)/(0.6*0.6*1.2)))
-        exit()
+        print(UF.TimeStamp(),"Hit density is of the Cluster",X_ID,Y_ID,Z_ID, "is  {} hits per cm\u00b3".format(len(HC.RawClusterGraph)/(0.6*0.6*1.2)))
         GraphStatus = HC.GenerateEdges(cut_dt, cut_dr)
         combined_weight_list=[]
         z_clusters_results=[]
@@ -222,7 +221,6 @@ for k in range(0,Z_ID_Max):
                         # if Log!='NO':
                         #     print(UF.TimeStamp(),'Tracking the cluster...')
                         #     HC.LinkHits(combined_weight_list,True,temp_MCdata_list,cut_dt,cut_dr,Acceptance) #We use the weights assigned by the model to perform microtracking within the volume
-                        print('Time lapse - set', k, After-Before)
                         continue
 print(process_memory())
 exit()
