@@ -217,8 +217,6 @@ for k in range(0,2):
                         z_clusters_results.append(_Tot_Hits)
 
                         del HC
-                        #print(k)
-                        #print(z_clusters_results)
 
                         continue
 import gc
@@ -277,7 +275,7 @@ while len(_Tot_Hits)>0:
                 _Tot_Hits_PCopy=copy.deepcopy(_Tot_Hits)
                 _Tot_Hits_Predator=[]
                 for prd in range(0,len(_Tot_Hits_PCopy)):
-                    print(UF.TimeStamp(),'Progress is ',round(100*prd/len(_Tot_Hits_PCopy),2), '%')
+                    print(UF.TimeStamp(),'Progress is ',round(100*prd/len(_Tot_Hits_PCopy),2), '%',end="\r", flush=True)
                     Predator=_Tot_Hits_PCopy[prd]
                     for pry in range(prd+1,len(_Tot_Hits_PCopy)):
                            Result=InjectHit(Predator,_Tot_Hits_PCopy[pry],False)
