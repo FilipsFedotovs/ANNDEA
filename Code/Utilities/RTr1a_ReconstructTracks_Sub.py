@@ -247,7 +247,6 @@ _Tot_Hits.drop_duplicates(subset=['r_HitID', 'l_index','link_strength'], keep='f
 _Tot_Hits.sort_values(by = ['l_HitID', 'r_index','link_strength'], ascending=[True,True, False],inplace=True)
 _Tot_Hits.drop_duplicates(subset=['l_HitID', 'r_index','link_strength'], keep='first', inplace=True)
 print(UF.TimeStamp(),'Tracking the cluster...')
-print(_Tot_Hits)
 _Tot_Hits=_Tot_Hits.values.tolist()
 _Temp_Tot_Hits=[]
 print('Prep', datetime.datetime.now()-Before)
@@ -309,8 +308,6 @@ while len(_Tot_Hits)>0:
                             del _Tot_Hits[_itr]
                         else:
                             _itr+=1
-print(_Rec_Hits_Pool)
-exit()
 print('Prep 3', datetime.datetime.now()-Before)
 #Transpose the rows
 _track_list=[]
@@ -319,6 +316,7 @@ for t in range(len(_Rec_Hits_Pool)):
               for h in _Rec_Hits_Pool[t]:
                      _track_list.append([_segment_id+'-'+str(t+1),h])
 _Rec_Hits_Pool=pd.DataFrame(_track_list, columns = ['Segment_ID','HitID'])
+print(_Rec_Hits_Pool)
 #_Hits_df=pd.DataFrame(self.ClusterHits, columns = ['HitID','x','y','z','tx','ty'])
 #     _Hits_df=_Hits_df[['HitID','z']]
 #             #Join hits + MC truth
