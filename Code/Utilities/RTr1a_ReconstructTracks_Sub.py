@@ -273,24 +273,19 @@ _Tot_Hits=_Temp_Tot_Hits
 
 _Rec_Hits_Pool=[]
 _intital_size=len(_Tot_Hits)
-print('Prep 2', datetime.datetime.now()-Before)
-cnt1=0
 while len(_Tot_Hits)>0:
-                cnt1+=1
-                print('Prep', datetime.datetime.now()-Before, cnt1,len(_Tot_Hits))
                 _Tot_Hits_PCopy=copy.deepcopy(_Tot_Hits)
                 _Tot_Hits_Predator=[]
                 for prd in range(0,len(_Tot_Hits_PCopy)):
+                    print(UF.TimeStamp(),'Progress is ',round(100*prd/len(_Tot_Hits_PCopy),2), '%')
                     Predator=_Tot_Hits_PCopy[prd]
                     for pry in range(prd+1,len(_Tot_Hits_PCopy)):
                            Result=InjectHit(Predator,_Tot_Hits_PCopy[pry],False)
                            Predator=Result[0]
-                           # test_count+=int(Result[1])
                     _Tot_Hits_Predator.append(Predator)
                 for s in _Tot_Hits_Predator:
                     s=s[0].append(mean(s.pop(1)))
                 _Tot_Hits_Predator = [item for l in _Tot_Hits_Predator for item in l]
-                #_Tot_Hits_Predator_Mirror=[]
                 for s in range(len(_Tot_Hits_Predator)):
                     for h in range(len(_Tot_Hits_Predator[s])):
                         if _Tot_Hits_Predator[s][h] =='_':
@@ -321,17 +316,15 @@ while len(_Tot_Hits)>0:
                             _itr+=1
 print(_Rec_Hits_Pool)
 exit()
-# print('Prep 3', datetime.datetime.now()-Before)
-# #Transpose the rows
-# _track_list=[]
-# _segment_id=str(self.ClusterID[0])
-# for el in self.ClusterID:
-#     _segment_id+=('-'+str(el))
-# for t in range(len(_Rec_Hits_Pool)):
-#                 for h in _Rec_Hits_Pool[t]:
-#                     _track_list.append([_segment_id+'-'+str(t+1),h])
-#     _Rec_Hits_Pool=pd.DataFrame(_track_list, columns = ['Segment_ID','HitID'])
-#     _Hits_df=pd.DataFrame(self.ClusterHits, columns = ['HitID','x','y','z','tx','ty'])
+print('Prep 3', datetime.datetime.now()-Before)
+#Transpose the rows
+_track_list=[]
+_segment_id=RecBatchID+'_'+str(X_ID_n)+'_'+str(Y_ID_n)
+for t in range(len(_Rec_Hits_Pool)):
+              for h in _Rec_Hits_Pool[t]:
+                     _track_list.append([_segment_id+'-'+str(t+1),h])
+_Rec_Hits_Pool=pd.DataFrame(_track_list, columns = ['Segment_ID','HitID'])
+#_Hits_df=pd.DataFrame(self.ClusterHits, columns = ['HitID','x','y','z','tx','ty'])
 #     _Hits_df=_Hits_df[['HitID','z']]
 #             #Join hits + MC truth
 #             print('Prep 4', datetime.datetime.now()-Before)
