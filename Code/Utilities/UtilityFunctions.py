@@ -243,6 +243,7 @@ class HitCluster:
                       _Tot_Hits.append(l+r)
            import pandas as pd
            _Tot_Hits=pd.DataFrame(_Tot_Hits, columns = ['l_HitID','l_x','l_y','l_z','l_tx','l_ty','r_HitID','r_x','r_y','r_z','r_tx','r_ty'])
+           self.HitPairs=_Tot_Hits[['_l_HitID','l_z','_r_HitID','r_z']]
            # print('Optimised Memory usage after is ', process_memory(), 'Mb')
            _Tot_Hits['l_x']=_Tot_Hits['l_x']/self.Step[2]
            _Tot_Hits['l_y']=_Tot_Hits['l_y']/self.Step[2]
@@ -260,7 +261,7 @@ class HitCluster:
            _Tot_Hits['d_ty'] = _Tot_Hits['d_ty'].abs()
            _Tot_Hits = _Tot_Hits.drop(['r_x','r_y','r_z','l_x','l_y','l_z'],axis=1)
            _Tot_Hits=_Tot_Hits[['l_HitID','r_HitID','label','d_l','d_t','d_z','d_tx','d_ty']]
-           self.HitPairs=_Tot_Hits
+
            _Tot_Hits=_Tot_Hits.values.tolist()
            if len(_Tot_Hits)>0:
                import torch
