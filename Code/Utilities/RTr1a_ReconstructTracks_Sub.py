@@ -120,25 +120,6 @@ if Log!='NO':
     MCdata.drop(MCdata.index[MCdata['y'] >= ((Y_ID+1)*stepY)], inplace = True)  #Keeping the relevant z slice
     MCdata.drop(MCdata.index[MCdata['y'] < (Y_ID*stepY)], inplace = True)  #Keeping the relevant z slice
 
-if Log=='KALMAN':
-    print(UF.TimeStamp(),'Preparing KALMAN data... ')
-    input_file_location=EOS_DIR+'/ANNDEA/Data/TEST_SET/KTr1_'+RecBatchID+'_hits.csv'
-    print(UF.TimeStamp(),'Loading pre-selected data from ',input_file_location)
-    FEDRAdata=pd.read_csv(input_file_location,header=0,
-                                usecols=["Hit_ID","x","y","z","tx","ty",'Rec_Track_ID'])[["Hit_ID","x","y","z","tx","ty",'Rec_Track_ID']]
-    FEDRAdata["x"] = pd.to_numeric(FEDRAdata["x"],downcast='float')
-    FEDRAdata["y"] = pd.to_numeric(FEDRAdata["y"],downcast='float')
-    FEDRAdata["z"] = pd.to_numeric(FEDRAdata["z"],downcast='float')
-    FEDRAdata["Hit_ID"] = FEDRAdata["Hit_ID"].astype(str)
-    FEDRAdata['z']=FEDRAdata['z']-z_offset
-    FEDRAdata['x']=FEDRAdata['x']-x_offset
-    FEDRAdata['y']=FEDRAdata['y']-y_offset
-
-    FEDRAdata.drop(FEDRAdata.index[FEDRAdata['x'] >= ((X_ID+1)*stepX)], inplace = True)  #Keeping the relevant z slice
-    FEDRAdata.drop(FEDRAdata.index[FEDRAdata['x'] < (X_ID*stepX)], inplace = True)  #Keeping the relevant z slice
-    FEDRAdata.drop(FEDRAdata.index[FEDRAdata['y'] >= ((Y_ID+1)*stepY)], inplace = True)  #Keeping the relevant z slice
-    FEDRAdata.drop(FEDRAdata.index[FEDRAdata['y'] < (Y_ID*stepY)], inplace = True)  #Keeping the relevant z slice
-
 torch_import=True
 cluster_output=[]
 import datetime
@@ -210,8 +191,6 @@ for k in range(0,Z_ID_Max):
                         if Log!='NO':
                             print(UF.TimeStamp(),'Tracking the cluster...')
                             HC.LinkHits(combined_weight_list,True,temp_MCdata_list,cut_dt,cut_dr,Acceptance) #We use the weights assigned by the model to perform microtracking within the volume
-                        if Log=='KALMAN':
-                               HC.TestKalmanHits(temp_FEDRAdata_list,temp_MCdata_list)
                         print('Time lapse - set', k, After-Before)
                         continue
             else:
