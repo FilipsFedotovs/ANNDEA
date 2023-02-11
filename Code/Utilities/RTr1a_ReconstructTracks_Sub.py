@@ -231,6 +231,7 @@ _Tot_Hits=pd.concat(z_clusters_results)
 print(z_clusters_results[0])
 print(_Tot_Hits)
 _Tot_Hits=_Tot_Hits.groupby(['r_HitID','l_HitID','r_z','l_z']).link_strength.agg(['mean']).reset_index()
+_Tot_Hits=_Tot_Hits.rename(columns={'mean': "link_strength"})
 print(_Tot_Hits)
 exit()
 
