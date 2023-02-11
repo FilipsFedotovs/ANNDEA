@@ -230,6 +230,8 @@ gc.collect
 _Tot_Hits=pd.concat(z_clusters_results)
 print(z_clusters_results[0])
 print(_Tot_Hits)
+_Tot_Hits=_Tot_Hits.groupby(['r_HitID','l_HitID','r_z','l_z']).link_strength.agg(['mean']).reset_index()
+print(_Tot_Hits)
 exit()
 
 print(len(cluster_output))
