@@ -125,7 +125,7 @@ cluster_output=[]
 import datetime
 Before=datetime.datetime.now()
 z_clusters_results=[]
-for k in range(0,3):
+for k in range(0,2):
 #for k in range(0,Z_ID_Max):
 
     Z_ID=int(k)/Z_overlap
@@ -194,11 +194,28 @@ for k in range(0,3):
                         del HC
                         #print(k)
                         #print(z_clusters_results)
-                        # _Tot_Hits.sort_values(by = ['_r_HitID', 'l_z','link_strength'], ascending=[True,True, False],inplace=True)
-                        # _Loc_Hits_r=_Tot_Hits[['r_z']].rename(columns={'r_z': 'z'})
-                        # _Loc_Hits_l=_Tot_Hits[['l_z']].rename(columns={'l_z': 'z'})
-                        # _Loc_Hits=pd.concat([_Loc_Hits_r,_Loc_Hits_l])
-                        # _Loc_Hits.sort_values(by = ['z'], ascending=[True],inplace=True)
+
+                        continue
+import gc
+gc.collect
+_Tot_Hits=pd.concat(z_clusters_results)
+print(z_clusters_results[0])
+print(_Tot_Hits)
+print(UF.TimeStamp(),'Collating the individual cluster results...')
+_Tot_Hits=pd.concat(z_clusters_results)
+ini_len=len(_Tot_Hits)
+print(UF.TimeStamp(),'Compressing the output...')
+_Tot_Hits=_Tot_Hits.groupby(['r_HitID','l_HitID','r_z','l_z']).link_strength.agg(['mean']).reset_index()
+_Tot_Hits=_Tot_Hits.rename(columns={'mean': "link_strength"})
+print(UF.TimeStamp(),'The compression ratio is ',round(len(_Tot_Hits)/ini_len),2)
+print(UF.TimeStamp(),'Preparing the weighted hits for tracking...')
+_Tot_Hits.sort_values(by = ['r_HitID', 'l_z','link_strength'], ascending=[True,True, False],inplace=True)
+_Loc_Hits_r=_Tot_Hits[['r_z']].rename(columns={'r_z': 'z'})
+_Loc_Hits_l=_Tot_Hits[['l_z']].rename(columns={'l_z': 'z'})
+_Loc_Hits=pd.concat([_Loc_Hits_r,_Loc_Hits_l])
+_Loc_Hits.sort_values(by = ['z'], ascending=[True],inplace=True)
+print(_Loc_Hits)
+exit()
                         # _Loc_Hits.drop_duplicates(subset=['z'], keep='first', inplace=True)
                         # _Loc_Hits=_Loc_Hits.reset_index(drop=True)
                         # _Loc_Hits=_Loc_Hits.reset_index()
@@ -224,14 +241,6 @@ for k in range(0,3):
                         # if Log!='NO':
                         #     print(UF.TimeStamp(),'Tracking the cluster...')
                         #     HC.LinkHits(combined_weight_list,True,temp_MCdata_list,cut_dt,cut_dr,Acceptance) #We use the weights assigned by the model to perform microtracking within the volume
-                        continue
-import gc
-gc.collect
-_Tot_Hits=pd.concat(z_clusters_results)
-print(z_clusters_results[0])
-print(_Tot_Hits)
-_Tot_Hits=_Tot_Hits.groupby(['r_HitID','l_HitID','r_z','l_z']).link_strength.agg(['mean']).reset_index()
-_Tot_Hits=_Tot_Hits.rename(columns={'mean': "link_strength"})
 print(_Tot_Hits)
 exit()
 
