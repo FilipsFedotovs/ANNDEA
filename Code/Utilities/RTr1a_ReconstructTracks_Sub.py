@@ -228,6 +228,7 @@ for k in range(0,3):
 import gc
 gc.collect
 _Tot_Hits=pd.concat(z_clusters_results)
+print(z_clusters_results[0])
 print(_Tot_Hits)
 exit()
 
