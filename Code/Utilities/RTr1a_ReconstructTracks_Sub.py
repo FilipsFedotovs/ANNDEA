@@ -96,6 +96,8 @@ def InjectHit(Predator,Prey, Soft):
                  elif Predator[0][el]=='_' and Prey[0][el]!=Predator[0][el]:
                      New_Predator[0][el]=Prey[0][el]
                      New_Predator[1][el]+=Prey[1][el]
+                 print(New_Predator)
+                 print(Prey)
                  print(el,_prey_trigger_count)
                  x=input()
              if OverlapDetected:
