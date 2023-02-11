@@ -259,7 +259,7 @@ class HitCluster:
            _Tot_Hits['d_ty'] = _Tot_Hits['l_ty']-_Tot_Hits['r_ty']
            _Tot_Hits['d_ty'] = _Tot_Hits['d_ty'].abs()
            _Tot_Hits = _Tot_Hits.drop(['r_x','r_y','r_z','l_x','l_y','l_z'],axis=1)
-           _Tot_Hits=_Tot_Hits[['l_HitID','r_HitID','label','d_l','d_t','d_z','d_tx','d_ty']]
+           self.HitPairs=_Tot_Hits[['l_HitID','r_HitID','label','d_l','d_t','d_z','d_tx','d_ty']]
            _Tot_Hits=_Tot_Hits.values.tolist()
            if len(_Tot_Hits)>0:
                import torch
@@ -278,7 +278,7 @@ class HitCluster:
            else:
                return False
 
-      def LinkHits(self,hits,GiveStats,MCHits,cut_dt,cut_dr, Acceptance):
+      def LinkHits(self,hits,GiveStats,MCHits,cut_dt,cut_dr,Acceptance):
           self.HitLinks=hits
           import pandas as pd
 
@@ -608,59 +608,7 @@ class HitCluster:
             print('Prep 4', datetime.datetime.now()-Before)
             _Rec_Hits_Pool=pd.merge(_Hits_df, _Rec_Hits_Pool, how="right", on=['HitID'])
             self.RecHits=_Rec_Hits_Pool
-      def TestKalmanHits(self,Recdata_list,MCdata_list):
-          import pandas as pd
-          _Tot_Hits_df=pd.DataFrame(self.ClusterHits, columns = ['HitID','x','y','z','tx','ty'])[['HitID','z']]
-          _Tot_Hits_df["z"] = pd.to_numeric(_Tot_Hits_df["z"],downcast='float')
 
-          _MCClusterHits=[]
-          _RecClusterHits=[]
-          StatFakeValues=[]
-          StatTruthValues=[]
-          StatLabels=['Initial # of combinations','Delete self-permutations','Enforce positive directionality','Kalman Track Reconstruction']
-          for s in MCdata_list:
-             if s[1]>=self.ClusterID[0]*self.Step[0] and s[1]<((self.ClusterID[0]+1)*self.Step[0]):
-                    if s[2]>=self.ClusterID[1]*self.Step[1] and s[2]<((self.ClusterID[1]+1)*self.Step[1]):
-                        if s[3]>=self.ClusterID[2]*self.Step[2] and s[3]<((self.ClusterID[2]+1)*self.Step[2]):
-                           _MCClusterHits.append([s[0],s[6]])
-          for s in Recdata_list:
-             if s[1]>=self.ClusterID[0]*self.Step[0] and s[1]<((self.ClusterID[0]+1)*self.Step[0]):
-                    if s[2]>=self.ClusterID[1]*self.Step[1] and s[2]<((self.ClusterID[1]+1)*self.Step[1]):
-                        if s[3]>=self.ClusterID[2]*self.Step[2] and s[3]<((self.ClusterID[2]+1)*self.Step[2]):
-                           _RecClusterHits.append([s[0],s[6]])
-          #Preparing Raw and MC combined data 1
-          _l_MCHits=pd.DataFrame(_MCClusterHits, columns = ['l_HitID','l_MC_ID'])
-          _r_MCHits=pd.DataFrame(_MCClusterHits, columns = ['r_HitID','r_MC_ID'])
-          _l_FHits=pd.DataFrame(_RecClusterHits, columns = ['l_HitID','l_Rec_ID'])
-          _r_FHits=pd.DataFrame(_RecClusterHits, columns = ['r_HitID','r_Rec_ID'])
-          _l_Hits=_Tot_Hits_df.rename(columns={"z": "l_z","HitID": "l_HitID" })
-          _r_Hits=_Tot_Hits_df.rename(columns={"z": "r_z","HitID": "r_HitID" })
-          #Join hits + MC truth
-          _l_Tot_Hits=pd.merge(_l_MCHits, _l_Hits, how="right", on=['l_HitID'])
-          _r_Tot_Hits=pd.merge(_r_MCHits, _r_Hits, how="right", on=['r_HitID'])
-          _l_Tot_Hits=pd.merge(_l_FHits, _l_Tot_Hits, how="right", on=['l_HitID'])
-          _r_Tot_Hits=pd.merge(_r_FHits, _r_Tot_Hits, how="right", on=['r_HitID'])
-          _l_Tot_Hits['join_key'] = 'join_key'
-          _r_Tot_Hits['join_key'] = 'join_key'
-          _Tot_Hits=pd.merge(_l_Tot_Hits, _r_Tot_Hits, how="inner", on=["join_key"])
-          _Tot_Hits.l_MC_ID= _Tot_Hits.l_MC_ID.fillna(_Tot_Hits.l_HitID)
-          _Tot_Hits.r_MC_ID= _Tot_Hits.r_MC_ID.fillna(_Tot_Hits.r_HitID)
-          _Tot_Hits=_Tot_Hits.drop(['join_key'], axis=1)
-          StatFakeValues.append(len(_Tot_Hits.axes[0])-len(_Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['l_MC_ID'] != _Tot_Hits['r_MC_ID']]).axes[0]))
-          StatTruthValues.append(len(_Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['l_MC_ID'] != _Tot_Hits['r_MC_ID']]).axes[0]))
-
-          _Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['l_HitID'] == _Tot_Hits['r_HitID']], inplace = True)
-          StatFakeValues.append(len(_Tot_Hits.axes[0])-len(_Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['l_MC_ID'] != _Tot_Hits['r_MC_ID']]).axes[0]))
-          StatTruthValues.append(len(_Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['l_MC_ID'] != _Tot_Hits['r_MC_ID']]).axes[0]))
-
-          _Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['l_z'] <= _Tot_Hits['r_z']], inplace = True)
-          StatFakeValues.append(len(_Tot_Hits.axes[0])-len(_Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['l_MC_ID'] != _Tot_Hits['r_MC_ID']]).axes[0]))
-          StatTruthValues.append(len(_Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['l_MC_ID'] != _Tot_Hits['r_MC_ID']]).axes[0]))
-
-          _Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['r_Rec_ID'] != _Tot_Hits['l_Rec_ID']], inplace = True)
-          StatFakeValues.append(len(_Tot_Hits.axes[0])-len(_Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['l_MC_ID'] != _Tot_Hits['r_MC_ID']]).axes[0]))
-          StatTruthValues.append(len(_Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['l_MC_ID'] != _Tot_Hits['r_MC_ID']]).axes[0]))
-          self.KalmanRecStats=[StatLabels,StatFakeValues,StatTruthValues]
       @staticmethod
       def GenerateLinks(_input,_ClusterID):
           _Top=[]

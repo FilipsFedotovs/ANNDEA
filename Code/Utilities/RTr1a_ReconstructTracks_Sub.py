@@ -198,7 +198,8 @@ for k in range(0,Z_ID_Max):
                         for edge in range(len(HC.edges)):
                             combined_weight_list.append(HC.edges[edge]+w[edge])
                         print(UF.TimeStamp(),'Tracking the cluster...')
-                        
+                        print(HC.HitPairs)
+                        exit()
                         HC.LinkHits(combined_weight_list,False,[],cut_dt,cut_dr,Acceptance) #We use the weights assigned by the model to perform microtracking within the volume
                         After=datetime.datetime.now()
                         
