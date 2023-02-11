@@ -319,6 +319,8 @@ for t in range(len(_Rec_Hits_Pool)):
 _Rec_Hits_Pool=pd.DataFrame(_track_list, columns = ['Segment_ID','HitID'])
 print(_Rec_Hits_Pool)
 print(_z_map)
+_Rec_Hits_Pool=pd.merge(_z_map, _Rec_Hits_Pool, how="right", on=['HitID'])
+print(_Rec_Hits_Pool)
 #_Hits_df=pd.DataFrame(self.ClusterHits, columns = ['HitID','x','y','z','tx','ty'])
 #     _Hits_df=_Hits_df[['HitID','z']]
 #             #Join hits + MC truth
