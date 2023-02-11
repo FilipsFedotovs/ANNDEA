@@ -235,9 +235,16 @@ _Loc_Hits_l=_Tot_Hits[['l_z']].rename(columns={'l_z': 'z'})
 _Loc_Hits=pd.concat([_Loc_Hits_r,_Loc_Hits_l])
 _Loc_Hits.sort_values(by = ['z'], ascending=[True],inplace=True)
 _Loc_Hits.drop_duplicates(subset=['z'], keep='first', inplace=True)
-_z_map=_Loc_Hits
 _Loc_Hits=_Loc_Hits.reset_index(drop=True)
 _Loc_Hits=_Loc_Hits.reset_index()
+
+_z_map_r=_Tot_Hits[['r_HitID','r_z']].rename(columns={'r_z': 'z','r_HitID': 'HitID'})
+_z_map_r=_Tot_Hits[['l_HitID','l_z']].rename(columns={'l_z': 'z','l_HitID': 'HitID'})
+_z_map=pd.concat([_z_map_r,_z_map_r])
+_z_map.drop_duplicates(subset=['HitID','z'], keep='first', inplace=True)
+_z_map=_z_map.reset_index()
+print(_z_map)
+
 _Loc_Hits_r=_Loc_Hits.rename(columns={'index': 'r_index', 'z': 'r_z'})
 _Loc_Hits_l=_Loc_Hits.rename(columns={'index': 'l_index', 'z': 'l_z'})
 _Tot_Hits=pd.merge(_Tot_Hits,_Loc_Hits_r, how='inner', on=['r_z'])
