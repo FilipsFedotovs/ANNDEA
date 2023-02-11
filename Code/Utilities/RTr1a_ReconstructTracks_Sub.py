@@ -145,7 +145,8 @@ for k in range(0,Z_ID_Max):
     # inner psutil function
 
 
-        print('Hit density is', len(HC.RawClusterGraph)/(0.6*0.6*1.2), 'hits per cm^3')
+        print("Hit density is of the Cluster",X_ID,Y_ID,Z_ID, "is  {}cm\u00b3".format(len(HC.RawClusterGraph)/(0.6*0.6*1.2)))
+        exit()
         GraphStatus = HC.GenerateEdges(cut_dt, cut_dr)
         combined_weight_list=[]
         z_clusters_results=[]
