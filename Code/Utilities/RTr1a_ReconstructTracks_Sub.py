@@ -88,8 +88,15 @@ def InjectHit(Predator,Prey, Soft):
                 print(_intersection)
                 _index1 = Predator[0].index(_intersection[0])
                 _index2 = Predator[0].index(_intersection[1])
+
                 print(_index1,_index2)
+
+                New_Predator=copy.deepcopy(Predator)
+                New_Predator[1][_index1]+=Prey[1][_index1]
+                New_Predator[1][_index2]+=Prey[1][_index2]
+                print(New_Predator)
                 x=input()
+                return(New_Predator,True)
              New_Predator=copy.deepcopy(Predator)
              _prey_trigger_count=0
              for el in range (len(Prey[0])):
