@@ -173,7 +173,7 @@ for k in range(0,2):
     # inner psutil function
 
 
-        print(UF.TimeStamp(),"Hit density is of the Cluster",X_ID,Y_ID,Z_ID, "is  {} hits per cm\u00b3".format(len(HC.RawClusterGraph)/(0.6*0.6*1.2)))
+        print(UF.TimeStamp(),"Hit density is of the Cluster",X_ID,Y_ID,Z_ID, "is  {} hits per cm\u00b3".format(round(len(HC.RawClusterGraph)/(0.6*0.6*1.2)),2))
         GraphStatus = HC.GenerateEdges(cut_dt, cut_dr)
         combined_weight_list=[]
 
@@ -242,7 +242,6 @@ _z_map_r=_Tot_Hits[['r_HitID','r_z']].rename(columns={'r_z': 'z','r_HitID': 'Hit
 _z_map_l=_Tot_Hits[['l_HitID','l_z']].rename(columns={'l_z': 'z','l_HitID': 'HitID'})
 _z_map=pd.concat([_z_map_r,_z_map_l])
 _z_map.drop_duplicates(subset=['HitID','z'], keep='first', inplace=True)
-_z_map=_z_map.reset_index()
 print(_z_map)
 
 _Loc_Hits_r=_Loc_Hits.rename(columns={'index': 'r_index', 'z': 'r_z'})
