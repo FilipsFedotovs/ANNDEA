@@ -174,10 +174,11 @@ for k in range(0,Z_ID_Max):
                         w=w.tolist()
                         for edge in range(len(HC.edges)):
                             combined_weight_list.append(HC.edges[edge]+w[edge])
-                        combined_weight_list=pd.DataFrame(combined_weight_list, columns = ['_l_HitID','_r_HitID','link_strength'])
+                        combined_weight_list=pd.DataFrame(combined_weight_list, columns = ['l_HitID','r_HitID','link_strength'])
                         print(combined_weight_list)
-                        _Tot_Hits=pd.merge(HC.HitPairs, combined_weight_list, how="inner", on=['_l_HitID','_r_HitID'])
-                        print()
+                        _Tot_Hits=pd.merge(HC.HitPairs, combined_weight_list, how="inner", on=['l_HitID','r_HitID'])
+                        print(_Tot_Hits)
+                        exit()
                         _Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['link_strength'] <= Acceptance], inplace = True)
                         _Tot_Hits=_Tot_Hits[['_r_HitID','_l_HitID','r_z','l_z','link_strength']]
                         _Tot_Hits.sort_values(by = ['_r_HitID', 'l_z','link_strength'], ascending=[True,True, False],inplace=True)
