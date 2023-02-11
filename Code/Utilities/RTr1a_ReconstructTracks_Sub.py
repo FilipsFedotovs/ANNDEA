@@ -235,6 +235,7 @@ _Loc_Hits_l=_Tot_Hits[['l_z']].rename(columns={'l_z': 'z'})
 _Loc_Hits=pd.concat([_Loc_Hits_r,_Loc_Hits_l])
 _Loc_Hits.sort_values(by = ['z'], ascending=[True],inplace=True)
 _Loc_Hits.drop_duplicates(subset=['z'], keep='first', inplace=True)
+_z_map=_Loc_Hits
 _Loc_Hits=_Loc_Hits.reset_index(drop=True)
 _Loc_Hits=_Loc_Hits.reset_index()
 _Loc_Hits_r=_Loc_Hits.rename(columns={'index': 'r_index', 'z': 'r_z'})
@@ -317,6 +318,7 @@ for t in range(len(_Rec_Hits_Pool)):
                      _track_list.append([_segment_id+'-'+str(t+1),h])
 _Rec_Hits_Pool=pd.DataFrame(_track_list, columns = ['Segment_ID','HitID'])
 print(_Rec_Hits_Pool)
+print(_z_map)
 #_Hits_df=pd.DataFrame(self.ClusterHits, columns = ['HitID','x','y','z','tx','ty'])
 #     _Hits_df=_Hits_df[['HitID','z']]
 #             #Join hits + MC truth
