@@ -81,6 +81,7 @@ def InjectHit(Predator,Prey, Soft):
              OverlapDetected=False
              _intersection=list(set(Predator[0]) & set(Prey[0]))
              print(len(_intersection))
+             print(_intersection)
              x=input()
              New_Predator=copy.deepcopy(Predator)
              _prey_trigger_count=0
