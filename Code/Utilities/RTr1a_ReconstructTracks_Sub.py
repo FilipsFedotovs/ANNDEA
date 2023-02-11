@@ -81,11 +81,11 @@ def InjectHit(Predator,Prey, Soft):
              OverlapDetected=False
              New_Predator=copy.deepcopy(Predator)
              for el in range (len(Prey[0])):
-                 if Prey[0][el]!='_' and Predator[0][el]!='_' and Prey[0][el]==Predator[0][el]:
+                 if Prey[0][el]!='_' and Predator[0][el]!='_' and Prey[0][el]!=Predator[0][el]:
+                     return(Predator,False)
+                 elif Prey[0][el]!='_' and Predator[0][el]!='_' and Prey[0][el]==Predator[0][el]:
                     OverlapDetected=True
                     New_Predator[1][el]+=Prey[1][el]
-                 elif Prey[0][el]!='_' and Predator[0][el]!='_' and Prey[0][el]!=Predator[0][el]:
-                     return(Predator,False)
                  elif Predator[0][el]=='_' and Prey[0][el]!=Predator[0][el]:
                      New_Predator[0][el]=Prey[0][el]
                      New_Predator[1][el]+=Prey[1][el]
