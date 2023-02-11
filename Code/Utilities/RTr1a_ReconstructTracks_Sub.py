@@ -125,7 +125,8 @@ cluster_output=[]
 import datetime
 Before=datetime.datetime.now()
 z_clusters_results=[]
-for k in range(0,Z_ID_Max):
+for k in range(0,3):
+#for k in range(0,Z_ID_Max):
 
     Z_ID=int(k)/Z_overlap
     temp_data=data.drop(data.index[data['z'] >= ((Z_ID+1)*stepZ)])  #Keeping the relevant z slice
@@ -224,10 +225,10 @@ for k in range(0,Z_ID_Max):
                         #     print(UF.TimeStamp(),'Tracking the cluster...')
                         #     HC.LinkHits(combined_weight_list,True,temp_MCdata_list,cut_dt,cut_dr,Acceptance) #We use the weights assigned by the model to perform microtracking within the volume
                         continue
-print(process_memory())
 import gc
 gc.collect
-print(process_memory())
+_Tot_Hits=pd.concat(z_clusters_results)
+print(_Tot_Hits)
 exit()
 
 print(len(cluster_output))
