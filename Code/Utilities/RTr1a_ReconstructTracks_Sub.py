@@ -82,6 +82,10 @@ def InjectHit(Predator,Prey, Soft):
              _intersection=list(set(Predator[0]) & set(Prey[0]))
              if len(_intersection)<2:
                 return(Predator,False)
+             elif len(_intersection)==3:
+                _intersection=[value for value in _intersection if value != "_"]
+                print(_intersection)
+                x=input()
              New_Predator=copy.deepcopy(Predator)
              _prey_trigger_count=0
              for el in range (len(Prey[0])):
