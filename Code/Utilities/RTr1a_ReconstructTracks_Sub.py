@@ -148,6 +148,13 @@ for k in range(0,Z_ID_Max):
         print('Hit density is', len(HC.RawClusterGraph)/(0.6*0.6*1.2), 'hits per cm^3')
         GraphStatus = HC.GenerateEdges(cut_dt, cut_dr)
         combined_weight_list=[]
+        z_clusters_results=[]
+        import os
+        import psutil
+        def process_memory():
+                 process = psutil.Process(os.getpid())
+                 mem_info = process.memory_info()
+                 return mem_info.rss/(1024**2)
         if GraphStatus:
             if HC.ClusterGraph.num_edges>0: #We only bring torch and GNN if we have some edges to classify
                         print(UF.TimeStamp(),'Classifying the edges...')
@@ -175,12 +182,14 @@ for k in range(0,Z_ID_Max):
                         for edge in range(len(HC.edges)):
                             combined_weight_list.append(HC.edges[edge]+w[edge])
                         combined_weight_list=pd.DataFrame(combined_weight_list, columns = ['l_HitID','r_HitID','link_strength'])
-                        print(combined_weight_list)
                         _Tot_Hits=pd.merge(HC.HitPairs, combined_weight_list, how="inner", on=['l_HitID','r_HitID'])
-                        print(_Tot_Hits)
-                        exit()
                         _Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['link_strength'] <= Acceptance], inplace = True)
-                        _Tot_Hits=_Tot_Hits[['_r_HitID','_l_HitID','r_z','l_z','link_strength']]
+                        _Tot_Hits=_Tot_Hits[['r_HitID','l_HitID','r_z','l_z','link_strength']]
+                        z_clusters_results.append(_Tot_Hits)
+                        print(process_memory())
+                        del HC
+                        print(process_memory())
+                        exit()
                         _Tot_Hits.sort_values(by = ['_r_HitID', 'l_z','link_strength'], ascending=[True,True, False],inplace=True)
                         _Loc_Hits_r=_Tot_Hits[['r_z']].rename(columns={'r_z': 'z'})
                         _Loc_Hits_l=_Tot_Hits[['l_z']].rename(columns={'l_z': 'z'})
