@@ -319,8 +319,8 @@ print('Final Time lapse', datetime.datetime.now()-Before)
 if len(z_clusters_results)>0:
     print(UF.TimeStamp(),'Merging all clusters along z-axis...')
     ZContractedTable=z_clusters_results[0].rename(columns={"Segment_ID": "Master_Segment_ID","z": "Master_z" })
-    for i in range(1,len(z_clusters_results[0])):
-        SecondFile=z_clusters_results[0][i]
+    for i in range(1,len(z_clusters_results)):
+        SecondFile=z_clusters_results[i]
         SecondFileTable=SecondFile.RecHits
         FileClean=pd.merge(ZContractedTable,SecondFileTable,how='inner', on=['HitID'])
         FileClean["Segment_No"]= FileClean["Segment_ID"]
