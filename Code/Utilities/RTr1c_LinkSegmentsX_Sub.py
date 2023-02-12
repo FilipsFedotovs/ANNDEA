@@ -65,10 +65,10 @@ def zero_divide(a, b):
     if (b==0): return 0
     return a/b
 
-FirstFileName=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RTr1c_'+RecBatchID+'_'+str(0)+'/RTr1b_'+RecBatchID+'_hit_cluster_rec_y_set_' +str(0)+'.csv'
+FirstFileName=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RTr1b_'+RecBatchID+'_'+str(0)+'/RTr1b_'+RecBatchID+'_hit_cluster_rec_y_set_' +str(0)+'.csv'
 ZContractedTable=pd.read_csv(FirstFileName)
 for i in range(1,X_ID_Max):
-    SecondFileName=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RTr1c_'+RecBatchID+'_'+str(0)+'/RTr1b_'+RecBatchID+'_hit_cluster_rec_y_set_'+str(i)+'.csv'
+    SecondFileName=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RTr1b_'+RecBatchID+'_'+str(0)+'/RTr1b_'+RecBatchID+'_hit_cluster_rec_y_set_'+str(i)+'.csv'
     SecondFile=pd.read_csv(SecondFileName)
     SecondFileTable=SecondFile.rename(columns={"Master_Segment_ID":"Segment_ID","Master_z":"z" })
     #SecondFileTable.to_csv('SecondFile.csv',index=False)
