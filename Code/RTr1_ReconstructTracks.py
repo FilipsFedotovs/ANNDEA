@@ -473,7 +473,7 @@ while Status<len(Program):
            #Read the output with hit- ANN Track map
            FirstFile=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RTr1c_'+RecBatchID+'_0'+'/RTr1c_'+RecBatchID+'_hit_cluster_rec_x_set_0.csv'
            print(UF.TimeStamp(),'Loading the file ',bcolors.OKBLUE+FirstFile+bcolors.ENDC)
-           FirstFile=pd.read_csv(input_file_location,header=0)
+           TrackMap=pd.read_csv(FirstFile,header=0)
            input_file_location=args.f
            print(UF.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
            #Reading the original file with Raw hits
