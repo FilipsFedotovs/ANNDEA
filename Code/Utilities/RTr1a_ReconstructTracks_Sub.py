@@ -308,25 +308,41 @@ for k in range(0,Z_ID_Max):
                                              _track_list.append([_segment_id+'-'+str(t+1),h])
                         _Rec_Hits_Pool=pd.DataFrame(_track_list, columns = ['Segment_ID','HitID'])
                         _Rec_Hits_Pool=pd.merge(_z_map, _Rec_Hits_Pool, how="right", on=['HitID'])
-                        print(UF.TimeStamp(),_no_tracks, 'have been reconstructed in this cluster set ...')
+                        print(UF.TimeStamp(),_no_tracks, 'track segments have been reconstructed in this cluster set ...')
                         z_clusters_results.append(_Rec_Hits_Pool)
                         del HC
                         continue
 import gc
 gc.collect
 print('Final Time lapse', datetime.datetime.now()-Before)
-# if len(z_clusters_results)>0:
-#
-#
-# else:
-#     print(UF.TimeStamp(),'No suitable hit pairs in the cluster set, just writing the empty one...')
-#     _Rec_Hits_Pool=pd.DataFrame([], columns = ['HitID','z','Segment_ID'])
-#
-# print(UF.TimeStamp(),'Writing the output...')
-# After=datetime.datetime.now()
-# print('Final Time lapse', After-Before)
-# _Rec_Hits_Pool.to_csv(output_file_location,index=False)
-# print(UF.TimeStamp(),'Output is written to ',output_file_location)
-# exit()
+
+if len(z_clusters_results)>0:
+    print(UF.TimeStamp(),'Merging all clusters along z-axis...')
+    ZContractedTable=z_clusters_results[0].rename(columns={"Segment_ID": "Master_Segment_ID","z": "Master_z" })
+    for i in range(1,len(z_clusters_results[0])):
+        SecondFile=z_clusters_results[0][i]
+        SecondFileTable=SecondFile.RecHits
+        FileClean=pd.merge(ZContractedTable,SecondFileTable,how='inner', on=['HitID'])
+        FileClean["Segment_No"]= FileClean["Segment_ID"]
+        FileClean=FileClean.groupby(by=["Master_Segment_ID","Segment_ID"])["Segment_No"].count().reset_index()
+        FileClean=FileClean.sort_values(["Master_Segment_ID","Segment_No"],ascending=[1,0])
+        FileClean.drop_duplicates(subset=["Master_Segment_ID"],keep='first',inplace=True)
+        FileClean=FileClean.drop(['Segment_No'],axis=1)
+        FileClean=pd.merge(FileClean,SecondFileTable,how='right', on=['Segment_ID'])
+        FileClean["Master_Segment_ID"] = FileClean["Master_Segment_ID"].fillna(FileClean["Segment_ID"])
+        FileClean=FileClean.rename(columns={"z": "Master_z" })
+        FileClean=FileClean.drop(['Segment_ID'],axis=1)
+        ZContractedTable=pd.concat([ZContractedTable,FileClean])
+        ZContractedTable.drop_duplicates(subset=["Master_Segment_ID","HitID",'Master_z'],keep='first',inplace=True)
+    ZContractedTable=ZContractedTable.sort_values(["Master_Segment_ID",'Master_z'],ascending=[1,1])
+    print(ZContractedTable)
+else:
+     print(UF.TimeStamp(),'No suitable hit pairs in the cluster set, just writing the empty one...')
+     ZContractedTable=pd.DataFrame([], columns = ['HitID','Master_z','Master_Segment_ID'])
+output_file_location=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(X_ID)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(X_ID)+'_'+str(Y_ID)+sfx
+print(UF.TimeStamp(),'Writing the output...')
+ZContractedTable.to_csv(output_file_location,index=False)
+print(UF.TimeStamp(),'Output is written to ',output_file_location)
+exit()
 
 
