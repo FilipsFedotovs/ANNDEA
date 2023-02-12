@@ -474,8 +474,6 @@ while Status<len(Program):
            FirstFile=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RTr1c_'+RecBatchID+'_0'+'/RTr1c_'+RecBatchID+'_hit_cluster_rec_x_set_0.csv'
            print(UF.TimeStamp(),'Loading the file ',bcolors.OKBLUE+FirstFile+bcolors.ENDC)
            TrackMap=pd.read_csv(FirstFile,header=0)
-           print(TrackMap)
-           exit()
            input_file_location=args.f
            print(UF.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
            #Reading the original file with Raw hits
@@ -490,6 +488,8 @@ while Status<len(Program):
 
            CutData.drop(['ANN_Brick_ID','ANN_Track_ID'],axis=1,inplace=True,errors='ignore') #Removing old ANNDEA reconstruction results so we can overwrite with the new ones
            #Map reconstructed ANN tracks to hits in the Raw file - this is in essesne the final output of the Tracking.
+           print(CutData)
+           print(TrackMap)
            CutData=pd.merge(CutData,TrackMap,how='left', left_on=[PM.Hit_ID], right_on=['HitID'])
            CutData.drop(['HitID'],axis=1,inplace=True) #Make sure that HitID is not the Hit ID name in the raw data.
            if SliceData:
