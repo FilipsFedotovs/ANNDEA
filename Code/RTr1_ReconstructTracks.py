@@ -429,7 +429,7 @@ if Mode=='RESET':
 #Setting up folders for the output. The reconstruction of just one brick can easily generate >100k of files. Keeping all that blob in one directory can cause problems on lxplus.
 print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Create'))
 
-###### Stage 3
+###### Stage 2
 prog_entry=[]
 job_sets=1
 prog_entry.append(' Sending hit cluster to the HTCondor, so the reconstructed clusters can be merged along x-axis')
@@ -444,7 +444,7 @@ if Mode=='RESET':
 #Setting up folders for the output. The reconstruction of just one brick can easily generate >100k of files. Keeping all that blob in one directory can cause problems on lxplus.
 print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Create'))
 
-###### Stage 4
+###### Stage 3
 Program.append('Custom')
 
 
@@ -472,10 +472,8 @@ while Status<len(Program):
        try:
            #Read the output with hit- ANN Track map
            FirstFile=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RTr1c_'+RecBatchID+'_0'+'/RTr1c_'+RecBatchID+'_hit_cluster_rec_x_set_0.csv'
-           print(UF.TimeStamp(),'Loading the object ',bcolors.OKBLUE+FirstFile+bcolors.ENDC)
-           FirstFileRaw=UF.PickleOperations(FirstFile,'r', 'N/A')
-           FirstFile=FirstFileRaw[0]
-           TrackMap=FirstFile.RecTracks
+           print(UF.TimeStamp(),'Loading the file ',bcolors.OKBLUE+FirstFile+bcolors.ENDC)
+           FirstFile=pd.read_csv(input_file_location,header=0)
            input_file_location=args.f
            print(UF.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
            #Reading the original file with Raw hits
@@ -585,64 +583,6 @@ while Status<len(Program):
                             [label[5], np.average(fake_results_6), np.average(truth_results_6), np.sum(truth_results_6)/(np.sum(fake_results_6)+np.sum(truth_results_6)), np.std(precision_results_6), np.average(recall_results_6), np.std(recall_results_6)], \
                             [label[6], np.average(fake_results_7), np.average(truth_results_7), np.sum(truth_results_7)/(np.sum(fake_results_7)+np.sum(truth_results_3)), np.std(precision_results_7), np.average(recall_results_7), np.std(recall_results_7)]], \
                             headers=['Step', 'Avg # Fake edges', 'Avg # of Genuine edges', 'Avg precision', 'Precision std','Avg recall', 'Recall std' ], tablefmt='orgtbl'))
-           if Log=='KALMAN':
-                        #Similar logic as for MC but here we measure FEDRA reconstruction
-                        print(UF.TimeStamp(),'Since the logging was requested, Kalman filter average recombination performance across the clusters is being calculated...')
-                        fake_results_1=[]
-                        fake_results_2=[]
-                        fake_results_3=[]
-                        fake_results_4=[]
-                        truth_results_1=[]
-                        truth_results_2=[]
-                        truth_results_3=[]
-                        truth_results_4=[]
-                        precision_results_1=[]
-                        precision_results_2=[]
-                        precision_results_3=[]
-                        precision_results_4=[]
-                        recall_results_1=[]
-                        recall_results_2=[]
-                        recall_results_3=[]
-                        recall_results_4=[]
-                        with alive_bar(Zsteps*Ysteps*Xsteps,force_tty=True, title='Collating the results') as bar:
-                            for k in range(0,Zsteps):
-                                for j in range(0,Ysteps):
-                                    for i in range(0,Xsteps):
-                                        bar()
-                                        input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RTr1a_'+RecBatchID+'_hit_cluster_rec_set_'+str(k)+'_' +str(j)+'_' +str(i)+'.pkl'
-                                        cluster_data_raw=UF.PickleOperations(input_file_location, 'r', 'N/A')
-                                        cluster_data=cluster_data_raw[0]
-                                        result_temp=cluster_data.KalmanRecStats
-                                        fake_results_1.append(int(result_temp[1][0]))
-                                        fake_results_2.append(int(result_temp[1][1]))
-                                        fake_results_3.append(int(result_temp[1][2]))
-                                        fake_results_4.append(int(result_temp[1][3]))
-                                        truth_results_1.append(int(result_temp[2][0]))
-                                        truth_results_2.append(int(result_temp[2][1]))
-                                        truth_results_3.append(int(result_temp[2][2]))
-                                        truth_results_4.append(int(result_temp[2][3]))
-                                        if (int(result_temp[2][3])+int(result_temp[1][3]))>0:
-                                            precision_results_1.append(int(result_temp[2][0])/(int(result_temp[2][0])+int(result_temp[1][0])))
-                                            precision_results_2.append(int(result_temp[2][1])/(int(result_temp[2][1])+int(result_temp[1][1])))
-                                            precision_results_3.append(int(result_temp[2][2])/(int(result_temp[2][2])+int(result_temp[1][2])))
-                                            precision_results_4.append(int(result_temp[2][3])/(int(result_temp[2][3])+int(result_temp[1][3])))
-                                        if int(result_temp[2][2])>0:
-                                            recall_results_1.append(int(result_temp[2][0])/(int(result_temp[2][2])))
-                                            recall_results_2.append(int(result_temp[2][1])/(int(result_temp[2][2])))
-                                            recall_results_3.append(int(result_temp[2][2])/(int(result_temp[2][2])))
-                                            recall_results_4.append(int(result_temp[2][3])/(int(result_temp[2][2])))
-                                        else:
-                                               continue
-                                        label=result_temp[0]
-                                        label.append('Original # of valid Combinations')
-
-                        print(UF.TimeStamp(),bcolors.OKGREEN+'Fedra reconstruction results have been compiled and presented bellow:'+bcolors.ENDC)
-                        print(tabulate([[label[0], np.average(fake_results_1), np.average(truth_results_1), np.sum(truth_results_1)/(np.sum(fake_results_1)+np.sum(truth_results_1)), np.std(precision_results_1), np.average(recall_results_1), np.std(recall_results_1)], \
-                        [label[1], np.average(fake_results_2), np.average(truth_results_2), np.sum(truth_results_2)/(np.sum(fake_results_2)+np.sum(truth_results_2)), np.std(precision_results_2), np.average(recall_results_2), np.std(recall_results_2)], \
-                        [label[2], np.average(fake_results_3), np.average(truth_results_3), np.sum(truth_results_3)/(np.sum(fake_results_3)+np.sum(truth_results_3)), np.std(precision_results_3), np.average(recall_results_3), np.std(recall_results_3)], \
-                        [label[3], np.average(fake_results_4), np.average(truth_results_4), np.sum(truth_results_4)/(np.sum(fake_results_4)+np.sum(truth_results_4)), np.std(precision_results_4), np.average(recall_results_4), np.std(recall_results_4)]],\
-                        headers=['Step', 'Avg # Fake edges', 'Avg # of Genuine edges', 'Avg precision', 'Precision std','Avg recall', 'Recall std' ], tablefmt='orgtbl'))
-
            print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 4 has successfully completed'+bcolors.ENDC)
            Status=5
        except Exception as e:
@@ -650,9 +590,13 @@ while Status<len(Program):
           Status=6
           break
 if Status==5:
+
     print(UF.TimeStamp(),'Performing the cleanup... ',bcolors.ENDC)
+    exit()
     HTCondorTag="SoftUsed == \"ANNDEA-RTr1a-"+RecBatchID+"\""
-    UF.RecCleanUp(AFS_DIR, EOS_DIR, 'RTr1_'+RecBatchID, ['RTr1_'+RecBatchID,RecBatchID+'_RTr_OUTPUT.csv'], HTCondorTag)
+    UF.RecCleanUp(AFS_DIR, EOS_DIR, 'RTr1a_'+RecBatchID, ['RTr1_'+RecBatchID,RecBatchID+'_RTr_OUTPUT.csv'], HTCondorTag)
+    HTCondorTag="SoftUsed == \"ANNDEA-RTr1b-"+RecBatchID+"\""
+    UF.RecCleanUp(AFS_DIR, EOS_DIR, 'RTr1b_'+RecBatchID, ['RTr1_'+RecBatchID,RecBatchID+'_RTr_OUTPUT.csv'], HTCondorTag)
     for p in Program:
         if p!='Custom':
            print(UF.TimeStamp(),UF.ManageTempFolders(p,'Delete'))
