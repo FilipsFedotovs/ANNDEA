@@ -490,8 +490,11 @@ while Status<len(Program):
            #Map reconstructed ANN tracks to hits in the Raw file - this is in essesne the final output of the Tracking.
            print(CutData)
            print(TrackMap)
+           CutData[PM.Hit_ID] = CutData[PM.Hit_ID].astype(str)
            CutData=pd.merge(CutData,TrackMap,how='left', left_on=[PM.Hit_ID], right_on=['HitID'])
+
            CutData.drop(['HitID'],axis=1,inplace=True) #Make sure that HitID is not the Hit ID name in the raw data.
+
            if SliceData:
             Data=pd.concat([CutData,OtherData]) #If we slice the data we do the of Reconstructed and Unreconstructed subset of the brick.
            else:
