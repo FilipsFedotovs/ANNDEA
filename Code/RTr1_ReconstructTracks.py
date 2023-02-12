@@ -490,6 +490,7 @@ while Status<len(Program):
            #Map reconstructed ANN tracks to hits in the Raw file - this is in essesne the final output of the Tracking.
            print(CutData)
            print(TrackMap)
+           TrackMap['HitID'] = TrackMap['HitID'].astype(str)
            CutData[PM.Hit_ID] = CutData[PM.Hit_ID].astype(str)
            CutData=pd.merge(CutData,TrackMap,how='left', left_on=[PM.Hit_ID], right_on=['HitID'])
 
