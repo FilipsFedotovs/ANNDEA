@@ -152,9 +152,7 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
               print(UF.TimeStamp(),'Slicing the data...')
               data=data.drop(data.index[(data[PM.x] > Xmax) | (data[PM.x] < Xmin) | (data[PM.y] > Ymax) | (data[PM.y] < Ymin)])
               final_rows=len(data.axes[0])
-              print(UF.TimeStamp(),'The sliced data has ',f
-
-              inal_rows,' hits')
+              print(UF.TimeStamp(),'The sliced data has ',final_rows,' hits')
          data=data.rename(columns={PM.x: "x"})
          data=data.rename(columns={PM.y: "y"})
          data=data.rename(columns={PM.z: "z"})
