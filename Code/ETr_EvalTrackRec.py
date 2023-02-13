@@ -164,8 +164,6 @@ for RN in RecNames:
   rec_data_tot=raw_data_temp_rec[RN].nunique()
   data_rec=pd.merge(raw_data_rec[[RN,PM.Hit_ID]],raw_data_temp_rec,how='inner', on =[RN])
   data_rec=pd.merge(data_rec,data_mc,how='inner', on =[PM.Hit_ID])
-  print(data_rec)
-  exit()
   data_rec=data_rec.rename(columns={PM.Hit_ID: RN+'_Overlap'})
   data_rec=data_rec.groupby(by=[RN,RN+'_Size','MC_Mother_Track_ID'])[RN+'_Overlap'].nunique().reset_index()
   data_rec.drop(data_rec.index[(data_rec[RN+'_Overlap'] < 2)],inplace=True)
@@ -180,6 +178,8 @@ for RN in RecNames:
   print(UF.TimeStamp(), bcolors.OKGREEN+'Recombination metrics for ',bcolors.BOLD+RN+bcolors.ENDC,bcolors.OKGREEN+' are ready and listed bellow:'+bcolors.ENDC)
   print(UF.TimeStamp(),'Total number of reconstructed tracks :',bcolors.BOLD+str(rec_data_tot)+bcolors.ENDC)
   print(UF.TimeStamp(),'But the number of those tracks matched to MC tracks is:',bcolors.BOLD+str(rec_data_mtch)+bcolors.ENDC)
+  print(raw_data_mc)
+  exit()
   if raw_data_mc["MC_Mother_Track_Size"].sum()>0:
     Recall=raw_data_mc[RN+'_Overlap'].sum()/raw_data_mc["MC_Mother_Track_Size"].sum()
   else:
