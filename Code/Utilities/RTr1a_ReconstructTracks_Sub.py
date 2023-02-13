@@ -286,7 +286,7 @@ for k in range(0,Z_ID_Max):
 
 
                                         for s in range(len(_Tot_Hits_Predator)):
-                                            for h in range(len(_Tot_Hits_Predator[s])/2):
+                                            for h in range(int(len(_Tot_Hits_Predator[s])/2)):
                                                 if _Tot_Hits_Predator[s][h] =='_':
                                                     _Tot_Hits_Predator[s][h]='H_'+str(s)
                                         print(_Tot_Hits_Predator[0])
