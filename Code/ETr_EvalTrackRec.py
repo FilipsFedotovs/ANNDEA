@@ -158,6 +158,8 @@ data_mc=pd.merge(raw_data[['MC_Mother_Track_ID',PM.Hit_ID]],raw_data_mc,how='inn
 for RN in RecNames:
   raw_data_rec=raw_data.drop(raw_data.index[(raw_data[RN] == 'nan-nan')])
   raw_data_rec=raw_data_rec[[RN,PM.Hit_ID]]
+  print(raw_data_rec)
+  exit()
   raw_data_temp_rec=raw_data_rec[[RN,PM.Hit_ID]].rename(columns={PM.Hit_ID: RN+'_Size'})
   raw_data_temp_rec=raw_data_temp_rec.groupby(by=[RN])[RN+'_Size'].nunique().reset_index()
   raw_data_temp_rec.drop(raw_data_temp_rec.index[(raw_data_temp_rec[RN+'_Size'] < 2)],inplace=True)
