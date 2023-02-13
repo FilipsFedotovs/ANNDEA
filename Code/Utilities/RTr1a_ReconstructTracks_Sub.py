@@ -271,16 +271,22 @@ for k in range(0,Z_ID_Max):
                                                    Result=InjectHit(Predator,_Tot_Hits_PCopy[pry],False)
                                                    Predator=Result[0]
                                             _Tot_Hits_Predator.append(Predator)
-                                        print(_Tot_Hits_Predator[0])
-                                        exit()
+                                        # for s in _Tot_Hits_Predator:
+                                        #     s=s[0].append(mean(s.pop(1)))
+                                        # _Tot_Hits_Predator = [item for l in _Tot_Hits_Predator for item in l]
+                                        # for s in range(len(_Tot_Hits_Predator)):
+                                        #     for h in range(len(_Tot_Hits_Predator[s])):
+                                        #         if _Tot_Hits_Predator[s][h] =='_':
+                                        #             _Tot_Hits_Predator[s][h]='H_'+str(s)
                                         for s in _Tot_Hits_Predator:
-                                            s=s[0].append(mean(s.pop(1)))
+                                            s=s[0]+s[1]
                                         _Tot_Hits_Predator = [item for l in _Tot_Hits_Predator for item in l]
+                                        print(_Tot_Hits_Predator)
+                                        exit()
                                         for s in range(len(_Tot_Hits_Predator)):
                                             for h in range(len(_Tot_Hits_Predator[s])):
                                                 if _Tot_Hits_Predator[s][h] =='_':
                                                     _Tot_Hits_Predator[s][h]='H_'+str(s)
-
                                         column_no=len(_Tot_Hits_Predator[0])-1
                                         columns=[]
 
