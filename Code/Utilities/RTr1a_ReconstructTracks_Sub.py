@@ -258,6 +258,9 @@ for k in range(0,Z_ID_Max):
 
                         _Rec_Hits_Pool=[]
                         _intital_size=len(_Tot_Hits)
+                        _Tot_Hits.to_csv('/eos/user/f/ffedship/ANNDEA_v2/ANNDEA/Data/REC_SET/v4_bug_before_tracking.csv',index=False)
+                        print('Step 1')
+                        exit()
                         while len(_Tot_Hits)>0:
                                         _Tot_Hits_PCopy=copy.deepcopy(_Tot_Hits)
                                         _Tot_Hits_Predator=[]
