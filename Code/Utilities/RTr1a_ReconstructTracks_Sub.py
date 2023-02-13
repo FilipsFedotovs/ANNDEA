@@ -239,8 +239,8 @@ for k in range(0,Z_ID_Max):
                         _Tot_Hits.sort_values(by = ['l_HitID', 'r_index','link_strength'], ascending=[True,True, False],inplace=True)
                         _Tot_Hits.drop_duplicates(subset=['l_HitID', 'r_index','link_strength'], keep='first', inplace=True)
                         print(UF.TimeStamp(),'Tracking the cluster...')
-                        _Tot_Hits.to_csv('/eos/user/f/ffedship/ANNDEA_v2/ANNDEA/Data/REC_SET/v4_bug_before_tracking.csv',index=False)
-                        print('Step 1')
+                        # _Tot_Hits.to_csv('/eos/user/f/ffedship/ANNDEA_v2/ANNDEA/Data/REC_SET/v4_bug_before_tracking.csv',index=False)
+                        # print('Step 1')
                         _Tot_Hits=_Tot_Hits.values.tolist()
                         _Temp_Tot_Hits=[]
                         for el in _Tot_Hits:
@@ -343,6 +343,10 @@ for k in range(0,Z_ID_Max):
 import gc
 gc.collect
 print('Final Time lapse', datetime.datetime.now()-Before)
+
+for i in range(0,len(z_clusters_results)):
+   z_clusters_results[i].to_csv('/eos/user/f/ffedship/ANNDEA_v2/ANNDEA/Data/REC_SET/v4_bug_before_tracking_ind_'+str(i)+".csv",index=False)
+exit()
 
 if len(z_clusters_results)>0:
     print(UF.TimeStamp(),'Merging all clusters along z-axis...')
