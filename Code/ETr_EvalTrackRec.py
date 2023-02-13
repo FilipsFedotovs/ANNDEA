@@ -178,10 +178,7 @@ for RN in RecNames:
 
   data_rec.drop([RN],axis=1,inplace=True)
   rec_data_mtch=data_rec['MC_Mother_Track_ID'].nunique()
-  print(raw_data_mc)
   raw_data_mc=pd.merge(raw_data_mc,data_rec,how='left', on =['MC_Mother_Track_ID'])
-  print(raw_data_mc["MC_Mother_Track_Size"].sum())
-  print(raw_data_mc[RN+'_Overlap'].sum())
   print(UF.TimeStamp(), bcolors.OKGREEN+'Recombination metrics for ',bcolors.BOLD+RN+bcolors.ENDC,bcolors.OKGREEN+' are ready and listed bellow:'+bcolors.ENDC)
   print(UF.TimeStamp(),'Total number of reconstructed tracks :',bcolors.BOLD+str(rec_data_tot)+bcolors.ENDC)
   print(UF.TimeStamp(),'But the number of those tracks matched to MC tracks is:',bcolors.BOLD+str(rec_data_mtch)+bcolors.ENDC)
@@ -193,7 +190,6 @@ for RN in RecNames:
     Precision=raw_data_mc[RN+'_Overlap'].sum()/raw_data_mc[RN+'_Size'].sum()
   else:
       Precision=0
-  print(Recall)
   Segmentation=raw_data_mc[RN+'_Segmentation'].mean()
   print(UF.TimeStamp(),'Average track reconstruction efficiency:',bcolors.BOLD+str(round(Recall,2)*100), '%'+bcolors.ENDC)
   print(UF.TimeStamp(),'Average track reconstruction purity:',bcolors.BOLD+str(round(Precision,2)*100), '%'+bcolors.ENDC)
