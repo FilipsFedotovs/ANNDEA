@@ -180,7 +180,7 @@ for RN in RecNames:
   rec_data_mtch=data_rec['MC_Mother_Track_ID'].nunique()
   print(raw_data_mc)
   raw_data_mc=pd.merge(raw_data_mc,data_rec,how='left', on =['MC_Mother_Track_ID'])
-  print(raw_data_mc)
+  print(raw_data_mc["MC_Mother_Track_Size"].sum())
   exit()
   print(UF.TimeStamp(), bcolors.OKGREEN+'Recombination metrics for ',bcolors.BOLD+RN+bcolors.ENDC,bcolors.OKGREEN+' are ready and listed bellow:'+bcolors.ENDC)
   print(UF.TimeStamp(),'Total number of reconstructed tracks :',bcolors.BOLD+str(rec_data_tot)+bcolors.ENDC)
