@@ -283,12 +283,14 @@ for k in range(0,Z_ID_Max):
                                         for s in _Tot_Hits_Predator:
                                             _Tot_Hits_Predator_temp.append(s[0]+s[1])
                                         _Tot_Hits_Predator = _Tot_Hits_Predator_temp
-                                        print(_Tot_Hits_Predator[0])
-                                        exit()
+
+
                                         for s in range(len(_Tot_Hits_Predator)):
-                                            for h in range(len(_Tot_Hits_Predator[s])):
+                                            for h in range(len(_Tot_Hits_Predator[s])/2):
                                                 if _Tot_Hits_Predator[s][h] =='_':
                                                     _Tot_Hits_Predator[s][h]='H_'+str(s)
+                                        print(_Tot_Hits_Predator[0])
+                                        exit()
                                         column_no=len(_Tot_Hits_Predator[0])-1
                                         columns=[]
 
