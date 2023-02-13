@@ -304,15 +304,17 @@ for k in range(0,Z_ID_Max):
                                         # print('Step 2')
                                         # exit()
                                         for c in range(column_no):
-                                            _Tot_Hits_Predator.sort_values(by = [str('fit_'+str(c)),], ascending=[False],inplace=True)
-                                            print(_Tot_Hits_Predator)
+                                            _Tot_Hits_Predator.sort_values(by = [str('fit_'+str(c))], ascending=[False],inplace=True)
+                                            # print(_Tot_Hits_Predator)
                                             _Tot_Hits_Predator.drop_duplicates(subset=[str(c)], keep='first', inplace=True)
-                                            print(_Tot_Hits_Predator)
-                                            exit()
-                                        _Tot_Hits_Predator.to_csv('/eos/user/f/ffedship/ANNDEA_v2/ANNDEA/Data/REC_SET/v4_bug_before_tracking2.csv',index=False)
-                                        print('Step 3')
-                                        exit()
-                                        _Tot_Hits_Predator=_Tot_Hits_Predator.drop(['average_link_strength'],axis=1)
+                                            # print(_Tot_Hits_Predator)
+                                            # exit()
+                                        # _Tot_Hits_Predator.to_csv('/eos/user/f/ffedship/ANNDEA_v2/ANNDEA/Data/REC_SET/v4_bug_before_tracking2.csv',index=False)
+                                        # print('Step 3')
+                                        # exit()
+                                        for c in range(column_no):
+                                            #_Tot_Hits_Predator.sort_values(by = [str('fit_'+str(c)),], ascending=[False],inplace=True)
+                                            _Tot_Hits_Predator=_Tot_Hits_Predator.drop([str('fit_'+str(c))],axis=1)
 
                                         _Tot_Hits_Predator=_Tot_Hits_Predator.values.tolist()
                                         for seg in range(len(_Tot_Hits_Predator)):
