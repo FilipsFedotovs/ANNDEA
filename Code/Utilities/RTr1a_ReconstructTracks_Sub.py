@@ -271,6 +271,8 @@ for k in range(0,Z_ID_Max):
                                                    Result=InjectHit(Predator,_Tot_Hits_PCopy[pry],False)
                                                    Predator=Result[0]
                                             _Tot_Hits_Predator.append(Predator)
+                                        print(_Tot_Hits_Predator[0])
+                                        exit()
                                         for s in _Tot_Hits_Predator:
                                             s=s[0].append(mean(s.pop(1)))
                                         _Tot_Hits_Predator = [item for l in _Tot_Hits_Predator for item in l]
@@ -292,6 +294,9 @@ for k in range(0,Z_ID_Max):
                                         exit()
                                         for c in range(column_no):
                                             _Tot_Hits_Predator.drop_duplicates(subset=[str(c)], keep='first', inplace=True)
+                                        _Tot_Hits_Predator.to_csv('/eos/user/f/ffedship/ANNDEA_v2/ANNDEA/Data/REC_SET/v4_bug_before_tracking2.csv',index=False)
+                                        print('Step 3')
+                                        exit()
                                         _Tot_Hits_Predator=_Tot_Hits_Predator.drop(['average_link_strength'],axis=1)
 
                                         _Tot_Hits_Predator=_Tot_Hits_Predator.values.tolist()
