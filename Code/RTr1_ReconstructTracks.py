@@ -145,7 +145,7 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
          print(UF.TimeStamp(),'The cleaned data has ',final_rows,' hits')
          data[PM.Hit_ID] = data[PM.Hit_ID].astype(int)
 
-         data=data.drop(data.index[(PM.Hit_ID > 27838915) | (data[PM.Hit_ID] < 27838860)])
+         data=data.drop(data.index[(data[PM.Hit_ID] > 27838915) | (data[PM.Hit_ID] < 27838860)])
          print(data)
          data[PM.Hit_ID] = data[PM.Hit_ID].astype(str)
          if SliceData:
