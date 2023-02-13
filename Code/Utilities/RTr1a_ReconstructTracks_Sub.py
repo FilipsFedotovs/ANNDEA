@@ -280,6 +280,9 @@ for k in range(0,Z_ID_Max):
                                         #             _Tot_Hits_Predator[s][h]='H_'+str(s)
                                         for s in _Tot_Hits_Predator:
                                             s=s[0]+s[1]
+                                            print(s[0])
+                                            print(s[1])
+                                            exit()
                                         _Tot_Hits_Predator = [item for l in _Tot_Hits_Predator for item in l]
                                         print(_Tot_Hits_Predator)
                                         exit()
