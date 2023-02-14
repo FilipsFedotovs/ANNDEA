@@ -343,21 +343,11 @@ for k in range(0,Z_ID_Max):
 
                                         for c in range(column_no):
                                             columns.append(str(c))
-                                        for c in range(column_no):
-                                            columns.append('fit_'+str(c))
-                                        # columns.append('average_link_strength')
+                                        columns.append('track_len')
                                         _Tot_Hits_Predator_Refined_Pool=pd.DataFrame(_Tot_Hits_Predator_Refined_Pool, columns = columns)
-                                        # print(_Tot_Hits_Predator)
-                                        #_Tot_Hits_Predator.sort_values(by = ['average_link_strength'], ascending=[False],inplace=True)
-                                        # _Tot_Hits_Predator_Refined_Pool.to_csv('/eos/user/f/ffedship/ANNDEA_v2/ANNDEA/Data/REC_SET/v4_bug_before_tracking5.csv',index=False)
-                                        # print('Step 5')
-                                        # exit()
+                                        _Tot_Hits_Predator_Refined_Pool.sort_values(by = ['track_len'], ascending=[False],inplace=True)
                                         for c in range(column_no):
-                                            _Tot_Hits_Predator.sort_values(by = [str('fit_'+str(c))], ascending=[False],inplace=True)
-                                            # print(_Tot_Hits_Predator)
-                                            #_Tot_Hits_Predator.drop_duplicates(subset=[str(c)], keep='first', inplace=True)
-                                            # print(_Tot_Hits_Predator)
-                                            # exit()
+                                            _Tot_Hits_Predator_Refined_Pool.drop_duplicates(subset=[str(c)], keep='first', inplace=True)
                                         _Tot_Hits_Predator.to_csv('/eos/user/f/ffedship/ANNDEA_v2/ANNDEA/Data/REC_SET/v4_bug_before_tracking_finish_test.csv',index=False)
                                         print('Step 3')
                                         exit()
