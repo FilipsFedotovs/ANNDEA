@@ -287,7 +287,7 @@ for k in range(0,Z_ID_Max):
                                             print(UF.TimeStamp(),'Progress is ',round(100*prd/len(_Tot_Hits_Predator_Refined),2), '%',end="\r", flush=True)
                                             RefinedPredator=_Tot_Hits_Predator_Refined[prd]
                                             for pry in range(prd+1,len(_Tot_Hits_Predator_Refined)):
-                                                   print(_Tot_Hits_PCopy[pry])
+                                                   print(_Tot_Hits_Predator_Refined[pry])
                                                    print(RefinedPredator)
                                                    RefinedPredator=DonateHit(RefinedPredator,_Tot_Hits_Predator_Refined[pry])
                                                    print(RefinedPredator)
