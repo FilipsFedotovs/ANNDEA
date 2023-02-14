@@ -281,14 +281,14 @@ for k in range(0,Z_ID_Max):
                                                    Result=InjectHit(Predator,_Tot_Hits_PCopy[pry],False)
                                                    Predator=Result[0]
                                             _Tot_Hits_Predator.append(Predator)
-
+                                        _Tot_Hits_Predator_Refined_Pool=[]
                                         _Tot_Hits_Predator_Refined=copy.deepcopy(_Tot_Hits_Predator)
                                         for prd in range(0,len(_Tot_Hits_Predator_Refined)):
                                             print(UF.TimeStamp(),'Progress is ',round(100*prd/len(_Tot_Hits_Predator_Refined),2), '%',end="\r", flush=True)
                                             RefinedPredator=_Tot_Hits_Predator_Refined[prd]
                                             for pry in range(prd+1,len(_Tot_Hits_Predator_Refined)):
                                                    RefinedPredator=DonateHit(RefinedPredator,_Tot_Hits_Predator_Refined[pry])
-
+                                            _Tot_Hits_Predator_Refined_Pool.append(RefinedPredator)
                                         #     _Tot_Hits_Predator.append(Predator)
                                         # for s in _Tot_Hits_Predator:
                                         #     s=s[0].append(mean(s.pop(1)))
@@ -299,16 +299,16 @@ for k in range(0,Z_ID_Max):
                                         #             _Tot_Hits_Predator[s][h]='H_'+str(s)
 
                                         _Tot_Hits_Predator_temp=[]
-                                        for s in _Tot_Hits_Predator:
+                                        for s in _Tot_Hits_Predator_Refined_Pool:
                                             _Tot_Hits_Predator_temp.append(s[0]+s[1])
-                                        _Tot_Hits_Predator = _Tot_Hits_Predator_temp
+                                        _Tot_Hits_Predator_Refined_Pool = _Tot_Hits_Predator_temp
 
 
-                                        for s in range(len(_Tot_Hits_Predator)):
-                                            for h in range(int(len(_Tot_Hits_Predator[s])/2)):
-                                                if _Tot_Hits_Predator[s][h] =='_':
-                                                    _Tot_Hits_Predator[s][h]='H_'+str(s)
-                                        column_no=int(len(_Tot_Hits_Predator[0])/2)
+                                        for s in range(len(_Tot_Hits_Predator_Refined_Pool)):
+                                            for h in range(int(len(_Tot_Hits_Predator_Refined_Pool[s])/2)):
+                                                if _Tot_Hits_Predator_Refined_Pool[s][h] =='_':
+                                                    _Tot_Hits_Predator_Refined_Pool[s][h]='H_'+str(s)
+                                        column_no=int(len(_Tot_Hits_Predator_Refined_Pool[0])/2)
                                         columns=[]
 
                                         for c in range(column_no):
@@ -316,10 +316,10 @@ for k in range(0,Z_ID_Max):
                                         for c in range(column_no):
                                             columns.append('fit_'+str(c))
                                         # columns.append('average_link_strength')
-                                        _Tot_Hits_Predator=pd.DataFrame(_Tot_Hits_Predator, columns = columns)
+                                        _Tot_Hits_Predator_Refined_Pool=pd.DataFrame(_Tot_Hits_Predator_Refined_Pool, columns = columns)
                                         # print(_Tot_Hits_Predator)
                                         #_Tot_Hits_Predator.sort_values(by = ['average_link_strength'], ascending=[False],inplace=True)
-                                        _Tot_Hits_Predator.to_csv('/eos/user/f/ffedship/ANNDEA_v2/ANNDEA/Data/REC_SET/v4_bug_before_tracking5.csv',index=False)
+                                        _Tot_Hits_Predator_Refined_Pool.to_csv('/eos/user/f/ffedship/ANNDEA_v2/ANNDEA/Data/REC_SET/v4_bug_before_tracking5.csv',index=False)
                                         print('Step 5')
                                         exit()
                                         for c in range(column_no):
