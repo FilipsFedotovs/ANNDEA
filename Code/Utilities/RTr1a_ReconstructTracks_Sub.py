@@ -281,8 +281,21 @@ for k in range(0,Z_ID_Max):
                                                    Result=InjectHit(Predator,_Tot_Hits_PCopy[pry],False)
                                                    Predator=Result[0]
                                             _Tot_Hits_Predator.append(Predator)
+
+                                        #Compression of the results
+                                        _Tot_Hits_Predator_temp=[]
+                                        for s in _Tot_Hits_Predator:
+                                            _Tot_Hits_Predator_temp.append(s[0]+s[1]+[sum(s[1])])
+                                        _Tot_Hits_Predator = _Tot_Hits_Predator_temp
+                                        print(_Tot_Hits_Predator)
+                                        exit()
+
+
                                         _Tot_Hits_Predator_Refined_Pool=[]
                                         _Tot_Hits_Predator_Refined=copy.deepcopy(_Tot_Hits_Predator)
+
+
+
                                         for prd in range(0,len(_Tot_Hits_Predator_Refined)):
                                             print(UF.TimeStamp(),'Progress is ',round(100*prd/len(_Tot_Hits_Predator_Refined),2), '%',end="\r", flush=True)
                                             RefinedPredator=_Tot_Hits_Predator_Refined[prd]
