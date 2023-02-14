@@ -305,14 +305,14 @@ for k in range(0,Z_ID_Max):
 
                                         _Tot_Hits_Predator_Refined_Pool=[]
                                         _Tot_Hits_Predator_Refined=copy.deepcopy(_Tot_Hits_Predator)
-
+                                        column_no=int(len(_Tot_Hits_Predator_Refined_Pool[0])/2)
 
 
                                         for prd in range(0,len(_Tot_Hits_Predator_Refined)):
                                             print(UF.TimeStamp(),'Progress is ',round(100*prd/len(_Tot_Hits_Predator_Refined),2), '%',end="\r", flush=True)
                                             RefinedPredator=_Tot_Hits_Predator_Refined[prd]
                                             for pry in range(prd+1,len(_Tot_Hits_Predator_Refined)):
-                                                   RefinedPredator=DonateHit(RefinedPredator,_Tot_Hits_Predator_Refined[pry])
+                                                   RefinedPredator=DonateHit(RefinedPredator,_Tot_Hits_Predator_Refined[pry],column_no)
                                             _Tot_Hits_Predator_Refined_Pool.append(RefinedPredator)
                                         #     _Tot_Hits_Predator.append(Predator)
                                         # for s in _Tot_Hits_Predator:
@@ -323,7 +323,7 @@ for k in range(0,Z_ID_Max):
                                         #         if _Tot_Hits_Predator[s][h] =='_':
                                         #             _Tot_Hits_Predator[s][h]='H_'+str(s)
 
-                                        column_no=int(len(_Tot_Hits_Predator_Refined_Pool[0])/2)
+
                                         for s in range(len(_Tot_Hits_Predator_Refined_Pool)):
                                             for h in range(column_no):
                                                 if _Tot_Hits_Predator_Refined_Pool[s][h] =='_':
