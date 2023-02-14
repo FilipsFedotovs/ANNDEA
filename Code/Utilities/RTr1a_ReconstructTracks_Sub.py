@@ -284,9 +284,8 @@ for k in range(0,Z_ID_Max):
 
                                         #Compression of the results
                                         _Tot_Hits_Predator_temp=[]
-                                        column_no=int(len(_Tot_Hits_Predator[0][0])/2)
-                                        print(_Tot_Hits_Predator[0][0])
-                                        exit()
+                                        column_no=len(_Tot_Hits_Predator[0][0])
+
                                         hit_columns=[]
                                         fit_columns=[]
                                         tot_fit_column=[]
