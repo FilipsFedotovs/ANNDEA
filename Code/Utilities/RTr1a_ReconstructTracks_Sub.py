@@ -285,6 +285,8 @@ for k in range(0,Z_ID_Max):
                                         #Compression of the results
                                         _Tot_Hits_Predator_temp=[]
                                         column_no=int(len(_Tot_Hits_Predator[0][0])/2)
+                                        print(_Tot_Hits_Predator[0][0])
+                                        exit()
                                         hit_columns=[]
                                         fit_columns=[]
                                         tot_fit_column=[]
@@ -298,6 +300,8 @@ for k in range(0,Z_ID_Max):
                                             fit_columns.append('fit_'+str(c))
                                         tot_fit_column.append('tot_fit')
                                         _Tot_Hits_Predator=pd.DataFrame(_Tot_Hits_Predator, columns = hit_columns+fit_columns+tot_fit_column)
+                                        print(_Tot_Hits_Predator)
+                                        _Tot_Hits_Predator.sort_values(by = ['tot_fit'], ascending=[False],inplace=True)
                                         print(_Tot_Hits_Predator)
                                         exit()
 
