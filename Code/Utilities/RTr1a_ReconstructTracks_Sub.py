@@ -117,6 +117,17 @@ def InjectHit(Predator,Prey, Soft):
                      return True
              return False
 
+def DonateHit(Predator,Prey):
+             New_Predator=copy.deepcopy(Predator)
+             _prey_trigger_count=0
+             for el in range (len(Prey[0])):
+                 if Prey[0][el]!='_' and Predator[0][el]!='_' and Prey[0][el]==Predator[0][el]:
+                        if Predator[1][el]<Prey[1][el]:
+                           Predator[0][el]='_'
+                           Predator[1][el]=0.0
+             return(New_Predator,True)
+
+
 #Specifying the full path to input/output files
 input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RTr1_'+RecBatchID+'_hits.csv'
 output_file_location=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(X_ID_n)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(X_ID_n)+'_'+str(Y_ID_n)+sfx
@@ -271,6 +282,17 @@ for k in range(0,Z_ID_Max):
                                                    Result=InjectHit(Predator,_Tot_Hits_PCopy[pry],False)
                                                    Predator=Result[0]
                                             _Tot_Hits_Predator.append(Predator)
+                                        _Tot_Hits_Predator_Refined=copy.deepcopy(_Tot_Hits_Predator)
+                                        for prd in range(0,len(_Tot_Hits_Predator_Refined)):
+                                            print(UF.TimeStamp(),'Progress is ',round(100*prd/len(_Tot_Hits_Predator_Refined),2), '%',end="\r", flush=True)
+                                            RefinedPredator=_Tot_Hits_Predator_Refined[prd]
+                                            for pry in range(prd+1,len(_Tot_Hits_Predator_Refined)):
+                                                   print(_Tot_Hits_PCopy[pry])
+                                                   print(RefinedPredator)
+                                                   RefinedPredator=DonateHit(RefinedPredator,_Tot_Hits_PCopy[pry])
+                                                   print(RefinedPredator)
+                                                   x=input()
+                                        #     _Tot_Hits_Predator.append(Predator)
                                         # for s in _Tot_Hits_Predator:
                                         #     s=s[0].append(mean(s.pop(1)))
                                         # _Tot_Hits_Predator = [item for l in _Tot_Hits_Predator for item in l]
