@@ -288,7 +288,7 @@ for k in range(0,Z_ID_Max):
                                             RefinedPredator=_Tot_Hits_Predator_Refined[prd]
                                             for pry in range(prd+1,len(_Tot_Hits_Predator_Refined)):
                                                    print(_Tot_Hits_Predator_Refined[pry])
-                                                   print(RefinedPredator[prd])
+                                                   print(RefinedPredator)
                                                    x=input()
                                                    RefinedPredator=DonateHit(RefinedPredator,_Tot_Hits_Predator_Refined[pry])
                                                    print(RefinedPredator[prd])
