@@ -305,7 +305,7 @@ for k in range(0,Z_ID_Max):
 
                                         _Tot_Hits_Predator_Refined_Pool=[]
                                         _Tot_Hits_Predator_Refined=copy.deepcopy(_Tot_Hits_Predator)
-                                        column_no=int(len(_Tot_Hits_Predator_Refined_Pool[0])/2)
+                                        column_no=int(len(_Tot_Hits_Predator_Refined[0])/2)
 
 
                                         for prd in range(0,len(_Tot_Hits_Predator_Refined)):
