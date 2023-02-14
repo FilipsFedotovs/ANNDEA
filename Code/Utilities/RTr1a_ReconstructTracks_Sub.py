@@ -121,10 +121,10 @@ def DonateHit(Predator,Prey):
              New_Predator=copy.deepcopy(Predator)
              _prey_trigger_count=0
              for el in range (len(Prey[0])):
-                 if Prey[0][el]!='_' and Predator[0][el]!='_' and Prey[0][el]==Predator[0][el]:
-                        if Predator[1][el]<Prey[1][el]:
-                           Predator[0][el]='_'
-                           Predator[1][el]=0.0
+                 if Prey[0][el]!='_' and New_Predator[0][el]!='_' and Prey[0][el]==New_Predator[0][el]:
+                        if New_Predator[1][el]<Prey[1][el]:
+                           New_Predator[0][el]='_'
+                           New_Predator[1][el]=0.0
              return(New_Predator,True)
 
 
