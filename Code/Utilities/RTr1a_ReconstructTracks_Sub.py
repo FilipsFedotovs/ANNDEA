@@ -328,14 +328,15 @@ for k in range(0,Z_ID_Max):
 
 
                                         for s in range(len(_Tot_Hits_Predator_Refined_Pool)):
+                                            print(_Tot_Hits_Predator_Refined_Pool[s])
                                             for h in range(int(len(_Tot_Hits_Predator_Refined_Pool[s])/2)):
                                                 if _Tot_Hits_Predator_Refined_Pool[s][h] =='_':
                                                     _Tot_Hits_Predator_Refined_Pool[s][h]='H_'+str(s)
                                             for f in range(int(len(_Tot_Hits_Predator_Refined_Pool[s])/2),int(len(_Tot_Hits_Predator_Refined_Pool[s]))):
-                                                print(_Tot_Hits_Predator_Refined_Pool[s][f])
+
                                                 _Tot_Hits_Predator_Refined_Pool[s][f]=int(_Tot_Hits_Predator_Refined_Pool[s][f]>0)
-                                                print(_Tot_Hits_Predator_Refined_Pool[s][f])
-                                                x=input()
+                                            print(_Tot_Hits_Predator_Refined_Pool[s])
+                                            x=input()
                                         column_no=int(len(_Tot_Hits_Predator_Refined_Pool[0])/2)
                                         columns=[]
 
