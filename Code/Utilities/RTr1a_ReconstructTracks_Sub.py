@@ -119,8 +119,8 @@ def InjectHit(Predator,Prey, Soft):
 
 def DonateHit(Predator,Prey):
              New_Predator=copy.deepcopy(Predator)
-             _prey_trigger_count=0
              for el in range (len(Prey[0])):
+                 print(Prey,New_Predator)
                  if Prey[0][el]!='_' and New_Predator[0][el]!='_' and Prey[0][el]==New_Predator[0][el]:
                         if New_Predator[1][el]<Prey[1][el]:
                            New_Predator[0][el]='_'
