@@ -292,7 +292,7 @@ for k in range(0,Z_ID_Max):
                                                    print(RefinedPredator)
                                                    x=input()
                                                    RefinedPredator=DonateHit(RefinedPredator,_Tot_Hits_Predator_Refined[pry])
-                                                   print(RefinedPredator[prd])
+                                                   print(RefinedPredator)
                                                    x=input()
 
                                         #     _Tot_Hits_Predator.append(Predator)
