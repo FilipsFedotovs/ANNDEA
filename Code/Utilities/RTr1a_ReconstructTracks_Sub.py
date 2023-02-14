@@ -117,14 +117,13 @@ def InjectHit(Predator,Prey, Soft):
                      return True
              return False
 
-def DonateHit(Predator,Prey,column_no):
+def DonateHit(Predator,Prey):
              New_Predator=copy.deepcopy(Predator)
-
-             for el in range (column_no):
-                 if Prey[el]!='_' and New_Predator[el]!='_' and Prey[el]==New_Predator[el]:
-                        if New_Predator[el+column_no]<Prey[el+column_no]:
-                           New_Predator[el]='_'
-                           New_Predator[el]=0.0
+             for el in range (len(Prey[0])):
+                 if Prey[0][el]!='_' and New_Predator[0][el]!='_' and Prey[0][el]==New_Predator[0][el]:
+                        if New_Predator[1][el]<Prey[1][el]:
+                           New_Predator[0][el]='_'
+                           New_Predator[1][el]=0.0
              return New_Predator
 
 
@@ -250,6 +249,8 @@ for k in range(0,Z_ID_Max):
                         _Tot_Hits.sort_values(by = ['l_HitID', 'r_index','link_strength'], ascending=[True,True, False],inplace=True)
                         _Tot_Hits.drop_duplicates(subset=['l_HitID', 'r_index','link_strength'], keep='first', inplace=True)
                         print(UF.TimeStamp(),'Tracking the cluster...')
+                        # _Tot_Hits.to_csv('/eos/user/f/ffedship/ANNDEA_v2/ANNDEA/Data/REC_SET/v4_bug_before_tracking.csv',index=False)
+                        # print('Step 1')
                         _Tot_Hits=_Tot_Hits.values.tolist()
                         _Temp_Tot_Hits=[]
                         for el in _Tot_Hits:
@@ -269,7 +270,7 @@ for k in range(0,Z_ID_Max):
 
                         _Rec_Hits_Pool=[]
                         _intital_size=len(_Tot_Hits)
-                        print(Acceptance)
+
                         while len(_Tot_Hits)>0:
                                         _Tot_Hits_PCopy=copy.deepcopy(_Tot_Hits)
                                         _Tot_Hits_Predator=[]
@@ -281,38 +282,35 @@ for k in range(0,Z_ID_Max):
                                                    Predator=Result[0]
                                             _Tot_Hits_Predator.append(Predator)
 
-                                        #Compression of the results
-                                        _Tot_Hits_Predator_temp=[]
-                                        column_no=len(_Tot_Hits_Predator[0][0])
+                                        # #Compression of the results
+                                        # _Tot_Hits_Predator_temp=[]
+                                        # column_no=int(len(_Tot_Hits_Predator[0][0])/2)
+                                        # hit_columns=[]
+                                        # fit_columns=[]
+                                        # tot_fit_column=[]
+                                        # for s in _Tot_Hits_Predator:
+                                        #     _Tot_Hits_Predator_temp.append(s[0]+s[1]+[sum(s[1])])
+                                        # _Tot_Hits_Predator = _Tot_Hits_Predator_temp
+                                        # print(_Tot_Hits_Predator)
+                                        # for c in range(column_no):
+                                        #     hit_columns.append(str(c))
+                                        # for c in range(column_no):
+                                        #     fit_columns.append('fit_'+str(c))
+                                        # tot_fit_column.append('tot_fit')
+                                        #
+                                        # exit()
 
-                                        hit_columns=[]
-                                        fit_columns=[]
-                                        tot_fit_column=[]
-                                        for s in _Tot_Hits_Predator:
-                                            _Tot_Hits_Predator_temp.append(s[0]+s[1]+[sum(s[1])])
-                                        _Tot_Hits_Predator = _Tot_Hits_Predator_temp
-
-                                        for c in range(column_no):
-                                            hit_columns.append(str(c))
-                                        for c in range(column_no):
-                                            fit_columns.append('fit_'+str(c))
-                                        tot_fit_column.append('tot_fit')
-                                        _Tot_Hits_Predator=pd.DataFrame(_Tot_Hits_Predator, columns = hit_columns+fit_columns+tot_fit_column)
-                                        _Tot_Hits_Predator.sort_values(by = ['tot_fit'], ascending=[False],inplace=True)
-                                        _Tot_Hits_Predator.drop_duplicates(subset=hit_columns, keep='first', inplace=True)
-                                        _Tot_Hits_Predator=_Tot_Hits_Predator.drop(['tot_fit'],axis=1)
-                                        _Tot_Hits_Predator=_Tot_Hits_Predator.values.tolist()
 
                                         _Tot_Hits_Predator_Refined_Pool=[]
                                         _Tot_Hits_Predator_Refined=copy.deepcopy(_Tot_Hits_Predator)
-                                        column_no=int(len(_Tot_Hits_Predator_Refined[0])/2)
+
 
 
                                         for prd in range(0,len(_Tot_Hits_Predator_Refined)):
                                             print(UF.TimeStamp(),'Progress is ',round(100*prd/len(_Tot_Hits_Predator_Refined),2), '%',end="\r", flush=True)
                                             RefinedPredator=_Tot_Hits_Predator_Refined[prd]
                                             for pry in range(prd+1,len(_Tot_Hits_Predator_Refined)):
-                                                   RefinedPredator=DonateHit(RefinedPredator,_Tot_Hits_Predator_Refined[pry],column_no)
+                                                   RefinedPredator=DonateHit(RefinedPredator,_Tot_Hits_Predator_Refined[pry])
                                             _Tot_Hits_Predator_Refined_Pool.append(RefinedPredator)
                                         #     _Tot_Hits_Predator.append(Predator)
                                         # for s in _Tot_Hits_Predator:
@@ -323,11 +321,17 @@ for k in range(0,Z_ID_Max):
                                         #         if _Tot_Hits_Predator[s][h] =='_':
                                         #             _Tot_Hits_Predator[s][h]='H_'+str(s)
 
+                                        _Tot_Hits_Predator_temp=[]
+                                        for s in _Tot_Hits_Predator_Refined_Pool:
+                                            _Tot_Hits_Predator_temp.append(s[0]+s[1])
+                                        _Tot_Hits_Predator_Refined_Pool = _Tot_Hits_Predator_temp
+
 
                                         for s in range(len(_Tot_Hits_Predator_Refined_Pool)):
-                                            for h in range(column_no):
+                                            for h in range(int(len(_Tot_Hits_Predator_Refined_Pool[s])/2)):
                                                 if _Tot_Hits_Predator_Refined_Pool[s][h] =='_':
                                                     _Tot_Hits_Predator_Refined_Pool[s][h]='H_'+str(s)
+                                        column_no=int(len(_Tot_Hits_Predator_Refined_Pool[0])/2)
                                         columns=[]
 
                                         for c in range(column_no):
