@@ -403,7 +403,6 @@ if len(z_clusters_results)>0:
         ZContractedTable=pd.concat([ZContractedTable,FileClean])
         ZContractedTable.drop_duplicates(subset=["Master_Segment_ID","HitID",'Master_z'],keep='first',inplace=True)
     ZContractedTable=ZContractedTable.sort_values(["Master_Segment_ID",'Master_z'],ascending=[1,1])
-    print(ZContractedTable)
 else:
      print(UF.TimeStamp(),'No suitable hit pairs in the cluster set, just writing the empty one...')
      ZContractedTable=pd.DataFrame([], columns = ['HitID','Master_z','Master_Segment_ID'])
