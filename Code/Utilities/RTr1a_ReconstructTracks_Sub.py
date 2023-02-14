@@ -331,7 +331,7 @@ for k in range(0,Z_ID_Max):
                                             for h in range(int(len(_Tot_Hits_Predator_Refined_Pool[s])/2)):
                                                 if _Tot_Hits_Predator_Refined_Pool[s][h] =='_':
                                                     _Tot_Hits_Predator_Refined_Pool[s][h]='H_'+str(s)
-                                            for f in range(int(len(_Tot_Hits_Predator_Refined_Pool[s])/2,int(len(_Tot_Hits_Predator_Refined_Pool[s])))):
+                                            for f in range(int(len(_Tot_Hits_Predator_Refined_Pool[s])/2),int(len(_Tot_Hits_Predator_Refined_Pool[s]))):
                                                 print(_Tot_Hits_Predator_Refined_Pool[s][f])
                                                 _Tot_Hits_Predator_Refined_Pool[s][f]=int(_Tot_Hits_Predator_Refined_Pool[s][f]>0)
                                                 print(_Tot_Hits_Predator_Refined_Pool[s][f])
