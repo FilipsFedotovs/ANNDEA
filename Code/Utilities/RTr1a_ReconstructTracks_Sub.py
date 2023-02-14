@@ -275,7 +275,7 @@ for k in range(0,Z_ID_Max):
                                         _Tot_Hits_PCopy=copy.deepcopy(_Tot_Hits)
                                         _Tot_Hits_Predator=[]
                                         for prd in range(0,len(_Tot_Hits_PCopy)):
-                                            print(UF.TimeStamp(),'Progress is ',round(100*prd/len(_Tot_Hits_PCopy),2), '%',end="\r", flush=True)
+                                            print(UF.TimeStamp(),'Tracking the cluster: building all possible hit combinations, progress is',round(100*prd/len(_Tot_Hits_PCopy),2), '%',end="\r", flush=True)
                                             Predator=_Tot_Hits_PCopy[prd]
                                             for pry in range(prd+1,len(_Tot_Hits_PCopy)):
                                                    Result=InjectHit(Predator,_Tot_Hits_PCopy[pry],False)
@@ -307,7 +307,7 @@ for k in range(0,Z_ID_Max):
 
 
                                         for prd in range(0,len(_Tot_Hits_Predator_Refined)):
-                                            print(UF.TimeStamp(),'Progress is ',round(100*prd/len(_Tot_Hits_Predator_Refined),2), '%',end="\r", flush=True)
+                                            print(UF.TimeStamp(),'Tracking the cluster: redistributing the hits where they fit the most, progress is ',round(100*prd/len(_Tot_Hits_Predator_Refined),2), '%',end="\r", flush=True)
                                             RefinedPredator=_Tot_Hits_Predator_Refined[prd]
                                             for pry in range(prd+1,len(_Tot_Hits_Predator_Refined)):
                                                    RefinedPredator=DonateHit(RefinedPredator,_Tot_Hits_Predator_Refined[pry])
@@ -346,18 +346,18 @@ for k in range(0,Z_ID_Max):
                                         _Tot_Hits_Predator_Refined_Pool.sort_values(by = ['track_len'], ascending=[False],inplace=True)
                                         for c in range(column_no):
                                             _Tot_Hits_Predator_Refined_Pool.drop_duplicates(subset=[str(c)], keep='first', inplace=True)
-                                        _Tot_Hits_Predator_Refined_Pool.to_csv('/eos/user/f/ffedship/ANNDEA_v2/ANNDEA/Data/REC_SET/v4_bug_before_tracking_finish_test.csv',index=False)
-                                        print('Step 3')
-                                        exit()
-                                        for c in range(column_no):
+                                        # _Tot_Hits_Predator_Refined_Pool.to_csv('/eos/user/f/ffedship/ANNDEA_v2/ANNDEA/Data/REC_SET/v4_bug_before_tracking_finish_test.csv',index=False)
+                                        # print('Step 3')
+                                        # exit()
+                                        # for c in range(column_no):
                                             #_Tot_Hits_Predator.sort_values(by = [str('fit_'+str(c)),], ascending=[False],inplace=True)
-                                            _Tot_Hits_Predator=_Tot_Hits_Predator.drop([str('fit_'+str(c))],axis=1)
+                                        _Tot_Hits_Predator_Refined_Pool=_Tot_Hits_Predator_Refined_Pool.drop(['track_len'],axis=1)
 
-                                        _Tot_Hits_Predator=_Tot_Hits_Predator.values.tolist()
-                                        for seg in range(len(_Tot_Hits_Predator)):
-                                            _Tot_Hits_Predator[seg]=[s for s in _Tot_Hits_Predator[seg] if ('H' in s)==False]
-                                        _Rec_Hits_Pool+=_Tot_Hits_Predator
-                                        for seg in _Tot_Hits_Predator:
+                                        _Tot_Hits_Predator_Refined_Pool=_Tot_Hits_Predator_Refined_Pool.tolist()
+                                        for seg in range(len(_Tot_Hits_Predator_Refined_Pool)):
+                                            _Tot_Hits_Predator_Refined_Pool[seg]=[s for s in _Tot_Hits_Predator_Refined_Pool[seg] if ('H' in s)==False]
+                                        _Rec_Hits_Pool+=_Tot_Hits_Predator_Refined_Pool
+                                        for seg in _Tot_Hits_Predator_Refined_Pool:
                                             _itr=0
                                             while _itr<len(_Tot_Hits):
                                                 if InjectHit(seg,_Tot_Hits[_itr],True):
