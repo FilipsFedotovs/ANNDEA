@@ -125,7 +125,7 @@ def DonateHit(Predator,Prey):
                         if New_Predator[1][el]<Prey[1][el]:
                            New_Predator[0][el]='_'
                            New_Predator[1][el]=0.0
-             return(New_Predator,True)
+             return New_Predator
 
 
 #Specifying the full path to input/output files
@@ -282,6 +282,7 @@ for k in range(0,Z_ID_Max):
                                                    Result=InjectHit(Predator,_Tot_Hits_PCopy[pry],False)
                                                    Predator=Result[0]
                                             _Tot_Hits_Predator.append(Predator)
+
                                         _Tot_Hits_Predator_Refined=copy.deepcopy(_Tot_Hits_Predator)
                                         for prd in range(0,len(_Tot_Hits_Predator_Refined)):
                                             print(UF.TimeStamp(),'Progress is ',round(100*prd/len(_Tot_Hits_Predator_Refined),2), '%',end="\r", flush=True)
@@ -292,6 +293,7 @@ for k in range(0,Z_ID_Max):
                                                    x=input()
                                                    RefinedPredator=DonateHit(RefinedPredator,_Tot_Hits_Predator_Refined[pry])
                                                    print(RefinedPredator[prd])
+                                                   x=input()
 
                                         #     _Tot_Hits_Predator.append(Predator)
                                         # for s in _Tot_Hits_Predator:
