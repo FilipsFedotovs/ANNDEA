@@ -335,7 +335,7 @@ for k in range(0,Z_ID_Max):
                                             for f in range(int(len(_Tot_Hits_Predator_Refined_Pool[s])/2),int(len(_Tot_Hits_Predator_Refined_Pool[s]))):
 
                                                 _Tot_Hits_Predator_Refined_Pool[s][f]=int(_Tot_Hits_Predator_Refined_Pool[s][f]>0)
-                                            _Tot_Hits_Predator_Refined_Pool[s]=_Tot_Hits_Predator_Refined_Pool[s][:len(_Tot_Hits_Predator_Refined_Pool)]+[sum(_Tot_Hits_Predator_Refined_Pool[s][len(_Tot_Hits_Predator_Refined_Pool):])]
+                                            _Tot_Hits_Predator_Refined_Pool[s]=_Tot_Hits_Predator_Refined_Pool[s][:len(_Tot_Hits_Predator_Refined_Pool[s])]+[sum(_Tot_Hits_Predator_Refined_Pool[s][len(_Tot_Hits_Predator_Refined_Pool[s]):])]
                                             print(_Tot_Hits_Predator_Refined_Pool[s])
                                             x=input()
                                         column_no=int(len(_Tot_Hits_Predator_Refined_Pool[0])/2)
