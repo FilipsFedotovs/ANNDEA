@@ -331,6 +331,11 @@ for k in range(0,Z_ID_Max):
                                             for h in range(int(len(_Tot_Hits_Predator_Refined_Pool[s])/2)):
                                                 if _Tot_Hits_Predator_Refined_Pool[s][h] =='_':
                                                     _Tot_Hits_Predator_Refined_Pool[s][h]='H_'+str(s)
+                                            for f in range(int(len(_Tot_Hits_Predator_Refined_Pool[s])/2,int(len(_Tot_Hits_Predator_Refined_Pool[s])))):
+                                                print(_Tot_Hits_Predator_Refined_Pool[s][f])
+                                                _Tot_Hits_Predator_Refined_Pool[s][f]=int(_Tot_Hits_Predator_Refined_Pool[s][f]>0)
+                                                print(_Tot_Hits_Predator_Refined_Pool[s][f])
+                                                x=input()
                                         column_no=int(len(_Tot_Hits_Predator_Refined_Pool[0])/2)
                                         columns=[]
 
@@ -342,9 +347,9 @@ for k in range(0,Z_ID_Max):
                                         _Tot_Hits_Predator_Refined_Pool=pd.DataFrame(_Tot_Hits_Predator_Refined_Pool, columns = columns)
                                         # print(_Tot_Hits_Predator)
                                         #_Tot_Hits_Predator.sort_values(by = ['average_link_strength'], ascending=[False],inplace=True)
-                                        _Tot_Hits_Predator_Refined_Pool.to_csv('/eos/user/f/ffedship/ANNDEA_v2/ANNDEA/Data/REC_SET/v4_bug_before_tracking5.csv',index=False)
-                                        print('Step 5')
-                                        exit()
+                                        # _Tot_Hits_Predator_Refined_Pool.to_csv('/eos/user/f/ffedship/ANNDEA_v2/ANNDEA/Data/REC_SET/v4_bug_before_tracking5.csv',index=False)
+                                        # print('Step 5')
+                                        # exit()
                                         for c in range(column_no):
                                             _Tot_Hits_Predator.sort_values(by = [str('fit_'+str(c))], ascending=[False],inplace=True)
                                             # print(_Tot_Hits_Predator)
