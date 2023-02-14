@@ -192,7 +192,7 @@ for k in range(0,Z_ID_Max):
     HC.LoadClusterHits(temp_data_list) #Decorating the Clusters with Hit information
     if len(HC.RawClusterGraph)>1: #If we have at least 2 Hits in the cluster that can create
         print(UF.TimeStamp(),'Generating the edges...')
-        print(UF.TimeStamp(),"Hit density of the Cluster",round(X_ID,1),round(Y_ID,1),round(Z_ID,1), "is  {} hits per cm\u00b3".format(round(len(HC.RawClusterGraph)/(0.6*0.6*1.2)),2))
+        print(UF.TimeStamp(),"Hit density of the Cluster",round(X_ID,1),round(Y_ID,1),round(Z_ID,1), "is {} hits per cm\u00b3".format(round(len(HC.RawClusterGraph)/(0.6*0.6*1.2)),2))
         GraphStatus = HC.GenerateEdges(cut_dt, cut_dr)
         combined_weight_list=[]
         if GraphStatus:
@@ -307,7 +307,7 @@ for k in range(0,Z_ID_Max):
 
 
                                         for prd in range(0,len(_Tot_Hits_Predator_Refined)):
-                                            print(UF.TimeStamp(),'Tracking the cluster: redistributing the hits where they fit the most, progress is ',round(100*prd/len(_Tot_Hits_Predator_Refined),2), '%',end="\r", flush=True)
+                                            print(UF.TimeStamp(),'Tracking the cluster: redistributing the hits where they fit the most, progress is',round(100*prd/len(_Tot_Hits_Predator_Refined),2), '%',end="\r", flush=True)
                                             RefinedPredator=_Tot_Hits_Predator_Refined[prd]
                                             for pry in range(prd+1,len(_Tot_Hits_Predator_Refined)):
                                                    RefinedPredator=DonateHit(RefinedPredator,_Tot_Hits_Predator_Refined[pry])
@@ -353,7 +353,7 @@ for k in range(0,Z_ID_Max):
                                             #_Tot_Hits_Predator.sort_values(by = [str('fit_'+str(c)),], ascending=[False],inplace=True)
                                         _Tot_Hits_Predator_Refined_Pool=_Tot_Hits_Predator_Refined_Pool.drop(['track_len'],axis=1)
 
-                                        _Tot_Hits_Predator_Refined_Pool=_Tot_Hits_Predator_Refined_Pool.tolist()
+                                        _Tot_Hits_Predator_Refined_Pool=_Tot_Hits_Predator_Refined_Pool.values.tolist()
                                         for seg in range(len(_Tot_Hits_Predator_Refined_Pool)):
                                             _Tot_Hits_Predator_Refined_Pool[seg]=[s for s in _Tot_Hits_Predator_Refined_Pool[seg] if ('H' in s)==False]
                                         _Rec_Hits_Pool+=_Tot_Hits_Predator_Refined_Pool
