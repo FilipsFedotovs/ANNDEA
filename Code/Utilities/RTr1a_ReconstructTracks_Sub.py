@@ -337,7 +337,7 @@ for k in range(0,Z_ID_Max):
                                                 _Tot_Hits_Predator_Refined_Pool[s][f]=int(_Tot_Hits_Predator_Refined_Pool[s][f]>0)
                                             _Tot_Hits_Predator_Refined_Pool[s]=_Tot_Hits_Predator_Refined_Pool[s][:int(len(_Tot_Hits_Predator_Refined_Pool[s])/2)]+[sum(_Tot_Hits_Predator_Refined_Pool[s][int(len(_Tot_Hits_Predator_Refined_Pool[s])/2):])]
 
-                                        column_no=int(len(_Tot_Hits_Predator_Refined_Pool[0])/2)
+                                        column_no=int(len(_Tot_Hits_Predator_Refined_Pool[0]))-1
                                         columns=[]
 
                                         for c in range(column_no):
