@@ -381,9 +381,9 @@ import gc
 gc.collect
 print('Final Time lapse', datetime.datetime.now()-Before)
 
-for i in range(0,len(z_clusters_results)):
-   z_clusters_results[i].to_csv('/eos/user/f/ffedship/ANNDEA_v2/ANNDEA/Data/REC_SET/v4_bug_before_tracking_ind_'+str(i)+".csv",index=False)
-exit()
+# for i in range(0,len(z_clusters_results)):
+#    z_clusters_results[i].to_csv('/eos/user/f/ffedship/ANNDEA_v2/ANNDEA/Data/REC_SET/v4_bug_before_tracking_ind_'+str(i)+".csv",index=False)
+# exit()
 
 if len(z_clusters_results)>0:
     print(UF.TimeStamp(),'Merging all clusters along z-axis...')
