@@ -302,7 +302,7 @@ for k in range(0,Z_ID_Max):
                                         print(_Tot_Hits_Predator)
                                         _Tot_Hits_Predator.sort_values(by = ['tot_fit'], ascending=[False],inplace=True)
                                         print(_Tot_Hits_Predator)
-                                        _Tot_Hits_Predator.drop_duplicates(subset=[hit_columns], keep='first', inplace=True)
+                                        _Tot_Hits_Predator.drop_duplicates(subset=hit_columns, keep='first', inplace=True)
                                         print(_Tot_Hits_Predator)
                                         exit()
 
