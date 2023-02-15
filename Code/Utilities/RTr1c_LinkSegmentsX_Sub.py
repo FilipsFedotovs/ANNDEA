@@ -64,20 +64,14 @@ print(UF.TimeStamp(), bcolors.OKGREEN+"Modules Have been imported successfully..
 def zero_divide(a, b):
     if (b==0): return 0
     return a/b
-
-FirstFile=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RTr1c_'+RecBatchID+'_'+str(0)+'/RTr1c_'+RecBatchID+'_hit_cluster_rec_y_set_' +str(0)+'.pkl'
-FirstFileRaw=UF.PickleOperations(FirstFile,'r', 'N/A')
-FirstFile=FirstFileRaw[0]
-ZContractedTable=FirstFile.RecSegments
-#ZContractedTable.to_csv('FirstFile.csv',index=False)
+#Load the first file (on the y-axis) with reconstructed clusters that already have been merged along z-axis
+FirstFileName=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RTr1b_'+RecBatchID+'_'+str(0)+'/RTr1b_'+RecBatchID+'_hit_cluster_rec_y_set_' +str(0)+'.csv'
+ZContractedTable=pd.read_csv(FirstFileName)  #First cluster is like a Pacman: it absorbes proceeding clusters and gets bigger
 for i in range(1,X_ID_Max):
-    SecondFile=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RTr1c_'+RecBatchID+'_'+str(0)+'/RTr1c_'+RecBatchID+'_hit_cluster_rec_y_set_'+str(i)+'.pkl'
-    SecondFileRaw=UF.PickleOperations(SecondFile,'r', 'N/A')
-    print(SecondFileRaw[1])
-    SecondFile=SecondFileRaw[0]
-    SecondFileTable=SecondFile.RecSegments.rename(columns={"Master_Segment_ID":"Segment_ID","Master_z":"z" })
-    #SecondFileTable.to_csv('SecondFile.csv',index=False)
-    FileClean=pd.merge(ZContractedTable.drop_duplicates(subset=["Master_Segment_ID","HitID",'Master_z'],keep='first'),SecondFileTable,how='inner', on=['HitID'])
+    SecondFileName=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RTr1b_'+RecBatchID+'_'+str(0)+'/RTr1b_'+RecBatchID+'_hit_cluster_rec_y_set_'+str(i)+'.csv' #keep loading subsequent files along y-xis with reconstructed clusters that already have been merged along z and y-axis
+    SecondFile=pd.read_csv(SecondFileName)
+    SecondFileTable=SecondFile.rename(columns={"Master_Segment_ID":"Segment_ID","Master_z":"z" }) #Initally the following clusters are downgraded from the master status
+    FileClean=pd.merge(ZContractedTable.drop_duplicates(subset=["Master_Segment_ID","HitID",'Master_z'],keep='first'),SecondFileTable,how='inner', on=['HitID']) #Join segments based on the common hits
     FileClean["Segment_No_z"]= FileClean["Segment_ID"]
     FileClean=FileClean.groupby(by=["Master_Segment_ID","Segment_ID","Segment_No_x","Segment_No_y","Segment_No_Tot_x","Segment_No_Tot_y"])["Segment_No_z"].count().reset_index()
     FileCleanTot=FileClean.groupby(by=["Master_Segment_ID"])["Segment_No_z"].sum().reset_index()
@@ -87,7 +81,7 @@ for i in range(1,X_ID_Max):
     FileClean['Segment_No_Tot']=FileClean['Segment_No_Tot_x']+FileClean['Segment_No_Tot_y']+FileClean['Segment_No_Tot_z']
     FileClean=FileClean.drop(['Segment_No_x','Segment_No_y','Segment_No_z',"Segment_No_Tot_x","Segment_No_Tot_y","Segment_No_Tot_z"],axis=1)
     FileClean=FileClean.sort_values(["Master_Segment_ID","Segment_No"],ascending=[1,0])
-    FileClean.drop_duplicates(subset=["Master_Segment_ID"],keep='first',inplace=True)
+    FileClean.drop_duplicates(subset=["Master_Segment_ID"],keep='first',inplace=True)  #Keep the best matching segment
 
 
     FileClean=pd.merge(FileClean,SecondFileTable,how='right', on=['Segment_ID'])
@@ -121,19 +115,19 @@ ZContractedTable['Hit_No']=ZContractedTable['HitID']
 ZContractedTable=ZContractedTable.groupby(by=["Master_Segment_ID","Master_z","HitID","Fit"])['Hit_No'].count().reset_index()
 ZContractedTable.sort_values(["HitID",'Fit',"Hit_No"],ascending=[1,0,0],inplace=True)
 
-ZContractedTable.drop_duplicates(subset=["HitID"],keep='first',inplace=True)
+ZContractedTable.drop_duplicates(subset=["HitID"],keep='first',inplace=True) #Ensure the hit fidelity the tracks are ready
 ZContractedTableIDs=ZContractedTable[["Master_Segment_ID"]]
 ZContractedTableIDs=ZContractedTableIDs.drop_duplicates(keep='first')
-ZContractedTableIDs=ZContractedTableIDs.reset_index().drop(['index'],axis=1)
+ZContractedTableIDs=ZContractedTableIDs.reset_index().drop(['index'],axis=1) #Create numerical track numbers
 ZContractedTableIDs=ZContractedTableIDs.reset_index()
-ZContractedTableIDs.rename(columns={"index":"ANN_Track_ID"},inplace=True)
-ZContractedTable.drop(['Fit',"Hit_No"],axis=1,inplace=True)
+ZContractedTableIDs.rename(columns={"index":"ANN_Track_ID"},inplace=True) #These are the ANN Track IDs
+ZContractedTable.drop(['Fit',"Hit_No"],axis=1,inplace=True) #Removing the info that is not used anymore
 ZContractedTable=pd.merge(ZContractedTable,ZContractedTableIDs,how='inner',on=["Master_Segment_ID"])
 ZContractedTable.drop(['Master_z',"Master_Segment_ID"],axis=1,inplace=True)
-ZContractedTable['ANN_Brick_ID']=RecBatchID
-FirstFile.RecTracks=ZContractedTable
+ZContractedTable['ANN_Brick_ID']=RecBatchID #Creating the track prefix relevant to this particular reconstruction (to keep track IDs unique)
 output_file_location=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(0)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(0)+sfx
-print(UF.PickleOperations(output_file_location, 'w', FirstFile)[1])
+ZContractedTable.to_csv(output_file_location,index=False)
+print(UF.TimeStamp(),'Output is written to ',output_file_location) #Write the output
 exit()
 
 
