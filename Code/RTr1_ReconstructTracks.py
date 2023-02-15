@@ -1,7 +1,6 @@
-#This simple connects hits in the data to produce tracks
+#This script connects hits in the data to produce tracks
 #Tracking Module of the ANNDEA package
 #Made by Filips Fedotovs
-
 
 ########################################    Import libraries    #############################################
 import csv
@@ -28,7 +27,6 @@ import pandas as pd #We use Panda for a routine data processing
 import math #We use it for data manipulation
 import numpy as np
 import os
-from tabulate import tabulate
 import time
 from alive_progress import alive_bar
 import argparse
