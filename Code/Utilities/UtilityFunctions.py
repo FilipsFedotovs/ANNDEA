@@ -228,7 +228,6 @@ class HitCluster:
            #Combining data 1 and 2
            _Tot_Hits=[]
            _hit_count=0
-           _initial_no_hit_pairs=(_l_Hits*_l_Hits)
            print(TimeStamp(),'Initial number of all possible hit combinations is:',len(_l_Hits)**2)
            print(TimeStamp(),'Number of all possible hit combinations without self-permutations:',(len(_l_Hits)**2)-len(_l_Hits))
            print(TimeStamp(),'Number of all possible hit  combinations with enforced one-directionality:',((len(_l_Hits)**2)-len(_l_Hits))/2)
