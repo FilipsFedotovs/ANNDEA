@@ -24,7 +24,6 @@ parser.add_argument('--yOffset',help="Data offset on y", default='0.0')
 parser.add_argument('--xOffset',help="Data offset on x", default='0.0')
 parser.add_argument('--cut_dt',help="Cut on angle difference", default='1.0')
 parser.add_argument('--cut_dr',help="Cut on angle difference", default='4000')
-parser.add_argument('--Log',help="Pull out stats?", default='No')
 parser.add_argument('--ModelName',help="Name of the model to use?", default='0')
 parser.add_argument('--BatchID',help="Give name to this train sample", default='')
 parser.add_argument('--p',help="Path to the output file", default='')
@@ -65,7 +64,6 @@ y_offset=float(args.yOffset)
 x_offset=float(args.xOffset)
 cut_dt=float(args.cut_dt)
 cut_dr=float(args.cut_dr)
-Log=args.Log.upper()
 ModelName=args.ModelName
 RecBatchID=args.BatchID
 p=args.p
@@ -141,27 +139,6 @@ data.drop(data.index[data['x'] < (X_ID*stepX)], inplace = True)  #Keeping the re
 data.drop(data.index[data['y'] >= ((Y_ID+1)*stepY)], inplace = True)  #Keeping the relevant z slice
 data.drop(data.index[data['y'] < (Y_ID*stepY)], inplace = True)  #Keeping the relevant z slice
 
-
-#Additional options to include reconstruction stats. Require MC and possibly FEDRA reconstruction.
-if Log!='NO':
-    print(UF.TimeStamp(),'Preparing MC data... ')
-    input_file_location=EOS_DIR+'/ANNDEA/Data/TEST_SET/ETr1_'+RecBatchID+'_hits.csv'
-    print(UF.TimeStamp(),'Loading pre-selected data from ',input_file_location)
-    MCdata=pd.read_csv(input_file_location,header=0,
-                                usecols=["Hit_ID","x","y","z","tx","ty",'MC_Mother_Track_ID'])[["Hit_ID","x","y","z","tx","ty",'MC_Mother_Track_ID']]
-    MCdata["x"] = pd.to_numeric(MCdata["x"],downcast='float')
-    MCdata["y"] = pd.to_numeric(MCdata["y"],downcast='float')
-    MCdata["z"] = pd.to_numeric(MCdata["z"],downcast='float')
-    MCdata["Hit_ID"] = MCdata["Hit_ID"].astype(str)
-    MCdata['z']=MCdata['z']-z_offset
-    MCdata['x']=MCdata['x']-x_offset
-    MCdata['y']=MCdata['y']-y_offset
-
-    MCdata.drop(MCdata.index[MCdata['x'] >= ((X_ID+1)*stepX)], inplace = True)  #Keeping the relevant z slice
-    MCdata.drop(MCdata.index[MCdata['x'] < (X_ID*stepX)], inplace = True)  #Keeping the relevant z slice
-    MCdata.drop(MCdata.index[MCdata['y'] >= ((Y_ID+1)*stepY)], inplace = True)  #Keeping the relevant z slice
-    MCdata.drop(MCdata.index[MCdata['y'] < (Y_ID*stepY)], inplace = True)  #Keeping the relevant z slice
-
 torch_import=True
 cluster_output=[]
 import datetime
@@ -172,10 +149,6 @@ for k in range(0,Z_ID_Max):
     temp_data=data.drop(data.index[data['z'] >= ((Z_ID+1)*stepZ)])  #Keeping the relevant z slice
     temp_data=temp_data.drop(temp_data.index[temp_data['z'] < (Z_ID*stepZ)])  #Keeping the relevant z slice
     temp_data_list=temp_data.values.tolist()
-    if Log!='NO':
-       temp_MCData=MCdata.drop(MCdata.index[MCdata['z'] >= ((Z_ID+1)*stepZ)])  #Keeping the relevant z slice
-       temp_MCData=temp_MCData.drop(temp_MCData.index[temp_MCData['z'] < (Z_ID*stepZ)])  #Keeping the relevant z slice
-       temp_MCdata_list=MCdata.values.tolist()
     print(UF.TimeStamp(),'Creating the cluster', X_ID,Y_ID,Z_ID)
     HC=UF.HitCluster([X_ID,Y_ID,Z_ID],[stepX,stepY,stepZ]) #Initializing the cluster
     print(UF.TimeStamp(),'Decorating the clusters')
@@ -223,12 +196,10 @@ for k in range(0,Z_ID_Max):
                         _Loc_Hits.drop_duplicates(subset=['z'], keep='first', inplace=True)
                         _Loc_Hits=_Loc_Hits.reset_index(drop=True)
                         _Loc_Hits=_Loc_Hits.reset_index()
-
                         _z_map_r=_Tot_Hits[['r_HitID','r_z']].rename(columns={'r_z': 'z','r_HitID': 'HitID'})
                         _z_map_l=_Tot_Hits[['l_HitID','l_z']].rename(columns={'l_z': 'z','l_HitID': 'HitID'})
                         _z_map=pd.concat([_z_map_r,_z_map_l])
                         _z_map.drop_duplicates(subset=['HitID','z'], keep='first', inplace=True)
-
                         _Loc_Hits_r=_Loc_Hits.rename(columns={'index': 'r_index', 'z': 'r_z'})
                         _Loc_Hits_l=_Loc_Hits.rename(columns={'index': 'l_index', 'z': 'l_z'})
                         _Tot_Hits=pd.merge(_Tot_Hits,_Loc_Hits_r, how='inner', on=['r_z'])
@@ -255,7 +226,6 @@ for k in range(0,Z_ID_Max):
                                                 _Temp_Tot_Hit_El[1].append(0.0)
                                         _Temp_Tot_Hits.append(_Temp_Tot_Hit_El)
                         _Tot_Hits=_Temp_Tot_Hits
-
                         _Rec_Hits_Pool=[]
                         _intital_size=len(_Tot_Hits)
                         while len(_Tot_Hits)>0:
