@@ -73,42 +73,44 @@ pfx=args.pfx
 
 import UtilityFunctions as UF #This is where we keep routine utility functions
 
-#This function is used for the actual tracking (combines hit-pairs into tracks
+#This function combines two segment object. Example: Segment 1 is [[a, _ ,b ,_ ,_ ][0.9,0.0,0.9,0.0,0.0]];  Segment 2 is [[a, _ ,c ,_ ,_ ][0.9,0.0,0.8,0.0,0.0]]; Segment 3 is [[_, d ,b ,_ ,_ ][0.0,0.8,0.8,0.0,0.0]]
+#In order to combine segments we have to have at least one common hit and no clashes. Segment 1 and 2 have a common hit a, but their third plates clash. Segment 1 can be combined with segment 3 which yields: [[a, d ,b ,_ ,_ ][0.8,0.0,1.7,0.0,0.0]]
+#Please note that if combination occurs then the hit weights combine together too
 def InjectHit(Predator,Prey, Soft):
           if Soft==False:
              OverlapDetected=False
-             _intersection=list(set(Predator[0]) & set(Prey[0]))
-             if len(_intersection)<2:
+             _intersection=list(set(Predator[0]) & set(Prey[0])) #Do we have any common hits between two track segment skeletons?
+             if len(_intersection)<2: #In order for hits to be combined there should always be at least two hits overlapping. Usually it will be '_' and a hit. It can be two hits overlap (Enforcing the existing connection)
                 return(Predator,False)
-             elif len(_intersection)==3:
-                _intersection=[value for value in _intersection if value != "_"]
-                _index1 = Predator[0].index(_intersection[0])
-                _index2 = Predator[0].index(_intersection[1])
+             elif len(_intersection)==3: #This is the case when we have two overlapping hits (reinforcement) and an overlapping hole
+                _intersection=[value for value in _intersection if value != "_"] #Remove the hole since we are not interested
+                _index1 = Predator[0].index(_intersection[0]) #Find the index of the first overlapping hit
+                _index2 = Predator[0].index(_intersection[1]) #Find the index of the second overlapping hit
                 New_Predator=copy.deepcopy(Predator)
-                New_Predator[1][_index1]+=Prey[1][_index1]
-                New_Predator[1][_index2]+=Prey[1][_index2]
-                return(New_Predator,True)
+                New_Predator[1][_index1]+=Prey[1][_index1] #Add additional weights (Reinforcement of the hit connection)
+                New_Predator[1][_index2]+=Prey[1][_index2] #Add additional weifght (Reinforcement of the hit connection)
+                return(New_Predator,True) #Return the enriched track segment
              New_Predator=copy.deepcopy(Predator)
              _prey_trigger_count=0
-             for el in range (len(Prey[0])):
-                 if Prey[0][el]!='_' and Predator[0][el]!='_':
-                     if Prey[0][el]!=Predator[0][el]:
+             for el in range (len(Prey[0])): #If we have one overlapping hit and one overlapping hole
+                 if Prey[0][el]!='_' and Predator[0][el]!='_': #Comparing hits not holes
+                     if Prey[0][el]!=Predator[0][el]: #Reject if there is a clash
                         return(Predator,False)
-                     elif Prey[0][el]==Predator[0][el]:
+                     elif Prey[0][el]==Predator[0][el]: #We found that there there is an overlapping hit
                         OverlapDetected=True
-                        New_Predator[1][el]+=Prey[1][el]
+                        New_Predator[1][el]+=Prey[1][el] #Add new weight for the overlapping hit
                         _prey_trigger_count+=1
-                 elif Predator[0][el]=='_' and Prey[0][el]!=Predator[0][el]:
+                 elif Predator[0][el]=='_' and Prey[0][el]!=Predator[0][el]: #If there is an overlap we fill the hole with a new hit from the subject pair
                      New_Predator[0][el]=Prey[0][el]
-                     New_Predator[1][el]+=Prey[1][el]
-                 if _prey_trigger_count>=2:
+                     New_Predator[1][el]+=Prey[1][el] #Add new weigth for the new hit
+                 if _prey_trigger_count>=2: #Max overlap can be 2 only, break the process to save time
                      break
 
              if OverlapDetected:
-                return(New_Predator,True)
+                return(New_Predator,True) #If overalp detected we return the updated track segment with incorporated hit
              else:
-                return(Predator,False)
-          if Soft==True:
+                return(Predator,False) #Return the same segment unchanged
+          if Soft==True: #This is jsut a loop to check the overlap between two track segments (used later)
              for el1 in Prey[0]:
                  for el2 in Predator:
                   if el1==el2:
@@ -182,13 +184,14 @@ for k in range(0,Z_ID_Max):
                         w = model(HC.ClusterGraph.x, HC.ClusterGraph.edge_index, HC.ClusterGraph.edge_attr) #Here we use the model to assign the weights between Hit edges
                         w=w.tolist()
                         for edge in range(len(HC.edges)):
-                            combined_weight_list.append(HC.edges[edge]+w[edge])
+                            combined_weight_list.append(HC.edges[edge]+w[edge]) #Join the Hit Pair classification back to the hit pairs
                         combined_weight_list=pd.DataFrame(combined_weight_list, columns = ['l_HitID','r_HitID','link_strength'])
                         _Tot_Hits=pd.merge(HC.HitPairs, combined_weight_list, how="inner", on=['l_HitID','r_HitID'])
-                        _Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['link_strength'] <= Acceptance], inplace = True)
+                        _Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['link_strength'] <= Acceptance], inplace = True) #Remove all hit pairs that fail GNN classification
                         print(UF.TimeStamp(),'Number of all  hit combinations passing GNN selection:',len(_Tot_Hits))
                         _Tot_Hits=_Tot_Hits[['r_HitID','l_HitID','r_z','l_z','link_strength']]
                         print(UF.TimeStamp(),'Preparing the weighted hits for tracking...')
+                        #Bellow just some data prep before the tracking procedure
                         _Tot_Hits.sort_values(by = ['r_HitID', 'l_z','link_strength'], ascending=[True,True, False],inplace=True)
                         _Loc_Hits_r=_Tot_Hits[['r_z']].rename(columns={'r_z': 'z'})
                         _Loc_Hits_l=_Tot_Hits[['l_z']].rename(columns={'l_z': 'z'})
@@ -213,6 +216,12 @@ for k in range(0,Z_ID_Max):
                         print(UF.TimeStamp(),'Tracking the cluster...')
                         _Tot_Hits=_Tot_Hits.values.tolist()
                         _Temp_Tot_Hits=[]
+
+                        #Bellow we build the track segment structure object that is made of two arrays:
+                        #First array contains a list of hits arranged in z-order
+                        #Second array contains the weights assighned to the hit combination
+
+                        #Example if we have a cluster with 5 plates and a hit pair a and b at first and third plate and the weight is 0.9 then the object will look like [[a, _ ,b ,_ ,_ ][0.9,0.0,0.9,0.0,0.0]]. '_' represents a missing hit at a plate
                         for el in _Tot_Hits:
                                         _Temp_Tot_Hit_El = [[],[]]
                                         for pos in range(len(_Loc_Hits)):
@@ -232,46 +241,52 @@ for k in range(0,Z_ID_Max):
                         while len(_Tot_Hits)>0:
                                         _Tot_Hits_PCopy=copy.deepcopy(_Tot_Hits)
                                         _Tot_Hits_Predator=[]
+                                        #Bellow we build all possible hit combinations that can occur in the data
                                         for prd in range(len(_Tot_Hits_PCopy)):
                                             print(UF.TimeStamp(),'Progress is ',round(100*prd/len(_Tot_Hits_PCopy),2), '%',end="\r", flush=True)
                                             Predator=_Tot_Hits_PCopy[prd]
+
                                             for pry in range(len(_Tot_Hits_PCopy)):
+                                                   #This function combines two segment object. Example: Segment 1 is [[a, _ ,b ,_ ,_ ][0.9,0.0,0.9,0.0,0.0]];  Segment 2 is [[a, _ ,c ,_ ,_ ][0.9,0.0,0.8,0.0,0.0]]; Segment 3 is [[_, d ,b ,_ ,_ ][0.0,0.8,0.8,0.0,0.0]]
+                                                   #In order to combine segments we have to have at least one common hit and no clashes. Segment 1 and 2 have a common hit a, but their third plates clash. Segment 1 can be combined with segment 3 which yields: [[a, d ,b ,_ ,_ ][0.8,0.0,1.7,0.0,0.0]]
+                                                   #Please note that if combination occurs then the hit weights combine together too
                                                    Result=InjectHit(Predator,_Tot_Hits_PCopy[pry],False)
                                                    Predator=Result[0]
                                             _Tot_Hits_Predator.append(Predator)
+                                        #We calculate the average value of the segment weight
                                         for s in _Tot_Hits_Predator:
                                             s=s[0].append(mean(s.pop(1)))
                                         _Tot_Hits_Predator = [item for l in _Tot_Hits_Predator for item in l]
                                         for s in range(len(_Tot_Hits_Predator)):
                                             for h in range(len(_Tot_Hits_Predator[s])):
                                                 if _Tot_Hits_Predator[s][h] =='_':
-                                                    _Tot_Hits_Predator[s][h]='H_'+str(s)
+                                                    _Tot_Hits_Predator[s][h]='H_'+str(s) #Giving holes a unique name to avoid problems later
 
                                         column_no=len(_Tot_Hits_Predator[0])-1
                                         columns=[]
-
+                                        #converting the list objects into Pandas dataframe
                                         for c in range(column_no):
                                             columns.append(str(c))
                                         columns.append('average_link_strength')
                                         _Tot_Hits_Predator=pd.DataFrame(_Tot_Hits_Predator, columns = columns)
-                                        _Tot_Hits_Predator.sort_values(by = ['average_link_strength'], ascending=[False],inplace=True)
+                                        _Tot_Hits_Predator.sort_values(by = ['average_link_strength'], ascending=[False],inplace=True) #Keep all the best hit combinations at the top
                                         for c in range(column_no):
-                                            _Tot_Hits_Predator.drop_duplicates(subset=[str(c)], keep='first', inplace=True)
-                                        _Tot_Hits_Predator=_Tot_Hits_Predator.drop(['average_link_strength'],axis=1)
+                                            _Tot_Hits_Predator.drop_duplicates(subset=[str(c)], keep='first', inplace=True) #Iterating over hits, make sure that their belong to the best fit track
+                                        _Tot_Hits_Predator=_Tot_Hits_Predator.drop(['average_link_strength'],axis=1) #We don't need the segment fit anymore
                                         _Tot_Hits_Predator=_Tot_Hits_Predator.values.tolist()
                                         for seg in range(len(_Tot_Hits_Predator)):
-                                            _Tot_Hits_Predator[seg]=[s for s in _Tot_Hits_Predator[seg] if ('H' in s)==False]
+                                            _Tot_Hits_Predator[seg]=[s for s in _Tot_Hits_Predator[seg] if ('H' in s)==False] #Remove holes from the track representation
                                         _Rec_Hits_Pool+=_Tot_Hits_Predator
                                         for seg in _Tot_Hits_Predator:
                                             _itr=0
                                             while _itr<len(_Tot_Hits):
-                                                if InjectHit(seg,_Tot_Hits[_itr],True):
+                                                if InjectHit(seg,_Tot_Hits[_itr],True): #We remove all the hitsthat become part of successful segments from the initial pool so we can rerun the process again with left over hits
                                                     del _Tot_Hits[_itr]
                                                 else:
                                                     _itr+=1
                         #Transpose the rows
                         _track_list=[]
-                        _segment_id=RecBatchID+'_'+str(X_ID)+'_'+str(Y_ID)+'_'+str(Z_ID)
+                        _segment_id=RecBatchID+'_'+str(X_ID)+'_'+str(Y_ID)+'_'+str(Z_ID) #Each segment name will have a relevant prefix (since numeration is only unique within an isolated cluster)
                         _no_tracks=len(_Rec_Hits_Pool)
                         for t in range(len(_Rec_Hits_Pool)):
                                       for h in _Rec_Hits_Pool[t]:
@@ -279,37 +294,37 @@ for k in range(0,Z_ID_Max):
                         _Rec_Hits_Pool=pd.DataFrame(_track_list, columns = ['Segment_ID','HitID'])
                         _Rec_Hits_Pool=pd.merge(_z_map, _Rec_Hits_Pool, how="right", on=['HitID'])
                         print(UF.TimeStamp(),_no_tracks, 'track segments have been reconstructed in this cluster set ...')
-                        z_clusters_results.append(_Rec_Hits_Pool)
+                        z_clusters_results.append(_Rec_Hits_Pool) #Save all the reconstructed segments.
                         del HC
                         continue
 import gc
-gc.collect
+gc.collect #Clean memory
 print('Final Time lapse', datetime.datetime.now()-Before)
 
+#Once we track all clusters we need to merge them along z-axis
 if len(z_clusters_results)>0:
     print(UF.TimeStamp(),'Merging all clusters along z-axis...')
-    ZContractedTable=z_clusters_results[0].rename(columns={"Segment_ID": "Master_Segment_ID","z": "Master_z" })
+    ZContractedTable=z_clusters_results[0].rename(columns={"Segment_ID": "Master_Segment_ID","z": "Master_z" }) #First cluster is like a Pacman: it absorbes proceeding clusters and gets bigger
     for i in range(1,len(z_clusters_results)):
         SecondFileTable=z_clusters_results[i]
-        FileClean=pd.merge(ZContractedTable,SecondFileTable,how='inner', on=['HitID'])
+        FileClean=pd.merge(ZContractedTable,SecondFileTable,how='inner', on=['HitID']) #Join segments based on the common hits
         FileClean["Segment_No"]= FileClean["Segment_ID"]
-        FileClean=FileClean.groupby(by=["Master_Segment_ID","Segment_ID"])["Segment_No"].count().reset_index()
-        FileClean=FileClean.sort_values(["Master_Segment_ID","Segment_No"],ascending=[1,0])
+        FileClean=FileClean.groupby(by=["Master_Segment_ID","Segment_ID"])["Segment_No"].count().reset_index() #If multiple segments share hit with the master segment we decide the best one by a level of the overlap
+        FileClean=FileClean.sort_values(["Master_Segment_ID","Segment_No"],ascending=[1,0]) #Keep the best matching segment
         FileClean.drop_duplicates(subset=["Master_Segment_ID"],keep='first',inplace=True)
         FileClean=FileClean.drop(['Segment_No'],axis=1)
         FileClean=pd.merge(FileClean,SecondFileTable,how='right', on=['Segment_ID'])
-        FileClean["Master_Segment_ID"] = FileClean["Master_Segment_ID"].fillna(FileClean["Segment_ID"])
+        FileClean["Master_Segment_ID"] = FileClean["Master_Segment_ID"].fillna(FileClean["Segment_ID"]) #All segments that did not have overlapping hits with the master segment become masters themselves and become part of the Pacman
         FileClean=FileClean.rename(columns={"z": "Master_z" })
         FileClean=FileClean.drop(['Segment_ID'],axis=1)
-        ZContractedTable=pd.concat([ZContractedTable,FileClean])
+        ZContractedTable=pd.concat([ZContractedTable,FileClean]) #Absorbing proceeding cluster
         ZContractedTable.drop_duplicates(subset=["Master_Segment_ID","HitID",'Master_z'],keep='first',inplace=True)
     ZContractedTable=ZContractedTable.sort_values(["Master_Segment_ID",'Master_z'],ascending=[1,1])
-    print(ZContractedTable)
-else:
+else: #If Cluster tracking yielded no segments we just create an empty array for consistency
      print(UF.TimeStamp(),'No suitable hit pairs in the cluster set, just writing the empty one...')
      ZContractedTable=pd.DataFrame([], columns = ['HitID','Master_z','Master_Segment_ID'])
 output_file_location=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(X_ID_n)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(X_ID_n)+'_'+str(Y_ID_n)+sfx
 print(UF.TimeStamp(),'Writing the output...')
-ZContractedTable.to_csv(output_file_location,index=False)
+ZContractedTable.to_csv(output_file_location,index=False) #Write the final result
 print(UF.TimeStamp(),'Output is written to ',output_file_location)
 exit()
