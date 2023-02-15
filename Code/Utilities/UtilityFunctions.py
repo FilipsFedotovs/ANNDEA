@@ -228,16 +228,14 @@ class HitCluster:
            #Combining data 1 and 2
            _Tot_Hits=[]
            _hit_count=0
-           for l in range(len(_l_Hits)):
+           for l in _l_Hits:
                _hit_count+=1
-               print(TimeStamp(),'Edge generation progress is ',round(100*_hit_count/len(_l_Hits),2), '%',end="\r", flush=True)
-               for r in _r_Hits[l:]:
-                  if HitCluster.JoinHits(_l_Hits[l],r,cut_dt,cut_dr):
-                      _Tot_Hits.append(_l_Hits[l]+r)
+               print(UF.TimeStamp(),'Edge generation progress is ',round(100*_hit_count/len(_l_Hits),2), '%',end="\r", flush=True)
+               for r in _r_Hits:
+                  if HitCluster.JoinHits(l,r,cut_dt,cut_dr):
+                      _Tot_Hits.append(l+r)
            import pandas as pd
            _Tot_Hits=pd.DataFrame(_Tot_Hits, columns = ['l_HitID','l_x','l_y','l_z','l_tx','l_ty','r_HitID','r_x','r_y','r_z','r_tx','r_ty'])
-           print(_Tot_Hits)
-           exit()
            self.HitPairs=_Tot_Hits[['l_HitID','l_z','r_HitID','r_z']]
            _Tot_Hits['l_x']=_Tot_Hits['l_x']/self.Step[2]
            _Tot_Hits['l_y']=_Tot_Hits['l_y']/self.Step[2]
