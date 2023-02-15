@@ -261,10 +261,10 @@ for k in range(0,Z_ID_Max):
                         while len(_Tot_Hits)>0:
                                         _Tot_Hits_PCopy=copy.deepcopy(_Tot_Hits)
                                         _Tot_Hits_Predator=[]
-                                        for prd in range(0,len(_Tot_Hits_PCopy)):
+                                        for prd in range(len(_Tot_Hits_PCopy)):
                                             print(UF.TimeStamp(),'Progress is ',round(100*prd/len(_Tot_Hits_PCopy),2), '%',end="\r", flush=True)
                                             Predator=_Tot_Hits_PCopy[prd]
-                                            for pry in range(prd+1,len(_Tot_Hits_PCopy)):
+                                            for pry in range(len(_Tot_Hits_PCopy)):
                                                    Result=InjectHit(Predator,_Tot_Hits_PCopy[pry],False)
                                                    Predator=Result[0]
                                             _Tot_Hits_Predator.append(Predator)
@@ -287,7 +287,6 @@ for k in range(0,Z_ID_Max):
                                         for c in range(column_no):
                                             _Tot_Hits_Predator.drop_duplicates(subset=[str(c)], keep='first', inplace=True)
                                         _Tot_Hits_Predator=_Tot_Hits_Predator.drop(['average_link_strength'],axis=1)
-
                                         _Tot_Hits_Predator=_Tot_Hits_Predator.values.tolist()
                                         for seg in range(len(_Tot_Hits_Predator)):
                                             _Tot_Hits_Predator[seg]=[s for s in _Tot_Hits_Predator[seg] if ('H' in s)==False]
