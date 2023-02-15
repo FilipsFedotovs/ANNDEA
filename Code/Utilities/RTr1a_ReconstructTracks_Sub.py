@@ -117,16 +117,6 @@ def InjectHit(Predator,Prey, Soft):
                      return True
              return False
 
-def DonateHit(Predator,Prey):
-             New_Predator=copy.deepcopy(Predator)
-             for el in range (len(Prey[0])):
-                 if Prey[0][el]!='_' and New_Predator[0][el]!='_' and Prey[0][el]==New_Predator[0][el]:
-                        if New_Predator[1][el]<Prey[1][el]:
-                           New_Predator[0][el]='_'
-                           New_Predator[1][el]=0.0
-             return New_Predator
-
-
 #Specifying the full path to input/output files
 input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RTr1_'+RecBatchID+'_hits.csv'
 output_file_location=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(X_ID_n)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(X_ID_n)+'_'+str(Y_ID_n)+sfx
@@ -192,7 +182,7 @@ for k in range(0,Z_ID_Max):
     HC.LoadClusterHits(temp_data_list) #Decorating the Clusters with Hit information
     if len(HC.RawClusterGraph)>1: #If we have at least 2 Hits in the cluster that can create
         print(UF.TimeStamp(),'Generating the edges...')
-        print(UF.TimeStamp(),"Hit density of the Cluster",round(X_ID,1),round(Y_ID,1),round(Z_ID,1), "is {} hits per cm\u00b3".format(round(len(HC.RawClusterGraph)/(0.6*0.6*1.2)),2))
+        print(UF.TimeStamp(),"Hit density of the Cluster",round(X_ID,1),round(Y_ID,1),round(Z_ID,1), "is  {} hits per cm\u00b3".format(round(len(HC.RawClusterGraph)/(0.6*0.6*1.2)),2))
         GraphStatus = HC.GenerateEdges(cut_dt, cut_dr)
         combined_weight_list=[]
         if GraphStatus:
@@ -249,8 +239,6 @@ for k in range(0,Z_ID_Max):
                         _Tot_Hits.sort_values(by = ['l_HitID', 'r_index','link_strength'], ascending=[True,True, False],inplace=True)
                         _Tot_Hits.drop_duplicates(subset=['l_HitID', 'r_index','link_strength'], keep='first', inplace=True)
                         print(UF.TimeStamp(),'Tracking the cluster...')
-                        # _Tot_Hits.to_csv('/eos/user/f/ffedship/ANNDEA_v2/ANNDEA/Data/REC_SET/v4_bug_before_tracking.csv',index=False)
-                        # print('Step 1')
                         _Tot_Hits=_Tot_Hits.values.tolist()
                         _Temp_Tot_Hits=[]
                         for el in _Tot_Hits:
@@ -270,94 +258,41 @@ for k in range(0,Z_ID_Max):
 
                         _Rec_Hits_Pool=[]
                         _intital_size=len(_Tot_Hits)
-
                         while len(_Tot_Hits)>0:
                                         _Tot_Hits_PCopy=copy.deepcopy(_Tot_Hits)
                                         _Tot_Hits_Predator=[]
                                         for prd in range(0,len(_Tot_Hits_PCopy)):
-                                            print(UF.TimeStamp(),'Tracking the cluster: building all possible hit combinations, progress is',round(100*prd/len(_Tot_Hits_PCopy),2), '%',end="\r", flush=True)
+                                            print(UF.TimeStamp(),'Progress is ',round(100*prd/len(_Tot_Hits_PCopy),2), '%',end="\r", flush=True)
                                             Predator=_Tot_Hits_PCopy[prd]
                                             for pry in range(prd+1,len(_Tot_Hits_PCopy)):
                                                    Result=InjectHit(Predator,_Tot_Hits_PCopy[pry],False)
                                                    Predator=Result[0]
                                             _Tot_Hits_Predator.append(Predator)
+                                        for s in _Tot_Hits_Predator:
+                                            s=s[0].append(mean(s.pop(1)))
+                                        _Tot_Hits_Predator = [item for l in _Tot_Hits_Predator for item in l]
+                                        for s in range(len(_Tot_Hits_Predator)):
+                                            for h in range(len(_Tot_Hits_Predator[s])):
+                                                if _Tot_Hits_Predator[s][h] =='_':
+                                                    _Tot_Hits_Predator[s][h]='H_'+str(s)
 
-                                        # #Compression of the results
-                                        # _Tot_Hits_Predator_temp=[]
-                                        # column_no=int(len(_Tot_Hits_Predator[0][0])/2)
-                                        # hit_columns=[]
-                                        # fit_columns=[]
-                                        # tot_fit_column=[]
-                                        # for s in _Tot_Hits_Predator:
-                                        #     _Tot_Hits_Predator_temp.append(s[0]+s[1]+[sum(s[1])])
-                                        # _Tot_Hits_Predator = _Tot_Hits_Predator_temp
-                                        # print(_Tot_Hits_Predator)
-                                        # for c in range(column_no):
-                                        #     hit_columns.append(str(c))
-                                        # for c in range(column_no):
-                                        #     fit_columns.append('fit_'+str(c))
-                                        # tot_fit_column.append('tot_fit')
-                                        #
-                                        # exit()
-
-
-                                        _Tot_Hits_Predator_Refined_Pool=[]
-                                        _Tot_Hits_Predator_Refined=copy.deepcopy(_Tot_Hits_Predator)
-
-
-
-                                        for prd in range(0,len(_Tot_Hits_Predator_Refined)):
-                                            print(UF.TimeStamp(),'Tracking the cluster: redistributing the hits where they fit the most, progress is',round(100*prd/len(_Tot_Hits_Predator_Refined),2), '%',end="\r", flush=True)
-                                            RefinedPredator=_Tot_Hits_Predator_Refined[prd]
-                                            for pry in range(prd+1,len(_Tot_Hits_Predator_Refined)):
-                                                   RefinedPredator=DonateHit(RefinedPredator,_Tot_Hits_Predator_Refined[pry])
-                                            _Tot_Hits_Predator_Refined_Pool.append(RefinedPredator)
-                                        #     _Tot_Hits_Predator.append(Predator)
-                                        # for s in _Tot_Hits_Predator:
-                                        #     s=s[0].append(mean(s.pop(1)))
-                                        # _Tot_Hits_Predator = [item for l in _Tot_Hits_Predator for item in l]
-                                        # for s in range(len(_Tot_Hits_Predator)):
-                                        #     for h in range(len(_Tot_Hits_Predator[s])):
-                                        #         if _Tot_Hits_Predator[s][h] =='_':
-                                        #             _Tot_Hits_Predator[s][h]='H_'+str(s)
-
-                                        _Tot_Hits_Predator_temp=[]
-                                        for s in _Tot_Hits_Predator_Refined_Pool:
-                                            _Tot_Hits_Predator_temp.append(s[0]+s[1])
-                                        _Tot_Hits_Predator_Refined_Pool = _Tot_Hits_Predator_temp
-
-
-                                        for s in range(len(_Tot_Hits_Predator_Refined_Pool)):
-                                            for h in range(int(len(_Tot_Hits_Predator_Refined_Pool[s])/2)):
-                                                if _Tot_Hits_Predator_Refined_Pool[s][h] =='_':
-                                                    _Tot_Hits_Predator_Refined_Pool[s][h]='H_'+str(s)
-                                            for f in range(int(len(_Tot_Hits_Predator_Refined_Pool[s])/2),int(len(_Tot_Hits_Predator_Refined_Pool[s]))):
-
-                                                _Tot_Hits_Predator_Refined_Pool[s][f]=int(_Tot_Hits_Predator_Refined_Pool[s][f]>0)
-                                            _Tot_Hits_Predator_Refined_Pool[s]=_Tot_Hits_Predator_Refined_Pool[s][:int(len(_Tot_Hits_Predator_Refined_Pool[s])/2)]+[sum(_Tot_Hits_Predator_Refined_Pool[s][int(len(_Tot_Hits_Predator_Refined_Pool[s])/2):])]
-
-                                        column_no=int(len(_Tot_Hits_Predator_Refined_Pool[0]))-1
+                                        column_no=len(_Tot_Hits_Predator[0])-1
                                         columns=[]
 
                                         for c in range(column_no):
                                             columns.append(str(c))
-                                        columns.append('track_len')
-                                        _Tot_Hits_Predator_Refined_Pool=pd.DataFrame(_Tot_Hits_Predator_Refined_Pool, columns = columns)
-                                        _Tot_Hits_Predator_Refined_Pool.sort_values(by = ['track_len'], ascending=[False],inplace=True)
+                                        columns.append('average_link_strength')
+                                        _Tot_Hits_Predator=pd.DataFrame(_Tot_Hits_Predator, columns = columns)
+                                        _Tot_Hits_Predator.sort_values(by = ['average_link_strength'], ascending=[False],inplace=True)
                                         for c in range(column_no):
-                                            _Tot_Hits_Predator_Refined_Pool.drop_duplicates(subset=[str(c)], keep='first', inplace=True)
-                                        # _Tot_Hits_Predator_Refined_Pool.to_csv('/eos/user/f/ffedship/ANNDEA_v2/ANNDEA/Data/REC_SET/v4_bug_before_tracking_finish_test.csv',index=False)
-                                        # print('Step 3')
-                                        # exit()
-                                        # for c in range(column_no):
-                                            #_Tot_Hits_Predator.sort_values(by = [str('fit_'+str(c)),], ascending=[False],inplace=True)
-                                        _Tot_Hits_Predator_Refined_Pool=_Tot_Hits_Predator_Refined_Pool.drop(['track_len'],axis=1)
+                                            _Tot_Hits_Predator.drop_duplicates(subset=[str(c)], keep='first', inplace=True)
+                                        _Tot_Hits_Predator=_Tot_Hits_Predator.drop(['average_link_strength'],axis=1)
 
-                                        _Tot_Hits_Predator_Refined_Pool=_Tot_Hits_Predator_Refined_Pool.values.tolist()
-                                        for seg in range(len(_Tot_Hits_Predator_Refined_Pool)):
-                                            _Tot_Hits_Predator_Refined_Pool[seg]=[s for s in _Tot_Hits_Predator_Refined_Pool[seg] if ('H' in s)==False]
-                                        _Rec_Hits_Pool+=_Tot_Hits_Predator_Refined_Pool
-                                        for seg in _Tot_Hits_Predator_Refined_Pool:
+                                        _Tot_Hits_Predator=_Tot_Hits_Predator.values.tolist()
+                                        for seg in range(len(_Tot_Hits_Predator)):
+                                            _Tot_Hits_Predator[seg]=[s for s in _Tot_Hits_Predator[seg] if ('H' in s)==False]
+                                        _Rec_Hits_Pool+=_Tot_Hits_Predator
+                                        for seg in _Tot_Hits_Predator:
                                             _itr=0
                                             while _itr<len(_Tot_Hits):
                                                 if InjectHit(seg,_Tot_Hits[_itr],True):
@@ -381,10 +316,6 @@ import gc
 gc.collect
 print('Final Time lapse', datetime.datetime.now()-Before)
 
-# for i in range(0,len(z_clusters_results)):
-#    z_clusters_results[i].to_csv('/eos/user/f/ffedship/ANNDEA_v2/ANNDEA/Data/REC_SET/v4_bug_before_tracking_ind_'+str(i)+".csv",index=False)
-# exit()
-
 if len(z_clusters_results)>0:
     print(UF.TimeStamp(),'Merging all clusters along z-axis...')
     ZContractedTable=z_clusters_results[0].rename(columns={"Segment_ID": "Master_Segment_ID","z": "Master_z" })
@@ -403,6 +334,7 @@ if len(z_clusters_results)>0:
         ZContractedTable=pd.concat([ZContractedTable,FileClean])
         ZContractedTable.drop_duplicates(subset=["Master_Segment_ID","HitID",'Master_z'],keep='first',inplace=True)
     ZContractedTable=ZContractedTable.sort_values(["Master_Segment_ID",'Master_z'],ascending=[1,1])
+    print(ZContractedTable)
 else:
      print(UF.TimeStamp(),'No suitable hit pairs in the cluster set, just writing the empty one...')
      ZContractedTable=pd.DataFrame([], columns = ['HitID','Master_z','Master_Segment_ID'])
@@ -411,5 +343,3 @@ print(UF.TimeStamp(),'Writing the output...')
 ZContractedTable.to_csv(output_file_location,index=False)
 print(UF.TimeStamp(),'Output is written to ',output_file_location)
 exit()
-
-
