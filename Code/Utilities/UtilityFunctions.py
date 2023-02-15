@@ -229,9 +229,9 @@ class HitCluster:
            _Tot_Hits=[]
            _hit_count=0
            _initial_no_hit_pairs=(_l_Hits*_l_Hits)
-           print(TimeStamp(),'Initial number of all possible hit combinations is:',_l_Hits*_l_Hits)
-           print(TimeStamp(),'Number of all possible hit combinations without self-permutations:',(_l_Hits**2)-_l_Hits)
-           print(TimeStamp(),'Number of all possible hit  combinations with enforced one-directionality:',((_l_Hits**2)-_l_Hits)/2)
+           print(TimeStamp(),'Initial number of all possible hit combinations is:',len(_l_Hits)**2)
+           print(TimeStamp(),'Number of all possible hit combinations without self-permutations:',(len(_l_Hits)**2)-len(_l_Hits))
+           print(TimeStamp(),'Number of all possible hit  combinations with enforced one-directionality:',((len(_l_Hits)**2)-len(_l_Hits))/2)
            for l in _l_Hits:
                _hit_count+=1
                print(TimeStamp(),'Edge generation progress is ',round(100*_hit_count/len(_l_Hits),2), '%',end="\r", flush=True)
