@@ -230,7 +230,7 @@ class HitCluster:
            _hit_count=0
            for l in _l_Hits:
                _hit_count+=1
-               print(UF.TimeStamp(),'Edge generation progress is ',round(100*_hit_count/len(_l_Hits),2), '%',end="\r", flush=True)
+               print(TimeStamp(),'Edge generation progress is ',round(100*_hit_count/len(_l_Hits),2), '%',end="\r", flush=True)
                for r in _r_Hits:
                   if HitCluster.JoinHits(l,r,cut_dt,cut_dr):
                       _Tot_Hits.append(l+r)
