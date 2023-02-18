@@ -72,20 +72,15 @@ for i in range(1,X_ID_Max):
     SecondFile=pd.read_csv(SecondFileName)
     SecondFileTable=SecondFile.rename(columns={"Master_Segment_ID":"Segment_ID","Master_z":"z" }) #Initally the following clusters are downgraded from the master status
     FileClean=pd.merge(ZContractedTable.drop_duplicates(subset=["Master_Segment_ID","HitID",'Master_z'],keep='first'),SecondFileTable,how='inner', on=['HitID']) #Join segments based on the common hits
-    FileClean.to_csv('x_merge_out_1.csv',index=False)
     FileClean["Segment_No_z"]= FileClean["Segment_ID"]
     FileClean=FileClean.groupby(by=["Master_Segment_ID","Segment_ID","Segment_No_x","Segment_No_y","Segment_No_Tot_x","Segment_No_Tot_y"])["Segment_No_z"].count().reset_index()
-    FileClean.to_csv('x_merge_out_2.csv',index=False)
     FileCleanTot=FileClean.groupby(by=["Master_Segment_ID"])["Segment_No_z"].sum().reset_index()
     FileCleanTot.rename(columns={"Segment_No_z":"Segment_No_Tot_z"},inplace=True)
     FileClean=pd.merge(FileClean,FileCleanTot,how='inner', on=["Master_Segment_ID"])
-    FileClean.to_csv('x_merge_out_3.csv',index=False)
     FileClean['Segment_No']=FileClean['Segment_No_x']+FileClean['Segment_No_y']+FileClean['Segment_No_z']
     FileClean['Segment_No_Tot']=FileClean['Segment_No_Tot_x']+FileClean['Segment_No_Tot_y']+FileClean['Segment_No_Tot_z']
-    FileClean.to_csv('x_merge_out_4.csv',index=False)
     FileClean=FileClean.drop(['Segment_No_x','Segment_No_y','Segment_No_z',"Segment_No_Tot_x","Segment_No_Tot_y","Segment_No_Tot_z"],axis=1)
     FileClean=FileClean.sort_values(["Master_Segment_ID","Segment_No"],ascending=[1,0])
-    FileClean.to_csv('x_merge_out_5.csv',index=False)
     FileClean.drop_duplicates(subset=["Master_Segment_ID"],keep='first',inplace=True)  #Keep the best matching segment
 
 
@@ -101,7 +96,6 @@ for i in range(1,X_ID_Max):
     FileCleanR=FileCleanR.drop(['Segment_No_x','Segment_No_y',"Segment_No_Tot_x","Segment_No_Tot_y",'Segment_ID'],axis=1)
 
     FileClean=pd.concat([FileCleanOrlp,FileCleanR])
-    FileClean.to_csv('x_merge_out_6.csv',index=False)
     FileClean=FileClean.drop(['Segment_ID'],axis=1)
     FileClean=FileClean.rename(columns={"z": "Master_z" })
     ZContractedTable=pd.concat([ZContractedTable,FileClean])
@@ -110,8 +104,6 @@ for i in range(1,X_ID_Max):
     ZContractedTable_r=ZContractedTable_r.groupby(['Master_Segment_ID']).agg({'Segment_No':'sum','Segment_No_Tot':'sum'}).reset_index()
     ZContractedTable=ZContractedTable.drop(['Segment_No','Segment_No_Tot'],axis=1)
     ZContractedTable=pd.merge(ZContractedTable,ZContractedTable_r,how='inner', on=["Master_Segment_ID"])
-    ZContractedTable.to_csv('x_merge_out_7.csv',index=False)
-    exit()
 ZContractedTable['Fit']=ZContractedTable['Segment_No']/ZContractedTable['Segment_No_Tot']
 ZContractedTable['Fit'] = ZContractedTable['Fit'].fillna(1.0)
 
@@ -127,11 +119,11 @@ ZContractedTableIDs=ZContractedTable[["Master_Segment_ID"]]
 ZContractedTableIDs=ZContractedTableIDs.drop_duplicates(keep='first')
 ZContractedTableIDs=ZContractedTableIDs.reset_index().drop(['index'],axis=1) #Create numerical track numbers
 ZContractedTableIDs=ZContractedTableIDs.reset_index()
-ZContractedTableIDs.rename(columns={"index":"ANN_Track_ID"},inplace=True) #These are the ANN Track IDs
+ZContractedTableIDs.rename(columns={"index":RecBatchID+'_Track_ID'},inplace=True) #These are the ANN Track IDs
 ZContractedTable.drop(['Fit',"Hit_No"],axis=1,inplace=True) #Removing the info that is not used anymore
 ZContractedTable=pd.merge(ZContractedTable,ZContractedTableIDs,how='inner',on=["Master_Segment_ID"])
 ZContractedTable.drop(['Master_z',"Master_Segment_ID"],axis=1,inplace=True)
-ZContractedTable['ANN_Brick_ID']=RecBatchID #Creating the track prefix relevant to this particular reconstruction (to keep track IDs unique)
+ZContractedTable[RecBatchID+'_Brick_ID']=RecBatchID #Creating the track prefix relevant to this particular reconstruction (to keep track IDs unique)
 output_file_location=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(0)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(0)+sfx
 ZContractedTable.to_csv(output_file_location,index=False)
 print(UF.TimeStamp(),'Output is written to ',output_file_location) #Write the output

@@ -436,7 +436,7 @@ while Status<len(Program):
            else:
                CutData=Data #If we reconstruct the whole brick we jsut take the whole data. No need to separate.
 
-           CutData.drop(['ANN_Brick_ID','ANN_Track_ID'],axis=1,inplace=True,errors='ignore') #Removing old ANNDEA reconstruction results so we can overwrite with the new ones
+           CutData.drop([RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID'],axis=1,inplace=True,errors='ignore') #Removing old ANNDEA reconstruction results so we can overwrite with the new ones
            #Map reconstructed ANN tracks to hits in the Raw file - this is in essesential for the final output of the tracking
            TrackMap['HitID'] = TrackMap['HitID'].astype(str)
            CutData[PM.Hit_ID] = CutData[PM.Hit_ID].astype(str)
