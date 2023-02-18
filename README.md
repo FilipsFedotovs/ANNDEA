@@ -77,7 +77,7 @@ Install Other libraries:
 3) **tmux**
 4) **kinit username@CERN.CH -l 24h00m**
 5) Enter your lxplus password
-6) **python3 RTr1_ReconstructTracks.py --Log KALMAN --ModelName MH_SND_Tracking_5_80_5_80 --Xmin 200000 --Xmax 230000 --Ymin 20000 --Ymax 40000 --X_overlap 1 --Y_overlap 1 --Z_overlap 1 --RecBatchID Test_Batch**
+6) **python3 RTr1_ReconstructTracks.py --ModelName MH_SND_Tracking_5_80_5_80 --Xmin 200000 --Xmax 230000 --Ymin 20000 --Ymax 40000 --X_overlap 1 --Y_overlap 1 --Z_overlap 1 --RecBatchID Test_Batch**
 7) The script will submit the subscript jobs and go to the autopilot mode.
 8) Exit tmux (by using **ctrl + b** and then typing  **d**). Script will keep running in the autopilot mode until all the steps in the hit reconstruction process have been completed.
 9) Enter the same tmux session (after overnight job for example) by logging to the same lxplus machine and then typing  **tmux a -t 0**. The program should finish with the message *'Reconstruction has been completed'*
