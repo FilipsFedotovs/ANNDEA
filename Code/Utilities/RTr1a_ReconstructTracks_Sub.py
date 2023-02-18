@@ -305,27 +305,18 @@ print('Final Time lapse', datetime.datetime.now()-Before)
 if len(z_clusters_results)>0:
     print(UF.TimeStamp(),'Merging all clusters along z-axis...')
     ZContractedTable=z_clusters_results[0].rename(columns={"Segment_ID": "Master_Segment_ID","z": "Master_z" }) #First cluster is like a Pacman: it absorbes proceeding clusters and gets bigger
-    ZContractedTable.to_csv('z_merge_out_a.csv',index=False)
     for i in range(1,len(z_clusters_results)):
         SecondFileTable=z_clusters_results[i]
-        ZContractedTable.to_csv('z_merge_out_b.csv',index=False)
         FileClean=pd.merge(ZContractedTable,SecondFileTable,how='inner', on=['HitID']) #Join segments based on the common hits
-        FileClean.to_csv('z_merge_out_1.csv',index=False)
-
         FileClean["Segment_No"]= FileClean["Segment_ID"]
         FileClean=FileClean.groupby(by=["Master_Segment_ID","Segment_ID"])["Segment_No"].count().reset_index() #If multiple segments share hit with the master segment we decide the best one by a level of the overlap
-        FileClean.to_csv('z_merge_out_2.csv',index=False)
         FileClean=FileClean.sort_values(["Master_Segment_ID","Segment_No"],ascending=[1,0]) #Keep the best matching segment
         FileClean.drop_duplicates(subset=["Master_Segment_ID"],keep='first',inplace=True)
-        FileClean.to_csv('z_merge_out_3.csv',index=False)
         FileClean=FileClean.drop(['Segment_No'],axis=1)
         FileClean=pd.merge(FileClean,SecondFileTable,how='right', on=['Segment_ID'])
-        FileClean.to_csv('z_merge_out_4.csv',index=False)
         FileClean["Master_Segment_ID"] = FileClean["Master_Segment_ID"].fillna(FileClean["Segment_ID"]) #All segments that did not have overlapping hits with the master segment become masters themselves and become part of the Pacman
         FileClean=FileClean.rename(columns={"z": "Master_z" })
         FileClean=FileClean.drop(['Segment_ID'],axis=1)
-        FileClean.to_csv('z_merge_out_5.csv',index=False)
-        exit()
         ZContractedTable=pd.concat([ZContractedTable,FileClean]) #Absorbing proceeding cluster
         ZContractedTable.drop_duplicates(subset=["Master_Segment_ID","HitID",'Master_z'],keep='first',inplace=True)
     ZContractedTable=ZContractedTable.sort_values(["Master_Segment_ID",'Master_z'],ascending=[1,1])
