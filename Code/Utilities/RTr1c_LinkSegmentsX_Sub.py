@@ -104,7 +104,6 @@ for i in range(1,X_ID_Max):
     ZContractedTable_r=ZContractedTable_r.groupby(['Master_Segment_ID']).agg({'Segment_No':'sum','Segment_No_Tot':'sum'}).reset_index()
     ZContractedTable=ZContractedTable.drop(['Segment_No','Segment_No_Tot'],axis=1)
     ZContractedTable=pd.merge(ZContractedTable,ZContractedTable_r,how='inner', on=["Master_Segment_ID"])
-
 ZContractedTable['Fit']=ZContractedTable['Segment_No']/ZContractedTable['Segment_No_Tot']
 ZContractedTable['Fit'] = ZContractedTable['Fit'].fillna(1.0)
 
@@ -120,11 +119,11 @@ ZContractedTableIDs=ZContractedTable[["Master_Segment_ID"]]
 ZContractedTableIDs=ZContractedTableIDs.drop_duplicates(keep='first')
 ZContractedTableIDs=ZContractedTableIDs.reset_index().drop(['index'],axis=1) #Create numerical track numbers
 ZContractedTableIDs=ZContractedTableIDs.reset_index()
-ZContractedTableIDs.rename(columns={"index":"ANN_Track_ID"},inplace=True) #These are the ANN Track IDs
+ZContractedTableIDs.rename(columns={"index":RecBatchID+'_Track_ID'},inplace=True) #These are the ANN Track IDs
 ZContractedTable.drop(['Fit',"Hit_No"],axis=1,inplace=True) #Removing the info that is not used anymore
 ZContractedTable=pd.merge(ZContractedTable,ZContractedTableIDs,how='inner',on=["Master_Segment_ID"])
 ZContractedTable.drop(['Master_z',"Master_Segment_ID"],axis=1,inplace=True)
-ZContractedTable['ANN_Brick_ID']=RecBatchID #Creating the track prefix relevant to this particular reconstruction (to keep track IDs unique)
+ZContractedTable[RecBatchID+'_Brick_ID']=RecBatchID #Creating the track prefix relevant to this particular reconstruction (to keep track IDs unique)
 output_file_location=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(0)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(0)+sfx
 ZContractedTable.to_csv(output_file_location,index=False)
 print(UF.TimeStamp(),'Output is written to ',output_file_location) #Write the output

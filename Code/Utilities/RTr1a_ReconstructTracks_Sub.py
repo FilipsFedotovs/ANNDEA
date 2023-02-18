@@ -163,31 +163,35 @@ for k in range(0,Z_ID_Max):
         if GraphStatus:
             if HC.ClusterGraph.num_edges>0: #We only bring torch and GNN if we have some edges to classify
                         print(UF.TimeStamp(),'Classifying the edges...')
-                        if torch_import:
-                            print(UF.TimeStamp(),'Preparing the model')
-                            import torch
-                            EOSsubDIR=EOS_DIR+'/'+'ANNDEA'
-                            EOSsubModelDIR=EOSsubDIR+'/'+'Models'
-                            #Load the model meta file
-                            Model_Meta_Path=EOSsubModelDIR+'/'+args.ModelName+'_Meta'
-                            #Specify the model path
-                            Model_Path=EOSsubModelDIR+'/'+args.ModelName
-                            ModelMeta=UF.PickleOperations(Model_Meta_Path, 'r', 'N/A')[0]
-                            #Meta file contatins training session stats. They also record the optimal acceptance.
-                            Acceptance=ModelMeta.TrainSessionsData[-1][-1][3]
-                            device = torch.device('cpu')
-                            #In PyTorch we don't save the actual model like in Tensorflow. We just save the weights, hence we have to regenerate the model again. The recepy is in the Model Meta file
-                            model = UF.GenerateModel(ModelMeta).to(device)
-                            model.load_state_dict(torch.load(Model_Path))
-                            model.eval() #In Pytorch this function sets the model into the evaluation mode.
-                            torch_import=False
-                        w = model(HC.ClusterGraph.x, HC.ClusterGraph.edge_index, HC.ClusterGraph.edge_attr) #Here we use the model to assign the weights between Hit edges
-                        w=w.tolist()
-                        for edge in range(len(HC.edges)):
-                            combined_weight_list.append(HC.edges[edge]+w[edge]) #Join the Hit Pair classification back to the hit pairs
-                        combined_weight_list=pd.DataFrame(combined_weight_list, columns = ['l_HitID','r_HitID','link_strength'])
-                        _Tot_Hits=pd.merge(HC.HitPairs, combined_weight_list, how="inner", on=['l_HitID','r_HitID'])
-                        _Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['link_strength'] <= Acceptance], inplace = True) #Remove all hit pairs that fail GNN classification
+                        if args.ModelName!='blank':
+                            if torch_import:
+                                print(UF.TimeStamp(),'Preparing the model')
+                                import torch
+                                EOSsubDIR=EOS_DIR+'/'+'ANNDEA'
+                                EOSsubModelDIR=EOSsubDIR+'/'+'Models'
+                                #Load the model meta file
+                                Model_Meta_Path=EOSsubModelDIR+'/'+args.ModelName+'_Meta'
+                                #Specify the model path
+                                Model_Path=EOSsubModelDIR+'/'+args.ModelName
+                                ModelMeta=UF.PickleOperations(Model_Meta_Path, 'r', 'N/A')[0]
+                                #Meta file contatins training session stats. They also record the optimal acceptance.
+                                Acceptance=ModelMeta.TrainSessionsData[-1][-1][3]
+                                device = torch.device('cpu')
+                                #In PyTorch we don't save the actual model like in Tensorflow. We just save the weights, hence we have to regenerate the model again. The recepy is in the Model Meta file
+                                model = UF.GenerateModel(ModelMeta).to(device)
+                                model.load_state_dict(torch.load(Model_Path))
+                                model.eval() #In Pytorch this function sets the model into the evaluation mode.
+                                torch_import=False
+                            w = model(HC.ClusterGraph.x, HC.ClusterGraph.edge_index, HC.ClusterGraph.edge_attr) #Here we use the model to assign the weights between Hit edges
+                            w=w.tolist()
+                            for edge in range(len(HC.edges)):
+                                combined_weight_list.append(HC.edges[edge]+w[edge]) #Join the Hit Pair classification back to the hit pairs
+                            combined_weight_list=pd.DataFrame(combined_weight_list, columns = ['l_HitID','r_HitID','link_strength'])
+                            _Tot_Hits=pd.merge(HC.HitPairs, combined_weight_list, how="inner", on=['l_HitID','r_HitID'])
+                            _Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['link_strength'] <= Acceptance], inplace = True) #Remove all hit pairs that fail GNN classification
+                        else:
+                            _Tot_Hits=HC.HitPairs
+                        _Tot_Hits['link_strength']=1.0
                         print(UF.TimeStamp(),'Number of all  hit combinations passing GNN selection:',len(_Tot_Hits))
                         _Tot_Hits=_Tot_Hits[['r_HitID','l_HitID','r_z','l_z','link_strength']]
                         print(UF.TimeStamp(),'Preparing the weighted hits for tracking...')
