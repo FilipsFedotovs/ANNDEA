@@ -19,9 +19,9 @@ TST=0.0001
 valRatio=0.1
 
 ######Tracking Module - list of parameters that are specific to this module
-stepX=3000
-stepY=3000
-stepZ=6000
+stepX=6000
+stepY=6000
+stepZ=12000
 cut_dt=0.2
 cut_dr=60
 testRatio=0.05
