@@ -305,8 +305,10 @@ print('Final Time lapse', datetime.datetime.now()-Before)
 if len(z_clusters_results)>0:
     print(UF.TimeStamp(),'Merging all clusters along z-axis...')
     ZContractedTable=z_clusters_results[0].rename(columns={"Segment_ID": "Master_Segment_ID","z": "Master_z" }) #First cluster is like a Pacman: it absorbes proceeding clusters and gets bigger
+    ZContractedTable.to_csv('z_merge_out_a.csv',index=False)
     for i in range(1,len(z_clusters_results)):
         SecondFileTable=z_clusters_results[i]
+        ZContractedTable.to_csv('z_merge_out_b.csv',index=False)
         FileClean=pd.merge(ZContractedTable,SecondFileTable,how='inner', on=['HitID']) #Join segments based on the common hits
         FileClean.to_csv('z_merge_out_1.csv',index=False)
 
