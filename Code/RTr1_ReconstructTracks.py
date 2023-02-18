@@ -112,7 +112,18 @@ Model_Meta_Path=EOSsubModelDIR+'/'+args.ModelName+'_Meta'
 print(UF.TimeStamp(),bcolors.BOLD+'Preparation 1/3:'+bcolors.ENDC+' Setting up metafiles...')
 #Loading the model meta file
 print(UF.TimeStamp(),'Loading the data file ',bcolors.OKBLUE+Model_Meta_Path+bcolors.ENDC)
-if os.path.isfile(Model_Meta_Path):
+
+if args.ModelName=='blank':
+   print(UF.TimeStamp(),bcolors.WARNING+'You have specified the model name as "blank": This means that no GNN model will be used as part of the tracking process which can degrade the tracking performance.'+bcolors.ENDC)
+   UserAnswer=input(bcolors.BOLD+"Do you want to continue? (y/n)\n"+bcolors.ENDC)
+   if UserAnswer.upper()=='N':
+       exit()
+   stepX=PM.stepX
+   stepY=PM.stepY
+   stepZ=PM.stepZ
+   cut_dt=PM.cut_dt
+   cut_dr=PM.cut_dr
+elif os.path.isfile(Model_Meta_Path):
        Model_Meta_Raw=UF.PickleOperations(Model_Meta_Path, 'r', 'N/A')
        print(Model_Meta_Raw[1])
        Model_Meta=Model_Meta_Raw[0]
@@ -122,7 +133,7 @@ if os.path.isfile(Model_Meta_Path):
        cut_dt=Model_Meta.cut_dt
        cut_dr=Model_Meta.cut_dr
 else:
-       print(UF.TimeStamp(),bcolors.WARNING+'Fail! No existing model meta files have been found, exiting now'+bcolors.ENDC)
+       print(UF.TimeStamp(),bcolors.FAIL+'Fail! No existing model meta files have been found, exiting now'+bcolors.ENDC)
 
 ########################################     Phase 1 - Create compact source file    #########################################
 print(UF.TimeStamp(),bcolors.BOLD+'Preparation 2/3:'+bcolors.ENDC+' Preparing the source data...')
