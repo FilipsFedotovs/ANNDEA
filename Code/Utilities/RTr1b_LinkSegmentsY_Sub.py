@@ -70,24 +70,18 @@ FirstFileName=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_'+'RTr1a'+'_'+RecBatchID+'_'+st
 ZContractedTable=pd.read_csv(FirstFileName) #First cluster is like a Pacman: it absorbes proceeding clusters and gets bigger
 ZContractedTable["Segment_No"]=0
 ZContractedTable["Segment_No_Tot"]=0
-ZContractedTable.to_csv('y_merge_out_a.csv')
 for i in range(1,Y_ID_Max):
     SecondFileName=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_'+'RTr1a'+'_'+RecBatchID+'_'+str(X_ID)+'/RTr1a_'+RecBatchID+'_hit_cluster_rec_set_'+str(X_ID)+'_' +str(i)+'.csv' #keep loading subsequent files along y-xis with reconstructed clusters that already have been merged along z-axis
     SecondFile=pd.read_csv(SecondFileName)
-    SecondFile.to_csv('y_merge_out_b.csv')
     SecondFileTable=SecondFile.rename(columns={"Master_Segment_ID":"Segment_ID","Master_z":"z" }) #Initally the following clusters are downgraded from the master status
     FileClean=pd.merge(ZContractedTable.drop_duplicates(subset=["Master_Segment_ID","HitID",'Master_z'],keep='first'),SecondFileTable,how='inner', on=['HitID']) #Join segments based on the common hits
     FileClean["Segment_No"]= FileClean["Segment_ID"]
-    FileClean.to_csv('y_merge_out_1.csv')
     FileClean=FileClean.groupby(by=["Master_Segment_ID","Segment_ID"])["Segment_No"].count().reset_index()
     FileCleanTot=FileClean.groupby(by=["Master_Segment_ID"])["Segment_No"].sum().reset_index()
-    FileClean.to_csv('y_merge_out_2.csv')
     FileCleanTot.rename(columns={"Segment_No":"Segment_No_Tot"},inplace=True)
     FileClean=pd.merge(FileClean,FileCleanTot,how='inner', on=["Master_Segment_ID"])
     FileClean=FileClean.sort_values(["Master_Segment_ID","Segment_No"],ascending=[1,0])
-    FileClean.to_csv('y_merge_out_3.csv')
     FileClean.drop_duplicates(subset=["Master_Segment_ID"],keep='first',inplace=True)  #Keep the best matching segment
-    FileClean.to_csv('y_merge_out_4.csv')
     FileClean=pd.merge(FileClean,SecondFileTable,how='right', on=['Segment_ID'])
     FileClean["Master_Segment_ID"] = FileClean["Master_Segment_ID"].fillna(FileClean["Segment_ID"])  #All segments that did not have overlapping hits with the master segment become masters themselves and become part of the Pacman
     FileClean["Segment_No"] = FileClean["Segment_No"].fillna(0)
@@ -100,8 +94,6 @@ for i in range(1,Y_ID_Max):
     ZContractedTable_r=ZContractedTable_r.groupby(['Master_Segment_ID']).agg({'Segment_No':'sum','Segment_No_Tot':'sum'}).reset_index()
     ZContractedTable=ZContractedTable.drop(['Segment_No','Segment_No_Tot'],axis=1)
     ZContractedTable=pd.merge(ZContractedTable,ZContractedTable_r,how='inner', on=["Master_Segment_ID"])
-    ZContractedTable.to_csv('y_merge_out_5.csv')
-    exit()
 ZContractedTable=ZContractedTable.sort_values(["Master_Segment_ID",'Master_z'],ascending=[1,1])
 output_file_location=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(0)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(X_ID)+sfx
 ZContractedTable.to_csv(output_file_location,index=False)
