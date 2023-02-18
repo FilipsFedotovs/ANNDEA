@@ -189,6 +189,8 @@ for k in range(0,Z_ID_Max):
                             combined_weight_list=pd.DataFrame(combined_weight_list, columns = ['l_HitID','r_HitID','link_strength'])
                             _Tot_Hits=pd.merge(HC.HitPairs, combined_weight_list, how="inner", on=['l_HitID','r_HitID'])
                             _Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['link_strength'] <= Acceptance], inplace = True) #Remove all hit pairs that fail GNN classification
+                        else:
+                            _Tot_Hits=HC.HitPairs
                         _Tot_Hits['link_strength']=1.0
                         print(UF.TimeStamp(),'Number of all  hit combinations passing GNN selection:',len(_Tot_Hits))
                         _Tot_Hits=_Tot_Hits[['r_HitID','l_HitID','r_z','l_z','link_strength']]
