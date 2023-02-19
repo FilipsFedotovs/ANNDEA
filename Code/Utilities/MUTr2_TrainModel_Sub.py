@@ -10,12 +10,7 @@ import math
 import ast
 import os
 import copy
-# import torch
-# from torch import optim
-# from torch.optim.lr_scheduler import StepLR
-# import torch.nn.functional as F
-# device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-# device = "cpu"
+
 ########################## Visual Formatting #################################################
 class bcolors:
     HEADER = '\033[95m'

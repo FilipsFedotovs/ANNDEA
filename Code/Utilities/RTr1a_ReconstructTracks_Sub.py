@@ -5,6 +5,7 @@ import argparse
 import sys
 import copy
 from statistics import mean
+import os
 #Setting the parser - this script is usually not run directly, but is used by a Master version Counterpart that passes the required arguments
 parser = argparse.ArgumentParser(description='select cut parameters')
 parser.add_argument('--i',help="Set number", default='1')
@@ -30,6 +31,7 @@ parser.add_argument('--p',help="Path to the output file", default='')
 parser.add_argument('--o',help="Path to the output file name", default='')
 parser.add_argument('--pfx',help="Path to the output file name", default='')
 parser.add_argument('--sfx',help="Path to the output file name", default='')
+parser.add_argument('--CheckPoint',help="Save cluster sets during individual cluster tracking.", default='N')
 
 #Working out where are the Py libraries
 args = parser.parse_args()
@@ -65,6 +67,7 @@ x_offset=float(args.xOffset)
 cut_dt=float(args.cut_dt)
 cut_dr=float(args.cut_dr)
 ModelName=args.ModelName
+CheckPoint=args.CheckPoint.upper()=='Y'
 RecBatchID=args.BatchID
 p=args.p
 o=args.o
@@ -147,6 +150,10 @@ import datetime
 Before=datetime.datetime.now()
 z_clusters_results=[]
 for k in range(0,Z_ID_Max):
+    if CheckPoint:
+        CheckPointFile=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(X_ID_n)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(X_ID_n)+'_'+str(Y_ID_n) +'_' +str(k)+'_CP'+sfx
+        if os.path.isfile(CheckPointFile):
+            continue
     Z_ID=int(k)/Z_overlap
     temp_data=data.drop(data.index[data['z'] >= ((Z_ID+1)*stepZ)])  #Keeping the relevant z slice
     temp_data=temp_data.drop(temp_data.index[temp_data['z'] < (Z_ID*stepZ)])  #Keeping the relevant z slice
@@ -298,12 +305,24 @@ for k in range(0,Z_ID_Max):
                         _Rec_Hits_Pool=pd.DataFrame(_track_list, columns = ['Segment_ID','HitID'])
                         _Rec_Hits_Pool=pd.merge(_z_map, _Rec_Hits_Pool, how="right", on=['HitID'])
                         print(UF.TimeStamp(),_no_tracks, 'track segments have been reconstructed in this cluster set ...')
-                        z_clusters_results.append(_Rec_Hits_Pool) #Save all the reconstructed segments.
+                        if CheckPoint:
+                            _Rec_Hits_Pool.to_csv(CheckPointFile,index=False)
+                        else:
+                            z_clusters_results.append(_Rec_Hits_Pool) #Save all the reconstructed segments.
                         del HC
                         continue
 import gc
 gc.collect #Clean memory
 print('Final Time lapse', datetime.datetime.now()-Before)
+
+
+if CheckPoint:
+    print(UF.TimeStamp(),'Loading all saved check points...')
+    for k in range(0,Z_ID_Max):
+        CheckPointFile=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(X_ID_n)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(X_ID_n)+'_'+str(Y_ID_n) +'_' +str(k)+'_CP'+sfx
+        if os.path.isfile(CheckPointFile):
+            ClusterData=pd.read_csv(CheckPointFile)
+            z_clusters_results.append(ClusterData)
 
 #Once we track all clusters we need to merge them along z-axis
 if len(z_clusters_results)>0:
