@@ -67,6 +67,7 @@ parser.add_argument('--Ymax',help="This option restricts data to only those even
 parser.add_argument('--Z_overlap',help="Enter the level of overlap in integer number between reconstruction blocks along z-axis. (In order to avoid segmentation this value should be more than 1)", default='3')
 parser.add_argument('--Y_overlap',help="Enter the level of overlap in integer number between reconstruction blocks along y-axis. (In order to avoid segmentation this value should be more than 1)", default='2')
 parser.add_argument('--X_overlap',help="Enter the level of overlap in integer number between reconstruction blocks along x-axis. (In order to avoid segmentation this value should be more than 1)", default='2')
+parser.add_argument('--CheckPoint',help="Save cluster sets during individual cluster tracking.", default='N')
 
 ######################################## Parsing argument values  #############################################################
 args = parser.parse_args()
@@ -364,8 +365,8 @@ for i in range(0,Xsteps):
                 job_sets.append(Ysteps)
 prog_entry.append(' Sending hit cluster to the HTCondor, so the model assigns weights between hits')
 prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','hit_cluster_rec_set','RTr1a','.csv',RecBatchID,job_sets,'RTr1a_ReconstructTracks_Sub.py'])
-prog_entry.append([' --stepZ ', ' --stepY ', ' --stepX ', " --zOffset ", " --yOffset ", " --xOffset ", ' --cut_dt ', ' --cut_dr ', ' --ModelName ',' --Z_overlap ',' --Y_overlap ',' --X_overlap ', ' --Z_ID_Max '])
-prog_entry.append([stepZ,stepY,stepX,z_offset, y_offset, x_offset, cut_dt,cut_dr, ModelName,Z_overlap,Y_overlap,X_overlap, Zsteps])
+prog_entry.append([' --stepZ ', ' --stepY ', ' --stepX ', " --zOffset ", " --yOffset ", " --xOffset ", ' --cut_dt ', ' --cut_dr ', ' --ModelName ',' --Z_overlap ',' --Y_overlap ',' --X_overlap ', ' --Z_ID_Max ', ' --CheckPoint '])
+prog_entry.append([stepZ,stepY,stepX,z_offset, y_offset, x_offset, cut_dt,cut_dr, ModelName,Z_overlap,Y_overlap,X_overlap, Zsteps, args.CheckPoint])
 prog_entry.append(Xsteps*Ysteps)
 prog_entry.append(LocalSub)
 Program.append(prog_entry)
