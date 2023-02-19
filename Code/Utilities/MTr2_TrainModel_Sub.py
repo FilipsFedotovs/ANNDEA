@@ -33,7 +33,7 @@ parser.add_argument('--TrainParams',help="Please enter the train params: '[<Lear
 parser.add_argument('--AFS',help="Please enter the user afs directory", default='.')
 parser.add_argument('--EOS',help="Please enter the user eos directory", default='.')
 parser.add_argument('--TrainSampleID',help="Give name of the training ", default='SHIP_TrainSample_v1')
-parser.add_argument('--ModelName',help="Name of the model", default='1T_MC_1_model')
+parser.add_argument('--BatchID',help="Name of the model", default='1T_MC_1_model')
 parser.add_argument('--no-cuda', action='store_true', default=False,
                         help='disables CUDA training')
 parser.add_argument('--i',help="Set number", default='1')
@@ -200,9 +200,9 @@ TestSamples=UF.PickleOperations(output_test_file_location,'r', 'N/A')[0]
 
 def main(self):
     print(UF.TimeStamp(),'Starting the training process... ')
-    State_Save_Path=EOSsubModelDIR+'/'+args.ModelName+'_State'
-    Model_Meta_Path=EOSsubModelDIR+'/'+args.ModelName+'_Meta'
-    Model_Path=EOSsubModelDIR+'/'+args.ModelName
+    State_Save_Path=EOSsubModelDIR+'/'+args.BatchID+'_State'
+    Model_Meta_Path=EOSsubModelDIR+'/'+args.BatchID+'_Meta'
+    Model_Path=EOSsubModelDIR+'/'+args.BatchID
     ModelMeta=UF.PickleOperations(Model_Meta_Path, 'r', 'N/A')[0]
     device = torch.device('cpu')
     model = UF.GenerateModel(ModelMeta).to(device)
