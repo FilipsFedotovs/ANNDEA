@@ -151,7 +151,7 @@ Before=datetime.datetime.now()
 z_clusters_results=[]
 for k in range(0,Z_ID_Max):
     if CheckPoint:
-        CheckPointFile=EOS_DIR+p+'/TempCheckPoint_'+pfx+'_'+RecBatchID+'_'+str(X_ID_n)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(X_ID_n)+'_'+str(Y_ID_n) +'_' +str(k)+sfx
+        CheckPointFile=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(X_ID_n)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(X_ID_n)+'_'+str(Y_ID_n) +'_' +str(k)+'_CP'+sfx
         if os.path.isfile(CheckPointFile):
             continue
     Z_ID=int(k)/Z_overlap
@@ -319,7 +319,7 @@ print('Final Time lapse', datetime.datetime.now()-Before)
 if CheckPoint:
     print(UF.TimeStamp(),'Loading all saved check points...')
     for k in range(0,Z_ID_Max):
-        CheckPointFile=EOS_DIR+p+'/TempCheckPoint_'+pfx+'_'+RecBatchID+'_'+str(X_ID_n)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(X_ID_n)+'_'+str(Y_ID_n) +'_' +str(k)+sfx
+        CheckPointFile=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(X_ID_n)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(X_ID_n)+'_'+str(Y_ID_n) +'_' +str(k)+'_CP'+sfx
         if os.path.isfile(CheckPointFile):
             ClusterData=pd.read_csv(CheckPointFile)
             z_clusters_results.append(ClusterData)
