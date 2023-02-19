@@ -248,7 +248,7 @@ else:
                  OptionHeader = [' --TrainParams ', ' --AFS ', ' --EOS ', " --TrainSampleID ", " --ModelName "]
                  OptionLine = [TrainParamsStr,  AFS_DIR, EOS_DIR, TrainSampleID, ModelName]
                  Job=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/','N/A','MTr2','N/A',ModelName,1,OptionHeader,OptionLine,'MTr2_TrainModel_Sub.py',False,"['','']", True, True)[0]
-                 UF.SubmitJobs2Condor([OptionHeader, OptionLine, 1, 'ANNDEA-MTr2-'+ModelName, True,False])
+                 UF.SubmitJobs2Condor(Job)
                  print(bcolors.BOLD+"The job has been submitted..."+bcolors.ENDC)
                  print(UF.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
                  exit()
