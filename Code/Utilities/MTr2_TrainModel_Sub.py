@@ -36,6 +36,12 @@ parser.add_argument('--TrainSampleID',help="Give name of the training ", default
 parser.add_argument('--ModelName',help="Name of the model", default='1T_MC_1_model')
 parser.add_argument('--no-cuda', action='store_true', default=False,
                         help='disables CUDA training')
+parser.add_argument('--i',help="Set number", default='1')
+parser.add_argument('--p',help="Path to the output file", default='')
+parser.add_argument('--o',help="Path to the output file name", default='')
+parser.add_argument('--pfx',help="Path to the output file name", default='')
+parser.add_argument('--sfx',help="Path to the output file name", default='')
+parser.add_argument('--PY',help="Python libraries directory location", default='.')
 ########################################     Initialising Variables    #########################################
 args = parser.parse_args()
 ModelParams=ast.literal_eval(args.ModelParams)
