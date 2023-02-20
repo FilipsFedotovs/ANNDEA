@@ -151,8 +151,12 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
          data=data.dropna()
          final_rows=len(data.axes[0])
          print(UF.TimeStamp(),'The cleaned data has ',final_rows,' hits')
-         data[PM.Hit_ID] = data[PM.Hit_ID].astype(int)
+         try:
+             data[PM.Hit_ID] = data[PM.Hit_ID].astype(int)
+         except:
+             print(UF.TimeStamp(), bcolors.WARNING+"Hit ID is already in the string format, skipping the reformatting step..."+bcolors.ENDC)
          data[PM.Hit_ID] = data[PM.Hit_ID].astype(str)
+            
          if SliceData:
               print(UF.TimeStamp(),'Slicing the data...')
               data=data.drop(data.index[(data[PM.x] > Xmax) | (data[PM.x] < Xmin) | (data[PM.y] > Ymax) | (data[PM.y] < Ymin)])
