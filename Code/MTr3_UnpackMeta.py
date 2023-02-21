@@ -51,7 +51,7 @@ if os.path.isfile(Model_Meta_Path):
        print(Model_Meta_Raw[1])
        Model_Meta=Model_Meta_Raw[0]
        try:
-         Header=Model_Meta.TrainSessionsData[0][0]+['Train Sample ID','LR','Batch Size','Normalised Epochs']
+         Header=Model_Meta.TrainSessionsData[0][0]+['Model Parameters','Train Sample ID','LR','Batch Size','Normalised Epochs']
        except:
          print(UF.TimeStamp(),bcolors.FAIL+'Fail! Meta file is empty. Please wait until at least one training session is completed.'+bcolors.ENDC)
          exit()
@@ -60,7 +60,7 @@ if os.path.isfile(Model_Meta_Path):
        for TSD in range(len(Model_Meta.TrainSessionsData)):
            for Record in Model_Meta.TrainSessionsData[TSD][1:]:
                counter+=1
-               New_Data.append(Record+[Model_Meta.TrainSessionsDataID[TSD],Model_Meta.TrainSessionsParameters[TSD][0],Model_Meta.TrainSessionsParameters[TSD][1],counter])
+               New_Data.append(Record+[Model_Meta.ModelParameters,Model_Meta.TrainSessionsDataID[TSD],Model_Meta.TrainSessionsParameters[TSD][0],Model_Meta.TrainSessionsParameters[TSD][1],counter])
 
 else:
        print(UF.TimeStamp(),bcolors.WARNING+'Fail! No existing meta files have been found, exiting now'+bcolors.ENDC)

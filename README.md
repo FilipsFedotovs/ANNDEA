@@ -1,12 +1,12 @@
 # ANNDEA
 Artificial Neural Network Driven Emulsion Analysis.
-This README just serves as a very short user guide, the documentation will be written much later.
+This README just serves as a very short user guide, a more complete documentation can be found in the project wiki.
 
 ## 0. Hints and Tips
 1) It is recommended to run those processes on lxplus in the tmux shell as some scripts can take up to several hours to execute.
-2) The first letter of the script name prefixes indicate what kind of operations this script perform: R is for actual reconstruction routines, E for evaluation and M for model creation and training. I for Classification tasks.
-3) The second letter of the script name prefixes indicates the subject of the reconstruction. H - hits, S - Track Segments, T- tracks, V - Vertices and E - events.
-4) In general the numbers in prefixes reflect the order at which scripts have to be executed e.g: MH1, MH2,MH3. If there is no number then the script is independent or optional.
+2) The first letter of the script name prefixes indicate what kind of operations this script perform: R is for actual reconstruction routines, E for evaluation and M for model creation and training.
+3) The second letter of the script name prefixes indicates the subject of the reconstruction. Tr- tracks, V - Vertices and E - events.
+4) In general the numbers in prefixes reflect the order at which scripts have to be executed e.g: MTr1, MTr2, MTr3. If there is no number then the script is independent or optional.
 4) --help argument provides all the available run arguments of a script and its purpose.
 5) The output of each script has the same prefix as the script that generates it. Sometimes if there are multiple sub scripts then the a,b,c letters are added to indicate the order of the execution. This is done for scripts with 'sub' suffix.
 6) The files that are the final output will not have any suffixes.
@@ -77,7 +77,7 @@ Install Other libraries:
 3) **tmux**
 4) **kinit username@CERN.CH -l 24h00m**
 5) Enter your lxplus password
-6) **python3 RTr1_ReconstructTracks.py --Log KALMAN --ModelName MH_SND_Tracking_5_80_5_80 --Xmin 200000 --Xmax 230000 --Ymin 20000 --Ymax 40000 --X_overlap 1 --Y_overlap 1 --Z_overlap 1 --RecBatchID Test_Batch**
+6) **python3 RTr1_ReconstructTracks.py --ModelName MH_SND_Tracking_5_80_5_80 --Xmin 200000 --Xmax 230000 --Ymin 20000 --Ymax 40000 --X_overlap 1 --Y_overlap 1 --Z_overlap 1 --RecBatchID Test_Batch**
 7) The script will submit the subscript jobs and go to the autopilot mode.
 8) Exit tmux (by using **ctrl + b** and then typing  **d**). Script will keep running in the autopilot mode until all the steps in the hit reconstruction process have been completed.
 9) Enter the same tmux session (after overnight job for example) by logging to the same lxplus machine and then typing  **tmux a -t 0**. The program should finish with the message *'Reconstruction has been completed'*

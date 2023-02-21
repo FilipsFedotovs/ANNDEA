@@ -8,7 +8,7 @@ import subprocess
 import datetime
 import numpy as np
 import copy
-from statistics import mean
+
 import ast
 import shutil
 
@@ -151,10 +151,6 @@ class HitCluster:
                           self.ClusterHits.append(s)
            self.ClusterSize=len(__ClusterHitsTemp)
            self.RawClusterGraph=__ClusterHitsTemp #Avoiding importing torch without a good reason (reduce load on the HTCOndor initiative)
-           # import torch
-           # import torch_geometric
-           # from torch_geometric.data import Data
-           # self.ClusterGraph=Data(x=torch.Tensor(__ClusterHitsTemp), edge_index=None, y=None)
            del __ClusterHitsTemp
       def GenerateTrainData(self, MCHits,cut_dt, cut_dr): #Decorate hit information
            import pandas as pd
@@ -214,6 +210,9 @@ class HitCluster:
            _Tot_Hits=_Tot_Hits[['l_HitID','r_HitID','label','d_l','d_t','d_z','d_tx','d_ty']]
            _Tot_Hits=_Tot_Hits.values.tolist()
            import torch
+           import torch_geometric
+           from torch_geometric.data import Data
+           self.ClusterGraph=Data(x=torch.Tensor(self.RawClusterGraph), edge_index=None, y=None)
            self.ClusterGraph.edge_index=torch.tensor((HitCluster.GenerateLinks(_Tot_Hits,self.ClusterHitIDs)))
            self.ClusterGraph.edge_attr=torch.tensor((HitCluster.GenerateEdgeAttributes(_Tot_Hits)))
            self.ClusterGraph.y=torch.tensor((HitCluster.GenerateEdgeLabels(_Tot_Hits)))
@@ -222,35 +221,26 @@ class HitCluster:
            else:
                return False
       def GenerateEdges(self, cut_dt, cut_dr): #Decorate hit information
-           import pandas as pd
-           #Preparing Raw and MC combined data 1
-           _l_Hits=pd.DataFrame(self.ClusterHits, columns = ['l_HitID','l_x','l_y','l_z','l_tx','l_ty'])
-           #Join hits + MC truth
-           _l_Hits['join_key'] = 'join_key'
-           #Preparing Raw and MC combined data 2
-           _r_Hits=pd.DataFrame(self.ClusterHits, columns = ['r_HitID','r_x','r_y','r_z','r_tx','r_ty'])
-           #Join hits + MC truth
-           _r_Hits['join_key'] = 'join_key'
 
+           #New workaround: instead of a painful Pandas outer join a loop over list is perfromed
+           _l_Hits=self.ClusterHits
+           _r_Hits=self.ClusterHits
            #Combining data 1 and 2
-           _Tot_Hits=pd.merge(_l_Hits, _r_Hits, how="inner", on=['join_key'])
-           _Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['l_HitID'] == _Tot_Hits['r_HitID']], inplace = True)
-           _Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['l_z'] <= _Tot_Hits['r_z']], inplace = True)
-           _Tot_Hits['d_tx'] = _Tot_Hits['l_tx']-_Tot_Hits['r_tx']
-           _Tot_Hits['d_tx'] = _Tot_Hits['d_tx'].abs()
-           _Tot_Hits['d_ty'] = _Tot_Hits['l_ty']-_Tot_Hits['r_ty']
-           _Tot_Hits['d_ty'] = _Tot_Hits['d_ty'].abs()
-           _Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['d_tx'] >= cut_dt], inplace = True)
-           _Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['d_ty'] >= cut_dt], inplace = True)
-           _Tot_Hits['d_x'] = (_Tot_Hits['r_x']-(_Tot_Hits['l_x']+(_Tot_Hits['l_tx']*(_Tot_Hits['r_z']-_Tot_Hits['l_z']))))
-           _Tot_Hits['d_x'] = _Tot_Hits['d_x'].abs()
-           _Tot_Hits['d_y'] = (_Tot_Hits['r_y']-(_Tot_Hits['l_y']+(_Tot_Hits['l_ty']*(_Tot_Hits['r_z']-_Tot_Hits['l_z']))))
-           _Tot_Hits['d_y'] = _Tot_Hits['d_y'].abs()
-           _Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['d_x'] >= cut_dr], inplace = True)
-           _Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['d_y'] >= cut_dr], inplace = True)
-
-           #_Tot_Hits = _Tot_Hits.drop(['d_tx','d_ty','d_x','d_y','join_key','l_tx','l_ty','r_tx','r_ty'],axis=1)
-           _Tot_Hits = _Tot_Hits.drop(['d_x','d_y','join_key','l_tx','l_ty','r_tx','r_ty'],axis=1)
+           _Tot_Hits=[]
+           _hit_count=0
+           print(TimeStamp(),'Initial number of all possible hit combinations is:',len(_l_Hits)**2)
+           print(TimeStamp(),'Number of all possible hit combinations without self-permutations:',(len(_l_Hits)**2)-len(_l_Hits))
+           print(TimeStamp(),'Number of all possible hit  combinations with enforced one-directionality:',int(((len(_l_Hits)**2)-len(_l_Hits))/2))
+           for l in _l_Hits:
+               _hit_count+=1
+               print(TimeStamp(),'Edge generation progress is ',round(100*_hit_count/len(_l_Hits),2), '%',end="\r", flush=True)
+               for r in _r_Hits:
+                  if HitCluster.JoinHits(l,r,cut_dt,cut_dr):
+                      _Tot_Hits.append(l+r)
+           print(TimeStamp(),'Number of all  hit combinations passing fiducial cuts:',len(_Tot_Hits))
+           import pandas as pd
+           _Tot_Hits=pd.DataFrame(_Tot_Hits, columns = ['l_HitID','l_x','l_y','l_z','l_tx','l_ty','r_HitID','r_x','r_y','r_z','r_tx','r_ty'])
+           self.HitPairs=_Tot_Hits[['l_HitID','l_z','r_HitID','r_z']]
            _Tot_Hits['l_x']=_Tot_Hits['l_x']/self.Step[2]
            _Tot_Hits['l_y']=_Tot_Hits['l_y']/self.Step[2]
            _Tot_Hits['l_z']=_Tot_Hits['l_z']/self.Step[2]
@@ -261,12 +251,16 @@ class HitCluster:
            _Tot_Hits['d_l'] = (np.sqrt(((_Tot_Hits['r_y']-_Tot_Hits['l_y'])**2) + ((_Tot_Hits['r_x']-_Tot_Hits['l_x'])**2) + ((_Tot_Hits['r_z']-_Tot_Hits['l_z'])**2)))
            _Tot_Hits['d_t'] = np.sqrt(((_Tot_Hits['r_y']-_Tot_Hits['l_y'])**2) + ((_Tot_Hits['r_x']-_Tot_Hits['l_x'])**2))
            _Tot_Hits['d_z'] = (_Tot_Hits['r_z']-_Tot_Hits['l_z']).abs()
+           _Tot_Hits['d_tx'] = _Tot_Hits['l_tx']-_Tot_Hits['r_tx']
+           _Tot_Hits['d_tx'] = _Tot_Hits['d_tx'].abs()
+           _Tot_Hits['d_ty'] = _Tot_Hits['l_ty']-_Tot_Hits['r_ty']
+           _Tot_Hits['d_ty'] = _Tot_Hits['d_ty'].abs()
            _Tot_Hits = _Tot_Hits.drop(['r_x','r_y','r_z','l_x','l_y','l_z'],axis=1)
            _Tot_Hits=_Tot_Hits[['l_HitID','r_HitID','label','d_l','d_t','d_z','d_tx','d_ty']]
+
            _Tot_Hits=_Tot_Hits.values.tolist()
            if len(_Tot_Hits)>0:
                import torch
-               import torch_geometric
                from torch_geometric.data import Data
                self.ClusterGraph=Data(x=torch.Tensor(self.RawClusterGraph), edge_index=None, y=None)
                self.ClusterGraph.edge_index=torch.tensor((HitCluster.GenerateLinks(_Tot_Hits,self.ClusterHitIDs)))
@@ -280,344 +274,8 @@ class HitCluster:
                    return False
            else:
                return False
-      def LinkHits(self,hits,GiveStats,MCHits,cut_dt,cut_dr, Acceptance):
-          self.HitLinks=hits
-          import pandas as pd
-          _Hits_df=pd.DataFrame(self.ClusterHits, columns = ['_l_HitID','x','y','z','tx','ty'])
-          _Hits_df["x"] = pd.to_numeric(_Hits_df["x"],downcast='float')
-          _Hits_df["y"] = pd.to_numeric(_Hits_df["y"],downcast='float')
-          _Hits_df["z"] = pd.to_numeric(_Hits_df["z"],downcast='float')
-          _Hits_df["tx"] = pd.to_numeric(_Hits_df["tx"],downcast='float')
-          _Hits_df["ty"] = pd.to_numeric(_Hits_df["ty"],downcast='float')
-          if GiveStats:
-            _Hits_df['dummy_join']='dummy_join'
-            _MCClusterHits=[]
-            StatFakeValues=[]
-            StatTruthValues=[]
-            StatLabels=['Initial # of combinations','Delete self-permutations','Enforce positive directionality','Cut on delta t', 'Cut on delta x','Acceptance Cut','Segment Reconstruction']
-            for s in MCHits:
-               if s[1]>=self.ClusterID[0]*self.Step[0] and s[1]<((self.ClusterID[0]+1)*self.Step[0]):
-                   if s[2]>=self.ClusterID[1]*self.Step[1] and s[2]<((self.ClusterID[1]+1)*self.Step[1]):
-                       if s[3]>=self.ClusterID[2]*self.Step[2] and s[3]<((self.ClusterID[2]+1)*self.Step[2]):
-                          _MCClusterHits.append([s[0],s[6]])
-           #Preparing Raw and MC combined data 1
-            _l_MCHits=pd.DataFrame(_MCClusterHits, columns = ['_l_HitID','l_MC_ID'])
-            _r_MCHits=pd.DataFrame(_MCClusterHits, columns = ['_r_HitID','l_MC_ID'])
-            _l_Hits=_Hits_df.rename(columns={"x": "l_x", "y": "l_y", "z": "l_z", "tx": "l_tx","ty": "l_ty"})
-            #Join hits + MC truth
-            _l_Tot_Hits=pd.merge(_l_MCHits, _l_Hits, how="right", on=['_l_HitID'])
-            #Preparing Raw and MC combined data 2
-            _r_MCHits=pd.DataFrame(_MCClusterHits, columns = ['_r_HitID','r_MC_ID'])
-            _r_Hits=_Hits_df[['_l_HitID', 'x', 'y', 'z', 'tx', 'ty', 'dummy_join']].rename(columns={"x": "r_x", "y": "r_y", "z": "r_z", "tx": "r_tx","ty": "r_ty","_l_HitID": "_r_HitID" })
-            #Join hits + MC truth
-            _r_Tot_Hits=pd.merge(_r_MCHits, _r_Hits, how="right", on=['_r_HitID'])
-            _r_Tot_Hits.drop_duplicates(subset=['_r_HitID'],keep='first', inplace=True)
-            _Tot_Hits=pd.merge(_l_Tot_Hits, _r_Tot_Hits, how="inner", on=["dummy_join"])
-            _Tot_Hits.l_MC_ID= _Tot_Hits.l_MC_ID.fillna(_Tot_Hits._l_HitID)
-            _Tot_Hits.r_MC_ID= _Tot_Hits.r_MC_ID.fillna(_Tot_Hits._r_HitID)
-            _Tot_Hits.drop_duplicates(subset=['_l_HitID','_r_HitID'],keep='first', inplace=True)
-            StatFakeValues.append(len(_Tot_Hits.axes[0])-len(_Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['l_MC_ID'] != _Tot_Hits['r_MC_ID']]).axes[0]))
-            StatTruthValues.append(len(_Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['l_MC_ID'] != _Tot_Hits['r_MC_ID']]).axes[0]))
-            _Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['_l_HitID'] == _Tot_Hits['_r_HitID']], inplace = True)
-            StatFakeValues.append(len(_Tot_Hits.axes[0])-len(_Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['l_MC_ID'] != _Tot_Hits['r_MC_ID']]).axes[0]))
-            StatTruthValues.append(len(_Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['l_MC_ID'] != _Tot_Hits['r_MC_ID']]).axes[0]))
-            _Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['l_z'] <= _Tot_Hits['r_z']], inplace = True)
-            StatFakeValues.append(len(_Tot_Hits.axes[0])-len(_Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['l_MC_ID'] != _Tot_Hits['r_MC_ID']]).axes[0]))
-            StatTruthValues.append(len(_Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['l_MC_ID'] != _Tot_Hits['r_MC_ID']]).axes[0]))
-            _Tot_Hits['d_tx'] = _Tot_Hits['l_tx']-_Tot_Hits['r_tx']
-            _Tot_Hits['d_tx'] = _Tot_Hits['d_tx'].abs()
-            _Tot_Hits['d_ty'] = _Tot_Hits['l_ty']-_Tot_Hits['r_ty']
-            _Tot_Hits['d_ty'] = _Tot_Hits['d_ty'].abs()
-            _Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['d_tx'] >= cut_dt], inplace = True)
-            _Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['d_ty'] >= cut_dt], inplace = True)
-            StatFakeValues.append(len(_Tot_Hits.axes[0])-len(_Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['l_MC_ID'] != _Tot_Hits['r_MC_ID']]).axes[0]))
-            StatTruthValues.append(len(_Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['l_MC_ID'] != _Tot_Hits['r_MC_ID']]).axes[0]))
-            _Tot_Hits['d_x'] = (_Tot_Hits['r_x']-(_Tot_Hits['l_x']+(_Tot_Hits['l_tx']*(_Tot_Hits['r_z']-_Tot_Hits['l_z']))))
-            _Tot_Hits['d_x'] = _Tot_Hits['d_x'].abs()
-            _Tot_Hits['d_y'] = (_Tot_Hits['r_y']-(_Tot_Hits['l_y']+(_Tot_Hits['l_ty']*(_Tot_Hits['r_z']-_Tot_Hits['l_z']))))
-            _Tot_Hits['d_y'] = _Tot_Hits['d_y'].abs()
-            _Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['d_x'] >= cut_dr], inplace = True)
-            _Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['d_y'] >= cut_dr], inplace = True)
-            StatFakeValues.append(len(_Tot_Hits.axes[0])-len(_Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['l_MC_ID'] != _Tot_Hits['r_MC_ID']]).axes[0]))
-            StatTruthValues.append(len(_Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['l_MC_ID'] != _Tot_Hits['r_MC_ID']]).axes[0]))
-            _Map_df=pd.DataFrame(self.HitLinks, columns = ['_l_HitID','_r_HitID','link_strength'])
-            _Tot_Hits=pd.merge(_Tot_Hits, _Map_df, how="inner", on=['_l_HitID','_r_HitID'])
-            _Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['link_strength'] <= Acceptance], inplace = True)
-            StatFakeValues.append(len(_Tot_Hits.axes[0])-len(_Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['l_MC_ID'] != _Tot_Hits['r_MC_ID']]).axes[0]))
-            StatTruthValues.append(len(_Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['l_MC_ID'] != _Tot_Hits['r_MC_ID']]).axes[0]))
-            _Tot_Hits=_Tot_Hits[['_r_HitID','_l_HitID','r_z','l_z','link_strength']]
-            _Tot_Hits.sort_values(by = ['_r_HitID', 'l_z','link_strength'], ascending=[True,True, False],inplace=True)
-            _Loc_Hits_r=_Tot_Hits[['r_z']].rename(columns={'r_z': 'z'})
-            _Loc_Hits_l=_Tot_Hits[['l_z']].rename(columns={'l_z': 'z'})
-            _Loc_Hits=pd.concat([_Loc_Hits_r,_Loc_Hits_l])
-            _Loc_Hits.sort_values(by = ['z'], ascending=[True],inplace=True)
-            _Loc_Hits.drop_duplicates(subset=['z'], keep='first', inplace=True)
-            _Loc_Hits=_Loc_Hits.reset_index(drop=True)
-            _Loc_Hits=_Loc_Hits.reset_index()
-            _Loc_Hits_r=_Loc_Hits.rename(columns={'index': 'r_index', 'z': 'r_z'})
-            _Loc_Hits_l=_Loc_Hits.rename(columns={'index': 'l_index', 'z': 'l_z'})
-            _Tot_Hits=pd.merge(_Tot_Hits,_Loc_Hits_r, how='inner', on=['r_z'])
-            _Tot_Hits=pd.merge(_Tot_Hits,_Loc_Hits_l, how='inner', on=['l_z'])
-            _Tot_Hits=_Tot_Hits[['_r_HitID','_l_HitID','r_index','l_index','link_strength']]
-            _Tot_Hits.sort_values(by = ['_r_HitID', 'l_index','link_strength'], ascending=[True,True, False],inplace=True)
-            _Tot_Hits.drop_duplicates(subset=['_r_HitID', 'l_index','link_strength'], keep='first', inplace=True)
-            _Tot_Hits.sort_values(by = ['_l_HitID', 'r_index','link_strength'], ascending=[True,True, False],inplace=True)
-            _Tot_Hits.drop_duplicates(subset=['_l_HitID', 'r_index','link_strength'], keep='first', inplace=True)
-            _Tot_Hits=_Tot_Hits.values.tolist()
-            _Temp_Tot_Hits=[]
-            for el in _Tot_Hits:
-                _Temp_Tot_Hit_El = [[],[]]
-                for pos in range(len(_Loc_Hits)):
-                    if pos==el[2]:
-                        _Temp_Tot_Hit_El[0].append(el[0])
-                        _Temp_Tot_Hit_El[1].append(el[4])
-                    elif pos==el[3]:
-                        _Temp_Tot_Hit_El[0].append(el[1])
-                        _Temp_Tot_Hit_El[1].append(el[4])
-                    else:
-                        _Temp_Tot_Hit_El[0].append('_')
-                        _Temp_Tot_Hit_El[1].append(0.0)
-                _Temp_Tot_Hits.append(_Temp_Tot_Hit_El)
-            _Tot_Hits=_Temp_Tot_Hits
-            _Rec_Hits_Pool=[]
-            _intital_size=len(_Tot_Hits)
 
-            while len(_Tot_Hits)>0:
-                _Tot_Hits_PCopy=copy.deepcopy(_Tot_Hits)
-                _Tot_Hits_Predator=[]
-                for Predator in _Tot_Hits_PCopy:
-                    for Prey in _Tot_Hits_PCopy:
-                          if Predator!=Prey:
-                           Predator=HitCluster.InjectHit(Predator,Prey,False)[0]
-                    _Tot_Hits_Predator.append(Predator)
-                for s in _Tot_Hits_Predator:
-                    s=s[0].append(mean(s.pop(1)))
-                _Tot_Hits_Predator = [item for l in _Tot_Hits_Predator for item in l]
-                #_Tot_Hits_Predator_Mirror=[]
-                for s in range(len(_Tot_Hits_Predator)):
-                    for h in range(len(_Tot_Hits_Predator[s])):
-                        if _Tot_Hits_Predator[s][h] =='_':
-                            _Tot_Hits_Predator[s][h]='H_'+str(s)
 
-                column_no=len(_Tot_Hits_Predator[0])-1
-                columns=[]
-
-                for c in range(column_no):
-                    columns.append(str(c))
-                columns.append('average_link_strength')
-                _Tot_Hits_Predator=pd.DataFrame(_Tot_Hits_Predator, columns = columns)
-                _Tot_Hits_Predator.sort_values(by = ['average_link_strength'], ascending=[False],inplace=True)
-                for c in range(column_no):
-                    _Tot_Hits_Predator.drop_duplicates(subset=[str(c)], keep='first', inplace=True)
-                _Tot_Hits_Predator=_Tot_Hits_Predator.drop(['average_link_strength'],axis=1)
-
-                _Tot_Hits_Predator=_Tot_Hits_Predator.values.tolist()
-                for seg in range(len(_Tot_Hits_Predator)):
-                    _Tot_Hits_Predator[seg]=[s for s in _Tot_Hits_Predator[seg] if ('H' in s)==False]
-                _Rec_Hits_Pool+=_Tot_Hits_Predator
-                for seg in _Tot_Hits_Predator:
-                    _itr=0
-                    while _itr<len(_Tot_Hits):
-                        if HitCluster.InjectHit(seg,_Tot_Hits[_itr],True):
-                            del _Tot_Hits[_itr]
-                        else:
-                            _itr+=1
-            #Transpose the rows
-            _track_list=[]
-            _segment_id=str(self.ClusterID[0])
-            for el in self.ClusterID:
-                _segment_id+=('-'+str(el))
-            for t in range(len(_Rec_Hits_Pool)):
-                for h in _Rec_Hits_Pool[t]:
-                    _track_list.append([_segment_id+'-'+str(t+1),h])
-            _Rec_Hits_Pool=pd.DataFrame(_track_list, columns = ['Segment_ID','HitID'])
-            _Hits_df=pd.DataFrame(self.ClusterHits, columns = ['HitID','x','y','z','tx','ty'])
-            _Hits_df=_Hits_df[['HitID','z']]
-            #Join hits + MC truth
-            _Rec_Hits_Pool=pd.merge(_Hits_df, _Rec_Hits_Pool, how="right", on=['HitID'])
-            self.RecHits=_Rec_Hits_Pool
-
-            _Rec_Hits_Pool_l=pd.DataFrame(_track_list, columns = ['Segment_ID','_l_HitID'])
-            _Rec_Hits_Pool_r=pd.DataFrame(_track_list, columns = ['Segment_ID','_r_HitID'])
-            #Join hits + MC truth
-            _Rec_Hits_Pool_r=pd.merge(_r_MCHits, _Rec_Hits_Pool_r, how="right", on=['_r_HitID'])
-            _Rec_Hits_Pool_l=pd.merge(_l_MCHits, _Rec_Hits_Pool_l, how="right", on=['_l_HitID'])
-            _Rec_Hits_Pool=pd.merge(_Rec_Hits_Pool_l, _Rec_Hits_Pool_r, how="inner",on=["Segment_ID"])
-            _Rec_Hits_Pool.l_MC_ID= _Rec_Hits_Pool.l_MC_ID.fillna(_Rec_Hits_Pool._l_HitID)
-            _Rec_Hits_Pool.r_MC_ID= _Rec_Hits_Pool.r_MC_ID.fillna(_Rec_Hits_Pool._r_HitID)
-            _Rec_Hits_Pool.drop(_Rec_Hits_Pool.index[_Rec_Hits_Pool['_l_HitID'] == _Rec_Hits_Pool['_r_HitID']], inplace = True)
-            _Rec_Hits_Pool["Pair_ID"]= ['-'.join(sorted(tup)) for tup in zip(_Rec_Hits_Pool['_l_HitID'], _Rec_Hits_Pool['_r_HitID'])]
-            _Rec_Hits_Pool.drop_duplicates(subset="Pair_ID",keep='first',inplace=True)
-            StatFakeValues.append(len(_Rec_Hits_Pool.axes[0])-len(_Rec_Hits_Pool.drop(_Rec_Hits_Pool.index[_Rec_Hits_Pool['l_MC_ID'] != _Rec_Hits_Pool['r_MC_ID']]).axes[0]))
-            StatTruthValues.append(len(_Rec_Hits_Pool.drop(_Rec_Hits_Pool.index[_Rec_Hits_Pool['l_MC_ID'] != _Rec_Hits_Pool['r_MC_ID']]).axes[0]))
-            self.RecStats=[StatLabels,StatFakeValues,StatTruthValues]
-          else:
-            _Hits_df['dummy_join']='dummy_join'
-            _l_Hits=_Hits_df.rename(columns={"x": "l_x", "y": "l_y", "z": "l_z", "tx": "l_tx","ty": "l_ty"})
-            _r_Hits=_Hits_df[['_l_HitID', 'x', 'y', 'z', 'tx', 'ty', 'dummy_join']].rename(columns={"x": "r_x", "y": "r_y", "z": "r_z", "tx": "r_tx","ty": "r_ty","_l_HitID": "_r_HitID" })
-            _Tot_Hits=pd.merge(_l_Hits, _r_Hits, how="inner", on=["dummy_join"])
-            _Tot_Hits.drop_duplicates(subset=['_l_HitID','_r_HitID'],keep='first', inplace=True)
-            _Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['_l_HitID'] == _Tot_Hits['_r_HitID']], inplace = True)
-            _Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['l_z'] <= _Tot_Hits['r_z']], inplace = True)
-            _Tot_Hits['d_tx'] = _Tot_Hits['l_tx']-_Tot_Hits['r_tx']
-            _Tot_Hits['d_tx'] = _Tot_Hits['d_tx'].abs()
-            _Tot_Hits['d_ty'] = _Tot_Hits['l_ty']-_Tot_Hits['r_ty']
-            _Tot_Hits['d_ty'] = _Tot_Hits['d_ty'].abs()
-            _Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['d_tx'] >= cut_dt], inplace = True)
-            _Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['d_ty'] >= cut_dt], inplace = True)
-            _Tot_Hits['d_x'] = (_Tot_Hits['r_x']-(_Tot_Hits['l_x']+(_Tot_Hits['l_tx']*(_Tot_Hits['r_z']-_Tot_Hits['l_z']))))
-            _Tot_Hits['d_x'] = _Tot_Hits['d_x'].abs()
-            _Tot_Hits['d_y'] = (_Tot_Hits['r_y']-(_Tot_Hits['l_y']+(_Tot_Hits['l_ty']*(_Tot_Hits['r_z']-_Tot_Hits['l_z']))))
-            _Tot_Hits['d_y'] = _Tot_Hits['d_y'].abs()
-            _Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['d_x'] >= cut_dr], inplace = True)
-            _Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['d_y'] >= cut_dr], inplace = True)
-            _Map_df=pd.DataFrame(self.HitLinks, columns = ['_l_HitID','_r_HitID','link_strength'])
-            _Tot_Hits=pd.merge(_Tot_Hits, _Map_df, how="inner", on=['_l_HitID','_r_HitID'])
-            _Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['link_strength'] <= Acceptance], inplace = True)
-            _Tot_Hits=_Tot_Hits[['_r_HitID','_l_HitID','r_z','l_z','link_strength']]
-            _Tot_Hits.sort_values(by = ['_r_HitID', 'l_z','link_strength'], ascending=[True,True, False],inplace=True)
-            _Loc_Hits_r=_Tot_Hits[['r_z']].rename(columns={'r_z': 'z'})
-            _Loc_Hits_l=_Tot_Hits[['l_z']].rename(columns={'l_z': 'z'})
-            _Loc_Hits=pd.concat([_Loc_Hits_r,_Loc_Hits_l])
-            _Loc_Hits.sort_values(by = ['z'], ascending=[True],inplace=True)
-            _Loc_Hits.drop_duplicates(subset=['z'], keep='first', inplace=True)
-            _Loc_Hits=_Loc_Hits.reset_index(drop=True)
-            _Loc_Hits=_Loc_Hits.reset_index()
-            _Loc_Hits_r=_Loc_Hits.rename(columns={'index': 'r_index', 'z': 'r_z'})
-            _Loc_Hits_l=_Loc_Hits.rename(columns={'index': 'l_index', 'z': 'l_z'})
-            _Tot_Hits=pd.merge(_Tot_Hits,_Loc_Hits_r, how='inner', on=['r_z'])
-            _Tot_Hits=pd.merge(_Tot_Hits,_Loc_Hits_l, how='inner', on=['l_z'])
-            _Tot_Hits=_Tot_Hits[['_r_HitID','_l_HitID','r_index','l_index','link_strength']]
-            _Tot_Hits.sort_values(by = ['_r_HitID', 'l_index','link_strength'], ascending=[True,True, False],inplace=True)
-            _Tot_Hits.drop_duplicates(subset=['_r_HitID', 'l_index','link_strength'], keep='first', inplace=True)
-            _Tot_Hits.sort_values(by = ['_l_HitID', 'r_index','link_strength'], ascending=[True,True, False],inplace=True)
-            _Tot_Hits.drop_duplicates(subset=['_l_HitID', 'r_index','link_strength'], keep='first', inplace=True)
-            _Tot_Hits=_Tot_Hits.values.tolist()
-            _Temp_Tot_Hits=[]
-            for el in _Tot_Hits:
-                _Temp_Tot_Hit_El = [[],[]]
-                for pos in range(len(_Loc_Hits)):
-                    if pos==el[2]:
-                        _Temp_Tot_Hit_El[0].append(el[0])
-                        _Temp_Tot_Hit_El[1].append(el[4])
-                    elif pos==el[3]:
-                        _Temp_Tot_Hit_El[0].append(el[1])
-                        _Temp_Tot_Hit_El[1].append(el[4])
-                    else:
-                        _Temp_Tot_Hit_El[0].append('_')
-                        _Temp_Tot_Hit_El[1].append(0.0)
-                _Temp_Tot_Hits.append(_Temp_Tot_Hit_El)
-            _Tot_Hits=_Temp_Tot_Hits
-            _Rec_Hits_Pool=[]
-            _intital_size=len(_Tot_Hits)
-
-            while len(_Tot_Hits)>0:
-                _Tot_Hits_PCopy=copy.deepcopy(_Tot_Hits)
-                _Tot_Hits_Predator=[]
-                for Predator in _Tot_Hits_PCopy:
-                    for Prey in _Tot_Hits_PCopy:
-                          if Predator!=Prey:
-                           Predator=HitCluster.InjectHit(Predator,Prey,False)[0]
-                    _Tot_Hits_Predator.append(Predator)
-                for s in _Tot_Hits_Predator:
-                    s=s[0].append(mean(s.pop(1)))
-                _Tot_Hits_Predator = [item for l in _Tot_Hits_Predator for item in l]
-                #_Tot_Hits_Predator_Mirror=[]
-                for s in range(len(_Tot_Hits_Predator)):
-                    for h in range(len(_Tot_Hits_Predator[s])):
-                        if _Tot_Hits_Predator[s][h] =='_':
-                            _Tot_Hits_Predator[s][h]='H_'+str(s)
-
-                column_no=len(_Tot_Hits_Predator[0])-1
-                columns=[]
-
-                for c in range(column_no):
-                    columns.append(str(c))
-                columns.append('average_link_strength')
-                _Tot_Hits_Predator=pd.DataFrame(_Tot_Hits_Predator, columns = columns)
-                _Tot_Hits_Predator.sort_values(by = ['average_link_strength'], ascending=[False],inplace=True)
-                for c in range(column_no):
-                    _Tot_Hits_Predator.drop_duplicates(subset=[str(c)], keep='first', inplace=True)
-                _Tot_Hits_Predator=_Tot_Hits_Predator.drop(['average_link_strength'],axis=1)
-
-                _Tot_Hits_Predator=_Tot_Hits_Predator.values.tolist()
-                for seg in range(len(_Tot_Hits_Predator)):
-                    _Tot_Hits_Predator[seg]=[s for s in _Tot_Hits_Predator[seg] if ('H' in s)==False]
-                _Rec_Hits_Pool+=_Tot_Hits_Predator
-                for seg in _Tot_Hits_Predator:
-                    _itr=0
-                    while _itr<len(_Tot_Hits):
-                        if HitCluster.InjectHit(seg,_Tot_Hits[_itr],True):
-                            del _Tot_Hits[_itr]
-                        else:
-                            _itr+=1
-            #Transpose the rows
-            _track_list=[]
-            _segment_id=str(self.ClusterID[0])
-            for el in self.ClusterID:
-                _segment_id+=('-'+str(el))
-            for t in range(len(_Rec_Hits_Pool)):
-                for h in _Rec_Hits_Pool[t]:
-                    _track_list.append([_segment_id+'-'+str(t+1),h])
-            _Rec_Hits_Pool=pd.DataFrame(_track_list, columns = ['Segment_ID','HitID'])
-            _Hits_df=pd.DataFrame(self.ClusterHits, columns = ['HitID','x','y','z','tx','ty'])
-            _Hits_df=_Hits_df[['HitID','z']]
-            #Join hits + MC truth
-            _Rec_Hits_Pool=pd.merge(_Hits_df, _Rec_Hits_Pool, how="right", on=['HitID'])
-            self.RecHits=_Rec_Hits_Pool
-      def TestKalmanHits(self,Recdata_list,MCdata_list):
-          import pandas as pd
-          _Tot_Hits_df=pd.DataFrame(self.ClusterHits, columns = ['HitID','x','y','z','tx','ty'])[['HitID','z']]
-          _Tot_Hits_df["z"] = pd.to_numeric(_Tot_Hits_df["z"],downcast='float')
-
-          _MCClusterHits=[]
-          _RecClusterHits=[]
-          StatFakeValues=[]
-          StatTruthValues=[]
-          StatLabels=['Initial # of combinations','Delete self-permutations','Enforce positive directionality','Kalman Track Reconstruction']
-          for s in MCdata_list:
-             if s[1]>=self.ClusterID[0]*self.Step[0] and s[1]<((self.ClusterID[0]+1)*self.Step[0]):
-                    if s[2]>=self.ClusterID[1]*self.Step[1] and s[2]<((self.ClusterID[1]+1)*self.Step[1]):
-                        if s[3]>=self.ClusterID[2]*self.Step[2] and s[3]<((self.ClusterID[2]+1)*self.Step[2]):
-                           _MCClusterHits.append([s[0],s[6]])
-          for s in Recdata_list:
-             if s[1]>=self.ClusterID[0]*self.Step[0] and s[1]<((self.ClusterID[0]+1)*self.Step[0]):
-                    if s[2]>=self.ClusterID[1]*self.Step[1] and s[2]<((self.ClusterID[1]+1)*self.Step[1]):
-                        if s[3]>=self.ClusterID[2]*self.Step[2] and s[3]<((self.ClusterID[2]+1)*self.Step[2]):
-                           _RecClusterHits.append([s[0],s[6]])
-          #Preparing Raw and MC combined data 1
-          _l_MCHits=pd.DataFrame(_MCClusterHits, columns = ['l_HitID','l_MC_ID'])
-          _r_MCHits=pd.DataFrame(_MCClusterHits, columns = ['r_HitID','r_MC_ID'])
-          _l_FHits=pd.DataFrame(_RecClusterHits, columns = ['l_HitID','l_Rec_ID'])
-          _r_FHits=pd.DataFrame(_RecClusterHits, columns = ['r_HitID','r_Rec_ID'])
-          _l_Hits=_Tot_Hits_df.rename(columns={"z": "l_z","HitID": "l_HitID" })
-          _r_Hits=_Tot_Hits_df.rename(columns={"z": "r_z","HitID": "r_HitID" })
-          #Join hits + MC truth
-          _l_Tot_Hits=pd.merge(_l_MCHits, _l_Hits, how="right", on=['l_HitID'])
-          _r_Tot_Hits=pd.merge(_r_MCHits, _r_Hits, how="right", on=['r_HitID'])
-          _l_Tot_Hits=pd.merge(_l_FHits, _l_Tot_Hits, how="right", on=['l_HitID'])
-          _r_Tot_Hits=pd.merge(_r_FHits, _r_Tot_Hits, how="right", on=['r_HitID'])
-          _l_Tot_Hits['join_key'] = 'join_key'
-          _r_Tot_Hits['join_key'] = 'join_key'
-          _Tot_Hits=pd.merge(_l_Tot_Hits, _r_Tot_Hits, how="inner", on=["join_key"])
-          _Tot_Hits.l_MC_ID= _Tot_Hits.l_MC_ID.fillna(_Tot_Hits.l_HitID)
-          _Tot_Hits.r_MC_ID= _Tot_Hits.r_MC_ID.fillna(_Tot_Hits.r_HitID)
-          _Tot_Hits=_Tot_Hits.drop(['join_key'], axis=1)
-          StatFakeValues.append(len(_Tot_Hits.axes[0])-len(_Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['l_MC_ID'] != _Tot_Hits['r_MC_ID']]).axes[0]))
-          StatTruthValues.append(len(_Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['l_MC_ID'] != _Tot_Hits['r_MC_ID']]).axes[0]))
-
-          _Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['l_HitID'] == _Tot_Hits['r_HitID']], inplace = True)
-          StatFakeValues.append(len(_Tot_Hits.axes[0])-len(_Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['l_MC_ID'] != _Tot_Hits['r_MC_ID']]).axes[0]))
-          StatTruthValues.append(len(_Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['l_MC_ID'] != _Tot_Hits['r_MC_ID']]).axes[0]))
-
-          _Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['l_z'] <= _Tot_Hits['r_z']], inplace = True)
-          StatFakeValues.append(len(_Tot_Hits.axes[0])-len(_Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['l_MC_ID'] != _Tot_Hits['r_MC_ID']]).axes[0]))
-          StatTruthValues.append(len(_Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['l_MC_ID'] != _Tot_Hits['r_MC_ID']]).axes[0]))
-
-          _Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['r_Rec_ID'] != _Tot_Hits['l_Rec_ID']], inplace = True)
-          StatFakeValues.append(len(_Tot_Hits.axes[0])-len(_Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['l_MC_ID'] != _Tot_Hits['r_MC_ID']]).axes[0]))
-          StatTruthValues.append(len(_Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['l_MC_ID'] != _Tot_Hits['r_MC_ID']]).axes[0]))
-          self.KalmanRecStats=[StatLabels,StatFakeValues,StatTruthValues]
       @staticmethod
       def GenerateLinks(_input,_ClusterID):
           _Top=[]
@@ -626,6 +284,29 @@ class HitCluster:
               _Top.append(_ClusterID.index(ip[0]))
               _Bottom.append(_ClusterID.index(ip[1]))
           return [_Top,_Bottom]
+
+      def JoinHits(_H1,_H2, _cdt, _cdr):
+          if _H1[0]==_H2[0]:
+              return False
+          elif _H1[3]<=_H2[3]:
+              return False
+          else:
+              _dtx=abs(_H1[4]-_H2[4])
+              if _dtx>=_cdt:
+                  return False
+              else:
+                  _dty=abs(_H1[5]-_H2[5])
+                  if _dty>=_cdt:
+                      return False
+                  else:
+                      _d_x = abs(_H2[1]-(_H1[1]+(_H1[4]*(_H2[3]-_H1[3]))))
+                      if _d_x>=_cdr:
+                         return False
+                      else:
+                          _d_y = abs(_H2[2]-(_H1[2]+(_H1[5]*(_H2[3]-_H1[3]))))
+                          if _d_y>=_cdr:
+                             return False
+          return True
       def GenerateEdgeAttributes(_input):
           _EdgeAttr=[]
           for ip in _input:
@@ -640,29 +321,7 @@ class HitCluster:
           del self.ClusterGraph
           del self.HitLinks
 
-      def InjectHit(Predator,Prey, Soft):
-          if Soft==False:
-             OverlapDetected=False
-             New_Predator=copy.deepcopy(Predator)
-             for el in range (len(Prey[0])):
-                 if Prey[0][el]!='_' and Predator[0][el]!='_' and Prey[0][el]==Predator[0][el]:
-                    OverlapDetected=True
-                    New_Predator[1][el]+=Prey[1][el]
-                 elif Prey[0][el]!='_' and Predator[0][el]!='_' and Prey[0][el]!=Predator[0][el]:
-                     return(Predator,False)
-                 elif Predator[0][el]=='_' and Prey[0][el]!=Predator[0][el]:
-                     New_Predator[0][el]=Prey[0][el]
-                     New_Predator[1][el]+=Prey[1][el]
-             if OverlapDetected:
-                return(New_Predator,True)
-             else:
-                return(Predator,False)
-          if Soft==True:
-             for el1 in Prey[0]:
-                 for el2 in Predator:
-                  if el1==el2:
-                     return True
-             return False
+
 
 class EMO:
       def __init__(self,parts):
@@ -692,12 +351,6 @@ class EMO:
                 __XZ2=EMO.GetEquationOfTrack(self.Hits[1])[0]
                 __YZ1=EMO.GetEquationOfTrack(self.Hits[0])[1]
                 __YZ2=EMO.GetEquationOfTrack(self.Hits[1])[1]
-                __X1S=EMO.GetEquationOfTrack(self.Hits[0])[3]
-                __X2S=EMO.GetEquationOfTrack(self.Hits[1])[3]
-                __Y1S=EMO.GetEquationOfTrack(self.Hits[0])[4]
-                __Y2S=EMO.GetEquationOfTrack(self.Hits[1])[4]
-                __Z1S=EMO.GetEquationOfTrack(self.Hits[0])[5]
-                __Z2S=EMO.GetEquationOfTrack(self.Hits[1])[5]
                 __vector_1_st = np.array([np.polyval(__XZ1,self.Hits[0][0][2]),np.polyval(__YZ1,self.Hits[0][0][2]),self.Hits[0][0][2]])
                 __vector_1_end = np.array([np.polyval(__XZ1,self.Hits[0][len(self.Hits[0])-1][2]),np.polyval(__YZ1,self.Hits[0][len(self.Hits[0])-1][2]),self.Hits[0][len(self.Hits[0])-1][2]])
                 __vector_2_st = np.array([np.polyval(__XZ2,self.Hits[0][0][2]),np.polyval(__YZ2,self.Hits[0][0][2]),self.Hits[0][0][2]])
@@ -2069,12 +1722,12 @@ def CreateCondorJobs(AFS,EOS,PY,path,o,pfx,sfx,ID,loop_params,OptionHeader,Optio
              if nest_lvl==2:
                  for i in range(len(loop_params)):
                      for j in range(loop_params[i]):
-                               required_output_file_location=EOS+'/'+path+'/'+pfx+'_'+ID+'_'+o+'_'+str(i)+'_'+str(j)+sfx
+                               required_output_file_location=EOS+'/'+path+'/Temp_'+pfx+'_'+ID+'_'+str(i)+'/'+pfx+'_'+ID+'_'+o+'_'+str(i)+'_'+str(j)+sfx
                                bar.text = f'-> Checking whether the file : {required_output_file_location}, exists...'
                                bar()
-                               SHName = AFS + '/HTCondor/SH/SH_'+pfx+'_'+ ID+'_' + str(i) + '_' + str(j) + '.sh'
-                               SUBName = AFS + '/HTCondor/SUB/SUB_'+pfx+'_'+ ID+'_' + str(i) + '_' + str(j) + '.sub'
-                               MSGName = AFS + '/HTCondor/MSG/MSG_'+pfx+'_'+ ID+'_' + str(i) + '_' + str(j)
+                               SHName = AFS + '/HTCondor/SH/Temp_'+pfx+'_'+ID+'_'+str(i)+'/SH_'+pfx+'_'+ ID+'_' + str(i) + '_' + str(j) + '.sh'
+                               SUBName = AFS + '/HTCondor/SUB/Temp_'+pfx+'_'+ID+'_'+str(i)+'/SUB_'+pfx+'_'+ ID+'_' + str(i) + '_' + str(j) + '.sub'
+                               MSGName = AFS + '/HTCondor/MSG/Temp_'+pfx+'_'+ID+'_'+str(i)+'/MSG_'+pfx+'_'+ ID+'_' + str(i) + '_' + str(j)
                                ScriptName = AFS + '/Code/Utilities/'+Sub_File
                                if os.path.isfile(required_output_file_location)!=True:
                                   bad_pop.append([OptionHeader+[' --i ', ' --j ', ' --p ', ' --o ',' --pfx ', ' --sfx ', Exception[0]], OptionLine+[i, j, path,o, pfx, sfx, Exception[1][j][0]], SHName, SUBName, MSGName, ScriptName, 1, 'ANNDEA-'+pfx+'-'+ID, Log,GPU])
@@ -2083,12 +1736,12 @@ def CreateCondorJobs(AFS,EOS,PY,path,o,pfx,sfx,ID,loop_params,OptionHeader,Optio
                  for i in range(len(loop_params)):
                      for j in range(len(loop_params[i])):
                          for k in range(loop_params[i][j]):
-                               required_output_file_location=EOS+'/'+path+'/'+pfx+'_'+ID+'_'+o+'_'+str(i)+'_'+str(j)+sfx
+                               required_output_file_location=EOS+'/'+path+'/Temp_'+pfx+'_'+ID+'_'+str(i)+'/'+pfx+'_'+ID+'_'+o+'_'+str(i)+'_'+str(j)+sfx
                                bar.text = f'-> Checking whether the file : {required_output_file_location}, exists...'
                                bar()
-                               SHName = AFS + '/HTCondor/SH/SH_'+pfx+'_'+ ID+'_' + str(i) + '_' + str(j) + '_' + str(k) +'.sh'
-                               SUBName = AFS + '/HTCondor/SUB/SUB_'+pfx+'_'+ ID+'_' + str(i) + '_' + str(j) + '_' + str(k) +'.sub'
-                               MSGName = AFS + '/HTCondor/MSG/MSG_'+pfx+'_'+ ID+'_' + str(i) + '_' + str(j) + '_' + str(k)
+                               SHName = AFS + '/HTCondor/SH/Temp_'+pfx+'_'+ID+'_'+str(i)+'/SH_'+pfx+'_'+ ID+'_' + str(i) + '_' + str(j) + '_' + str(k) +'.sh'
+                               SUBName = AFS + '/HTCondor/SUB/Temp_'+pfx+'_'+ID+'_'+str(i)+'/SUB_'+pfx+'_'+ ID+'_' + str(i) + '_' + str(j) + '_' + str(k) +'.sub'
+                               MSGName = AFS + '/HTCondor/MSG/Temp_'+pfx+'_'+ID+'_'+str(i)+'/MSG_'+pfx+'_'+ ID+'_' + str(i) + '_' + str(j) + '_' + str(k)
                                ScriptName = AFS + '/Code/Utilities/'+Sub_File
                                if os.path.isfile(required_output_file_location)!=True:
                                   bad_pop.append([OptionHeader+[' --i ', ' --j ',' --k ', ' --p ', ' --o ',' --pfx ', ' --sfx ', Exception[0]], OptionLine+[i, j,k, path,o, pfx, sfx, Exception[1][j][0]], SHName, SUBName, MSGName, ScriptName, 1, 'ANNDEA-'+pfx+'-'+ID, Log,GPU])
@@ -2115,9 +1768,9 @@ def CreateCondorJobs(AFS,EOS,PY,path,o,pfx,sfx,ID,loop_params,OptionHeader,Optio
                  for i in range(len(loop_params)):
                                bar.text = f'-> Preparing batch submission...'
                                bar()
-                               SHName = AFS + '/HTCondor/SH/SH_'+pfx+'_'+ ID+'_' + str(i) + '.sh'
-                               SUBName = AFS + '/HTCondor/SUB/SUB_'+pfx+'_'+ ID+'_' + str(i) + '.sub'
-                               MSGName = AFS + '/HTCondor/MSG/MSG_'+pfx+'_'+ ID+'_' + str(i)
+                               SHName = AFS + '/HTCondor/SH/Temp_'+pfx+'_'+ID+'_'+str(i)+'/SH_'+pfx+'_'+ ID+'_' + str(i) + '.sh'
+                               SUBName = AFS + '/HTCondor/SUB/Temp_'+pfx+'_'+ID+'_'+str(i)+'/SUB_'+pfx+'_'+ ID+'_' + str(i) + '.sub'
+                               MSGName = AFS + '/HTCondor/MSG/Temp_'+pfx+'_'+ID+'_'+str(i)+'/MSG_'+pfx+'_'+ ID+'_' + str(i)
                                ScriptName = AFS + '/Code/Utilities/'+Sub_File
                                bad_pop.append([OptionHeader+[' --i ', ' --j ', ' --p ', ' --o ',' --pfx ', ' --sfx ', Exception[0]], OptionLine+[i, '$1', path,o, pfx, sfx, Exception[1][i][0]], SHName, SUBName, MSGName, ScriptName, loop_params[i], 'ANNDEA-'+pfx+'-'+ID, Log,GPU])
              if nest_lvl==3:
@@ -2125,9 +1778,9 @@ def CreateCondorJobs(AFS,EOS,PY,path,o,pfx,sfx,ID,loop_params,OptionHeader,Optio
                      for j in range(loop_params[i]):
                                bar.text = f'-> Preparing batch submission...'
                                bar()
-                               SHName = AFS + '/HTCondor/SH/SH_'+pfx+'_'+ ID+'_' + str(i) + '_' + str(j)+'.sh'
-                               SUBName = AFS + '/HTCondor/SUB/SUB_'+pfx+'_'+ ID+'_' + str(i) +'_' + str(j)+'.sub'
-                               MSGName = AFS + '/HTCondor/MSG/MSG_'+pfx+'_'+ ID+'_' + str(i) +'_' + str(j)
+                               SHName = AFS + '/HTCondor/SH/Temp_'+pfx+'_'+ID+'_'+str(i)+'/SH_'+pfx+'_'+ ID+'_' + str(i) + '_' + str(j)+'.sh'
+                               SUBName = AFS + '/HTCondor/SUB/Temp_'+pfx+'_'+ID+'_'+str(i)+'/SUB_'+pfx+'_'+ ID+'_' + str(i) +'_' + str(j)+'.sub'
+                               MSGName = AFS + '/HTCondor/MSG/Temp_'+pfx+'_'+ID+'_'+str(i)+'/MSG_'+pfx+'_'+ ID+'_' + str(i) +'_' + str(j)
                                ScriptName = AFS + '/Code/Utilities/'+Sub_File
                                bad_pop.append([OptionHeader+[' --i ', ' --j ',' --k ', ' --p ', ' --o ',' --pfx ', ' --sfx ', Exception[0]], OptionLine+[i, j, '$1', path,o, pfx, sfx, Exception[1][i][0]], SHName, SUBName, MSGName, ScriptName, loop_params[i], 'ANNDEA-'+pfx+'-'+ID, Log,GPU])
         return(bad_pop)

@@ -10,12 +10,7 @@ import math
 import ast
 import os
 import copy
-# import torch
-# from torch import optim
-# from torch.optim.lr_scheduler import StepLR
-# import torch.nn.functional as F
-# device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-# device = "cpu"
+
 ########################## Visual Formatting #################################################
 class bcolors:
     HEADER = '\033[95m'
@@ -39,6 +34,7 @@ parser.add_argument('--p',help="Path to the output file", default='')
 parser.add_argument('--o',help="Path to the output file name", default='')
 parser.add_argument('--pfx',help="Path to the output file name", default='')
 parser.add_argument('--sfx',help="Path to the output file name", default='')
+parser.add_argument('--PY',help="Python libraries directory location", default='.')
 ########################################     Initialising Variables    #########################################
 args = parser.parse_args()
 TrainParams=ast.literal_eval(args.TrainParams)
@@ -47,6 +43,7 @@ ModelName=args.BatchID
 ##################################   Loading Directory locations   ##################################################
 AFS_DIR=args.AFS
 EOS_DIR=args.EOS
+PY_DIR=args.PY
 import sys
 sys.path.insert(1, AFS_DIR+'/Code/Utilities/')
 import UtilityFunctions as UF
