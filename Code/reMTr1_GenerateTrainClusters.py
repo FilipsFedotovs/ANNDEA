@@ -75,16 +75,16 @@ cut_dt=PM.cut_dt #This cust help to discard hit pairs that are likely do not hav
 cut_dr=PM.cut_dr
 testRatio=PM.testRatio #Usually about 5%
 valRatio=PM.valRatio #Usually about 10%
-TrainSampleOutputMeta=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_info.pkl' #For each training sample batch we create an individual meta file.
-destination_output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TTr_OUTPUT_1.pkl' #The desired output
-if os.path.isfile(destination_output_file_location) and Mode!='RESET': #If we have it, we don't have to start from the scratch.
+
+######## Utility Functions ###########################################
+def generate_train_val_test_samples(TrainSampleID):
     TrainSampleInputMeta=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_info.pkl'
     Meta= PickleUtility.load(TrainSampleInputMeta) #Reading the meta file
     TrainSamples=[]
     ValSamples=[]
     TestSamples=[]
     TrainFraction = 1.0-(Meta.testRatio+Meta.valRatio)
-    ValFraction = dataSize*Meta.valRatio
+    ValFraction = Meta.valRatio
     for i in range(1,Meta.no_sets+1):
         flocation=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TTr_OUTPUT_'+str(i)+'.pkl' #Looking for constituent input file
         TrainClusters = PickleUtility.load(flocation) #Reading the train sample file
@@ -98,20 +98,29 @@ if os.path.isfile(destination_output_file_location) and Mode!='RESET': #If we ha
             sample = TrainClusters[i] 
             #discard graphs do not contain edges
             if sample.ClusterGraph.num_edges<=0 :
-                continue 
+                continue
+            # separate the samples into training set, validation set and test set 
             if i < TrainSize:
                 TrainSamples.append(sample.ClusterGraph)
             else if i < TrainSize + ValSize:
                 ValSamples.append(sample.ClusterGraph)
             else :
                 TestSamples.append(sample.ClusterGraph)
-
     #Write the final output
     output_train_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_SAMPLES'+'.pkl'
+    output_val_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_SAMPLES'+'.pkl'
+    output_test_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TEST_SAMPLES'+'.pkl'
     PickleUtility.write(output_train_file_location,TrainSamples)
     PickleUtility.write(output_val_file_location,ValSamples)
     PickleUtility.write(output_test_file_location,TestSamples)
     print(UF.TimeStamp(), bcolors.OKGREEN+"Train data has been re-generated successfully..."+bcolors.ENDC)
+######## End of Utility Functions ###########################################
+
+
+TrainSampleOutputMeta=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_info.pkl' #For each training sample batch we create an individual meta file.
+destination_output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TTr_OUTPUT_1.pkl' #The desired output
+if os.path.isfile(destination_output_file_location) and Mode!='RESET': #If we have it, we don't have to start from the scratch.
+    generate_train_val_test_samples(TrainSampleID)
     exit()
 
 
@@ -221,7 +230,10 @@ print(bcolors.HEADER+"##########################################################
 print(UF.TimeStamp(),bcolors.BOLD+'Stage 2:'+bcolors.ENDC+' Checking HTCondor jobs and preparing the job submission')
 
 
-def check_finished_jobs(Zsteps,Xsteps,bad_pop):
+############## Belows are some utility functions #########################################
+
+# Check condor jobs that are unfinished 
+def check_unfinished_jobs(Zsteps,Xsteps,bad_pop):
     bad_pop=[]
     print(UF.TimeStamp(),"Scheduled job checkup...") 
     for k in range(0,Zsteps):
@@ -254,7 +266,7 @@ def submit_job_to_condor_auto(wait_min, interval_min, max_interval_tolerance):
     interval_sec=interval_min*60
     nIntervals=int(math.ceil(wait_min/interval_min))
     for i in range(0,nIntervals):
-        bad_pop=check_finished_jobs(Zsteps,Xsteps,bad_pop)
+        bad_pop=check_unfinished_jobs(Zsteps,Xsteps,bad_pop)
         if len(bad_pop) ==0:
             return True
         # else case: there are still jobs in condor
@@ -271,7 +283,7 @@ def submit_job_to_condor_auto(wait_min, interval_min, max_interval_tolerance):
         time.sleep(interval_sec)
     return False
 
-
+# Let users to choose whether resubmit jobs when condor jobs are unfinished
 def deal_remain_jobs(bad_pop):
     print(UF.TimeStamp(),bcolors.WARNING+'Warning, there are still', len(bad_pop), 'HTCondor jobs remaining'+bcolors.ENDC)
     print(bcolors.BOLD+'If you would like to wait and exit please enter E'+bcolors.ENDC)
@@ -281,6 +293,7 @@ def deal_remain_jobs(bad_pop):
     if UserAnswer=='E':
         print(UF.TimeStamp(),'OK, exiting now then')
         exit()
+    # parameters for auto submission to condor
     wait_min = 120 
     interval_min = 10
     max_interval_tolerance = Patience
@@ -301,10 +314,13 @@ def deal_remain_jobs(bad_pop):
         print(UF.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
     else:
         wait_min = UserAnswer
-    return submit_job_to_condor_auto(wait_min,interval_min,max_interval_tolerance)
     
+    finished = submit_job_to_condor_auto(wait_min,interval_min,max_interval_tolerance)
+    return finished
+####################### End of utility functions #############################################
+####################### Below are main logic again ########################################### 
 
-bad_pop = check_finished_jobs(Zsteps,Xsteps,bad_pop)
+bad_pop = check_unfinished_jobs(Zsteps,Xsteps,bad_pop)
 # all jobs are finished if no item in bad_pop
 job_finished = (len(bad_pop)==0)
 if job_finished == False: 
@@ -345,36 +361,45 @@ print(UF.PickleOperations(TrainSampleOutputMeta,'w', MetaInput[0])[1])
 HTCondorTag="SoftUsed == \"ANNDEA-MTr-"+TrainSampleID+"\""
 UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MTr1_'+TrainSampleID, ['MTr1a_'+TrainSampleID,'ETr1_'+TrainSampleID,'MTr1_'+TrainSampleID], HTCondorTag) #If successful we delete all temp files created by the process
 print(UF.TimeStamp(),bcolors.OKGREEN+'Training samples are ready for the model creation/training'+bcolors.ENDC)
+
+
+
 TrainSampleInputMeta=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_info.pkl'
-print(UF.TimeStamp(),'Loading the data file ',bcolors.OKBLUE+TrainSampleInputMeta+bcolors.ENDC)
-MetaInput=UF.PickleOperations(TrainSampleInputMeta,'r', 'N/A')
-print(MetaInput[1])
-Meta=MetaInput[0]
+Meta= PickleUtility.load(TrainSampleInputMeta) #Reading the meta file
 TrainSamples=[]
 ValSamples=[]
 TestSamples=[]
+TrainFraction = 1.0-(Meta.testRatio+Meta.valRatio)
+ValFraction = dataSize*Meta.valRatio
 for i in range(1,Meta.no_sets+1):
-    flocation=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TTr_OUTPUT_'+str(i)+'.pkl'
-    print(UF.TimeStamp(),'Loading data from ',bcolors.OKBLUE+flocation+bcolors.ENDC)
-    TrainClusters=UF.PickleOperations(flocation,'r', 'N/A')
-    TrainClusters=TrainClusters[0]
-    TrainFraction=int(math.floor(len(TrainClusters)*(1.0-(Meta.testRatio+Meta.valRatio))))
-    ValFraction=int(math.ceil(len(TrainClusters)*Meta.valRatio))
-    for smpl in range(0,TrainFraction):
-                if TrainClusters[smpl].ClusterGraph.num_edges>0 and Sampling>=random.random(): #Only graph clusters with edges are kept + sampled
-                    TrainSamples.append(TrainClusters[smpl].ClusterGraph)
-    for smpl in range(TrainFraction,TrainFraction+ValFraction):
-                if TrainClusters[smpl].ClusterGraph.num_edges>0 and Sampling>=random.random():
-                    ValSamples.append(TrainClusters[smpl].ClusterGraph)
-    for smpl in range(TrainFraction+ValFraction,len(TrainClusters)):
-                if TrainClusters[smpl].ClusterGraph.num_edges>0 and Sampling>=random.random():
-                    TestSamples.append(TrainClusters[smpl].ClusterGraph)
+    flocation=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TTr_OUTPUT_'+str(i)+'.pkl' #Looking for constituent input file
+    TrainClusters = PickleUtility.load(flocation) #Reading the train sample file
+    dataSize = len(TrainClusters)    
+    TrainSize = math.floor(dataSize*TrainFraction)  #Calculating the size of the training sample pool
+    ValSize = math.ceil(dataSize*ValFraction) #Calculating the size of the validation sample pool
+    for i in range(0, dataSize):
+        # apply random sampling 
+        if Sampling>=random.random():
+            continue 
+        sample = TrainClusters[i] 
+        #discard graphs do not contain edges
+        if sample.ClusterGraph.num_edges<=0 :
+            continue 
+        if i < TrainSize:
+            TrainSamples.append(sample.ClusterGraph)
+        else if i < TrainSize + ValSize:
+            ValSamples.append(sample.ClusterGraph)
+        else :
+            TestSamples.append(sample.ClusterGraph)
+
+#Write the final output
 output_train_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_SAMPLES'+'.pkl'
-print(UF.PickleOperations(output_train_file_location,'w', TrainSamples)[1])
 output_val_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_SAMPLES'+'.pkl'
-print(UF.PickleOperations(output_val_file_location,'w', ValSamples)[1])
 output_test_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TEST_SAMPLES'+'.pkl'
-print(UF.PickleOperations(output_test_file_location,'w', ValSamples)[1])
+PickleUtility.write(output_train_file_location,TrainSamples)
+PickleUtility.write(output_val_file_location,ValSamples)
+PickleUtility.write(output_test_file_location,TestSamples)
+
 print(UF.TimeStamp(), bcolors.OKGREEN+"Train data has been re-generated successfully..."+bcolors.ENDC)
 print(UF.TimeStamp(),bcolors.OKGREEN+'Please run MTr2_TrainModel.py after this to create/train a model'+bcolors.ENDC)
 print(bcolors.HEADER+"############################################# End of the program ################################################"+bcolors.ENDC)

@@ -11,7 +11,7 @@ class bcolors:   #We use it for the interface
     UNDERLINE = '\033[4m'
 
 
-def print_head():
+def print_header():
     print('                                                                                                                                    ')
     print('                                                                                                                                    ')
     print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)

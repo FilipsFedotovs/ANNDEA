@@ -104,7 +104,7 @@ def remove_ill_mc_tracks(dataFrame)
 
 
 def reset_origin(dataFrame):
-    Printing.print_message('Analysing data... '+bcolors.ENDC)
+    Printing.print_message('Reset coordinate origin for hits... '+bcolors.ENDC)
     data = dataFrame
     x_offset = data['x'].min()
     y_offset = data['y'].min()
@@ -114,5 +114,5 @@ def reset_origin(dataFrame):
     data['z']=data['z']-z_offset
     return data
 
-def 
+ 
 
