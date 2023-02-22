@@ -421,7 +421,7 @@ class EMO:
               __vector_2 = [__Zdiff, __Vardiff]
               __Angle=EMO.angle_between(__vector_1, __vector_2)
               print(__Angle*57.2958)
-              exit()
+
               if np.isnan(__Angle)==True:
                         __Angle=0.0
 
@@ -431,6 +431,9 @@ class EMO:
                      __Pos=float(__hits[0])
                      __hits[2]=(__Z*math.cos(-__Angle)) - (__Pos * math.sin(-__Angle))
                      __hits[0]=(__Z*math.sin(-__Angle)) + (__Pos * math.cos(-__Angle))
+              print('--------')
+              print(__TempTrack)
+              exit()
               #Lon Rotate y
               __Track=__TempTrack[self.LagTrackInd]
               __Vardiff=float(__Track[len(__Track)-1][1])
