@@ -79,9 +79,10 @@ else:
  input_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_TRACK_SEEDS_OUTPUT_'+args.Type+'.pkl'
 
 ImageObjectSet=UF.PickleOperations(input_file_location,'r', 'N/A')[0]
-print(ImageObjectSet)
+print(ImageObjectSet[0].__dict__)
 exit()
-
+ImageObjectSet=ImageObjectSet[StartImage-1:min(TrackNo,len(ImageObjectSet))]
+print(ImageObjectSet)
 if args.PlotType=='XZ':
   InitialData=[]
   Index=-1
@@ -109,23 +110,12 @@ if args.PlotType=='XY':
   Matrix=np.reshape(Matrix,(H,W))
 
 
-
-
-
-
-#Locate mothers
-data_file=open(input_file_location,'rb')
-data=pickle.load(data_file)
-data=data[StartImage-1:min(TrackNo,len(data))]
-data_file.close()
-
-
 Title=args.Label+' Track Image'
 
 if args.Label=='Truth':
-     data=[im for im in data if im.MC_truth_label == 1]
+     ImageObjectSet=[im for im in ImageObjectSet if im.Label == 1]
 if args.Label=='Fake':
-     data=[im for im in data if im.MC_truth_label == 0]
+     ImageObjectSet=[im for im in ImageObjectSet if im.Label == 0]
 counter=0
 for sd in data:
  progress=int( round( (float(counter)/float(len(data))*100),1)  )
