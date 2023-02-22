@@ -90,7 +90,7 @@ print(UF.TimeStamp(),'Loading the data file ',bcolors.OKBLUE+TrainSampleInputMet
 MetaInput=UF.PickleOperations(TrainSampleInputMeta,'r', 'N/A')
 print(MetaInput[1])
 Meta=MetaInput[0]
-DummyModelObj=UF.ModelMeta.IniModelMeta([], 'Tensorflow', Meta, EImg, 'CNN')
+DummyModelObj=UF.ModelMeta.IniModelMeta(['c'], 'Tensorflow', Meta, EImg, 'CNN')
 ImageObjectSet[0].PrepareSeedPrint(DummyModelObj)
 exit()
 if args.PlotType=='XZ':
