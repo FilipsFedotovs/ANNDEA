@@ -92,6 +92,7 @@ print(MetaInput[1])
 Meta=MetaInput[0]
 DummyModelObj=UF.ModelMeta("Dummy'")
 DummyModelObj.IniModelMeta([[],[],[],[],[],[],[],[],[],[],[],[MaxX,MaxY,MaxZ,resolution]], 'Tensorflow', Meta, EImg, 'CNN')
+print(ImageObjectSet[0].__dict__)
 ImageObjectSet[0].PrepareSeedPrint(DummyModelObj)
 ImageObjectSet[0].Plot('XZ')
 exit()
