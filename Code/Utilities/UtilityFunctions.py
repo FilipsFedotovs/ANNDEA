@@ -392,6 +392,7 @@ class EMO:
           self.L=(self.bZ)
           __StartTrackZ=6666666666
           __EndTrackZ=-6666666666
+          print(__TempTrack)
           for __Track in __TempTrack:
             __CurrentZ=float(__Track[0][2])
             if __CurrentZ<=__StartTrackZ:
@@ -408,9 +409,9 @@ class EMO:
                   __Hits[0]=float(__Hits[0])-__FinX
                   __Hits[1]=float(__Hits[1])-__FinY
                   __Hits[2]=float(__Hits[2])-__FinZ
-
+          print(__TempTrack)
+          exit()
           if MM.ModelArchitecture=='CNN-E':
-
               #Lon Rotate x
               __Track=__TempTrack[self.LagTrackInd]
               __Vardiff=float(__Track[len(__Track)-1][0])
@@ -420,6 +421,7 @@ class EMO:
               __Angle=EMO.angle_between(__vector_1, __vector_2)
               if np.isnan(__Angle)==True:
                         __Angle=0.0
+
               for __Tracks in __TempTrack:
                 for __hits in __Tracks:
                      __Z=float(__hits[2])
