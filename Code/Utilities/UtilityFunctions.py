@@ -473,7 +473,6 @@ class EMO:
                      __hits[1]=(__X*math.sin(__Angle)) + (__Y * math.cos(__Angle))
               print('--------')
               print(__TempTrack)
-              exit()
               __X=[]
               __Y=[]
               __Z=[]
@@ -502,11 +501,16 @@ class EMO:
                      __hits[1]=__hits[1]+__yshift
                      __Y.append(__hits[1])
               __min_scale=max(max(__X)/(MM.ModelParameters[11][0]-(2*self.Resolution)),max(__Y)/(MM.ModelParameters[11][1]-(2*self.Resolution)), max(__Z)/(MM.ModelParameters[11][2]-(2*self.Resolution)))
+              print('--------')
+              print(__TempTrack)
               for __Tracks in __TempTrack:
                  for __hits in __Tracks:
                      __hits[0]=int(round(__hits[0]/__min_scale,0))
                      __hits[1]=int(round(__hits[1]/__min_scale,0))
                      __hits[2]=int(round(__hits[2]/__min_scale,0))
+              print('--------')
+              print(__TempTrack)
+              exit()
           else:
             for __Tracks in __TempTrack:
                   for __Hits in __Tracks:
