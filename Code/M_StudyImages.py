@@ -38,6 +38,7 @@ parser.add_argument('--StartImage',help="Please select the beginning Image", def
 parser.add_argument('--Images',help="Please select the number of Images", default='1')
 parser.add_argument('--PlotType',help="Enter plot type: XZ/YZ/3D", default='XZ')
 parser.add_argument('--Res',help="Please enter the scaling resolution in microns", default=50)
+parser.add_argument('--EImg',help="Enchance image?", default='Y')
 parser.add_argument('--MaxX',help="Enter max half height of the image in microns", default=1000)
 parser.add_argument('--MaxY',help="Enter max half width of the image in microns", default=1000)
 parser.add_argument('--MaxZ',help="Enter max length of the image in microns", default=20000)
@@ -53,6 +54,10 @@ resolution=float(args.Res)
 MaxX=float(args.MaxX)
 MaxY=float(args.MaxY)
 MaxZ=float(args.MaxZ)
+if args.EImg=='Y':
+    EImg='CNN-E'
+else:
+    EImg='CNN'
 StartImage=int(args.StartImage)
 if StartImage>TrackNo:
     TrackNo=StartImage
@@ -79,10 +84,15 @@ else:
  input_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_TRACK_SEEDS_OUTPUT_'+args.Type+'.pkl'
 
 ImageObjectSet=UF.PickleOperations(input_file_location,'r', 'N/A')[0]
-print(ImageObjectSet[0].__dict__)
-exit()
 ImageObjectSet=ImageObjectSet[StartImage-1:min(TrackNo,len(ImageObjectSet))]
-print(ImageObjectSet)
+TrainSampleInputMeta=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_info.pkl'
+print(UF.TimeStamp(),'Loading the data file ',bcolors.OKBLUE+TrainSampleInputMeta+bcolors.ENDC)
+MetaInput=UF.PickleOperations(TrainSampleInputMeta,'r', 'N/A')
+print(MetaInput[1])
+Meta=MetaInput[0]
+DummyModelObj=UF.ModelMeta.IniModelMeta([], 'Tensorflow', Meta, EImg, 'CNN')
+ImageObjectSet[0].PrepareSeedPrint(DummyModelObj)
+exit()
 if args.PlotType=='XZ':
   InitialData=[]
   Index=-1
@@ -117,11 +127,11 @@ if args.Label=='Truth':
 if args.Label=='Fake':
      ImageObjectSet=[im for im in ImageObjectSet if im.Label == 0]
 counter=0
-for sd in data:
- progress=int( round( (float(counter)/float(len(data))*100),1)  )
+for sd in ImageObjectSet:
+ progress=int( round( (float(counter)/float(len(ImageObjectSet))*100),1)  )
  print('Rendering images, progress is ',progress, end="\r", flush=True)
  counter+=1
- sd.PrepareTrackPrint(MaxX,MaxY,MaxZ,resolution,Rescale)
+ sd.PrepareSeedPrint(MaxX,MaxY,MaxZ,resolution,Rescale)
  if args.PlotType=='XZ':
   for Hits in sd.TrackPrint:
       if abs(Hits[0])<boundsX and abs(Hits[2])<boundsZ:
