@@ -433,7 +433,7 @@ class EMO:
                      __hits[0]=(__Z*math.sin(-__Angle)) + (__Pos * math.cos(-__Angle))
               print('--------')
               print(__TempTrack)
-              exit()
+
               #Lon Rotate y
               __Track=__TempTrack[self.LagTrackInd]
               __Vardiff=float(__Track[len(__Track)-1][1])
@@ -449,6 +449,8 @@ class EMO:
                      __Pos=float(__hits[1])
                      __hits[2]=(__Z*math.cos(-__Angle)) - (__Pos * math.sin(-__Angle))
                      __hits[1]=(__Z*math.sin(-__Angle)) + (__Pos * math.cos(-__Angle))
+              print('--------')
+              print(__TempTrack)
              #  Phi rotate print
 
               __LongestDistance=0.0
