@@ -91,7 +91,7 @@ MetaInput=UF.PickleOperations(TrainSampleInputMeta,'r', 'N/A')
 print(MetaInput[1])
 Meta=MetaInput[0]
 DummyModelObj=UF.ModelMeta("Dummy'")
-DummyModelObj.IniModelMeta(['c'], 'Tensorflow', Meta, EImg, 'CNN')
+DummyModelObj.IniModelMeta([[],[],[],[],[],[],[],[],[],[],[],[MaxX,MaxY,MaxZ,resolution]], 'Tensorflow', Meta, EImg, 'CNN')
 ImageObjectSet[0].PrepareSeedPrint(DummyModelObj)
 exit()
 if args.PlotType=='XZ':
