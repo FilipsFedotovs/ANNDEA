@@ -392,8 +392,6 @@ class EMO:
           self.L=(self.bZ)
           __StartTrackZ=6666666666
           __EndTrackZ=-6666666666
-          print('--------')
-          print(__TempTrack)
           for __Track in __TempTrack:
             __CurrentZ=float(__Track[0][2])
             if __CurrentZ<=__StartTrackZ:
@@ -410,8 +408,6 @@ class EMO:
                   __Hits[0]=float(__Hits[0])-__FinX
                   __Hits[1]=float(__Hits[1])-__FinY
                   __Hits[2]=float(__Hits[2])-__FinZ
-          print('--------')
-          print(__TempTrack)
           if MM.ModelArchitecture=='CNN-E':
               #Lon Rotate x
               __Track=__TempTrack[self.LagTrackInd]
@@ -420,7 +416,7 @@ class EMO:
               __vector_1 = [__Zdiff, 0]
               __vector_2 = [__Zdiff, __Vardiff]
               __Angle=EMO.angle_between(__vector_1, __vector_2)
-              print(__Angle*57.2958)
+
 
               if np.isnan(__Angle)==True:
                         __Angle=0.0
@@ -431,9 +427,6 @@ class EMO:
                      __Pos=float(__hits[0])
                      __hits[2]=(__Z*math.cos(-__Angle)) - (__Pos * math.sin(-__Angle))
                      __hits[0]=(__Z*math.sin(-__Angle)) + (__Pos * math.cos(-__Angle))
-              print('--------')
-              print(__TempTrack)
-
               #Lon Rotate y
               __Track=__TempTrack[self.LagTrackInd]
               __Vardiff=float(__Track[len(__Track)-1][1])
@@ -449,8 +442,6 @@ class EMO:
                      __Pos=float(__hits[1])
                      __hits[2]=(__Z*math.cos(-__Angle)) - (__Pos * math.sin(-__Angle))
                      __hits[1]=(__Z*math.sin(-__Angle)) + (__Pos * math.cos(-__Angle))
-              print('--------')
-              print(__TempTrack)
              #  Phi rotate print
 
               __LongestDistance=0.0
@@ -471,8 +462,6 @@ class EMO:
                      __Y=float(__hits[1])
                      __hits[0]=(__X*math.cos(__Angle)) - (__Y * math.sin(__Angle))
                      __hits[1]=(__X*math.sin(__Angle)) + (__Y * math.cos(__Angle))
-              print('--------')
-              print(__TempTrack)
               __X=[]
               __Y=[]
               __Z=[]
@@ -501,15 +490,11 @@ class EMO:
                      __hits[1]=__hits[1]+__yshift
                      __Y.append(__hits[1])
               __min_scale=max(max(__X)/(MM.ModelParameters[11][0]-(2*self.Resolution)),max(__Y)/(MM.ModelParameters[11][1]-(2*self.Resolution)), max(__Z)/(MM.ModelParameters[11][2]-(2*self.Resolution)))
-              print('--------')
-              print(__TempTrack)
               for __Tracks in __TempTrack:
                  for __hits in __Tracks:
                      __hits[0]=int(round(__hits[0]/__min_scale,0))
                      __hits[1]=int(round(__hits[1]/__min_scale,0))
                      __hits[2]=int(round(__hits[2]/__min_scale,0))
-              print('--------')
-              print(__TempTrack)
 
           else:
             for __Tracks in __TempTrack:
@@ -726,7 +711,10 @@ class EMO:
           import matplotlib as plt
           from matplotlib.colors import LogNorm
           from matplotlib import pyplot as plt
-          plt.title('Seed '+':'.join(self.Header))
+
+          plt.title('Seed:'.join(self.Header))
+          if hasattr(self,'Label'):
+              plt.title('Label:'+str(self.Label))
           plt.xlabel('Z [microns /'+str(int(self.Resolution))+']')
           plt.ylabel('X [microns /'+str(int(self.Resolution))+']')
           __image=plt.imshow(__Matrix,cmap='gray_r',extent=[0,self.bZ,self.bX,-self.bX])
