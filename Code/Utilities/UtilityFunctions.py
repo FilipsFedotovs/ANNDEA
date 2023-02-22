@@ -471,7 +471,9 @@ class EMO:
                      __Y=float(__hits[1])
                      __hits[0]=(__X*math.cos(__Angle)) - (__Y * math.sin(__Angle))
                      __hits[1]=(__X*math.sin(__Angle)) + (__Y * math.cos(__Angle))
-
+              print('--------')
+              print(__TempTrack)
+              exit()
               __X=[]
               __Y=[]
               __Z=[]
