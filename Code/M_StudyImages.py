@@ -148,8 +148,8 @@ for sd in ImageObjectSet:
      for Hits in sd.TrackPrint:
        if abs(Hits[0])<boundsX and abs(Hits[1])<boundsY:
          Matrix[Hits[0]+boundsX][Hits[1]+boundsY]+=1
-image_no=len(data)
-del data
+image_no=len(ImageObjectSet)
+del ImageObjectSet
 import matplotlib as plt
 from matplotlib.colors import LogNorm
 import numpy as np
