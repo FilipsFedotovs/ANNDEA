@@ -714,7 +714,7 @@ class EMO:
 
           plt.title('Seed:'.join(self.Header))
           if hasattr(self,'Label'):
-              plt.title('Label:'+str(self.Label))
+              plt.suptitle('Label:'+str(self.Label))
           plt.xlabel('Z [microns /'+str(int(self.Resolution))+']')
           plt.ylabel('X [microns /'+str(int(self.Resolution))+']')
           __image=plt.imshow(__Matrix,cmap='gray_r',extent=[0,self.bZ,self.bX,-self.bX])
