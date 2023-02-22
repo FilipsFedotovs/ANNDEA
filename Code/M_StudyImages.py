@@ -30,7 +30,7 @@ csv_reader.close()
 import sys
 sys.path.insert(1, AFS_DIR+'/Code/Utilities/')
 import UtilityFunctions as UF
-from UF import EMO
+from UtilityFunctions import EMO
 import Parameters as PM
 
 parser = argparse.ArgumentParser(description='This script helps to visualise the seeds by projecting their hit coordinates to the 2-d screen.')
