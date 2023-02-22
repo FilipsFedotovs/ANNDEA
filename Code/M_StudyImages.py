@@ -97,98 +97,98 @@ Meta=MetaInput[0]
 DummyModelObj=UF.ModelMeta("Dummy'")
 DummyModelObj.IniModelMeta([[],[],[],[],[],[],[],[],[],[],[],[MaxX,MaxY,MaxZ,resolution]], 'Tensorflow', Meta, EImg, 'CNN')
 
-ImageObjectSet[0].PrepareSeedPrint(DummyModelObj)
-ImageObjectSet[0].Plot('XZ')
+#ImageObjectSet[0].PrepareSeedPrint(DummyModelObj)
+#ImageObjectSet[0].Plot('XZ')
+
+if args.PlotType=='XZ':
+  InitialData=[]
+  Index=-1
+  for x in range(-boundsX,boundsX):
+          for z in range(0,boundsZ):
+            InitialData.append(0.0)
+  Matrix = np.array(InitialData)
+  Matrix=np.reshape(Matrix,(H,L))
+if args.PlotType=='YZ':
+ InitialData=[]
+ Index=-1
+ for y in range(-boundsY,boundsY):
+          for z in range(0,boundsZ):
+            InitialData.append(0.0)
+
+ Matrix = np.array(InitialData)
+ Matrix=np.reshape(Matrix,(W,L))
+if args.PlotType=='XY':
+  InitialData=[]
+  Index=-1
+  for x in range(-boundsX,boundsX):
+          for y in range(-boundsY,boundsY):
+            InitialData.append(0.0)
+  Matrix = np.array(InitialData)
+  Matrix=np.reshape(Matrix,(H,W))
+
+
+Title=args.Label+' Track Image'
+
+
+counter=0
+for sd in ImageObjectSet:
+ progress=int( round( (float(counter)/float(len(ImageObjectSet))*100),1)  )
+ print('Rendering images, progress is ',progress, end="\r", flush=True)
+ counter+=1
+ sd.PrepareSeedPrint(DummyModelObj)
+ if args.PlotType=='XZ':
+  for Hits in sd.TrackPrint:
+      if abs(Hits[0])<boundsX and abs(Hits[2])<boundsZ:
+                   Matrix[Hits[0]+boundsX][Hits[2]]+=1
+ if args.PlotType=='YZ':
+        for Hits in sd.TrackPrint:
+                 if abs(Hits[1])<boundsY and abs(Hits[2])<boundsZ:
+                   Matrix[Hits[1]+boundsY][Hits[2]]+=1
+ if args.PlotType=='XY':
+     for Hits in sd.TrackPrint:
+       if abs(Hits[0])<boundsX and abs(Hits[1])<boundsY:
+         Matrix[Hits[0]+boundsX][Hits[1]+boundsY]+=1
+image_no=len(data)
+del data
+import matplotlib as plt
+from matplotlib.colors import LogNorm
+import numpy as np
+from matplotlib import pyplot as plt
+if args.PlotType=='XZ':
+ plt.title(Title)
+ plt.xlabel('Z [microns /'+str(int(resolution))+']')
+ plt.ylabel('X [microns /'+str(int(resolution))+']')
+ if image_no==1:
+    image=plt.imshow(Matrix,cmap='gray_r',extent=[0,boundsZ,boundsX,-boundsX])#,norm=LogNorm())
+ else:
+    image=plt.imshow(Matrix,cmap='gray_r',extent=[0,boundsZ,boundsX,-boundsX],norm=LogNorm())
+ plt.gca().invert_yaxis()
+ plt.show()
+if args.PlotType=='YZ':
+ import numpy as np
+ from matplotlib import pyplot as plt
+ plt.title(Title)
+ plt.xlabel('Z [microns /'+str(int(resolution))+']')
+ plt.ylabel('Y [microns /'+str(int(resolution))+']')
+ if image_no==1:
+    image=plt.imshow(Matrix,cmap='gray_r',extent=[0,boundsZ,boundsY,-boundsY])#,norm=LogNorm())
+ else:
+    image=plt.imshow(Matrix,cmap='gray_r',extent=[0,boundsZ,boundsY,-boundsY],norm=LogNorm())
+ plt.gca().invert_yaxis()
+ plt.show()
+if args.PlotType=='XY':
+ import numpy as np
+ from matplotlib import pyplot as plt
+ plt.title(Title)
+ plt.xlabel('X [microns /'+str(int(resolution))+']')
+ plt.ylabel('Y [microns /'+str(int(resolution))+']')
+ if image_no==1:
+    image=plt.imshow(Matrix,cmap='gray_r',extent=[boundsX,-boundsX,-boundsY,boundsY])#,norm=LogNorm())
+ else:
+    image=plt.imshow(Matrix,cmap='gray_r',extent=[boundsX,-boundsX,-boundsY,boundsY],norm=LogNorm())
+ plt.gca().invert_xaxis()
+ plt.show()
 exit()
-# if args.PlotType=='XZ':
-#   InitialData=[]
-#   Index=-1
-#   for x in range(-boundsX,boundsX):
-#           for z in range(0,boundsZ):
-#             InitialData.append(0.0)
-#   Matrix = np.array(InitialData)
-#   Matrix=np.reshape(Matrix,(H,L))
-# if args.PlotType=='YZ':
-#  InitialData=[]
-#  Index=-1
-#  for y in range(-boundsY,boundsY):
-#           for z in range(0,boundsZ):
-#             InitialData.append(0.0)
-#
-#  Matrix = np.array(InitialData)
-#  Matrix=np.reshape(Matrix,(W,L))
-# if args.PlotType=='XY':
-#   InitialData=[]
-#   Index=-1
-#   for x in range(-boundsX,boundsX):
-#           for y in range(-boundsY,boundsY):
-#             InitialData.append(0.0)
-#   Matrix = np.array(InitialData)
-#   Matrix=np.reshape(Matrix,(H,W))
-#
-#
-# Title=args.Label+' Track Image'
-#
-#
-# counter=0
-# for sd in ImageObjectSet:
-#  progress=int( round( (float(counter)/float(len(ImageObjectSet))*100),1)  )
-#  print('Rendering images, progress is ',progress, end="\r", flush=True)
-#  counter+=1
-#  sd.PrepareSeedPrint(MaxX,MaxY,MaxZ,resolution,Rescale)
-#  if args.PlotType=='XZ':
-#   for Hits in sd.TrackPrint:
-#       if abs(Hits[0])<boundsX and abs(Hits[2])<boundsZ:
-#                    Matrix[Hits[0]+boundsX][Hits[2]]+=1
-#  if args.PlotType=='YZ':
-#         for Hits in sd.TrackPrint:
-#                  if abs(Hits[1])<boundsY and abs(Hits[2])<boundsZ:
-#                    Matrix[Hits[1]+boundsY][Hits[2]]+=1
-#  if args.PlotType=='XY':
-#      for Hits in sd.TrackPrint:
-#        if abs(Hits[0])<boundsX and abs(Hits[1])<boundsY:
-#          Matrix[Hits[0]+boundsX][Hits[1]+boundsY]+=1
-# image_no=len(data)
-# del data
-# import matplotlib as plt
-# from matplotlib.colors import LogNorm
-# import numpy as np
-# from matplotlib import pyplot as plt
-# if args.PlotType=='XZ':
-#  plt.title(Title)
-#  plt.xlabel('Z [microns /'+str(int(resolution))+']')
-#  plt.ylabel('X [microns /'+str(int(resolution))+']')
-#  if image_no==1:
-#     image=plt.imshow(Matrix,cmap='gray_r',extent=[0,boundsZ,boundsX,-boundsX])#,norm=LogNorm())
-#  else:
-#     image=plt.imshow(Matrix,cmap='gray_r',extent=[0,boundsZ,boundsX,-boundsX],norm=LogNorm())
-#  plt.gca().invert_yaxis()
-#  plt.show()
-# if args.PlotType=='YZ':
-#  import numpy as np
-#  from matplotlib import pyplot as plt
-#  plt.title(Title)
-#  plt.xlabel('Z [microns /'+str(int(resolution))+']')
-#  plt.ylabel('Y [microns /'+str(int(resolution))+']')
-#  if image_no==1:
-#     image=plt.imshow(Matrix,cmap='gray_r',extent=[0,boundsZ,boundsY,-boundsY])#,norm=LogNorm())
-#  else:
-#     image=plt.imshow(Matrix,cmap='gray_r',extent=[0,boundsZ,boundsY,-boundsY],norm=LogNorm())
-#  plt.gca().invert_yaxis()
-#  plt.show()
-# if args.PlotType=='XY':
-#  import numpy as np
-#  from matplotlib import pyplot as plt
-#  plt.title(Title)
-#  plt.xlabel('X [microns /'+str(int(resolution))+']')
-#  plt.ylabel('Y [microns /'+str(int(resolution))+']')
-#  if image_no==1:
-#     image=plt.imshow(Matrix,cmap='gray_r',extent=[boundsX,-boundsX,-boundsY,boundsY])#,norm=LogNorm())
-#  else:
-#     image=plt.imshow(Matrix,cmap='gray_r',extent=[boundsX,-boundsX,-boundsY,boundsY],norm=LogNorm())
-#  plt.gca().invert_xaxis()
-#  plt.show()
-# exit()
 
 
 
