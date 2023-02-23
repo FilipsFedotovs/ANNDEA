@@ -63,6 +63,7 @@ print(UF.TimeStamp(),bcolors.BOLD+'Stage 3:'+bcolors.ENDC+' Using the results fr
 input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_RTr_OUTPUT.csv'
 print(UF.TimeStamp(),'Loading the file ',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
 Data=pd.read_csv(input_file_location,header=0)
+Data=Data.sort_values([RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID',PM.z],ascending=[1,1,1])
 print(Data)
 
            #
