@@ -77,6 +77,9 @@ compress_data['Hit_No']= compress_data[PM.Hit_ID]
 compress_data=compress_data.groupby(by=['Rec_Seg_ID'])['Hit_No'].count().reset_index()
 New_Data=pd.merge(New_Data, compress_data, how="left", on=['Rec_Seg_ID'])
 New_Data = New_Data[New_Data.Hit_No >= PM.MinHitsTrack]
+print(New_Data)
+print(Data)
+exit()
 Data=pd.merge(Data,New_Data,how='left', on=[PM.Hit_ID])
 print(Data)
 exit()
