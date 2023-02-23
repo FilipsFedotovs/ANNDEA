@@ -63,7 +63,6 @@ print(UF.TimeStamp(),bcolors.BOLD+'Stage 3:'+bcolors.ENDC+' Using the results fr
 input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_RTr_OUTPUT.csv'
 print(UF.TimeStamp(),'Loading the file ',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
 Data=pd.read_csv(input_file_location,header=0)
-
 New_Data=Data[[RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID',PM.z,PM.Hit_ID]]
 Data.drop([RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID'],axis=1,inplace=True)
 New_Data=New_Data.dropna()
@@ -78,25 +77,10 @@ compress_data=compress_data.groupby(by=['Rec_Seg_ID'])['Hit_No'].count().reset_i
 New_Data=pd.merge(New_Data, compress_data, how="left", on=['Rec_Seg_ID'])
 New_Data = New_Data[New_Data.Hit_No >= PM.MinHitsTrack]
 Data=pd.merge(Data,New_Data,how='left', on=[PM.Hit_ID])
-print(Data)
-exit()
-           #
-           # CutData.drop([RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID'],axis=1,inplace=True,errors='ignore') #Removing old ANNDEA reconstruction results so we can overwrite with the new ones
-           # #Map reconstructed ANN tracks to hits in the Raw file - this is in essesential for the final output of the tracking
-           # TrackMap['HitID'] = TrackMap['HitID'].astype(str)
-           # CutData[PM.Hit_ID] = CutData[PM.Hit_ID].astype(str)
-           # CutData=pd.merge(CutData,TrackMap,how='left', left_on=[PM.Hit_ID], right_on=['HitID'])
-           #
-           # CutData.drop(['HitID'],axis=1,inplace=True) #Make sure that HitID is not the Hit ID name in the raw data.
-           #
-           # if SliceData:
-           #  Data=pd.concat([CutData,OtherData]) #If we slice the data we Reconstructed and Unreconstructed subset of the brick separately (attach reconstructed hits to the selected volume, leave the rest unaffected).
-           # else:
-           #  Data=CutData
-           # output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_RTr_OUTPUT.csv' #Final output. We can use this file for further operations
-           # Data.to_csv(output_file_location,index=False)
-           # print(UF.TimeStamp(), bcolors.OKGREEN+"The tracked data has been written to"+bcolors.ENDC, bcolors.OKBLUE+output_file_location+bcolors.ENDC)
-           # print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 4 has successfully completed'+bcolors.ENDC)
+output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_RTr_OUTPUT_CLEAN.csv'
+Data.to_csv(output_file_location,index=False)
+print(UF.TimeStamp(), bcolors.OKGREEN+"The cleaned tracked data has been written to"+bcolors.ENDC, bcolors.OKBLUE+output_file_location+bcolors.ENDC)
+
 
 
 
