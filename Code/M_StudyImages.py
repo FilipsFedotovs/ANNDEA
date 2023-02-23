@@ -84,6 +84,7 @@ else:
  input_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_TRACK_SEEDS_OUTPUT_'+args.Type+'.pkl'
 
 ImageObjectSet=UF.PickleOperations(input_file_location,'r', 'N/A')[0]
+
 if args.Label=='Truth':
      ImageObjectSet=[im for im in ImageObjectSet if im.Label == 1]
 if args.Label=='Fake':
