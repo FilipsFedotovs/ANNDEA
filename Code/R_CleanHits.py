@@ -65,7 +65,7 @@ print(UF.TimeStamp(),'Loading the file ',bcolors.OKBLUE+input_file_location+bcol
 Data=pd.read_csv(input_file_location,header=0)
 
 New_Data=Data[[RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID',PM.z,PM.Hit_ID]]
-Data.drop([RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID',PM.z,PM.Hit_ID],axis=1,inplace=True)
+Data.drop([RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID'],axis=1,inplace=True)
 New_Data=New_Data.dropna()
 New_Data=New_Data.sort_values([RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID',PM.z],ascending=[1,1,1])
 New_Data[RecBatchID+'_Brick_ID'] = New_Data[RecBatchID+'_Brick_ID'].astype(str)
@@ -77,9 +77,6 @@ compress_data['Hit_No']= compress_data[PM.Hit_ID]
 compress_data=compress_data.groupby(by=['Rec_Seg_ID'])['Hit_No'].count().reset_index()
 New_Data=pd.merge(New_Data, compress_data, how="left", on=['Rec_Seg_ID'])
 New_Data = New_Data[New_Data.Hit_No >= PM.MinHitsTrack]
-print(New_Data)
-print(Data)
-exit()
 Data=pd.merge(Data,New_Data,how='left', on=[PM.Hit_ID])
 print(Data)
 exit()
