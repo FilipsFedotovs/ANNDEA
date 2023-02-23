@@ -76,7 +76,7 @@ compress_data['Hit_No']= compress_data[PM.Hit_ID]
 compress_data=compress_data.groupby(by=['Rec_Seg_ID'])['Hit_No'].count().reset_index()
 New_Data=pd.merge(New_Data, compress_data, how="left", on=['Rec_Seg_ID'])
 New_Data = New_Data[New_Data.Hit_No >= PM.MinHitsTrack]
-New_Data.drop([PM.z],axis=1,inplace=True)
+New_Data.drop([PM.z,'Rec_Seg_ID'],axis=1,inplace=True)
 Data=pd.merge(Data,New_Data,how='left', on=[PM.Hit_ID])
 output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_RTr_OUTPUT_CLEAN.csv'
 Data.to_csv(output_file_location,index=False)
