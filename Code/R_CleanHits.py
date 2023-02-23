@@ -72,7 +72,10 @@ New_Data[RecBatchID+'_Brick_ID'] = New_Data[RecBatchID+'_Brick_ID'].astype(str)
 New_Data[RecBatchID+'_Track_ID'] = New_Data[RecBatchID+'_Track_ID'].astype(str)
 New_Data['Rec_Seg_ID'] = New_Data[RecBatchID+'_Brick_ID'] + '-' + New_Data[RecBatchID+'_Track_ID']
 New_Data.drop_duplicates(subset=[RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID',PM.z],keep='first',inplace=True)
-print(New_Data)
+compress_data=New_Data.drop([RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID',PM.z],axis=1)
+compress_data['Track_No']= compress_data[PM.Hit_ID]
+compress_data=compress_data.groupby(by=['Rec_Seg_ID'])['Track_No'].count().reset_index()
+print(compress_data)
 exit()
            #
            # CutData.drop([RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID'],axis=1,inplace=True,errors='ignore') #Removing old ANNDEA reconstruction results so we can overwrite with the new ones
