@@ -68,6 +68,8 @@ New_Data=Data[[RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID',PM.z,PM.Hit_ID]]
 Data.drop([RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID',PM.z,PM.Hit_ID],axis=1,inplace=True)
 New_Data=New_Data.dropna()
 New_Data=New_Data.sort_values([RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID',PM.z],ascending=[1,1,1])
+New_Data[RecBatchID+'_Brick_ID'] = New_Data[RecBatchID+'_Brick_ID'].astype(str)
+New_Data[RecBatchID+'_Track_ID'] = New_Data[RecBatchID+'_Track_ID'].astype(str)
 New_Data['Rec_Seg_ID'] = New_Data[RecBatchID+'_Brick_ID'] + '-' + New_Data[RecBatchID+'_Track_ID']
 print(New_Data)
 
