@@ -64,7 +64,7 @@ input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_RTr_OUTPUT.csv'
 print(UF.TimeStamp(),'Loading the file ',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
 Data=pd.read_csv(input_file_location,header=0)
 Data=Data.sort_values([RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID',PM.z],ascending=[1,1,1])
-print(Data)
+print(Data[[RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID',PM.z,PM.Hit_ID]])
 
            #
            # CutData.drop([RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID'],axis=1,inplace=True,errors='ignore') #Removing old ANNDEA reconstruction results so we can overwrite with the new ones
