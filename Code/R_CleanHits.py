@@ -73,7 +73,7 @@ New_Data[RecBatchID+'_Track_ID'] = New_Data[RecBatchID+'_Track_ID'].astype(str)
 New_Data['Rec_Seg_ID'] = New_Data[RecBatchID+'_Brick_ID'] + '-' + New_Data[RecBatchID+'_Track_ID']
 New_Data.drop_duplicates(subset=[RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID',PM.z],keep='first',inplace=True)
 compress_data=New_Data.drop([RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID',PM.z],axis=1)
-compress_data['Track_No']= compress_data[PM.Hit_ID]
+compress_data['Hit_No']= compress_data[PM.Hit_ID]
 compress_data=compress_data.groupby(by=['Rec_Seg_ID'])['Hit_No'].count().reset_index()
 New_Data=pd.merge(New_Data, compress_data, how="left", on=['Rec_Seg_ID'])
 New_Data = New_Data[New_Data.Hit_No >= PM.MinHitsTrack]
