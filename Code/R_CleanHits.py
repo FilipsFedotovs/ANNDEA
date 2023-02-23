@@ -71,8 +71,9 @@ New_Data=New_Data.sort_values([RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID',PM.
 New_Data[RecBatchID+'_Brick_ID'] = New_Data[RecBatchID+'_Brick_ID'].astype(str)
 New_Data[RecBatchID+'_Track_ID'] = New_Data[RecBatchID+'_Track_ID'].astype(str)
 New_Data['Rec_Seg_ID'] = New_Data[RecBatchID+'_Brick_ID'] + '-' + New_Data[RecBatchID+'_Track_ID']
+New_Data.drop_duplicates(subset=[RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID',PM.z],keep='first',inplace=True)
 print(New_Data)
-
+exit()
            #
            # CutData.drop([RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID'],axis=1,inplace=True,errors='ignore') #Removing old ANNDEA reconstruction results so we can overwrite with the new ones
            # #Map reconstructed ANN tracks to hits in the Raw file - this is in essesential for the final output of the tracking
