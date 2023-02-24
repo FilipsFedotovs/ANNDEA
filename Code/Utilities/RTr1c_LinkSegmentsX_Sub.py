@@ -107,22 +107,20 @@ for i in range(1,X_ID_Max):
     ZContractedTable_r=ZContractedTable_r.groupby(['Master_Segment_ID']).agg({'Segment_No':'sum','Segment_No_Tot':'sum'}).reset_index()
     ZContractedTable=ZContractedTable.drop(['Segment_No','Segment_No_Tot'],axis=1)
     ZContractedTable=pd.merge(ZContractedTable,ZContractedTable_r,how='inner', on=["Master_Segment_ID"])
-    print(ZContractedTable)
-    x=input()
     ZContractedTable=ZContractedTable.groupby(by=["Master_Segment_ID",'Master_z',"HitID",'Segment_No','Segment_No_Tot'])["Hit_Fit"].sum().reset_index()
-    print(ZContractedTable)
-    x=input()
 ZContractedTable['Fit']=ZContractedTable['Segment_No']/ZContractedTable['Segment_No_Tot']
 ZContractedTable['Fit'] = ZContractedTable['Fit'].fillna(1.0)
 
 ZContractedTable=ZContractedTable.drop(['Segment_No','Segment_No_Tot'],axis=1)
 
-
-ZContractedTable['Hit_No']=ZContractedTable['HitID']
-ZContractedTable=ZContractedTable.groupby(by=["Master_Segment_ID","Master_z","HitID","Fit"])['Hit_No'].count().reset_index()
-ZContractedTable.sort_values(["HitID",'Fit',"Hit_No"],ascending=[1,0,0],inplace=True)
-
+ZContractedTable.sort_values(["HitID",'Fit'],ascending=[1,0],inplace=True)
+print(ZContractedTable)
+x=input()
 ZContractedTable.drop_duplicates(subset=["HitID"],keep='first',inplace=True) #Ensure the hit fidelity the tracks are ready
+print(ZContractedTable)
+x=input()
+
+
 ZContractedTableIDs=ZContractedTable[["Master_Segment_ID"]]
 ZContractedTableIDs=ZContractedTableIDs.drop_duplicates(keep='first')
 ZContractedTableIDs=ZContractedTableIDs.reset_index().drop(['index'],axis=1) #Create numerical track numbers
