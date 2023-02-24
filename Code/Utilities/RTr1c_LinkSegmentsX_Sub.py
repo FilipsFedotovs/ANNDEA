@@ -67,8 +67,7 @@ def zero_divide(a, b):
 #Load the first file (on the y-axis) with reconstructed clusters that already have been merged along z-axis
 FirstFileName=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RTr1b_'+RecBatchID+'_'+str(0)+'/RTr1b_'+RecBatchID+'_hit_cluster_rec_y_set_' +str(0)+'.csv'
 ZContractedTable=pd.read_csv(FirstFileName)  #First cluster is like a Pacman: it absorbes proceeding clusters and gets bigger
-print(ZContractedTable)
-x=input()
+
 for i in range(1,X_ID_Max):
     SecondFileName=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RTr1b_'+RecBatchID+'_'+str(0)+'/RTr1b_'+RecBatchID+'_hit_cluster_rec_y_set_'+str(i)+'.csv' #keep loading subsequent files along y-xis with reconstructed clusters that already have been merged along z and y-axis
     SecondFile=pd.read_csv(SecondFileName)
@@ -107,6 +106,11 @@ for i in range(1,X_ID_Max):
     ZContractedTable_r=ZContractedTable_r.groupby(['Master_Segment_ID']).agg({'Segment_No':'sum','Segment_No_Tot':'sum'}).reset_index()
     ZContractedTable=ZContractedTable.drop(['Segment_No','Segment_No_Tot'],axis=1)
     ZContractedTable=pd.merge(ZContractedTable,ZContractedTable_r,how='inner', on=["Master_Segment_ID"])
+    print(ZContractedTable)
+    x=input()
+    ZContractedTable=ZContractedTable.groupby(by=["Master_Segment_ID",'Master_z',"HitID",'Segment_No','Segment_No_Tot'])["Hit_Fit"].sum().reset_index()
+    print(ZContractedTable)
+    x=input()
 ZContractedTable['Fit']=ZContractedTable['Segment_No']/ZContractedTable['Segment_No_Tot']
 ZContractedTable['Fit'] = ZContractedTable['Fit'].fillna(1.0)
 
