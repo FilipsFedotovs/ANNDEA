@@ -122,6 +122,8 @@ ZContractedTable.drop(['Fit'],axis=1,inplace=True) #Removing the info that is no
 print(ZContractedTable)
 x=input()
 ZContractedTable.sort_values(["Master_Segment_ID","Master_z","Hit_Fit"],ascending=[1,1,0],inplace=True)
+ZContractedTable.to_csv('test_dummy',index=False)
+print('ZContractedTable')
 print(ZContractedTable)
 x=input()
 ZContractedTable.drop_duplicates(subset=["Master_Segment_ID","Master_z"],keep='first',inplace=True)
