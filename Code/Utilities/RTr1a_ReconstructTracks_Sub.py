@@ -341,7 +341,10 @@ if len(z_clusters_results)>0:
         FileClean=FileClean.rename(columns={"z": "Master_z" })
         FileClean=FileClean.drop(['Segment_ID'],axis=1)
         ZContractedTable=pd.concat([ZContractedTable,FileClean]) #Absorbing proceeding cluster
+        FileClean["Hit_Fit"]= FileClean["HitID"]
+        ZContractedTable=ZContractedTable.groupby(by=["Master_Segment_ID",'Master_z',"HitID"])["Hit_Fit"].count().reset_index()
         ZContractedTable.sort_values(["Master_Segment_ID",'Master_z'],ascending=[1,1]).to_csv('Before_Dup',index=False)
+
         print(ZContractedTable)
         ZContractedTable.drop_duplicates(subset=["Master_Segment_ID","HitID",'Master_z'],keep='first',inplace=True)
         ZContractedTable.to_csv('After_Dup',index=False)
