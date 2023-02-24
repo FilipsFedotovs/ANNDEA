@@ -77,7 +77,7 @@ for i in range(1,X_ID_Max):
     FileClean=FileClean.groupby(by=["Master_Segment_ID","Segment_ID","Segment_No_x","Segment_No_y","Segment_No_Tot_x","Segment_No_Tot_y"])["Segment_No_z"].count().reset_index()
     FileCleanTot=FileClean.groupby(by=["Master_Segment_ID"])["Segment_No_z"].sum().reset_index()
     FileCleanTot.rename(columns={"Segment_No_z":"Segment_No_Tot_z"},inplace=True)
-    FileClean=FileClean.rename(columns={'Hit_Fit_s': 'Hit_Fit' })
+
     FileClean=pd.merge(FileClean,FileCleanTot,how='inner', on=["Master_Segment_ID"])
     FileClean['Segment_No']=FileClean['Segment_No_x']+FileClean['Segment_No_y']+FileClean['Segment_No_z']
     FileClean['Segment_No_Tot']=FileClean['Segment_No_Tot_x']+FileClean['Segment_No_Tot_y']+FileClean['Segment_No_Tot_z']
@@ -100,6 +100,7 @@ for i in range(1,X_ID_Max):
     FileClean=pd.concat([FileCleanOrlp,FileCleanR])
     FileClean=FileClean.drop(['Segment_ID'],axis=1)
     FileClean=FileClean.rename(columns={"z": "Master_z" })
+    FileClean=FileClean.rename(columns={'Hit_Fit_s': 'Hit_Fit' })
     ZContractedTable=pd.concat([ZContractedTable,FileClean])
     ZContractedTable_r=ZContractedTable[['Master_Segment_ID','Segment_No','Segment_No_Tot']]
     ZContractedTable_r.drop_duplicates(subset=['Master_Segment_ID','Segment_No','Segment_No_Tot'],keep='first',inplace=True)
