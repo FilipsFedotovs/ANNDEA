@@ -341,6 +341,7 @@ if len(z_clusters_results)>0:
         FileClean=FileClean.rename(columns={"z": "Master_z" })
         FileClean=FileClean.drop(['Segment_ID'],axis=1)
         ZContractedTable=pd.concat([ZContractedTable,FileClean]) #Absorbing proceeding cluster
+        print(ZContractedTable)
         ZContractedTable.drop_duplicates(subset=["Master_Segment_ID","HitID",'Master_z'],keep='first',inplace=True)
         print(ZContractedTable)
         exit()
