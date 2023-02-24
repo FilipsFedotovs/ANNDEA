@@ -343,7 +343,6 @@ if len(z_clusters_results)>0:
         ZContractedTable=pd.concat([ZContractedTable,FileClean]) #Absorbing proceeding cluster
         ZContractedTable["Hit_Fit"]= ZContractedTable["HitID"]
         ZContractedTable=ZContractedTable.groupby(by=["Master_Segment_ID",'Master_z',"HitID"])["Hit_Fit"].count().reset_index()
-        ZContractedTable.sort_values(["Master_Segment_ID",'Master_z'],ascending=[1,1]).to_csv('Before_Dup',index=False)
     ZContractedTable=ZContractedTable.sort_values(["Master_Segment_ID",'Master_z'],ascending=[1,1])
 
 else: #If Cluster tracking yielded no segments we just create an empty array for consistency

@@ -96,6 +96,7 @@ for i in range(1,Y_ID_Max):
     ZContractedTable_r=ZContractedTable_r.groupby(['Master_Segment_ID']).agg({'Segment_No':'sum','Segment_No_Tot':'sum'}).reset_index()
     ZContractedTable=ZContractedTable.drop(['Segment_No','Segment_No_Tot'],axis=1)
     ZContractedTable=pd.merge(ZContractedTable,ZContractedTable_r,how='inner', on=["Master_Segment_ID"])
+    ZContractedTable=ZContractedTable.groupby(by=["Master_Segment_ID",'Master_z',"HitID",'Segment_No','Segment_No_Tot'])["Hit_Fit"].sum().reset_index()
     print(ZContractedTable.sort_values(["Master_Segment_ID",'Master_z'],ascending=[1,1]))
     x=input()
 ZContractedTable=ZContractedTable.sort_values(["Master_Segment_ID",'Master_z'],ascending=[1,1])
