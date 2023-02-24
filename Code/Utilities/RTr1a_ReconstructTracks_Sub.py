@@ -341,10 +341,12 @@ if len(z_clusters_results)>0:
         FileClean=FileClean.rename(columns={"z": "Master_z" })
         FileClean=FileClean.drop(['Segment_ID'],axis=1)
         ZContractedTable=pd.concat([ZContractedTable,FileClean]) #Absorbing proceeding cluster
+        ZContractedTable.to_csv('Before_Dup',index=False)
         print(ZContractedTable)
         ZContractedTable.drop_duplicates(subset=["Master_Segment_ID","HitID",'Master_z'],keep='first',inplace=True)
+        ZContractedTable.to_csv('After_Dup',index=False)
         print(ZContractedTable)
-        exit()
+        x=input()
     ZContractedTable=ZContractedTable.sort_values(["Master_Segment_ID",'Master_z'],ascending=[1,1])
 
 else: #If Cluster tracking yielded no segments we just create an empty array for consistency
