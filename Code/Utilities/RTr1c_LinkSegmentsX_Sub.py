@@ -118,16 +118,21 @@ ZContractedTable.sort_values(["HitID",'Fit'],ascending=[1,0],inplace=True)
 print(ZContractedTable)
 x=input()
 ZContractedTable.drop_duplicates(subset=["HitID"],keep='first',inplace=True) #Ensure the hit fidelity the tracks are ready
+ZContractedTable.drop(['Fit'],axis=1,inplace=True) #Removing the info that is not used anymore
 print(ZContractedTable)
 x=input()
-
-
+ZContractedTable.sort_values(["Master_Segment_ID","Master_z","Hit_Fit"],ascending=[1,1,0],inplace=True)
+print(ZContractedTable)
+x=input()
+ZContractedTable.drop_duplicates(subset=["Master_Segment_ID","Master_z"],keep='first',inplace=True)
+print(ZContractedTable)
+x=input()
 ZContractedTableIDs=ZContractedTable[["Master_Segment_ID"]]
 ZContractedTableIDs=ZContractedTableIDs.drop_duplicates(keep='first')
 ZContractedTableIDs=ZContractedTableIDs.reset_index().drop(['index'],axis=1) #Create numerical track numbers
 ZContractedTableIDs=ZContractedTableIDs.reset_index()
 ZContractedTableIDs.rename(columns={"index":RecBatchID+'_Track_ID'},inplace=True) #These are the ANN Track IDs
-ZContractedTable.drop(['Fit',"Hit_No"],axis=1,inplace=True) #Removing the info that is not used anymore
+
 ZContractedTable=pd.merge(ZContractedTable,ZContractedTableIDs,how='inner',on=["Master_Segment_ID"])
 ZContractedTable.drop(['Master_z',"Master_Segment_ID"],axis=1,inplace=True)
 ZContractedTable[RecBatchID+'_Brick_ID']=RecBatchID #Creating the track prefix relevant to this particular reconstruction (to keep track IDs unique)
