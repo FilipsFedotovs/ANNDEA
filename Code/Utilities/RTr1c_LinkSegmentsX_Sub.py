@@ -67,15 +67,18 @@ def zero_divide(a, b):
 #Load the first file (on the y-axis) with reconstructed clusters that already have been merged along z-axis
 FirstFileName=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RTr1b_'+RecBatchID+'_'+str(0)+'/RTr1b_'+RecBatchID+'_hit_cluster_rec_y_set_' +str(0)+'.csv'
 ZContractedTable=pd.read_csv(FirstFileName)  #First cluster is like a Pacman: it absorbes proceeding clusters and gets bigger
+print(ZContractedTable)
+x=input()
 for i in range(1,X_ID_Max):
     SecondFileName=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RTr1b_'+RecBatchID+'_'+str(0)+'/RTr1b_'+RecBatchID+'_hit_cluster_rec_y_set_'+str(i)+'.csv' #keep loading subsequent files along y-xis with reconstructed clusters that already have been merged along z and y-axis
     SecondFile=pd.read_csv(SecondFileName)
-    SecondFileTable=SecondFile.rename(columns={"Master_Segment_ID":"Segment_ID","Master_z":"z" }) #Initally the following clusters are downgraded from the master status
+    SecondFileTable=SecondFile.rename(columns={"Master_Segment_ID":"Segment_ID","Master_z":"z","Hit_Fit":"Hit_Fit_s"}) #Initally the following clusters are downgraded from the master status
     FileClean=pd.merge(ZContractedTable.drop_duplicates(subset=["Master_Segment_ID","HitID",'Master_z'],keep='first'),SecondFileTable,how='inner', on=['HitID']) #Join segments based on the common hits
     FileClean["Segment_No_z"]= FileClean["Segment_ID"]
     FileClean=FileClean.groupby(by=["Master_Segment_ID","Segment_ID","Segment_No_x","Segment_No_y","Segment_No_Tot_x","Segment_No_Tot_y"])["Segment_No_z"].count().reset_index()
     FileCleanTot=FileClean.groupby(by=["Master_Segment_ID"])["Segment_No_z"].sum().reset_index()
     FileCleanTot.rename(columns={"Segment_No_z":"Segment_No_Tot_z"},inplace=True)
+    FileClean=FileClean.rename(columns={'Hit_Fit_s': 'Hit_Fit' })
     FileClean=pd.merge(FileClean,FileCleanTot,how='inner', on=["Master_Segment_ID"])
     FileClean['Segment_No']=FileClean['Segment_No_x']+FileClean['Segment_No_y']+FileClean['Segment_No_z']
     FileClean['Segment_No_Tot']=FileClean['Segment_No_Tot_x']+FileClean['Segment_No_Tot_y']+FileClean['Segment_No_Tot_z']
