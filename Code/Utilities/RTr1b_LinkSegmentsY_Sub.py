@@ -74,8 +74,8 @@ ZContractedTable["Segment_No_Tot"]=0
 for i in range(1,Y_ID_Max):
     SecondFileName=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_'+'RTr1a'+'_'+RecBatchID+'_'+str(X_ID)+'/RTr1a_'+RecBatchID+'_hit_cluster_rec_set_'+str(X_ID)+'_' +str(i)+'.csv' #keep loading subsequent files along y-xis with reconstructed clusters that already have been merged along z-axis
     SecondFile=pd.read_csv(SecondFileName)
-    SecondFileTable=SecondFile.rename(columns={"Master_Segment_ID":"Segment_ID","Master_z":"z" }) #Initally the following clusters are downgraded from the master status
-    FileClean=pd.merge(ZContractedTable.drop_duplicates(subset=["Master_Segment_ID","HitID",'Master_z','Hit_Fit_s'],keep='first'),SecondFileTable,how='inner', on=['HitID']) #Join segments based on the common hits
+    SecondFileTable=SecondFile.rename(columns={"Master_Segment_ID":"Segment_ID","Master_z":"z","Hit_Fit":"Hit_Fit_s" }) #Initally the following clusters are downgraded from the master status
+    FileClean=pd.merge(ZContractedTable.drop_duplicates(subset=["Master_Segment_ID","HitID",'Master_z'],keep='first'),SecondFileTable,how='inner', on=['HitID']) #Join segments based on the common hits
     FileClean["Segment_No"]= FileClean["Segment_ID"]
     FileClean=FileClean.groupby(by=["Master_Segment_ID","Segment_ID"])["Segment_No"].count().reset_index()
     FileCleanTot=FileClean.groupby(by=["Master_Segment_ID"])["Segment_No"].sum().reset_index()
