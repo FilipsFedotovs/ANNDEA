@@ -344,17 +344,11 @@ if len(z_clusters_results)>0:
         ZContractedTable["Hit_Fit"]= ZContractedTable["HitID"]
         ZContractedTable=ZContractedTable.groupby(by=["Master_Segment_ID",'Master_z',"HitID"])["Hit_Fit"].count().reset_index()
         ZContractedTable.sort_values(["Master_Segment_ID",'Master_z'],ascending=[1,1]).to_csv('Before_Dup',index=False)
-
-        print(ZContractedTable)
-        ZContractedTable.drop_duplicates(subset=["Master_Segment_ID","HitID",'Master_z'],keep='first',inplace=True)
-        ZContractedTable.to_csv('After_Dup',index=False)
-        print(ZContractedTable)
-        x=input()
     ZContractedTable=ZContractedTable.sort_values(["Master_Segment_ID",'Master_z'],ascending=[1,1])
 
 else: #If Cluster tracking yielded no segments we just create an empty array for consistency
      print(UF.TimeStamp(),'No suitable hit pairs in the cluster set, just writing the empty one...')
-     ZContractedTable=pd.DataFrame([], columns = ['HitID','Master_z','Master_Segment_ID'])
+     ZContractedTable=pd.DataFrame([], columns = ['HitID','Master_z','Master_Segment_ID','Hit_Fit'])
 output_file_location=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(X_ID_n)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(X_ID_n)+'_'+str(Y_ID_n)+sfx
 print(UF.TimeStamp(),'Writing the output...')
 ZContractedTable.to_csv(output_file_location,index=False) #Write the final result

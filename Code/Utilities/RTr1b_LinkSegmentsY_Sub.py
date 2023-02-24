@@ -70,6 +70,8 @@ FirstFileName=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_'+'RTr1a'+'_'+RecBatchID+'_'+st
 ZContractedTable=pd.read_csv(FirstFileName) #First cluster is like a Pacman: it absorbes proceeding clusters and gets bigger
 ZContractedTable["Segment_No"]=0
 ZContractedTable["Segment_No_Tot"]=0
+print(ZContractedTable)
+exit()
 for i in range(1,Y_ID_Max):
     SecondFileName=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_'+'RTr1a'+'_'+RecBatchID+'_'+str(X_ID)+'/RTr1a_'+RecBatchID+'_hit_cluster_rec_set_'+str(X_ID)+'_' +str(i)+'.csv' #keep loading subsequent files along y-xis with reconstructed clusters that already have been merged along z-axis
     SecondFile=pd.read_csv(SecondFileName)
