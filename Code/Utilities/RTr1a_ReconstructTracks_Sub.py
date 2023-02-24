@@ -342,7 +342,10 @@ if len(z_clusters_results)>0:
         FileClean=FileClean.drop(['Segment_ID'],axis=1)
         ZContractedTable=pd.concat([ZContractedTable,FileClean]) #Absorbing proceeding cluster
         ZContractedTable.drop_duplicates(subset=["Master_Segment_ID","HitID",'Master_z'],keep='first',inplace=True)
+        print(ZContractedTable)
+        exit()
     ZContractedTable=ZContractedTable.sort_values(["Master_Segment_ID",'Master_z'],ascending=[1,1])
+
 else: #If Cluster tracking yielded no segments we just create an empty array for consistency
      print(UF.TimeStamp(),'No suitable hit pairs in the cluster set, just writing the empty one...')
      ZContractedTable=pd.DataFrame([], columns = ['HitID','Master_z','Master_Segment_ID'])
