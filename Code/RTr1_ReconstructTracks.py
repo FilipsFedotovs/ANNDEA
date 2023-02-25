@@ -447,8 +447,7 @@ while Status<len(Program):
            Data[PM.Hit_ID] = Data[PM.Hit_ID].astype(str)
 
            if SliceData: #If we want to perform reconstruction on the fraction of the Brick
-                  CutData=Data.drop(Data.index[(Data[PM.x] > Xmax) | (Data[PM.x] < Xmin) | (Data[PM.y] > Ymax) | (Data[PM.y] < Ymin)]) #The focus area where we reconstruct
-                  OtherData=Data.drop(Data.index[(Data[PM.x] <= Xmax) | (Data[PM.x] >= Xmin) | (Data[PM.y] <= Ymax) | (Data[PM.y] >= Ymin)]) #The rest of the volume
+               CutData=Data.drop(Data.index[(Data[PM.x] > Xmax) | (Data[PM.x] < Xmin) | (Data[PM.y] > Ymax) | (Data[PM.y] < Ymin)]) #The focus area where we reconstruct
            else:
                CutData=Data #If we reconstruct the whole brick we jsut take the whole data. No need to separate.
 
@@ -459,19 +458,14 @@ while Status<len(Program):
            CutData=pd.merge(CutData,TrackMap,how='left', left_on=[PM.Hit_ID], right_on=['HitID'])
 
            CutData.drop(['HitID'],axis=1,inplace=True) #Make sure that HitID is not the Hit ID name in the raw data.
-
-           if SliceData:
-            Data=pd.concat([CutData,OtherData]) #If we slice the data we Reconstructed and Unreconstructed subset of the brick separately (attach reconstructed hits to the selected volume, leave the rest unaffected).
-           else:
-            Data=CutData
+           Data=CutData
 
            #It was discovered that the output is not perfect: while the hit fidelity is achieved we don't have a full plate hit fidelity for a given track. It is still possible for a track to have multiple hits per plate.
            #In order to fix it we need to apply some additional logic to those problematic tracks.
            print(UF.TimeStamp(),'Identifying problematic tracks where thera are more than one hit per plate...',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
            Hit_Map=Data[[RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID',PM.x,PM.y,PM.z,PM.Hit_ID]]
+           Hit_Map=Hit_Map.dropna()
            print(Hit_Map)
-           print(CutData)
-           print(OtherData)
            exit()
            # Data.drop([RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID'],axis=1,inplace=True)
            # New_Data=New_Data.dropna()
