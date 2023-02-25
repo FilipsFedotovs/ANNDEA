@@ -486,10 +486,8 @@ while Status<len(Program):
            Bad_Tracks=Bad_Tracks.values.tolist() #I find it is much easier to deal with tracks in list format when it comes to fitting
            Bad_Tracks_Head=Bad_Tracks_Head.values.tolist()
            Bad_Track_Pool=[]
-           print(Bad_Tracks_Head)
-           print(Bad_Tracks)
            for bth in Bad_Tracks_Head:
-               bth.insert([])
+               bth.append([])
                for bt in Bad_Tracks:
                    if (bth[0]==bt[0] and bth[1]==bt[1]):
                       bth[2].append(bt[2:])
