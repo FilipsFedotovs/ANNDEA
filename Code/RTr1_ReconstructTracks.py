@@ -463,7 +463,7 @@ while Status<len(Program):
            #It was discovered that the output is not perfect: while the hit fidelity is achieved we don't have a full plate hit fidelity for a given track. It is still possible for a track to have multiple hits per plate.
            #In order to fix it we need to apply some additional logic to those problematic tracks.
            print(UF.TimeStamp(),'Identifying problematic tracks where there is more than one hit per plate...',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
-           Hit_Map=Data[[RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID',PM.x,PM.y,PM.z,PM.Hit_ID]] #Separating the hit map
+           Hit_Map=Data[[RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID',PM.x,PM.y,PM.z,PM.tx,PM.ty,PM.Hit_ID]] #Separating the hit map
            Hit_Map=Hit_Map.dropna() #Remove unreconstructing hits - we are not interested in them atm
            Hit_Map_Stats=Hit_Map[[RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID',PM.z,PM.Hit_ID]] #Calculating the stats
 
@@ -479,7 +479,7 @@ while Status<len(Program):
            Good_Tracks=Good_Tracks[[RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID',PM.Hit_ID]] #Just strip off the information that we don't need anymore
            print(Good_Tracks)
            Bad_Tracks=Hit_Map[Hit_Map.No_Plates < Hit_Map.No_Hits] #These are the bad guys. We need to remove this extra hits
-
+           Bad_Tracks=Hit_Map[[RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID',PM.z,PM.Hit_ID]]
            print(Bad_Tracks)
            exit()
 
