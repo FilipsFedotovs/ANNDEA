@@ -498,9 +498,8 @@ while Status<len(Program):
                bth.append([])
                for bt in Bad_Tracks:
                    if (bth[0]==bt[0] and bth[1]==bt[1]):
-                      print(bt)
-                      exit()
-                      bth[2].append(bt[2:])
+                      if bt[8]==1:
+                         bth[2].append(bt[2:-2])
            print(Bad_Tracks_Head)
            exit()
 
