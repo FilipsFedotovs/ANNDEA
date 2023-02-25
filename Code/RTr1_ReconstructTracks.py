@@ -475,10 +475,10 @@ while Status<len(Program):
            Prop_No_Tracks=len(Hit_Map_Stats)
            print(UF.TimeStamp(),bcolors.WARNING+'After dropping single hit tracks, left '+ str(Prop_No_Tracks)+' tracks...'+bcolors.ENDC)
            Hit_Map=pd.merge(Hit_Map,Hit_Map_Stats,how='inner',on = [RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID']) #Join back to the hit map
-           Good_Tracks=Hit_Map[Hit_Map.No_Plates == Hit_Map.No_Hits]
-           Good_Tracks=Good_Tracks[[RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID',PM.Hit_ID]]
+           Good_Tracks=Hit_Map[Hit_Map.No_Plates == Hit_Map.No_Hits] #For all good tracks the number of hits matches the number of plates, we won't touch them
+           Good_Tracks=Good_Tracks[[RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID',PM.Hit_ID]] #Just strip off the information that we don't need anymore
            print(Good_Tracks)
-           Bad_Tracks=Hit_Map[Hit_Map.No_Plates != Hit_Map.No_Hits]
+           Bad_Tracks=Hit_Map[Hit_Map.No_Plates > Hit_Map.No_Hits] #These are the bad guys. We need to remove this extra hits
            print(Bad_Tracks)
            exit()
 
