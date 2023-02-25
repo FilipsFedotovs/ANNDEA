@@ -543,9 +543,11 @@ while Status<len(Program):
                        z.append(k[2])
                    print(bth)
                    print(x,y,z)
+                   print(np.polyfit(z,x,2)[0])
                    exit()
-                   tx=np.polyfit(z,x,1)[0]
-                   ax=np.polyfit(z,x,1)[1]
+                   
+                   tx=np.polyfit(z,x,2)[0]
+                   ax=np.polyfit(z,x,2)[1]
                    ty=np.polyfit(z,y,1)[0]
                    ay=np.polyfit(z,y,1)[1]
                    bth.append(ax) #Append x intercept
