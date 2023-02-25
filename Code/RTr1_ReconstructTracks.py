@@ -541,10 +541,6 @@ while Status<len(Program):
                        y.append(j[1])
                    for k in bth[2]:
                        z.append(k[2])
-                   print(bth)
-                   print(x,y,z)
-                   print(np.polyfit(z,x,2))
-                   exit()
 
                    t1x=np.polyfit(z,x,2)[0]
                    t2x=np.polyfit(z,x,2)[1]
