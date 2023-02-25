@@ -480,9 +480,17 @@ while Status<len(Program):
 
            Bad_Tracks=Hit_Map[Hit_Map.No_Plates < Hit_Map.No_Hits] #These are the bad guys. We need to remove this extra hits
            Bad_Tracks=Bad_Tracks[[RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID',PM.x,PM.y,PM.z,PM.tx,PM.ty,PM.Hit_ID]]
+           Bad_Tracks_Head=Bad_Tracks[[RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID']]
+           Bad_Tracks_Head.drop_duplicates(inplace=True)
            Bad_Tracks.sort_values([RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID',PM.z],ascending=[0,0,1],inplace=True)
            Bad_Tracks=Bad_Tracks.values.tolist() #I find it is much easier to deal with tracks in list format when it comes to fitting
+           Bad_Tracks_Head=Bad_Tracks_Head.values.tolist()
+           Bad_Track_Pool=[]
+           print(Bad_Tracks_Head)
            print(Bad_Tracks)
+           # for bt in Bad_Tracks:
+           #     for btc in Bad_Tracks
+
            exit()
 
            # Data.drop([RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID'],axis=1,inplace=True)
