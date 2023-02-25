@@ -502,8 +502,22 @@ while Status<len(Program):
                          bth[2].append(bt[2:-2])
 
            for bth in Bad_Tracks_Head:
-               if len(bth[2])==1:
+               if len(bth[2])==1: #In this cases we take only tx and ty slopes
+                   x=bth[2][0]
+                   z=bth[2][2]
+                   tx=bth[2][3]
+                   ax=x-tx*z
+                   bth.append(ax) #Append x intercept
+                   bth.append(tx) #Append x slope
+                   bth.append('N/A') #Append a placeholder slope (for polynomial case)
+                   y=bth[2][1]
+                   ty=bth[2][4]
+                   ay=y-ty*z
+                   bth.append(ay) #Append x intercept
+                   bth.append(ty) #Append x slope
+                   bth.append('N/A') #Append a placeholder slope (for polynomial case)
                    print(bth[2])
+                   exit()
            #print(Bad_Tracks_Head)
            exit()
 
