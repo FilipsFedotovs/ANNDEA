@@ -469,6 +469,7 @@ while Status<len(Program):
            Hit_Map_Stats=Hit_Map_Stats.groupby([RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID']).agg({PM.z:pd.Series.nunique,PM.Hit_ID: pd.Series.nunique}).reset_index()
            Hit_Map_Stats=Hit_Map_Stats.rename(columns={PM.z: "No_Plates",PM.Hit_ID:"No_Hits"})
            print(UF.TimeStamp(),bcolors.WARNING+'THe number of problematic tracks is '+ str(len(Hit_Map_Stats[Hit_Map_Stats.No_Hits != Hit_Map_Stats.No_Plates]))+bcolors.ENDC)
+           print(len(Hit_Map_Stats))
            exit()
            Hit_Map=pd.merge(Hit_Map,)
            print(Hit_Map_Stats)
