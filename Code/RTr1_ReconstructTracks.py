@@ -504,7 +504,7 @@ while Status<len(Program):
            for bth in Bad_Tracks_Head:
                if len(bth[2])==1:
                    print(bth[2])
-           print(Bad_Tracks_Head)
+           #print(Bad_Tracks_Head)
            exit()
 
            # Data.drop([RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID'],axis=1,inplace=True)
