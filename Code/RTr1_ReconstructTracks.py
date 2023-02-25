@@ -471,7 +471,7 @@ while Status<len(Program):
            Ini_No_Tracks=len(Hit_Map_Stats)
            print(UF.TimeStamp(),bcolors.WARNING+'The initial number of tracks is '+ str(Ini_No_Tracks)+bcolors.ENDC)
            Hit_Map_Stats=Hit_Map_Stats.rename(columns={PM.z: "No_Plates",PM.Hit_ID:"No_Hits"}) #Renaming the columns so they don't interfere once we join it back to the hit map
-           Hit_Map_Stats=Hit_Map_Stats[Hit_Map.No_Plates >= PM.MinHitsTrack]
+           Hit_Map_Stats=Hit_Map_Stats[Hit_Map_Stats.No_Plates >= PM.MinHitsTrack]
            Prop_No_Tracks=len(Hit_Map_Stats)
            print(UF.TimeStamp(),bcolors.WARNING+'After dropping single hit tracks, left'+ str(Prop_No_Tracks)+' tracks...'+bcolors.ENDC)
            Hit_Map=pd.merge(Hit_Map,Hit_Map_Stats,how='inner',on = [RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID']) #Join back to the hit map
