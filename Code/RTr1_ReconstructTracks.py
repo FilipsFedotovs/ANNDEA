@@ -467,8 +467,12 @@ while Status<len(Program):
            Hit_Map=Hit_Map.dropna()
            Hit_Map_Stats=Hit_Map[[RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID',PM.z,PM.Hit_ID]]
            Hit_Map_Stats=Hit_Map_Stats.groupby([RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID']).agg({PM.z:pd.Series.nunique,PM.Hit_ID: pd.Series.nunique}).reset_index()
-           print(Hit_Map_Stats)
+           Hit_Map_Stats=Hit_Map_Stats.rename(columns={PM.z: "No_Plates",PM.Hit_ID:"No_Hits"})
+           print(UF.TimeStamp(),bcolors.WARNING+'THe number of problematic tracks is '+ str(len(Hit_Map_Stats[Hit_Map_Stats.No_Hits != Hit_Map_Stats.No_Plates]))+bcolors.ENDC)
            exit()
+           Hit_Map=pd.merge(Hit_Map,)
+           print(Hit_Map_Stats)
+
            # Data.drop([RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID'],axis=1,inplace=True)
            # New_Data=New_Data.dropna()
            # New_Data=New_Data.sort_values([RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID',PM.z],ascending=[1,1,1])
