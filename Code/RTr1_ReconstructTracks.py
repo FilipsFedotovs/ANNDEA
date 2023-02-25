@@ -543,9 +543,9 @@ while Status<len(Program):
                        z.append(k[2])
                    print(bth)
                    print(x,y,z)
-                   print(np.polyfit(z,x,2)[0])
+                   print(np.polyfit(z,x,2))
                    exit()
-                   
+
                    tx=np.polyfit(z,x,2)[0]
                    ax=np.polyfit(z,x,2)[1]
                    ty=np.polyfit(z,y,1)[0]
