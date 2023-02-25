@@ -546,18 +546,22 @@ while Status<len(Program):
                    print(np.polyfit(z,x,2))
                    exit()
 
-                   tx=np.polyfit(z,x,2)[0]
-                   ax=np.polyfit(z,x,2)[1]
-                   ty=np.polyfit(z,y,1)[0]
-                   ay=np.polyfit(z,y,1)[1]
+                   t1x=np.polyfit(z,x,2)[0]
+                   t2x=np.polyfit(z,x,2)[1]
+                   ax=np.polyfit(z,x,2)[2]
+
+                   t1y=np.polyfit(z,y,2)[0]
+                   t2y=np.polyfit(z,y,2)[1]
+                   ay=np.polyfit(z,y,2)[2]
+
                    bth.append(ax) #Append x intercept
-                   bth.append(tx) #Append x slope
-                   bth.append(0) #Append a placeholder slope (for polynomial case)
+                   bth.append(t1x) #Append x slope
+                   bth.append(t2x) #Append a placeholder slope (for polynomial case)
                    bth.append(ay) #Append x intercept
-                   bth.append(ty) #Append x slope
-                   bth.append(0) #Append a placeholder slope (for polynomial case)
+                   bth.append(t1y) #Append x slope
+                   bth.append(t2y) #Append a placeholder slope (for polynomial case)
                    del(bth[2])
-           #print(Bad_Tracks_Head)
+           print(Bad_Tracks_Head)
            exit()
 
            # Data.drop([RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID'],axis=1,inplace=True)
