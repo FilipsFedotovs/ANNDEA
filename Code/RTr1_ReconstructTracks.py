@@ -509,15 +509,21 @@ while Status<len(Program):
                    ax=x-tx*z
                    bth.append(ax) #Append x intercept
                    bth.append(tx) #Append x slope
-                   bth.append('N/A') #Append a placeholder slope (for polynomial case)
+                   bth.append(0) #Append a placeholder slope (for polynomial case)
                    y=bth[2][0][1]
                    ty=bth[2][0][4]
                    ay=y-ty*z
                    bth.append(ay) #Append x intercept
                    bth.append(ty) #Append x slope
-                   bth.append('N/A') #Append a placeholder slope (for polynomial case)
+                   bth.append(0) #Append a placeholder slope (for polynomial case)
                    del(bth[2])
-                   print(bth)
+               elif len(bth[2])==2:
+                   x,y,z=[],[],[]
+                   x=[bth[2][0][0],bth[2][1][0]]
+                   y=[bth[2][0][1],bth[2][1][1]]
+                   z=[bth[2][0][2],bth[2][1][2]]
+                   print(bth[2])
+                   print(x,y,z)
                    exit()
            #print(Bad_Tracks_Head)
            exit()
