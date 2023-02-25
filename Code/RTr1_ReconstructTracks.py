@@ -465,7 +465,9 @@ while Status<len(Program):
            print(UF.TimeStamp(),'Identifying problematic tracks where thera are more than one hit per plate...',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
            Hit_Map=Data[[RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID',PM.x,PM.y,PM.z,PM.Hit_ID]]
            Hit_Map=Hit_Map.dropna()
-           print(Hit_Map)
+           Hit_Map_Stats=Hit_Map[[RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID',PM.z,PM.Hit_ID]]
+           Hit_Map_Stats=Hit_Map_Stats.groupby([RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID']).agg({PM.z:'sum',PM.Hit_ID: pd.Series.nunique}).reset_index()
+           print(Hit_Map_Stats)
            exit()
            # Data.drop([RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID'],axis=1,inplace=True)
            # New_Data=New_Data.dropna()
