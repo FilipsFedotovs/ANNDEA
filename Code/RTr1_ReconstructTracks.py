@@ -488,9 +488,12 @@ while Status<len(Program):
            Bad_Track_Pool=[]
            print(Bad_Tracks_Head)
            print(Bad_Tracks)
-           # for bt in Bad_Tracks:
-           #     for btc in Bad_Tracks
-
+           for bth in Bad_Tracks_Head:
+               bth.insert([])
+               for bt in Bad_Tracks:
+                   if (bth[0]==bt[0] and bth[1]==bt[1]):
+                      bth[2].append(bt[2:])
+           print(Bad_Tracks_Head)
            exit()
 
            # Data.drop([RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID'],axis=1,inplace=True)
