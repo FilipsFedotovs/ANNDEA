@@ -487,8 +487,6 @@ while Status<len(Program):
            Bad_Tracks_Stats=Bad_Tracks_Stats.rename(columns={PM.Hit_ID: "Problem"}) #Renaming the columns so they don't interfere once we join it back to the hit map
            Bad_Tracks=pd.merge(Bad_Tracks,Bad_Tracks_Stats,how='inner',on = [RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID',PM.z])
 
-           print(Bad_Tracks)
-           exit()
 
            Bad_Tracks_Head=Bad_Tracks[[RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID']]
            Bad_Tracks_Head.drop_duplicates(inplace=True)
@@ -500,8 +498,9 @@ while Status<len(Program):
                bth.append([])
                for bt in Bad_Tracks:
                    if (bth[0]==bt[0] and bth[1]==bt[1]):
-                      print(Bad_Tracks.index(bt))
-                      bth[2].append(bt[2:-1])
+                      print(bt)
+                      exit()
+                      bth[2].append(bt[2:])
            print(Bad_Tracks_Head)
            exit()
 
