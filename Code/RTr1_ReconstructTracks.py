@@ -480,6 +480,7 @@ while Status<len(Program):
            print(Good_Tracks)
            Bad_Tracks=Hit_Map[Hit_Map.No_Plates < Hit_Map.No_Hits] #These are the bad guys. We need to remove this extra hits
            Bad_Tracks=Bad_Tracks[[RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID',PM.x,PM.y,PM.z,PM.tx,PM.ty,PM.Hit_ID]]
+           Bad_Tracks=Bad_Tracks.values.to_list()
            print(Bad_Tracks)
            exit()
 
