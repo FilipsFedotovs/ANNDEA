@@ -532,10 +532,29 @@ while Status<len(Program):
                    bth.append(ay) #Append x intercept
                    bth.append(ty) #Append x slope
                    bth.append(0) #Append a placeholder slope (for polynomial case)
-                   print(bth)
                    del(bth[2])
+               else:
+                   x,y,z=[],[],[]
+                   for i in bth[2]:
+                       x.append(i[0])
+                   for j in bth[2]:
+                       y.append(j[1])
+                   for k in bth[2]:
+                       z.append(k[2])
                    print(bth)
+                   print(x,y,z)
                    exit()
+                   tx=np.polyfit(z,x,1)[0]
+                   ax=np.polyfit(z,x,1)[1]
+                   ty=np.polyfit(z,y,1)[0]
+                   ay=np.polyfit(z,y,1)[1]
+                   bth.append(ax) #Append x intercept
+                   bth.append(tx) #Append x slope
+                   bth.append(0) #Append a placeholder slope (for polynomial case)
+                   bth.append(ay) #Append x intercept
+                   bth.append(ty) #Append x slope
+                   bth.append(0) #Append a placeholder slope (for polynomial case)
+                   del(bth[2])
            #print(Bad_Tracks_Head)
            exit()
 
