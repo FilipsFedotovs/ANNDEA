@@ -471,6 +471,7 @@ while Status<len(Program):
            Hit_Map=Data[[RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID',PM.x,PM.y,PM.z,PM.Hit_ID]]
            print(Hit_Map)
            print(CutData)
+           print(OtherData)
            exit()
            # Data.drop([RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID'],axis=1,inplace=True)
            # New_Data=New_Data.dropna()
