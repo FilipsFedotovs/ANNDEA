@@ -491,12 +491,12 @@ while Status<len(Program):
            Bad_Tracks_Head=Bad_Tracks[[RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID']]
            Bad_Tracks_Head.drop_duplicates(inplace=True)
            Bad_Tracks.sort_values([RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID',PM.z],ascending=[0,0,1],inplace=True)
-           Bad_Tracks=Bad_Tracks.values.tolist() #I find it is much easier to deal with tracks in list format when it comes to fitting
+           Bad_Tracks_List=Bad_Tracks.values.tolist() #I find it is much easier to deal with tracks in list format when it comes to fitting
            Bad_Tracks_Head=Bad_Tracks_Head.values.tolist()
            Bad_Track_Pool=[]
            for bth in Bad_Tracks_Head:
                bth.append([])
-               for bt in Bad_Tracks:
+               for bt in Bad_Tracks_List:
                    if (bth[0]==bt[0] and bth[1]==bt[1]):
                       if bt[8]==1:
                          bth[2].append(bt[2:-2])
@@ -557,6 +557,7 @@ while Status<len(Program):
                    bth.append(t1y) #Append x slope
                    bth.append(t2y) #Append a placeholder slope (for polynomial case)
                    del(bth[2])
+           Bad_Tracks_Head=pd.DataFrame(Bad_Tracks_Head, columns = [RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID','ax','t1x','t2x','ay','ty1','ty2'])
            print(Bad_Tracks_Head)
            exit()
 
