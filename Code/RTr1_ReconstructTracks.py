@@ -464,6 +464,21 @@ while Status<len(Program):
             Data=pd.concat([CutData,OtherData]) #If we slice the data we Reconstructed and Unreconstructed subset of the brick separately (attach reconstructed hits to the selected volume, leave the rest unaffected).
            else:
             Data=CutData
+
+           #It was discovered that the output is not perfect: while the hit fidelity is achieved we don't have a full plate hit fidelity for a given track. It is still possible for a track to have multiple hits per plate.
+           #In order to fix it we need to apply some additional logic to those problematic tracks.
+           print(UF.TimeStamp(),'Identifying problematic tracks where thera are more than one hit per plate...',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
+           Hit_Map=Data[[RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID',PM.x,PM.y,PM.z,PM.Hit_ID]]
+           print(Hit_Map)
+           exit()
+           # Data.drop([RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID'],axis=1,inplace=True)
+           # New_Data=New_Data.dropna()
+           # New_Data=New_Data.sort_values([RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID',PM.z],ascending=[1,1,1])
+           # New_Data[RecBatchID+'_Brick_ID'] = New_Data[RecBatchID+'_Brick_ID'].astype(str)
+           # New_Data[RecBatchID+'_Track_ID'] = New_Data[RecBatchID+'_Track_ID'].astype(str)
+           # New_Data['Rec_Seg_ID'] = New_Data[RecBatchID+'_Brick_ID'] + '-' + New_Data[RecBatchID+'_Track_ID']
+
+
            output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_RTr_OUTPUT.csv' #Final output. We can use this file for further operations
            Data.to_csv(output_file_location,index=False)
            print(UF.TimeStamp(), bcolors.OKGREEN+"The tracked data has been written to"+bcolors.ENDC, bcolors.OKBLUE+output_file_location+bcolors.ENDC)
