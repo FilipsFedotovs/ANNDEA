@@ -524,7 +524,8 @@ while Status<len(Program):
                    z=[bth[2][0][2],bth[2][1][2]]
                    print(bth[2])
                    print(x,y,z)
-                   print(np.polyfit(x,z,1))
+                   print(np.polyfit([1,3],[0,3],1))
+
                    exit()
            #print(Bad_Tracks_Head)
            exit()
