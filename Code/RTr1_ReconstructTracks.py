@@ -542,12 +542,12 @@ while Status<len(Program):
                    for k in bth[2]:
                        z.append(k[2])
 
-                   t1x=np.polyfit(z,x,2)[0]
-                   t2x=np.polyfit(z,x,2)[1]
+                   t2x=np.polyfit(z,x,2)[0]
+                   t1x=np.polyfit(z,x,2)[1]
                    ax=np.polyfit(z,x,2)[2]
 
-                   t1y=np.polyfit(z,y,2)[0]
-                   t2y=np.polyfit(z,y,2)[1]
+                   t2y=np.polyfit(z,y,2)[0]
+                   t1y=np.polyfit(z,y,2)[1]
                    ay=np.polyfit(z,y,2)[2]
 
                    bth.append(ax) #Append x intercept
