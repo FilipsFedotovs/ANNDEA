@@ -558,7 +558,8 @@ while Status<len(Program):
                    bth.append(t2y) #Append a placeholder slope (for polynomial case)
                    del(bth[2])
            Bad_Tracks_Head=pd.DataFrame(Bad_Tracks_Head, columns = [RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID','ax','t1x','t2x','ay','ty1','ty2'])
-           print(Bad_Tracks_Head)
+           Bad_Tracks=pd.merge(Bad_Tracks,Bad_Tracks_Head,how='inner',on = [RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID'])
+           print(Bad_Tracks)
            exit()
 
            # Data.drop([RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID'],axis=1,inplace=True)
