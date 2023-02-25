@@ -516,7 +516,7 @@ while Status<len(Program):
                    bth.append(ay) #Append x intercept
                    bth.append(ty) #Append x slope
                    bth.append('N/A') #Append a placeholder slope (for polynomial case)
-                   print(bth[2])
+                   print(bth)
                    exit()
            #print(Bad_Tracks_Head)
            exit()
