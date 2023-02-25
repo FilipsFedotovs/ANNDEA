@@ -463,16 +463,15 @@ while Status<len(Program):
            #It was discovered that the output is not perfect: while the hit fidelity is achieved we don't have a full plate hit fidelity for a given track. It is still possible for a track to have multiple hits per plate.
            #In order to fix it we need to apply some additional logic to those problematic tracks.
            print(UF.TimeStamp(),'Identifying problematic tracks where thera are more than one hit per plate...',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
-           Hit_Map=Data[[RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID',PM.x,PM.y,PM.z,PM.Hit_ID]]
-           Hit_Map=Hit_Map.dropna()
-           Hit_Map_Stats=Hit_Map[[RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID',PM.z,PM.Hit_ID]]
-           Hit_Map_Stats=Hit_Map_Stats.groupby([RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID']).agg({PM.z:pd.Series.nunique,PM.Hit_ID: pd.Series.nunique}).reset_index()
-           Hit_Map_Stats=Hit_Map_Stats.rename(columns={PM.z: "No_Plates",PM.Hit_ID:"No_Hits"})
-           print(UF.TimeStamp(),bcolors.WARNING+'THe number of problematic tracks is '+ str(len(Hit_Map_Stats[Hit_Map_Stats.No_Hits != Hit_Map_Stats.No_Plates]))+bcolors.ENDC)
-           print(len(Hit_Map_Stats))
+           Hit_Map=Data[[RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID',PM.x,PM.y,PM.z,PM.Hit_ID]] #Separating the hit map
+           Hit_Map=Hit_Map.dropna() #Remove unreconstructing hits - we are not interested in them atm
+           Hit_Map_Stats=Hit_Map[[RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID',PM.z,PM.Hit_ID]] #Calculating the stats
+           Hit_Map_Stats=Hit_Map_Stats.groupby([RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID']).agg({PM.z:pd.Series.nunique,PM.Hit_ID: pd.Series.nunique}).reset_index() #Calculate the number fo unique plates and hits
+           Hit_Map_Stats=Hit_Map_Stats.rename(columns={PM.z: "No_Plates",PM.Hit_ID:"No_Hits"}) #Renaming the columns so they don't interfere once we join it back to the hit map
+           print(UF.TimeStamp(),bcolors.WARNING+'The number of problematic tracks is '+ str(len(Hit_Map_Stats[Hit_Map_Stats.No_Hits != Hit_Map_Stats.No_Plates]))+bcolors.ENDC)
+           Hit_Map=pd.merge(Hit_Map,Hit_Map_Stats,how='left',on = [RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID']) #Join back to the hit map
+           print(Hit_Map)
            exit()
-           Hit_Map=pd.merge(Hit_Map,)
-           print(Hit_Map_Stats)
 
            # Data.drop([RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID'],axis=1,inplace=True)
            # New_Data=New_Data.dropna()
