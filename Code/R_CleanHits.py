@@ -120,6 +120,8 @@ with alive_bar(len(Bad_Tracks_Head),force_tty=True, title='Building track repres
                    else:
                        continue
                    bt+=1
+
+
 with alive_bar(len(Bad_Tracks_Head),force_tty=True, title='Fitting the tracks...') as bar:
  for bth in Bad_Tracks_Head:
    bar()
@@ -154,6 +156,9 @@ with alive_bar(len(Bad_Tracks_Head),force_tty=True, title='Fitting the tracks...
        bth.append(ty) #Append x slope
        bth.append(0) #Append a placeholder slope (for polynomial case)
        del(bth[2])
+   elif len(bth[2])==0:
+       del(bth)
+       continue
    else: #Three pr more trusted hits - In these cases whe we fit a polynomial of the second degree and the equations of the line are x=ax+(t1x*z)+(t2x*z*z) and y=ay+(t1y*z)+(t2y*z*z)
        x,y,z=[],[],[]
        for i in bth[2]:
@@ -162,8 +167,6 @@ with alive_bar(len(Bad_Tracks_Head),force_tty=True, title='Fitting the tracks...
            y.append(j[1])
        for k in bth[2]:
            z.append(k[2])
-       print(x)
-       b=input()
        t2x=np.polyfit(z,x,2)[0]
        t1x=np.polyfit(z,x,2)[1]
        ax=np.polyfit(z,x,2)[2]
