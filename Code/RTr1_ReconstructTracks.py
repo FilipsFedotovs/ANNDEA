@@ -461,6 +461,7 @@ while Status<len(Program):
            Data=CutData
 
            print(Data)
+           exit()
            #It was discovered that the output is not perfect: while the hit fidelity is achieved we don't have a full plate hit fidelity for a given track. It is still possible for a track to have multiple hits per plate.
            #In order to fix it we need to apply some additional logic to those problematic tracks.
            print(UF.TimeStamp(),'Identifying problematic tracks where there is more than one hit per plate...',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
