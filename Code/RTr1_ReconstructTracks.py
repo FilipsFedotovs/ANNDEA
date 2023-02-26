@@ -566,7 +566,7 @@ while Status<len(Program):
            Bad_Tracks['d_x']=Bad_Tracks[PM.x]-Bad_Tracks['new_x']
            Bad_Tracks['d_y']=Bad_Tracks[PM.y]-Bad_Tracks['new_y']
            Bad_Tracks['d_r']=np.sqrt(Bad_Tracks['d_x']**2+Bad_Tracks['d_y']**2)
-           print(Bad_Tracks[[RecBatchID+'_Track_ID',PM.z,PM.y,'new_y','new_x','d_x','d_y','d_r']].to_string())
+           print(Bad_Tracks[[RecBatchID+'_Track_ID',PM.z,PM.y,'new_y','d_y',PM.x,'new_x','d_x','d_r']].to_string())
            exit()
 
            # Data.drop([RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID'],axis=1,inplace=True)
