@@ -495,15 +495,17 @@ while Status<len(Program):
            Bad_Tracks_List=Bad_Tracks.values.tolist() #I find it is much easier to deal with tracks in list format when it comes to fitting
            Bad_Tracks_Head=Bad_Tracks_Head.values.tolist()
            Bad_Track_Pool=[]
+
+           #Bellow we build the track representatation that we can use to fit slopes
            for bth in Bad_Tracks_Head:
                bth.append([])
                for bt in Bad_Tracks_List:
                    if (bth[0]==bt[0] and bth[1]==bt[1]):
-                      if bt[8]==1:
+                      if bt[8]==1: #We only build polynomials for hits in a track that do not have duplicates - these are 'trusted hits'
                          bth[2].append(bt[2:-2])
 
            for bth in Bad_Tracks_Head:
-               if len(bth[2])==1: #In this cases we take only tx and ty slopes
+               if len(bth[2])==1: #Only one trusted hit - In these cases whe we take only tx and ty slopes of the single base track. Polynomial of the first degree and the equations of the line are x=ax+tx*z and y=ay+ty*z
                    x=bth[2][0][0]
                    z=bth[2][0][2]
                    tx=bth[2][0][3]
@@ -518,7 +520,7 @@ while Status<len(Program):
                    bth.append(ty) #Append x slope
                    bth.append(0) #Append a placeholder slope (for polynomial case)
                    del(bth[2])
-               elif len(bth[2])==2:
+               elif len(bth[2])==2: #Two trusted hits - In these cases whe we fit a polynomial of the first degree and the equations of the line are x=ax+tx*z and y=ay+ty*z
                    x,y,z=[],[],[]
                    x=[bth[2][0][0],bth[2][1][0]]
                    y=[bth[2][0][1],bth[2][1][1]]
@@ -534,7 +536,7 @@ while Status<len(Program):
                    bth.append(ty) #Append x slope
                    bth.append(0) #Append a placeholder slope (for polynomial case)
                    del(bth[2])
-               else:
+               else: #Three pr more trusted hits - In these cases whe we fit a polynomial of the second degree and the equations of the line are x=ax+(t1x*z)+(t2x*z*z) and y=ay+(t1y*z)+(t2y*z*z)
                    x,y,z=[],[],[]
                    for i in bth[2]:
                        x.append(i[0])
@@ -558,34 +560,31 @@ while Status<len(Program):
                    bth.append(t1y) #Append x slope
                    bth.append(t2y) #Append a placeholder slope (for polynomial case)
                    del(bth[2])
+
+           #Once we get coefficients for all tracks we convert them back to Pandas dataframe and join back to the data
            Bad_Tracks_Head=pd.DataFrame(Bad_Tracks_Head, columns = [RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID','ax','t1x','t2x','ay','t1y','t2y'])
            Bad_Tracks=pd.merge(Bad_Tracks,Bad_Tracks_Head,how='inner',on = [RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID'])
 
+
+           #Calculating x and y coordinates of the fitted line for all plates in the track
            Bad_Tracks['new_x']=Bad_Tracks['ax']+(Bad_Tracks[PM.z]*Bad_Tracks['t1x'])+((Bad_Tracks[PM.z]**2)*Bad_Tracks['t2x'])
            Bad_Tracks['new_y']=Bad_Tracks['ay']+(Bad_Tracks[PM.z]*Bad_Tracks['t1y'])+((Bad_Tracks[PM.z]**2)*Bad_Tracks['t2y'])
 
+           #Calculating how far hits deviate from the fit polynomial
            Bad_Tracks['d_x']=Bad_Tracks[PM.x]-Bad_Tracks['new_x']
            Bad_Tracks['d_y']=Bad_Tracks[PM.y]-Bad_Tracks['new_y']
-           Bad_Tracks['d_r']=np.sqrt(Bad_Tracks['d_x']**2+Bad_Tracks['d_y']**2)
+           Bad_Tracks['d_r']=np.sqrt(Bad_Tracks['d_x']**2+Bad_Tracks['d_y']**2) #Absolute distance
            Bad_Tracks=Bad_Tracks[[RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID',PM.z,PM.Hit_ID,'d_r']]
 
+           #Sort the tracks and their hits by Track ID, Plate and distance to the perfect line
            Bad_Tracks.sort_values([RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID',PM.z,'d_r'],ascending=[0,0,1,1],inplace=True)
+
+           #If there are two hits per plate we will keep the one which is closer to the line
            Bad_Tracks.drop_duplicates(subset=[RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID',PM.z],keep='first',inplace=True)
            Bad_Tracks=Bad_Tracks[[RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID',PM.Hit_ID]]
-           Good_Tracks=pd.concat([Good_Tracks,Bad_Tracks])
+           Good_Tracks=pd.concat([Good_Tracks,Bad_Tracks]) #Combine all ANNDEA tracks together
 
-
-           Data=pd.merge(Data,Good_Tracks,how='left', on=[PM.Hit_ID])
-
-           print(Data)
-           exit()
-           # Data.drop([RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID'],axis=1,inplace=True)
-           # New_Data=New_Data.dropna()
-           # New_Data=New_Data.sort_values([RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID',PM.z],ascending=[1,1,1])
-           # New_Data[RecBatchID+'_Brick_ID'] = New_Data[RecBatchID+'_Brick_ID'].astype(str)
-           # New_Data[RecBatchID+'_Track_ID'] = New_Data[RecBatchID+'_Track_ID'].astype(str)
-           # New_Data['Rec_Seg_ID'] = New_Data[RecBatchID+'_Brick_ID'] + '-' + New_Data[RecBatchID+'_Track_ID']
-
+           Data=pd.merge(Data,Good_Tracks,how='left', on=[PM.Hit_ID]) #Remapp corrected ANNDEA Tracks back to the main data
 
            output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_RTr_OUTPUT.csv' #Final output. We can use this file for further operations
            Data.to_csv(output_file_location,index=False)
