@@ -120,9 +120,6 @@ with alive_bar(len(Bad_Tracks_Head),force_tty=True, title='Building track repres
                    else:
                        continue
                    bt+=1
-print(Bad_Tracks_Head)
-print(Bad_Tracks_Head[0])
-exit()
 with alive_bar(len(Bad_Tracks_Head),force_tty=True, title='Fitting the tracks...') as bar:
  for bth in Bad_Tracks_Head:
    bar()
@@ -165,7 +162,8 @@ with alive_bar(len(Bad_Tracks_Head),force_tty=True, title='Fitting the tracks...
            y.append(j[1])
        for k in bth[2]:
            z.append(k[2])
-
+       print(x)
+       b=input()
        t2x=np.polyfit(z,x,2)[0]
        t1x=np.polyfit(z,x,2)[1]
        ax=np.polyfit(z,x,2)[2]
