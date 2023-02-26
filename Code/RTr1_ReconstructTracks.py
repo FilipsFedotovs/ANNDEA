@@ -460,6 +460,7 @@ while Status<len(Program):
            CutData.drop(['HitID'],axis=1,inplace=True) #Make sure that HitID is not the Hit ID name in the raw data.
            Data=CutData
 
+           print(Data)
            #It was discovered that the output is not perfect: while the hit fidelity is achieved we don't have a full plate hit fidelity for a given track. It is still possible for a track to have multiple hits per plate.
            #In order to fix it we need to apply some additional logic to those problematic tracks.
            print(UF.TimeStamp(),'Identifying problematic tracks where there is more than one hit per plate...',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
@@ -567,13 +568,14 @@ while Status<len(Program):
            Bad_Tracks['d_y']=Bad_Tracks[PM.y]-Bad_Tracks['new_y']
            Bad_Tracks['d_r']=np.sqrt(Bad_Tracks['d_x']**2+Bad_Tracks['d_y']**2)
            Bad_Tracks=Bad_Tracks[[RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID',PM.z,PM.Hit_ID,'d_r']]
-           print(Bad_Tracks)
+
            Bad_Tracks.sort_values([RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID',PM.z,'d_r'],ascending=[0,0,1,1],inplace=True)
            Bad_Tracks.drop_duplicates(subset=[RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID',PM.z],keep='first',inplace=True)
            Bad_Tracks=Bad_Tracks[[RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID',PM.Hit_ID]]
            Good_Tracks=pd.concat([Good_Tracks,Bad_Tracks])
-           print(Good_Tracks)
-           exit()
+
+
+           Data=pd.merge(Data,New_Data,how='left', on=[PM.Hit_ID])
 
            # Data.drop([RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID'],axis=1,inplace=True)
            # New_Data=New_Data.dropna()
