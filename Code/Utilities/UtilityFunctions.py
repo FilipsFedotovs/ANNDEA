@@ -408,9 +408,7 @@ class EMO:
                   __Hits[0]=float(__Hits[0])-__FinX
                   __Hits[1]=float(__Hits[1])-__FinY
                   __Hits[2]=float(__Hits[2])-__FinZ
-
           if MM.ModelArchitecture=='CNN-E':
-
               #Lon Rotate x
               __Track=__TempTrack[self.LagTrackInd]
               __Vardiff=float(__Track[len(__Track)-1][0])
@@ -418,8 +416,11 @@ class EMO:
               __vector_1 = [__Zdiff, 0]
               __vector_2 = [__Zdiff, __Vardiff]
               __Angle=EMO.angle_between(__vector_1, __vector_2)
+
+
               if np.isnan(__Angle)==True:
                         __Angle=0.0
+
               for __Tracks in __TempTrack:
                 for __hits in __Tracks:
                      __Z=float(__hits[2])
@@ -461,7 +462,6 @@ class EMO:
                      __Y=float(__hits[1])
                      __hits[0]=(__X*math.cos(__Angle)) - (__Y * math.sin(__Angle))
                      __hits[1]=(__X*math.sin(__Angle)) + (__Y * math.cos(__Angle))
-
               __X=[]
               __Y=[]
               __Z=[]
@@ -495,6 +495,7 @@ class EMO:
                      __hits[0]=int(round(__hits[0]/__min_scale,0))
                      __hits[1]=int(round(__hits[1]/__min_scale,0))
                      __hits[2]=int(round(__hits[2]/__min_scale,0))
+
           else:
             for __Tracks in __TempTrack:
                   for __Hits in __Tracks:
@@ -710,7 +711,10 @@ class EMO:
           import matplotlib as plt
           from matplotlib.colors import LogNorm
           from matplotlib import pyplot as plt
-          plt.title('Seed '+':'.join(self.Header))
+
+          plt.title('Seed:'.join(self.Header))
+          if hasattr(self,'Label'):
+              plt.suptitle('Label:'+str(self.Label))
           plt.xlabel('Z [microns /'+str(int(self.Resolution))+']')
           plt.ylabel('X [microns /'+str(int(self.Resolution))+']')
           __image=plt.imshow(__Matrix,cmap='gray_r',extent=[0,self.bZ,self.bX,-self.bX])

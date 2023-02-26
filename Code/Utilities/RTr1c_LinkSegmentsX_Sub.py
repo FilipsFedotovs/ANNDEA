@@ -1,9 +1,3 @@
-########################################################################################################################
-#######################################  This simple script prepares data for CNN  #####################################
-
-
-
-
 ########################################    Import libraries    ########################################################
 import argparse
 import sys
@@ -128,6 +122,3 @@ output_file_location=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(0)+'/'+pfx+'_
 ZContractedTable.to_csv(output_file_location,index=False)
 print(UF.TimeStamp(),'Output is written to ',output_file_location) #Write the output
 exit()
-
-
-
