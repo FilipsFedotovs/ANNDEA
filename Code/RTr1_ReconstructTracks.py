@@ -462,7 +462,7 @@ while Status<len(Program):
 
            #It was discovered that the output is not perfect: while the hit fidelity is achieved we don't have a full plate hit fidelity for a given track. It is still possible for a track to have multiple hits at one plate.
            #In order to fix it we need to apply some additional logic to those problematic tracks.
-           print(UF.TimeStamp(),'Identifying problematic tracks where there is more than one hit per plate...',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
+           print(UF.TimeStamp(),'Identifying problematic tracks where there is more than one hit per plate...')
            Hit_Map=Data[[RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID',PM.x,PM.y,PM.z,PM.tx,PM.ty,PM.Hit_ID]] #Separating the hit map
            Data.drop([RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID'],axis=1,inplace=True) #Remove the ANNDEA tracking info from the main data
            Hit_Map=Hit_Map.dropna() #Remove unreconstructing hits - we are not interested in them atm
@@ -503,8 +503,9 @@ while Status<len(Program):
                    if (bth[0]==bt[0] and bth[1]==bt[1]):
                       if bt[8]==1: #We only build polynomials for hits in a track that do not have duplicates - these are 'trusted hits'
                          bth[2].append(bt[2:-2])
-
-           for bth in Bad_Tracks_Head:
+           with alive_bar(len(Bad_Tracks_Head),force_tty=True, title='Fitting the tracks...') as bar:
+            for bth in Bad_Tracks_Head:
+               bar()
                if len(bth[2])==1: #Only one trusted hit - In these cases whe we take only tx and ty slopes of the single base track. Polynomial of the first degree and the equations of the line are x=ax+tx*z and y=ay+ty*z
                    x=bth[2][0][0]
                    z=bth[2][0][2]
@@ -561,6 +562,7 @@ while Status<len(Program):
                    bth.append(t2y) #Append a placeholder slope (for polynomial case)
                    del(bth[2])
 
+           print(UF.TimeStamp(),'Removing problematic hits...')
            #Once we get coefficients for all tracks we convert them back to Pandas dataframe and join back to the data
            Bad_Tracks_Head=pd.DataFrame(Bad_Tracks_Head, columns = [RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID','ax','t1x','t2x','ay','t1y','t2y'])
            Bad_Tracks=pd.merge(Bad_Tracks,Bad_Tracks_Head,how='inner',on = [RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID'])
