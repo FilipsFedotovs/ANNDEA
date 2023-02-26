@@ -105,17 +105,19 @@ with alive_bar(len(Bad_Tracks_Head),force_tty=True, title='Building track repres
             for bth in Bad_Tracks_Head:
                bar()
                bth.append([])
-               trigger=False
-               for bt in Bad_Tracks_List:
-
-                   if (bth[0]==bt[0] and bth[1]==bt[1]):
-                      trigger=True
-                      if bt[8]==1: #We only build polynomials for hits in a track that do not have duplicates - these are 'trusted hits'
-                         bth[2].append(bt[2:-2])
-                   elif trigger:
-                       break
-                   else:
-                       continue
+               bt=0
+               while bt<(len(Bad_Tracks_List)):
+                   if (bth[0]==Bad_Tracks_List[bt][0] and bth[1]==Bad_Tracks_List[bt][1]):
+                      if Bad_Tracks_List[bt][8]==1: #We only build polynomials for hits in a track that do not have duplicates - these are 'trusted hits'
+                         bth[2].append(Bad_Tracks_List[bt][2:-2])
+                      del Bad_Tracks_List[bt]
+                      bt-=1
+                      print('Flag')
+                   print(len(Bad_Tracks_List))
+                   print(bt)
+                   bt+=1
+                   print(bt)
+                   x=input()
 with alive_bar(len(Bad_Tracks_Head),force_tty=True, title='Fitting the tracks...') as bar:
  for bth in Bad_Tracks_Head:
    bar()
