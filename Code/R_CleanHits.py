@@ -120,6 +120,9 @@ with alive_bar(len(Bad_Tracks_Head),force_tty=True, title='Building track repres
                    else:
                        continue
                    bt+=1
+print(Bad_Tracks_Head)
+print(Bad_Tracks_Head[0])
+exit()
 with alive_bar(len(Bad_Tracks_Head),force_tty=True, title='Fitting the tracks...') as bar:
  for bth in Bad_Tracks_Head:
    bar()
