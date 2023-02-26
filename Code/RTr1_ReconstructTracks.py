@@ -568,6 +568,8 @@ while Status<len(Program):
            Bad_Tracks['d_r']=np.sqrt(Bad_Tracks['d_x']**2+Bad_Tracks['d_y']**2)
            Bad_Tracks=Bad_Tracks[[RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID',PM.z,PM.Hit_ID,'d_r']]
            print(Bad_Tracks)
+           Bad_Tracks.sort_values([RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID',PM.z,'d_r'],ascending=[0,0,1,1],inplace=True)
+           print(Bad_Tracks)
            print(Good_Tracks)
            exit()
 
