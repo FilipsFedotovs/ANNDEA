@@ -47,11 +47,11 @@ print(bcolors.HEADER+"##########################################################
 #Setting the parser - this script is usually not run directly, but is used by a Master version Counterpart that passes the required arguments
 parser = argparse.ArgumentParser(description='This script prepares training data for training the tracking model')
 parser.add_argument('--RecBatchID',help="Give this reconstruction batch an ID", default='Test_Batch')
-
+parser.add_argument('--f',help="Please enter the full path to the file with track reconstruction", default='/afs/cern.ch/work/f/ffedship/public/SHIP/Source_Data/SHIP_Emulsion_FEDRA_Raw_UR.csv')
 ######################################## Parsing argument values  #############################################################
 args = parser.parse_args()
 RecBatchID=args.RecBatchID
-
+input_file_location=args.f
 
 sys.path.insert(1, AFS_DIR+'/Code/Utilities/')
 import UtilityFunctions as UF #This is where we keep routine utility functions
@@ -62,7 +62,6 @@ import Parameters as PM #This is where we keep framework global parameters
 #Non standard processes (that don't follow the general pattern) have been coded here
 print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
 print(UF.TimeStamp(),bcolors.BOLD+'Stage 3:'+bcolors.ENDC+' Using the results from previous steps to map merged trackIDs to the original reconstruction file')
-input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_RTr_OUTPUT.csv'
 print(UF.TimeStamp(),'Loading the file ',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
 Data=pd.read_csv(input_file_location,header=0)
 #It was discovered that the output is not perfect: while the hit fidelity is achieved we don't have a full plate hit fidelity for a given track. It is still possible for a track to have multiple hits at one plate.
