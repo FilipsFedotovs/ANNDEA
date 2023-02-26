@@ -108,7 +108,7 @@ for bth in Bad_Tracks_Head:
           if bt[8]==1: #We only build polynomials for hits in a track that do not have duplicates - these are 'trusted hits'
              bth[2].append(bt[2:-2])
 with alive_bar(len(Bad_Tracks_Head),force_tty=True, title='Fitting the tracks...') as bar:
-for bth in Bad_Tracks_Head:
+ for bth in Bad_Tracks_Head:
    bar()
    if len(bth[2])==1: #Only one trusted hit - In these cases whe we take only tx and ty slopes of the single base track. Polynomial of the first degree and the equations of the line are x=ax+tx*z and y=ay+ty*z
        x=bth[2][0][0]
