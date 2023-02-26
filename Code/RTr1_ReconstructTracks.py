@@ -571,7 +571,7 @@ while Status<len(Program):
            Bad_Tracks.sort_values([RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID',PM.z,'d_r'],ascending=[0,0,1,1],inplace=True)
            Bad_Tracks.drop_duplicates(subset=[RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID',PM.z],keep='first',inplace=True)
            Bad_Tracks=Bad_Tracks[[RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID',PM.Hit_ID]]
-           print(Bad_Tracks)
+           Good_Tracks=pd.concat([Good_Tracks,Bad_Tracks])
            print(Good_Tracks)
            exit()
 
