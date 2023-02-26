@@ -101,7 +101,9 @@ Bad_Tracks_Head=Bad_Tracks_Head.values.tolist()
 Bad_Track_Pool=[]
 
 #Bellow we build the track representatation that we can use to fit slopes
-for bth in Bad_Tracks_Head:
+with alive_bar(len(Bad_Tracks_Head),force_tty=True, title='Building track representations...') as bar:
+ for bth in Bad_Tracks_Head:
+   bar()
    bth.append([])
    for bt in Bad_Tracks_List:
        if (bth[0]==bt[0] and bth[1]==bt[1]):
@@ -190,7 +192,7 @@ Bad_Tracks.drop_duplicates(subset=[RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID'
 Bad_Tracks=Bad_Tracks[[RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID',PM.Hit_ID]]
 Good_Tracks=pd.concat([Good_Tracks,Bad_Tracks]) #Combine all ANNDEA tracks together
 
-Data=pd.merge(Data,Good_Tracks,how='left', on=[PM.Hit_ID]) #Remapp corrected ANNDEA Tracks back to the main data
+Data=pd.merge(Data,Good_Tracks,how='left', on=[PM.Hit_ID]) #Re-map corrected ANNDEA Tracks back to the main data
 output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_RTr_OUTPUT_CLEANED.csv'
 Data.to_csv(output_file_location,index=False)
 print(UF.TimeStamp(), bcolors.OKGREEN+"The cleaned tracked data has been written to"+bcolors.ENDC, bcolors.OKBLUE+output_file_location+bcolors.ENDC)

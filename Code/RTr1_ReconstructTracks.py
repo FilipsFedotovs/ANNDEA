@@ -497,7 +497,9 @@ while Status<len(Program):
            Bad_Track_Pool=[]
 
            #Bellow we build the track representatation that we can use to fit slopes
-           for bth in Bad_Tracks_Head:
+           with alive_bar(len(Bad_Tracks_Head),force_tty=True, title='Building track representations...') as bar:
+            for bth in Bad_Tracks_Head:
+               bar()
                bth.append([])
                for bt in Bad_Tracks_List:
                    if (bth[0]==bt[0] and bth[1]==bt[1]):
