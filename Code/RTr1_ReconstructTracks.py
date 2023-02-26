@@ -355,7 +355,7 @@ def StandardProcess(program,status,freshstart):
 if Mode=='RESET':
     print(UF.TimeStamp(),'Performing the cleanup... ',bcolors.ENDC)
     HTCondorTag="SoftUsed == \"ANNDEA-RTr1a-"+RecBatchID+"\""
-    UF.RecCleanUp(AFS_DIR, EOS_DIR, 'RTr1_'+RecBatchID, ['RTr1a','RTr1b','RTr1c','RTr1d',RecBatchID+'_RTr_OUTPUT.csv'], HTCondorTag)
+    UF.RecCleanUp(AFS_DIR, EOS_DIR, 'RTr1_'+RecBatchID, ['RTr1a','RTr1b','RTr1c','RTr1d',RecBatchID+'_RTr_OUTPUT_CLEANED.csv'], HTCondorTag)
     FreshStart=False
 if Mode=='CLEANUP':
     Status=5
@@ -588,7 +588,7 @@ while Status<len(Program):
 
            Data=pd.merge(Data,Good_Tracks,how='left', on=[PM.Hit_ID]) #Remapp corrected ANNDEA Tracks back to the main data
 
-           output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_RTr_OUTPUT.csv' #Final output. We can use this file for further operations
+           output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_RTr_OUTPUT_CLEANED.csv' #Final output. We can use this file for further operations
            Data.to_csv(output_file_location,index=False)
            print(UF.TimeStamp(), bcolors.OKGREEN+"The tracked data has been written to"+bcolors.ENDC, bcolors.OKBLUE+output_file_location+bcolors.ENDC)
            print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 4 has successfully completed'+bcolors.ENDC)
