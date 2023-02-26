@@ -107,6 +107,8 @@ with alive_bar(len(Bad_Tracks_Head),force_tty=True, title='Building track repres
                bth.append([])
                bt=0
                while bt<(len(Bad_Tracks_List)):
+                   print(bth[0],bth[1])
+                   print(Bad_Tracks_List[bt][0],Bad_Tracks_List[bt][1])
                    if (bth[0]==Bad_Tracks_List[bt][0] and bth[1]==Bad_Tracks_List[bt][1]):
                       if Bad_Tracks_List[bt][8]==1: #We only build polynomials for hits in a track that do not have duplicates - these are 'trusted hits'
                          bth[2].append(Bad_Tracks_List[bt][2:-2])
