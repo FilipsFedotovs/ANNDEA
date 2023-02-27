@@ -202,12 +202,12 @@ if os.path.isfile(Bad_Tracks_CP_File)==False:
 else:
    print(UF.TimeStamp(),'Loading the checkpoint file ',bcolors.OKBLUE+Bad_Tracks_CP_File+bcolors.ENDC)
    Bad_Tracks_Head=pd.read_csv(Bad_Tracks_CP_File,header=0)
-   Bad_Tracks['ax'] = Bad_Tracks['ax'].astype(float)
-   Bad_Tracks['ay'] = Bad_Tracks['ay'].astype(float)
-   Bad_Tracks['t1x'] = Bad_Tracks['t1x'].astype(float)
-   Bad_Tracks['t2x'] = Bad_Tracks['t2x'].astype(float)
-   Bad_Tracks['t1y'] = Bad_Tracks['t1y'].astype(float)
-   Bad_Tracks['t2y'] = Bad_Tracks['t2y'].astype(float)
+   Bad_Tracks_Head['ax'] = Bad_Tracks_Head['ax'].astype(float)
+   Bad_Tracks_Head['ay'] = Bad_Tracks_Head['ay'].astype(float)
+   Bad_Tracks_Head['t1x'] = Bad_Tracks_Head['t1x'].astype(float)
+   Bad_Tracks_Head['t2x'] = Bad_Tracks_Head['t2x'].astype(float)
+   Bad_Tracks_Head['t1y'] = Bad_Tracks_Head['t1y'].astype(float)
+   Bad_Tracks_Head['t2y'] = Bad_Tracks_Head['t2y'].astype(float)
 print(UF.TimeStamp(),'Removing problematic hits...')
 Bad_Tracks=pd.merge(Bad_Tracks,Bad_Tracks_Head,how='inner',on = [RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID'])
 
