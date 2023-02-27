@@ -202,6 +202,7 @@ if os.path.isfile(Bad_Tracks_CP_File)==False:
 else:
    print(UF.TimeStamp(),'Loading the checkpoint file ',bcolors.OKBLUE+Bad_Tracks_CP_File+bcolors.ENDC)
    Bad_Tracks_Head=pd.read_csv(Bad_Tracks_CP_File,header=0)
+   Bad_Tracks_Head=Bad_Tracks_Head[Bad_Tracks_Head.ax != '[]']
    Bad_Tracks_Head['ax'] = Bad_Tracks_Head['ax'].astype(float)
    Bad_Tracks_Head['ay'] = Bad_Tracks_Head['ay'].astype(float)
    Bad_Tracks_Head['t1x'] = Bad_Tracks_Head['t1x'].astype(float)
