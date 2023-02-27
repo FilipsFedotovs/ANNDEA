@@ -200,9 +200,10 @@ if os.path.isfile(Bad_Tracks_CP_File)==False:
     print(UF.TimeStamp(),'Saving the checkpoint file ',bcolors.OKBLUE+Bad_Tracks_CP_File+bcolors.ENDC)
     Bad_Tracks_Head.to_csv(Bad_Tracks_CP_File,index=False)
 else:
-   print(UF.TimeStamp(),'Loadingthe checkpoint file ',bcolors.OKBLUE+Bad_Tracks_CP_File+bcolors.ENDC)
+   print(UF.TimeStamp(),'Loading the checkpoint file ',bcolors.OKBLUE+Bad_Tracks_CP_File+bcolors.ENDC)
    Bad_Tracks_Head=pd.read_csv(Bad_Tracks_CP_File,header=0)
 
+Bad_Tracks_Head.dtypes
 print(UF.TimeStamp(),'Removing problematic hits...')
 Bad_Tracks=pd.merge(Bad_Tracks,Bad_Tracks_Head,how='inner',on = [RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID'])
 
