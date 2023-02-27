@@ -208,12 +208,12 @@ Bad_Tracks=pd.merge(Bad_Tracks,Bad_Tracks_Head,how='inner',on = [RecBatchID+'_Br
 
 
 print(Bad_Tracks)
-exit()
+
 print(UF.TimeStamp(),'Calculating x and y coordinates of the fitted line for all plates in the track...')
 #Calculating x and y coordinates of the fitted line for all plates in the track
 Bad_Tracks['new_x']=Bad_Tracks['ax']+(Bad_Tracks[PM.z]*Bad_Tracks['t1x'])+((Bad_Tracks[PM.z]**2)*Bad_Tracks['t2x'])
 Bad_Tracks['new_y']=Bad_Tracks['ay']+(Bad_Tracks[PM.z]*Bad_Tracks['t1y'])+((Bad_Tracks[PM.z]**2)*Bad_Tracks['t2y'])
-
+print(Bad_Tracks)
 #Calculating how far hits deviate from the fit polynomial
 print(UF.TimeStamp(),'Calculating how far hits deviate from the fit polynomial...')
 Bad_Tracks['d_x']=Bad_Tracks[PM.x]-Bad_Tracks['new_x']
