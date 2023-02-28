@@ -24,6 +24,7 @@ if PY_DIR!='': #Temp solution - the decision was made to move all libraries to E
     sys.path.append('/usr/lib/python3.6/site-packages')
 sys.path.append(AFS_DIR+'/Code/Utilities')
 import pandas as pd #We use Panda for a routine data processing
+pd.options.mode.chained_assignment = None #Silence annoying warnings
 import math #We use it for data manipulation
 import numpy as np
 import os
@@ -643,7 +644,7 @@ while Status<len(Program):
             print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 4 has successfully completed'+bcolors.ENDC)
             Status=4
        except Exception as e:
-          print(UF.TimeStamp(),bcolors.FAIL+'Stage 4 is uncompleted due to...',+e+bcolors.ENDC)
+          print(UF.TimeStamp(),bcolors.FAIL+'Stage 4 is uncompleted due to...',+str(e)+bcolors.ENDC)
           Status=5
           break
 if Status==4:
