@@ -498,7 +498,7 @@ while Status<len(Program):
 
             Bad_Tracks.sort_values([RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID',PM.z],ascending=[0,0,1],inplace=True)
 
-            Bad_Tracks_CP_File='/ANNDEA/Data/REC_SET/Temp_RTr1c_'+RecBatchID+'_0'+'/RTr1c_'+RecBatchID+'_Bad_Tracks_CP.csv'
+            Bad_Tracks_CP_File=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RTr1c_'+RecBatchID+'_0'+'/RTr1c_'+RecBatchID+'_Bad_Tracks_CP.csv'
             if os.path.isfile(Bad_Tracks_CP_File)==False or Mode=='RESET':
 
                 Bad_Tracks_Head=Bad_Tracks[[RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID']]
