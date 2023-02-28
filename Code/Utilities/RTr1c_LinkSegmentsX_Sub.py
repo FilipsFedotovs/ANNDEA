@@ -42,6 +42,7 @@ sys.path.append(AFS_DIR+'/Code/Utilities')
 
 #import the rest of the libraries
 import pandas as pd
+pd.options.mode.chained_assignment = None #Silence annoying warnings
 import UtilityFunctions as UF
 #Load data configuration
 EOSsubDIR=EOS_DIR+'/'+'ANNDEA'
