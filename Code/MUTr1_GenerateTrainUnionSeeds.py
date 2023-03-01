@@ -84,7 +84,7 @@ parser.add_argument('--MinHitsTrack',help="What is the minimum number of hits pe
 ######################################## Parsing argument values  #############################################################
 args = parser.parse_args()
 Mode=args.Mode.upper()
-MinHitsTrack=args.MinHitsTrack
+MinHitsTrack=int(args.MinHitsTrack)
 ModelName=ast.literal_eval(args.ModelName)
 TrainSampleID=args.TrainSampleID
 Patience=int(args.Patience)
