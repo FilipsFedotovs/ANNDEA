@@ -130,8 +130,8 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         print(UF.TimeStamp(),'The cleaned data has ',final_rows,' hits')
         data[PM.MC_Event_ID] = data[PM.MC_Event_ID].astype(str)
         data[PM.MC_Track_ID] = data[PM.MC_Track_ID].astype(str)
-        data[PM.Rec_Track_ID] = data[PM.Rec_Track_ID].astype(str)
-        data[PM.Rec_Track_Domain] = data[PM.Rec_Track_Domain].astype(str)
+        data[RecBatchID+'_Track_ID'] = data[RecBatchID+'_Track_ID'].astype(str)
+        data[RecBatchID+'_Brick_ID'] = data[RecBatchID+'_Brick_ID'].astype(str)
         data['Rec_Seg_ID'] = data[RecBatchID+'_Brick_ID'] + '-' + data[RecBatchID+'_Track_ID']
         data['MC_Mother_Track_ID'] = data[PM.MC_Event_ID] + '-' + data[PM.MC_Track_ID]
         data=data.drop([PM.Rec_Track_ID],axis=1)
