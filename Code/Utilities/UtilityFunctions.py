@@ -56,7 +56,7 @@ class TrainingSampleMeta:
           self.ClassValues=ClassValues
           self.MaxSegments=MaxSegments
           self.JobSets=JobSets
-      def IniTrackSeedMetaData(self,MaxSLG,MaxSTG,MaxDOCA,MaxAngle,JobSets,MaxSegments,VetoMotherTrack,MaxSeeds):
+      def IniTrackSeedMetaData(self,MaxSLG,MaxSTG,MaxDOCA,MaxAngle,JobSets,MaxSegments,VetoMotherTrack,MaxSeeds,MinHitsTrack):
           self.MaxSLG=MaxSLG
           self.MaxSTG=MaxSTG
           self.MaxDOCA=MaxDOCA
@@ -65,6 +65,7 @@ class TrainingSampleMeta:
           self.MaxSegments=MaxSegments
           self.MaxSeeds=MaxSeeds
           self.VetoMotherTrack=VetoMotherTrack
+          self.MinHitsTrack=MinHitsTrack
       def UpdateHitClusterMetaData(self,NoS,NoNF,NoEF,NoSets):
           self.num_node_features=NoNF
           self.num_edge_features=NoEF
