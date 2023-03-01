@@ -65,7 +65,8 @@ parser.add_argument('--Mode', help='Script will continue from the last checkpoin
 parser.add_argument('--ModelName',help="WHat GNN model would you like to use?", default="['MH_GNN_5FTR_4_120_4_120']")
 parser.add_argument('--Patience',help="How many checks to do before resubmitting the job?", default='15')
 parser.add_argument('--TrainSampleID',help="Give this training sample batch an ID", default='SHIP_UR_v1')
-parser.add_argument('--RecBatchID',help="Rec batch ID that was used to reconstruct those tracks", default='ANN')
+parser.add_argument('--TrackID',help="What track name is used?", default='ANN_Track_ID')
+parser.add_argument('--BrickID',help="What brick ID name is used?", default='ANN_Brick_ID')
 parser.add_argument('--f',help="Please enter the full path to the file with track reconstruction", default='/afs/cern.ch/work/f/ffedship/public/SHIP/Source_Data/SHIP_Emulsion_FEDRA_Raw_UR.csv')
 parser.add_argument('--Xmin',help="This option restricts data to only those events that have tracks with hits x-coordinates that are above this value", default='0')
 parser.add_argument('--Xmax',help="This option restricts data to only those events that have tracks with hits x-coordinates that are below this value", default='0')
@@ -88,7 +89,8 @@ Mode=args.Mode.upper()
 MinHitsTrack=int(args.MinHitsTrack)
 ModelName=ast.literal_eval(args.ModelName)
 TrainSampleID=args.TrainSampleID
-RecBatchID=args.RecBatchID
+TrackID=args.TrackID
+BrickID=args.BrickID
 Patience=int(args.Patience)
 TrainSampleSize=int(args.TrainSampleSize)
 input_file_location=args.f
@@ -119,7 +121,7 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         print(UF.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
         data=pd.read_csv(input_file_location,
                     header=0,
-                    usecols=[RecBatchID+'_Track_ID',RecBatchID+'_Brick_ID',
+                    usecols=[TrackID,BrickID,
                             PM.x,PM.y,PM.z,PM.tx,PM.ty,
                             PM.MC_Track_ID,PM.MC_Event_ID])
         total_rows=len(data)
@@ -130,12 +132,12 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         print(UF.TimeStamp(),'The cleaned data has ',final_rows,' hits')
         data[PM.MC_Event_ID] = data[PM.MC_Event_ID].astype(str)
         data[PM.MC_Track_ID] = data[PM.MC_Track_ID].astype(str)
-        data[RecBatchID+'_Track_ID'] = data[RecBatchID+'_Track_ID'].astype(str)
-        data[RecBatchID+'_Brick_ID'] = data[RecBatchID+'_Brick_ID'].astype(str)
-        data['Rec_Seg_ID'] = data[RecBatchID+'_Brick_ID'] + '-' + data[RecBatchID+'_Track_ID']
+        data[TrackID] = data[TrackID].astype(str)
+        data[BrickID] = data[BrickID].astype(str)
+        data['Rec_Seg_ID'] = data[TrackID] + '-' + data[BrickID]
         data['MC_Mother_Track_ID'] = data[PM.MC_Event_ID] + '-' + data[PM.MC_Track_ID]
-        data=data.drop([PM.Rec_Track_ID],axis=1)
-        data=data.drop([PM.Rec_Track_Domain],axis=1)
+        data=data.drop([TrackID],axis=1)
+        data=data.drop([BrickID],axis=1)
         data=data.drop([PM.MC_Event_ID],axis=1)
         data=data.drop([PM.MC_Track_ID],axis=1)
         compress_data=data.drop([PM.x,PM.y,PM.z,PM.tx,PM.ty],axis=1)
