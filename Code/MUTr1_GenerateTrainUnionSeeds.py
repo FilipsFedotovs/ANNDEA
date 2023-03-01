@@ -65,6 +65,7 @@ parser.add_argument('--Mode', help='Script will continue from the last checkpoin
 parser.add_argument('--ModelName',help="WHat GNN model would you like to use?", default="['MH_GNN_5FTR_4_120_4_120']")
 parser.add_argument('--Patience',help="How many checks to do before resubmitting the job?", default='15')
 parser.add_argument('--TrainSampleID',help="Give this training sample batch an ID", default='SHIP_UR_v1')
+parser.add_argument('--RecBatchID',help="Rec batch ID that was used to reconstruct those tracks", default='ANN')
 parser.add_argument('--f',help="Please enter the full path to the file with track reconstruction", default='/afs/cern.ch/work/f/ffedship/public/SHIP/Source_Data/SHIP_Emulsion_FEDRA_Raw_UR.csv')
 parser.add_argument('--Xmin',help="This option restricts data to only those events that have tracks with hits x-coordinates that are above this value", default='0')
 parser.add_argument('--Xmax',help="This option restricts data to only those events that have tracks with hits x-coordinates that are below this value", default='0')
@@ -87,6 +88,7 @@ Mode=args.Mode.upper()
 MinHitsTrack=int(args.MinHitsTrack)
 ModelName=ast.literal_eval(args.ModelName)
 TrainSampleID=args.TrainSampleID
+RecBatchID=args.RecBatchID
 Patience=int(args.Patience)
 TrainSampleSize=int(args.TrainSampleSize)
 input_file_location=args.f
@@ -120,17 +122,17 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
                     usecols=[PM.Rec_Track_ID,PM.Rec_Track_Domain,
                             PM.x,PM.y,PM.z,PM.tx,PM.ty,
                             PM.MC_Track_ID,PM.MC_Event_ID])
-        total_rows=len(data.axes[0])
+        total_rows=len(data)
         print(UF.TimeStamp(),'The raw data has ',total_rows,' hits')
         print(UF.TimeStamp(),'Removing unreconstructed hits...')
         data=data.dropna()
-        final_rows=len(data.axes[0])
+        final_rows=len(data)
         print(UF.TimeStamp(),'The cleaned data has ',final_rows,' hits')
         data[PM.MC_Event_ID] = data[PM.MC_Event_ID].astype(str)
         data[PM.MC_Track_ID] = data[PM.MC_Track_ID].astype(str)
         data[PM.Rec_Track_ID] = data[PM.Rec_Track_ID].astype(str)
         data[PM.Rec_Track_Domain] = data[PM.Rec_Track_Domain].astype(str)
-        data['Rec_Seg_ID'] = data[PM.Rec_Track_Domain] + '-' + data[PM.Rec_Track_ID]
+        data['Rec_Seg_ID'] = data[RecBatchID] + '-' + data[RecBatchID]
         data['MC_Mother_Track_ID'] = data[PM.MC_Event_ID] + '-' + data[PM.MC_Track_ID]
         data=data.drop([PM.Rec_Track_ID],axis=1)
         data=data.drop([PM.Rec_Track_Domain],axis=1)
@@ -163,7 +165,7 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         new_combined_data = new_combined_data[new_combined_data.Rec_Seg_No >= MinHitsTrack]
         new_combined_data = new_combined_data.drop(["Rec_Seg_No"],axis=1)
         new_combined_data=new_combined_data.sort_values(['Rec_Seg_ID',PM.x],ascending=[1,1])
-        grand_final_rows=len(new_combined_data.axes[0])
+        grand_final_rows=len(new_combined_data)
         print(UF.TimeStamp(),'The cleaned data has ',grand_final_rows,' hits')
         new_combined_data=new_combined_data.rename(columns={PM.x: "x"})
         new_combined_data=new_combined_data.rename(columns={PM.y: "y"})
@@ -200,6 +202,7 @@ JobSets=Meta.JobSets
 MaxSegments=Meta.MaxSegments
 MaxSeeds=Meta.MaxSeeds
 VetoMotherTrack=Meta.VetoMotherTrack
+MinHitsTrack=Meta.MinHitsTrack
 TotJobs=0
 for j in range(0,len(JobSets)):
           for sj in range(0,int(JobSets[j][2])):
@@ -359,7 +362,7 @@ def StandardProcess(program,status,freshstart):
 if Mode=='RESET':
     print(UF.TimeStamp(),'Performing the cleanup... ',bcolors.ENDC)
     HTCondorTag="SoftUsed == \"ANNDEA-MUTr1a-"+TrainSampleID+"\""
-    UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MUTr1_'+TrainSampleID, ['MUTr1a','MUTr1b','MUTr1c','MUTr1d',TrainSampleID], HTCondorTag)
+    UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MUTr1_'+TrainSampleID, ['MUTr1a','MUTr1b','MUTr1c','MUTr1d'], HTCondorTag)
     FreshStart=False
 if Mode=='CLEANUP':
     Status=6
