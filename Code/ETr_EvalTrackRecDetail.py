@@ -92,7 +92,7 @@ for i in range(14,49):
             FEDRA_test = FEDRA[FEDRA.y==j]
             FEDRA_test = FEDRA[FEDRA.z==k]
 
-            print(FEDRA_test)
+            print(FEDRA_test.memory_usage())
             x=input()
             print(i,j,k)
 
