@@ -50,7 +50,7 @@ def zero_divide(a, b):
     if (b==0): return 0
     return a/b
 Meta=UF.TrainingSampleMeta('N/A')
-Meta.IniTrackSeedMetaData(0,0,0,0,[],0,[],0)
+Meta.IniTrackSeedMetaData(0,0,0,0,[],0,[],0,0)
 ModelMeta=UF.ModelMeta('N/A')
 ModelMeta.IniModelMeta(ModelParams,ModelFramework, Meta, ModelArchitecture, ModelType)
 if ModelType=='CNN':
