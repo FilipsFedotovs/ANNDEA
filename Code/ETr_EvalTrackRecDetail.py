@@ -85,12 +85,15 @@ FEDRA['z'] = (FEDRA['z']).apply(np.ceil).astype(int)
 
 
 for i in range(14,49):
+    FEDRA_test = FEDRA[FEDRA.x==i]
     for j in range(-9,26):
+        FEDRA_test = FEDRA[FEDRA.y==j]
         for k in range(26,34):
-            FEDRA_test=FEDRA.drop(FEDRA.index[FEDRA['x'] != i | FEDRA['y'] != j | FEDRA['z'] != k])
+            print(i,j,k)
+            FEDRA_test = FEDRA[FEDRA.z==k]
             print(FEDRA_test)
             x=input()
-            print(i,j,k)
+
 
 
             FEDRA_test['MC_Track_ID'] = FEDRA_test['MC_Track_ID'].astype(str)
