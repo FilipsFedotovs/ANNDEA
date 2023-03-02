@@ -83,14 +83,12 @@ FEDRA['y'] = (FEDRA['y']).apply(np.ceil).astype(int)
 FEDRA['z'] = (FEDRA['z']/10000)
 FEDRA['z'] = (FEDRA['z']).apply(np.ceil).astype(int)
 
+
 for i in range(14,49):
-    FEDRA_test = FEDRA[FEDRA.x==i]
     for j in range(-9,26):
-        FEDRA_test = FEDRA_test[FEDRA_test.y==j]
         for k in range(26,34):
-            FEDRA_test = FEDRA_test[FEDRA_test.z==k]
+            FEDRA_test=FEDRA.drop(FEDRA.index[FEDRA['x'] != i | FEDRA['y'] != j | FEDRA['z'] != k])
             print(FEDRA_test)
-            print(FEDRA_test.memory_usage())
             x=input()
             print(i,j,k)
 
