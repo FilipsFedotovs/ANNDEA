@@ -654,7 +654,7 @@ while Status<len(Program):
            continue
     elif Status==5:
            print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
-           print(UF.TimeStamp(),bcolors.BOLD+'Stage 6:'+bcolors.ENDC+' Preparing the final output')
+           print(UF.TimeStamp(),bcolors.BOLD+'Stage 5:'+bcolors.ENDC+' Preparing the final output')
            TotalData=[]
            JobSet=[]
            for i in range(len(JobSets)):
