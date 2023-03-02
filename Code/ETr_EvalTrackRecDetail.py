@@ -168,7 +168,7 @@ for i in range(14,49):
 
 # In[ ]:
 
-
+print(FEDRA_base)
 FEDRA_analysis = pd.merge(densitydata,FEDRA_base, how='inner', on=['x','y','z'])
 print(FEDRA_analysis)
 exit()
