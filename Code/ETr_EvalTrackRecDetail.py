@@ -82,7 +82,14 @@ FEDRA['y'] = (FEDRA['y']).apply(np.ceil).astype(int)
 #binning z
 FEDRA['z'] = (FEDRA['z']/10000)
 FEDRA['z'] = (FEDRA['z']).apply(np.ceil).astype(int)
+FEDRA['MC_Track_ID'] = FEDRA['MC_Track_ID'].astype(str)
+FEDRA['MC_Event_ID'] = FEDRA['MC_Event_ID'].astype(str)
+FEDRA['MC_Track'] = FEDRA['MC_Track_ID'] + '-' + FEDRA['MC_Event_ID']
+#print(FEDRA_test)
 
+
+
+FEDRA.drop(['MC_Track_ID','MC_Event_ID','Brick_ID'], axis=1, inplace=True)
 
 for i in range(14,49):
     FEDRA_test = FEDRA[FEDRA.x==i]
@@ -96,14 +103,7 @@ for i in range(14,49):
 
 
 
-            FEDRA_test['MC_Track_ID'] = FEDRA_test['MC_Track_ID'].astype(str)
-            FEDRA_test['MC_Event_ID'] = FEDRA_test['MC_Event_ID'].astype(str)
-            FEDRA_test['MC_Track'] = FEDRA_test['MC_Track_ID'] + '-' + FEDRA_test['MC_Event_ID']
-            #print(FEDRA_test)
 
-
-
-            FEDRA_test.drop(['MC_Track_ID','MC_Event_ID','Brick_ID'], axis=1, inplace=True)
             #print(FEDRA_test)
 
 
