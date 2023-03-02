@@ -52,12 +52,12 @@ densitydata['y'] = (densitydata['y']).apply(np.ceil)
 #binning z
 densitydata['z'] = (densitydata['z']/10000)
 densitydata['z'] = (densitydata['z']).apply(np.ceil)
-print(densitydata)
-exit()
+
 
 # number of Hit_ID's by specific coordinates
 densitydata = densitydata.groupby(['x','y','z']).Hit_ID.nunique().reset_index() 
-
+print(densitydata)
+exit()
 
 FEDRA_test_columns = ['Hit_ID','x','y','z','MC_Event_ID','MC_Track_ID','Brick_ID','FEDRA_Track_ID']
 FEDRA = rowdata[FEDRA_test_columns]
