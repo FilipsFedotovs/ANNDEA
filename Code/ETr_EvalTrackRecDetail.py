@@ -57,7 +57,7 @@ densitydata['z'] = (densitydata['z']).apply(np.ceil)
 # number of Hit_ID's by specific coordinates
 densitydata = densitydata.groupby(['x','y','z']).Hit_ID.nunique().reset_index() 
 print(densitydata[densitydata.Hit_ID>1000])
-exit()
+
 
 FEDRA_test_columns = ['Hit_ID','x','y','z','MC_Event_ID','MC_Track_ID','Brick_ID','FEDRA_Track_ID']
 FEDRA = rowdata[FEDRA_test_columns]
