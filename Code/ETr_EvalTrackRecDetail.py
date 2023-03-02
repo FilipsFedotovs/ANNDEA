@@ -84,6 +84,9 @@ FEDRA['z'] = (FEDRA['z']/10000)
 FEDRA['z'] = (FEDRA['z']).apply(np.ceil).astype(int)
 
 print(FEDRA)
+print('------')
+print(FEDRA[FEDRA.x==14])
+exit()
 
 for i in range(14,49):
     for j in range(-9,26):
