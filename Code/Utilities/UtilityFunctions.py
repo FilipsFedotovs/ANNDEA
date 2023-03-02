@@ -122,6 +122,8 @@ class ModelMeta:
                   self.MaxDOCA=DataMeta.MaxDOCA
               if hasattr(DataMeta,'MaxAngle'):
                   self.MaxAngle=DataMeta.MaxAngle
+              if hasattr(DataMeta,'MinHitsTrack'):
+                  self.MinHitsTrack=DataMeta.MinHitsTrack
 
       def IniTrainingSession(self, TrainDataID, DateTime, TrainParameters):
           self.TrainSessionsDataID.append(TrainDataID)
