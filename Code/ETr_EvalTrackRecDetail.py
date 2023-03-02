@@ -7,6 +7,7 @@
 #!/usr/bin/python3
 
 import pandas as pd #for analysis
+pd.options.mode.chained_assignment = None #Silence annoying warnings
 import math 
 import numpy as np
 import argparse
@@ -17,34 +18,27 @@ args = parser.parse_args()
 
 input_file_location=args.f
 
-# In[2]:
-
-
 #importing data - making sure we only use relevant columns
 columns = ['Hit_ID','x','y','z','MC_Event_ID','MC_Track_ID','PDG_ID','MotherPDG','Brick_ID','FEDRA_Track_ID','SND_B31_3_2_2_Track_ID','SND_B31_3_2_2_Brick_ID','SND_B31_Blank_3_2_2_Track_ID','SND_B31_Blank_3_2_2_Brick_ID']
 rowdata = pd.read_csv(input_file_location,usecols=columns)
 
-print(rowdata)
-
-
-# In[3]:
 
 
 #calculating overall density, coordinates initially in microns
 columns = ['Hit_ID','x','y','z']
 densitydata = rowdata[columns]
 
-print(densitydata)
+
 
 
 #using particle id columns
 part_columns = ['Hit_ID','PDG_ID']
 density_particles = rowdata[part_columns]
-print(density_particles)
+
 
 # number of Hit_ID's by specific particle ID's
 density_particles = density_particles.groupby(['PDG_ID']).Hit_ID.nunique().reset_index() 
-print(density_particles)
+
 
 
 #binning x
