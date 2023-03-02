@@ -71,7 +71,6 @@ def CNNtrain(model, Sample, Batches,num_classes=2):
         EndSeed=StartSeed+TrainParams[1]-1
         BatchImages=UF.LoadRenderImages(Sample,StartSeed,EndSeed,num_classes)
         t=model.train_on_batch(BatchImages[0],BatchImages[1],reset_metrics=False)
-        print(t)
     return t
 
 def GNNtrain(model, Sample,optimizer):

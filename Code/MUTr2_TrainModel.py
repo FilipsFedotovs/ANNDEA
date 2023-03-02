@@ -81,7 +81,6 @@ prog_entry.append([''])
 prog_entry.append([1])
 prog_entry.append(1)
 prog_entry.append('NA')
-print(prog_entry)
 if Mode=='RESET':
    print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Delete'))
 print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Create'))
