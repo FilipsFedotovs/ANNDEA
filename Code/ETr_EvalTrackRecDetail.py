@@ -93,12 +93,11 @@ FEDRA['MC_Track'] = FEDRA['MC_Track_ID'] + '-' + FEDRA['MC_Event_ID']
 FEDRA.drop(['MC_Track_ID','MC_Event_ID','Brick_ID'], axis=1, inplace=True)
 
 for i in range(40,41):
-    FEDRA_test = FEDRA[FEDRA.x==i]
+    FEDRA_test_i = FEDRA[FEDRA.x==i]
     for     j in range(18,19):
-            FEDRA_test = FEDRA_test[FEDRA_test.y==j]
+            FEDRA_test = FEDRA_test_i[FEDRA_test_i.y==j]
 #        for k in range(26,34):
             print(i,j)
-            print(FEDRA_test)
 
 #            FEDRA_test = FEDRA_test[FEDRA_test.z==k]
 
@@ -164,8 +163,6 @@ for i in range(40,41):
 
 
             FEDRA_test_all['FEDRA_precision'] = FEDRA_test_all['True']/FEDRA_test_all['FEDRA_true']
-            print(FEDRA_test_all)
-            exit()
             FEDRA_base = pd.concat([FEDRA_base,FEDRA_test_all])
 
 
