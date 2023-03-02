@@ -94,14 +94,11 @@ FEDRA.drop(['MC_Track_ID','MC_Event_ID','Brick_ID'], axis=1, inplace=True)
 
 for i in range(38,41):
     FEDRA_test_i = FEDRA[FEDRA.x==i]
-    print(len(FEDRA_test_i))
     for  j in range(17,19):
          FEDRA_test_j = FEDRA_test_i[FEDRA_test_i.y==j]
-         print(len(FEDRA_test_j))
          for k in range(26,34):
             print(i,j,k)
             FEDRA_test = FEDRA_test_j[FEDRA_test_j.z==k]
-            print(len(FEDRA_test))
 
 
 
