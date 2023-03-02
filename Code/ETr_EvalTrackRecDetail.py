@@ -96,7 +96,7 @@ for i in range(14,49):
     for     j in range(-9,26):
             FEDRA_test = FEDRA_test[FEDRA_test.y==j]
 #        for k in range(26,34):
-            print(i,j,k)
+            print(i,j)
 #            FEDRA_test = FEDRA_test[FEDRA_test.z==k]
 
 
