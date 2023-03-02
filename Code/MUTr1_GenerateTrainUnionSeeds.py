@@ -684,7 +684,7 @@ while Status<len(Program):
                  bar()
 
            print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 5 has successfully completed'+bcolors.ENDC)
-           print(UF.TimeStamp(),Would you like to delete Temporary files?')
+           print(UF.TimeStamp(),'Would you like to delete Temporary files?')
            user_response=input()
            if user_response=='y' or  if user_response=='Y':
                Status=6
