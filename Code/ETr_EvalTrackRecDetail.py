@@ -99,7 +99,7 @@ for i in range(40,41):
 #        for k in range(26,34):
             print(i,j)
             print(FEDRA_test)
-            exit()
+
 #            FEDRA_test = FEDRA_test[FEDRA_test.z==k]
 
 
@@ -164,6 +164,8 @@ for i in range(40,41):
 
 
             FEDRA_test_all['FEDRA_precision'] = FEDRA_test_all['True']/FEDRA_test_all['FEDRA_true']
+            print(FEDRA_test_all)
+            exit()
             FEDRA_base = pd.concat([FEDRA_base,FEDRA_test_all])
 
 
