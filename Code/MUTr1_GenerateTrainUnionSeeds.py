@@ -684,9 +684,15 @@ while Status<len(Program):
                  bar()
 
            print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 5 has successfully completed'+bcolors.ENDC)
-           Status=6
-           UpdateStatus(Status)
-           continue
+           print(UF.TimeStamp(),Would you like to delete Temporary files?')
+           user_response=input()
+           if user_response=='y' or  if user_response=='Y':
+               Status=6
+               UpdateStatus(Status)
+               continue
+           else:
+               print(UF.TimeStamp(), bcolors.OKGREEN+"Train sample generation has been completed"+bcolors.ENDC)
+               exit() 
 if Status==6:
            print(UF.TimeStamp(),'Performing the cleanup... ',bcolors.ENDC)
            for p in Program:
