@@ -71,17 +71,17 @@ FEDRA['z_coord'] = FEDRA['z']
 
 #binning x
 FEDRA['x'] = (FEDRA['x']/10000) #going from microns to cms
-FEDRA['x'] = (FEDRA['x']).apply(np.ceil) #rounding up to higher number
+FEDRA['x'] = (FEDRA['x']).apply(np.ceil).astype(int) #rounding up to higher number
 
 
 #binning y
 FEDRA['y'] = (FEDRA['y']/10000)
-FEDRA['y'] = (FEDRA['y']).apply(np.ceil)
+FEDRA['y'] = (FEDRA['y']).apply(np.ceil).astype(int)
 
 
 #binning z
 FEDRA['z'] = (FEDRA['z']/10000)
-FEDRA['z'] = (FEDRA['z']).apply(np.ceil)
+FEDRA['z'] = (FEDRA['z']).apply(np.ceil).astype(int)
 
 print(FEDRA)
 
