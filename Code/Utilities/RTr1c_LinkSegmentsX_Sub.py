@@ -1,9 +1,3 @@
-########################################################################################################################
-#######################################  This simple script prepares data for CNN  #####################################
-
-
-
-
 ########################################    Import libraries    ########################################################
 import argparse
 import sys
@@ -48,7 +42,9 @@ sys.path.append(AFS_DIR+'/Code/Utilities')
 
 #import the rest of the libraries
 import pandas as pd
+pd.options.mode.chained_assignment = None #Silence annoying warnings
 import UtilityFunctions as UF
+from alive_progress import alive_bar
 #Load data configuration
 EOSsubDIR=EOS_DIR+'/'+'ANNDEA'
 EOSsubDataDIR=EOSsubDIR+'/'+'Data'
@@ -67,43 +63,45 @@ def zero_divide(a, b):
 #Load the first file (on the y-axis) with reconstructed clusters that already have been merged along z-axis
 FirstFileName=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RTr1b_'+RecBatchID+'_'+str(0)+'/RTr1b_'+RecBatchID+'_hit_cluster_rec_y_set_' +str(0)+'.csv'
 ZContractedTable=pd.read_csv(FirstFileName)  #First cluster is like a Pacman: it absorbes proceeding clusters and gets bigger
-for i in range(1,X_ID_Max):
-    SecondFileName=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RTr1b_'+RecBatchID+'_'+str(0)+'/RTr1b_'+RecBatchID+'_hit_cluster_rec_y_set_'+str(i)+'.csv' #keep loading subsequent files along y-xis with reconstructed clusters that already have been merged along z and y-axis
-    SecondFile=pd.read_csv(SecondFileName)
-    SecondFileTable=SecondFile.rename(columns={"Master_Segment_ID":"Segment_ID","Master_z":"z" }) #Initally the following clusters are downgraded from the master status
-    FileClean=pd.merge(ZContractedTable.drop_duplicates(subset=["Master_Segment_ID","HitID",'Master_z'],keep='first'),SecondFileTable,how='inner', on=['HitID']) #Join segments based on the common hits
-    FileClean["Segment_No_z"]= FileClean["Segment_ID"]
-    FileClean=FileClean.groupby(by=["Master_Segment_ID","Segment_ID","Segment_No_x","Segment_No_y","Segment_No_Tot_x","Segment_No_Tot_y"])["Segment_No_z"].count().reset_index()
-    FileCleanTot=FileClean.groupby(by=["Master_Segment_ID"])["Segment_No_z"].sum().reset_index()
-    FileCleanTot.rename(columns={"Segment_No_z":"Segment_No_Tot_z"},inplace=True)
-    FileClean=pd.merge(FileClean,FileCleanTot,how='inner', on=["Master_Segment_ID"])
-    FileClean['Segment_No']=FileClean['Segment_No_x']+FileClean['Segment_No_y']+FileClean['Segment_No_z']
-    FileClean['Segment_No_Tot']=FileClean['Segment_No_Tot_x']+FileClean['Segment_No_Tot_y']+FileClean['Segment_No_Tot_z']
-    FileClean=FileClean.drop(['Segment_No_x','Segment_No_y','Segment_No_z',"Segment_No_Tot_x","Segment_No_Tot_y","Segment_No_Tot_z"],axis=1)
-    FileClean=FileClean.sort_values(["Master_Segment_ID","Segment_No"],ascending=[1,0])
-    FileClean.drop_duplicates(subset=["Master_Segment_ID"],keep='first',inplace=True)  #Keep the best matching segment
+with alive_bar(X_ID_Max,force_tty=True, title='Merging cluster sets along x-axis..') as bar:
+    for i in range(1,X_ID_Max):
+        bar()
+        SecondFileName=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RTr1b_'+RecBatchID+'_'+str(0)+'/RTr1b_'+RecBatchID+'_hit_cluster_rec_y_set_'+str(i)+'.csv' #keep loading subsequent files along y-xis with reconstructed clusters that already have been merged along z and y-axis
+        SecondFile=pd.read_csv(SecondFileName)
+        SecondFileTable=SecondFile.rename(columns={"Master_Segment_ID":"Segment_ID","Master_z":"z" }) #Initally the following clusters are downgraded from the master status
+        FileClean=pd.merge(ZContractedTable.drop_duplicates(subset=["Master_Segment_ID","HitID",'Master_z'],keep='first'),SecondFileTable,how='inner', on=['HitID']) #Join segments based on the common hits
+        FileClean["Segment_No_z"]= FileClean["Segment_ID"]
+        FileClean=FileClean.groupby(by=["Master_Segment_ID","Segment_ID","Segment_No_x","Segment_No_y","Segment_No_Tot_x","Segment_No_Tot_y"])["Segment_No_z"].count().reset_index()
+        FileCleanTot=FileClean.groupby(by=["Master_Segment_ID"])["Segment_No_z"].sum().reset_index()
+        FileCleanTot.rename(columns={"Segment_No_z":"Segment_No_Tot_z"},inplace=True)
+        FileClean=pd.merge(FileClean,FileCleanTot,how='inner', on=["Master_Segment_ID"])
+        FileClean['Segment_No']=FileClean['Segment_No_x']+FileClean['Segment_No_y']+FileClean['Segment_No_z']
+        FileClean['Segment_No_Tot']=FileClean['Segment_No_Tot_x']+FileClean['Segment_No_Tot_y']+FileClean['Segment_No_Tot_z']
+        FileClean=FileClean.drop(['Segment_No_x','Segment_No_y','Segment_No_z',"Segment_No_Tot_x","Segment_No_Tot_y","Segment_No_Tot_z"],axis=1)
+        FileClean=FileClean.sort_values(["Master_Segment_ID","Segment_No"],ascending=[1,0])
+        FileClean.drop_duplicates(subset=["Master_Segment_ID"],keep='first',inplace=True)  #Keep the best matching segment
 
 
-    FileClean=pd.merge(FileClean,SecondFileTable,how='right', on=['Segment_ID'])
-    FileCleanOrlp=FileClean.dropna(subset=["Master_Segment_ID"])
-    FileCleanOrlp['Segment_No']=FileCleanOrlp['Segment_No_x']
-    FileCleanOrlp['Segment_No_Tot']=FileCleanOrlp['Segment_No_Tot_x']
-    FileCleanOrlp=FileCleanOrlp.drop(['Segment_No_x','Segment_No_y',"Segment_No_Tot_x","Segment_No_Tot_y"],axis=1)
-    FileCleanR=FileClean[FileClean["Master_Segment_ID"].isnull()]
-    FileCleanR["Master_Segment_ID"] = FileCleanR["Master_Segment_ID"].fillna(FileCleanR["Segment_ID"])
-    FileCleanR['Segment_No']=FileCleanR['Segment_No_y']
-    FileCleanR['Segment_No_Tot']=FileCleanR['Segment_No_Tot_y']
-    FileCleanR=FileCleanR.drop(['Segment_No_x','Segment_No_y',"Segment_No_Tot_x","Segment_No_Tot_y",'Segment_ID'],axis=1)
+        FileClean=pd.merge(FileClean,SecondFileTable,how='right', on=['Segment_ID'])
+        FileCleanOrlp=FileClean.dropna(subset=["Master_Segment_ID"])
+        FileCleanOrlp['Segment_No']=FileCleanOrlp['Segment_No_x']
+        FileCleanOrlp['Segment_No_Tot']=FileCleanOrlp['Segment_No_Tot_x']
+        FileCleanOrlp=FileCleanOrlp.drop(['Segment_No_x','Segment_No_y',"Segment_No_Tot_x","Segment_No_Tot_y"],axis=1)
+        FileCleanR=FileClean[FileClean["Master_Segment_ID"].isnull()]
+        FileCleanR["Master_Segment_ID"] = FileCleanR["Master_Segment_ID"].fillna(FileCleanR["Segment_ID"])
+        FileCleanR['Segment_No']=FileCleanR['Segment_No_y']
+        FileCleanR['Segment_No_Tot']=FileCleanR['Segment_No_Tot_y']
+        FileCleanR=FileCleanR.drop(['Segment_No_x','Segment_No_y',"Segment_No_Tot_x","Segment_No_Tot_y",'Segment_ID'],axis=1)
 
-    FileClean=pd.concat([FileCleanOrlp,FileCleanR])
-    FileClean=FileClean.drop(['Segment_ID'],axis=1)
-    FileClean=FileClean.rename(columns={"z": "Master_z" })
-    ZContractedTable=pd.concat([ZContractedTable,FileClean])
-    ZContractedTable_r=ZContractedTable[['Master_Segment_ID','Segment_No','Segment_No_Tot']]
-    ZContractedTable_r.drop_duplicates(subset=['Master_Segment_ID','Segment_No','Segment_No_Tot'],keep='first',inplace=True)
-    ZContractedTable_r=ZContractedTable_r.groupby(['Master_Segment_ID']).agg({'Segment_No':'sum','Segment_No_Tot':'sum'}).reset_index()
-    ZContractedTable=ZContractedTable.drop(['Segment_No','Segment_No_Tot'],axis=1)
-    ZContractedTable=pd.merge(ZContractedTable,ZContractedTable_r,how='inner', on=["Master_Segment_ID"])
+        FileClean=pd.concat([FileCleanOrlp,FileCleanR])
+        FileClean=FileClean.drop(['Segment_ID'],axis=1)
+        FileClean=FileClean.rename(columns={"z": "Master_z" })
+        ZContractedTable=pd.concat([ZContractedTable,FileClean])
+        ZContractedTable_r=ZContractedTable[['Master_Segment_ID','Segment_No','Segment_No_Tot']]
+        ZContractedTable_r.drop_duplicates(subset=['Master_Segment_ID','Segment_No','Segment_No_Tot'],keep='first',inplace=True)
+        ZContractedTable_r=ZContractedTable_r.groupby(['Master_Segment_ID']).agg({'Segment_No':'sum','Segment_No_Tot':'sum'}).reset_index()
+        ZContractedTable=ZContractedTable.drop(['Segment_No','Segment_No_Tot'],axis=1)
+        ZContractedTable=pd.merge(ZContractedTable,ZContractedTable_r,how='inner', on=["Master_Segment_ID"])
 ZContractedTable['Fit']=ZContractedTable['Segment_No']/ZContractedTable['Segment_No_Tot']
 ZContractedTable['Fit'] = ZContractedTable['Fit'].fillna(1.0)
 
@@ -128,6 +126,3 @@ output_file_location=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(0)+'/'+pfx+'_
 ZContractedTable.to_csv(output_file_location,index=False)
 print(UF.TimeStamp(),'Output is written to ',output_file_location) #Write the output
 exit()
-
-
-

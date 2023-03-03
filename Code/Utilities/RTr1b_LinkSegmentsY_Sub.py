@@ -1,9 +1,3 @@
-########################################################################################################################
-#######################################  This simple script prepares data for CNN  #####################################
-
-
-
-
 ########################################    Import libraries    ########################################################
 import argparse
 import sys
@@ -48,6 +42,7 @@ sys.path.append(AFS_DIR+'/Code/Utilities')
 RecBatchID=args.BatchID
 #import the rest of the libraries
 import pandas as pd
+pd.options.mode.chained_assignment = None #Silence annoying warnings
 import UtilityFunctions as UF
 #Load data configuration
 EOSsubDIR=EOS_DIR+'/'+'ANNDEA'
@@ -99,6 +94,3 @@ output_file_location=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(0)+'/'+pfx+'_
 ZContractedTable.to_csv(output_file_location,index=False)
 print(UF.TimeStamp(),'Output is written to ',output_file_location) #Write the final result
 exit()
-
-
-

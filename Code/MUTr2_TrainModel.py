@@ -26,6 +26,8 @@ import ast
 import os
 import time
 import math
+import htcondor
+schedd=htcondor.Schedd()
 class bcolors:
     HEADER = '\033[95m'
     OKBLUE = '\033[94m'
@@ -46,7 +48,6 @@ parser.add_argument('--TrainParams',help="Please enter the train params: '[<Lear
 parser.add_argument('--TrainSampleID',help="Give name to this train sample", default='SHIP_TrainSample_v1')
 parser.add_argument('--Mode',help="Please enter 'Reset' if you want to overwrite the existing model", default='')
 parser.add_argument('--Wait',help="How many minutes to wait for a job", default='30')
-parser.add_argument('--Patience',help="How many minutes to wait for a job", default='5')
 args = parser.parse_args()
 
 #setting main learning parameters
@@ -60,7 +61,7 @@ ModelParams=ast.literal_eval(args.ModelParams)
 TrainParams=ast.literal_eval(args.TrainParams)
 TrainSampleID=args.TrainSampleID
 Wait=int(args.Wait)
-Patience=int(args.Patience)
+
 
 #Loading Data configurations
 EOSsubDIR=EOS_DIR+'/'+'ANNDEA'
@@ -81,7 +82,6 @@ prog_entry.append([''])
 prog_entry.append([1])
 prog_entry.append(1)
 prog_entry.append('NA')
-print(prog_entry)
 if Mode=='RESET':
    print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Delete'))
 print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Create'))
@@ -110,7 +110,7 @@ def ModelTrainingSaturation(Meta):
         AccGrad=UF.GetEquationOfLine(AccDataForChecking)[0]
         return LossGrad>=-PM.TST and AccGrad<=PM.TST
 
-def AutoPilot(wait_min, interval_min, max_interval_tolerance):
+def AutoPilot(wait_min, interval_min):
     print(UF.TimeStamp(),'Going on an autopilot mode for ',wait_min, 'minutes while checking HTCondor every',interval_min,'min',bcolors.ENDC)
     wait_sec=wait_min*60
     interval_sec=interval_min*60
@@ -158,19 +158,23 @@ def AutoPilot(wait_min, interval_min, max_interval_tolerance):
                  print(UF.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
                  print(bcolors.OKGREEN+"......................................................................."+bcolors.ENDC)
                  interval_count=1
-       elif interval_count%max_interval_tolerance==0:
-
-                print(UF.TimeStamp(),bcolors.WARNING+'Job has not been received, resubmitting...'+bcolors.ENDC)
+       else:
                 HTCondorTag="SoftUsed == \"ANNDEA-MUTr2-"+ModelName+"\""
-                UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MUTr2_'+ModelName, ['N/A'], HTCondorTag)
-                if Model_Meta.ModelType=='CNN':
-                    Job=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/','N/A','MUTr2','N/A',ModelName,1,OptionHeader,OptionLine,'MUTr2_TrainModel_Sub.py',False,"['','']", True, True)[0]
-                else:
-                    Job=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/','N/A','MUTr2','N/A',ModelName,1,OptionHeader,OptionLine,'MUTr2_TrainModel_Sub.py',False,"['','']", True, False)[0]
+                q=schedd.query(constraint=HTCondorTag,projection=['CLusterID','JobStatus'])
+                if len(q)==0:
+                    print(UF.TimeStamp(),bcolors.FAIL+'The HTCondor job has failed, resubmitting...'+bcolors.ENDC)
+                    if Model_Meta.ModelType=='CNN':
+                        Job=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/','N/A','MUTr2','N/A',ModelName,1,OptionHeader,OptionLine,'MUTr2_TrainModel_Sub.py',False,"['','']", True, True)[0]
+                    else:
+                        Job=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/','N/A','MUTr2','N/A',ModelName,1,OptionHeader,OptionLine,'MUTr2_TrainModel_Sub.py',False,"['','']", True, False)[0]
 
-                UF.SubmitJobs2Condor(Job)
-                print(bcolors.BOLD+"The job has been submitted..."+bcolors.ENDC)
-       print(UF.TimeStamp(),bcolors.WARNING+'The job is not ready, waiting again...'+bcolors.ENDC)
+                    UF.SubmitJobs2Condor(Job)
+                    print(bcolors.BOLD+"The job has been submitted..."+bcolors.ENDC)
+                else:
+                    print(UF.TimeStamp(),bcolors.WARNING+'Warning, the training is still running on HTCondor, the job parameters are listed bellow:'+bcolors.ENDC)
+                    print(q)
+                    continue
+
     return True
 
 if Mode=='RESET':
@@ -201,7 +205,7 @@ if Mode=='RESET':
                   print(UF.TimeStamp(),'OK, exiting now then')
                   exit()
  else:
-    AutoPilot(int(UserAnswer),Wait,Patience)
+    AutoPilot(int(UserAnswer),Wait)
 else:
      Model_Meta_Path=EOSsubModelDIR+'/'+args.ModelName+'_Meta'
      print(UF.TimeStamp(),'Loading the data file ',bcolors.OKBLUE+Model_Meta_Path+bcolors.ENDC)
@@ -223,6 +227,7 @@ else:
               print(UF.TimeStamp(),bcolors.WARNING+'Warning, the model seems to be over saturated'+bcolors.ENDC)
               print(bcolors.BOLD+'If you would like to stop training and exit please enter E'+bcolors.ENDC)
               print(bcolors.BOLD+'If you would like to resubmit your script enter R'+bcolors.ENDC)
+              print(bcolors.BOLD+'If you would like to continue training on autopilot please type waiting time in minutes'+bcolors.ENDC)
               UserAnswer=input(bcolors.BOLD+"Please, enter your option\n"+bcolors.ENDC)
               if UserAnswer=='E':
                   print(UF.TimeStamp(),'OK, exiting now then')
@@ -233,12 +238,16 @@ else:
                     Job=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/','N/A','MUTr2','N/A',ModelName,1,OptionHeader,OptionLine,'MUTr2_TrainModel_Sub.py',False,"['','']", True, True)[0]
                  else:
                     Job=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/','N/A','MUTr2','N/A',ModelName,1,OptionHeader,OptionLine,'MUTr2_TrainModel_Sub.py',False,"['','']", True, False)[0]
+                 Model_Meta.IniTrainingSession(TrainSampleID, datetime.datetime.now(), TrainParams)
+                 print(UF.PickleOperations(Model_Meta_Path, 'w', Model_Meta)[1])
                  UF.SubmitJobs2Condor(Job)
                  print(bcolors.BOLD+"The job has been submitted..."+bcolors.ENDC)
                  print(UF.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
                  exit()
+              else:
+                AutoPilot(int(UserAnswer),Wait)
            else:
-                 print(UF.TimeStamp(),bcolors.WARNING+'The training session has been completed'+bcolors.ENDC)
+                 print(UF.TimeStamp(),bcolors.OKGREEN+'The training session has been completed'+bcolors.ENDC)
                  print(bcolors.BOLD+'If you would like to stop training and exit please enter E'+bcolors.ENDC)
                  print(bcolors.BOLD+'If you would like to submit another one and exit enter S'+bcolors.ENDC)
                  print(bcolors.BOLD+'If you would like to continue training on autopilot please type waiting time in minutes'+bcolors.ENDC)
@@ -267,10 +276,16 @@ else:
                      print(UF.PickleOperations(Model_Meta_Path, 'w', Model_Meta)[1])
                      UF.SubmitJobs2Condor(Job)
                      print(bcolors.BOLD+"The job has been submitted..."+bcolors.ENDC)
-                     AutoPilot(int(UserAnswer),Wait,Patience)
+                     AutoPilot(int(UserAnswer),Wait)
 
        else:
-           print(UF.TimeStamp(),bcolors.WARNING+'Warning, the training has not been completed.'+bcolors.ENDC)
+           HTCondorTag="SoftUsed == \"ANNDEA-MUTr2-"+ModelName+"\""
+           q=schedd.query(constraint=HTCondorTag,projection=['CLusterID','JobStatus'])
+           if len(q)==0:
+                print(UF.TimeStamp(),bcolors.FAIL+'HTCondor has failed...'+bcolors.ENDC)
+           else:
+                print(UF.TimeStamp(),bcolors.WARNING+'Warning, the training is still running on HTCondor, the job parameters are listed bellow:'+bcolors.ENDC)
+                print(q)
            print(bcolors.BOLD+'If you would like to wait and exit please enter E'+bcolors.ENDC)
            print(bcolors.BOLD+'If you would like to resubmit your script enter R'+bcolors.ENDC)
            print(bcolors.BOLD+'If you would like to put the script on the autopilot type number of minutes to wait'+bcolors.ENDC)
@@ -283,12 +298,15 @@ else:
                          Job=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/','N/A','MUTr2','N/A',ModelName,1,OptionHeader,OptionLine,'MUTr2_TrainModel_Sub.py',False,"['','']", True, True)[0]
                  else:
                          Job=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/','N/A','MUTr2','N/A',ModelName,1,OptionHeader,OptionLine,'MUTr2_TrainModel_Sub.py',False,"['','']", True, False)[0]
+                 if len(q)>0:
+                      HTCondorTag="SoftUsed == \"ANNDEA-MUTr2-"+ModelName+"\""
+                      UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MUTr2_'+ModelName, [ModelName], HTCondorTag)
                  UF.SubmitJobs2Condor(Job)
                  print(bcolors.BOLD+"The job has been submitted..."+bcolors.ENDC)
                  print(UF.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
                  exit()
            else:
-              AutoPilot(int(UserAnswer),Wait,Patience)
+              AutoPilot(int(UserAnswer),Wait)
      else:
                  print(UF.TimeStamp(),bcolors.WARNING+'Warning! No existing meta files have been found, starting everything from the scratch.'+bcolors.ENDC)
                  if ModelType=='CNN':
@@ -313,7 +331,7 @@ else:
                  print(UF.PickleOperations(Model_Meta_Path, 'w', ModelMeta)[1])
                  UF.SubmitJobs2Condor(Job)
                  print(bcolors.BOLD+"The job has been submitted..."+bcolors.ENDC)
-                 AutoPilot(600,Wait,Patience)
+                 AutoPilot(600,Wait)
 print(UF.TimeStamp(),bcolors.OKGREEN+'Training is finished then, thank you and goodbye'+bcolors.ENDC)
 print(bcolors.HEADER+"############################################# End of the program ################################################"+bcolors.ENDC)
 exit()

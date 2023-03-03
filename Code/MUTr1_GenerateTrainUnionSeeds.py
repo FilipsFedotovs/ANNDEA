@@ -44,12 +44,29 @@ print(bcolors.HEADER+"#########     Initialising ANNDEA Track Union Training Sam
 print(bcolors.HEADER+"#########################              Written by Filips Fedotovs              #########################"+bcolors.ENDC)
 print(bcolors.HEADER+"#########################                 PhD Student at UCL                   #########################"+bcolors.ENDC)
 print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
+
+#Loading Directory locations
+csv_reader=open('../config',"r")
+config = list(csv.reader(csv_reader))
+for c in config:
+    if c[0]=='AFS_DIR':
+        AFS_DIR=c[1]
+    if c[0]=='EOS_DIR':
+        EOS_DIR=c[1]
+csv_reader.close()
+import sys
+sys.path.insert(1, AFS_DIR+'/Code/Utilities/')
+import UtilityFunctions as UF #This is where we keep routine utility functions
+import Parameters as PM #This is where we keep framework global parameters
+
 #Setting the parser - this script is usually not run directly, but is used by a Master version Counterpart that passes the required arguments
 parser = argparse.ArgumentParser(description='This script prepares training data for training the tracking model')
 parser.add_argument('--Mode', help='Script will continue from the last checkpoint, unless you want to start from the scratch, then type "Reset"',default='')
 parser.add_argument('--ModelName',help="WHat GNN model would you like to use?", default="['MH_GNN_5FTR_4_120_4_120']")
 parser.add_argument('--Patience',help="How many checks to do before resubmitting the job?", default='15')
 parser.add_argument('--TrainSampleID',help="Give this training sample batch an ID", default='SHIP_UR_v1')
+parser.add_argument('--TrackID',help="What track name is used?", default='ANN_Track_ID')
+parser.add_argument('--BrickID',help="What brick ID name is used?", default='ANN_Brick_ID')
 parser.add_argument('--f',help="Please enter the full path to the file with track reconstruction", default='/afs/cern.ch/work/f/ffedship/public/SHIP/Source_Data/SHIP_Emulsion_FEDRA_Raw_UR.csv')
 parser.add_argument('--Xmin',help="This option restricts data to only those events that have tracks with hits x-coordinates that are above this value", default='0')
 parser.add_argument('--Xmax',help="This option restricts data to only those events that have tracks with hits x-coordinates that are below this value", default='0')
@@ -64,12 +81,16 @@ parser.add_argument('--JobFlavour',help="Specifying the length of the HTCondor j
 parser.add_argument('--LocalSub',help="Local submission?", default='N')
 parser.add_argument('--SubPause',help="How long to wait in minutes after submitting 10000 jobs?", default='60')
 parser.add_argument('--SubGap',help="How long to wait in minutes after submitting 10000 jobs?", default='10000')
+parser.add_argument('--MinHitsTrack',help="What is the minimum number of hits per track?", default=PM.MinHitsTrack)
 
 ######################################## Parsing argument values  #############################################################
 args = parser.parse_args()
 Mode=args.Mode.upper()
+MinHitsTrack=int(args.MinHitsTrack)
 ModelName=ast.literal_eval(args.ModelName)
 TrainSampleID=args.TrainSampleID
+TrackID=args.TrackID
+BrickID=args.BrickID
 Patience=int(args.Patience)
 TrainSampleSize=int(args.TrainSampleSize)
 input_file_location=args.f
@@ -84,19 +105,7 @@ if LocalSub:
    time_int=0
 else:
     time_int=10
-#Loading Directory locations
-csv_reader=open('../config',"r")
-config = list(csv.reader(csv_reader))
-for c in config:
-    if c[0]=='AFS_DIR':
-        AFS_DIR=c[1]
-    if c[0]=='EOS_DIR':
-        EOS_DIR=c[1]
-csv_reader.close()
-import sys
-sys.path.insert(1, AFS_DIR+'/Code/Utilities/')
-import UtilityFunctions as UF #This is where we keep routine utility functions
-import Parameters as PM #This is where we keep framework global parameters
+
 
 #Establishing paths
 EOSsubDIR=EOS_DIR+'/'+'ANNDEA'
@@ -112,23 +121,23 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         print(UF.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
         data=pd.read_csv(input_file_location,
                     header=0,
-                    usecols=[PM.Rec_Track_ID,PM.Rec_Track_Domain,
+                    usecols=[TrackID,BrickID,
                             PM.x,PM.y,PM.z,PM.tx,PM.ty,
                             PM.MC_Track_ID,PM.MC_Event_ID])
-        total_rows=len(data.axes[0])
+        total_rows=len(data)
         print(UF.TimeStamp(),'The raw data has ',total_rows,' hits')
         print(UF.TimeStamp(),'Removing unreconstructed hits...')
         data=data.dropna()
-        final_rows=len(data.axes[0])
+        final_rows=len(data)
         print(UF.TimeStamp(),'The cleaned data has ',final_rows,' hits')
         data[PM.MC_Event_ID] = data[PM.MC_Event_ID].astype(str)
         data[PM.MC_Track_ID] = data[PM.MC_Track_ID].astype(str)
-        data[PM.Rec_Track_ID] = data[PM.Rec_Track_ID].astype(str)
-        data[PM.Rec_Track_Domain] = data[PM.Rec_Track_Domain].astype(str)
-        data['Rec_Seg_ID'] = data[PM.Rec_Track_Domain] + '-' + data[PM.Rec_Track_ID]
+        data[TrackID] = data[TrackID].astype(str)
+        data[BrickID] = data[BrickID].astype(str)
+        data['Rec_Seg_ID'] = data[TrackID] + '-' + data[BrickID]
         data['MC_Mother_Track_ID'] = data[PM.MC_Event_ID] + '-' + data[PM.MC_Track_ID]
-        data=data.drop([PM.Rec_Track_ID],axis=1)
-        data=data.drop([PM.Rec_Track_Domain],axis=1)
+        data=data.drop([TrackID],axis=1)
+        data=data.drop([BrickID],axis=1)
         data=data.drop([PM.MC_Event_ID],axis=1)
         data=data.drop([PM.MC_Track_ID],axis=1)
         compress_data=data.drop([PM.x,PM.y,PM.z,PM.tx,PM.ty],axis=1)
@@ -150,15 +159,15 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
              print(UF.TimeStamp(),'The sliced data has ',final_rows,' hits')
 
         output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MUTr1_'+TrainSampleID+'_TRACK_SEGMENTS.csv'
-        print(UF.TimeStamp(),'Removing tracks which have less than',PM.MinHitsTrack,'hits...')
+        print(UF.TimeStamp(),'Removing tracks which have less than',MinHitsTrack,'hits...')
         track_no_data=data.groupby(['MC_Mother_Track_ID','Rec_Seg_ID'],as_index=False).count()
         track_no_data=track_no_data.drop([PM.y,PM.z,PM.tx,PM.ty],axis=1)
         track_no_data=track_no_data.rename(columns={PM.x: "Rec_Seg_No"})
         new_combined_data=pd.merge(data, track_no_data, how="left", on=['Rec_Seg_ID','MC_Mother_Track_ID'])
-        new_combined_data = new_combined_data[new_combined_data.Rec_Seg_No >= PM.MinHitsTrack]
+        new_combined_data = new_combined_data[new_combined_data.Rec_Seg_No >= MinHitsTrack]
         new_combined_data = new_combined_data.drop(["Rec_Seg_No"],axis=1)
         new_combined_data=new_combined_data.sort_values(['Rec_Seg_ID',PM.x],ascending=[1,1])
-        grand_final_rows=len(new_combined_data.axes[0])
+        grand_final_rows=len(new_combined_data)
         print(UF.TimeStamp(),'The cleaned data has ',grand_final_rows,' hits')
         new_combined_data=new_combined_data.rename(columns={PM.x: "x"})
         new_combined_data=new_combined_data.rename(columns={PM.y: "y"})
@@ -178,7 +187,7 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         data = data.values.tolist()
         print(UF.TimeStamp(), bcolors.OKGREEN+"The track segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+output_file_location+bcolors.ENDC)
         Meta=UF.TrainingSampleMeta(TrainSampleID)
-        Meta.IniTrackSeedMetaData(PM.MaxSLG,PM.MaxSTG,PM.MaxDOCA,PM.MaxAngle,data,PM.MaxSegments,PM.VetoMotherTrack,PM.MaxSeeds)
+        Meta.IniTrackSeedMetaData(PM.MaxSLG,PM.MaxSTG,PM.MaxDOCA,PM.MaxAngle,data,PM.MaxSegments,PM.VetoMotherTrack,PM.MaxSeeds,MinHitsTrack)
         Meta.UpdateStatus(0)
         print(UF.PickleOperations(TrainSampleOutputMeta,'w', Meta)[1])
         print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
@@ -195,6 +204,7 @@ JobSets=Meta.JobSets
 MaxSegments=Meta.MaxSegments
 MaxSeeds=Meta.MaxSeeds
 VetoMotherTrack=Meta.VetoMotherTrack
+MinHitsTrack=Meta.MinHitsTrack
 TotJobs=0
 for j in range(0,len(JobSets)):
           for sj in range(0,int(JobSets[j][2])):
@@ -354,7 +364,7 @@ def StandardProcess(program,status,freshstart):
 if Mode=='RESET':
     print(UF.TimeStamp(),'Performing the cleanup... ',bcolors.ENDC)
     HTCondorTag="SoftUsed == \"ANNDEA-MUTr1a-"+TrainSampleID+"\""
-    UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MUTr1_'+TrainSampleID, ['MUTr1a','MUTr1b','MUTr1c','MUTr1d',TrainSampleID], HTCondorTag)
+    UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MUTr1_'+TrainSampleID, ['MUTr1a','MUTr1b','MUTr1c','MUTr1d'], HTCondorTag)
     FreshStart=False
 if Mode=='CLEANUP':
     Status=6
@@ -644,7 +654,7 @@ while Status<len(Program):
            continue
     elif Status==5:
            print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
-           print(UF.TimeStamp(),bcolors.BOLD+'Stage 6:'+bcolors.ENDC+' Preparing the final output')
+           print(UF.TimeStamp(),bcolors.BOLD+'Stage 5:'+bcolors.ENDC+' Preparing the final output')
            TotalData=[]
            JobSet=[]
            for i in range(len(JobSets)):
@@ -674,9 +684,15 @@ while Status<len(Program):
                  bar()
 
            print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 5 has successfully completed'+bcolors.ENDC)
-           Status=6
-           UpdateStatus(Status)
-           continue
+           print(UF.TimeStamp(),'Would you like to delete Temporary files?')
+           user_response=input()
+           if user_response=='y' or user_response=='Y':
+               Status=6
+               UpdateStatus(Status)
+               continue
+           else:
+               print(UF.TimeStamp(), bcolors.OKGREEN+"Train sample generation has been completed"+bcolors.ENDC)
+               exit() 
 if Status==6:
            print(UF.TimeStamp(),'Performing the cleanup... ',bcolors.ENDC)
            for p in Program:
