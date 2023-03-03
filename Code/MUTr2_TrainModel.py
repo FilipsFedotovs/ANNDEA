@@ -218,6 +218,8 @@ else:
            if Model_Meta.TrainSessionsDataID[did]==TrainSampleID:
                completion=did
                break
+       print(Model_Meta.TrainSessionsDataID)
+       print(Model_Meta.TrainSessionsData)
        if len(Model_Meta.TrainSessionsDataID)==len(Model_Meta.TrainSessionsData):
            if len(Model_Meta.TrainSessionsData[-1])==2 and len(Model_Meta.TrainSessionsData)>2:
               test_input=[Model_Meta.TrainSessionsData[-3][1],Model_Meta.TrainSessionsData[-2][1],Model_Meta.TrainSessionsData[-1][1]]
