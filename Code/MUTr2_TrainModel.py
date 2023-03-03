@@ -161,7 +161,7 @@ def AutoPilot(wait_min, interval_min):
        else:
                 HTCondorTag="SoftUsed == \"ANNDEA-MUTr2-"+ModelName+"\""
                 q=schedd.query(constraint=HTCondorTag,projection=['CLusterID','JobStatus'])
-                if (q)==0:
+                if len(q)==0:
                     print(UF.TimeStamp(),bcolors.FAIL+'The HTCondor job has failed, resubmitting...'+bcolors.ENDC)
                     if Model_Meta.ModelType=='CNN':
                         Job=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/','N/A','MUTr2','N/A',ModelName,1,OptionHeader,OptionLine,'MUTr2_TrainModel_Sub.py',False,"['','']", True, True)[0]
@@ -227,6 +227,7 @@ else:
               print(UF.TimeStamp(),bcolors.WARNING+'Warning, the model seems to be over saturated'+bcolors.ENDC)
               print(bcolors.BOLD+'If you would like to stop training and exit please enter E'+bcolors.ENDC)
               print(bcolors.BOLD+'If you would like to resubmit your script enter R'+bcolors.ENDC)
+              print(bcolors.BOLD+'If you would like to continue training on autopilot please type waiting time in minutes'+bcolors.ENDC)
               UserAnswer=input(bcolors.BOLD+"Please, enter your option\n"+bcolors.ENDC)
               if UserAnswer=='E':
                   print(UF.TimeStamp(),'OK, exiting now then')
