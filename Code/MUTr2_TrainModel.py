@@ -237,11 +237,14 @@ else:
                     Job=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/','N/A','MUTr2','N/A',ModelName,1,OptionHeader,OptionLine,'MUTr2_TrainModel_Sub.py',False,"['','']", True, True)[0]
                  else:
                     Job=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/','N/A','MUTr2','N/A',ModelName,1,OptionHeader,OptionLine,'MUTr2_TrainModel_Sub.py',False,"['','']", True, False)[0]
-
+                 Model_Meta.IniTrainingSession(TrainSampleID, datetime.datetime.now(), TrainParams)
+                 print(UF.PickleOperations(Model_Meta_Path, 'w', Model_Meta)[1])
                  UF.SubmitJobs2Condor(Job)
                  print(bcolors.BOLD+"The job has been submitted..."+bcolors.ENDC)
                  print(UF.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
                  exit()
+              else:
+                AutoPilot(int(UserAnswer),Wait)
            else:
                  print(UF.TimeStamp(),bcolors.OKGREEN+'The training session has been completed'+bcolors.ENDC)
                  print(bcolors.BOLD+'If you would like to stop training and exit please enter E'+bcolors.ENDC)
