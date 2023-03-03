@@ -130,6 +130,10 @@ class ModelMeta:
           self.TrainSessionsDateTime.append(DateTime)
           self.TrainSessionsParameters.append(TrainParameters)
       def CompleteTrainingSession(self, TrainData):
+          if len(self.TrainSessionsData)>=len(self.TrainSessionsDataID):
+             self.TrainSessionsData=self.TrainSessionsData[:len(self.TrainSessionsDataID)-1]
+          elif len(self.TrainSessionsData)<(len(self.TrainSessionsDataID)-1):
+             self.TrainSessionsDataID=self.TrainSessionsDataID[:len(self.TrainSessionsData)+1]
           self.TrainSessionsData.append(TrainData)
 
 
