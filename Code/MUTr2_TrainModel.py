@@ -136,7 +136,7 @@ def AutoPilot(wait_min, interval_min):
        print(Model_Meta.TrainSessionsData)
        if len(Model_Meta.TrainSessionsDataID)==len(Model_Meta.TrainSessionsData):
            if len(Model_Meta.TrainSessionsData[-1])==2 and len(Model_Meta.TrainSessionsData)>2:
-              test_input=Model_Meta.TrainSessionsData[-1]+Model_Meta.TrainSessionsData[-2][1:]+Model_Meta.TrainSessionsData[-3][1:]
+              test_input=Model_Meta.TrainSessionsData[-3][1]+Model_Meta.TrainSessionsData[-2][1]+Model_Meta.TrainSessionsData[-3][1]
            else:
               test_input=Model_Meta.TrainSessionsData[completion]
            if ModelTrainingSaturation(test_input):
@@ -222,6 +222,9 @@ else:
                break
        print(Model_Meta.TrainSessionsDataID)
        print(Model_Meta.TrainSessionsData)
+       test_input=[Model_Meta.TrainSessionsData[-3][1],Model_Meta.TrainSessionsData[-2][1],Model_Meta.TrainSessionsData[-1][1]]
+       print(test_input)
+       exit()
        if len(Model_Meta.TrainSessionsDataID)==len(Model_Meta.TrainSessionsData):
            if len(Model_Meta.TrainSessionsData[-1])==2 and len(Model_Meta.TrainSessionsData)>2:
               test_input=[Model_Meta.TrainSessionsData[-3][1],Model_Meta.TrainSessionsData[-2][1],Model_Meta.TrainSessionsData[-1][1]]
