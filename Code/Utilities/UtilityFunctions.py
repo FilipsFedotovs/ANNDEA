@@ -144,7 +144,9 @@ class ModelMeta:
                     if self.TrainSessionsDataID[did]==TrainSampleID:
                        completion=did
                        break
-                return completion
+                print(len(self.TrainSessionsData[-1]),len(self.TrainSessionsData))
+                if len(self.TrainSessionsData[-1])==2 and len(self.TrainSessionsData)>2:
+                    return completion
             else:
                 return 0
 
