@@ -146,7 +146,8 @@ class ModelMeta:
                        break
                 print(len(self.TrainSessionsData[-1]),len(self.TrainSessionsData))
                 if len(self.TrainSessionsData)>=3:
-                    return 'check'
+                    test_input=[self.TrainSessionsData[-3][1],self.TrainSessionsData[-2][1],self.TrainSessionsData[-1][1]]
+                    return test_input
                 else:
                     return 2
             else:
@@ -158,7 +159,6 @@ class ModelMeta:
        # print(test_input)
        # exit()
        #
-       #     if len(Model_Meta.TrainSessionsData[-1])==2 and len(Model_Meta.TrainSessionsData)>2:
        #        test_input=[Model_Meta.TrainSessionsData[-3][1],Model_Meta.TrainSessionsData[-2][1],Model_Meta.TrainSessionsData[-1][1]]
        #     else:
        #        test_input=Model_Meta.TrainSessionsData[completion]
