@@ -130,7 +130,31 @@ class ModelMeta:
           self.TrainSessionsDateTime.append(DateTime)
           self.TrainSessionsParameters.append(TrainParameters)
       def CompleteTrainingSession(self, TrainData):
+          if len(self.TrainSessionsData)>=len(self.TrainSessionsDataID):
+             self.TrainSessionsData=self.TrainSessionsData[:len(self.TrainSessionsDataID)-1]
+          elif len(self.TrainSessionsData)<(len(self.TrainSessionsDataID)-1):
+             self.TrainSessionsDataID=self.TrainSessionsDataID[:len(self.TrainSessionsData)+1]
           self.TrainSessionsData.append(TrainData)
+      def ModelTrainStatus(self,TST):
+            if len(self.TrainSessionsDataID)==len(self.TrainSessionsData):
+                if len(self.TrainSessionsData)>=3:
+                    test_input=[self.TrainSessionsData[-3][1],self.TrainSessionsData[-2][1],self.TrainSessionsData[-1][1]]
+                    LossDataForChecking=[]
+                    AccDataForChecking=[]
+                    for i in test_input:
+                               LossDataForChecking.append(i[6])
+                               AccDataForChecking.append(i[7])
+                    LossGrad=GetEquationOfLine(LossDataForChecking)[0]
+                    AccGrad=GetEquationOfLine(AccDataForChecking)[0]
+                    if LossGrad>=-TST and AccGrad<=TST:
+                        return 1
+                    else:
+                        return 2
+                else:
+                    return 2
+            else:
+                return 0
+
 
 
 class HitCluster:
