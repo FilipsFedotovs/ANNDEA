@@ -152,8 +152,6 @@ class ModelMeta:
                     for i in test_input:
                                LossDataForChecking.append(i[6])
                                AccDataForChecking.append(i[7])
-                    LossDataForChecking=[1,1,1]
-                    AccDataForChecking=[1,2,3]
                     LossGrad=GetEquationOfLine(LossDataForChecking)[0]
                     AccGrad=GetEquationOfLine(AccDataForChecking)[0]
                     print(LossGrad,AccGrad)
