@@ -109,7 +109,6 @@ def AutoPilot(wait_min, interval_min):
        print(Model_Meta_Raw[1])
        Model_Meta=Model_Meta_Raw[0]
        Model_Status=Model_Meta.ModelTrainStatus(PM.TST)
-
        if Model_Status==1:
               print(UF.TimeStamp(),bcolors.WARNING+'Warning, the model seems to be over saturated'+bcolors.ENDC)
               print(UF.TimeStamp(),'Aborting the training...')
