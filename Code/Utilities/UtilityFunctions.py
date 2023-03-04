@@ -135,21 +135,25 @@ class ModelMeta:
           elif len(self.TrainSessionsData)<(len(self.TrainSessionsDataID)-1):
              self.TrainSessionsDataID=self.TrainSessionsDataID[:len(self.TrainSessionsData)+1]
           self.TrainSessionsData.append(TrainData)
-      def ReachedPlateau(self,TrainSampleID):
-            completion=None
-            for did in range(len(self.TrainSessionsDataID)-1,-1,-1):
-                if self.TrainSessionsDataID[did]==TrainSampleID:
-                   completion=did
-                   break
-            return completion
-       # print(Model_Meta.TrainSessionsDataID)
-       # print(Model_Meta.TrainSessionsData)
-       # test_input=[Model_Meta.TrainSessionsData[-3][1],Model_Meta.TrainSessionsData[-2][1],Model_Meta.TrainSessionsData[-1][1]]
+      def ModelStatus(self,TrainSampleID):
+            print(self.TrainSessionsDataID)
+            print(self.TrainSessionsData)
+            if len(self.TrainSessionsDataID)==len(self.TrainSessionsData):
+                completion=None
+                for did in range(len(self.TrainSessionsDataID)-1,-1,-1):
+                    if self.TrainSessionsDataID[did]==TrainSampleID:
+                       completion=did
+                       break
+                return completion
+            else:
+                return 0
+
+#test_input=[Model_Meta.TrainSessionsData[-3][1],Model_Meta.TrainSessionsData[-2][1],Model_Meta.TrainSessionsData[-1][1]]
        # print(test_input)
        # test_input=Model_Meta.TrainSessionsData[completion]
        # print(test_input)
        # exit()
-       # if len(Model_Meta.TrainSessionsDataID)==len(Model_Meta.TrainSessionsData):
+       #
        #     if len(Model_Meta.TrainSessionsData[-1])==2 and len(Model_Meta.TrainSessionsData)>2:
        #        test_input=[Model_Meta.TrainSessionsData[-3][1],Model_Meta.TrainSessionsData[-2][1],Model_Meta.TrainSessionsData[-1][1]]
        #     else:
