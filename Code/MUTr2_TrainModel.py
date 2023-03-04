@@ -216,7 +216,7 @@ else:
                  UF.SubmitJobs2Condor(Job)
                  print(bcolors.BOLD+"The job has been submitted..."+bcolors.ENDC)
                  print(UF.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
-                AutoPilot(int(UserAnswer),Wait)
+                 AutoPilot(int(UserAnswe    r),Wait)
        elif Models_Status==2:
                  print(UF.TimeStamp(),bcolors.OKGREEN+'The training session has been completed'+bcolors.ENDC)
                  print(bcolors.BOLD+'If you would like to stop training and exit please enter E'+bcolors.ENDC)
