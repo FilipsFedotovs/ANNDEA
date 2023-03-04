@@ -135,7 +135,7 @@ class ModelMeta:
           elif len(self.TrainSessionsData)<(len(self.TrainSessionsDataID)-1):
              self.TrainSessionsDataID=self.TrainSessionsDataID[:len(self.TrainSessionsData)+1]
           self.TrainSessionsData.append(TrainData)
-      def ModelTrainStatus(self,TrainSampleID,TST):
+      def ModelTrainStatus(self,TST):
             if len(self.TrainSessionsDataID)==len(self.TrainSessionsData):
                 if len(self.TrainSessionsData)>=3:
                     test_input=[self.TrainSessionsData[-3][1],self.TrainSessionsData[-2][1],self.TrainSessionsData[-1][1]]
@@ -155,28 +155,6 @@ class ModelMeta:
             else:
                 return 0
 
-#test_input=[Model_Meta.TrainSessionsData[-3][1],Model_Meta.TrainSessionsData[-2][1],Model_Meta.TrainSessionsData[-1][1]]
-       # print(test_input)
-       # test_input=Model_Meta.TrainSessionsData[completion]
-       # print(test_input)
-       # exit()
-       #
-       #        test_input=[Model_Meta.TrainSessionsData[-3][1],Model_Meta.TrainSessionsData[-2][1],Model_Meta.TrainSessionsData[-1][1]]
-       #     else:
-       #        test_input=Model_Meta.TrainSessionsData[completion]
-       #     if ModelTrainingSaturation(test_input):
-       #      print(Meta)
-       #      if len(Meta)==2:
-       #          return False
-       #      else:
-       #          LossDataForChecking=[]
-       #          AccDataForChecking=[]
-       #          for i in range(1,len(Meta)):
-       #                     LossDataForChecking.append(Meta[i][6])
-       #                     AccDataForChecking.append(Meta[i][7])
-       #          LossGrad=UF.GetEquationOfLine(LossDataForChecking)[0]
-       #          AccGrad=UF.GetEquationOfLine(AccDataForChecking)[0]
-                #return LossGrad>=-PM.TST and AccGrad<=PM.TST
 
 
 class HitCluster:

@@ -108,7 +108,7 @@ def AutoPilot(wait_min, interval_min):
        Model_Meta_Raw=UF.PickleOperations(Model_Meta_Path, 'r', 'N/A')
        print(Model_Meta_Raw[1])
        Model_Meta=Model_Meta_Raw[0]
-       Model_Status=Model_Meta.ModelTrainStatus(TrainSampleID,PM.TST)
+       Model_Status=Model_Meta.ModelTrainStatus(PM.TST)
 
        if Model_Status==1:
               print(UF.TimeStamp(),bcolors.WARNING+'Warning, the model seems to be over saturated'+bcolors.ENDC)
@@ -185,7 +185,7 @@ else:
        Model_Meta_Raw=UF.PickleOperations(Model_Meta_Path, 'r', 'N/A')
        print(Model_Meta_Raw[1])
        Model_Meta=Model_Meta_Raw[0]
-       Models_Status=Model_Meta.ModelTrainStatus(TrainSampleID,PM.TST)
+       Models_Status=Model_Meta.ModelTrainStatus(PM.TST)
        if Models_Status==1:
               print(UF.TimeStamp(),bcolors.WARNING+'Warning, the model seems to be over saturated'+bcolors.ENDC)
               print(bcolors.BOLD+'If you would like to stop training and exit please enter E'+bcolors.ENDC)
