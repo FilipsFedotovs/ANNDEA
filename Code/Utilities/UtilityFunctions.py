@@ -145,8 +145,10 @@ class ModelMeta:
                        completion=did
                        break
                 print(len(self.TrainSessionsData[-1]),len(self.TrainSessionsData))
-                if len(self.TrainSessionsData[-1])==2 and len(self.TrainSessionsData)>2:
-                    return completion
+                if len(self.TrainSessionsData)>=3:
+                    return 'check'
+                else:
+                    return 2
             else:
                 return 0
 
