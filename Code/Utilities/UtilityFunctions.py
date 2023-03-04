@@ -135,7 +135,7 @@ class ModelMeta:
           elif len(self.TrainSessionsData)<(len(self.TrainSessionsDataID)-1):
              self.TrainSessionsDataID=self.TrainSessionsDataID[:len(self.TrainSessionsData)+1]
           self.TrainSessionsData.append(TrainData)
-      def ModelStatus(self,TrainSampleID):
+      def ModelTrainStatus(self,TrainSampleID):
             print(self.TrainSessionsDataID)
             print(self.TrainSessionsData)
             if len(self.TrainSessionsDataID)==len(self.TrainSessionsData):
