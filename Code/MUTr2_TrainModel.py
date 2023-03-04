@@ -215,7 +215,7 @@ else:
        Model_Meta_Raw=UF.PickleOperations(Model_Meta_Path, 'r', 'N/A')
        print(Model_Meta_Raw[1])
        Model_Meta=Model_Meta_Raw[0]
-       print(Model_Meta.ModelTrainStatus(TrainSampleID))
+       print(Model_Meta.ModelTrainStatus(TrainSampleID,PM.TST))
        exit()
      #
      #          print(UF.TimeStamp(),bcolors.WARNING+'Warning, the model seems to be over saturated'+bcolors.ENDC)

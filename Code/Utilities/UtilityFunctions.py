@@ -135,7 +135,7 @@ class ModelMeta:
           elif len(self.TrainSessionsData)<(len(self.TrainSessionsDataID)-1):
              self.TrainSessionsDataID=self.TrainSessionsDataID[:len(self.TrainSessionsData)+1]
           self.TrainSessionsData.append(TrainData)
-      def ModelTrainStatus(self,TrainSampleID):
+      def ModelTrainStatus(self,TrainSampleID,TST):
             print(self.TrainSessionsDataID)
             print(self.TrainSessionsData)
             if len(self.TrainSessionsDataID)==len(self.TrainSessionsData):
@@ -154,7 +154,10 @@ class ModelMeta:
                                AccDataForChecking.append(i[7])
                     LossGrad=GetEquationOfLine(LossDataForChecking)[0]
                     AccGrad=GetEquationOfLine(AccDataForChecking)[0]
-                    return LossGrad,AccGrad
+                    if LossGrad>=-TST and AccGrad<=TST:
+                        return 1
+                    else:
+                        return 2
                 else:
                     return 2
             else:
