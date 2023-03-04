@@ -2,7 +2,7 @@ import os
 import subprocess
 
 
-script_name = "../MUTr2_TrainModel.py"
+script_name = "MUTr2_TrainModel.py"
 
 
 model_parameters_dict={
@@ -29,7 +29,7 @@ option_headers=[
 
 def get_fixed_options(dict):
     s = ""
-    for option_header, option_value in dict.item():
+    for option_header, option_value in dict.items():
         s+= (" --"+option_header+" ")
         s+= (" " + option_value +" ")
     return s
@@ -40,6 +40,6 @@ for model_name, model_parameters in model_parameters_dict.items():
     variable_options = " --ModelName " + model_name +" --ModelParams " + str(model_parameters)
     fixed_options = get_fixed_options(fixed_option_dict)
     command = "python3 "+script_name + variable_options + fixed_options
-    subprocess.call(command, shell=True)
+    subprocess.run(command, shell=True)
 
     
