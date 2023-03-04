@@ -147,7 +147,12 @@ class ModelMeta:
                 print(len(self.TrainSessionsData[-1]),len(self.TrainSessionsData))
                 if len(self.TrainSessionsData)>=3:
                     test_input=[self.TrainSessionsData[-3][1],self.TrainSessionsData[-2][1],self.TrainSessionsData[-1][1]]
-                    return test_input
+                    LossDataForChecking=[]
+                    AccDataForChecking=[]
+                    for i in test_input:
+                               LossDataForChecking.append(i[6])
+                               AccDataForChecking.append(i[7])
+                    return LossDataForChecking,AccDataForChecking
                 else:
                     return 2
             else:
