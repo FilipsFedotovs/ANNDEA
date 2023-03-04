@@ -37,9 +37,9 @@ def get_fixed_options(dict):
 
 
 for model_name, model_parameters in model_parameters_dict.items():
-    variable_options = " --ModelName " + model_name +" --ModelParams " + str(model_parameters)
+    variable_options = " --ModelName " + model_name +" --ModelParams " + '"'+str(model_parameters)+'"'
     fixed_options = get_fixed_options(fixed_option_dict)
     command = "python3 "+script_name + variable_options + fixed_options
-    subprocess.run(command, shell=True)
+    subprocess.call(command, shell=True)
 
     
