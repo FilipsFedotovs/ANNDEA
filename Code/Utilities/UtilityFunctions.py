@@ -137,12 +137,6 @@ class ModelMeta:
           self.TrainSessionsData.append(TrainData)
       def ModelTrainStatus(self,TrainSampleID,TST):
             if len(self.TrainSessionsDataID)==len(self.TrainSessionsData):
-                completion=None
-                for did in range(len(self.TrainSessionsDataID)-1,-1,-1):
-                    if self.TrainSessionsDataID[did]==TrainSampleID:
-                       completion=did
-                       break
-                print(len(self.TrainSessionsData[-1]),len(self.TrainSessionsData))
                 if len(self.TrainSessionsData)>=3:
                     test_input=[self.TrainSessionsData[-3][1],self.TrainSessionsData[-2][1],self.TrainSessionsData[-1][1]]
                     LossDataForChecking=[]
