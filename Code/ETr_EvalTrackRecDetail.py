@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[1]:
-
 
 #!/usr/bin/python3
 
@@ -51,7 +49,7 @@ densitydata = densitydata.groupby(['x','y','z']).Hit_ID.nunique().reset_index()
 densitydata = densitydata.rename(columns={'Hit_ID':'Hit_Density'})
 
 # starting an if loop to match the choice of Computing tool in the arguments
-
+# Get precision and recall for ANNDEA with GNN
 if args.ToolNames == ANN:
     ANN_test_columns = ['Hit_ID','x','y','z','MC_Event_ID','MC_Track_ID','SND_B31_3_2_2_Track_ID','SND_B31_3_2_2_Brick_ID']
     ANN = rowdata[ANN_test_columns]
@@ -75,8 +73,10 @@ if args.ToolNames == ANN:
     ANN['MC_Track'] = ANN['MC_Track_ID'] + '-' + ANN['MC_Event_ID']
     #print(ANN_test)
     
+    #delete unwanted columns
     ANN.drop(['MC_Track_ID','MC_Event_ID','Brick_ID'], axis=1, inplace=True)
-
+    
+    # create a loop for all x, y and z ranges to be evaluated
     for i in range(38,41):
         ANN_test_i = ANN[ANN.x==i]
         for  j in range(17,19):
@@ -114,6 +114,7 @@ if args.ToolNames == ANN:
                 ANN_test_all['ANN_precision'] = ANN_test_all['True']/ANN_test_all['ANN_true']
                 ANN_base = pd.concat([ANN_base,ANN_test_all])
                 
+    #create a table with all the wanted columns
     print(ANN_base)
     ANN_analysis = pd.merge(densitydata,ANN_base, how='inner', on=['x','y','z'])
     print(ANN_analysis)
@@ -125,7 +126,7 @@ if args.ToolNames == ANN:
     precision_average = ANN_test_all.loc[:, 'ANN_precision'].mean()
     print(precision_average)
 
-    
+# Get precision and recall from ANNDEA without GNN
 elif args.ToolNames == ANN_Blank:
     ANN_blank_test_columns = ['Hit_ID','x','y','z','MC_Event_ID','MC_Track_ID','SND_B31_Blank_3_2_2_Track_ID','SND_B31_Blank_3_2_2_Brick_ID']
     ANN_blank = rowdata[ANN_blank_test_columns]
@@ -149,8 +150,10 @@ elif args.ToolNames == ANN_Blank:
     ANN_blank['MC_Track'] = ANN_blank['MC_Track_ID'] + '-' + ANN_blank['MC_Event_ID']
     #print(ANN_blank_test)
     
+    #drop unwanted columns 
     ANN_blank.drop(['MC_Track_ID','MC_Event_ID','Brick_ID'], axis=1, inplace=True)
     
+    # create a loop for all x, y and z ranges to be evaluated
     for i in range(38,41):
         ANN_blank_test_i = ANN_blank[ANN_blank.x==i]
         for  j in range(17,19):
@@ -188,6 +191,7 @@ elif args.ToolNames == ANN_Blank:
                 ANN_blank_test_all['ANN_blank_precision'] = ANN_blank_test_all['True']/ANN_blank_test_all['ANN_blank_true']
                 ANN_blank_base = pd.concat([ANN_blank_base,ANN_blank_test_all])
                 
+    #create a table with all the wanted columns
     print(ANN_blank_base)
     ANN_blank_analysis = pd.merge(densitydata,ANN_blank_base, how='inner', on=['x','y','z'])
     print(ANN_blank_analysis)
@@ -199,6 +203,7 @@ elif args.ToolNames == ANN_Blank:
     precision_average = ANN_blank_test_all.loc[:, 'ANN_blank_precision'].mean()
     print(precision_average)
     
+# Get precision and recall for FEDRA
 else:
     FEDRA_test_columns = ['Hit_ID','x','y','z','MC_Event_ID','MC_Track_ID','Brick_ID','FEDRA_Track_ID']
     FEDRA = rowdata[FEDRA_test_columns]
@@ -221,9 +226,11 @@ else:
     FEDRA['MC_Event_ID'] = FEDRA['MC_Event_ID'].astype(str)
     FEDRA['MC_Track'] = FEDRA['MC_Track_ID'] + '-' + FEDRA['MC_Event_ID']
     #print(FEDRA_test)
-
+    
+    #drop unwanted columns
     FEDRA.drop(['MC_Track_ID','MC_Event_ID','Brick_ID'], axis=1, inplace=True)
-
+    
+    # create a loop for all x, y and z ranges to be evaluated
     for i in range(38,41):
         FEDRA_test_i = FEDRA[FEDRA.x==i]
         for  j in range(17,19):
@@ -263,15 +270,12 @@ else:
 
                 FEDRA_test_all['FEDRA_precision'] = FEDRA_test_all['True']/FEDRA_test_all['FEDRA_true']
                 FEDRA_base = pd.concat([FEDRA_base,FEDRA_test_all])
-
-    # In[ ]:
-
+    
+    #create a table with all the wanted columns
     print(FEDRA_base)
     FEDRA_analysis = pd.merge(densitydata,FEDRA_base, how='inner', on=['x','y','z'])
     print(FEDRA_analysis)
     exit()
-
-    # In[ ]:
 
     #average of precision and recall
     recall_average = FEDRA_test_all.loc[:, 'FEDRA_recall'].mean()
