@@ -49,16 +49,32 @@ def get_fixed_options(dict):
     return s
 
 
+train_parameter_dict = {
+    "learning rate": 0.0001,
+    "Batch size": 4,
+    "Epochs": 1,
+}
+
+train_parameter_dict_gnn = {
+    "learning rate": 0.0001,
+    "Batch size": 32,
+    "Epochs": 32,
+}
+
+
 gnn = True
 if(gnn):
     fixed_option_dict = fixed_option_dict_gnn
     model_parameters_dict = model_parameters_dict_gnn
+    train_parameter_dict = train_parameter_dict_gnn
 
 
 for model_name, model_parameters in model_parameters_dict.items():
     variable_options = " --ModelName " + model_name +" --ModelParams " + '"'+str(model_parameters)+'"'
+    training_options = " --TrainParams " +'"'+str(list(train_parameter_dict.values()))+'"'
     fixed_options = get_fixed_options(fixed_option_dict)
-    command = "python3 "+script_name + variable_options + fixed_options
+    command = "python3 "+script_name + variable_options + fixed_options + training_options
+    command+= (" --TrainParams " +'"'+str(list(train_parameter_dict.values()))+'"')
     subprocess.Popen(command, shell=True)
 
     
