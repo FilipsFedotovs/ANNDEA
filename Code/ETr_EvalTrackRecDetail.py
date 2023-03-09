@@ -74,7 +74,7 @@ if args.ToolNames == 'ANN':
     #print(ANN_test)
     
     #delete unwanted columns
-    ANN.drop(['MC_Track_ID','MC_Event_ID','Brick_ID'], axis=1, inplace=True)
+    ANN.drop(['MC_Track_ID','MC_Event_ID'], axis=1, inplace=True)
     
     # create a loop for all x, y and z ranges to be evaluated
     for i in range(38,41):
