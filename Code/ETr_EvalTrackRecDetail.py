@@ -100,14 +100,9 @@ if args.ToolNames == 'ANN':
                 ANN_test_j = ANN_test_i[ANN_test_i.y==j]
                 for k in range(zmin,zmax):
                     bar()
-                    ANN_test = ANN_test_j[ANN_test_j.z==k]
-                    if len(ANN_test)>0:
-                        print(ANN_test.memory_usage)
-                        
+                    ANN_test = ANN_test_j[ANN_test_j.z==k]                       
                     ANN_test = ANN_test.drop(['y','z'], axis=1)
-                    if len(ANN_test)>0:
-                        print(ANN_test.memory_usage)  
-                        exit()
+                   
 
                     ANN_test_right = ANN_test
                     ANN_test_right = ANN_test_right.rename(columns={'Hit_ID':'Hit_ID_right','SND_B31_3_2_2_Track_ID':'SND_B31_3_2_2_Track_ID_right','MC_Track':'MC_Track_right','z_coord':'z_coord_right'})
