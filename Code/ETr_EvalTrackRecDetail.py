@@ -80,17 +80,17 @@ if args.ToolNames == 'ANN':
     # create a loop for all x, y and z ranges to be evaluated
     
     #with alive_bar(
-    xmin = densitydata['x'].min()
+    xmin = math.floor(densitydata['x'].min())
     print(xmin)
-    xmax = densitydata['x'].max()
+    xmax = math.ceil(densitydata['x'].max())
     print(xmax)
-    ymin = densitydata['y'].min()
+    ymin = math.floor(densitydata['y'].min())
     print(ymin)
-    ymax = densitydata['y'].max()
+    ymax = math.ceil(densitydata['y'].max())
     print(ymax)
-    zmin = densitydata['z'].min()
+    zmin = math.floor(densitydata['z'].min())
     print(zmin)
-    zmax = densitydata['z'].max()
+    zmax = math.ceil(densitydata['z'].max())
     print(zmax)
     
     for i in range(xmin,xmax):
