@@ -50,7 +50,7 @@ densitydata = densitydata.rename(columns={'Hit_ID':'Hit_Density'})
 
 # starting an if loop to match the choice of Computing tool in the arguments
 # Get precision and recall for ANNDEA with GNN
-if args.ToolNames == ANN:
+if args.ToolNames == 'ANN':
     ANN_test_columns = ['Hit_ID','x','y','z','MC_Event_ID','MC_Track_ID','SND_B31_3_2_2_Track_ID','SND_B31_3_2_2_Brick_ID']
     ANN = rowdata[ANN_test_columns]
     ANN_base = None
@@ -127,7 +127,7 @@ if args.ToolNames == ANN:
     print(precision_average)
 
 # Get precision and recall from ANNDEA without GNN
-elif args.ToolNames == ANN_Blank:
+elif args.ToolNames == 'ANN_Blank':
     ANN_blank_test_columns = ['Hit_ID','x','y','z','MC_Event_ID','MC_Track_ID','SND_B31_Blank_3_2_2_Track_ID','SND_B31_Blank_3_2_2_Brick_ID']
     ANN_blank = rowdata[ANN_blank_test_columns]
     ANN_blank_base = None
