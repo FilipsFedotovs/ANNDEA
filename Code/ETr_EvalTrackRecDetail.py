@@ -103,7 +103,7 @@ with alive_bar(iterations,force_tty=True, title = 'Calculating densities.') as b
                 bar()
                 ANN_test = ANN_test_j[ANN_test_j.z==k]                       
                 ANN_test = ANN_test.drop(['y','z'], axis=1)
-                ANN_test = ANN_test.astype({col: 'int8' for col in df.select_dtypes('int64').columns})
+                ANN_test = ANN_test.astype({col: 'int8' for col in ANN_test.select_dtypes('int64').columns})
                 if len(ANN_test) > 0:
                     
                     print(ANN_test.dtypes)
