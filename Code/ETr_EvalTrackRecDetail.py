@@ -92,7 +92,7 @@ if args.ToolNames == 'ANN':
     zmax = math.ceil(densitydata['z'].max())
     #print(zmax)
     
-    iteractions = (xmax - xmin)*(ymax - ymin)*(zmax - zmin)
+    iterations = (xmax - xmin)*(ymax - ymin)*(zmax - zmin)
     with alive_bar(iterations,force_tty=True, title = 'Calculating densities.') as bar:
         for i in range(xmin,xmax):
             ANN_test_i = ANN[ANN.x==i]
