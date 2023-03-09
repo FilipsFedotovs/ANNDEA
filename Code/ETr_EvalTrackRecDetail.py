@@ -78,57 +78,58 @@ if args.ToolNames == 'ANN':
     ANN.drop(['MC_Track_ID','MC_Event_ID'], axis=1, inplace=True)
     
     # create a loop for all x, y and z ranges to be evaluated
-    
-    #with alive_bar(
+   
     xmin = math.floor(densitydata['x'].min())
-    print(xmin)
+    #print(xmin)
     xmax = math.ceil(densitydata['x'].max())
-    print(xmax)
+    #print(xmax)
     ymin = math.floor(densitydata['y'].min())
-    print(ymin)
+    #print(ymin)
     ymax = math.ceil(densitydata['y'].max())
-    print(ymax)
+    #print(ymax)
     zmin = math.floor(densitydata['z'].min())
-    print(zmin)
+    #print(zmin)
     zmax = math.ceil(densitydata['z'].max())
-    print(zmax)
+    #print(zmax)
     
-    for i in range(xmin,xmax):
-        ANN_test_i = ANN[ANN.x==i]
-        for  j in range(ymin,ymax):
-            ANN_test_j = ANN_test_i[ANN_test_i.y==j]
-            for k in range(zmin,zmax):
-                #print(i,j,k)
-                ANN_test = ANN_test_j[ANN_test_j.z==k]
-                
-                ANN_test_right = ANN_test
-                ANN_test_right = ANN_test_right.rename(columns={'Hit_ID':'Hit_ID_right','SND_B31_3_2_2_Track_ID':'SND_B31_3_2_2_Track_ID_right','MC_Track':'MC_Track_right','z_coord':'z_coord_right'})
-                ANN_test_all = pd.merge(ANN_test,ANN_test_right,how='inner',on=['x','y','z'])
-                #print(ANN_test_all)
-                
-                ANN_test_all = ANN_test_all[ANN_test_all.Hit_ID!=ANN_test_all.Hit_ID_right]
-                #print(ANN_test_all)
-                
-                ANN_test_all = ANN_test_all[ANN_test_all.z_coord>ANN_test_all.z_coord_right]
-                #print(ANN_test_all)
-                
-                ANN_test_all['MC_true'] = (ANN_test_all['MC_Track']==ANN_test_all['MC_Track_right']).astype(int)
-                #print(ANN_test_all)
+    iteractions = (xmax - xmin)*(ymax - ymin)*(zmax - zmin)
+    with alive_bar(iterations,force_tty=True, title = 'Calculating densities.') as bar:
+        for i in range(xmin,xmax):
+            ANN_test_i = ANN[ANN.x==i]
+            for  j in range(ymin,ymax):
+                ANN_test_j = ANN_test_i[ANN_test_i.y==j]
+                for k in range(zmin,zmax):
+                    bar()
+                    ANN_test = ANN_test_j[ANN_test_j.z==k]
 
-                ANN_test_all['ANN_true'] = (ANN_test_all['SND_B31_3_2_2_Track_ID']==ANN_test_all['SND_B31_3_2_2_Track_ID_right']).astype(int)
-                #print(ANN_test_all)
-                
-                ANN_test_all['True'] = ANN_test_all['MC_true'] + ANN_test_all['ANN_true']
-                ANN_test_all['True'] = (ANN_test_all['True']>1).astype(int)
-                #print(ANN_test_all[['SND_B31_3_2_2_Track_ID','SND_B31_3_2_2_Track_ID_right','ANN_true']])
-                
-                ANN_test_all = ANN_test_all[['MC_true','ANN_true','True','x','y','z']]
-                ANN_test_all = ANN_test_all.groupby(['x', 'y','z']).agg({'ANN_true':'sum','True':'sum','MC_true':'sum'}).reset_index()
-                
-                ANN_test_all['ANN_recall'] = ANN_test_all['True']/ANN_test_all['MC_true']
+                    ANN_test_right = ANN_test
+                    ANN_test_right = ANN_test_right.rename(columns={'Hit_ID':'Hit_ID_right','SND_B31_3_2_2_Track_ID':'SND_B31_3_2_2_Track_ID_right','MC_Track':'MC_Track_right','z_coord':'z_coord_right'})
+                    ANN_test_all = pd.merge(ANN_test,ANN_test_right,how='inner',on=['x','y','z'])
+                    #print(ANN_test_all)
 
-                ANN_test_all['ANN_precision'] = ANN_test_all['True']/ANN_test_all['ANN_true']
-                ANN_base = pd.concat([ANN_base,ANN_test_all])
+                    ANN_test_all = ANN_test_all[ANN_test_all.Hit_ID!=ANN_test_all.Hit_ID_right]
+                    #print(ANN_test_all)
+
+                    ANN_test_all = ANN_test_all[ANN_test_all.z_coord>ANN_test_all.z_coord_right]
+                    #print(ANN_test_all)
+
+                    ANN_test_all['MC_true'] = (ANN_test_all['MC_Track']==ANN_test_all['MC_Track_right']).astype(int)
+                    #print(ANN_test_all)
+
+                    ANN_test_all['ANN_true'] = (ANN_test_all['SND_B31_3_2_2_Track_ID']==ANN_test_all['SND_B31_3_2_2_Track_ID_right']).astype(int)
+                    #print(ANN_test_all)
+
+                    ANN_test_all['True'] = ANN_test_all['MC_true'] + ANN_test_all['ANN_true']
+                    ANN_test_all['True'] = (ANN_test_all['True']>1).astype(int)
+                    #print(ANN_test_all[['SND_B31_3_2_2_Track_ID','SND_B31_3_2_2_Track_ID_right','ANN_true']])
+
+                    ANN_test_all = ANN_test_all[['MC_true','ANN_true','True','x','y','z']]
+                    ANN_test_all = ANN_test_all.groupby(['x', 'y','z']).agg({'ANN_true':'sum','True':'sum','MC_true':'sum'}).reset_index()
+
+                    ANN_test_all['ANN_recall'] = ANN_test_all['True']/ANN_test_all['MC_true']
+
+                    ANN_test_all['ANN_precision'] = ANN_test_all['True']/ANN_test_all['ANN_true']
+                    ANN_base = pd.concat([ANN_base,ANN_test_all])
                 
     #create a table with all the wanted columns
     #print(ANN_base)
