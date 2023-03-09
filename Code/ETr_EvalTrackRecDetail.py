@@ -101,10 +101,13 @@ if args.ToolNames == 'ANN':
                 for k in range(zmin,zmax):
                     bar()
                     ANN_test = ANN_test_j[ANN_test_j.z==k]
+                    print(ANN_test.memory_usage)
+                    ANN_test = ANN_test.drop(['y','z'], axis=1, inplace = True)
+                    print(ANN_test.memory_usage)
 
                     ANN_test_right = ANN_test
                     ANN_test_right = ANN_test_right.rename(columns={'Hit_ID':'Hit_ID_right','SND_B31_3_2_2_Track_ID':'SND_B31_3_2_2_Track_ID_right','MC_Track':'MC_Track_right','z_coord':'z_coord_right'})
-                    ANN_test_all = pd.merge(ANN_test,ANN_test_right,how='inner',on=['x','y','z'])
+                    ANN_test_all = pd.merge(ANN_test,ANN_test_right,how='inner',on=['x'])
                     #print(ANN_test_all)
 
                     ANN_test_all = ANN_test_all[ANN_test_all.Hit_ID!=ANN_test_all.Hit_ID_right]
@@ -122,6 +125,9 @@ if args.ToolNames == 'ANN':
                     ANN_test_all['True'] = ANN_test_all['MC_true'] + ANN_test_all['ANN_true']
                     ANN_test_all['True'] = (ANN_test_all['True']>1).astype(int)
                     #print(ANN_test_all[['SND_B31_3_2_2_Track_ID','SND_B31_3_2_2_Track_ID_right','ANN_true']])
+                    
+                    ANN_test_all['y'] = ANN_test_all['j']
+                    ANN_test_all['z'] = ANN_test_all['k']
 
                     ANN_test_all = ANN_test_all[['MC_true','ANN_true','True','x','y','z']]
                     ANN_test_all = ANN_test_all.groupby(['x', 'y','z']).agg({'ANN_true':'sum','True':'sum','MC_true':'sum'}).reset_index()
@@ -171,47 +177,64 @@ elif args.ToolNames == 'ANN_Blank':
     ANN_blank.drop(['MC_Track_ID','MC_Event_ID','Brick_ID'], axis=1, inplace=True)
     
     # create a loop for all x, y and z ranges to be evaluated
-    for i in range(38,41):
-        ANN_blank_test_i = ANN_blank[ANN_blank.x==i]
-        for  j in range(17,19):
-            ANN_blank_test_j = ANN_blank_test_i[ANN_blank_test_i.y==j]
-            for k in range(26,34):
-                print(i,j,k)
-                ANN_blank_test = ANN_blank_test_j[ANN_blank_test_j.z==k]
-                
-                ANN_blank_test_right = ANN_blank_test
-                ANN_blank_test_right = ANN_blank_test_right.rename(columns={'Hit_ID':'Hit_ID_right','SND_B31_Blank_3_2_2_Track_ID':'SND_B31_Blank_3_2_2_Track_ID_right','MC_Track':'MC_Track_right','z_coord':'z_coord_right'})
-                ANN_blank_test_all = pd.merge(ANN_blank_test,ANN_blank_test_right,how='inner',on=['x','y','z'])
-                #print(ANN_blank_test_all)
-                
-                ANN_blank_test_all = ANN_blank_test_all[ANN_blank_test_all.Hit_ID!=ANN_blank_test_all.Hit_ID_right]
-                #print(ANN_blank_test_all)
-                
-                ANN_blank_test_all = ANN_blank_test_all[ANN_blank_test_all.z_coord>ANN_blank_test_all.z_coord_right]
-                #print(ANN_blank_test_all)
-                
-                ANN_blank_test_all['MC_true'] = (ANN_blank_test_all['MC_Track']==ANN_blank_test_all['MC_Track_right']).astype(int)
-                #print(ANN_blank_test_all)
+    
+    xmin = math.floor(densitydata['x'].min())
+    #print(xmin)
+    xmax = math.ceil(densitydata['x'].max())
+    #print(xmax)
+    ymin = math.floor(densitydata['y'].min())
+    #print(ymin)
+    ymax = math.ceil(densitydata['y'].max())
+    #print(ymax)
+    zmin = math.floor(densitydata['z'].min())
+    #print(zmin)
+    zmax = math.ceil(densitydata['z'].max())
+    #print(zmax)
+    
+    iterations = (xmax - xmin)*(ymax - ymin)*(zmax - zmin)
+    with alive_bar(iterations,force_tty=True, title = 'Calculating densities.') as bar:
+        for i in range(xmin,xmax):
+            ANN_blank_test_i = ANN_blank[ANN_blank.x==i]
+            for  j in range(ymin,ymax):
+                ANN_blank_test_j = ANN_blank_test_i[ANN_blank_test_i.y==j]
+                for k in range(zmin,zmax):
+                    #print(i,j,k)
+                    bar()
+                    ANN_blank_test = ANN_blank_test_j[ANN_blank_test_j.z==k]
 
-                ANN_blank_test_all['ANN_blank_true'] = (ANN_blank_test_all['SND_B31_Blank_3_2_2_Track_ID']==ANN_blank_test_all['SND_B31_Blank_3_2_2_Track_ID_right']).astype(int)
-                #print(ANN_blank_test_all)
-                
-                ANN_blank_test_all['True'] = ANN_blank_test_all['MC_true'] + ANN_blank_test_all['ANN_blank_true']
-                ANN_blank_test_all['True'] = (ANN_blank_test_all['True']>1).astype(int)
-                #print(ANN_blank_test_all[['SND_B31_Blank_3_2_2_Track_ID','SND_B31_Blank_3_2_2_Track_ID_right','ANN_blank_true']])
-                
-                ANN_blank_test_all = ANN_blank_test_all[['MC_true','ANN_blank_true','True','x','y','z']]
-                ANN_blank_test_all = ANN_blank_test_all.groupby(['x', 'y','z']).agg({'ANN_blank_true':'sum','True':'sum','MC_true':'sum'}).reset_index()
-                
-                ANN_blank_test_all['ANN_blank_recall'] = ANN_blank_test_all['True']/ANN_blank_test_all['MC_true']
+                    ANN_blank_test_right = ANN_blank_test
+                    ANN_blank_test_right = ANN_blank_test_right.rename(columns={'Hit_ID':'Hit_ID_right','SND_B31_Blank_3_2_2_Track_ID':'SND_B31_Blank_3_2_2_Track_ID_right','MC_Track':'MC_Track_right','z_coord':'z_coord_right'})
+                    ANN_blank_test_all = pd.merge(ANN_blank_test,ANN_blank_test_right,how='inner',on=['x','y','z'])
+                    #print(ANN_blank_test_all)
 
-                ANN_blank_test_all['ANN_blank_precision'] = ANN_blank_test_all['True']/ANN_blank_test_all['ANN_blank_true']
-                ANN_blank_base = pd.concat([ANN_blank_base,ANN_blank_test_all])
+                    ANN_blank_test_all = ANN_blank_test_all[ANN_blank_test_all.Hit_ID!=ANN_blank_test_all.Hit_ID_right]
+                    #print(ANN_blank_test_all)
+
+                    ANN_blank_test_all = ANN_blank_test_all[ANN_blank_test_all.z_coord>ANN_blank_test_all.z_coord_right]
+                    #print(ANN_blank_test_all)
+
+                    ANN_blank_test_all['MC_true'] = (ANN_blank_test_all['MC_Track']==ANN_blank_test_all['MC_Track_right']).astype(int)
+                    #print(ANN_blank_test_all)
+
+                    ANN_blank_test_all['ANN_blank_true'] = (ANN_blank_test_all['SND_B31_Blank_3_2_2_Track_ID']==ANN_blank_test_all['SND_B31_Blank_3_2_2_Track_ID_right']).astype(int)
+                    #print(ANN_blank_test_all)
+
+                    ANN_blank_test_all['True'] = ANN_blank_test_all['MC_true'] + ANN_blank_test_all['ANN_blank_true']
+                    ANN_blank_test_all['True'] = (ANN_blank_test_all['True']>1).astype(int)
+                    #print(ANN_blank_test_all[['SND_B31_Blank_3_2_2_Track_ID','SND_B31_Blank_3_2_2_Track_ID_right','ANN_blank_true']])
+
+                    ANN_blank_test_all = ANN_blank_test_all[['MC_true','ANN_blank_true','True','x','y','z']]
+                    ANN_blank_test_all = ANN_blank_test_all.groupby(['x', 'y','z']).agg({'ANN_blank_true':'sum','True':'sum','MC_true':'sum'}).reset_index()
+
+                    ANN_blank_test_all['ANN_blank_recall'] = ANN_blank_test_all['True']/ANN_blank_test_all['MC_true']
+
+                    ANN_blank_test_all['ANN_blank_precision'] = ANN_blank_test_all['True']/ANN_blank_test_all['ANN_blank_true']
+                    ANN_blank_base = pd.concat([ANN_blank_base,ANN_blank_test_all])
                 
     #create a table with all the wanted columns
-    print(ANN_blank_base)
+    #print(ANN_blank_base)
     ANN_blank_analysis = pd.merge(densitydata,ANN_blank_base, how='inner', on=['x','y','z'])
-    print(ANN_blank_analysis)
+    #print(ANN_blank_analysis)
     exit()
     
     #average of precision and recall
@@ -248,50 +271,67 @@ else:
     FEDRA.drop(['MC_Track_ID','MC_Event_ID','Brick_ID'], axis=1, inplace=True)
     
     # create a loop for all x, y and z ranges to be evaluated
-    for i in range(38,41):
-        FEDRA_test_i = FEDRA[FEDRA.x==i]
-        for  j in range(17,19):
-            FEDRA_test_j = FEDRA_test_i[FEDRA_test_i.y==j]
-            for k in range(26,34):
-                print(i,j,k)
-                FEDRA_test = FEDRA_test_j[FEDRA_test_j.z==k]
-                #print(FEDRA_test)
+    
+    xmin = math.floor(densitydata['x'].min())
+    #print(xmin)
+    xmax = math.ceil(densitydata['x'].max())
+    #print(xmax)
+    ymin = math.floor(densitydata['y'].min())
+    #print(ymin)
+    ymax = math.ceil(densitydata['y'].max())
+    #print(ymax)
+    zmin = math.floor(densitydata['z'].min())
+    #print(zmin)
+    zmax = math.ceil(densitydata['z'].max())
+    #print(zmax)
+    
+    iterations = (xmax - xmin)*(ymax - ymin)*(zmax - zmin)
+    with alive_bar(iterations,force_tty=True, title = 'Calculating densities.') as bar:
+        for i in range(xmin,xmax):
+            FEDRA_test_i = FEDRA[FEDRA.x==i]
+            for  j in range(ymin,ymax):
+                FEDRA_test_j = FEDRA_test_i[FEDRA_test_i.y==j]
+                for k in range(zmin,zmax):
+                    #print(i,j,k)
+                    FEDRA_test = FEDRA_test_j[FEDRA_test_j.z==k]
+                    bar()
+                    #print(FEDRA_test)
 
-                FEDRA_test_right = FEDRA_test
-                FEDRA_test_right = FEDRA_test_right.rename(columns={'Hit_ID':'Hit_ID_right','FEDRA_Track_ID':'FEDRA_Track_ID_right','MC_Track':'MC_Track_right','z_coord':'z_coord_right'})
-                FEDRA_test_all = pd.merge(FEDRA_test,FEDRA_test_right,how='inner',on=['x','y','z'])
-                #print(FEDRA_test_all)
+                    FEDRA_test_right = FEDRA_test
+                    FEDRA_test_right = FEDRA_test_right.rename(columns={'Hit_ID':'Hit_ID_right','FEDRA_Track_ID':'FEDRA_Track_ID_right','MC_Track':'MC_Track_right','z_coord':'z_coord_right'})
+                    FEDRA_test_all = pd.merge(FEDRA_test,FEDRA_test_right,how='inner',on=['x','y','z'])
+                    #print(FEDRA_test_all)
 
-                FEDRA_test_all = FEDRA_test_all[FEDRA_test_all.Hit_ID!=FEDRA_test_all.Hit_ID_right]
-                #print(FEDRA_test_all)
+                    FEDRA_test_all = FEDRA_test_all[FEDRA_test_all.Hit_ID!=FEDRA_test_all.Hit_ID_right]
+                    #print(FEDRA_test_all)
 
-                FEDRA_test_all = FEDRA_test_all[FEDRA_test_all.z_coord>FEDRA_test_all.z_coord_right]
-                #print(FEDRA_test_all)
-                #print(len(FEDRA_test_all))
+                    FEDRA_test_all = FEDRA_test_all[FEDRA_test_all.z_coord>FEDRA_test_all.z_coord_right]
+                    #print(FEDRA_test_all)
+                    #print(len(FEDRA_test_all))
 
-                FEDRA_test_all['MC_true'] = (FEDRA_test_all['MC_Track']==FEDRA_test_all['MC_Track_right']).astype(int)
-                #print(FEDRA_test_all)
+                    FEDRA_test_all['MC_true'] = (FEDRA_test_all['MC_Track']==FEDRA_test_all['MC_Track_right']).astype(int)
+                    #print(FEDRA_test_all)
 
-                FEDRA_test_all['FEDRA_true'] = (FEDRA_test_all['FEDRA_Track_ID']==FEDRA_test_all['FEDRA_Track_ID_right']).astype(int)
-                #print(FEDRA_test_all)
+                    FEDRA_test_all['FEDRA_true'] = (FEDRA_test_all['FEDRA_Track_ID']==FEDRA_test_all['FEDRA_Track_ID_right']).astype(int)
+                    #print(FEDRA_test_all)
 
-                FEDRA_test_all['True'] = FEDRA_test_all['MC_true'] + FEDRA_test_all['FEDRA_true']
-                FEDRA_test_all['True'] = (FEDRA_test_all['True']>1).astype(int)
-                #print(FEDRA_test_all[['FEDRA_Track_ID','FEDRA_Track_ID_right','FEDRA_true']])
+                    FEDRA_test_all['True'] = FEDRA_test_all['MC_true'] + FEDRA_test_all['FEDRA_true']
+                    FEDRA_test_all['True'] = (FEDRA_test_all['True']>1).astype(int)
+                    #print(FEDRA_test_all[['FEDRA_Track_ID','FEDRA_Track_ID_right','FEDRA_true']])
 
-                FEDRA_test_all = FEDRA_test_all[['MC_true','FEDRA_true','True','x','y','z']]
-                FEDRA_test_all = FEDRA_test_all.groupby(['x', 'y','z']).agg({'FEDRA_true':'sum','True':'sum','MC_true':'sum'}).reset_index()
-                #print(FEDRA_test_all)
+                    FEDRA_test_all = FEDRA_test_all[['MC_true','FEDRA_true','True','x','y','z']]
+                    FEDRA_test_all = FEDRA_test_all.groupby(['x', 'y','z']).agg({'FEDRA_true':'sum','True':'sum','MC_true':'sum'}).reset_index()
+                    #print(FEDRA_test_all)
 
-                FEDRA_test_all['FEDRA_recall'] = FEDRA_test_all['True']/FEDRA_test_all['MC_true']
+                    FEDRA_test_all['FEDRA_recall'] = FEDRA_test_all['True']/FEDRA_test_all['MC_true']
 
-                FEDRA_test_all['FEDRA_precision'] = FEDRA_test_all['True']/FEDRA_test_all['FEDRA_true']
-                FEDRA_base = pd.concat([FEDRA_base,FEDRA_test_all])
+                    FEDRA_test_all['FEDRA_precision'] = FEDRA_test_all['True']/FEDRA_test_all['FEDRA_true']
+                    FEDRA_base = pd.concat([FEDRA_base,FEDRA_test_all])
     
     #create a table with all the wanted columns
-    print(FEDRA_base)
+    #print(FEDRA_base)
     FEDRA_analysis = pd.merge(densitydata,FEDRA_base, how='inner', on=['x','y','z'])
-    print(FEDRA_analysis)
+    #print(FEDRA_analysis)
     exit()
 
     #average of precision and recall
