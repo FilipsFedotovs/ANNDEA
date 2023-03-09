@@ -23,6 +23,7 @@ input_file_location=args.f
 columns = ['Hit_ID','x','y','z','MC_Event_ID','MC_Track_ID','PDG_ID','MotherPDG',args.BrickName,args.TrackName]
 rowdata = pd.read_csv(input_file_location,usecols=columns)
 
+
 #calculating overall density, coordinates initially in microns
 columns = ['Hit_ID','x','y','z']
 densitydata = rowdata[columns]
@@ -102,6 +103,7 @@ with alive_bar(iterations,force_tty=True, title = 'Calculating densities.') as b
                 bar()
                 ANN_test = ANN_test_j[ANN_test_j.z==k]                       
                 ANN_test = ANN_test.drop(['y','z'], axis=1)
+                ANN_test = ANN_test.astype({col: 'int8' for col in df.select_dtypes('int64').columns})
                 if len(ANN_test) > 0:
                     
                     print(ANN_test.dtypes)
