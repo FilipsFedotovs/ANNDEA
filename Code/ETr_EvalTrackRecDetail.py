@@ -115,9 +115,9 @@ if args.ToolNames == 'ANN':
                 ANN_base = pd.concat([ANN_base,ANN_test_all])
                 
     #create a table with all the wanted columns
-    print(ANN_base)
+    #print(ANN_base)
     ANN_analysis = pd.merge(densitydata,ANN_base, how='inner', on=['x','y','z'])
-    print(ANN_analysis)
+    #print(ANN_analysis)
     exit()
     
     #average of precision and recall
