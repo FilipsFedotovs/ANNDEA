@@ -102,7 +102,7 @@ with alive_bar(iterations,force_tty=True, title = 'Calculating densities.') as b
                 bar()
                 ANN_test = ANN_test_j[ANN_test_j.z==k]                       
                 ANN_test = ANN_test.drop(['y','z'], axis=1)
-                if ANN_test > 0:
+                if len(ANN_test) > 0:
                     
                     print(ANN_test.dtypes)
                     exit()
