@@ -126,8 +126,8 @@ if args.ToolNames == 'ANN':
                     ANN_test_all['True'] = (ANN_test_all['True']>1).astype(int)
                     #print(ANN_test_all[['SND_B31_3_2_2_Track_ID','SND_B31_3_2_2_Track_ID_right','ANN_true']])
                     
-                    ANN_test_all['y'] = ANN_test_all['j']
-                    ANN_test_all['z'] = ANN_test_all['k']
+                    ANN_test_all['y'] = j
+                    ANN_test_all['z'] = k
 
                     ANN_test_all = ANN_test_all[['MC_true','ANN_true','True','x','y','z']]
                     ANN_test_all = ANN_test_all.groupby(['x', 'y','z']).agg({'ANN_true':'sum','True':'sum','MC_true':'sum'}).reset_index()
