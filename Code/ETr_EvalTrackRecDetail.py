@@ -13,8 +13,8 @@ from alive_progress import alive_bar
 
 parser = argparse.ArgumentParser(description='This script compares the ouput of the previous step with the output of ANNDEA reconstructed data to calculate reconstruction performance.')
 parser.add_argument('--f',help="Please enter the full path to the file with track reconstruction", default='/afs/cern.ch/work/f/ffedship/public/SHIP/Source_Data/SHIP_Emulsion_FEDRA_Raw_UR.csv')
-parser.add_argument('--TrackName', type=str, default='FEDRA_Track_ID' help="Please enter the computing tool name that you want to compare")
-parser.add_argument('--BrickName', type=str, default='Brick_ID' help="Please enter the computing tool name that you want to compare")
+parser.add_argument('--TrackName', type=str, default='FEDRA_Track_ID', help="Please enter the computing tool name that you want to compare")
+parser.add_argument('--BrickName', type=str, default='Brick_ID', help="Please enter the computing tool name that you want to compare")
 args = parser.parse_args()
 
 input_file_location=args.f
