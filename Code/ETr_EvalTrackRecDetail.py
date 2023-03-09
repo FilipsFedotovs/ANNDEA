@@ -105,11 +105,9 @@ with alive_bar(iterations,force_tty=True, title = 'Calculating densities.') as b
                 ANN_test = ANN_test.drop(['y','z'], axis=1)
                 
                 
-                if len(ANN_test) > 0:
-                   
-                    
+                if len(ANN_test) > 0:                                       
                     ANN_test = ANN_test.astype({col: 'int8' for col in ANN_test.select_dtypes('int64').columns})
-                    ANN_test = ANN_test.astype({col: 'int8' for col in ANN_test.select_dtypes('float64').columns})
+                    ANN_test = ANN_test.astype({col: 'float8' for col in ANN_test.select_dtypes('float64').columns})
                     print(ANN_test.dtypes)
                     exit()
 
