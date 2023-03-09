@@ -9,6 +9,7 @@ pd.options.mode.chained_assignment = None #Silence annoying warnings
 import math 
 import numpy as np
 import argparse
+from alive_progress import alive_bar
 
 parser = argparse.ArgumentParser(description='This script compares the ouput of the previous step with the output of ANNDEA reconstructed data to calculate reconstruction performance.')
 parser.add_argument('--f',help="Please enter the full path to the file with track reconstruction", default='/afs/cern.ch/work/f/ffedship/public/SHIP/Source_Data/SHIP_Emulsion_FEDRA_Raw_UR.csv')
@@ -77,12 +78,27 @@ if args.ToolNames == 'ANN':
     ANN.drop(['MC_Track_ID','MC_Event_ID'], axis=1, inplace=True)
     
     # create a loop for all x, y and z ranges to be evaluated
-    for i in range(38,41):
+    
+    #with alive_bar(
+    xmin = densitydata['x'].min()
+    print(xmin)
+    xmax = densitydata['x'].max()
+    print(xmax)
+    ymin = densitydata['y'].min()
+    print(ymin)
+    ymax = densitydata['y'].max()
+    print(ymax)
+    zmin = densitydata['z'].min()
+    print(zmin)
+    zmax = densitydata['z'].max()
+    print(zmax)
+    
+    for i in range(xmin,xmax):
         ANN_test_i = ANN[ANN.x==i]
-        for  j in range(17,19):
+        for  j in range(ymin,ymax):
             ANN_test_j = ANN_test_i[ANN_test_i.y==j]
-            for k in range(26,34):
-                print(i,j,k)
+            for k in range(zmin,zmax):
+                #print(i,j,k)
                 ANN_test = ANN_test_j[ANN_test_j.z==k]
                 
                 ANN_test_right = ANN_test
