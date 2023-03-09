@@ -102,7 +102,7 @@ if args.ToolNames == 'ANN':
                     bar()
                     ANN_test = ANN_test_j[ANN_test_j.z==k]
                     print(ANN_test.memory_usage)
-                    ANN_test = ANN_test.drop(['y','z'], axis=1, inplace = True)
+                    ANN_test = ANN_test.drop(['y','z'], axis=1)
                     print(ANN_test.memory_usage)
 
                     ANN_test_right = ANN_test
