@@ -149,6 +149,9 @@ ANN_analysis = pd.merge(densitydata,ANN_base, how='inner', on=['x','y','z'])
 #print(ANN_analysis)
 #exit()
 
+ANN_analysis['ANN_recall'] = pd.to_numeric(ANN_analysis['ANN_recall'],errors='coerce').fillna(0).astype('int')
+ANN_analysis['ANN_precision'] = pd.to_numeric(ANN_analysis['ANN_precision'],errors='coerce').fillna(0).astype('int')
+
 #average of precision and recall
 recall_average = ANN_test_all.loc[:, 'ANN_recall'].mean()
 print('Average recall is', recall_average)
