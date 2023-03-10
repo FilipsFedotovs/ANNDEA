@@ -149,13 +149,22 @@ ANN_analysis = pd.merge(densitydata,ANN_base, how='inner', on=['x','y','z'])
 #print(ANN_analysis)
 #exit()
 
+#average of precision and recall
 ANN_analysis['ANN_recall'] = pd.to_numeric(ANN_analysis['ANN_recall'],errors='coerce').fillna(0).astype('int')
 ANN_analysis['ANN_precision'] = pd.to_numeric(ANN_analysis['ANN_precision'],errors='coerce').fillna(0).astype('int')
+TotalMCtrue = ANN_analysis['MC_true'].sum()
+TotalANNtrue = ANN_analysis['ANN_true'].sum()
+Totaltrue = ANN_analysis['True'].sum()
+
+Average_recall = Totaltrue/TotalMCtrue
+Average_precision = Totaltrue/TotalANNtrue
+print('Average recall is', Average_recall)
+print('Average precision is', Average_precision)
 
 #average of precision and recall
-recall_average = ANN_test_all.loc[:, 'ANN_recall'].mean()
-print('Average recall is', recall_average)
-precision_average = ANN_test_all.loc[:, 'ANN_precision'].mean()
-print('Average precision is', precision_average)
+#recall_average = ANN_test_all.loc[:, 'ANN_recall'].mean()
+#print('Average recall is', recall_average)
+#precision_average = ANN_test_all.loc[:, 'ANN_precision'].mean()
+#print('Average precision is', precision_average)
 
 # end of script #
