@@ -146,8 +146,8 @@ with alive_bar(iterations,force_tty=True, title = 'Calculating densities.') as b
 #create a table with all the wanted columns
 #print(ANN_base)
 ANN_analysis = pd.merge(densitydata,ANN_base, how='inner', on=['x','y','z'])
-print(ANN_analysis)
-exit()
+#print(ANN_analysis)
+#exit()
 
 #average of precision and recall
 recall_average = ANN_test_all.loc[:, 'ANN_recall'].mean()
