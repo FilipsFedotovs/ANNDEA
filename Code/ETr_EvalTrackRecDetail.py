@@ -108,8 +108,8 @@ with alive_bar(iterations,force_tty=True, title = 'Calculating densities.') as b
                     ANN_test['SND_B31_3_2_2_Track_ID'] = pd.to_numeric(ANN_test['SND_B31_3_2_2_Track_ID'],errors='coerce').fillna(-2).astype('int')
                     ANN_test['z_coord'] = ANN_test['z_coord'].astype('int')
                     ANN_test = ANN_test.astype({col: 'int8' for col in ANN_test.select_dtypes('int64').columns})
-                    print(ANN_test.dtypes)
-                    exit()
+                    #print(ANN_test.dtypes)
+                    #exit()
 
                 ANN_test_right = ANN_test
                 ANN_test_right = ANN_test_right.rename(columns={'Hit_ID':'Hit_ID_right',args.TrackName:args.TrackName+'_right','MC_Track':'MC_Track_right','z_coord':'z_coord_right'})
