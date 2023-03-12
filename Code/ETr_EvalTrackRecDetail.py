@@ -81,18 +81,18 @@ ANN.drop(['MC_Track_ID','MC_Event_ID'], axis=1, inplace=True)
 # create a loop for all x, y and z ranges to be evaluated
 
 xmin = math.floor(densitydata['x'].min())
-#print(xmin)
+print(xmin)
 xmax = math.ceil(densitydata['x'].max())
-#print(xmax)
+print(xmax)
 ymin = math.floor(densitydata['y'].min())
-#print(ymin)
+print(ymin)
 ymax = math.ceil(densitydata['y'].max())
-#print(ymax)
+print(ymax)
 zmin = math.floor(densitydata['z'].min())
-#print(zmin)
+print(zmin)
 zmax = math.ceil(densitydata['z'].max())
-#print(zmax)
-
+print(zmax)
+exit()
 iterations = (xmax - xmin)*(ymax - ymin)*(zmax - zmin)
 with alive_bar(iterations,force_tty=True, title = 'Calculating densities.') as bar:
     for i in range(xmin,xmax):
