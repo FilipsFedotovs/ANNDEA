@@ -38,8 +38,9 @@ sns.heatmap(hitdata, annot=True)
 #exit()
 
 # number of segments by specific Track IDs
-segments_tx = rowdata.groupby([args.TrackName]).tx.nunique().reset_index() 
-segments_ty = rowdata.groupby([args.TrackName]).ty.nunique().reset_index() 
+angledata = ['tx','ty',args.TrackName]
+segments_tx = angledata.groupby([args.TrackName]).tx.nunique().reset_index() 
+segments_ty = angledata.groupby([args.TrackName]).ty.nunique().reset_index() 
 print(segments_tx)
 print(segments_ty)
 exit()
