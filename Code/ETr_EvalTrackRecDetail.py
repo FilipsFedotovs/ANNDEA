@@ -128,7 +128,8 @@ with alive_bar(iterations,force_tty=True, title = 'Calculating densities.') as b
                 ANN_test_all['MC_true'] = (ANN_test_all['MC_Track']==ANN_test_all['MC_Track_right']).astype(int)
                 #print(ANN_test_all)
 
-                ANN_test_all['ANN_true'] = (ANN_test_all[args.TrackName]==ANN_test_all[args.TrackName+'_right']).astype(int)
+                ANN_test_all['ANN_true'] = ((ANN_test_all[args.TrackName]==ANN_test_all[args.TrackName+'_right']) & (ANN_test_all[args.TrackName]!=-2))
+                ANN_test_all['ANN_true'] = ANN_test_all['ANN_true'].astype(int)
                 #print(ANN_test_all)
 
                 ANN_test_all['True'] = ANN_test_all['MC_true'] + ANN_test_all['ANN_true']
@@ -149,6 +150,9 @@ with alive_bar(iterations,force_tty=True, title = 'Calculating densities.') as b
 #create a table with all the wanted columns
 #print(ANN_base)
 ANN_analysis = pd.merge(densitydata,ANN_base, how='inner', on=['x','y','z'])
+output = Args.TrackName+'FinalData.csv'
+ANN_analysis.to_csv(output,index=False)
+print(output, 'was saved.')
 #print(ANN_analysis)
 #exit()
 
@@ -158,7 +162,7 @@ plt.xlabel('Density of Hits')
 plt.ylabel('Recall Average')
 plt.title('Recall for Hit density')
 plt.show()
-exit()
+#exit()
 
 #average of precision and recall
 ANN_analysis['ANN_recall'] = pd.to_numeric(ANN_analysis['ANN_recall'],errors='coerce').fillna(0).astype('int')
