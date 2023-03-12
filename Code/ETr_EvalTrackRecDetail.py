@@ -150,12 +150,12 @@ ANN_analysis = pd.merge(densitydata,ANN_base, how='inner', on=['x','y','z'])
 print(ANN_analysis)
 
 
-#creating an histogram of recall and precision by hit density
-plt.hist2d(ANN_analysis['Hit_Density']/100,ANN_analysis['ANN_recall'])
-plt.xlabel('Density of Hits')
-plt.ylabel('Recall Average')
-plt.title('Recall for Hit density')
-plt.show()
+# #creating an histogram of recall and precision by hit density
+# plt.hist2d(ANN_analysis['Hit_Density']/100,ANN_analysis['ANN_recall'])
+# plt.xlabel('Density of Hits')
+# plt.ylabel('Recall Average')
+# plt.title('Recall for Hit density')
+# plt.show()
 
 
 #average of precision and recall
