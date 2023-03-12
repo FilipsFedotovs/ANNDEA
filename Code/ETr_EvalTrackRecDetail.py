@@ -7,6 +7,8 @@
 import pandas as pd #for analysis
 pd.options.mode.chained_assignment = None #Silence annoying warnings
 import math 
+import matplotlib
+matplotlib.use('Agg')
 from matplotlib import pyplot as plt #in order to create histograms
 import numpy as np
 import argparse
