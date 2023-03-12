@@ -92,10 +92,10 @@ zmin = math.floor(densitydata['z'].min())
 print(zmin)
 zmax = math.ceil(densitydata['z'].max())
 print(zmax)
-exit()
+
 iterations = (xmax - xmin)*(ymax - ymin)*(zmax - zmin)
 with alive_bar(iterations,force_tty=True, title = 'Calculating densities.') as bar:
-    for i in range(xmin,xmax):
+    for i in range(xmin,15):
         ANN_test_i = ANN[ANN.x==i]
         for  j in range(ymin,ymax):
             ANN_test_j = ANN_test_i[ANN_test_i.y==j]
