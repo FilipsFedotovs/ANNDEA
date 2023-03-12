@@ -147,8 +147,8 @@ with alive_bar(iterations,force_tty=True, title = 'Calculating densities.') as b
 #create a table with all the wanted columns
 #print(ANN_base)
 ANN_analysis = pd.merge(densitydata,ANN_base, how='inner', on=['x','y','z'])
-#print(ANN_analysis)
-#exit()
+print(ANN_analysis)
+exit()
 
 #creating an histogram of recall and precision by hit density
 plt.hist2d(ANN_analysis['Hit_Density']/100,ANN_analysis['ANN_recall'])
