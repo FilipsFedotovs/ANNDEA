@@ -126,7 +126,7 @@ with alive_bar(iterations,force_tty=True, title = 'Calculating densities.') as b
                 ANN_test_all['MC_true'] = (ANN_test_all['MC_Track']==ANN_test_all['MC_Track_right']).astype(int)
                 #print(ANN_test_all)
 
-                ANN_test_all['ANN_true'] = (ANN_test_all[args.TrackName]==ANN_test_all[args.TrackName+'_right'] | ANN_test_all[args.TrackName]!=-2).astype(int)
+                ANN_test_all['ANN_true'] = (ANN_test_all[args.TrackName]==ANN_test_all[args.TrackName+'_right'] & ANN_test_all[args.TrackName]!=-2).astype(int)
                 #print(ANN_test_all)
 
                 ANN_test_all['True'] = ANN_test_all['MC_true'] + ANN_test_all['ANN_true']
