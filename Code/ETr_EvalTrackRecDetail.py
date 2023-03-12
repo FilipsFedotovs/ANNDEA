@@ -109,10 +109,8 @@ with alive_bar(iterations,force_tty=True, title = 'Calculating densities.') as b
 
                     ANN_test[args.TrackName] = pd.to_numeric(ANN_test[args.TrackName],errors='coerce').fillna(-2).astype('int')
                     ANN_test['z_coord'] = ANN_test['z_coord'].astype('int')
-                    print(ANN_test)
                     ANN_test = ANN_test.astype({col: 'int8' for col in ANN_test.select_dtypes('int64').columns})
-                    print(ANN_test.dtypes)
-                    exit()
+
 
                 ANN_test_right = ANN_test
                 ANN_test_right = ANN_test_right.rename(columns={'Hit_ID':'Hit_ID_right',args.TrackName:args.TrackName+'_right','MC_Track':'MC_Track_right','z_coord':'z_coord_right'})
@@ -150,7 +148,7 @@ with alive_bar(iterations,force_tty=True, title = 'Calculating densities.') as b
 #print(ANN_base)
 ANN_analysis = pd.merge(densitydata,ANN_base, how='inner', on=['x','y','z'])
 print(ANN_analysis)
-exit()
+
 
 #creating an histogram of recall and precision by hit density
 plt.hist2d(ANN_analysis['Hit_Density']/100,ANN_analysis['ANN_recall'])
@@ -158,7 +156,7 @@ plt.xlabel('Density of Hits')
 plt.ylabel('Recall Average')
 plt.title('Recall for Hit density')
 plt.show()
-exit()
+
 
 #average of precision and recall
 ANN_analysis['ANN_recall'] = pd.to_numeric(ANN_analysis['ANN_recall'],errors='coerce').fillna(0).astype('int')
