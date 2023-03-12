@@ -34,7 +34,14 @@ hitdata['ty'] = pd.to_numeric(hitdata['ty'],errors='coerce').fillna(0.00).astype
 #ANN_test = ANN_test.astype({col: 'int8' for col in ANN_test.select_dtypes('int64').columns})
 hitdata=hitdata.groupby(['tx','ty']).Hit_ID.nunique().reset_index()
 sns.heatmap(hitdata, annot=True)
-plt.show()
+#plt.show()
+#exit()
+
+# number of segments by specific Track IDs
+segments_tx = rowdata.groupby([args.TrackName]).tx.nunique().reset_index() 
+segments_ty = rowdata.groupby([args.TrackName]).ty.nunique().reset_index() 
+print(segments_tx)
+print(segments_ty)
 exit()
 
 # number of Hit_ID's by specific particle ID's
