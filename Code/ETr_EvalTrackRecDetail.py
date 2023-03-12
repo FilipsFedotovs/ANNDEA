@@ -7,6 +7,7 @@
 import pandas as pd #for analysis
 pd.options.mode.chained_assignment = None #Silence annoying warnings
 import math 
+from matplotlib import pyplot as plt #in order to create histograms
 import numpy as np
 import argparse
 from alive_progress import alive_bar
@@ -148,6 +149,14 @@ with alive_bar(iterations,force_tty=True, title = 'Calculating densities.') as b
 ANN_analysis = pd.merge(densitydata,ANN_base, how='inner', on=['x','y','z'])
 #print(ANN_analysis)
 #exit()
+
+#creating an histogram of recall and precision by hit density
+plt.hist2d(ANN_analysis['Hit_Density']/100,ANN_analysis['ANN_recall'])
+plt.xlabel('Density of Hits')
+plt.ylabel('Recall Average')
+plt.title('Recall for Hit density')
+plt.show()
+exit()
 
 #average of precision and recall
 ANN_analysis['ANN_recall'] = pd.to_numeric(ANN_analysis['ANN_recall'],errors='coerce').fillna(0).astype('int')
