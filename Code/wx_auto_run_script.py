@@ -69,7 +69,7 @@ train_parameter_dict_cnn = {
 
 train_parameter_dict_gnn = {
     "learning rate": 0.0001,
-    "Batch size": 32,
+    "Batch size": 4,
     "Epochs": 32,
 }
 
