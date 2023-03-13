@@ -763,7 +763,7 @@ class EMO:
                           __graphData_x =__TempTrack[0]
                       __y=[]
                       for i in range(MM.ModelParameters[10][1]):
-                      if self.Label==i:
+                      if (self.Label==i):
                         __y.append(1)
                       else:
                         __y.append(0)
