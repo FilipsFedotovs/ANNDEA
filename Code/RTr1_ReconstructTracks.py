@@ -136,6 +136,7 @@ elif os.path.isfile(Model_Meta_Path):
        cut_dr=Model_Meta.cut_dr
 else:
        print(UF.TimeStamp(),bcolors.FAIL+'Fail! No existing model meta files have been found, exiting now'+bcolors.ENDC)
+       exit()
 
 ########################################     Phase 1 - Create compact source file    #########################################
 print(UF.TimeStamp(),bcolors.BOLD+'Preparation 2/3:'+bcolors.ENDC+' Preparing the source data...')
@@ -644,7 +645,7 @@ while Status<len(Program):
             print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 4 has successfully completed'+bcolors.ENDC)
             Status=4
        except Exception as e:
-          print(UF.TimeStamp(),bcolors.FAIL+'Stage 4 is uncompleted due to...',+str(e)+bcolors.ENDC)
+          print(UF.TimeStamp(),bcolors.FAIL+'Stage 4 is uncompleted due to '+str(e)+bcolors.ENDC)
           Status=5
           break
 if Status==4:
