@@ -645,7 +645,7 @@ while Status<len(Program):
             print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 4 has successfully completed'+bcolors.ENDC)
             Status=4
        except Exception as e:
-          print(UF.TimeStamp(),bcolors.FAIL+'Stage 4 is uncompleted due to '+str(e)+bcolors.ENDC)
+          print(UF.TimeStamp(),bcolors.FAIL+'Stage 4 is uncompleted due to: '+str(e)+bcolors.ENDC)
           Status=5
           break
 if Status==4:

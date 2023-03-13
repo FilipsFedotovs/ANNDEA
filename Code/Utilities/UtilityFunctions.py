@@ -749,6 +749,7 @@ class EMO:
                               __Tracks[h][2]=float(__Tracks[h][2])-__FinZ
 
                       # Rescale
+                      print(MM.ModelParameters)
                       for __Tracks in __TempTrack:
                               for h in range(len(__Tracks)):
                                   __Tracks[h][0]=__Tracks[h][0]/MM.ModelParameters[11][0]
