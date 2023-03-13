@@ -26,15 +26,10 @@ columns = ['Hit_ID','x','y','z','tx','ty','MC_Event_ID','MC_Track_ID','PDG_ID','
 rowdata = pd.read_csv(input_file_location,usecols=columns)
 
 #heatmap plot for tx and ty
-#rowdata['tx'] = str(round(rowdata['tx'],2))
-#rowdata['ty'] = str(round(rowdata['ty'],2))
 hitdata = rowdata[['Hit_ID','tx','ty']]
-#hitdata['tx'] = pd.to_numeric(hitdata['tx'],errors='coerce').fillna(0.00).astype('float')
-#hitdata['ty'] = pd.to_numeric(hitdata['ty'],errors='coerce').fillna(0.00).astype('float')
-#ANN_test = ANN_test.astype({col: 'int8' for col in ANN_test.select_dtypes('int64').columns})
 hitdata=hitdata.groupby(['tx','ty']).Hit_ID.nunique().reset_index()
-hitdata = hitdata.pivot("tx", "ty", "Hit_ID")
-sns.heatmap(heatmap_data, annot=True)
+#hitdata = hitdata.pivot("tx", "ty", "Hit_ID")
+sns.heatmap(hitdata, annot=True)
 plt.show()
 exit()
 
