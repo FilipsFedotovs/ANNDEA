@@ -781,6 +781,13 @@ class EMO:
                             __graphData_edge_index.append([j,i])
                             __graphData_edge_attr.append(np.array(__graphData_pos[i]) - np.array(__graphData_pos[j]))
                       if(hasattr(self, 'Label')):
+                          __y=[]
+                          for i in range(MM.ModelParameters[10][1]):
+                            if self.Label==i:
+                                __y.append(1)
+                            else:
+                                __y.append(0)
+                          __graphData_y = (__y)
                           import torch
                           import torch_geometric
                           from torch_geometric.data import Data
