@@ -85,6 +85,11 @@ newdata['delta_y'] = newdata['y_max'] - newdata['y_min']
 
 newdata['TX'] = newdata['delta_x']/newdata['Track_length']
 newdata['TY'] = newdata['delta_y']/newdata['Track_length']
-print(newdata)
-        
+#print(newdata)
+
+print('Maximum angle TX is', newdata['TX'].max())
+print('Minimum angle TX is', newdata['TX'].min())
+print('Maximum angle TY is', newdata['TY'].max())
+print('Minimum angle TY is', newdata['TY'].min())
+
 # end of script #
