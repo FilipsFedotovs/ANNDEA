@@ -46,9 +46,13 @@ print(segments_tx)
 print(segments_ty)
 
 z_min = rowdata.groupby([args.TrackName]).z.min().reset_index() 
+
 z_max = rowdata.groupby([args.TrackName]).z.max().reset_index() 
-print(z_min)
-print(z_max)
+z_min = z_min.rename(columns={'z':'z_min'})
+z_max = z_max.rename(columns={'z':'z_max'})
+newdata = pd.merge(z_max,z_min,how='inner',on=[args.TrackName])
+print(newdata)
+
 exit()
 #length of tracks along z
 TrackIDmin =  math.floor(rowdata[args.TrackName].min())
