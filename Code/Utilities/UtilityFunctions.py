@@ -707,13 +707,7 @@ class EMO:
 
 
                       try:
-                          __y=[]
-                          for i in range(MM.ModelParameters[10][1]):
-                            if self.Label==i:
-                                __y.append(1)
-                            else:
-                                __y.append(0)
-                          __graphData_y = (__y)
+                          __graphData_y = self.Label
                           import torch
                           import torch_geometric
                           from torch_geometric.data import Data
@@ -762,13 +756,8 @@ class EMO:
                       except:
                           __graphData_x =__TempTrack[0]
 
-                      __y=[]
-                      for i in range(MM.ModelParameters[10][1]):
-                        if (self.Label==i):
-                            __y.append(1)
-                        else:
-                            __y.append(0)
-                      __graphData_y = (__y)
+     
+                      __graphData_y = self.Label
 
                       __graphData_pos = []
                       for node in __graphData_x:

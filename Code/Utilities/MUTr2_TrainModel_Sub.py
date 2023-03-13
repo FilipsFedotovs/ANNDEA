@@ -77,7 +77,7 @@ def GNNtrain(model, Sample,optimizer):
     model.train()
     for data in Sample:
         out = model(data.x, data.edge_index, data.edge_attr, data.batch)
-        data.y = torch.argmax(data.y, dim=1)
+        # data.y = torch.argmax(data.y, dim=1)
         loss = criterion(out, data.y)
         loss.backward()  # Derive gradients.
         optimizer.step()  # Update parameters based on gradients.
