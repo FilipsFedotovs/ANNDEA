@@ -34,8 +34,8 @@ hitdata['ty'] = pd.to_numeric(hitdata['ty'],errors='coerce').fillna(0.00).astype
 #ANN_test = ANN_test.astype({col: 'int8' for col in ANN_test.select_dtypes('int64').columns})
 hitdata=hitdata.groupby(['tx','ty']).Hit_ID.nunique().reset_index()
 sns.heatmap(hitdata, annot=True)
-plt.show()
-exit()
+#plt.show()
+#exit()
 
 # number of segments by specific Track IDs
 angle_columns = ['tx','ty',args.TrackName]
@@ -45,6 +45,11 @@ segments_ty = angle_data.groupby([args.TrackName]).ty.nunique().reset_index()
 print(segments_tx)
 print(segments_ty)
 
+z_min = rowdata.groupby([args.TrackName]).z.min().reset_index() 
+z_max = rowdata.groupby([args.TrackName]).z.max().reset_index() 
+print(z_min)
+print(z_max)
+exit()
 #length of tracks along z
 TrackIDmin =  math.floor(rowdata[args.TrackName].min())
 TrackIDmax =  math.ceil(rowdata[args.TrackName].max())
