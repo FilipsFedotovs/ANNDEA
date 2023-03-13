@@ -52,10 +52,11 @@ iterations = (TrackIDmax - TrackIDmin)
 with alive_bar(iterations,force_tty=True, title = 'Calculating Z length.') as bar:
     for i in range (TrackIDmin,TrackIDmax):
         #calculate length
+        bar()
         zmin = math.floor(rowdata['z'].min())
         zmax = math.ceil(rowdata['z'].max())
         z_length = zmax-zmin
-        print(z_lenght)
+        print(z_length)
     
 exit()
 
