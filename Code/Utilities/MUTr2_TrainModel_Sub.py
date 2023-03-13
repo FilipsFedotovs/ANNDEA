@@ -76,6 +76,8 @@ def CNNtrain(model, Sample, Batches,num_classes=2):
 def GNNtrain(model, Sample,optimizer):
     model.train()
     for data in Sample:
+        print(data.batch)
+        print(data.x)
         out = model(data.x, data.edge_index, data.edge_attr, data.batch)
         loss = criterion(out, data.y)
         loss.backward()  # Derive gradients.
