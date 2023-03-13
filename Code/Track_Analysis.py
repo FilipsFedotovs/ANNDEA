@@ -31,13 +31,7 @@ hitdata=hitdata.groupby(['tx','ty']).Hit_ID.nunique().reset_index()
 #hitdata = hitdata.pivot("tx", "ty", "Hit_ID")
 print('Creating plot')
 #sns.heatmap(hitdata, annot=True)
-heatmap = np.histogram2d(hitdata['tx'], hitdata['ty'], bins=(64,64))
-
-# Plot heatmap
-plt.title('tx and ty heatmap')
-plt.ylabel('ty')
-plt.xlabel('tx')
-plt.imshow(heatmap)
+plt.hist2d(hitdata['tx'],hitdata['ty'],bins=20,
 plt.show()
 exit()
 
