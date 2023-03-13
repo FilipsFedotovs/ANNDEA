@@ -33,8 +33,6 @@ hitdata = rowdata[['Hit_ID','tx','ty']]
 #hitdata['ty'] = pd.to_numeric(hitdata['ty'],errors='coerce').fillna(0.00).astype('float')
 #ANN_test = ANN_test.astype({col: 'int8' for col in ANN_test.select_dtypes('int64').columns})
 hitdata=hitdata.groupby(['tx','ty']).Hit_ID.nunique().reset_index()
-print(hitdata)
-exit()
 hitdata = hitdata.pivot("tx", "ty", "Hit_ID")
 sns.heatmap(heatmap_data, annot=True)
 plt.show()
