@@ -44,6 +44,19 @@ segments_tx = angle_data.groupby([args.TrackName]).tx.nunique().reset_index()
 segments_ty = angle_data.groupby([args.TrackName]).ty.nunique().reset_index() 
 print(segments_tx)
 print(segments_ty)
+
+#length of tracks along z
+TrackIDmin =  math.floor(rowdata[args.TrackName].min())
+TrackIDmax =  math.ceil(rowdata[args.TrackName].max())
+iterations = (TrackIDmax - TrackIDmin)
+with alive_bar(iterations,force_tty=True, title = 'Calculating Z length.') as bar:
+    for i in range (TrackIDmin,TrackIDmax):
+        #calculate length
+        zmin = math.floor(rowdata['z'].min())
+        zmax = math.ceil(rowdata['z'].max())
+        z_length = zmax-zmin
+        print(z_lenght)
+    
 exit()
 
 # number of Hit_ID's by specific particle ID's
