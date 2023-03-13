@@ -150,7 +150,7 @@ with alive_bar(iterations,force_tty=True, title = 'Calculating densities.') as b
 #create a table with all the wanted columns
 #print(ANN_base)
 ANN_analysis = pd.merge(densitydata,ANN_base, how='inner', on=['x','y','z'])
-output = Args.TrackName+'FinalData.csv'
+output = args.TrackName+'_FinalData.csv'
 ANN_analysis.to_csv(output,index=False)
 print(output, 'was saved.')
 #print(ANN_analysis)
