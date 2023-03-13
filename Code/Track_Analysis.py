@@ -52,10 +52,13 @@ z_min = z_min.rename(columns={'z':'z_min'})
 z_max = z_max.rename(columns={'z':'z_max'})
 newdata = pd.merge(z_max,z_min,how='inner',on=[args.TrackName])
 newdata['Track_length'] = newdata['z_max'] - newdata['z_min']
-print(newdata)
+#print(newdata)
 
 x_max = pd.merge(newdata, rowdata, how='inner', left_on=[args.TrackName,'z_max'], right_on=[args.TrackName,'z'])
-print(x_max)
+x_max = x_max.rename(columns={'x':'x_max'})
+x_max = x_max[['x_max', args.TrackName]]
+newdata = pd.merge(newdata,x_max,how='inner',on=[args.TrackName])
+print(newdata)
 
 exit()
 #length of tracks along z
