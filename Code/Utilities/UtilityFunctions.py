@@ -1671,7 +1671,7 @@ def GenerateModel(ModelMeta,TrainParams=None):
                         self.conv1 = GMMConv(5 , HiddenLayer[0][0],dim=3,kernel_size=HiddenLayer[0][1])
                         self.conv2 = GMMConv(HiddenLayer[0][0],HiddenLayer[1][0],dim=3,kernel_size=HiddenLayer[1][1])
                         self.conv3 = GMMConv(HiddenLayer[1][0],HiddenLayer[2][0],dim=3,kernel_size=HiddenLayer[2][1])
-                        self.lin = Linear(HiddenLayer[2][0],OutputLayer[1])
+                        self.lin = Linear(HiddenLayer[2][0]*3,OutputLayer[1])
                     self.softmax = Softmax(dim=-1)
 
                 def forward(self, x, edge_index, edge_attr, batch):
