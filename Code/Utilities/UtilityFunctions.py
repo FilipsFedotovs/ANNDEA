@@ -761,6 +761,13 @@ class EMO:
                           __graphData_x =__TempTrack[0]+__TempTrack[1]
                       except:
                           __graphData_x =__TempTrack[0]
+                      __y=[]
+                      for i in range(MM.ModelParameters[10][1]):
+                      if self.Label==i:
+                        __y.append(1)
+                      else:
+                        __y.append(0)
+                      __graphData_y = (__y)
 
                       __graphData_pos = []
                       for node in __graphData_x:
@@ -1661,7 +1668,7 @@ def GenerateModel(ModelMeta,TrainParams=None):
                     super(GMM, self).__init__()
                     torch.manual_seed(12345)
                     if len(HiddenLayer)==3:
-                        self.conv1 = Conv(5 , HiddenLayer[0][0],dim=3,kernel_size=HiddenLayer[0][1])
+                        self.conv1 = GMMConv(5 , HiddenLayer[0][0],dim=3,kernel_size=HiddenLayer[0][1])
                         self.conv2 = GMMConv(HiddenLayer[0][0],HiddenLayer[1][0],dim=3,kernel_size=HiddenLayer[1][1])
                         self.conv3 = GMMConv(HiddenLayer[1][0],HiddenLayer[2][0],dim=3,kernel_size=HiddenLayer[2][1])
                         self.lin = Linear(HiddenLayer[2][0],OutputLayer[1])
