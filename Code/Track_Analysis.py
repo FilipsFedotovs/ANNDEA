@@ -92,4 +92,9 @@ print('Minimum angle TX is', newdata['TX'].min())
 print('Maximum angle TY is', newdata['TY'].max())
 print('Minimum angle TY is', newdata['TY'].min())
 
+plt.hist(newdata['TX'], bins=100, align = 'right', color = 'purple', edgecolor = 'black', log = 'True')
+plt.xlabel('Angle TX distribution')
+plt.ylabel('Number of counts')
+plt.title('Angle Distribution on x')
+plt.show()
 # end of script #
