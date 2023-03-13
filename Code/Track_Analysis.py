@@ -33,7 +33,8 @@ hitdata['tx'] = pd.to_numeric(hitdata['tx'],errors='coerce').fillna(0.00).astype
 hitdata['ty'] = pd.to_numeric(hitdata['ty'],errors='coerce').fillna(0.00).astype('float')
 #ANN_test = ANN_test.astype({col: 'int8' for col in ANN_test.select_dtypes('int64').columns})
 hitdata=hitdata.groupby(['tx','ty']).Hit_ID.nunique().reset_index()
-heatmap_data = hitdata[['tx','ty']]
+print(hitdata)
+exit()
 sns.heatmap(heatmap_data, annot=True)
 plt.show()
 exit()
