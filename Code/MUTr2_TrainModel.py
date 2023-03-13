@@ -270,10 +270,10 @@ else:
                  else:
                          Job=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/','N/A','MUTr2','N/A',ModelName,1,OptionHeader,OptionLine,'MUTr2_TrainModel_Sub.py',False,"['','']", True, False)[0]
                  if len(q)>0:
-                 UF.SubmitJobs2Condor(Job,False,False,JobFlavour)
-                 print(bcolors.BOLD+"The job has been submitted..."+bcolors.ENDC)
-                 print(UF.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
-                 exit()
+                  UF.SubmitJobs2Condor(Job,False,False,JobFlavour)
+                  print(bcolors.BOLD+"The job has been submitted..."+bcolors.ENDC)
+                  print(UF.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
+                  exit()
            else:
               AutoPilot(int(UserAnswer),Wait)
      else:
