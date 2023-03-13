@@ -33,8 +33,8 @@ hitdata=hitdata.groupby(['tx','ty']).Hit_ID.nunique().reset_index()
 print('Creating plot')
 #sns.heatmap(hitdata, annot=True)
 plt.hist2d(hitdata['tx'],hitdata['ty'],bins=20)
-plt.show()
-exit()
+#plt.show()
+#exit()
 
 # number of segments by specific Track IDs
 #angle_columns = ['tx','ty',args.TrackName]
