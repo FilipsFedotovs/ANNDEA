@@ -81,8 +81,10 @@ newdata = pd.merge(newdata,y_min,how='inner',on=[args.TrackName])
 
 newdata['delta_x'] = newdata['x_max'] - newdata['x_min']
 newdata['delta_y'] = newdata['y_max'] - newdata['y_min']
+#print(newdata)
+
+newdata['TX'] = newdata['delta_x']/newdata['Track_length']
+newdata['TY'] = newdata['delta_y']/newdata['Track_length']
 print(newdata)
-
-
-
+        
 # end of script #
