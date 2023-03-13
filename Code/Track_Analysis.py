@@ -51,6 +51,7 @@ z_max = rowdata.groupby([args.TrackName]).z.max().reset_index()
 z_min = z_min.rename(columns={'z':'z_min'})
 z_max = z_max.rename(columns={'z':'z_max'})
 newdata = pd.merge(z_max,z_min,how='inner',on=[args.TrackName])
+newdata['Track_length'] = newdata['z_max'] - newdata['z_min']
 print(newdata)
 
 exit()
