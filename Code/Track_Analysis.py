@@ -27,6 +27,8 @@ rowdata = pd.read_csv(input_file_location,usecols=columns)
 
 #heatmap plot for tx and ty
 hitdata = rowdata[['Hit_ID','tx','ty']]
+hitdata['tx'].round(decimals = 2)
+hitdata['ty'].round(decimals = 2)
 hitdata=hitdata.groupby(['tx','ty']).Hit_ID.nunique().reset_index()
 #hitdata = hitdata.pivot("tx", "ty", "Hit_ID")
 print('Creating plot')
