@@ -30,7 +30,16 @@ hitdata = rowdata[['Hit_ID','tx','ty']]
 hitdata=hitdata.groupby(['tx','ty']).Hit_ID.nunique().reset_index()
 #hitdata = hitdata.pivot("tx", "ty", "Hit_ID")
 print('Creating plot')
-sns.heatmap(hitdata, annot=True)
+#sns.heatmap(hitdata, annot=True)
+heatmap, xedges, yedges = np.histogram2d(hitdata['tx'], hitdata['ty'], bins=(64,64))
+extent = [xedges[0], xedges[-1], yedges[0], yedges[-1]]
+
+# Plot heatmap
+plt.clf()
+plt.title('tx and ty heatmap')
+plt.ylabel('ty')
+plt.xlabel('tx')
+plt.imshow(heatmap, extent=extent)
 plt.show()
 exit()
 
