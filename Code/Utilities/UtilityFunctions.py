@@ -588,7 +588,6 @@ class EMO:
           self.UTrID=ID
       def PrepareSeedGraph(self,MM):
           if MM.ModelArchitecture=='GCN-4N-FC':
-
                       __TempTrack=copy.deepcopy(self.Hits)
                       for __Tracks in __TempTrack:
                               for h in range(len(__Tracks)):
@@ -724,6 +723,73 @@ class EMO:
                           import torch_geometric
                           from torch_geometric.data import Data
                           self.GraphSeed = Data(x=torch.Tensor(Data_x), edge_index = torch.Tensor([top_edge, bottom_edge]).long(), edge_attr = torch.Tensor(edge_attr), pos = torch.Tensor(__graphData_pos))
+          if MM.ModelArchitecture=='GMM-5N-FC':
+                      __TempTrack=copy.deepcopy(self.Hits)
+                      for __Tracks in __TempTrack:
+                              for h in range(len(__Tracks)):
+                                  __Tracks[h]=__Tracks[h][:5]
+
+                      __LongestDistance=0.0
+                      for __Track in __TempTrack:
+                        __Xdiff=float(__Track[len(__Track)-1][0])-float(__Track[0][0])
+                        __Ydiff=float(__Track[len(__Track)-1][1])-float(__Track[0][1])
+                        __Zdiff=float(__Track[len(__Track)-1][2])-float(__Track[0][2])
+                        __Distance=math.sqrt(__Xdiff**2+__Ydiff**2+__Zdiff**2)
+                        if __Distance>=__LongestDistance:
+                            __LongestDistance=__Distance
+                            __FinX=float(__Track[0][0])
+                            __FinY=float(__Track[0][1])
+                            __FinZ=float(__Track[0][2])
+                            self.LongestTrackInd=__TempTrack.index(__Track)
+                      # Shift
+                      for __Tracks in __TempTrack:
+                          for h in range(len(__Tracks)):
+                              __Tracks[h][0]=float(__Tracks[h][0])-__FinX
+                              __Tracks[h][1]=float(__Tracks[h][1])-__FinY
+                              __Tracks[h][2]=float(__Tracks[h][2])-__FinZ
+
+                      # Rescale
+                      for __Tracks in __TempTrack:
+                              for h in range(len(__Tracks)):
+                                  __Tracks[h][0]=__Tracks[h][0]/MM.ModelParameters[11][0]
+                                  __Tracks[h][1]=__Tracks[h][1]/MM.ModelParameters[11][1]
+                                  __Tracks[h][2]=__Tracks[h][2]/MM.ModelParameters[11][2]
+
+                      import pandas as pd
+# Graph representation v1 (not fully connected)
+                      try:
+                          __graphData_x =__TempTrack[0]+__TempTrack[1]
+                      except:
+                          __graphData_x =__TempTrack[0]
+
+                      __graphData_pos = []
+                      for node in __graphData_x:
+                        # hit attributes [x,y,z,tx,ty]
+                        # the (x,y,z) attributes are hit[0:3]
+                        __graphData_pos.append(node[0:3])
+
+                      # edge index and attributes
+                      __graphData_edge_index = []
+                      __graphData_edge_attr = []
+                                #fully connected
+                      for i in range(len(__TempTrack[0])+len(__TempTrack[1])):
+                        for j in range(0,i):
+                            # the edges are diretced, so i->j and j->i are different edges
+                            __graphData_edge_index.append([i,j])
+                            # the vector i->j in 3D space are set as edge attribute
+                            __graphData_edge_attr.append(np.array(__graphData_pos[j]) - np.array(__graphData_pos[i]))
+                            __graphData_edge_index.append([j,i])
+                            __graphData_edge_attr.append(np.array(__graphData_pos[i]) - np.array(__graphData_pos[j]))
+                      if(hasattr(self, 'Label')):
+                          import torch
+                          import torch_geometric
+                          from torch_geometric.data import Data
+                          self.GraphSeed = Data(x=torch.Tensor(__graphData_x), edge_index = torch.Tensor(__graphData_edge_index).t().contiguous().long(), edge_attr = torch.Tensor(__graphData_edge_attr),y=torch.Tensor(__graphData_y), pos = torch.Tensor(__graphData_pos))
+                      else:
+                          import torch
+                          import torch_geometric
+                          from torch_geometric.data import Data
+                          self.GraphSeed = Data(x=torch.Tensor(__graphData_x), edge_index = torch.Tensor(__graphData_edge_index).t().contiguous().long(), edge_attr = torch.Tensor(__graphData_edge_attr), pos = torch.Tensor(__graphData_pos))
       def Plot(self,PlotType):
         if PlotType=='XZ' or PlotType=='ZX':
           __InitialData=[]
@@ -1580,6 +1646,46 @@ def GenerateModel(ModelMeta,TrainParams=None):
                     x = self.softmax(x)
                     return x
             return GCN()
+         elif ModelMeta.ModelArchitecture=='GMM-5N-FC':
+            from torch_geometric.nn import GMMConv
+            HiddenLayer=[]
+            OutputLayer=[]
+            for el in ModelMeta.ModelParameters:
+              if ModelMeta.ModelParameters.index(el)<=4 and len(el)>0:
+                 HiddenLayer.append(el)
+              elif ModelMeta.ModelParameters.index(el)==10:
+                 OutputLayer=el
+
+            class GMM(torch.nn.Module):
+                def __init__(self):
+                    super(GMM, self).__init__()
+                    torch.manual_seed(12345)
+                    if len(HiddenLayer)==3:
+                        self.conv1 = GMMConv(5 , HiddenLayer[0][0],dim=3,kernel_size=HiddenLayer[0][1])
+                        self.conv2 = GMMConv(HiddenLayer[0][0],HiddenLayer[1][0],dim=3,kernel_size=HiddenLayer[1][1])
+                        self.conv3 = GMMConv(HiddenLayer[1][0],HiddenLayer[2][0],dim=3,kernel_size=HiddenLayer[2][1])
+                        self.lin = Linear(HiddenLayer[2][0],OutputLayer[1])
+                    self.softmax = Softmax(dim=-1)
+
+                def forward(self, x, edge_index, edge_attr, batch):
+                    # 1. Obtain node embeddings
+                    if len(HiddenLayer)==3:
+
+                        x = self.conv1(x, edge_index,edge_attr)
+                        x = x.relu()
+                        x = self.conv2(x, edge_index,edge_attr)
+                        x = x.relu()
+                        x = self.conv3(x, edge_index,edge_attr)
+
+                    # 2. Readout layer
+                    x = global_mean_pool(x, batch)  # [batch_size, hidden_channels]
+
+                    # 3. Apply a final classifier
+                    x = F.dropout(x, p=0.5, training=self.training)
+                    x = self.lin(x)
+                    x = self.softmax(x)
+                    return x
+            return GMM()
 
       elif ModelMeta.ModelFramework=='Tensorflow':
           if ModelMeta.ModelType=='CNN':
