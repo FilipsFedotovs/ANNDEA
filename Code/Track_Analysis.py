@@ -92,4 +92,8 @@ print('Minimum angle TX is', newdata['TX'].min())
 print('Maximum angle TY is', newdata['TY'].max())
 print('Minimum angle TY is', newdata['TY'].min())
 
+
+output = args.TrackName+'_AngleData.csv'
+ANN_analysis.to_csv(output,index=False)
+print(output, 'was saved.') 
 # end of script #
