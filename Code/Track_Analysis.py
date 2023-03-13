@@ -54,6 +54,9 @@ newdata = pd.merge(z_max,z_min,how='inner',on=[args.TrackName])
 newdata['Track_length'] = newdata['z_max'] - newdata['z_min']
 print(newdata)
 
+x_max = pd.merge(newdata, rowdata, how='inner', left_on=[args.TrackName,'z_max'], right_on=[args.TrackName,'z'])
+print(x_max)
+
 exit()
 #length of tracks along z
 TrackIDmin =  math.floor(rowdata[args.TrackName].min())
