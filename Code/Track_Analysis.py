@@ -29,6 +29,7 @@ rowdata = pd.read_csv(input_file_location,usecols=columns)
 hitdata = rowdata[['Hit_ID','tx','ty']]
 hitdata=hitdata.groupby(['tx','ty']).Hit_ID.nunique().reset_index()
 #hitdata = hitdata.pivot("tx", "ty", "Hit_ID")
+print('Creating plot')
 sns.heatmap(hitdata, annot=True)
 plt.show()
 exit()
