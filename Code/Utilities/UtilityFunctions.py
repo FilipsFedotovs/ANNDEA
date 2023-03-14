@@ -1675,10 +1675,21 @@ def GenerateModel(ModelMeta,TrainParams=None):
                         print('edge_attr',edge_attr.shape)
                         x = self.conv1(x, edge_index,edge_attr)
                         print(x)
+                        print('x1',x.shape)
+                        print('edge_ind',edge_index.shape)
+                        print('edge_attr',edge_attr.shape)
                         x = x.relu()
                         x = self.conv2(x, edge_index,edge_attr)
+                        print(x)
+                        print('x2',x.shape)
+                        print('edge_ind',edge_index.shape)
+                        print('edge_attr',edge_attr.shape)
                         x = x.relu()
                         x = self.conv3(x, edge_index,edge_attr)
+                        print(x)
+                        print('x3',x.shape)
+                        print('edge_ind',edge_index.shape)
+                        print('edge_attr',edge_attr.shape)
 
                     # 2. Readout layer
                     x = global_mean_pool(x, batch)  # [batch_size, hidden_channels]
