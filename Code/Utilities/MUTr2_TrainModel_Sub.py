@@ -77,7 +77,6 @@ def GNNtrain(model, Sample,optimizer):
     model.train()
     for data in Sample:
         out = model(data.x, data.edge_index, data.edge_attr, data.batch)
-        print(out,data.y)
         loss = criterion(out, data.y)
         loss.backward()  # Derive gradients.
         optimizer.step()  # Update parameters based on gradients.
@@ -186,9 +185,6 @@ elif ModelMeta.ModelType=='GNN':
        del ValSamples
        import torch_geometric
        from torch_geometric.loader import DataLoader
-       print(train_dataset[1].x.shape)
-       print(train_dataset[1].y)
-       print(TrainParams[1])
        TrainSamples = DataLoader(train_dataset, batch_size=TrainParams[1], shuffle=True)
        ValSamples = DataLoader(val_dataset, batch_size=TrainParams[1], shuffle=False)
 
