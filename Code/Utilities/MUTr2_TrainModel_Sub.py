@@ -185,7 +185,6 @@ elif ModelMeta.ModelType=='GNN':
        del ValSamples
        import torch_geometric
        from torch_geometric.loader import DataLoader
-
        TrainSamples = DataLoader(train_dataset, batch_size=TrainParams[1], shuffle=True)
        ValSamples = DataLoader(val_dataset, batch_size=TrainParams[1], shuffle=False)
 

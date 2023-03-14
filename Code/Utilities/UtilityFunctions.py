@@ -26,7 +26,6 @@ class bcolors:
 #This utility provides Timestamps for print messages
 def TimeStamp():
  return "["+datetime.datetime.now().strftime("%D")+' '+datetime.datetime.now().strftime("%H:%M:%S")+"]"
-
 class TrainingSampleMeta:
       def __init__(self,TrainDataID):
           self.TrainDataID=TrainDataID
@@ -154,9 +153,6 @@ class ModelMeta:
                     return 2
             else:
                 return 0
-
-
-
 class HitCluster:
       def __init__(self,ClusterID, Step):
           self.ClusterID=ClusterID
@@ -347,9 +343,6 @@ class HitCluster:
       def UnloadClusterGraph(self):
           del self.ClusterGraph
           del self.HitLinks
-
-
-
 class EMO:
       def __init__(self,parts):
           self.Header=sorted(parts, key=str.lower)
@@ -791,7 +784,7 @@ class EMO:
                           import torch
                           import torch_geometric
                           from torch_geometric.data import Data
-                          self.GraphSeed = Data(x=torch.Tensor(__graphData_x), edge_index = torch.Tensor(__graphData_edge_index).t().contiguous().long(), edge_attr = torch.Tensor(__graphData_edge_attr),y=torch.Tensor(__graphData_y), pos = torch.Tensor(__graphData_pos))
+                          self.GraphSeed = Data(x=torch.Tensor(__graphData_x), edge_index = torch.Tensor(__graphData_edge_index).t().contiguous().long(), edge_attr = torch.Tensor(__graphData_edge_attr),y=torch.Tensor([__graphData_y]), pos = torch.Tensor(__graphData_pos))
                       else:
                           import torch
                           import torch_geometric
@@ -1677,16 +1670,13 @@ def GenerateModel(ModelMeta,TrainParams=None):
                 def forward(self, x, edge_index, edge_attr, batch):
                     # 1. Obtain node embeddings
                     if len(HiddenLayer)==3:
-
                         x = self.conv1(x, edge_index,edge_attr)
                         x = x.relu()
                         x = self.conv2(x, edge_index,edge_attr)
                         x = x.relu()
                         x = self.conv3(x, edge_index,edge_attr)
-
                     # 2. Readout layer
                     x = global_mean_pool(x, batch)  # [batch_size, hidden_channels]
-
                     # 3. Apply a final classifier
                     x = F.dropout(x, p=0.5, training=self.training)
                     x = self.lin(x)
@@ -1782,8 +1772,6 @@ def LogOperations(flocation,mode, message):
         csv_reader_log=open(flocation,"r")
         log_reader = csv.reader(csv_reader_log)
         return list(log_reader)
-
-
 def PickleOperations(flocation,mode, message):
     import pickle
     if mode=='w':
@@ -1824,7 +1812,6 @@ def EvalCleanUp(AFS_DIR, EOS_DIR, Process, FileNames, ProcessId):
       CleanFolder(folder,'SUB_'+Process+'_')
       folder =  AFS_DIR+'/HTCondor/MSG'
       CleanFolder(folder,'MSG_'+Process+'_')
-
 def TrainCleanUp(AFS_DIR, EOS_DIR, Process, FileNames, ProcessId):
       subprocess.call(['condor_rm', '-constraint', ProcessId])
       EOSsubDIR=EOS_DIR+'/'+'ANNDEA'
@@ -1842,7 +1829,6 @@ def TrainCleanUp(AFS_DIR, EOS_DIR, Process, FileNames, ProcessId):
       CleanFolder(folder,'SUB_'+Process+'_')
       folder =  AFS_DIR+'/HTCondor/MSG'
       CleanFolder(folder,'MSG_'+Process+'_')
-
 def CreateCondorJobs(AFS,EOS,PY,path,o,pfx,sfx,ID,loop_params,OptionHeader,OptionLine,Sub_File,batch_sub=False,Exception=['',''], Log=False, GPU=False):
    if Exception[0]==" --PlateZ ":
     if batch_sub==False:
@@ -2093,8 +2079,6 @@ def SubmitJobs2Condor(job,local=False,ExtCPU=False,JobFlavour='workday'):
         f.close()
         subprocess.call(['condor_submit', SUBName])
         print(TotalLine, " has been successfully submitted")
-
-
 
 def ErrorOperations(a,b,a_e,b_e,mode):
     if mode=='+' or mode == '-':
