@@ -403,10 +403,10 @@ class EMO:
       def PrepareSeedPrint(self,MM):
           __TempTrack=copy.deepcopy(self.Hits)
 
-          self.Resolution=MM.ModelParameters[11][3]
-          self.bX=int(round(MM.ModelParameters[11][0]/self.Resolution,0))
-          self.bY=int(round(MM.ModelParameters[11][1]/self.Resolution,0))
-          self.bZ=int(round(MM.ModelParameters[11][2]/self.Resolution,0))
+          self.Resolution=MM.ModelParameters[-1][3]
+          self.bX=int(round(MM.ModelParameters[-1][0]/self.Resolution,0))
+          self.bY=int(round(MM.ModelParameters[-1][1]/self.Resolution,0))
+          self.bZ=int(round(MM.ModelParameters[-1][2]/self.Resolution,0))
           self.H=(self.bX)*2
           self.W=(self.bY)*2
           self.L=(self.bZ)
@@ -509,7 +509,7 @@ class EMO:
                  for __hits in __Tracks:
                      __hits[1]=__hits[1]+__yshift
                      __Y.append(__hits[1])
-              __min_scale=max(max(__X)/(MM.ModelParameters[11][0]-(2*self.Resolution)),max(__Y)/(MM.ModelParameters[11][1]-(2*self.Resolution)), max(__Z)/(MM.ModelParameters[11][2]-(2*self.Resolution)))
+              __min_scale=max(max(__X)/(MM.ModelParameters[-1][0]-(2*self.Resolution)),max(__Y)/(MM.ModelParameters[-1][1]-(2*self.Resolution)), max(__Z)/(MM.ModelParameters[-1][2]-(2*self.Resolution)))
               for __Tracks in __TempTrack:
                  for __hits in __Tracks:
                      __hits[0]=int(round(__hits[0]/__min_scale,0))
