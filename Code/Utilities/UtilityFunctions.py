@@ -1670,30 +1670,13 @@ def GenerateModel(ModelMeta,TrainParams=None):
                 def forward(self, x, edge_index, edge_attr, batch):
                     # 1. Obtain node embeddings
                     if len(HiddenLayer)==3:
-                        print('x',x.shape)
-                        print('edge_ind',edge_index.shape)
-                        print('edge_attr',edge_attr.shape)
                         x = self.conv1(x, edge_index,edge_attr)
-                        print(x)
-                        print('x1',x.shape)
-                        print('edge_ind',edge_index.shape)
-                        print('edge_attr',edge_attr.shape)
                         x = x.relu()
                         x = self.conv2(x, edge_index,edge_attr)
-                        print(x)
-                        print('x2',x.shape)
-                        print('edge_ind',edge_index.shape)
-                        print('edge_attr',edge_attr.shape)
                         x = x.relu()
                         x = self.conv3(x, edge_index,edge_attr)
-                        print(x)
-                        print('x3',x.shape)
-                        print('edge_ind',edge_index.shape)
-                        print('edge_attr',edge_attr.shape)
-
                     # 2. Readout layer
                     x = global_mean_pool(x, batch)  # [batch_size, hidden_channels]
-
                     # 3. Apply a final classifier
                     x = F.dropout(x, p=0.5, training=self.training)
                     x = self.lin(x)
