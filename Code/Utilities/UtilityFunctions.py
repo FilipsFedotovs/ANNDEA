@@ -500,8 +500,8 @@ class EMO:
                      __hits[0]=__hits[0]+__xshift
                      __X.append(__hits[0])
              ##########Y
-              __dUpY=MM.ModelParameters[11][1]-max(__Y)
-              __dDownY=MM.ModelParameters[11][1]+min(__Y)
+              __dUpY=MM.ModelParameters[-1][1]-max(__Y)
+              __dDownY=MM.ModelParameters[-1][1]+min(__Y)
               __dY=(__dUpY+__dDownY)/2
               __yshift=__dUpY-__dY
               __Y=[]
