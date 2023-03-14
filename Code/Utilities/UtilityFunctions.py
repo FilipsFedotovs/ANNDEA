@@ -26,7 +26,6 @@ class bcolors:
 #This utility provides Timestamps for print messages
 def TimeStamp():
  return "["+datetime.datetime.now().strftime("%D")+' '+datetime.datetime.now().strftime("%H:%M:%S")+"]"
-
 class TrainingSampleMeta:
       def __init__(self,TrainDataID):
           self.TrainDataID=TrainDataID
@@ -154,9 +153,6 @@ class ModelMeta:
                     return 2
             else:
                 return 0
-
-
-
 class HitCluster:
       def __init__(self,ClusterID, Step):
           self.ClusterID=ClusterID
@@ -347,9 +343,6 @@ class HitCluster:
       def UnloadClusterGraph(self):
           del self.ClusterGraph
           del self.HitLinks
-
-
-
 class EMO:
       def __init__(self,parts):
           self.Header=sorted(parts, key=str.lower)
@@ -1671,14 +1664,15 @@ def GenerateModel(ModelMeta,TrainParams=None):
                         self.conv1 = GMMConv(5 , HiddenLayer[0][0],dim=3,kernel_size=HiddenLayer[0][1])
                         self.conv2 = GMMConv(HiddenLayer[0][0],HiddenLayer[1][0],dim=3,kernel_size=HiddenLayer[1][1])
                         self.conv3 = GMMConv(HiddenLayer[1][0],HiddenLayer[2][0],dim=3,kernel_size=HiddenLayer[2][1])
-                        self.lin = Linear(HiddenLayer[2][0]*3,OutputLayer[1])
+                        self.lin = Linear(HiddenLayer[2][0],OutputLayer[1])
                     self.softmax = Softmax(dim=-1)
 
                 def forward(self, x, edge_index, edge_attr, batch):
                     # 1. Obtain node embeddings
                     if len(HiddenLayer)==3:
-
+                        print(x,edge_index,edge_attr)
                         x = self.conv1(x, edge_index,edge_attr)
+                        print(x)
                         x = x.relu()
                         x = self.conv2(x, edge_index,edge_attr)
                         x = x.relu()
@@ -1782,8 +1776,6 @@ def LogOperations(flocation,mode, message):
         csv_reader_log=open(flocation,"r")
         log_reader = csv.reader(csv_reader_log)
         return list(log_reader)
-
-
 def PickleOperations(flocation,mode, message):
     import pickle
     if mode=='w':
@@ -1824,7 +1816,6 @@ def EvalCleanUp(AFS_DIR, EOS_DIR, Process, FileNames, ProcessId):
       CleanFolder(folder,'SUB_'+Process+'_')
       folder =  AFS_DIR+'/HTCondor/MSG'
       CleanFolder(folder,'MSG_'+Process+'_')
-
 def TrainCleanUp(AFS_DIR, EOS_DIR, Process, FileNames, ProcessId):
       subprocess.call(['condor_rm', '-constraint', ProcessId])
       EOSsubDIR=EOS_DIR+'/'+'ANNDEA'
@@ -1842,7 +1833,6 @@ def TrainCleanUp(AFS_DIR, EOS_DIR, Process, FileNames, ProcessId):
       CleanFolder(folder,'SUB_'+Process+'_')
       folder =  AFS_DIR+'/HTCondor/MSG'
       CleanFolder(folder,'MSG_'+Process+'_')
-
 def CreateCondorJobs(AFS,EOS,PY,path,o,pfx,sfx,ID,loop_params,OptionHeader,OptionLine,Sub_File,batch_sub=False,Exception=['',''], Log=False, GPU=False):
    if Exception[0]==" --PlateZ ":
     if batch_sub==False:
@@ -2093,8 +2083,6 @@ def SubmitJobs2Condor(job,local=False,ExtCPU=False,JobFlavour='workday'):
         f.close()
         subprocess.call(['condor_submit', SUBName])
         print(TotalLine, " has been successfully submitted")
-
-
 
 def ErrorOperations(a,b,a_e,b_e,mode):
     if mode=='+' or mode == '-':
