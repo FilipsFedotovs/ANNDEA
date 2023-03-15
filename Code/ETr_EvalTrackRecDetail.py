@@ -49,6 +49,7 @@ if len(MotherGroup)>0:
 
 else:
    rowdata['Mother_Group']='Other'
+   MotherGroup.append('Other')
 rowdata = rowdata.drop(['MotherPDG'],axis=1)
 
 #calculating overall density, coordinates initially in microns
