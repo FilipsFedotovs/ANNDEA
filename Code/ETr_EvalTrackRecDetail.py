@@ -136,12 +136,16 @@ with alive_bar(iterations,force_tty=True, title = 'Calculating densities.') as b
                 MC_Block=ANN_test_all[['Hit_ID','Hit_ID_right','MotherPDG','MC_Track','MC_Track_right']]
 
 
-                if len(ANN_test_all) > 10:
+                if len(ANN_test_all) > 100:
                     ANN_test_all = ANN_test_all.drop(['MotherPDG','MC_Track','MC_Track_right'],axis=1)
                     MC_Block = MC_Block[MC_Block.MC_Track==MC_Block.MC_Track_right]
-
+                    MC_Block_Base=None
+                    for mp in MotherPDG:
+                        MC_Block_temp=MC_Block[MC_Block.MotherPDG==mp]
+                        MC_Block_Base=pd.concat([MC_Block_Base,MC_Block_temp])
                     print(ANN_test_all)
                     print(MC_Block)
+                    print(MC_Block_Base)
                     exit()
 
                 ANN_test_all['MC_true'] = (ANN_test_all['MC_Track']==ANN_test_all['MC_Track_right']).astype(int)
