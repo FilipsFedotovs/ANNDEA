@@ -167,6 +167,9 @@ with alive_bar(iterations,force_tty=True, title = 'Calculating densities.') as b
                         print(ANN_test_all)
                         exit()
 
+                else:
+                    continue
+
 
 
 
