@@ -141,9 +141,7 @@ with alive_bar(iterations,force_tty=True, title = 'Calculating densities.') as b
                     #print(ANN_test.dtypes)
                     #exit()
 
-
-
-                ANN_test_right = ANN_test_right.rename(columns={'Hit_ID':'Hit_ID_right',args.TrackName:args.TrackName+'_right','MC_Track':'MC_Track_right','z_coord':'z_coord_right','Mother_Group':'Mother_Group_right'})
+                ANN_test_right = ANN_test.rename(columns={'Hit_ID':'Hit_ID_right',args.TrackName:args.TrackName+'_right','MC_Track':'MC_Track_right','z_coord':'z_coord_right','Mother_Group':'Mother_Group_right'})
                 ANN_test_all = pd.merge(ANN_test,ANN_test_right,how='inner',on=['x'])
                 if len(ANN_test_all) > 100:
                  print(ANN_test_all)
