@@ -186,7 +186,7 @@ with alive_bar(iterations,force_tty=True, title = 'Calculating densities.') as b
                         ANN_test_temp['Mother_Group'] =mp
                         ANN_base_temp = pd.concat([ANN_base_temp,ANN_test_temp])
 
-                    ANN_base_temp = ANN_base_temp.groupby(['x', 'y','z']).agg({'ANN_true':'sum','True':'sum','MC_true':'sum'}).reset_index()
+                    ANN_base_temp = ANN_base_temp.groupby(['Mother_Group','x', 'y','z']).agg({'ANN_true':'sum','True':'sum','MC_true':'sum'}).reset_index()
 
                     ANN_base_temp['ANN_recall'] = ANN_base_temp['True']/ANN_base_temp['MC_true']
 
