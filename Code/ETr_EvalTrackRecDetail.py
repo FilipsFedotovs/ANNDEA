@@ -143,11 +143,6 @@ with alive_bar(iterations,force_tty=True, title = 'Calculating densities.') as b
 
                 ANN_test_right = ANN_test.rename(columns={'Hit_ID':'Hit_ID_right',args.TrackName:args.TrackName+'_right','MC_Track':'MC_Track_right','z_coord':'z_coord_right','Mother_Group':'Mother_Group_right'})
                 ANN_test_all = pd.merge(ANN_test,ANN_test_right,how='inner',on=['x'])
-                if len(ANN_test_all) > 100:
-                 print(ANN_test_all)
-                else:
-                    continue
-
 
                 ANN_test_all = ANN_test_all[ANN_test_all.Hit_ID!=ANN_test_all.Hit_ID_right]
                 #print(ANN_test_all)
@@ -157,24 +152,21 @@ with alive_bar(iterations,force_tty=True, title = 'Calculating densities.') as b
 
                 #Little data trick to assess only the relevant connections
 
-                MC_Block=ANN_test_all[['Hit_ID','Hit_ID_right','MotherPDG','MC_Track','MC_Track_right']]
-
+                MC_Block=ANN_test_all[['Hit_ID','Hit_ID_right','Mother_Group','MC_Track','MC_Track_right']]
 
                 if len(ANN_test_all) > 100:
-                    ANN_test_all = ANN_test_all.drop(['MotherPDG','MC_Track','MC_Track_right'],axis=1)
-                    MC_Block = MC_Block[MC_Block.MC_Track==MC_Block.MC_Track_right]
-                    MC_Block=MC_Block.drop(['MC_Track','MC_Track_right'],axis=1)
-                    MC_Block_Base=None
-                    for mp in MotherPDG:
-                        MC_Block_temp=MC_Block[MC_Block.MotherPDG==mp]
-                        MC_Block_Base=pd.concat([MC_Block_Base,MC_Block_temp])
-                    if len(MotherPDG)>0:
-                       MC_Block=MC_Block_Base
-                    if len(MC_Block)>0:
-                       MC_Block['MC_True']=1
-                       ANN_test_all=pd.merge(ANN_test_all,MC_Block,how='left',on=['Hit_ID','Hit_ID_right'])
-                       print(ANN_test_all)
-                       exit()
+                    for mp in MotherGroup:
+                        ANN_test_all = ANN_test_all.drop(['MC_Track','MC_Track_right'],axis=1)
+                        MC_Block = MC_Block[MC_Block.MC_Track==MC_Block.MC_Track_right]
+                        MC_Block=MC_Block.drop(['MC_Track','MC_Track_right'],axis=1)
+                        MC_Block=MC_Block[MC_Block.Mother_Group==mp]
+                        MC_Block=MC_Block.drop(['Mother_Group'],axis=1)
+                        MC_Block['MC_True']=1
+                        print(MC_Block)
+                        ANN_test_all=pd.merge(ANN_test_all,MC_Block,how='left',on=['Hit_ID','Hit_ID_right'])
+                        print(ANN_test_all)
+                        exit()
+
 
 
 
