@@ -95,7 +95,7 @@ print('Minimum angle TY is', newdata['TY'].min())
 
 output1 = args.TrackName+'_smallangledata.csv'
 output = args.TrackName+'_AngleData.csv'
-#newdata.to_csv(output,index=False)
+newdata.to_csv(output,index=False)
 insert.to_csv(output1,index=False)
 print(output, 'was saved.') 
 print(output1, 'was saved.')
