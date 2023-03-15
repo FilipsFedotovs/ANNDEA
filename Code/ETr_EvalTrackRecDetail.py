@@ -173,6 +173,8 @@ with alive_bar(iterations,force_tty=True, title = 'Calculating densities.') as b
                         ANN_test_temp=ANN_test_temp.drop(ANN_test_temp.index[ANN_test_temp['Check'] < 1])
                         ANN_test_temp=ANN_test_temp.drop(['Mother_Group','Mother_Group_right','Left_Check','Right_Check','Check'],axis=1)
 
+                        print(ANN_test_temp)
+                        exit()
                         ANN_test_temp['ANN_true'] = ((ANN_test_temp[args.TrackName]==ANN_test_temp[args.TrackName+'_right']) & (ANN_test_temp[args.TrackName]!=-2))
                         ANN_test_temp['ANN_true'] = ANN_test_temp['ANN_true'].astype(int)
                         #print(ANN_test_temp)
