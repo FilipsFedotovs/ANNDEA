@@ -134,7 +134,7 @@ with alive_bar(iterations,force_tty=True, title = 'Calculating densities.') as b
                 ANN_test = ANN_test.drop(['y','z'], axis=1)
 
 
-                if len(ANN_test) <2000:
+                if len(ANN_test) <100:
                     if len(ANN_test) > 0:
                         ANN_test[args.TrackName] = pd.to_numeric(ANN_test[args.TrackName],errors='coerce').fillna(-5).astype('int')
                         ANN_test['z_coord'] = ANN_test['z_coord'].astype('int')
