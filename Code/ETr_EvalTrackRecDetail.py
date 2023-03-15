@@ -175,67 +175,67 @@ print(output, 'was saved.')
 #plt.show()
 #exit()
 
-
-
-                ANN_test_all = ANN_test_all[ANN_test_all.Hit_ID!=ANN_test_all.Hit_ID_right]
-                #print(ANN_test_all)
-
-                ANN_test_all = ANN_test_all[ANN_test_all.z_coord>ANN_test_all.z_coord_right]
-                #print(ANN_test_all)
-
-                ANN_test_all['MC_true'] = (ANN_test_all['MC_Track']==ANN_test_all['MC_Track_right']).astype(int)
-                #print(ANN_test_all)
-
-                #ANN_test_all['ANN_true'] = ANN_test_all[(ANN_test_all[args.TrackName]==ANN_test_all[args.TrackName+'_right'] & ANN_test_all[args.TrackName]!=-2)].astype(int)
-                ANN_test_all['ANN_true']=((ANN_test_all[args.TrackName]==ANN_test_all[args.TrackName+'_right']) & (ANN_test_all[args.TrackName]!=-2))
-                ANN_test_all['ANN_true']=ANN_test_all['ANN_true'].astype(int)
-                #print(ANN_test_all)
-
-                ANN_test_all['True'] = ANN_test_all['MC_true'] + ANN_test_all['ANN_true']
-                ANN_test_all['True'] = (ANN_test_all['True']>1).astype(int)
-                #print(ANN_test_all[[args.TrackName,args.TrackName+'_right','ANN_true']])
-
-                ANN_test_all['y'] = j
-                ANN_test_all['z'] = k
-
-                ANN_test_all = ANN_test_all[['MC_true','ANN_true','True','x','y','z']]
-                ANN_test_all = ANN_test_all.groupby(['x', 'y','z']).agg({'ANN_true':'sum','True':'sum','MC_true':'sum'}).reset_index()
-
-                ANN_test_all['ANN_recall'] = ANN_test_all['True']/ANN_test_all['MC_true']
-
-                ANN_test_all['ANN_precision'] = ANN_test_all['True']/ANN_test_all['ANN_true']
-                ANN_base = pd.concat([ANN_base,ANN_test_all])
-
-#create a table with all the wanted columns
-#print(ANN_base)
-ANN_analysis = pd.merge(densitydata,ANN_base, how='inner', on=['x','y','z'])
-print(ANN_analysis)
-
-
-# #creating an histogram of recall and precision by hit density
-# plt.hist2d(ANN_analysis['Hit_Density']/100,ANN_analysis['ANN_recall'])
-# plt.xlabel('Density of Hits')
-# plt.ylabel('Recall Average')
-# plt.title('Recall for Hit density')
-# plt.show()
-
-
-#average of precision and recall
-ANN_analysis['ANN_recall'] = pd.to_numeric(ANN_analysis['ANN_recall'],errors='coerce').fillna(0).astype('int')
-ANN_analysis['ANN_precision'] = pd.to_numeric(ANN_analysis['ANN_precision'],errors='coerce').fillna(0).astype('int')
-TotalMCtrue = ANN_analysis['MC_true'].sum()
-TotalANNtrue = ANN_analysis['ANN_true'].sum()
-Totaltrue = ANN_analysis['True'].sum()
-
-Average_recall = Totaltrue/TotalMCtrue
-Average_precision = Totaltrue/TotalANNtrue
-print('Average recall is', Average_recall)
-print('Average precision is', Average_precision)
-
-#average of precision and recall
-#recall_average = ANN_test_all.loc[:, 'ANN_recall'].mean()
-#print('Average recall is', recall_average)
-#precision_average = ANN_test_all.loc[:, 'ANN_precision'].mean()
-#print('Average precision is', precision_average)
-
-# end of script #
+#
+#
+#                 ANN_test_all = ANN_test_all[ANN_test_all.Hit_ID!=ANN_test_all.Hit_ID_right]
+#                 #print(ANN_test_all)
+#
+#                 ANN_test_all = ANN_test_all[ANN_test_all.z_coord>ANN_test_all.z_coord_right]
+#                 #print(ANN_test_all)
+#
+#                 ANN_test_all['MC_true'] = (ANN_test_all['MC_Track']==ANN_test_all['MC_Track_right']).astype(int)
+#                 #print(ANN_test_all)
+#
+#                 #ANN_test_all['ANN_true'] = ANN_test_all[(ANN_test_all[args.TrackName]==ANN_test_all[args.TrackName+'_right'] & ANN_test_all[args.TrackName]!=-2)].astype(int)
+#                 ANN_test_all['ANN_true']=((ANN_test_all[args.TrackName]==ANN_test_all[args.TrackName+'_right']) & (ANN_test_all[args.TrackName]!=-2))
+#                 ANN_test_all['ANN_true']=ANN_test_all['ANN_true'].astype(int)
+#                 #print(ANN_test_all)
+#
+#                 ANN_test_all['True'] = ANN_test_all['MC_true'] + ANN_test_all['ANN_true']
+#                 ANN_test_all['True'] = (ANN_test_all['True']>1).astype(int)
+#                 #print(ANN_test_all[[args.TrackName,args.TrackName+'_right','ANN_true']])
+#
+#                 ANN_test_all['y'] = j
+#                 ANN_test_all['z'] = k
+#
+#                 ANN_test_all = ANN_test_all[['MC_true','ANN_true','True','x','y','z']]
+#                 ANN_test_all = ANN_test_all.groupby(['x', 'y','z']).agg({'ANN_true':'sum','True':'sum','MC_true':'sum'}).reset_index()
+#
+#                 ANN_test_all['ANN_recall'] = ANN_test_all['True']/ANN_test_all['MC_true']
+#
+#                 ANN_test_all['ANN_precision'] = ANN_test_all['True']/ANN_test_all['ANN_true']
+#                 ANN_base = pd.concat([ANN_base,ANN_test_all])
+#
+# #create a table with all the wanted columns
+# #print(ANN_base)
+# ANN_analysis = pd.merge(densitydata,ANN_base, how='inner', on=['x','y','z'])
+# print(ANN_analysis)
+#
+#
+# # #creating an histogram of recall and precision by hit density
+# # plt.hist2d(ANN_analysis['Hit_Density']/100,ANN_analysis['ANN_recall'])
+# # plt.xlabel('Density of Hits')
+# # plt.ylabel('Recall Average')
+# # plt.title('Recall for Hit density')
+# # plt.show()
+#
+#
+# #average of precision and recall
+# ANN_analysis['ANN_recall'] = pd.to_numeric(ANN_analysis['ANN_recall'],errors='coerce').fillna(0).astype('int')
+# ANN_analysis['ANN_precision'] = pd.to_numeric(ANN_analysis['ANN_precision'],errors='coerce').fillna(0).astype('int')
+# TotalMCtrue = ANN_analysis['MC_true'].sum()
+# TotalANNtrue = ANN_analysis['ANN_true'].sum()
+# Totaltrue = ANN_analysis['True'].sum()
+#
+# Average_recall = Totaltrue/TotalMCtrue
+# Average_precision = Totaltrue/TotalANNtrue
+# print('Average recall is', Average_recall)
+# print('Average precision is', Average_precision)
+#
+# #average of precision and recall
+# #recall_average = ANN_test_all.loc[:, 'ANN_recall'].mean()
+# #print('Average recall is', recall_average)
+# #precision_average = ANN_test_all.loc[:, 'ANN_precision'].mean()
+# #print('Average precision is', precision_average)
+#
+# # end of script #
