@@ -37,7 +37,7 @@ if len(MotherGroup)>0:
 input_file_location=args.f
 
 #importing data - making sure we only use relevant columns
-columns = ['Hit_ID','x','y','z','MC_Event_ID','MC_Track_ID','PDG_ID','Mother_PDG',args.TrackName]
+columns = ['Hit_ID','x','y','z','MC_Event_ID','MC_Track_ID','PDG_ID','MotherPDG',args.TrackName]
 rowdata = pd.read_csv(input_file_location,usecols=columns)
 
 if len(MotherGroup)>0:
