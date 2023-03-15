@@ -134,7 +134,7 @@ with alive_bar(iterations,force_tty=True, title = 'Calculating densities.') as b
                 ANN_test = ANN_test.drop(['y','z'], axis=1)
 
 
-                if len(ANN_test) <100 and len(ANN_test)>0:
+                if len(ANN_test) <20 and len(ANN_test)>0:
                     if len(ANN_test) > 0:
                         ANN_test[args.TrackName] = pd.to_numeric(ANN_test[args.TrackName],errors='coerce').fillna(-5).astype('int')
                         ANN_test['z_coord'] = ANN_test['z_coord'].astype('int')
@@ -154,7 +154,7 @@ with alive_bar(iterations,force_tty=True, title = 'Calculating densities.') as b
 
                     MC_Block=ANN_test_all[['Hit_ID','Hit_ID_right','Mother_Group','MC_Track','MC_Track_right']]
 
-                    ANN_base_temp=pd.DataFrame([],columns=['MC_true','ANN_true','True','x','y','z'])
+                    ANN_base_temp=pd.DataFrame([],columns=['Mother_Group','MC_true','ANN_true','True','x','y','z'])
                     for mp in MotherGroup:
                         ANN_test_temp = ANN_test_all.drop(['MC_Track','MC_Track_right'],axis=1)
                         MC_Block_temp = MC_Block[MC_Block.MC_Track==MC_Block.MC_Track_right]
@@ -194,7 +194,7 @@ with alive_bar(iterations,force_tty=True, title = 'Calculating densities.') as b
                     ANN_base = pd.concat([ANN_base,ANN_test_all])
                 continue
 #create a table with all the wanted columns
-#print(ANN_base)
+print(ANN_base)
 ANN_analysis = pd.merge(densitydata,ANN_base, how='inner', on=['x','y','z'])
 print(ANN_analysis)
 output = args.TrackName+'_FinalData_WP.csv'
