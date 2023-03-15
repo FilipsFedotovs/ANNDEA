@@ -119,7 +119,7 @@ with alive_bar(iterations,force_tty=True, title = 'Calculating densities.') as b
                     #exit()
 
 
-                ANN_test_right = ANN_test
+                ANN_test_right = ANN_test.drop(['MotherPDG'],axis=1)
                 ANN_test_right = ANN_test_right.rename(columns={'Hit_ID':'Hit_ID_right',args.TrackName:args.TrackName+'_right','MC_Track':'MC_Track_right','z_coord':'z_coord_right'})
                 ANN_test_all = pd.merge(ANN_test,ANN_test_right,how='inner',on=['x'])
                 #print(ANN_test_all)
