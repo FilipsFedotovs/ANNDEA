@@ -130,31 +130,31 @@ with alive_bar(iterations,force_tty=True, title = 'Calculating densities.') as b
             ANN_test_j = ANN_test_i[ANN_test_i.y==j]
             for k in range(zmin,zmax):
                 bar()
-                ANN_test = ANN_test_j[ANN_test_j.z==k]                       
+                ANN_test = ANN_test_j[ANN_test_j.z==k]
                 ANN_test = ANN_test.drop(['y','z'], axis=1)
-                
-                
 
-                if len(ANN_test) > 0:
-                    ANN_test[args.TrackName] = pd.to_numeric(ANN_test[args.TrackName],errors='coerce').fillna(-5).astype('int')
-                    ANN_test['z_coord'] = ANN_test['z_coord'].astype('int')
-                    ANN_test = ANN_test.astype({col: 'int8' for col in ANN_test.select_dtypes('int64').columns})
 
-                ANN_test_right = ANN_test.rename(columns={'Hit_ID':'Hit_ID_right',args.TrackName:args.TrackName+'_right','MC_Track':'MC_Track_right','z_coord':'z_coord_right','Mother_Group':'Mother_Group_right'})
+                if len(ANN_test) <2000:
+                    if len(ANN_test) > 0:
+                        ANN_test[args.TrackName] = pd.to_numeric(ANN_test[args.TrackName],errors='coerce').fillna(-5).astype('int')
+                        ANN_test['z_coord'] = ANN_test['z_coord'].astype('int')
+                        ANN_test = ANN_test.astype({col: 'int8' for col in ANN_test.select_dtypes('int64').columns})
 
-                ANN_test_all = pd.merge(ANN_test,ANN_test_right,how='inner',on=['x'])
+                    ANN_test_right = ANN_test.rename(columns={'Hit_ID':'Hit_ID_right',args.TrackName:args.TrackName+'_right','MC_Track':'MC_Track_right','z_coord':'z_coord_right','Mother_Group':'Mother_Group_right'})
 
-                ANN_test_all = ANN_test_all[ANN_test_all.Hit_ID!=ANN_test_all.Hit_ID_right]
-                #print(ANN_test_all)
+                    ANN_test_all = pd.merge(ANN_test,ANN_test_right,how='inner',on=['x'])
 
-                ANN_test_all = ANN_test_all[ANN_test_all.z_coord>ANN_test_all.z_coord_right]
-                #print(ANN_test_all)
+                    ANN_test_all = ANN_test_all[ANN_test_all.Hit_ID!=ANN_test_all.Hit_ID_right]
+                    #print(ANN_test_all)
 
-                #Little data trick to assess only the relevant connections
+                    ANN_test_all = ANN_test_all[ANN_test_all.z_coord>ANN_test_all.z_coord_right]
+                    #print(ANN_test_all)
 
-                MC_Block=ANN_test_all[['Hit_ID','Hit_ID_right','Mother_Group','MC_Track','MC_Track_right']]
+                    #Little data trick to assess only the relevant connections
 
-                if len(ANN_test_all) > 50:
+                    MC_Block=ANN_test_all[['Hit_ID','Hit_ID_right','Mother_Group','MC_Track','MC_Track_right']]
+
+                    ANN_Base_temp=pd.DataFrame([],columns=['MC_true','ANN_true','True','x','y','z'])
                     for mp in MotherGroup:
                         ANN_test_temp = ANN_test_all.drop(['MC_Track','MC_Track_right'],axis=1)
                         MC_Block_temp = MC_Block[MC_Block.MC_Track==MC_Block.MC_Track_right]
@@ -174,28 +174,30 @@ with alive_bar(iterations,force_tty=True, title = 'Calculating densities.') as b
                         ANN_test_temp['ANN_true'] = ((ANN_test_temp[args.TrackName]==ANN_test_temp[args.TrackName+'_right']) & (ANN_test_temp[args.TrackName]!=-5))
                         ANN_test_temp['ANN_true'] = ANN_test_temp['ANN_true'].astype(int)
                         #print(ANN_test_temp)
-        
+
                         ANN_test_temp['True'] = ANN_test_temp['MC_true'] + ANN_test_temp['ANN_true']
                         ANN_test_temp['True'] = (ANN_test_temp['True']>1).astype(int)
                         #print(ANN_test_temp[[args.TrackName,args.TrackName+'_right','ANN_true']])
-        
+
                         ANN_test_temp['y'] = j
                         ANN_test_temp['z'] = k
-        
+
                         ANN_test_temp = ANN_test_temp[['MC_true','ANN_true','True','x','y','z']]
                         ANN_test_temp['Mother_Group'] =mp
-                        ANN_test_temp = ANN_test_temp.groupby(['x', 'y','z']).agg({'ANN_true':'sum','True':'sum','MC_true':'sum'}).reset_index()
-        
-                        ANN_test_temp['ANN_recall'] = ANN_test_temp['True']/ANN_test_temp['MC_true']
-        
-                        ANN_test_temp['ANN_precision'] = ANN_test_temp['True']/ANN_test_temp['ANN_true']
-                        print(ANN_test_temp)
-                        exit()
-                        
-                continue
-                        
-                ANN_base = pd.concat([ANN_base,ANN_test_all])
+                        ANN_base_temp = pd.concat([ANN_base_temp,ANN_test_temp])
 
+                    ANN_base_temp = ANN_base_temp.groupby(['x', 'y','z']).agg({'ANN_true':'sum','True':'sum','MC_true':'sum'}).reset_index()
+
+                    ANN_base_temp['ANN_recall'] = ANN_base_temp['True']/ANN_base_temp['MC_true']
+
+                    ANN_base_temp['ANN_precision'] = ANN_base_temp['True']/ANN_base_temp['ANN_true']
+                    print(ANN_base_temp)
+                    x=input()
+
+
+
+                    ANN_base = pd.concat([ANN_base,ANN_test_all])
+                continue
 #create a table with all the wanted columns
 #print(ANN_base)
 ANN_analysis = pd.merge(densitydata,ANN_base, how='inner', on=['x','y','z'])
