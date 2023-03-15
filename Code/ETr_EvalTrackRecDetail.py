@@ -43,7 +43,7 @@ rowdata = pd.read_csv(input_file_location,usecols=columns)
 if len(MotherGroup)>0:
 
    rowdata=pd.merge(rowdata,Group_Df,how='left',on=['MotherPDG'])
-   rowdata=rowdata[['Mother_Group']].fillna('Other')
+   rowdata['Mother_Group']=rowdata['Mother_Group'].fillna('Other')
    print(rowdata)
 exit()
 #calculating overall density, coordinates initially in microns
