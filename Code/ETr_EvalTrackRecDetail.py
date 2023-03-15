@@ -191,19 +191,15 @@ with alive_bar(iterations,force_tty=True, title = 'Calculating densities.') as b
                     ANN_base_temp['ANN_recall'] = ANN_base_temp['True']/ANN_base_temp['MC_true']
 
                     ANN_base_temp['ANN_precision'] = ANN_base_temp['True']/ANN_base_temp['ANN_true']
-                    print(ANN_base_temp)
-                    x=input()
-
-
-
                     ANN_base = pd.concat([ANN_base,ANN_test_all])
                 continue
 #create a table with all the wanted columns
 #print(ANN_base)
 ANN_analysis = pd.merge(densitydata,ANN_base, how='inner', on=['x','y','z'])
-output = args.TrackName+'_FinalData.csv'
-ANN_analysis.to_csv(output,index=False)
-print(output, 'was saved.')
+print(ANN_analysis)
+output = args.TrackName+'_FinalData_WP.csv'
+#ANN_analysis.to_csv(output,index=False)
+#print(output, 'was saved.')
 #print(ANN_analysis)
 #exit()
 
