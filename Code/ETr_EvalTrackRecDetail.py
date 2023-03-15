@@ -28,8 +28,10 @@ MotherGroup=ast.literal_eval(args.MotherGroup)
 GroupData=[]
 for mpg in range(len(MotherGroup)):
     for mp in MotherPDG[mpg]:
-        GroupData.append([MotherGroup[mpg],mp])
-print(GroupData)
+        GroupData.append([mp,MotherGroup[mpg]])
+
+Group_Df=pd.DataFrame(GroupData,columns=['MotherPDG','MotherPDGGroup'])
+print(Group_Df)
 exit()
 
 input_file_location=args.f
