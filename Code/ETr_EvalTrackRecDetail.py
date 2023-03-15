@@ -32,17 +32,18 @@ if len(MotherGroup)>0:
         for mp in MotherPDG[mpg]:
             GroupData.append([mp,MotherGroup[mpg]])
 
-    Group_Df=pd.DataFrame(GroupData,columns=['MotherPDG','MotherGroup'])
+    Group_Df=pd.DataFrame(GroupData,columns=['MotherPDG','Mother_Group'])
 
 input_file_location=args.f
 
 #importing data - making sure we only use relevant columns
-columns = ['Hit_ID','x','y','z','MC_Event_ID','MC_Track_ID','PDG_ID','MotherPDG',args.TrackName]
+columns = ['Hit_ID','x','y','z','MC_Event_ID','MC_Track_ID','PDG_ID','Mother_PDG',args.TrackName]
 rowdata = pd.read_csv(input_file_location,usecols=columns)
 
 if len(MotherGroup)>0:
 
    rowdata=pd.merge(rowdata,Group_Df,how='left',on=['MotherPDG'])
+   rowdata[['Mother_Group']].fillna('Other')
    print(rowdata)
 exit()
 #calculating overall density, coordinates initially in microns
