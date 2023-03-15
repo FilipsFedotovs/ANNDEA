@@ -135,7 +135,7 @@ with alive_bar(iterations,force_tty=True, title = 'Calculating densities.') as b
 
                 ANN_test_all['MC_true'] = (ANN_test_all['MC_Track']==ANN_test_all['MC_Track_right']).astype(int)
 
-                if len(ANN_test) > 0:
+                if len(ANN_test_all) > 0:
                     print(ANN_test_all)
                     exit()
 
