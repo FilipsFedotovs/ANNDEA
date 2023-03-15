@@ -166,6 +166,7 @@ with alive_bar(iterations,force_tty=True, title = 'Calculating densities.') as b
                         MC_Block['MC_True']=1
                         print(MC_Block)
                         ANN_test_all=pd.merge(ANN_test_all,MC_Block,how='left',on=['Hit_ID','Hit_ID_right'])
+                        ANN_test_all['MC_True']=ANN_test_all['MC_True'].fillna(0)
                         print(ANN_test_all)
                         exit()
 
