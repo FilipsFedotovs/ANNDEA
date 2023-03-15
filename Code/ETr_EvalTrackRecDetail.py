@@ -134,9 +134,10 @@ with alive_bar(iterations,force_tty=True, title = 'Calculating densities.') as b
                 #Little data trick to assess only the relevant connections
 
                 MC_Block=ANN_test_all[['Hit_ID','Hit_ID_right','MotherPDG','MC_Track','MC_Track_right']]
-                ANN_test_all = ANN_test_all.drop(['MotherPDG','MC_Track','MC_Track_right'],axis=1)
+
 
                 if len(ANN_test_all) > 10:
+                    ANN_test_all = ANN_test_all.drop(['MotherPDG','MC_Track','MC_Track_right'],axis=1)
                     print(ANN_test_all)
                     print(MC_Block)
                     exit()
