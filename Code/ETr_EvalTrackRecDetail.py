@@ -170,33 +170,31 @@ with alive_bar(iterations,force_tty=True, title = 'Calculating densities.') as b
                         ANN_test_temp['Left_Check'] = (ANN_test_temp['Mother_Group']==mp).astype(int)
                         ANN_test_temp['Right_Check'] = (ANN_test_temp['Mother_Group_right']==mp).astype(int)
                         ANN_test_temp['Check'] = ANN_test_temp['Left_Check']+ANN_test_temp['Right_Check']
+                        ANN_test_temp=ANN_test_temp.drop(ANN_test_temp.index[ANN_test_temp['Check'] < 1])
+                        ANN_test_temp=ANN_test_temp.drop(['Mother_Group','Mother_Group_right','Left_Check','Right_Check'],axis=1)
                         print(ANN_test_temp)
                         exit()
 
-                else:
-                    continue
-
-
-
-
-
-                ANN_test_all['ANN_true'] = ((ANN_test_all[args.TrackName]==ANN_test_all[args.TrackName+'_right']) & (ANN_test_all[args.TrackName]!=-2))
-                ANN_test_all['ANN_true'] = ANN_test_all['ANN_true'].astype(int)
-                #print(ANN_test_all)
-
-                ANN_test_all['True'] = ANN_test_all['MC_true'] + ANN_test_all['ANN_true']
-                ANN_test_all['True'] = (ANN_test_all['True']>1).astype(int)
-                #print(ANN_test_all[[args.TrackName,args.TrackName+'_right','ANN_true']])
-
-                ANN_test_all['y'] = j
-                ANN_test_all['z'] = k
-
-                ANN_test_all = ANN_test_all[['MC_true','ANN_true','True','x','y','z']]
-                ANN_test_all = ANN_test_all.groupby(['x', 'y','z']).agg({'ANN_true':'sum','True':'sum','MC_true':'sum'}).reset_index()
-
-                ANN_test_all['ANN_recall'] = ANN_test_all['True']/ANN_test_all['MC_true']
-
-                ANN_test_all['ANN_precision'] = ANN_test_all['True']/ANN_test_all['ANN_true']
+                        ANN_test_temp['ANN_true'] = ((ANN_test_temp[args.TrackName]==ANN_test_temp[args.TrackName+'_right']) & (ANN_test_temp[args.TrackName]!=-2))
+                        ANN_test_temp['ANN_true'] = ANN_test_temp['ANN_true'].astype(int)
+                        #print(ANN_test_temp)
+        
+                        ANN_test_temp['True'] = ANN_test_temp['MC_true'] + ANN_test_temp['ANN_true']
+                        ANN_test_temp['True'] = (ANN_test_temp['True']>1).astype(int)
+                        #print(ANN_test_temp[[args.TrackName,args.TrackName+'_right','ANN_true']])
+        
+                        ANN_test_temp['y'] = j
+                        ANN_test_temp['z'] = k
+        
+                        ANN_test_temp = ANN_test_temp[['MC_true','ANN_true','True','x','y','z']]
+                        ANN_test_temp = ANN_test_temp.groupby(['x', 'y','z']).agg({'ANN_true':'sum','True':'sum','MC_true':'sum'}).reset_index()
+        
+                        ANN_test_temp['ANN_recall'] = ANN_test_temp['True']/ANN_test_temp['MC_true']
+        
+                        ANN_test_temp['ANN_precision'] = ANN_test_temp['True']/ANN_test_temp['ANN_true']
+                        
+                continue
+                        
                 ANN_base = pd.concat([ANN_base,ANN_test_all])
 
 #create a table with all the wanted columns
