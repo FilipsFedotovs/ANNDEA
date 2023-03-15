@@ -25,14 +25,14 @@ args = parser.parse_args()
 
 MotherPDG=ast.literal_eval(args.MotherPDG)
 MotherGroup=ast.literal_eval(args.MotherGroup)
-GroupData=[]
-for mpg in range(len(MotherGroup)):
-    for mp in MotherPDG[mpg]:
-        GroupData.append([mp,MotherGroup[mpg]])
 
-Group_Df=pd.DataFrame(GroupData,columns=['MotherPDG','MotherPDGGroup'])
-print(Group_Df)
-exit()
+if len(MotherGroup)>0:
+    GroupData=[]
+    for mpg in range(len(MotherGroup)):
+        for mp in MotherPDG[mpg]:
+            GroupData.append([mp,MotherGroup[mpg]])
+
+    Group_Df=pd.DataFrame(GroupData,columns=['MotherPDG','MotherGroup'])
 
 input_file_location=args.f
 
@@ -40,7 +40,11 @@ input_file_location=args.f
 columns = ['Hit_ID','x','y','z','MC_Event_ID','MC_Track_ID','PDG_ID','MotherPDG',args.TrackName]
 rowdata = pd.read_csv(input_file_location,usecols=columns)
 
+if len(MotherGroup)>0:
 
+   rowdata=pd.merge(rowdata,Group_Df,how='left',on=['Mother_PDG'])
+   print(rowdata)
+exit()
 #calculating overall density, coordinates initially in microns
 columns = ['Hit_ID','x','y','z']
 densitydata = rowdata[columns]
