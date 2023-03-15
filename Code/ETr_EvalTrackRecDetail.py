@@ -154,7 +154,7 @@ with alive_bar(iterations,force_tty=True, title = 'Calculating densities.') as b
 
                     MC_Block=ANN_test_all[['Hit_ID','Hit_ID_right','Mother_Group','MC_Track','MC_Track_right']]
 
-                    ANN_Base_temp=pd.DataFrame([],columns=['MC_true','ANN_true','True','x','y','z'])
+                    ANN_base_temp=pd.DataFrame([],columns=['MC_true','ANN_true','True','x','y','z'])
                     for mp in MotherGroup:
                         ANN_test_temp = ANN_test_all.drop(['MC_Track','MC_Track_right'],axis=1)
                         MC_Block_temp = MC_Block[MC_Block.MC_Track==MC_Block.MC_Track_right]
