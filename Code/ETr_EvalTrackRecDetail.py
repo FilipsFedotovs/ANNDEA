@@ -135,16 +135,11 @@ with alive_bar(iterations,force_tty=True, title = 'Calculating densities.') as b
                 
                 
 
-                if len(ANN_test) > 20:
-                    print(ANN_test)
-                    ANN_test[args.TrackName] = pd.to_numeric(ANN_test[args.TrackName],errors='coerce').fillna(-2).astype('int')
-                    print(ANN_test)
-                    exit()
+                if len(ANN_test) > 0:
+                    ANN_test[args.TrackName] = pd.to_numeric(ANN_test[args.TrackName],errors='coerce').fillna(-5).astype('int')
                     ANN_test['z_coord'] = ANN_test['z_coord'].astype('int')
                     ANN_test = ANN_test.astype({col: 'int8' for col in ANN_test.select_dtypes('int64').columns})
-                    #print(ANN_test.dtypes)
-                    #exit()
-                continue
+
                 ANN_test_right = ANN_test.rename(columns={'Hit_ID':'Hit_ID_right',args.TrackName:args.TrackName+'_right','MC_Track':'MC_Track_right','z_coord':'z_coord_right','Mother_Group':'Mother_Group_right'})
 
                 ANN_test_all = pd.merge(ANN_test,ANN_test_right,how='inner',on=['x'])
@@ -176,9 +171,7 @@ with alive_bar(iterations,force_tty=True, title = 'Calculating densities.') as b
                         ANN_test_temp=ANN_test_temp.drop(ANN_test_temp.index[ANN_test_temp['Check'] < 1])
                         ANN_test_temp=ANN_test_temp.drop(['Mother_Group','Mother_Group_right','Left_Check','Right_Check','Check'],axis=1)
 
-                        print(ANN_test_temp)
-                        exit()
-                        ANN_test_temp['ANN_true'] = ((ANN_test_temp[args.TrackName]==ANN_test_temp[args.TrackName+'_right']) & (ANN_test_temp[args.TrackName]!=-2))
+                        ANN_test_temp['ANN_true'] = ((ANN_test_temp[args.TrackName]==ANN_test_temp[args.TrackName+'_right']) & (ANN_test_temp[args.TrackName]!=-5))
                         ANN_test_temp['ANN_true'] = ANN_test_temp['ANN_true'].astype(int)
                         #print(ANN_test_temp)
         
