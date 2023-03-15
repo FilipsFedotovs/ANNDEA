@@ -32,7 +32,7 @@ hitdata['ty'] = hitdata['ty'].round(decimals = 2)
 hitdata=hitdata.groupby(['tx','ty']).Hit_ID.nunique().reset_index()
 print('Creating plot')
 #sns.heatmap(hitdata, annot=True)
-plt.hist2d(hitdata['tx'],hitdata['ty'],bins=100)
+#plt.hist2d(hitdata['tx'],hitdata['ty'],bins=100)
 #plt.show()
 #exit()
 
