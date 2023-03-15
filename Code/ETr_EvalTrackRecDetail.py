@@ -159,7 +159,7 @@ with alive_bar(iterations,force_tty=True, title = 'Calculating densities.') as b
                 if len(ANN_test_all) > 100:
                     for mp in MotherGroup:
                         ANN_test_temp = ANN_test_all.drop(['MC_Track','MC_Track_right'],axis=1)
-                        MC_Block_temp = MC_Block_temp[MC_Block_temp.MC_Track==MC_Block_temp.MC_Track_right]
+                        MC_Block_temp = MC_Block[MC_Block.MC_Track==MC_Block.MC_Track_right]
                         MC_Block_temp=MC_Block_temp.drop(['MC_Track','MC_Track_right'],axis=1)
                         MC_Block_temp=MC_Block_temp[MC_Block_temp.Mother_Group==mp]
                         MC_Block_temp=MC_Block_temp.drop(['Mother_Group'],axis=1)
