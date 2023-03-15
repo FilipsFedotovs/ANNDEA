@@ -57,7 +57,7 @@ densitydata = densitydata.rename(columns={'Hit_ID':'Hit_Density'})
 
 # starting an if loop to match the choice of Computing tool in the arguments
 # Get precision and recall for ANNDEA with GNN
-ANN_test_columns = ['Hit_ID','x','y','z','MC_Event_ID','MC_Track_ID',args.TrackName]
+ANN_test_columns = ['Hit_ID','x','y','z','MC_Event_ID','MC_Track_ID',args.TrackName,'MotherPDG']
 ANN = rowdata[ANN_test_columns]
 ANN_base = None
 
@@ -135,6 +135,7 @@ with alive_bar(iterations,force_tty=True, title = 'Calculating densities.') as b
 
                 ANN_test_all['MC_true'] = (ANN_test_all['MC_Track']==ANN_test_all['MC_Track_right']).astype(int)
 
+                MC_Block=ANN_test_all[['Hit_ID','Hit_ID_right',]]
                 if len(ANN_test_all) > 0:
                     print(ANN_test_all)
                     exit()
