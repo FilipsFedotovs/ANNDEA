@@ -42,7 +42,7 @@ rowdata = pd.read_csv(input_file_location,usecols=columns)
 
 if len(MotherGroup)>0:
 
-   rowdata=pd.merge(rowdata,Group_Df,how='left',on=['Mother_PDG'])
+   rowdata=pd.merge(rowdata,Group_Df,how='left',on=['MotherPDG'])
    print(rowdata)
 exit()
 #calculating overall density, coordinates initially in microns
