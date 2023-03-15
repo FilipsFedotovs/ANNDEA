@@ -45,7 +45,13 @@ if len(MotherGroup)>0:
    rowdata=pd.merge(rowdata,Group_Df,how='left',on=['MotherPDG'])
    rowdata['Mother_Group']=rowdata['Mother_Group'].fillna('Other')
    MotherGroup.append('Other')
-   print(MotherGroup)
+
+
+else:
+   rowdata['Mother_Group']='Other'
+rowdata = rowdata.drop(['MotherPDG'],axis=1)
+print(MotherGroup)
+print(rowdata)
 exit()
 #calculating overall density, coordinates initially in microns
 columns = ['Hit_ID','x','y','z']
