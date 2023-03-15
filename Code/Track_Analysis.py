@@ -24,7 +24,7 @@ input_file_location=args.f
 #importing data - making sure we only use relevant columns
 columns = ['Hit_ID','x','y','z','tx','ty','MC_Event_ID','MC_Track_ID','PDG_ID','MotherPDG',args.BrickName,args.TrackName]
 rowdata = pd.read_csv(input_file_location,usecols=columns)
-insert = rowdata['z','tx','ty']
+insert = rowdata[['z','tx','ty']]
 #heatmap plot for tx and ty
 hitdata = rowdata[['Hit_ID','tx','ty']]
 hitdata['tx'] = hitdata['tx'].round(decimals = 2)
