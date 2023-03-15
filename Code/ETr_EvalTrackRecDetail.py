@@ -19,8 +19,19 @@ parser = argparse.ArgumentParser(description='This script compares the ouput of 
 parser.add_argument('--f',help="Please enter the full path to the file with track reconstruction", default='/afs/cern.ch/work/f/ffedship/public/SHIP/Source_Data/SHIP_Emulsion_FEDRA_Raw_UR.csv')
 parser.add_argument('--TrackName', type=str, default='FEDRA_Track_ID', help="Please enter the computing tool name that you want to compare")
 parser.add_argument('--MotherPDG', type=str, default='[]', help="Please enter the computing tool name that you want to compare")
+parser.add_argument('--MotherGroup', type=str, default='[]', help="Please enter the computing tool name that you want to compare")
 args = parser.parse_args()
+
+
 MotherPDG=ast.literal_eval(args.MotherPDG)
+MotherGroup=ast.literal_eval(args.MotherGroup)
+GroupData=[]
+for mpg in range(len(MotherGroup)):
+    for mp in MotherPDG[mpg]:
+        GroupData+=[MotherGroup[mpg],mp]
+print(GroupData)
+exit()
+
 input_file_location=args.f
 
 #importing data - making sure we only use relevant columns
