@@ -28,7 +28,7 @@ MotherGroup=ast.literal_eval(args.MotherGroup)
 GroupData=[]
 for mpg in range(len(MotherGroup)):
     for mp in MotherPDG[mpg]:
-        GroupData+=[MotherGroup[mpg],mp]
+        GroupData.append([MotherGroup[mpg],mp])
 print(GroupData)
 exit()
 
