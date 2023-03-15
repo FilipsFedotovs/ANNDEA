@@ -50,9 +50,7 @@ if len(MotherGroup)>0:
 else:
    rowdata['Mother_Group']='Other'
 rowdata = rowdata.drop(['MotherPDG'],axis=1)
-print(MotherGroup)
-print(rowdata)
-exit()
+
 #calculating overall density, coordinates initially in microns
 columns = ['Hit_ID','x','y','z']
 densitydata = rowdata[columns]
@@ -82,7 +80,7 @@ densitydata = densitydata.rename(columns={'Hit_ID':'Hit_Density'})
 
 # starting an if loop to match the choice of Computing tool in the arguments
 # Get precision and recall for ANNDEA with GNN
-ANN_test_columns = ['Hit_ID','x','y','z','MC_Event_ID','MC_Track_ID',args.TrackName,'MotherPDG']
+ANN_test_columns = ['Hit_ID','x','y','z','MC_Event_ID','MC_Track_ID',args.TrackName,'Mother_Group']
 ANN = rowdata[ANN_test_columns]
 ANN_base = None
 
@@ -144,10 +142,13 @@ with alive_bar(iterations,force_tty=True, title = 'Calculating densities.') as b
                     #exit()
 
 
-                ANN_test_right = ANN_test.drop(['MotherPDG'],axis=1)
-                ANN_test_right = ANN_test_right.rename(columns={'Hit_ID':'Hit_ID_right',args.TrackName:args.TrackName+'_right','MC_Track':'MC_Track_right','z_coord':'z_coord_right'})
+
+                ANN_test_right = ANN_test_right.rename(columns={'Hit_ID':'Hit_ID_right',args.TrackName:args.TrackName+'_right','MC_Track':'MC_Track_right','z_coord':'z_coord_right','Mother_Group':'Mother_Group_right'})
                 ANN_test_all = pd.merge(ANN_test,ANN_test_right,how='inner',on=['x'])
-                #print(ANN_test_all)
+                if len(ANN_test_all) > 100:
+                 print(ANN_test_all)
+                else:
+                    continue
 
 
                 ANN_test_all = ANN_test_all[ANN_test_all.Hit_ID!=ANN_test_all.Hit_ID_right]
