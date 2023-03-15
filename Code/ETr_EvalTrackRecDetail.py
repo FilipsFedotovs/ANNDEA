@@ -164,10 +164,12 @@ with alive_bar(iterations,force_tty=True, title = 'Calculating densities.') as b
                         MC_Block_temp=MC_Block_temp[MC_Block_temp.Mother_Group==mp]
                         MC_Block_temp=MC_Block_temp.drop(['Mother_Group'],axis=1)
                         MC_Block_temp['MC_True']=1
-                        print(MC_Block)
                         ANN_test_temp=pd.merge(ANN_test_temp,MC_Block_temp,how='left',on=['Hit_ID','Hit_ID_right'])
                         ANN_test_temp['MC_True']=ANN_test_temp['MC_True'].fillna(0)
                         ANN_test_temp=ANN_test_temp.drop(['Hit_ID','Hit_ID_right','z_coord','z_coord_right'],axis=1)
+                        ANN_test_temp['Left_Check'] = (ANN_test_temp['Mother_Group']==mp).astype(int)
+                        ANN_test_temp['Right_Check'] = (ANN_test_temp['Mother_Group_right']==mp).astype(int)
+                        ANN_test_temp['Check'] = ANN_test_temp['Left_Check']+ANN_test_temp['Right_Check']
                         print(ANN_test_temp)
                         exit()
 
