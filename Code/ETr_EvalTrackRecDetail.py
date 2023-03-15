@@ -131,14 +131,18 @@ with alive_bar(iterations,force_tty=True, title = 'Calculating densities.') as b
                 ANN_test_all = ANN_test_all[ANN_test_all.z_coord>ANN_test_all.z_coord_right]
                 #print(ANN_test_all)
 
+                #Little data trick to assess only the relevant connections
+                ANN_test_all = ANN_test_all.drop(['MotherPDG','MC_Track','MC_Track_right'],axis=1)
+                MC_Block=ANN_test_all[['Hit_ID','Hit_ID_right','MotherPDG','MC_Track','MC_Track_right']]
 
+                if len(ANN_test_all) > 10:
+                    print(ANN_test_all)
+                    print(MC_Block)
+                    exit()
 
                 ANN_test_all['MC_true'] = (ANN_test_all['MC_Track']==ANN_test_all['MC_Track_right']).astype(int)
 
-                MC_Block=ANN_test_all[['Hit_ID','Hit_ID_right',]]
-                if len(ANN_test_all) > 0:
-                    print(ANN_test_all)
-                    exit()
+
 
                 ANN_test_all['ANN_true'] = ((ANN_test_all[args.TrackName]==ANN_test_all[args.TrackName+'_right']) & (ANN_test_all[args.TrackName]!=-2))
                 ANN_test_all['ANN_true'] = ANN_test_all['ANN_true'].astype(int)
