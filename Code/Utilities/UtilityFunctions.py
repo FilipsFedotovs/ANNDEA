@@ -700,7 +700,7 @@ class EMO:
 
 
                       try:
-                          __graphData_y = self.Label
+                          __graphData_y = self.Label.long()
                           import torch
                           import torch_geometric
                           from torch_geometric.data import Data
@@ -771,7 +771,7 @@ class EMO:
                             __graphData_edge_index.append([j,i])
                             __graphData_edge_attr.append(np.array(__graphData_pos[i]) - np.array(__graphData_pos[j]))
                       if(hasattr(self, 'Label')):
-                          __graphData_y = self.Label
+                          __graphData_y = self.Label.long()
                           import torch
                           import torch_geometric
                           from torch_geometric.data import Data
