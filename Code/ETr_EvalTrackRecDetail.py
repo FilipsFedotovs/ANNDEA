@@ -138,7 +138,7 @@ with alive_bar(iterations,force_tty=True, title = 'Calculating densities.') as b
 
                 if len(ANN_test_all) > 10:
                     ANN_test_all = ANN_test_all.drop(['MotherPDG','MC_Track','MC_Track_right'],axis=1)
-                    ANN_test_all = ANN_test_all[ANN_test_all.MC_Track==ANN_test_all.MC_Track_right]
+                    MC_Block = MC_Block[ANN_test_all.MC_Track==MC_Block.MC_Track_right]
 
                     print(ANN_test_all)
                     print(MC_Block)
