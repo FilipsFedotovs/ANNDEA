@@ -74,6 +74,6 @@ for i in range(-5000,5000):
   print('Maximum angle TY is', newdata['TY'].max())
   print('Minimum angle TY is', newdata['TY'].min())
   
-  output = args.TrackName+ MotherPDG +'_AngleData.csv'
+  output = args.TrackName+ i +'_AngleData.csv'
   newdata.to_csv(output,index=False)
   print(output, 'was saved.')
