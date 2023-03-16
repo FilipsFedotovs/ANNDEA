@@ -26,6 +26,29 @@ args = parser.parse_args()
 MotherPDG=ast.literal_eval(args.MotherPDG)
 MotherGroup=ast.literal_eval(args.MotherGroup)
 
+def JoinHits(_H1,_H2, _cdt, _cdr):
+          if _H1[0]==_H2[0]:
+              return False
+          elif _H1[3]<=_H2[3]:
+              return False
+          else:
+              _dtx=abs(_H1[4]-_H2[4])
+              if _dtx>=_cdt:
+                  return False
+              else:
+                  _dty=abs(_H1[5]-_H2[5])
+                  if _dty>=_cdt:
+                      return False
+                  else:
+                      _d_x = abs(_H2[1]-(_H1[1]+(_H1[4]*(_H2[3]-_H1[3]))))
+                      if _d_x>=_cdr:
+                         return False
+                      else:
+                          _d_y = abs(_H2[2]-(_H1[2]+(_H1[5]*(_H2[3]-_H1[3]))))
+                          if _d_y>=_cdr:
+                             return False
+          return True
+
 if len(MotherGroup)>0:
     GroupData=[]
     for mpg in range(len(MotherGroup)):
@@ -139,7 +162,8 @@ with alive_bar(iterations,force_tty=True, title = 'Calculating densities.') as b
                     ANN_test = ANN_test.astype({col: 'int8' for col in ANN_test.select_dtypes('int64').columns})
 
                 ANN_test_right = ANN_test.rename(columns={'Hit_ID':'Hit_ID_right',args.TrackName:args.TrackName+'_right','MC_Track':'MC_Track_right','z_coord':'z_coord_right','Mother_Group':'Mother_Group_right'})
-
+                print(ANN_test)
+                print(ANN_test_right)
                 ANN_test_all = pd.merge(ANN_test,ANN_test_right,how='inner',on=['x'])
 
                 ANN_test_all = ANN_test_all[ANN_test_all.Hit_ID!=ANN_test_all.Hit_ID_right]
@@ -149,7 +173,8 @@ with alive_bar(iterations,force_tty=True, title = 'Calculating densities.') as b
                 #print(ANN_test_all)
 
                 #Little data trick to assess only the relevant connections
-
+                print(ANN_test_all)
+                exit()
                 MC_Block=ANN_test_all[['Hit_ID','Hit_ID_right','Mother_Group','MC_Track','MC_Track_right']]
 
                 ANN_base_temp=pd.DataFrame([],columns=['Mother_Group','MC_true','ANN_true','True','x','y','z'])
