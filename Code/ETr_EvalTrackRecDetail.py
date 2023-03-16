@@ -167,8 +167,9 @@ with alive_bar(iterations,force_tty=True, title = 'Calculating densities.') as b
                 # #print(ANN_test_all)
                 #
                 # ANN_test_all = ANN_test_all[ANN_test_all.z_coord>ANN_test_all.z_coord_right]
-                print(ANN_res)
-                x=input()
+                if len(ANN_res)>0:
+                    print(ANN_res)
+                    x=input()
                 #Little data trick to assess only the relevant connections
                 continue
                 MC_Block=ANN_test_all[['Hit_ID','Hit_ID_right','Mother_Group','MC_Track','MC_Track_right']]
