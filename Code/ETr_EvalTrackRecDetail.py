@@ -129,10 +129,10 @@ zmin = math.floor(densitydata['z'].min())
 #print(zmin)
 zmax = math.ceil(densitydata['z'].max())
 #print(zmax)
+if os.path.isfile(args.TrackName+'_FinalData_WP.csv'):
+    check_point = pd.read_csv(args.TrackName+'_FinalData_WP.csv',usecols=['x','y','z'])
+    print(check_point)
 
-check_point = pd.read_csv(args.TrackName+'_FinalData_WP.csv',usecols=['x','y','z'])
-print(check_point)
-exit()
 iterations = (xmax - xmin)*(ymax - ymin)*(zmax - zmin)
 with alive_bar(iterations,force_tty=True, title = 'Calculating densities.') as bar:
     for i in range(xmin,xmax):
@@ -208,8 +208,8 @@ with alive_bar(iterations,force_tty=True, title = 'Calculating densities.') as b
                 continue
             ANN_analysis = pd.merge(densitydata,ANN_base, how='inner', on=['x','y','z'])
             print(ANN_analysis)
+            ANN_analysis.to_csv(args.TrackName+'_FinalData_WP.csv', mode='a', header=not os.path.exists(args.TrackName+'_FinalData_WP.csv'))
+            print(args.TrackName+'_FinalData_WP.csv', 'was updated')
             exit()
-            # ANN_analysis.to_csv(args.TrackName+'_FinalData_WP.csv', mode='a', header=not os.path.exists(args.TrackName+'_FinalData_WP.csv'))
-            # print(args.TrackName+'_FinalData_WP.csv', 'was updated')
 print('All good')
 
