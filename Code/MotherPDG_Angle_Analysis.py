@@ -25,7 +25,8 @@ input_file_location=args.f
 columns = ['Hit_ID','x','y','z','tx','ty','MC_Event_ID','MC_Track_ID','PDG_ID','MotherPDG',args.BrickName,args.TrackName]
 rowdata = pd.read_csv(input_file_location,usecols=columns)
 
-for 'MotherPDG' in range(-5000,5000):
+for i in range(-5000,5000):
+  rowdata = rowdata[rowdata.MotherPDG==i]
   #calculate the Track Length
   z_min = rowdata.groupby([args.TrackName]).z.min().reset_index() 
   z_max = rowdata.groupby([args.TrackName]).z.max().reset_index() 
