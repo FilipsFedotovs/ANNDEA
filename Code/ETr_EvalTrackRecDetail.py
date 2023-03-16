@@ -178,7 +178,7 @@ with alive_bar(iterations,force_tty=True, title = 'Calculating densities.') as b
                        continue
                     tot_rec.append([mp,T,P,TP,i,j,k])
 
-    ANN_base_temp=pd.DataFrame([[mp,T,P,TP,i,j,k]],columns=['Mother_Group','MC_true','ANN_true','True','x','y','z'])
+    ANN_base_temp=pd.DataFrame(tot_rec,columns=['Mother_Group','MC_true','ANN_true','True','x','y','z'])
     ANN_base_temp['ANN_recall'] = ANN_base_temp['True']/ANN_base_temp['MC_true']
 
     ANN_base_temp['ANN_precision'] = ANN_base_temp['True']/ANN_base_temp['ANN_true']
