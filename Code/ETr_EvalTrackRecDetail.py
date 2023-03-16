@@ -135,7 +135,6 @@ if os.path.isfile(args.TrackName+'_FinalData_WP.csv'):
     for el in check_point:
         string=str(int(el[0]))+'-'+str(int(el[1]))+'-'+str(int(el[2]))+'-'+el[3]
         new_list.append(string)
-        print(new_list)
 
 iterations = (xmax - xmin)*(ymax - ymin)*(zmax - zmin)
 with alive_bar(iterations,force_tty=True, title = 'Calculating densities.') as bar:
