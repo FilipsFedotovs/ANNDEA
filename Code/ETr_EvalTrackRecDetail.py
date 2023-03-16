@@ -27,12 +27,17 @@ args = parser.parse_args()
 MotherPDG=ast.literal_eval(args.MotherPDG)
 MotherGroup=ast.literal_eval(args.MotherGroup)
 
-def JoinHits(_H1,_H2):
+def MeasureHitPair(_H1,_H2,_G):
           if _H1[0]==_H2[0]:
-              return False
+              return (0,0,0)
           elif _H1[3]>=_H2[3]:
-              return False
-          return True
+              return (0,0,0)
+          else:
+              T=int((_H1[4]==_H1[9]) and _H1[2]==_G)
+              P= int((_H1[1]==_H1[6]) and (_H1[2]==_G or _H1[7]==_G))
+              TP=int(T==P)
+              return T,P,TP
+
 
 if len(MotherGroup)>0:
     GroupData=[]
@@ -163,18 +168,16 @@ with alive_bar(iterations,force_tty=True, title = 'Calculating densities.') as b
                     ANN_test=ANN_test.values.tolist()
                     ANN_test_right=ANN_test_right.values.tolist()
                     _hit_count=0
-                    ANN_res=[]
+                    # MC_T
+
                     for l in ANN_test:
                             _hit_count+=1
                             for r in ANN_test_right:
-                               if JoinHits(l,r):
-                                   ANN_res.append(l+r)
-                                   print(l)
-                                   print(r)
-                                   print(len(ANN_test))
-                                   print(ANN_res)
-                                   exit()
-                    print(ANN_res)
+                               print(l)
+                               print(r)
+                               print(MeasureHitPair)
+                               x=input()
+                    exit()
 
 
                     ANN_test_all=pd.DataFrame(ANN_res,columns=['Hit_ID','SND_B31_3_2_2_Track_ID','Mother_Group','z_coord','MC_Track','Hit_ID_right','SND_B31_3_2_2_Track_ID_right','Mother_Group_right','z_coord_right','MC_Track_right'])
