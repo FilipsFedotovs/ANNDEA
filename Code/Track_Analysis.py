@@ -38,47 +38,81 @@ print('Creating plot')
 #plt.show()
 #exit()
 
-# number of segments by specific Track IDs
-#angle_columns = ['tx','ty',args.TrackName]
-#angle_data = rowdata[angle_columns]
-#segments_tx = angle_data.groupby([args.TrackName]).tx.nunique().reset_index() 
-#segments_ty = angle_data.groupby([args.TrackName]).ty.nunique().reset_index() 
-#print(segments_tx)
-#print(segments_ty)
+if args.TrackName == MC_Track_ID:
+  rowdata['MC_Track_ID'] = rowdata['MC_Track_ID'].astype(str)
+  rowdata['MC_Event_ID'] = rowdata['MC_Event_ID'].astype(str)
+  rowdata['MC_Track'] = rowdata['MC_Track_ID'] + '-' + rowdata['MC_Event_ID']
+  rowdata.drop(['MC_Track_ID','MC_Event_ID'], axis=1, inplace=True)
+  
+  #calculate the Track Length
+  z_min = rowdata.groupby(['MC_Track']).z.min().reset_index() 
+  z_max = rowdata.groupby(['MC_Track']).z.max().reset_index() 
+  z_min = z_min.rename(columns={'z':'z_min'})
+  z_max = z_max.rename(columns={'z':'z_max'})
+  newdata = pd.merge(z_max,z_min,how='inner',on=['MC_Track'])
+  newdata['Track_length'] = newdata['z_max'] - newdata['z_min']
+  #print(newdata)
+  
+  x_max = pd.merge(newdata, rowdata, how='inner', left_on=['MC_Track','z_max'], right_on=['MC_Track','z'])
+  x_max = x_max.rename(columns={'x':'x_max'})
+  x_max = x_max[['x_max', 'MC_Track']]
+  newdata = pd.merge(newdata,x_max,how='inner',on=['MC_Track'])
+  #print(newdata)
 
-#calculate the Track Length
-z_min = rowdata.groupby([args.TrackName]).z.min().reset_index() 
-z_max = rowdata.groupby([args.TrackName]).z.max().reset_index() 
-z_min = z_min.rename(columns={'z':'z_min'})
-z_max = z_max.rename(columns={'z':'z_max'})
-newdata = pd.merge(z_max,z_min,how='inner',on=[args.TrackName])
-newdata['Track_length'] = newdata['z_max'] - newdata['z_min']
-#print(newdata)
+  x_min = pd.merge(newdata, rowdata, how='inner', left_on=['MC_Track','z_min'], right_on=['MC_Track','z'])
+  x_min = x_min.rename(columns={'x':'x_min'})
+  x_min = x_min[['x_min', 'MC_Track']]
+  newdata = pd.merge(newdata,x_min,how='inner',on=['MC_Track'])
+  #print(newdata)
+
+  y_max = pd.merge(newdata, rowdata, how='inner', left_on=['MC_Track','z_max'], right_on=['MC_Track','z'])
+  y_max = y_max.rename(columns={'y':'y_max'})
+  y_max = y_max[['y_max', 'MC_Track']]
+  newdata = pd.merge(newdata,y_max,how='inner',on=['MC_Track'])
+  #print(newdata)
+
+  y_min = pd.merge(newdata, rowdata, how='inner', left_on=['MC_Track','z_min'], right_on=['MC_Track','z'])
+  y_min = y_min.rename(columns={'y':'y_min'})
+  y_min = y_min[['y_min', 'MC_Track']]
+  newdata = pd.merge(newdata,y_min,how='inner',on=['MC_Track'])
+  #print(newdata)
+
+  
+else:
+
+  #calculate the Track Length
+  z_min = rowdata.groupby([args.TrackName]).z.min().reset_index() 
+  z_max = rowdata.groupby([args.TrackName]).z.max().reset_index() 
+  z_min = z_min.rename(columns={'z':'z_min'})
+  z_max = z_max.rename(columns={'z':'z_max'})
+  newdata = pd.merge(z_max,z_min,how='inner',on=[args.TrackName])
+  newdata['Track_length'] = newdata['z_max'] - newdata['z_min']
+  #print(newdata)
 
 
-x_max = pd.merge(newdata, rowdata, how='inner', left_on=[args.TrackName,'z_max'], right_on=[args.TrackName,'z'])
-x_max = x_max.rename(columns={'x':'x_max'})
-x_max = x_max[['x_max', args.TrackName]]
-newdata = pd.merge(newdata,x_max,how='inner',on=[args.TrackName])
-#print(newdata)
+  x_max = pd.merge(newdata, rowdata, how='inner', left_on=[args.TrackName,'z_max'], right_on=[args.TrackName,'z'])
+  x_max = x_max.rename(columns={'x':'x_max'})
+  x_max = x_max[['x_max', args.TrackName]]
+  newdata = pd.merge(newdata,x_max,how='inner',on=[args.TrackName])
+  #print(newdata)
 
-x_min = pd.merge(newdata, rowdata, how='inner', left_on=[args.TrackName,'z_min'], right_on=[args.TrackName,'z'])
-x_min = x_min.rename(columns={'x':'x_min'})
-x_min = x_min[['x_min', args.TrackName]]
-newdata = pd.merge(newdata,x_min,how='inner',on=[args.TrackName])
-#print(newdata)
+  x_min = pd.merge(newdata, rowdata, how='inner', left_on=[args.TrackName,'z_min'], right_on=[args.TrackName,'z'])
+  x_min = x_min.rename(columns={'x':'x_min'})
+  x_min = x_min[['x_min', args.TrackName]]
+  newdata = pd.merge(newdata,x_min,how='inner',on=[args.TrackName])
+  #print(newdata)
 
-y_max = pd.merge(newdata, rowdata, how='inner', left_on=[args.TrackName,'z_max'], right_on=[args.TrackName,'z'])
-y_max = y_max.rename(columns={'y':'y_max'})
-y_max = y_max[['y_max', args.TrackName]]
-newdata = pd.merge(newdata,y_max,how='inner',on=[args.TrackName])
-#print(newdata)
+  y_max = pd.merge(newdata, rowdata, how='inner', left_on=[args.TrackName,'z_max'], right_on=[args.TrackName,'z'])
+  y_max = y_max.rename(columns={'y':'y_max'})
+  y_max = y_max[['y_max', args.TrackName]]
+  newdata = pd.merge(newdata,y_max,how='inner',on=[args.TrackName])
+  #print(newdata)
 
-y_min = pd.merge(newdata, rowdata, how='inner', left_on=[args.TrackName,'z_min'], right_on=[args.TrackName,'z'])
-y_min = y_min.rename(columns={'y':'y_min'})
-y_min = y_min[['y_min', args.TrackName]]
-newdata = pd.merge(newdata,y_min,how='inner',on=[args.TrackName])
-#print(newdata)
+  y_min = pd.merge(newdata, rowdata, how='inner', left_on=[args.TrackName,'z_min'], right_on=[args.TrackName,'z'])
+  y_min = y_min.rename(columns={'y':'y_min'})
+  y_min = y_min[['y_min', args.TrackName]]
+  newdata = pd.merge(newdata,y_min,how='inner',on=[args.TrackName])
+  #print(newdata)
 
 newdata['delta_x'] = newdata['x_max'] - newdata['x_min']
 newdata['delta_y'] = newdata['y_max'] - newdata['y_min']
