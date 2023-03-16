@@ -29,7 +29,7 @@ MotherGroup=ast.literal_eval(args.MotherGroup)
 def JoinHits(_H1,_H2):
           if _H1[0]==_H2[0]:
               return False
-          elif _H1[3]<=_H2[3]:
+          elif _H1[3]>=_H2[3]:
               return False
           return True
 
@@ -146,12 +146,8 @@ with alive_bar(iterations,force_tty=True, title = 'Calculating densities.') as b
                     ANN_test = ANN_test.astype({col: 'int8' for col in ANN_test.select_dtypes('int64').columns})
 
                 ANN_test_right = ANN_test.rename(columns={'Hit_ID':'Hit_ID_right',args.TrackName:args.TrackName+'_right','MC_Track':'MC_Track_right','z_coord':'z_coord_right','Mother_Group':'Mother_Group_right'})
-                print(ANN_test)
-                print(ANN_test_right)
                 ANN_test=ANN_test.values.tolist()
                 ANN_test_right=ANN_test_right.values.tolist()
-                print(ANN_test)
-                print(ANN_test_right)
                 _hit_count=0
                 ANN_res=[]
                 for l in ANN_test:
@@ -161,17 +157,8 @@ with alive_bar(iterations,force_tty=True, title = 'Calculating densities.') as b
                        if JoinHits(l,r):
                            ANN_res.append(l+r)
 
-                # ANN_test_all = pd.merge(ANN_test,ANN_test_right,how='inner',on=['x'])
-                #
-                # ANN_test_all = ANN_test_all[ANN_test_all.Hit_ID!=ANN_test_all.Hit_ID_right]
-                # #print(ANN_test_all)
-                #
-                # ANN_test_all = ANN_test_all[ANN_test_all.z_coord>ANN_test_all.z_coord_right]
-                if len(ANN_res)>0:
 
-                    ANN_test_all=pd.DataFrame(ANN_res,columns=['Hit_ID','SND_B31_3_2_2_Track_ID','Mother_Group','z_coord','MC_Track','Hit_ID_right','SND_B31_3_2_2_Track_ID_right','Mother_Group_right','z_coord_right','MC_Track_right'])
-                    print(ANN_test_all)
-                    x=input()
+                ANN_test_all=pd.DataFrame(ANN_res,columns=['Hit_ID','SND_B31_3_2_2_Track_ID','Mother_Group','z_coord','MC_Track','Hit_ID_right','SND_B31_3_2_2_Track_ID_right','Mother_Group_right','z_coord_right','MC_Track_right'])
                 #Little data trick to assess only the relevant connections
                 continue
                 MC_Block=ANN_test_all[['Hit_ID','Hit_ID_right','Mother_Group','MC_Track','MC_Track_right']]
