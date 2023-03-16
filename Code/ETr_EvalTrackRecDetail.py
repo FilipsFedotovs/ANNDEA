@@ -179,9 +179,9 @@ with alive_bar(iterations,force_tty=True, title = 'Calculating densities.') as b
                                T+=result[0]
                                P+=result[1]
                                TP+=result[2]
-                               if l[2]!=r[2]:
+                               if l[2]!=r[2] and result[1]==1:
                                    print(MeasureHitPair(l,r,mp))
-                                   print(l,r)
+                                   print(l,r,mp)
                                    x=input()
 
 
