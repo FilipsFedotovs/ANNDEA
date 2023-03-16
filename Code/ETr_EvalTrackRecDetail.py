@@ -164,11 +164,17 @@ with alive_bar(iterations,force_tty=True, title = 'Calculating densities.') as b
                 ANN_test_right = ANN_test.rename(columns={'Hit_ID':'Hit_ID_right',args.TrackName:args.TrackName+'_right','MC_Track':'MC_Track_right','z_coord':'z_coord_right','Mother_Group':'Mother_Group_right'})
                 print(ANN_test)
                 print(ANN_test_right)
-                ANN_test=ANN_test.values.to_list()
-                ANN_test_right=ANN_test_right.values.to_list()
+                ANN_test=ANN_test.values.tolist()
+                ANN_test_right=ANN_test_right.values.tolist()
                 print(ANN_test)
                 print(ANN_test_right)
                 exit()
+                # for l in _l_Hits:
+                #    _hit_count+=1
+                #    print(TimeStamp(),'Edge generation progress is ',round(100*_hit_count/len(_l_Hits),2), '%',end="\r", flush=True)
+                #    for r in _r_Hits:
+                #       if HitCluster.JoinHits(l,r,cut_dt,cut_dr):
+                #           _Tot_Hits.append(l+r)
                 ANN_test_all = pd.merge(ANN_test,ANN_test_right,how='inner',on=['x'])
 
                 ANN_test_all = ANN_test_all[ANN_test_all.Hit_ID!=ANN_test_all.Hit_ID_right]
