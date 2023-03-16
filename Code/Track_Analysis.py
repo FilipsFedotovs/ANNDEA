@@ -56,8 +56,6 @@ if args.TrackName == 'MC_Track_ID':
   newdata['Track_length'] = newdata['z_max'] - newdata['z_min']
   newdata = pd.merge(newdata,mother,how='inner',on=['MC_Track'])
   newdata = newdata.loc[newdata['Track_length'] > 0]
-  print(newdata)
-  exit()
   
   x_max = pd.merge(newdata, rowdata, how='inner', left_on=['MC_Track','z_max'], right_on=['MC_Track','z'])
   x_max = x_max.rename(columns={'x':'x_max'})
@@ -90,11 +88,6 @@ if args.TrackName == 'MC_Track_ID':
   newdata['TX'] = newdata['delta_x']/newdata['Track_length']
   newdata['TY'] = newdata['delta_y']/newdata['Track_length']
   #print(newdata)
-
-  mother = rowdata[['MotherPDG','MC_Track']]
-  newdata=pd.merge(newdata,mother,how='inner',on=['MC_Track'])
-  print(newdata)
-  exit()
 
   print('Maximum angle TX is', newdata['TX'].max())
   print('Minimum angle TX is', newdata['TX'].min())
