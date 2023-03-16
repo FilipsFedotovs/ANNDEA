@@ -213,6 +213,5 @@ with alive_bar(iterations,force_tty=True, title = 'Calculating densities.') as b
             print(ANN_analysis)
             ANN_analysis.to_csv(args.TrackName+'_FinalData_WP.csv', mode='a', header=not os.path.exists(args.TrackName+'_FinalData_WP.csv'))
             print(args.TrackName+'_FinalData_WP.csv', 'was updated')
-            exit()
 print('All good')
 
