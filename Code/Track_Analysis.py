@@ -38,7 +38,7 @@ print('Creating plot')
 #plt.show()
 #exit()
 
-if args.TrackName == MC_Track_ID:
+if args.TrackName == 'MC_Track_ID':
   rowdata['MC_Track_ID'] = rowdata['MC_Track_ID'].astype(str)
   rowdata['MC_Event_ID'] = rowdata['MC_Event_ID'].astype(str)
   rowdata['MC_Track'] = rowdata['MC_Track_ID'] + '-' + rowdata['MC_Event_ID']
