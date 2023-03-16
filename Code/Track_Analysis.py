@@ -123,7 +123,7 @@ newdata['TX'] = newdata['delta_x']/newdata['Track_length']
 newdata['TY'] = newdata['delta_y']/newdata['Track_length']
 #print(newdata)
 
-mother = rowdata['MotherPDG',args.TrackName]
+mother = rowdata[['MotherPDG',args.TrackName]]
 newdata=pd.merge(newdata,mother,how='inner',on=[args.TrackName])
 print(newdata)
 exit()
