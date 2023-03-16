@@ -29,7 +29,7 @@ MotherGroup=ast.literal_eval(args.MotherGroup)
 def JoinHits(_H1,_H2):
           if _H1[0]==_H2[0]:
               return False
-          elif _H1[4]<=_H2[4]:
+          elif _H1[3]<=_H2[3]:
               return False
           return True
 
@@ -138,7 +138,7 @@ with alive_bar(iterations,force_tty=True, title = 'Calculating densities.') as b
             for k in range(zmin,zmax):
                 bar()
                 ANN_test = ANN_test_j[ANN_test_j.z==k]
-                ANN_test = ANN_test.drop(['y','z'], axis=1)
+                ANN_test = ANN_test.drop(['y','z','x'], axis=1)
 
                 if len(ANN_test) > 0:
                     ANN_test[args.TrackName] = pd.to_numeric(ANN_test[args.TrackName],errors='coerce').fillna(-5).astype('int')
@@ -168,6 +168,8 @@ with alive_bar(iterations,force_tty=True, title = 'Calculating densities.') as b
                 #
                 # ANN_test_all = ANN_test_all[ANN_test_all.z_coord>ANN_test_all.z_coord_right]
                 if len(ANN_res)>0:
+
+                    ANN_test_all=pd.DataFrame(ANN_res,columns=['Hit_ID','SND_B31_3_2_2_Track_ID','Mother_Group','z_coord','MC_Track','Hit_ID_right','SND_B31_3_2_2_Track_ID_right','Mother_Group_right','z_coord_right','MC_Track_right'])
                     print(ANN_res)
                     x=input()
                 #Little data trick to assess only the relevant connections
@@ -201,6 +203,7 @@ with alive_bar(iterations,force_tty=True, title = 'Calculating densities.') as b
 
                     ANN_test_temp['y'] = j
                     ANN_test_temp['z'] = k
+                    ANN_test_temp['x'] = i
 
                     ANN_test_temp = ANN_test_temp[['MC_true','ANN_true','True','x','y','z']]
                     ANN_test_temp['Mother_Group'] =mp
