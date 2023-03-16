@@ -23,7 +23,7 @@ parser.add_argument('--o', default='Output', help="Please enter the computing to
 parser.add_argument('--MotherGroup', type=str, default='[]', help="Please enter the computing tool name that you want to compare")
 parser.add_argument('--MotherPDG', type=str, default='[]', help="Please enter the computing tool name that you want to compare")
 args = parser.parse_args()
-out=args.TrackName+'_'+args.Output
+out=args.TrackName+'_'+args.o
 
 MotherPDG=ast.literal_eval(args.MotherPDG)
 MotherGroup=ast.literal_eval(args.MotherGroup)
