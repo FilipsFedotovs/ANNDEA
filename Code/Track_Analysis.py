@@ -40,13 +40,13 @@ print('Creating plot')
 
 if args.TrackName == 'MC_Track_ID':
   
-  mother = rowdata[['MotherPDG','MC_Track']]
-  print(mother)
-  
   rowdata['MC_Track_ID'] = rowdata['MC_Track_ID'].astype(str)
   rowdata['MC_Event_ID'] = rowdata['MC_Event_ID'].astype(str)
   rowdata['MC_Track'] = rowdata['MC_Track_ID'] + '-' + rowdata['MC_Event_ID']
   rowdata.drop(['MC_Track_ID','MC_Event_ID'], axis=1, inplace=True)
+  
+  mother = rowdata[['MotherPDG','MC_Track']]
+  print(mother)
   
   #calculate the Track Length
   z_min = rowdata.groupby(['MC_Track']).z.min().reset_index() 
