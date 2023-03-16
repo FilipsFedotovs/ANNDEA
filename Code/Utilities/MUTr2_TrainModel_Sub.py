@@ -94,7 +94,7 @@ def GNNvalidate(model, Sample):
          pred = out.argmax(dim=1)  # Use the class with the highest probability.
          y_index = data.y.argmax(dim=1)
          correct += int((pred == y_index).sum())  # Check against ground-truth labels.
-         data.y = torch.argmax(data.y, dim=1)
+         #data.y = torch.argmax(data.y, dim=1)
          loss = criterion(out, data.y.long())
          loss_accumulative += float(loss)
     return (correct / len(Sample.dataset), loss_accumulative/len(Sample.dataset))
