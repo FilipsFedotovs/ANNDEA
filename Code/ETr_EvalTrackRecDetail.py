@@ -26,27 +26,11 @@ args = parser.parse_args()
 MotherPDG=ast.literal_eval(args.MotherPDG)
 MotherGroup=ast.literal_eval(args.MotherGroup)
 
-def JoinHits(_H1,_H2, _cdt, _cdr):
+def JoinHits(_H1,_H2):
           if _H1[0]==_H2[0]:
               return False
-          elif _H1[3]<=_H2[3]:
+          elif _H1[4]<=_H2[4]:
               return False
-          else:
-              _dtx=abs(_H1[4]-_H2[4])
-              if _dtx>=_cdt:
-                  return False
-              else:
-                  _dty=abs(_H1[5]-_H2[5])
-                  if _dty>=_cdt:
-                      return False
-                  else:
-                      _d_x = abs(_H2[1]-(_H1[1]+(_H1[4]*(_H2[3]-_H1[3]))))
-                      if _d_x>=_cdr:
-                         return False
-                      else:
-                          _d_y = abs(_H2[2]-(_H1[2]+(_H1[5]*(_H2[3]-_H1[3]))))
-                          if _d_y>=_cdr:
-                             return False
           return True
 
 if len(MotherGroup)>0:
@@ -168,24 +152,25 @@ with alive_bar(iterations,force_tty=True, title = 'Calculating densities.') as b
                 ANN_test_right=ANN_test_right.values.tolist()
                 print(ANN_test)
                 print(ANN_test_right)
-                exit()
-                # for l in _l_Hits:
-                #    _hit_count+=1
-                #    print(TimeStamp(),'Edge generation progress is ',round(100*_hit_count/len(_l_Hits),2), '%',end="\r", flush=True)
-                #    for r in _r_Hits:
-                #       if HitCluster.JoinHits(l,r,cut_dt,cut_dr):
-                #           _Tot_Hits.append(l+r)
-                ANN_test_all = pd.merge(ANN_test,ANN_test_right,how='inner',on=['x'])
+                _hit_count=0
+                ANN_res=[]
+                for l in ANN_test:
+                    _hit_count+=1
+                    print('Edge generation progress is ',round(100*_hit_count/len(ANN_test),2), '%',end="\r", flush=True)
+                    for r in ANN_test_right:
+                       if JoinHits(l,r):
+                           ANN_res.append(l+r)
 
-                ANN_test_all = ANN_test_all[ANN_test_all.Hit_ID!=ANN_test_all.Hit_ID_right]
-                #print(ANN_test_all)
-
-                ANN_test_all = ANN_test_all[ANN_test_all.z_coord>ANN_test_all.z_coord_right]
-                #print(ANN_test_all)
-
+                # ANN_test_all = pd.merge(ANN_test,ANN_test_right,how='inner',on=['x'])
+                #
+                # ANN_test_all = ANN_test_all[ANN_test_all.Hit_ID!=ANN_test_all.Hit_ID_right]
+                # #print(ANN_test_all)
+                #
+                # ANN_test_all = ANN_test_all[ANN_test_all.z_coord>ANN_test_all.z_coord_right]
+                print(ANN_res)
+                x=input()
                 #Little data trick to assess only the relevant connections
-                print(ANN_test_all)
-                exit()
+                continue
                 MC_Block=ANN_test_all[['Hit_ID','Hit_ID_right','Mother_Group','MC_Track','MC_Track_right']]
 
                 ANN_base_temp=pd.DataFrame([],columns=['Mother_Group','MC_true','ANN_true','True','x','y','z'])
