@@ -200,7 +200,7 @@ with alive_bar(iterations,force_tty=True, title = 'Calculating densities.') as b
                 ANN_base_temp['ANN_recall'] = ANN_base_temp['True']/ANN_base_temp['MC_true']
 
                 ANN_base_temp['ANN_precision'] = ANN_base_temp['True']/ANN_base_temp['ANN_true']
-                ANN_base = pd.concat([ANN_base,ANN_base_temp])
+            ANN_base = pd.concat([ANN_base,ANN_base_temp])
             ANN_analysis = pd.merge(densitydata,ANN_base, how='inner', on=['x','y','z'])
             print(ANN_analysis)
             exit()
