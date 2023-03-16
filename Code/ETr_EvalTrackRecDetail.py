@@ -175,10 +175,8 @@ with alive_bar(iterations,force_tty=True, title = 'Calculating densities.') as b
                     ANN_test_all=pd.DataFrame(ANN_res,columns=['Hit_ID','SND_B31_3_2_2_Track_ID','Mother_Group','z_coord','MC_Track','Hit_ID_right','SND_B31_3_2_2_Track_ID_right','Mother_Group_right','z_coord_right','MC_Track_right'])
                     #Little data trick to assess only the relevant connections
                     MC_Block=ANN_test_all[['Hit_ID','Hit_ID_right','Mother_Group','MC_Track','MC_Track_right']]
-                    if len(ANN_test_all)>20:
-                        print(MC_Block)
-                        print(ANN_test_all)
-                        exit()
+
+
                     ANN_base_temp=pd.DataFrame([],columns=['Mother_Group','MC_true','ANN_true','True','x','y','z'])
 
                     ANN_test_temp = ANN_test_all.drop(['MC_Track','MC_Track_right'],axis=1)
