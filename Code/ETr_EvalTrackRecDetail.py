@@ -129,11 +129,12 @@ zmin = math.floor(densitydata['z'].min())
 #print(zmin)
 zmax = math.ceil(densitydata['z'].max())
 #print(zmax)
+new_list=[]
 if os.path.isfile(args.TrackName+'_FinalData_WP.csv'):
     check_point = pd.read_csv(args.TrackName+'_FinalData_WP.csv',usecols=['x','y','z','Mother_Group']).values.tolist()
-    new_list=[]
+
     for el in check_point:
-        string=str(int(el[0]))+'-'+str(int(el[1]))+'-'+str(int(el[2]))
+        string=str(int(el[0]))+'-'+str(int(el[1]))+'-'+str(int(el[2]))+'-'+str(int(el[3]))
         new_list.append(string)
         print(new_list)
 
