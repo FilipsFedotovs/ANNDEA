@@ -147,7 +147,6 @@ with alive_bar(iterations,force_tty=True, title = 'Calculating densities.') as b
                 for mp in MotherGroup:
                     string=str(i)+'-'+str(j)+'-'+str(k)+'-'+mp
                     if string in new_list:
-                        print(string)
                         continue
 
                     ANN_test = ANN_test_j[ANN_test_j.z==k]
@@ -170,7 +169,11 @@ with alive_bar(iterations,force_tty=True, title = 'Calculating densities.') as b
                             for r in ANN_test_right:
                                if JoinHits(l,r):
                                    ANN_res.append(l+r)
+                                   print(l)
+                                   print(r)
                                    print(len(ANN_res))
+                                   print(ANN_res)
+                                   exit()
                     print(ANN_res)
 
 
