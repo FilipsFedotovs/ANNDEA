@@ -179,9 +179,10 @@ with alive_bar(iterations,force_tty=True, title = 'Calculating densities.') as b
                                T+=result[0]
                                P+=result[1]
                                TP+=result[2]
-                               print(T,P,TP)
-                               print(l,r)
-                               x=input()
+                               if l[2]!=r[2]:
+                                   print(T,P,TP)
+                                   print(l,r)
+                                   x=input()
 
 
                     continue
