@@ -184,7 +184,7 @@ with alive_bar(iterations,force_tty=True, title = 'Calculating densities.') as b
                                x=input()
 
 
-
+                    continue
                     ANN_test_all=pd.DataFrame(ANN_res,columns=['Hit_ID','SND_B31_3_2_2_Track_ID','Mother_Group','z_coord','MC_Track','Hit_ID_right','SND_B31_3_2_2_Track_ID_right','Mother_Group_right','z_coord_right','MC_Track_right'])
                     #Little data trick to assess only the relevant connections
                     MC_Block=ANN_test_all[['Hit_ID','Hit_ID_right','Mother_Group','MC_Track','MC_Track_right']]
