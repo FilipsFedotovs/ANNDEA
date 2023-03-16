@@ -175,7 +175,7 @@ with alive_bar(iterations,force_tty=True, title = 'Calculating densities.') as b
                             for r in ANN_test_right:
                                print(l)
                                print(r)
-                               print(MeasureHitPair)
+                               print(MeasureHitPair(l,r,mp))
                                x=input()
                     exit()
 
