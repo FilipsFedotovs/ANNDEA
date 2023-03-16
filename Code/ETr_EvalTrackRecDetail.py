@@ -22,7 +22,7 @@ parser.add_argument('--TrackName', type=str, default='FEDRA_Track_ID', help="Ple
 parser.add_argument('--o', default='Output', help="Please enter the computing tool name that you want to compare")
 parser.add_argument('--MotherGroup', type=str, default='[]', help="Please enter the computing tool name that you want to compare")
 args = parser.parse_args()
-out=args.TrackName+args.Output
+out=args.TrackName+args.o
 
 MotherPDG=ast.literal_eval(args.MotherPDG)
 MotherGroup=ast.literal_eval(args.MotherGroup)
