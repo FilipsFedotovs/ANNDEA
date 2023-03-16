@@ -179,11 +179,8 @@ with alive_bar(iterations,force_tty=True, title = 'Calculating densities.') as b
                                T+=result[0]
                                P+=result[1]
                                TP+=result[2]
-                               if l[2]!=r[2] and result[1]==1:
-                                   print(MeasureHitPair(l,r,mp))
-                                   print(l,r,mp)
 
-                    ANN_base_temp=pd.DataFrame([mp,T,P,TP,i,j,k],columns=['Mother_Group','MC_true','ANN_true','True','x','y','z'])
+                    ANN_base_temp=pd.DataFrame([[mp,T,P,TP,i,j,k]],columns=['Mother_Group','MC_true','ANN_true','True','x','y','z'])
 
                     ANN_base_temp['ANN_recall'] = ANN_base_temp['True']/ANN_base_temp['MC_true']
 
