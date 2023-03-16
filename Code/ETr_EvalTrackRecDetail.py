@@ -169,8 +169,8 @@ with alive_bar(iterations,force_tty=True, title = 'Calculating densities.') as b
                             for r in ANN_test_right:
                                if JoinHits(l,r):
                                    ANN_res.append(l+r)
-                                   print(l)
-                                   print(r)
+                                   print(len(l))
+                                   print(len(r))
                                    print(len(ANN_res))
                                    print(ANN_res)
                                    exit()
