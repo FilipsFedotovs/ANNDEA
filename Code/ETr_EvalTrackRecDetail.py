@@ -130,6 +130,9 @@ zmin = math.floor(densitydata['z'].min())
 zmax = math.ceil(densitydata['z'].max())
 #print(zmax)
 
+check_point = pd.read_csv(args.TrackName+'_FinalData_WP.csv',usecols=['x','y','z'])
+print(check_point)
+exit()
 iterations = (xmax - xmin)*(ymax - ymin)*(zmax - zmin)
 with alive_bar(iterations,force_tty=True, title = 'Calculating densities.') as bar:
     for i in range(xmin,xmax):
