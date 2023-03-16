@@ -152,7 +152,6 @@ with alive_bar(iterations,force_tty=True, title = 'Calculating densities.') as b
                 ANN_res=[]
                 for l in ANN_test:
                     _hit_count+=1
-                    print('Edge generation progress is ',round(100*_hit_count/len(ANN_test),2), '%',end="\r", flush=True)
                     for r in ANN_test_right:
                        if JoinHits(l,r):
                            ANN_res.append(l+r)
@@ -160,7 +159,6 @@ with alive_bar(iterations,force_tty=True, title = 'Calculating densities.') as b
 
                 ANN_test_all=pd.DataFrame(ANN_res,columns=['Hit_ID','SND_B31_3_2_2_Track_ID','Mother_Group','z_coord','MC_Track','Hit_ID_right','SND_B31_3_2_2_Track_ID_right','Mother_Group_right','z_coord_right','MC_Track_right'])
                 #Little data trick to assess only the relevant connections
-                continue
                 MC_Block=ANN_test_all[['Hit_ID','Hit_ID_right','Mother_Group','MC_Track','MC_Track_right']]
 
                 ANN_base_temp=pd.DataFrame([],columns=['Mother_Group','MC_true','ANN_true','True','x','y','z'])
