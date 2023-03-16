@@ -179,15 +179,14 @@ with alive_bar(iterations,force_tty=True, title = 'Calculating densities.') as b
                                T+=result[0]
                                P+=result[1]
                                TP+=result[2]
-
+                    if T==P==TP==0:
+                       continue
                     ANN_base_temp=pd.DataFrame([[mp,T,P,TP,i,j,k]],columns=['Mother_Group','MC_true','ANN_true','True','x','y','z'])
 
                     ANN_base_temp['ANN_recall'] = ANN_base_temp['True']/ANN_base_temp['MC_true']
 
                     ANN_base_temp['ANN_precision'] = ANN_base_temp['True']/ANN_base_temp['ANN_true']
 
-                    if len(ANN_base_temp)==0:
-                            continue
                     ANN_analysis = pd.merge(densitydata,ANN_base_temp, how='inner', on=['x','y','z'])
                     print(ANN_analysis)
                     ANN_analysis.to_csv(args.TrackName+'_FinalData_WP.csv', mode='a', header=not os.path.exists(args.TrackName+'_FinalData_WP.csv'))
