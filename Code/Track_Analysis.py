@@ -39,6 +39,10 @@ print('Creating plot')
 #exit()
 
 if args.TrackName == 'MC_Track_ID':
+  
+  mother = rowdata[['MotherPDG','MC_Track']]
+  print(mother)
+  
   rowdata['MC_Track_ID'] = rowdata['MC_Track_ID'].astype(str)
   rowdata['MC_Event_ID'] = rowdata['MC_Event_ID'].astype(str)
   rowdata['MC_Track'] = rowdata['MC_Track_ID'] + '-' + rowdata['MC_Event_ID']
@@ -59,13 +63,13 @@ if args.TrackName == 'MC_Track_ID':
   x_max = x_max.rename(columns={'x':'x_max'})
   x_max = x_max[['x_max', 'MC_Track']]
   newdata = pd.merge(newdata,x_max,how='inner',on=['MC_Track'])
-  print(newdata)
+  #print(newdata)
 
   x_min = pd.merge(newdata, rowdata, how='inner', left_on=['MC_Track','z_min'], right_on=['MC_Track','z'])
   x_min = x_min.rename(columns={'x':'x_min'})
   x_min = x_min[['x_min', 'MC_Track']]
   newdata = pd.merge(newdata,x_min,how='inner',on=['MC_Track'])
-  print(newdata)
+  #print(newdata)
 
   y_max = pd.merge(newdata, rowdata, how='inner', left_on=['MC_Track','z_max'], right_on=['MC_Track','z'])
   y_max = y_max.rename(columns={'y':'y_max'})
@@ -77,15 +81,15 @@ if args.TrackName == 'MC_Track_ID':
   y_min = y_min.rename(columns={'y':'y_min'})
   y_min = y_min[['y_min', 'MC_Track']]
   newdata = pd.merge(newdata,y_min,how='inner',on=['MC_Track'])
-  print(newdata)
+  #print(newdata)
   
   newdata['delta_x'] = newdata['x_max'] - newdata['x_min']
   newdata['delta_y'] = newdata['y_max'] - newdata['y_min']
-  print(newdata)
+  #print(newdata)
 
   newdata['TX'] = newdata['delta_x']/newdata['Track_length']
   newdata['TY'] = newdata['delta_y']/newdata['Track_length']
-  print(newdata)
+  #print(newdata)
 
   mother = rowdata[['MotherPDG','MC_Track']]
   newdata=pd.merge(newdata,mother,how='inner',on=['MC_Track'])
