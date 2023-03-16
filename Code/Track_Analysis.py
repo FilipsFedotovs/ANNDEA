@@ -45,7 +45,7 @@ if args.TrackName == 'MC_Track_ID':
   rowdata['MC_Track'] = rowdata['MC_Track_ID'] + '-' + rowdata['MC_Event_ID']
   rowdata.drop(['MC_Track_ID','MC_Event_ID'], axis=1, inplace=True)
   
-  #mother = rowdata[['MotherPDG','MC_Track']]
+  mother = rowdata[['MotherPDG','MC_Track']]
   
   #calculate the Track Length
   z_min = rowdata.groupby(['MC_Track']).z.min().reset_index() 
@@ -54,8 +54,8 @@ if args.TrackName == 'MC_Track_ID':
   z_max = z_max.rename(columns={'z':'z_max'})
   newdata = pd.merge(z_max,z_min,how='inner',on=['MC_Track'])
   newdata['Track_length'] = newdata['z_max'] - newdata['z_min']
-  #newdata = pd.merge(newdata,mother,how='inner',on=['MC_Track'])
-  newdata = newdata.loc[newdata['Track_length'] > 0]
+  newdata = pd.merge(newdata,mother,how='inner',on=['MC_Track'])
+  #newdata = newdata.loc[newdata['Track_length'] > 0]
   print(newdata)
   
   x_max = pd.merge(newdata, rowdata, how='inner', left_on=['MC_Track','z_max'], right_on=['MC_Track','z'])
@@ -80,6 +80,7 @@ if args.TrackName == 'MC_Track_ID':
   y_min = y_min.rename(columns={'y':'y_min'})
   y_min = y_min[['y_min', 'MC_Track']]
   newdata = pd.merge(newdata,y_min,how='inner',on=['MC_Track'])
+  newdata = newdata.loc[newdata['Track_length'] > 0]
   #print(newdata)
   
   newdata['delta_x'] = newdata['x_max'] - newdata['x_min']
@@ -94,7 +95,7 @@ if args.TrackName == 'MC_Track_ID':
   print('Minimum angle TX is', newdata['TX'].min())
   print('Maximum angle TY is', newdata['TY'].max())
   print('Minimum angle TY is', newdata['TY'].min())
-
+  exit()
   output1 = 'MC_Track'+'_smallangledata.csv'
   output = 'MC_Track'+'_AngleData.csv'
   newdata.to_csv(output,index=False)
