@@ -170,7 +170,7 @@ with alive_bar(iterations,force_tty=True, title = 'Calculating densities.') as b
                 if len(ANN_res)>0:
 
                     ANN_test_all=pd.DataFrame(ANN_res,columns=['Hit_ID','SND_B31_3_2_2_Track_ID','Mother_Group','z_coord','MC_Track','Hit_ID_right','SND_B31_3_2_2_Track_ID_right','Mother_Group_right','z_coord_right','MC_Track_right'])
-                    print(ANN_res)
+                    print(ANN_test_all)
                     x=input()
                 #Little data trick to assess only the relevant connections
                 continue
