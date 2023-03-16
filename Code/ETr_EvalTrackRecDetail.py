@@ -23,7 +23,7 @@ parser.add_argument('--o', default='Output', help="Please enter the computing to
 parser.add_argument('--MotherGroup', type=str, default='[]', help="Please enter the computing tool name that you want to compare")
 parser.add_argument('--MotherPDG', type=str, default='[]', help="Please enter the computing tool name that you want to compare")
 args = parser.parse_args()
-out=args.TrackName+'_'+args.o
+out=args.TrackName+'_'+args.o+'.csv'
 
 MotherPDG=ast.literal_eval(args.MotherPDG)
 MotherGroup=ast.literal_eval(args.MotherGroup)
@@ -149,7 +149,7 @@ with alive_bar(iterations,force_tty=True, title = 'Calculating densities.') as b
                     ANN_test = ANN_test_j[ANN_test_j.z==k]
                     ANN_test = ANN_test.drop(['y','z','x'], axis=1)
 
-                    if len(ANN_test) > 0 and len(ANN_test) <100:
+                    if len(ANN_test) > 0:
                         ANN_test[args.TrackName] = pd.to_numeric(ANN_test[args.TrackName],errors='coerce').fillna(-5).astype('int')
                         ANN_test['z_coord'] = ANN_test['z_coord'].astype('int')
                         ANN_test['Hit_ID'] = ANN_test['Hit_ID'].astype('str')
