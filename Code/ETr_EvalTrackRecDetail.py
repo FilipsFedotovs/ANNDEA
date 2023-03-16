@@ -188,7 +188,6 @@ with alive_bar(iterations,force_tty=True, title = 'Calculating densities.') as b
                     ANN_base_temp['ANN_precision'] = ANN_base_temp['True']/ANN_base_temp['ANN_true']
 
                     ANN_analysis = pd.merge(densitydata,ANN_base_temp, how='inner', on=['x','y','z'])
-                    print(ANN_analysis)
                     ANN_analysis.to_csv(args.TrackName+'_FinalData_WP.csv', mode='a', header=not os.path.exists(args.TrackName+'_FinalData_WP.csv'))
                     print(args.TrackName+'_FinalData_WP.csv', 'was updated')
 print('All good')
