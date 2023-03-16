@@ -91,7 +91,6 @@ densitydata = densitydata.rename(columns={'Hit_ID':'Hit_Density'})
 # Get precision and recall for ANNDEA with GNN
 ANN_test_columns = ['Hit_ID','x','y','z','MC_Event_ID','MC_Track_ID',args.TrackName,'Mother_Group']
 ANN = rowdata[ANN_test_columns]
-ANN_base = None
 
 ANN['z_coord'] = ANN['z']
 
@@ -148,6 +147,9 @@ with alive_bar(iterations,force_tty=True, title = 'Calculating densities.') as b
                 bar()
                 for mp in MotherGroup:
                     string=str(i)+'-'+str(j)+'-'+str(k)+'-'+mp
+                    print(string)
+                    print(new_list)
+                    print(string in new_list)
                     if string in new_list:continue
 
                     ANN_test = ANN_test_j[ANN_test_j.z==k]
@@ -212,10 +214,9 @@ with alive_bar(iterations,force_tty=True, title = 'Calculating densities.') as b
                     ANN_base_temp['ANN_recall'] = ANN_base_temp['True']/ANN_base_temp['MC_true']
 
                     ANN_base_temp['ANN_precision'] = ANN_base_temp['True']/ANN_base_temp['ANN_true']
-                    ANN_base = pd.concat([ANN_base,ANN_base_temp])
-                    if len(ANN_base)==0:
+                    if len(ANN_base_temp)==0:
                             continue
-                    ANN_analysis = pd.merge(densitydata,ANN_base, how='inner', on=['x','y','z'])
+                    ANN_analysis = pd.merge(densitydata,ANN_base_temp, how='inner', on=['x','y','z'])
                     print(ANN_analysis)
                     ANN_analysis.to_csv(args.TrackName+'_FinalData_WP.csv', mode='a', header=not os.path.exists(args.TrackName+'_FinalData_WP.csv'))
                     print(args.TrackName+'_FinalData_WP.csv', 'was updated')
