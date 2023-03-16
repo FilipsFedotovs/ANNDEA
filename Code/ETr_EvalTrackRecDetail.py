@@ -6,7 +6,8 @@ import ast
 
 import pandas as pd #for analysis
 pd.options.mode.chained_assignment = None #Silence annoying warnings
-import math 
+import math
+import os
 
 import matplotlib
 matplotlib.use('Agg')
@@ -200,12 +201,10 @@ with alive_bar(iterations,force_tty=True, title = 'Calculating densities.') as b
 
                 ANN_base_temp['ANN_precision'] = ANN_base_temp['True']/ANN_base_temp['ANN_true']
                 ANN_base = pd.concat([ANN_base,ANN_base_temp])
+            ANN_analysis = pd.merge(densitydata,ANN_base, how='inner', on=['x','y','z'])
+            print(ANN_analysis)
+            exit()
+            # ANN_analysis.to_csv(args.TrackName+'_FinalData_WP.csv', mode='a', header=not os.path.exists(args.TrackName+'_FinalData_WP.csv'))
+            # print(args.TrackName+'_FinalData_WP.csv', 'was updated')
+print('All good')
 
-#create a table with all the wanted columns
-
-ANN_analysis = pd.merge(densitydata,ANN_base, how='inner', on=['x','y','z'])
-
-output = args.TrackName+'_FinalData_WP.csv'
-ANN_analysis.to_csv(output,index=False)
-print(output, 'was saved.')
-# end of script #
