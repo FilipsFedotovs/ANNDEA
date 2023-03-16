@@ -19,10 +19,10 @@ from alive_progress import alive_bar
 parser = argparse.ArgumentParser(description='This script compares the ouput of the previous step with the output of ANNDEA reconstructed data to calculate reconstruction performance.')
 parser.add_argument('--f',help="Please enter the full path to the file with track reconstruction", default='/afs/cern.ch/work/f/ffedship/public/SHIP/Source_Data/SHIP_Emulsion_FEDRA_Raw_UR.csv')
 parser.add_argument('--TrackName', type=str, default='FEDRA_Track_ID', help="Please enter the computing tool name that you want to compare")
-parser.add_argument('--MotherPDG', type=str, default='[]', help="Please enter the computing tool name that you want to compare")
+parser.add_argument('--o', default='Output', help="Please enter the computing tool name that you want to compare")
 parser.add_argument('--MotherGroup', type=str, default='[]', help="Please enter the computing tool name that you want to compare")
 args = parser.parse_args()
-
+out=args.TrackName+args.Output
 
 MotherPDG=ast.literal_eval(args.MotherPDG)
 MotherGroup=ast.literal_eval(args.MotherGroup)
@@ -133,13 +133,7 @@ zmin = math.floor(densitydata['z'].min())
 #print(zmin)
 zmax = math.ceil(densitydata['z'].max())
 #print(zmax)
-new_list=[]
-# if os.path.isfile(args.TrackName+'_FinalData_WP.csv'):
-#     check_point = pd.read_csv(args.TrackName+'_FinalData_WP.csv',usecols=['x','y','z','Mother_Group']).values.tolist()
-#
-#     for el in check_point:
-#         string=str(int(el[0]))+'-'+str(int(el[1]))+'-'+str(int(el[2]))+'-'+el[3]
-#         new_list.append(string)
+
 
 tot_rec=[]
 iterations = (xmax - xmin)*(ymax - ymin)*(zmax - zmin)
@@ -151,10 +145,6 @@ with alive_bar(iterations,force_tty=True, title = 'Calculating densities.') as b
             for k in range(zmin,zmax):
                 bar()
                 for mp in MotherGroup:
-                    string=str(i)+'-'+str(j)+'-'+str(k)+'-'+mp
-                    if string in new_list:
-                        continue
-
                     ANN_test = ANN_test_j[ANN_test_j.z==k]
                     ANN_test = ANN_test.drop(['y','z','x'], axis=1)
 
@@ -190,6 +180,6 @@ with alive_bar(iterations,force_tty=True, title = 'Calculating densities.') as b
     ANN_base_temp['ANN_precision'] = ANN_base_temp['True']/ANN_base_temp['ANN_true']
 
     ANN_analysis = pd.merge(densitydata,ANN_base_temp, how='inner', on=['x','y','z'])
-    ANN_analysis.to_csv(args.TrackName+'_FinalData_WP.csv',index=False)
-    print('Success')
+    ANN_analysis.to_csv(out,index=False)
+    print('Success, the file has been saved as ',out)
 
