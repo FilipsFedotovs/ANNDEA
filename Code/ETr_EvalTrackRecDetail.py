@@ -147,10 +147,9 @@ with alive_bar(iterations,force_tty=True, title = 'Calculating densities.') as b
                 bar()
                 for mp in MotherGroup:
                     string=str(i)+'-'+str(j)+'-'+str(k)+'-'+mp
-                    print(string)
-                    print(new_list)
-                    print(string in new_list)
-                    if string in new_list:continue
+                    if string in new_list:
+                        print(string)
+                        continue
 
                     ANN_test = ANN_test_j[ANN_test_j.z==k]
                     ANN_test = ANN_test.drop(['y','z','x'], axis=1)
@@ -159,7 +158,8 @@ with alive_bar(iterations,force_tty=True, title = 'Calculating densities.') as b
                         ANN_test[args.TrackName] = pd.to_numeric(ANN_test[args.TrackName],errors='coerce').fillna(-5).astype('int')
                         ANN_test['z_coord'] = ANN_test['z_coord'].astype('int')
                         ANN_test = ANN_test.astype({col: 'int8' for col in ANN_test.select_dtypes('int64').columns})
-
+                    else:
+                        continue
                     ANN_test_right = ANN_test.rename(columns={'Hit_ID':'Hit_ID_right',args.TrackName:args.TrackName+'_right','MC_Track':'MC_Track_right','z_coord':'z_coord_right','Mother_Group':'Mother_Group_right'})
                     ANN_test=ANN_test.values.tolist()
                     ANN_test_right=ANN_test_right.values.tolist()
