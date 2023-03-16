@@ -168,16 +168,21 @@ with alive_bar(iterations,force_tty=True, title = 'Calculating densities.') as b
                     ANN_test=ANN_test.values.tolist()
                     ANN_test_right=ANN_test_right.values.tolist()
                     _hit_count=0
-                    # MC_T
+                    T=0
+                    P=0
+                    TP=0
 
                     for l in ANN_test:
                             _hit_count+=1
                             for r in ANN_test_right:
-                               print(l)
-                               print(r)
-                               print(MeasureHitPair(l,r,mp))
+                               result=(MeasureHitPair(l,r,mp))
+                               T+=result[0]
+                               P+=result[1]
+                               TP+=result[2]
+                               print(T,P,TP)
+                               print(l,r)
                                x=input()
-                    continue
+
 
 
                     ANN_test_all=pd.DataFrame(ANN_res,columns=['Hit_ID','SND_B31_3_2_2_Track_ID','Mother_Group','z_coord','MC_Track','Hit_ID_right','SND_B31_3_2_2_Track_ID_right','Mother_Group_right','z_coord_right','MC_Track_right'])
