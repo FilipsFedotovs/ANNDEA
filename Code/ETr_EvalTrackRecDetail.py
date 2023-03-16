@@ -130,9 +130,12 @@ zmin = math.floor(densitydata['z'].min())
 zmax = math.ceil(densitydata['z'].max())
 #print(zmax)
 if os.path.isfile(args.TrackName+'_FinalData_WP.csv'):
-    check_point = pd.read_csv(args.TrackName+'_FinalData_WP.csv',usecols=['x','y','z']).values.tolist()
-    print(check_point[-1][0])
-    xmin=int(check_point[-1][0])
+    check_point = pd.read_csv(args.TrackName+'_FinalData_WP.csv',usecols=['x','y','z','Mother_Group']).values.tolist()
+    new_list=[]
+    for el in check_point:
+        string=str(int(el[0]))+'-'+str(int(el[1]))+'-'+str(int(el[2]))
+        new_list.append(string)
+        print(new_list)
 
 iterations = (xmax - xmin)*(ymax - ymin)*(zmax - zmin)
 with alive_bar(iterations,force_tty=True, title = 'Calculating densities.') as bar:
@@ -142,32 +145,36 @@ with alive_bar(iterations,force_tty=True, title = 'Calculating densities.') as b
             ANN_test_j = ANN_test_i[ANN_test_i.y==j]
             for k in range(zmin,zmax):
                 bar()
-                ANN_test = ANN_test_j[ANN_test_j.z==k]
-                ANN_test = ANN_test.drop(['y','z','x'], axis=1)
-
-                if len(ANN_test) > 0:
-                    ANN_test[args.TrackName] = pd.to_numeric(ANN_test[args.TrackName],errors='coerce').fillna(-5).astype('int')
-                    ANN_test['z_coord'] = ANN_test['z_coord'].astype('int')
-                    ANN_test = ANN_test.astype({col: 'int8' for col in ANN_test.select_dtypes('int64').columns})
-
-                ANN_test_right = ANN_test.rename(columns={'Hit_ID':'Hit_ID_right',args.TrackName:args.TrackName+'_right','MC_Track':'MC_Track_right','z_coord':'z_coord_right','Mother_Group':'Mother_Group_right'})
-                ANN_test=ANN_test.values.tolist()
-                ANN_test_right=ANN_test_right.values.tolist()
-                _hit_count=0
-                ANN_res=[]
-                for l in ANN_test:
-                    _hit_count+=1
-                    for r in ANN_test_right:
-                       if JoinHits(l,r):
-                           ANN_res.append(l+r)
-
-
-                ANN_test_all=pd.DataFrame(ANN_res,columns=['Hit_ID','SND_B31_3_2_2_Track_ID','Mother_Group','z_coord','MC_Track','Hit_ID_right','SND_B31_3_2_2_Track_ID_right','Mother_Group_right','z_coord_right','MC_Track_right'])
-                #Little data trick to assess only the relevant connections
-                MC_Block=ANN_test_all[['Hit_ID','Hit_ID_right','Mother_Group','MC_Track','MC_Track_right']]
-
-                ANN_base_temp=pd.DataFrame([],columns=['Mother_Group','MC_true','ANN_true','True','x','y','z'])
                 for mp in MotherGroup:
+                    string=str(i)+'-'+str(j)+'-'+str(k)+'-'+mp
+                    if string in new_list:continue
+
+                    ANN_test = ANN_test_j[ANN_test_j.z==k]
+                    ANN_test = ANN_test.drop(['y','z','x'], axis=1)
+
+                    if len(ANN_test) > 0:
+                        ANN_test[args.TrackName] = pd.to_numeric(ANN_test[args.TrackName],errors='coerce').fillna(-5).astype('int')
+                        ANN_test['z_coord'] = ANN_test['z_coord'].astype('int')
+                        ANN_test = ANN_test.astype({col: 'int8' for col in ANN_test.select_dtypes('int64').columns})
+
+                    ANN_test_right = ANN_test.rename(columns={'Hit_ID':'Hit_ID_right',args.TrackName:args.TrackName+'_right','MC_Track':'MC_Track_right','z_coord':'z_coord_right','Mother_Group':'Mother_Group_right'})
+                    ANN_test=ANN_test.values.tolist()
+                    ANN_test_right=ANN_test_right.values.tolist()
+                    _hit_count=0
+                    ANN_res=[]
+                    for l in ANN_test:
+                            _hit_count+=1
+                            for r in ANN_test_right:
+                               if JoinHits(l,r):
+                                   ANN_res.append(l+r)
+
+
+                    ANN_test_all=pd.DataFrame(ANN_res,columns=['Hit_ID','SND_B31_3_2_2_Track_ID','Mother_Group','z_coord','MC_Track','Hit_ID_right','SND_B31_3_2_2_Track_ID_right','Mother_Group_right','z_coord_right','MC_Track_right'])
+                    #Little data trick to assess only the relevant connections
+                    MC_Block=ANN_test_all[['Hit_ID','Hit_ID_right','Mother_Group','MC_Track','MC_Track_right']]
+
+                    ANN_base_temp=pd.DataFrame([],columns=['Mother_Group','MC_true','ANN_true','True','x','y','z'])
+
                     ANN_test_temp = ANN_test_all.drop(['MC_Track','MC_Track_right'],axis=1)
                     MC_Block_temp = MC_Block[MC_Block.MC_Track==MC_Block.MC_Track_right]
                     MC_Block_temp=MC_Block_temp.drop(['MC_Track','MC_Track_right'],axis=1)
@@ -199,17 +206,17 @@ with alive_bar(iterations,force_tty=True, title = 'Calculating densities.') as b
                     ANN_test_temp['Mother_Group'] =mp
                     ANN_base_temp = pd.concat([ANN_base_temp,ANN_test_temp])
 
-                ANN_base_temp = ANN_base_temp.groupby(['Mother_Group','x', 'y','z']).agg({'ANN_true':'sum','True':'sum','MC_true':'sum'}).reset_index()
+                    ANN_base_temp = ANN_base_temp.groupby(['Mother_Group','x', 'y','z']).agg({'ANN_true':'sum','True':'sum','MC_true':'sum'}).reset_index()
 
-                ANN_base_temp['ANN_recall'] = ANN_base_temp['True']/ANN_base_temp['MC_true']
+                    ANN_base_temp['ANN_recall'] = ANN_base_temp['True']/ANN_base_temp['MC_true']
 
-                ANN_base_temp['ANN_precision'] = ANN_base_temp['True']/ANN_base_temp['ANN_true']
-        ANN_base = pd.concat([ANN_base,ANN_base_temp])
-        if len(ANN_base)==0:
-                continue
-        ANN_analysis = pd.merge(densitydata,ANN_base, how='inner', on=['x','y','z'])
-        print(ANN_analysis)
-        ANN_analysis.to_csv(args.TrackName+'_FinalData_WP.csv', mode='a', header=not os.path.exists(args.TrackName+'_FinalData_WP.csv'))
-        print(args.TrackName+'_FinalData_WP.csv', 'was updated')
+                    ANN_base_temp['ANN_precision'] = ANN_base_temp['True']/ANN_base_temp['ANN_true']
+                    ANN_base = pd.concat([ANN_base,ANN_base_temp])
+                    if len(ANN_base)==0:
+                            continue
+                    ANN_analysis = pd.merge(densitydata,ANN_base, how='inner', on=['x','y','z'])
+                    print(ANN_analysis)
+                    ANN_analysis.to_csv(args.TrackName+'_FinalData_WP.csv', mode='a', header=not os.path.exists(args.TrackName+'_FinalData_WP.csv'))
+                    print(args.TrackName+'_FinalData_WP.csv', 'was updated')
 print('All good')
 
