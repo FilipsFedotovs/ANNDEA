@@ -6,8 +6,10 @@ import ast
 
 import pandas as pd #for analysis
 pd.options.mode.chained_assignment = None #Silence annoying warnings
+
 import math
 import os
+
 
 import matplotlib
 matplotlib.use('Agg')
@@ -145,6 +147,7 @@ with alive_bar(iterations,force_tty=True, title = 'Calculating densities.') as b
             ANN_test_j = ANN_test_i[ANN_test_i.y==j]
             for k in range(zmin,zmax):
                 bar()
+
                 for mp in MotherGroup:
                     ANN_test = ANN_test_j[ANN_test_j.z==k]
                     ANN_test = ANN_test.drop(['y','z','x'], axis=1)
@@ -183,4 +186,5 @@ with alive_bar(iterations,force_tty=True, title = 'Calculating densities.') as b
     ANN_analysis = pd.merge(densitydata,ANN_base_temp, how='inner', on=['x','y','z'])
     ANN_analysis.to_csv(out,index=False)
     print('Success, the file has been saved as ',out)
+
 
