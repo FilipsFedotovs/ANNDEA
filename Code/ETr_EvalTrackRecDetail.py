@@ -130,7 +130,8 @@ zmin = math.floor(densitydata['z'].min())
 zmax = math.ceil(densitydata['z'].max())
 #print(zmax)
 if os.path.isfile(args.TrackName+'_FinalData_WP.csv'):
-    check_point = pd.read_csv(args.TrackName+'_FinalData_WP.csv',usecols=['x','y','z']).values.to_list()
+    check_point = pd.read_csv(args.TrackName+'_FinalData_WP.csv',usecols=['x','y','z'])
+    check_point=check_point.values.to_list()
     print(check_point)
 
 iterations = (xmax - xmin)*(ymax - ymin)*(zmax - zmin)
