@@ -52,8 +52,7 @@ if args.TrackName == 'MC_Track_ID':
   newdata = pd.merge(z_max,z_min,how='inner',on=['MC_Track'])
   newdata['Track_length'] = newdata['z_max'] - newdata['z_min']
   newdata = newdata.loc[newdata['Track_length'] > 0]
-  print(newdata)
-  exit()
+  #print(newdata)
   
   
   x_max = pd.merge(newdata, rowdata, how='inner', left_on=['MC_Track','z_max'], right_on=['MC_Track','z'])
@@ -78,7 +77,32 @@ if args.TrackName == 'MC_Track_ID':
   y_min = y_min.rename(columns={'y':'y_min'})
   y_min = y_min[['y_min', 'MC_Track']]
   newdata = pd.merge(newdata,y_min,how='inner',on=['MC_Track'])
+  #print(newdata)
+  
+  newdata['delta_x'] = newdata['x_max'] - newdata['x_min']
+  newdata['delta_y'] = newdata['y_max'] - newdata['y_min']
+  #print(newdata)
+
+  newdata['TX'] = newdata['delta_x']/newdata['Track_length']
+  newdata['TY'] = newdata['delta_y']/newdata['Track_length']
+  #print(newdata)
+
+  mother = rowdata[['MotherPDG','MC_Track']]
+  newdata=pd.merge(newdata,mother,how='inner',on=['MC_Track'])
   print(newdata)
+  exit()
+
+  print('Maximum angle TX is', newdata['TX'].max())
+  print('Minimum angle TX is', newdata['TX'].min())
+  print('Maximum angle TY is', newdata['TY'].max())
+  print('Minimum angle TY is', newdata['TY'].min())
+
+  output1 = 'MC_Track'+'_smallangledata.csv'
+  output = 'MC_Track'+'_AngleData.csv'
+  newdata.to_csv(output,index=False)
+  #insert.to_csv(output1,index=False)
+  print(output, 'was saved.') 
+  #print(output1, 'was saved.')
 
   
 else:
@@ -117,27 +141,27 @@ else:
   newdata = pd.merge(newdata,y_min,how='inner',on=[args.TrackName])
   #print(newdata)
 
-newdata['delta_x'] = newdata['x_max'] - newdata['x_min']
-newdata['delta_y'] = newdata['y_max'] - newdata['y_min']
-#print(newdata)
+  newdata['delta_x'] = newdata['x_max'] - newdata['x_min']
+  newdata['delta_y'] = newdata['y_max'] - newdata['y_min']
+  #print(newdata)
 
-newdata['TX'] = newdata['delta_x']/newdata['Track_length']
-newdata['TY'] = newdata['delta_y']/newdata['Track_length']
-#print(newdata)
+  newdata['TX'] = newdata['delta_x']/newdata['Track_length']
+  newdata['TY'] = newdata['delta_y']/newdata['Track_length']
+  #print(newdata)
 
-mother = rowdata[['MotherPDG',args.TrackName]]
-newdata=pd.merge(newdata,mother,how='inner',on=[args.TrackName])
-#print(newdata)
+  mother = rowdata[['MotherPDG',args.TrackName]]
+  newdata=pd.merge(newdata,mother,how='inner',on=[args.TrackName])
+  #print(newdata)
 
-print('Maximum angle TX is', newdata['TX'].max())
-print('Minimum angle TX is', newdata['TX'].min())
-print('Maximum angle TY is', newdata['TY'].max())
-print('Minimum angle TY is', newdata['TY'].min())
+  print('Maximum angle TX is', newdata['TX'].max())
+  print('Minimum angle TX is', newdata['TX'].min())
+  print('Maximum angle TY is', newdata['TY'].max())
+  print('Minimum angle TY is', newdata['TY'].min())
 
-output1 = args.TrackName+'_smallangledata.csv'
-output = args.TrackName+'_AngleData.csv'
-newdata.to_csv(output,index=False)
-#insert.to_csv(output1,index=False)
-print(output, 'was saved.') 
-#print(output1, 'was saved.')
+  output1 = args.TrackName+'_smallangledata.csv'
+  output = args.TrackName+'_AngleData.csv'
+  newdata.to_csv(output,index=False)
+  #insert.to_csv(output1,index=False)
+  print(output, 'was saved.') 
+  #print(output1, 'was saved.')
 # end of script #
