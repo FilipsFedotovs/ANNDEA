@@ -35,7 +35,7 @@ def MeasureHitPair(_H1,_H2,_G):
           else:
               T=int((_H1[4]==_H2[4]) and _H1[2]==_G)
               P= int((_H1[1]==_H2[1]) and (_H1[2]==_G or _H2[2]==_G))
-              TP=int(T==P)
+              TP=int(T==P==1)
               return T,P,TP
 
 
