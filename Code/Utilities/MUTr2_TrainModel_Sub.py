@@ -91,9 +91,9 @@ def GNNvalidate(model, Sample):
     loss_accumulative = 0
     for data in Sample:
          out = model(data.x, data.edge_index, data.edge_attr, data.batch)
-         pred = out.argmax(dim=1)  # Use the class with the highest probability.
-         y_index = data.y.argmax(dim=1)
-         correct += int((pred == y_index).sum())  # Check against ground-truth labels.
+        #  pred = out.argmax(dim=1)  # Use the class with the highest probability.
+        #  y_index = data.y.argmax(dim=1)
+        #  correct += int((pred == y_index).sum())  # Check against ground-truth labels.
          #data.y = torch.argmax(data.y, dim=1)
          loss = criterion(out, data.y.long())
          loss_accumulative += float(loss)
