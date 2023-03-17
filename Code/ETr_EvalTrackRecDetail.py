@@ -136,9 +136,16 @@ zmin = math.floor(densitydata['z'].min())
 #print(zmin)
 zmax = math.ceil(densitydata['z'].max())
 #print(zmax)
+new_list=[]
+if os.path.isfile(out):
+    check_point = pd.read_csv(out,usecols=['x','y','z','Mother_Group']).values.tolist()
+
+    for el in check_point:
+        string=str(int(el[0]))+'-'+str(int(el[1]))+'-'+str(int(el[2]))+'-'+el[3]
+        new_list.append(string)
 
 
-tot_rec=[]
+
 iterations = (xmax - xmin)*(ymax - ymin)*(zmax - zmin)
 with alive_bar(iterations,force_tty=True, title = 'Calculating densities.') as bar:
     for i in range(xmin,xmax):
@@ -176,15 +183,15 @@ with alive_bar(iterations,force_tty=True, title = 'Calculating densities.') as b
                                TP+=result[2]
                     if T==P==TP==0:
                        continue
-                    tot_rec.append([mp,T,P,TP,i,j,k])
+                    ANN_base_temp=pd.DataFrame([[mp,T,P,TP,i,j,k]],columns=['Mother_Group','MC_true','ANN_true','True','x','y','z'])
+                    ANN_base_temp['ANN_recall'] = ANN_base_temp['True']/ANN_base_temp['MC_true']
 
-    ANN_base_temp=pd.DataFrame(tot_rec,columns=['Mother_Group','MC_true','ANN_true','True','x','y','z'])
-    ANN_base_temp['ANN_recall'] = ANN_base_temp['True']/ANN_base_temp['MC_true']
+                    ANN_base_temp['ANN_precision'] = ANN_base_temp['True']/ANN_base_temp['ANN_true']
+                    ANN_analysis = pd.merge(densitydata,ANN_base_temp, how='inner', on=['x','y','z'])
+                    ANN_analysis.to_csv(out, mode='a', header=not os.path.exists(out))
+                    print(out, 'was updated')
 
-    ANN_base_temp['ANN_precision'] = ANN_base_temp['True']/ANN_base_temp['ANN_true']
 
-    ANN_analysis = pd.merge(densitydata,ANN_base_temp, how='inner', on=['x','y','z'])
-    ANN_analysis.to_csv(out,index=False)
     print('Success, the file has been saved as ',out)
 
 
