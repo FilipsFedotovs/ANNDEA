@@ -134,6 +134,13 @@ zmin = math.floor(densitydata['z'].min())
 #print(zmin)
 zmax = math.ceil(densitydata['z'].max())
 #print(zmax)
+new_list=[]
+if os.path.isfile(out):
+    check_point = pd.read_csv(out,usecols=['x','y','z','Mother_Group']).values.tolist()
+
+    for el in check_point:
+        string=str(int(el[0]))+'-'+str(int(el[1]))+'-'+str(int(el[2]))+'-'+el[3]
+        new_list.append(string)
 
 
 tot_rec=[]
