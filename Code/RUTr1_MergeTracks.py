@@ -92,8 +92,7 @@ RequestExtCPU=(args.RequestExtCPU=='Y')
 Xmin,Xmax,Ymin,Ymax=float(args.Xmin),float(args.Xmax),float(args.Ymin),float(args.Ymax)
 SliceData=max(Xmin,Xmax,Ymin,Ymax)>0 #We don't slice data if all values are set to zero simultaneousy (which is the default setting)
 ModelName=ast.literal_eval(args.ModelName)
-print(ModelName)
-exit()
+
 Patience=int(args.Patience)
 Acceptance=float(args.Acceptance)
 input_file_location=args.f
@@ -105,42 +104,10 @@ SliceData=max(Xmin,Xmax,Ymin,Ymax)>0 #We don't slice data if all values are set 
 #Establishing paths
 EOSsubDIR=EOS_DIR+'/'+'ANNDEA'
 EOSsubModelDIR=EOSsubDIR+'/'+'Models'
-Model_Meta_Path=EOSsubModelDIR+'/'+args.ModelName+'_Meta'
-print(UF.TimeStamp(),bcolors.BOLD+'Preparation 1/3:'+bcolors.ENDC+' Setting up metafiles...')
-#Loading the model meta file
-print(UF.TimeStamp(),'Loading the data file ',bcolors.OKBLUE+Model_Meta_Path+bcolors.ENDC)
-
-if args.ModelName=='blank':
-   print(UF.TimeStamp(),bcolors.WARNING+'You have specified the model name as "blank": This means that no GNN model will be used as part of the tracking process which can degrade the tracking performance.'+bcolors.ENDC)
-   UserAnswer=input(bcolors.BOLD+"Do you want to continue? (y/n)\n"+bcolors.ENDC)
-   if UserAnswer.upper()=='N':
-       exit()
-   stepX=PM.stepX
-   stepY=PM.stepY
-   stepZ=PM.stepZ
-   cut_dt=PM.cut_dt
-   cut_dr=PM.cut_dr
-elif os.path.isfile(Model_Meta_Path):
-       Model_Meta_Raw=UF.PickleOperations(Model_Meta_Path, 'r', 'N/A')
-       print(Model_Meta_Raw[1])
-       Model_Meta=Model_Meta_Raw[0]
-       stepX=Model_Meta.stepX
-       stepY=Model_Meta.stepY
-       stepZ=Model_Meta.stepZ
-       cut_dt=Model_Meta.cut_dt
-       cut_dr=Model_Meta.cut_dr
-else:
-       print(UF.TimeStamp(),bcolors.FAIL+'Fail! No existing model meta files have been found, exiting now'+bcolors.ENDC)
-       exit()
-
-#Establishing paths
-EOSsubDIR=EOS_DIR+'/'+'ANNDEA'
-EOSsubModelDIR=EOSsubDIR+'/'+'Models'
 EOSsubModelMetaDIR=EOSsubDIR+'/'+'Models/'+ModelName[0]+'_Meta'
 RecOutputMeta=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_info.pkl'
 required_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1_'+RecBatchID+'_TRACK_SEGMENTS.csv'
 required_eval_file_location=EOS_DIR+'/ANNDEA/Data/TEST_SET/EUTr1_'+RecBatchID+'_TRACK_SEGMENTS.csv'
-
 
 ########################################     Phase 1 - Create compact source file    #########################################
 print(UF.TimeStamp(),bcolors.BOLD+'Stage 0:'+bcolors.ENDC+' Preparing the source data...')
