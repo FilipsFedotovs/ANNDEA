@@ -61,7 +61,8 @@ parser.add_argument('--LocalSub',help="Local submission?", default='N')
 parser.add_argument('--ForceStatus',help="Would you like the program run from specific status number? (Only for advance users)", default='0')
 parser.add_argument('--RequestExtCPU',help="Would you like to request extra CPUs?", default='N')
 parser.add_argument('--JobFlavour',help="Specifying the length of the HTCondor job walltime. Currently at 'workday' which is 8 hours.", default='workday')
-
+parser.add_argument('--TrackID',help="What track name is used?", default='ANN_Track_ID')
+parser.add_argument('--BrickID',help="What brick ID name is used?", default='ANN_Brick_ID')
 
 parser.add_argument('--Mode', help='Script will continue from the last checkpoint, unless you want to start from the scratch, then type "Reset"',default='')
 parser.add_argument('--ModelName',help="What  models would you like to use?", default="[]")
@@ -80,6 +81,8 @@ args = parser.parse_args()
 Mode=args.Mode.upper()
 RecBatchID=args.RecBatchID
 Patience=int(args.Patience)
+TrackID=args.TrackID
+BrickID=args.BrickID
 SubPause=int(args.SubPause)*60
 SubGap=int(args.SubGap)
 LocalSub=(args.LocalSub=='Y')
@@ -135,17 +138,16 @@ if Log and (os.path.isfile(required_eval_file_location)==False or Mode=='RESET')
     data[PM.MC_Event_ID] = data[PM.MC_Event_ID].astype(str)
     data[PM.MC_Track_ID] = data[PM.MC_Track_ID].astype(str)
     try:
-        data[PM.Rec_Track_Domain] = data[PM.Rec_Track_Domain].astype(int)
+        data[BrickID] = data[BrickID].astype(int)
     except:
         print(UF.TimeStamp(), bcolors.WARNING+"Failed to convert Domain to integer..."+bcolors.ENDC)
-    data[PM.Rec_Track_ID] = data[PM.Rec_Track_ID].astype(int)
-    data[PM.Rec_Track_ID] = data[PM.Rec_Track_ID].astype(str)
-    data[PM.Rec_Track_Domain] = data[PM.Rec_Track_Domain].astype(str)
 
-    data['Rec_Seg_ID'] = data[PM.Rec_Track_Domain] + '-' + data[PM.Rec_Track_ID]
+    data[BrickID] = data[BrickID].astype(str)
+
+    data['Rec_Seg_ID'] = data[TrackID] + '-' + data[BrickID]
     data['MC_Mother_Track_ID'] = data[PM.MC_Event_ID] + '-' + data[PM.MC_Track_ID]
-    data=data.drop([PM.Rec_Track_ID],axis=1)
-    data=data.drop([PM.Rec_Track_Domain],axis=1)
+    data=data.drop([TrackID],axis=1)
+    data=data.drop([BrickID],axis=1)
     data=data.drop([PM.MC_Event_ID],axis=1)
     data=data.drop([PM.MC_Track_ID],axis=1)
     compress_data=data.drop([PM.x,PM.y,PM.z,PM.tx,PM.ty],axis=1)
@@ -210,19 +212,16 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         data=data.dropna()
         final_rows=len(data.axes[0])
         print(UF.TimeStamp(),'The cleaned data has ',final_rows,' hits')
-        data[PM.Rec_Track_ID] = data[PM.Rec_Track_ID].astype(int)
-        data[PM.Rec_Track_ID] = data[PM.Rec_Track_ID].astype(str)
         try:
-            data[PM.Rec_Track_Domain] = data[PM.Rec_Track_Domain].astype(int)
+            data[BrickID] = data[BrickID].astype(int)
         except:
             print(UF.TimeStamp(), bcolors.WARNING+"Failed to convert Domain to integer..."+bcolors.ENDC)
 
-        data[PM.Rec_Track_Domain] = data[PM.Rec_Track_Domain].astype(str)
+        data[BrickID] = data[BrickID].astype(str)
 
-
-        data['Rec_Seg_ID'] = data[PM.Rec_Track_Domain] + '-' + data[PM.Rec_Track_ID]
-        data=data.drop([PM.Rec_Track_ID],axis=1)
-        data=data.drop([PM.Rec_Track_Domain],axis=1)
+        data['Rec_Seg_ID'] = data[TrackID] + '-' + data[BrickID]
+        data=data.drop([TrackID],axis=1)
+        data=data.drop([BrickID],axis=1)
         if SliceData:
              print(UF.TimeStamp(),'Slicing the data...')
              ValidEvents=data.drop(data.index[(data[PM.x] > Xmax) | (data[PM.x] < Xmin) | (data[PM.y] > Ymax) | (data[PM.y] < Ymin)])
