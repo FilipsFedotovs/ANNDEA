@@ -27,7 +27,7 @@ parser.add_argument('--AFS',help="AFS directory location", default='.')
 parser.add_argument('--PY',help="Python libraries directory location", default='.')
 parser.add_argument('--BatchID',help="Give this training sample batch an ID", default='SHIP_UR_v1')
 parser.add_argument('--MaxSegments',help="A maximum number of track combinations that will be used in a particular HTCondor job for this script", default='20000')
-
+parser.add_argument('--PY',help="Python libraries directory location", default='.')
 
 ######################################## Set variables  #############################################################
 args = parser.parse_args()
@@ -47,6 +47,7 @@ MaxSegments=int(args.MaxSegments)
 #Loading Directory locations
 EOS_DIR=args.EOS
 AFS_DIR=args.AFS
+PY_DIR=args.PY
 if PY_DIR!='': #Temp solution
     sys.path=['',PY_DIR]
     sys.path.append('/usr/lib64/python36.zip')
@@ -62,8 +63,8 @@ import gc  #Helps to clear memory
 import numpy as np
 #Specifying the full path to input/output files
 input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1_'+BatchID+'_TRACK_SEGMENTS.csv'
-output_file_location=EOS_DIR+p+'/'+pfx+'_'+BatchID+'_RawSeeds_'+str(i)+'_'+str(j)+sfx
-output_result_location=EOS_DIR+'/'+p+'/'+pfx+'_'+BatchID+'_'+o+'_'+str(i)+'_'+str(j)+sfx
+output_file_location=EOS_DIR+p+'/Temp_'+pfx+'_'+BatchID+'_'+str(i)+'/'+pfx+'_'+BatchID+'_RawSeeds_'+str(i)+'_'+str(j)+sfx
+output_result_location=EOS_DIR+'/'+p+'/Temp_'+pfx+'_'+BatchID+'_'+str(i)+'/'+pfx+'_'+BatchID+'_'+o+'_'+str(i)+'_'+str(j)+sfx
 print(UF.TimeStamp(), "Modules Have been imported successfully...")
 print(UF.TimeStamp(),'Loading pre-selected data from ',input_file_location)
 data=pd.read_csv(input_file_location,header=0,
@@ -170,7 +171,7 @@ for i in range(0,Steps):
 
 UF.LogOperations(output_file_location,'a',result_list) #Writing the remaining data into the csv
 UF.LogOperations(output_result_location,'w',[])
-print(UF.TimeStamp(), "Train seed generation is finished...")
+print(UF.TimeStamp(), "Reconstruction seed generation is finished...")
 #End of the script
 
 
