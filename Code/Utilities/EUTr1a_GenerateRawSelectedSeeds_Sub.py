@@ -88,7 +88,7 @@ EndDataCut=(i+1)*MaxSegments
 #Specifying the right join
 
 r_data=data.rename(columns={"Rec_Seg_ID": "Segment_2"})
-
+r_data=r_data.iloc[StartDataCut:min(EndDataCut,Records)]
 data=data.rename(columns={"Rec_Seg_ID": "Segment_1"})
 
 result_list=[]  #We will keep the result in list rather then Panda Dataframe to save memory

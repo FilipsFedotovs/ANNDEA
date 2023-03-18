@@ -106,7 +106,6 @@ r_data.drop(r_data.index[r_data['z'] != PlateZ], inplace = True)
 
 Records=len(r_data)
 print(UF.TimeStamp(),'There are  ', Records, 'segments in the starting plate')
-
 r_data=r_data.iloc[StartDataCut:min(EndDataCut,Records)]
 Records=len(r_data)
 print(UF.TimeStamp(),'However we will only attempt  ', Records, 'track segments in the starting plate')
