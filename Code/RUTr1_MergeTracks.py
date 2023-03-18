@@ -509,13 +509,14 @@ while Status<len(Program):
     MetaInput=UF.PickleOperations(RecOutputMeta,'r', 'N/A')
     Meta=MetaInput[0]
     Status=Meta.Status[-1]
-
+    print(Status)
     if Program[Status]!='Custom':
         #Standard process here
         Result=StandardProcess(Program,Status,FreshStart)
         print(Status)
         if Result[0]:
              FreshStart=Result[1]
+             continue
         else:
              Status=8
              break
