@@ -311,7 +311,6 @@ def AutoPilot(wait_min, interval_min, max_interval_tolerance,program):
 def StandardProcess(program,status,freshstart):
         print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
         print(UF.TimeStamp(),bcolors.BOLD+'Stage '+str(status)+':'+bcolors.ENDC+str(program[status][0]))
-        print(program[status][4])
         batch_sub=program[status][4]>1
         bad_pop=UF.CreateCondorJobs(program[status][1][0],
                                     program[status][1][1],
@@ -505,7 +504,7 @@ prog_entry.append(' Sending tracks to the HTCondor, so track segment combination
 prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','RawSeedsRes','RUTr1a','.csv',RecBatchID,JobSet,'RUTr1a_GenerateRawSelectedSeeds_Sub.py'])
 prog_entry.append([ " --MaxSegments ", " --MaxSLG "," --MaxSTG "])
 prog_entry.append([MaxSegments, MaxSLG, MaxSTG])
-prog_entry.append(JobSet)
+prog_entry.append(np.sum(JobSet))
 prog_entry.append(LocalSub)
 prog_entry.append([" --PlateZ ",JobSets])
 if Mode=='RESET':
