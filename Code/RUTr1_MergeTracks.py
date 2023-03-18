@@ -513,7 +513,8 @@ while Status<len(Program):
     if Program[Status]!='Custom':
         #Standard process here
         Result=StandardProcess(Program,Status,FreshStart)
-        print(Result)
+        print(Status)
+
         exit()
         # if Result[0]:
         #     FreshStart=Result[1]
