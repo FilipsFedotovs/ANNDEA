@@ -273,13 +273,7 @@ MaxSegments=Meta.MaxSegments
 MaxSeeds=Meta.MaxSeeds
 VetoMotherTrack=Meta.VetoMotherTrack
 MinHitsTrack=Meta.MinHitsTrack
-TotJobs=0
 
-exit()
-
-for j in range(0,len(JobSets)):
-          for sj in range(0,int(JobSets[j][2])):
-              TotJobs+=1
 #The function bellow helps to monitor the HTCondor jobs and keep the submission flow
 def AutoPilot(wait_min, interval_min, max_interval_tolerance,program):
      print(UF.TimeStamp(),'Going on an autopilot mode for ',wait_min, 'minutes while checking HTCondor every',interval_min,'min',bcolors.ENDC)
@@ -426,68 +420,56 @@ def StandardProcess(program,status,freshstart):
                           print(UF.TimeStamp(),bcolors.FAIL+'Stage '+str(status)+' is uncompleted...'+bcolors.ENDC)
                           return False,False
 
-#If we chose reset mode we do a full cleanup.
-# #Reconstructing a single brick can cause in gereation of 100s of thousands of files - need to make sure that we remove them.
+def UpdateStatus(status):
+    Meta.UpdateStatus(status)
+    print(UF.PickleOperations(RecOutputMeta,'w', Meta)[1])
+
 if Mode=='RESET':
     print(UF.TimeStamp(),'Performing the cleanup... ',bcolors.ENDC)
-    HTCondorTag="SoftUsed == \"ANNDEA-RTr1a-"+RecBatchID+"\""
-    UF.RecCleanUp(AFS_DIR, EOS_DIR, 'RTr1_'+RecBatchID, ['RTr1a','RTr1b','RTr1c','RTr1d',RecBatchID+'_RTr_OUTPUT_CLEANED.csv'], HTCondorTag)
+    HTCondorTag="SoftUsed == \"ANNDEA-EUTr1a-"+RecBatchID+"\""
+    UF.EvalCleanUp(AFS_DIR, EOS_DIR, 'EUTr1a_'+RecBatchID, ['EUTr1a','EUTr1b'], HTCondorTag)
+    HTCondorTag="SoftUsed == \"ANNDEA-RUTr1a-"+RecBatchID+"\""
+    UF.RecCleanUp(AFS_DIR, EOS_DIR, 'RUTr1a_'+RecBatchID, ['RUTr1a',RecBatchID+'_REC_LOG.csv'], HTCondorTag)
     FreshStart=False
+    UpdateStatus(0)
+else:
+    print(UF.TimeStamp(),'Analysing the current script status...',bcolors.ENDC)
+    status=Meta.Status[-1]
+print(UF.TimeStamp(),'There are 8 stages (0-7) of this script',status,bcolors.ENDC)
+print(UF.TimeStamp(),'Current status has a stage',status,bcolors.ENDC)
+Status=Meta.Status[-1]
+
 if Mode=='CLEANUP':
     Status=5
 else:
     Status=int(args.ForceStatus)
 ################ Set the execution sequence for the script
+Program=[]
 ###### Stage 0
 prog_entry=[]
 job_sets=[]
-for i in range(0,Xsteps):
-                job_sets.append(Ysteps)
-prog_entry.append(' Sending hit cluster to the HTCondor, so the model assigns weights between hits')
-prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','hit_cluster_rec_set','RTr1a','.csv',RecBatchID,job_sets,'RTr1a_ReconstructTracks_Sub.py'])
-prog_entry.append([' --stepZ ', ' --stepY ', ' --stepX ', " --zOffset ", " --yOffset ", " --xOffset ", ' --cut_dt ', ' --cut_dr ', ' --ModelName ',' --Z_overlap ',' --Y_overlap ',' --X_overlap ', ' --Z_ID_Max ', ' --CheckPoint '])
-prog_entry.append([stepZ,stepY,stepX,z_offset, y_offset, x_offset, cut_dt,cut_dr, ModelName,Z_overlap,Y_overlap,X_overlap, Zsteps, args.CheckPoint])
-prog_entry.append(Xsteps*Ysteps)
+
+prog_entry.append(' Sending eval seeds to HTCondor...')
+print(UF.TimeStamp(),'Loading preselected data from ',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
+data=pd.read_csv(required_eval_file_location,header=0,usecols=['Rec_Seg_ID'])
+print(UF.TimeStamp(),'Analysing data... ',bcolors.ENDC)
+data.drop_duplicates(subset="Rec_Seg_ID",keep='first',inplace=True)  #Keeping only starting hits for each track record (we do not require the full information about track in this script)
+Records=len(data.axes[0])
+Sets=int(np.ceil(Records/MaxSegments))
+prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TEST_SET/','RawSeedsRes','EUTr1a','.csv',RecBatchID,Sets,'EUTr1a_GenerateRawSelectedSeeds_Sub.py'])
+prog_entry.append([" --MaxSegments ", " --VetoMotherTrack "])
+prog_entry.append([MaxSegments, '"'+str(VetoMotherTrack)+'"'])
+prog_entry.append(Sets)
 prog_entry.append(LocalSub)
 Program.append(prog_entry)
 
-if Mode=='RESET':
-   print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Delete'))
-#Setting up folders for the output. The reconstruction of just one brick can easily generate >100k of files. Keeping all that blob in one directory can cause problems on lxplus.
-print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Create'))
-
-###### Stage 1
-prog_entry=[]
-job_sets=Xsteps
-prog_entry.append(' Sending hit cluster to the HTCondor, so the reconstructed clusters can be merged along y-axis')
-prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','hit_cluster_rec_y_set','RTr1b','.csv',RecBatchID,job_sets,'RTr1b_LinkSegmentsY_Sub.py'])
-prog_entry.append([' --Y_ID_Max ', ' --i '])
-prog_entry.append([Ysteps,Xsteps])
-prog_entry.append(Xsteps)
-prog_entry.append(LocalSub)
-Program.append(prog_entry)
-if Mode=='RESET':
-   print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Delete'))
-#Setting up folders for the output. The reconstruction of just one brick can easily generate >100k of files. Keeping all that blob in one directory can cause problems on lxplus.
-print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Create'))
-
-###### Stage 2
-prog_entry=[]
-job_sets=1
-prog_entry.append(' Sending hit cluster to the HTCondor, so the reconstructed clusters can be merged along x-axis')
-prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','hit_cluster_rec_x_set','RTr1c','.csv',RecBatchID,job_sets,'RTr1c_LinkSegmentsX_Sub.py'])
-prog_entry.append([' --X_ID_Max '])
-prog_entry.append([Xsteps])
-prog_entry.append(1)
-prog_entry.append(True) #This part we can execute locally, no need for HTCondor
-Program.append(prog_entry)
 if Mode=='RESET':
    print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Delete'))
 #Setting up folders for the output. The reconstruction of just one brick can easily generate >100k of files. Keeping all that blob in one directory can cause problems on lxplus.
 print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Create'))
 
 ###### Stage 3
-Program.append('Custom')
+#Program.append('Custom')
 
 
 print(UF.TimeStamp(),'There are '+str(len(Program)+1)+' stages (0-'+str(len(Program)+1)+') of this script',bcolors.ENDC)
@@ -499,229 +481,14 @@ while Status<len(Program):
         if Result[0]:
             FreshStart=Result[1]
             if int(args.ForceStatus)==0:
-                Status+=1
+                UpdateStatus(Status+1)
                 continue
             else:
                 exit()
         else:
-            Status=len(Program)+1
+            UpdateStatus(len(Program)+1)
             break
 
-    elif Status==3:
-       #Non standard processes (that don't follow the general pattern) have been coded here
-       print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
-       print(UF.TimeStamp(),bcolors.BOLD+'Stage 3:'+bcolors.ENDC+' Using the results from previous steps to map merged trackIDs to the original reconstruction file')
-       try:
-            #Read the output with hit- ANN Track map
-            FirstFile=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RTr1c_'+RecBatchID+'_0'+'/RTr1c_'+RecBatchID+'_hit_cluster_rec_x_set_0.csv'
-            print(UF.TimeStamp(),'Loading the file ',bcolors.OKBLUE+FirstFile+bcolors.ENDC)
-            TrackMap=pd.read_csv(FirstFile,header=0)
-            input_file_location=args.f
-            print(UF.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
-            #Reading the original file with Raw hits
-            Data=pd.read_csv(input_file_location,header=0)
-            Data[PM.Hit_ID] = Data[PM.Hit_ID].astype(str)
-
-            if SliceData: #If we want to perform reconstruction on the fraction of the Brick
-               CutData=Data.drop(Data.index[(Data[PM.x] > Xmax) | (Data[PM.x] < Xmin) | (Data[PM.y] > Ymax) | (Data[PM.y] < Ymin)]) #The focus area where we reconstruct
-            else:
-               CutData=Data #If we reconstruct the whole brick we jsut take the whole data. No need to separate.
-
-            CutData.drop([RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID'],axis=1,inplace=True,errors='ignore') #Removing old ANNDEA reconstruction results so we can overwrite with the new ones
-            #Map reconstructed ANN tracks to hits in the Raw file - this is in essesential for the final output of the tracking
-            TrackMap['HitID'] = TrackMap['HitID'].astype(str)
-            CutData[PM.Hit_ID] = CutData[PM.Hit_ID].astype(str)
-            CutData=pd.merge(CutData,TrackMap,how='left', left_on=[PM.Hit_ID], right_on=['HitID'])
-
-            CutData.drop(['HitID'],axis=1,inplace=True) #Make sure that HitID is not the Hit ID name in the raw data.
-            Data=CutData
-
-
-            #It was discovered that the output is not perfect: while the hit fidelity is achieved we don't have a full plate hit fidelity for a given track. It is still possible for a track to have multiple hits at one plate.
-            #In order to fix it we need to apply some additional logic to those problematic tracks.
-            print(UF.TimeStamp(),'Identifying problematic tracks where there is more than one hit per plate...')
-            Hit_Map=Data[[RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID',PM.x,PM.y,PM.z,PM.tx,PM.ty,PM.Hit_ID]] #Separating the hit map
-            Data.drop([RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID'],axis=1,inplace=True) #Remove the ANNDEA tracking info from the main data
-
-
-
-
-
-            Hit_Map=Hit_Map.dropna() #Remove unreconstructing hits - we are not interested in them atm
-            Hit_Map_Stats=Hit_Map[[RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID',PM.z,PM.Hit_ID]] #Calculating the stats
-
-            Hit_Map_Stats=Hit_Map_Stats.groupby([RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID']).agg({PM.z:pd.Series.nunique,PM.Hit_ID: pd.Series.nunique}).reset_index() #Calculate the number fo unique plates and hits
-            Ini_No_Tracks=len(Hit_Map_Stats)
-            print(UF.TimeStamp(),bcolors.WARNING+'The initial number of tracks is '+ str(Ini_No_Tracks)+bcolors.ENDC)
-            Hit_Map_Stats=Hit_Map_Stats.rename(columns={PM.z: "No_Plates",PM.Hit_ID:"No_Hits"}) #Renaming the columns so they don't interfere once we join it back to the hit map
-            Hit_Map_Stats=Hit_Map_Stats[Hit_Map_Stats.No_Plates >= PM.MinHitsTrack]
-            Prop_No_Tracks=len(Hit_Map_Stats)
-            print(UF.TimeStamp(),bcolors.WARNING+'After dropping single hit tracks, left '+ str(Prop_No_Tracks)+' tracks...'+bcolors.ENDC)
-            Hit_Map=pd.merge(Hit_Map,Hit_Map_Stats,how='inner',on = [RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID']) #Join back to the hit map
-            Good_Tracks=Hit_Map[Hit_Map.No_Plates == Hit_Map.No_Hits] #For all good tracks the number of hits matches the number of plates, we won't touch them
-            Good_Tracks=Good_Tracks[[RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID',PM.Hit_ID]] #Just strip off the information that we don't need anymore
-
-            Bad_Tracks=Hit_Map[Hit_Map.No_Plates < Hit_Map.No_Hits] #These are the bad guys. We need to remove this extra hits
-            Bad_Tracks=Bad_Tracks[[RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID',PM.x,PM.y,PM.z,PM.tx,PM.ty,PM.Hit_ID]]
-
-            #Id the problematic plates
-            Bad_Tracks_Stats=Bad_Tracks[[RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID',PM.z,PM.Hit_ID]]
-            Bad_Tracks_Stats=Bad_Tracks_Stats.groupby([RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID',PM.z]).agg({PM.Hit_ID: pd.Series.nunique}).reset_index() #Which plates have double hits?
-            Bad_Tracks_Stats=Bad_Tracks_Stats.rename(columns={PM.Hit_ID: "Problem"}) #Renaming the columns so they don't interfere once we join it back to the hit map
-            Bad_Tracks=pd.merge(Bad_Tracks,Bad_Tracks_Stats,how='inner',on = [RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID',PM.z])
-
-
-
-            Bad_Tracks.sort_values([RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID',PM.z],ascending=[0,0,1],inplace=True)
-
-            Bad_Tracks_CP_File=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RTr1c_'+RecBatchID+'_0'+'/RTr1c_'+RecBatchID+'_Bad_Tracks_CP.csv'
-            if os.path.isfile(Bad_Tracks_CP_File)==False or Mode=='RESET':
-
-                Bad_Tracks_Head=Bad_Tracks[[RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID']]
-                Bad_Tracks_Head.drop_duplicates(inplace=True)
-                Bad_Tracks_List=Bad_Tracks.values.tolist() #I find it is much easier to deal with tracks in list format when it comes to fitting
-                Bad_Tracks_Head=Bad_Tracks_Head.values.tolist()
-                Bad_Track_Pool=[]
-
-                #Bellow we build the track representatation that we can use to fit slopes
-                with alive_bar(len(Bad_Tracks_Head),force_tty=True, title='Building track representations...') as bar:
-                            for bth in Bad_Tracks_Head:
-                               bar()
-                               bth.append([])
-                               bt=0
-                               trigger=False
-                               while bt<(len(Bad_Tracks_List)):
-                                   if (bth[0]==Bad_Tracks_List[bt][0] and bth[1]==Bad_Tracks_List[bt][1]):
-                                      if Bad_Tracks_List[bt][8]==1: #We only build polynomials for hits in a track that do not have duplicates - these are 'trusted hits'
-                                         bth[2].append(Bad_Tracks_List[bt][2:-2])
-                                      del Bad_Tracks_List[bt]
-                                      bt-=1
-                                      trigger=True
-                                   elif trigger:
-                                       break
-                                   else:
-                                       continue
-                                   bt+=1
-
-
-                with alive_bar(len(Bad_Tracks_Head),force_tty=True, title='Fitting the tracks...') as bar:
-                 for bth in Bad_Tracks_Head:
-                   bar()
-                   if len(bth[2])==1: #Only one trusted hit - In these cases whe we take only tx and ty slopes of the single base track. Polynomial of the first degree and the equations of the line are x=ax+tx*z and y=ay+ty*z
-                       x=bth[2][0][0]
-                       z=bth[2][0][2]
-                       tx=bth[2][0][3]
-                       ax=x-tx*z
-                       bth.append(ax) #Append x intercept
-                       bth.append(tx) #Append x slope
-                       bth.append(0) #Append a placeholder slope (for polynomial case)
-                       y=bth[2][0][1]
-                       ty=bth[2][0][4]
-                       ay=y-ty*z
-                       bth.append(ay) #Append x intercept
-                       bth.append(ty) #Append x slope
-                       bth.append(0) #Append a placeholder slope (for polynomial case)
-                       del(bth[2])
-                   elif len(bth[2])==2: #Two trusted hits - In these cases whe we fit a polynomial of the first degree and the equations of the line are x=ax+tx*z and y=ay+ty*z
-                       x,y,z=[],[],[]
-                       x=[bth[2][0][0],bth[2][1][0]]
-                       y=[bth[2][0][1],bth[2][1][1]]
-                       z=[bth[2][0][2],bth[2][1][2]]
-                       tx=np.polyfit(z,x,1)[0]
-                       ax=np.polyfit(z,x,1)[1]
-                       ty=np.polyfit(z,y,1)[0]
-                       ay=np.polyfit(z,y,1)[1]
-                       bth.append(ax) #Append x intercept
-                       bth.append(tx) #Append x slope
-                       bth.append(0) #Append a placeholder slope (for polynomial case)
-                       bth.append(ay) #Append x intercept
-                       bth.append(ty) #Append x slope
-                       bth.append(0) #Append a placeholder slope (for polynomial case)
-                       del(bth[2])
-                   elif len(bth[2])==0:
-                       del(bth)
-                       continue
-                   else: #Three pr more trusted hits - In these cases whe we fit a polynomial of the second degree and the equations of the line are x=ax+(t1x*z)+(t2x*z*z) and y=ay+(t1y*z)+(t2y*z*z)
-                       x,y,z=[],[],[]
-                       for i in bth[2]:
-                           x.append(i[0])
-                       for j in bth[2]:
-                           y.append(j[1])
-                       for k in bth[2]:
-                           z.append(k[2])
-                       t2x=np.polyfit(z,x,2)[0]
-                       t1x=np.polyfit(z,x,2)[1]
-                       ax=np.polyfit(z,x,2)[2]
-
-                       t2y=np.polyfit(z,y,2)[0]
-                       t1y=np.polyfit(z,y,2)[1]
-                       ay=np.polyfit(z,y,2)[2]
-
-                       bth.append(ax) #Append x intercept
-                       bth.append(t1x) #Append x slope
-                       bth.append(t2x) #Append a placeholder slope (for polynomial case)
-                       bth.append(ay) #Append x intercept
-                       bth.append(t1y) #Append x slope
-                       bth.append(t2y) #Append a placeholder slope (for polynomial case)
-                       del(bth[2])
-
-
-                #Once we get coefficients for all tracks we convert them back to Pandas dataframe and join back to the data
-                Bad_Tracks_Head=pd.DataFrame(Bad_Tracks_Head, columns = [RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID','ax','t1x','t2x','ay','t1y','t2y'])
-
-                print(UF.TimeStamp(),'Saving the checkpoint file ',bcolors.OKBLUE+Bad_Tracks_CP_File+bcolors.ENDC)
-                Bad_Tracks_Head.to_csv(Bad_Tracks_CP_File,index=False)
-            else:
-               print(UF.TimeStamp(),'Loadingthe checkpoint file ',bcolors.OKBLUE+Bad_Tracks_CP_File+bcolors.ENDC)
-               Bad_Tracks_Head=pd.read_csv(Bad_Tracks_CP_File,header=0)
-               Bad_Tracks_Head=Bad_Tracks_Head[Bad_Tracks_Head.ax != '[]']
-               Bad_Tracks_Head['ax'] = Bad_Tracks_Head['ax'].astype(float)
-               Bad_Tracks_Head['ay'] = Bad_Tracks_Head['ay'].astype(float)
-               Bad_Tracks_Head['t1x'] = Bad_Tracks_Head['t1x'].astype(float)
-               Bad_Tracks_Head['t2x'] = Bad_Tracks_Head['t2x'].astype(float)
-               Bad_Tracks_Head['t1y'] = Bad_Tracks_Head['t1y'].astype(float)
-               Bad_Tracks_Head['t2y'] = Bad_Tracks_Head['t2y'].astype(float)
-
-            print(UF.TimeStamp(),'Removing problematic hits...')
-            Bad_Tracks=pd.merge(Bad_Tracks,Bad_Tracks_Head,how='inner',on = [RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID'])
-
-
-
-            print(UF.TimeStamp(),'Calculating x and y coordinates of the fitted line for all plates in the track...')
-            #Calculating x and y coordinates of the fitted line for all plates in the track
-            Bad_Tracks['new_x']=Bad_Tracks['ax']+(Bad_Tracks[PM.z]*Bad_Tracks['t1x'])+((Bad_Tracks[PM.z]**2)*Bad_Tracks['t2x'])
-            Bad_Tracks['new_y']=Bad_Tracks['ay']+(Bad_Tracks[PM.z]*Bad_Tracks['t1y'])+((Bad_Tracks[PM.z]**2)*Bad_Tracks['t2y'])
-
-            #Calculating how far hits deviate from the fit polynomial
-            print(UF.TimeStamp(),'Calculating how far hits deviate from the fit polynomial...')
-            Bad_Tracks['d_x']=Bad_Tracks[PM.x]-Bad_Tracks['new_x']
-            Bad_Tracks['d_y']=Bad_Tracks[PM.y]-Bad_Tracks['new_y']
-
-            Bad_Tracks['d_r']=Bad_Tracks['d_x']**2+Bad_Tracks['d_y']**2
-            Bad_Tracks['d_r'] = Bad_Tracks['d_r'].astype(float)
-            Bad_Tracks['d_r']=np.sqrt(Bad_Tracks['d_r']) #Absolute distance
-            Bad_Tracks=Bad_Tracks[[RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID',PM.z,PM.Hit_ID,'d_r']]
-
-            #Sort the tracks and their hits by Track ID, Plate and distance to the perfect line
-            print(UF.TimeStamp(),'Sorting the tracks and their hits by Track ID, Plate and distance to the perfect line...')
-            Bad_Tracks.sort_values([RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID',PM.z,'d_r'],ascending=[0,0,1,1],inplace=True)
-
-            #If there are two hits per plate we will keep the one which is closer to the line
-            Bad_Tracks.drop_duplicates(subset=[RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID',PM.z],keep='first',inplace=True)
-            Bad_Tracks=Bad_Tracks[[RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID',PM.Hit_ID]]
-            Good_Tracks=pd.concat([Good_Tracks,Bad_Tracks]) #Combine all ANNDEA tracks together
-
-            Data=pd.merge(Data,Good_Tracks,how='left', on=[PM.Hit_ID]) #Re-map corrected ANNDEA Tracks back to the main data
-
-            output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_RTr_OUTPUT_CLEANED.csv' #Final output. We can use this file for further operations
-            Data.to_csv(output_file_location,index=False)
-            print(UF.TimeStamp(), bcolors.OKGREEN+"The tracked data has been written to"+bcolors.ENDC, bcolors.OKBLUE+output_file_location+bcolors.ENDC)
-            print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 4 has successfully completed'+bcolors.ENDC)
-            Status=4
-       except Exception as e:
-          print(UF.TimeStamp(),bcolors.FAIL+'Stage 4 is uncompleted due to: '+str(e)+bcolors.ENDC)
-          Status=5
-          break
 if Status==4:
     # Removing the temp files that were generated by the process
     print(UF.TimeStamp(),'Performing the cleanup... ',bcolors.ENDC)
