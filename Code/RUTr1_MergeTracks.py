@@ -434,9 +434,8 @@ if Mode=='RESET':
     UpdateStatus(0)
 else:
     print(UF.TimeStamp(),'Analysing the current script status...',bcolors.ENDC)
-    status=Meta.Status[-1]
-print(UF.TimeStamp(),'There are 8 stages (0-7) of this script',status,bcolors.ENDC)
-print(UF.TimeStamp(),'Current status has a stage',status,bcolors.ENDC)
+    Status=Meta.Status[-1]
+print(UF.TimeStamp(),'Current status has a stage',Status,bcolors.ENDC)
 Status=Meta.Status[-1]
 
 if Mode=='CLEANUP':
@@ -445,10 +444,33 @@ else:
     Status=int(args.ForceStatus)
 ################ Set the execution sequence for the script
 Program=[]
+
+if Log=='Y':
+    ###### Stage 0
+    prog_entry=[]
+    job_sets=[]
+    prog_entry.append(' Sending eval seeds to HTCondor...')
+    print(UF.TimeStamp(),'Loading preselected data from ',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
+    data=pd.read_csv(required_eval_file_location,header=0,usecols=['Rec_Seg_ID'])
+    print(UF.TimeStamp(),'Analysing data... ',bcolors.ENDC)
+    data.drop_duplicates(subset="Rec_Seg_ID",keep='first',inplace=True)  #Keeping only starting hits for each track record (we do not require the full information about track in this script)
+    Records=len(data.axes[0])
+    Sets=int(np.ceil(Records/MaxSegments))
+    prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TEST_SET/','RawSeedsRes','EUTr1a','.csv',RecBatchID,Sets,'EUTr1a_GenerateRawSelectedSeeds_Sub.py'])
+    prog_entry.append([" --MaxSegments ", " --VetoMotherTrack "])
+    prog_entry.append([MaxSegments, '"'+str(VetoMotherTrack)+'"'])
+    prog_entry.append(Sets)
+    prog_entry.append(LocalSub)
+    Program.append(prog_entry)
+else:
+    Program.append('Custom')
+
+###### Stage 1
+Program.append('Custom')
+
 ###### Stage 0
 prog_entry=[]
 job_sets=[]
-
 prog_entry.append(' Sending eval seeds to HTCondor...')
 print(UF.TimeStamp(),'Loading preselected data from ',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
 data=pd.read_csv(required_eval_file_location,header=0,usecols=['Rec_Seg_ID'])
@@ -463,7 +485,7 @@ prog_entry.append(Sets)
 prog_entry.append(LocalSub)
 Program.append(prog_entry)
 
-Program.append('Custom')
+
 
 if Mode=='RESET':
    print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Delete'))
@@ -490,7 +512,7 @@ while Status<len(Program):
         else:
             UpdateStatus(len(Program)+1)
             break
-    elif Log=='Y' and Status==1:
+    elif Status==1:
         print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
         print(UF.TimeStamp(),bcolors.BOLD+'Status '+Status+': Collecting and de-duplicating the results from previous stage')
         print(UF.TimeStamp(),'Loading preselected data from ',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
