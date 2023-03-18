@@ -120,8 +120,7 @@ if Log and (os.path.isfile(required_eval_file_location)==False or Mode=='RESET')
            print(UF.TimeStamp(),'Loading previously saved data from ',bcolors.OKBLUE+EOSsubModelMetaDIR+bcolors.ENDC)
            MetaInput=UF.PickleOperations(EOSsubModelMetaDIR,'r', 'N/A')
            Meta=MetaInput[0]
-           print(Meta.__dict__)
-           exit()
+           MinHitsTrack=Meta.MinHitsTrack
     print(UF.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
     data=pd.read_csv(input_file_location,
                 header=0,
@@ -165,12 +164,12 @@ if Log and (os.path.isfile(required_eval_file_location)==False or Mode=='RESET')
          data=pd.merge(data, ValidEvents, how="inner", on=['Rec_Seg_ID'])
          final_rows=len(data.axes[0])
          print(UF.TimeStamp(),'The sliced data has ',final_rows,' hits')
-    print(UF.TimeStamp(),'Removing tracks which have less than',PM.MinHitsTrack,'hits...')
+    print(UF.TimeStamp(),'Removing tracks which have less than',MinHitsTrack,'hits...')
     track_no_data=data.groupby(['MC_Mother_Track_ID','Rec_Seg_ID'],as_index=False).count()
     track_no_data=track_no_data.drop([PM.y,PM.z,PM.tx,PM.ty],axis=1)
     track_no_data=track_no_data.rename(columns={PM.x: "Rec_Seg_No"})
     new_combined_data=pd.merge(data, track_no_data, how="left", on=['Rec_Seg_ID','MC_Mother_Track_ID'])
-    new_combined_data = new_combined_data[new_combined_data.Rec_Seg_No >= PM.MinHitsTrack]
+    new_combined_data = new_combined_data[new_combined_data.Rec_Seg_No >= MinHitsTrack]
     new_combined_data = new_combined_data.drop(["Rec_Seg_No"],axis=1)
     new_combined_data=new_combined_data.sort_values(['Rec_Seg_ID',PM.x],ascending=[1,1])
     grand_final_rows=len(new_combined_data.axes[0])
@@ -200,6 +199,7 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
            MaxSegments=PM.MaxSegments
            MaxSeeds=PM.MaxSeeds
            VetoMotherTrack=PM.VetoMotherTrack
+           MinHitsTrack=Meta.MinHitsTrack
         print(UF.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
         data=pd.read_csv(input_file_location,
                     header=0,
@@ -231,12 +231,12 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
              data=pd.merge(data, ValidEvents, how="inner", on=['Rec_Seg_ID'])
              final_rows=len(data.axes[0])
              print(UF.TimeStamp(),'The sliced data has ',final_rows,' hits')
-        print(UF.TimeStamp(),'Removing tracks which have less than',PM.MinHitsTrack,'hits...')
+        print(UF.TimeStamp(),'Removing tracks which have less than',MinHitsTrack,'hits...')
         track_no_data=data.groupby(['Rec_Seg_ID'],as_index=False).count()
         track_no_data=track_no_data.drop([PM.y,PM.z,PM.tx,PM.ty],axis=1)
         track_no_data=track_no_data.rename(columns={PM.x: "Track_No"})
         new_combined_data=pd.merge(data, track_no_data, how="left", on=["Rec_Seg_ID"])
-        new_combined_data = new_combined_data[new_combined_data.Track_No >= PM.MinHitsTrack]
+        new_combined_data = new_combined_data[new_combined_data.Track_No >= MinHitsTrack]
         new_combined_data = new_combined_data.drop(['Track_No'],axis=1)
         new_combined_data=new_combined_data.sort_values(['Rec_Seg_ID',PM.x],ascending=[1,1])
         grand_final_rows=len(new_combined_data.axes[0])
@@ -259,7 +259,7 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         data = data.values.tolist()
         print(UF.TimeStamp(), bcolors.OKGREEN+"The track segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+required_file_location+bcolors.ENDC)
         Meta=UF.TrainingSampleMeta(RecBatchID)
-        Meta.IniTrackSeedMetaData(MaxSLG,MaxSTG,MaxDOCA,MaxAngle,data,MaxSegments,VetoMotherTrack,MaxSeeds)
+        Meta.IniTrackSeedMetaData(MaxSLG,MaxSTG,MaxDOCA,MaxAngle,data,MaxSegments,VetoMotherTrack,MaxSeeds,MinHitsTrack)
         if Log:
             Meta.UpdateStatus(-2)
         else:
@@ -279,6 +279,7 @@ JobSets=Meta.JobSets
 MaxSegments=Meta.MaxSegments
 MaxSeeds=Meta.MaxSeeds
 VetoMotherTrack=Meta.VetoMotherTrack
+MinHitsTrack=Meta.MinHitsTrack
 TotJobs=0
 
 exit()
