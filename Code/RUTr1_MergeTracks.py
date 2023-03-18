@@ -514,11 +514,10 @@ while Status<len(Program):
         #Standard process here
         Result=StandardProcess(Program,Status,FreshStart)
         print(Status)
-
-        exit()
-        # if Result[0]:
-        #     FreshStart=Result[1]
-        # else:
+        if Result[0]:
+             FreshStart=Result[1]
+        else:
+             UpdateStatus(8)
 
 
     elif Status==1:
@@ -583,7 +582,7 @@ while Status<len(Program):
 #     print(UF.TimeStamp(), bcolors.OKGREEN+"Reconstruction has been completed"+bcolors.ENDC)
     exit()
 else:
-    print(UF.TimeStamp(), bcolors.FAIL+"Reconstruction has not been completed as one of the processes has timed out or --ForceStatus!=0 option was chosen. Please run the script again (without Reset Mode)."+bcolors.ENDC)
+    print(UF.TimeStamp(), bcolors.FAIL+"Reconstruction has not been completed as one of the processes has timed out. Please run the script again (without Reset Mode)."+bcolors.ENDC)
     exit()
 
 
