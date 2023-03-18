@@ -450,7 +450,7 @@ print(UF.TimeStamp(),'Current status has a stage',Status,bcolors.ENDC)
 ################ Set the execution sequence for the script
 Program=[]
 
-if Log=='Y':
+if Log:
     ###### Stage 0
     prog_entry=[]
     job_sets=[]
@@ -504,10 +504,6 @@ if Mode=='CLEANUP':
 
 ###### Stage 3
 
-
-
-print(UF.TimeStamp(),'There are '+str(len(Program)+1)+' stages (0-'+str(len(Program)+1)+') of this script',bcolors.ENDC)
-print(UF.TimeStamp(),'Current stage has a code',Status,bcolors.ENDC)
 while Status<len(Program):
     print(UF.TimeStamp(),'Loading previously saved data from ',bcolors.OKBLUE+RecOutputMeta+bcolors.ENDC)
     MetaInput=UF.PickleOperations(RecOutputMeta,'r', 'N/A')
