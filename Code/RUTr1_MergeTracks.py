@@ -515,7 +515,6 @@ if Mode=='RESET':
     #Setting up folders for the output. The reconstruction of just one brick can easily generate >100k of files. Keeping all that blob in one directory can cause problems on lxplus.
 print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Create'))
 Program.append(prog_entry)
-print(Program)
 
 # ###### Stage 3
 Program.append('Custom')

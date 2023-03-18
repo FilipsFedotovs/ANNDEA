@@ -74,7 +74,7 @@ data.drop_duplicates(subset="Rec_Seg_ID",keep='first',inplace=True)
 print(UF.TimeStamp(),'Creating segment combinations... ')
 
 #Doing a plate region cut for the Main Data
-Records=len(data.axes[0])
+Records=len(data)
 print(UF.TimeStamp(),'There are total of ', Records, 'tracks in the data set')
 Cut=math.ceil(MaxRecords/Records) #Even if use only a max of 20000 track on the right join we cannot perform the full outer join due to the memory limitations, we do it in a small 'cuts'
 Steps=math.ceil(MaxSegments/Cut)  #Calculating number of cuts
@@ -89,6 +89,8 @@ EndDataCut=(i+1)*MaxSegments
 
 r_data=data.rename(columns={"Rec_Seg_ID": "Segment_2"})
 r_data=r_data.iloc[StartDataCut:min(EndDataCut,Records)]
+Records=len(r_data)
+print(UF.TimeStamp(),'However we will only attempt  ', Records, 'track segments in the starting plate')
 data=data.rename(columns={"Rec_Seg_ID": "Segment_1"})
 
 result_list=[]  #We will keep the result in list rather then Panda Dataframe to save memory
