@@ -465,7 +465,12 @@ if Log=='Y':
     prog_entry.append([MaxSegments, '"'+str(VetoMotherTrack)+'"'])
     prog_entry.append(Sets)
     prog_entry.append(LocalSub)
+    if Mode=='RESET':
+        print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Delete'))
+    #Setting up folders for the output. The reconstruction of just one brick can easily generate >100k of files. Keeping all that blob in one directory can cause problems on lxplus.
+    print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Create'))
     Program.append(prog_entry)
+
 else:
     Program.append('Custom')
     Program.append('Custom')
@@ -491,10 +496,7 @@ else:
 
 
 
-if Mode=='RESET':
-   print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Delete'))
-#Setting up folders for the output. The reconstruction of just one brick can easily generate >100k of files. Keeping all that blob in one directory can cause problems on lxplus.
-print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Create'))
+
 
 ###### Stage 3
 
