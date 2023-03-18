@@ -465,9 +465,8 @@ if Log=='Y':
     Program.append(prog_entry)
 else:
     Program.append('Custom')
-
-###### Stage 1
-Program.append('Custom')
+    Program.append('Custom')
+    UpdateStatus(2)
 
 ###### Stage 0
 prog_entry=[]
