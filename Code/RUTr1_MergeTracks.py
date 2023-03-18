@@ -430,8 +430,6 @@ def UpdateStatus(status):
     Meta.UpdateStatus(status)
     print(UF.PickleOperations(RecOutputMeta,'w', Meta)[1])
 
-UpdateStatus(0)
-
 if Mode=='RESET':
     print(UF.TimeStamp(),'Performing the cleanup... ',bcolors.ENDC)
     HTCondorTag="SoftUsed == \"ANNDEA-EUTr1a-"+RecBatchID+"\""
