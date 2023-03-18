@@ -40,7 +40,7 @@ sfx=args.sfx
 pfx=args.pfx
 AFS_DIR=args.AFS
 EOS_DIR=args.EOS
-PY_DIR=args.PY_DIR
+PY_DIR=args.PY
 
 BatchID=args.BatchID
 Models=[]
