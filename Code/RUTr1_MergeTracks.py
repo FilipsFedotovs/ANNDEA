@@ -326,6 +326,7 @@ def StandardProcess(program,status,freshstart):
         if len(bad_pop)==0:
              print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
              UpdateStatus(status+1)
+             Status+=1
              return True,False
 
 
@@ -467,6 +468,7 @@ else:
     Program.append('Custom')
     Program.append('Custom')
     UpdateStatus(2)
+    Status=2
 
 ###### Stage 0
 prog_entry=[]
