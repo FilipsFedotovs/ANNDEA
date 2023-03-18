@@ -55,7 +55,6 @@ print(bcolors.HEADER+"##########################################################
 
 #Setting the parser - this script is usually not run directly, but is used by a Master version Counterpart that passes the required arguments
 parser = argparse.ArgumentParser(description='This script prepares training data for training the tracking model')
-parser.add_argument('--Patience',help="How many checks to do before resubmitting the job?", default='30')
 parser.add_argument('--SubPause',help="How long to wait in minutes after submitting 10000 jobs?", default='60')
 parser.add_argument('--SubGap',help="How long to wait in minutes after submitting 10000 jobs?", default='10000')
 parser.add_argument('--LocalSub',help="Local submission?", default='N')
