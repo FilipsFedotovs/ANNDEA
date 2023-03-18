@@ -483,23 +483,56 @@ if Mode=='CLEANUP':
     Status=5
 # ###### Stage 1
 Program.append('Custom')
-# ###### Stage 0
+
+# ###### Stage 2
+print(JobSets)
+exit()
 # prog_entry=[]
 # job_sets=[]
-# prog_entry.append(' Sending eval seeds to HTCondor...')
+# prog_entry.append(' Sending tracks to the HTCondor, so track segment combination pairs can be formed...')
 # print(UF.TimeStamp(),'Loading preselected data from ',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
-# data=pd.read_csv(required_eval_file_location,header=0,usecols=['Rec_Seg_ID'])
-# print(UF.TimeStamp(),'Analysing data... ',bcolors.ENDC)
-# data.drop_duplicates(subset="Rec_Seg_ID",keep='first',inplace=True)  #Keeping only starting hits for each track record (we do not require the full information about track in this script)
-# Records=len(data.axes[0])
 # Sets=int(np.ceil(Records/MaxSegments))
 # prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TEST_SET/','RawSeedsRes','EUTr1a','.csv',RecBatchID,Sets,'EUTr1a_GenerateRawSelectedSeeds_Sub.py'])
 # prog_entry.append([" --MaxSegments ", " --VetoMotherTrack "])
 # prog_entry.append([MaxSegments, '"'+str(VetoMotherTrack)+'"'])
-# prog_entry.append(Sets)
+# prog_entry.append(JobSets)
 # prog_entry.append(LocalSub)
 # Program.append(prog_entry)
-
+# print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
+#           print(UF.TimeStamp(),bcolors.BOLD+'Stage 1:'+bcolors.ENDC+' Sending hit cluster to the HTCondor, so tack segment combination pairs can be formed...')
+#           JobSet=[]
+#           for i in range(len(JobSets)):
+#                 JobSet.append(int(JobSets[i][2]))
+#           TotJobs=0
+#
+#           if type(JobSet) is int:
+#                         TotJobs=JobSet
+#           elif type(JobSet[0]) is int:
+#                         TotJobs=np.sum(JobSet)
+#           elif type(JobSet[0][0]) is int:
+#                         for lp in JobSet:
+#                             TotJobs+=np.sum(lp)
+#           OptionHeader = [ " --MaxSegments ", " --MaxSLG "," --MaxSTG "]
+#           OptionLine = [MaxSegments, MaxSLG, MaxSTG]
+#           print(UF.TimeStamp(),'Analysing the data sample in order to understand how many jobs to submit to HTCondor... ',bcolors.ENDC)
+#           bad_pop=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,
+#                                     '/ANNDEA/Data/REC_SET/',
+#                                     'RawSeedsRes',
+#                                     'RUTr1a',
+#                                     '.csv',
+#                                     RecBatchID,
+#                                     JobSet,
+#                                     OptionHeader,
+#                                     OptionLine,
+#                                     'RUTr1a_GenerateRawSelectedSeeds_Sub.py',
+#                                     False,
+#                                     [" --PlateZ ",JobSets])
+#           if len(bad_pop)==0:
+#               FreshStart=False
+#               print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 1 has successfully completed'+bcolors.ENDC)
+#               UpdateStatus(2)
+#               status=2
+#               continue
 
 
 
