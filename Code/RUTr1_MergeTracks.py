@@ -297,7 +297,8 @@ def AutoPilot(wait_min, interval_min, max_interval_tolerance,program):
                                     program[2],
                                     program[3],
                                     program[1][9],
-                                    False)
+                                    False,
+                                     )
          if len(bad_pop)>0:
                print(UF.TimeStamp(),bcolors.WARNING+'Autopilot status update: There are still', len(bad_pop), 'HTCondor jobs remaining'+bcolors.ENDC)
                if interval%max_interval_tolerance==0:
@@ -324,8 +325,8 @@ def StandardProcess(program,status,freshstart):
                                     program[status][2],
                                     program[status][3],
                                     program[status][1][9],
-                                    False
-                                    )
+                                    False,
+                                    program[status][5])
         if len(bad_pop)==0:
              print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
              UpdateStatus(status+1)
@@ -345,7 +346,8 @@ def StandardProcess(program,status,freshstart):
                                     program[status][2],
                                     program[status][3],
                                     program[status][1][9],
-                                    batch_sub)
+                                    batch_sub,
+                                    program[status][5])
                  print(UF.TimeStamp(),'Submitting jobs to HTCondor... ',bcolors.ENDC)
                  _cnt=0
                  for bp in bad_pop:
@@ -467,6 +469,7 @@ if Log:
     prog_entry.append([MaxSegments, '"'+str(VetoMotherTrack)+'"'])
     prog_entry.append(Sets)
     prog_entry.append(LocalSub)
+    prog_entry.append(['',''])
     if Mode=='RESET':
         print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Delete'))
     #Setting up folders for the output. The reconstruction of just one brick can easily generate >100k of files. Keeping all that blob in one directory can cause problems on lxplus.
