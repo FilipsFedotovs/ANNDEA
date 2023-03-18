@@ -585,7 +585,7 @@ while Status<len(Program):
 #         if p!='Custom':
 #            print(UF.TimeStamp(),UF.ManageTempFolders(p,'Delete'))
 #     print(UF.TimeStamp(), bcolors.OKGREEN+"Reconstruction has been completed"+bcolors.ENDC)
-    exit()
+
 else:
     print(UF.TimeStamp(), bcolors.FAIL+"Reconstruction has not been completed as one of the processes has timed out. Please run the script again (without Reset Mode)."+bcolors.ENDC)
     exit()
