@@ -61,8 +61,8 @@ MaxSegments=int(args.MaxSegments)
 
 #Specifying the full path to input/output files
 input_file_location=EOS_DIR+'/ANNDEA/Data/TEST_SET/EUTr1_'+BatchID+'_TRACK_SEGMENTS.csv'
-output_file_location=EOS_DIR+p+'/'+pfx+'_'+BatchID+'_RawSeeds_'+str(i)+sfx
-output_result_location=EOS_DIR+'/'+p+'/'+pfx+'_'+BatchID+'_'+o+'_'+str(i)+sfx
+output_file_location=EOS_DIR+p+'/Temp_'+'/'+pfx+'_'+BatchID+'_RawSeeds_'+str(i)+sfx
+output_result_location=EOS_DIR+'/'+p+'/Temp_'+'/'+pfx+'_'+BatchID+'_'+o+'_'+str(i)+sfx
 print(UF.TimeStamp(), "Modules Have been imported successfully...")
 print(UF.TimeStamp(),'Loading pre-selected data from ',input_file_location)
 data=pd.read_csv(input_file_location,header=0,
@@ -121,7 +121,6 @@ for i in range(0,Steps):
       result_list=[]
       gc.collect()
 
-print(result_list,output_file_location)
 UF.LogOperations(output_file_location,'a',result_list) #Writing the remaining data into the csv
 UF.LogOperations(output_result_location,'w',[])
 print(UF.TimeStamp(), "Eval seed generation is finished...")
