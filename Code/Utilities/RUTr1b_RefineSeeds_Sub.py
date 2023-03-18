@@ -50,10 +50,6 @@ EOSsubModelDIR=EOSsubDIR+'/'+'Models'
 
 ########################################    Import libraries    #############################################
 
-#Loading Directory locations
-EOS_DIR=args.EOS
-AFS_DIR=args.AFS
-PY_DIR=args.PY
 if PY_DIR!='': #Temp solution
     sys.path=['',PY_DIR]
     sys.path.append('/usr/lib64/python36.zip')
