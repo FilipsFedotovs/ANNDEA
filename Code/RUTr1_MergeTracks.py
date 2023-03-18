@@ -92,6 +92,8 @@ RequestExtCPU=(args.RequestExtCPU=='Y')
 Xmin,Xmax,Ymin,Ymax=float(args.Xmin),float(args.Xmax),float(args.Ymin),float(args.Ymax)
 SliceData=max(Xmin,Xmax,Ymin,Ymax)>0 #We don't slice data if all values are set to zero simultaneousy (which is the default setting)
 ModelName=ast.literal_eval(args.ModelName)
+print(ModelName)
+exit()
 Patience=int(args.Patience)
 Acceptance=float(args.Acceptance)
 input_file_location=args.f
