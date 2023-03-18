@@ -517,7 +517,8 @@ while Status<len(Program):
         if Result[0]:
              FreshStart=Result[1]
         else:
-             UpdateStatus(8)
+             Status=8
+             break
 
 
     elif Status==1:
