@@ -526,7 +526,7 @@ while Status<len(Program):
 
     elif Status==1:
         print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
-        print(UF.TimeStamp(),bcolors.BOLD+'Status '+Status+': Collecting and de-duplicating the results from previous stage')
+        print(UF.TimeStamp(),bcolors.BOLD+'Status ',Status,': Collecting and de-duplicating the results from previous stage')
         print(UF.TimeStamp(),'Loading preselected data from ',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
         data=pd.read_csv(required_eval_file_location,header=0,usecols=['Rec_Seg_ID'])
         print(UF.TimeStamp(),'Analysing data... ',bcolors.ENDC)
