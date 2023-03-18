@@ -324,7 +324,8 @@ def StandardProcess(program,status,freshstart):
                                     program[status][2],
                                     program[status][3],
                                     program[status][1][9],
-                                    False)
+                                    False
+                                    )
         if len(bad_pop)==0:
              print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
              UpdateStatus(status+1)
@@ -487,11 +488,23 @@ Program.append('Custom')
 # ###### Stage 2
 prog_entry=[]
 job_sets=[]
+JobSet=[]
+for i in range(len(JobSets)):
+    JobSet.append(int(JobSets[i][2]))
+TotJobs=0
+
+if type(JobSet) is int:
+            TotJobs=JobSet
+elif type(JobSet[0]) is int:
+            TotJobs=np.sum(JobSet)
+elif type(JobSet[0][0]) is int:
+            for lp in JobSet:
+                TotJobs+=np.sum(lp)
 prog_entry.append(' Sending tracks to the HTCondor, so track segment combination pairs can be formed...')
-prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','RawSeedsRes','RUTr1a','.csv',RecBatchID,JobSets,'RUTr1a_GenerateRawSelectedSeeds_Sub.py'])
+prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','RawSeedsRes','RUTr1a','.csv',RecBatchID,JobSet,'RUTr1a_GenerateRawSelectedSeeds_Sub.py'])
 prog_entry.append([ " --MaxSegments ", " --MaxSLG "," --MaxSTG "])
 prog_entry.append([MaxSegments, MaxSLG, MaxSTG])
-prog_entry.append(JobSets)
+prog_entry.append(JobSet)
 prog_entry.append(LocalSub)
 prog_entry.append([" --PlateZ ",JobSets])
 if Mode=='RESET':
