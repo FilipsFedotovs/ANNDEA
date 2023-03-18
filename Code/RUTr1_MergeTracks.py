@@ -58,7 +58,6 @@ parser = argparse.ArgumentParser(description='This script prepares training data
 parser.add_argument('--SubPause',help="How long to wait in minutes after submitting 10000 jobs?", default='60')
 parser.add_argument('--SubGap',help="How long to wait in minutes after submitting 10000 jobs?", default='10000')
 parser.add_argument('--LocalSub',help="Local submission?", default='N')
-parser.add_argument('--ForceStatus',help="Would you like the program run from specific status number? (Only for advance users)", default='0')
 parser.add_argument('--RequestExtCPU',help="Would you like to request extra CPUs?", default='N')
 parser.add_argument('--JobFlavour',help="Specifying the length of the HTCondor job walltime. Currently at 'workday' which is 8 hours.", default='workday')
 parser.add_argument('--TrackID',help="What track name is used?", default='ANN_Track_ID')
@@ -326,7 +325,6 @@ def StandardProcess(program,status,freshstart):
         if len(bad_pop)==0:
              print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
              UpdateStatus(status+1)
-             Status+=1
              return True,False
 
 
@@ -444,8 +442,7 @@ print(UF.TimeStamp(),'Current status has a stage',Status,bcolors.ENDC)
 
 if Mode=='CLEANUP':
     Status=5
-else:
-    Status=int(args.ForceStatus)
+
 ################ Set the execution sequence for the script
 Program=[]
 
@@ -505,19 +502,20 @@ else:
 print(UF.TimeStamp(),'There are '+str(len(Program)+1)+' stages (0-'+str(len(Program)+1)+') of this script',bcolors.ENDC)
 print(UF.TimeStamp(),'Current stage has a code',Status,bcolors.ENDC)
 while Status<len(Program):
+    print(UF.TimeStamp(),'Loading previously saved data from ',bcolors.OKBLUE+RecOutputMeta+bcolors.ENDC)
+    MetaInput=UF.PickleOperations(RecOutputMeta,'r', 'N/A')
+    Meta=MetaInput[0]
+    Status=Meta.Status
     if Program[Status]!='Custom':
         #Standard process here
         Result=StandardProcess(Program,Status,FreshStart)
-        if Result[0]:
-            FreshStart=Result[1]
-            if int(args.ForceStatus)==0:
-                UpdateStatus(Status+1)
-                continue
-            else:
-                exit()
-        else:
-            UpdateStatus(len(Program)+1)
-            break
+        print(Result)
+        exit()
+        # if Result[0]:
+        #     FreshStart=Result[1]
+        # else:
+
+
     elif Status==1:
         print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
         print(UF.TimeStamp(),bcolors.BOLD+'Status '+Status+': Collecting and de-duplicating the results from previous stage')
