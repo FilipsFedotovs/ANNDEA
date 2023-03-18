@@ -548,9 +548,11 @@ while Status<len(Program):
             print(UF.TimeStamp(),'Set',str(i), 'contains', Records, 'seeds',bcolors.ENDC)
         Records=len(result)
         result["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(result['Segment_1'], result['Segment_2'])]
+        print(result)
         result.drop_duplicates(subset="Seed_ID",keep='first',inplace=True)
         result.drop(result.index[result['Segment_1'] == result['Segment_2']], inplace = True)
         result.drop(["Seed_ID"],axis=1,inplace=True)
+        print(result)
         Records_After_Compression=len(result)
         if Records>0:
                       Compression_Ratio=int((Records_After_Compression/Records)*100)
