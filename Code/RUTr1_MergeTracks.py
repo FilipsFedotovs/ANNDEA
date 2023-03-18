@@ -525,7 +525,6 @@ while Status<len(Program):
         Result=StandardProcess(Program,Status,FreshStart)
         if Result[0]:
              FreshStart=Result[1]
-             continue
         else:
              Status=8
              break
