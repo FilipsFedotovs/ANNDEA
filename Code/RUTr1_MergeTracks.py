@@ -137,12 +137,10 @@ if Log and (os.path.isfile(required_eval_file_location)==False or Mode=='RESET')
     print(UF.TimeStamp(),'The cleaned data has ',final_rows,' hits')
     data[PM.MC_Event_ID] = data[PM.MC_Event_ID].astype(str)
     data[PM.MC_Track_ID] = data[PM.MC_Track_ID].astype(str)
-    try:
-        data[BrickID] = data[BrickID].astype(int)
-    except:
-        print(UF.TimeStamp(), bcolors.WARNING+"Failed to convert Domain to integer..."+bcolors.ENDC)
+
 
     data[BrickID] = data[BrickID].astype(str)
+    data[TrackID] = data[TrackID].astype(str)
 
     data['Rec_Seg_ID'] = data[TrackID] + '-' + data[BrickID]
     data['MC_Mother_Track_ID'] = data[PM.MC_Event_ID] + '-' + data[PM.MC_Track_ID]
@@ -212,12 +210,8 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         data=data.dropna()
         final_rows=len(data.axes[0])
         print(UF.TimeStamp(),'The cleaned data has ',final_rows,' hits')
-        try:
-            data[BrickID] = data[BrickID].astype(int)
-        except:
-            print(UF.TimeStamp(), bcolors.WARNING+"Failed to convert Domain to integer..."+bcolors.ENDC)
-
         data[BrickID] = data[BrickID].astype(str)
+        data[TrackID] = data[TrackID].astype(str)
 
         data['Rec_Seg_ID'] = data[TrackID] + '-' + data[BrickID]
         data=data.drop([TrackID],axis=1)
