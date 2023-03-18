@@ -273,6 +273,9 @@ MaxSeeds=Meta.MaxSeeds
 VetoMotherTrack=Meta.VetoMotherTrack
 MinHitsTrack=Meta.MinHitsTrack
 
+
+
+
 #The function bellow helps to monitor the HTCondor jobs and keep the submission flow
 def AutoPilot(wait_min, interval_min, max_interval_tolerance,program):
      print(UF.TimeStamp(),'Going on an autopilot mode for ',wait_min, 'minutes while checking HTCondor every',interval_min,'min',bcolors.ENDC)
@@ -424,6 +427,8 @@ def UpdateStatus(status):
     Meta.UpdateStatus(status)
     print(UF.PickleOperations(RecOutputMeta,'w', Meta)[1])
 
+UpdateStatus(0)
+
 if Mode=='RESET':
     print(UF.TimeStamp(),'Performing the cleanup... ',bcolors.ENDC)
     HTCondorTag="SoftUsed == \"ANNDEA-EUTr1a-"+RecBatchID+"\""
@@ -440,8 +445,7 @@ else:
 print(UF.TimeStamp(),'Current status has a stage',Status,bcolors.ENDC)
 
 
-if Mode=='CLEANUP':
-    Status=5
+
 
 ################ Set the execution sequence for the script
 Program=[]
@@ -474,6 +478,9 @@ else:
     UpdateStatus(2)
     Status=2
 
+if Mode=='CLEANUP':
+    UpdateStatus(5)
+    Status=5
 # ###### Stage 0
 # prog_entry=[]
 # job_sets=[]
