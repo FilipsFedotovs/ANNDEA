@@ -55,7 +55,8 @@ class TrainingSampleMeta:
           self.ClassValues=ClassValues
           self.MaxSegments=MaxSegments
           self.JobSets=JobSets
-      def IniTrackSeedMetaData(self,MaxSLG,MaxSTG,MaxDOCA,MaxAngle,JobSets,MaxSegments,VetoMotherTrack,MaxSeeds,MinHitsTrack):
+      def IniTrackSeedMetaData(self,MaxSLG,MaxSTG,MaxDOCA,MaxAngle,JobSets,MaxSegments,VetoMotherTrack,MaxSeeds,MinHitsTrack
+                               ):
           self.MaxSLG=MaxSLG
           self.MaxSTG=MaxSTG
           self.MaxDOCA=MaxDOCA
@@ -1929,13 +1930,16 @@ def CreateCondorJobs(AFS,EOS,PY,path,o,pfx,sfx,ID,loop_params,OptionHeader,Optio
             nest_lvl=3
             for lp in loop_params:
                 TotJobs+=np.sum(lp)
+        print(nest_lvl)
         OH=OptionHeader+[' --EOS '," --AFS ", " --PY ", " --BatchID "]
         OL=OptionLine+[EOS, AFS, PY, ID]
         TotJobs=int(TotJobs)
         with alive_bar(TotJobs,force_tty=True, title='Checking the results from HTCondor') as bar:
              if nest_lvl==1:
                  for i in range(loop_params):
+
                                required_output_file_location=EOS+'/'+path+'/Temp_'+pfx+'_'+ID+'_'+str(0)+'/'+pfx+'_'+ID+'_'+o+'_'+str(i)+sfx
+                               print(required_output_file_location)
                                bar.text = f'-> Checking whether the file : {required_output_file_location}, exists...'
                                bar()
                                SHName = AFS + '/HTCondor/SH/Temp_'+pfx+'_'+ID+'_'+str(0)+'/SH_'+pfx+'_'+ ID+'_' + str(i) + '.sh'
