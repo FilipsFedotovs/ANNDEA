@@ -517,6 +517,8 @@ print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Create'))
 Program.append(prog_entry)
 print(Program)
 
+# ###### Stage 3
+Program.append('Custom')
 
 ###### Stage 3
 
@@ -525,17 +527,13 @@ while Status<len(Program):
     MetaInput=UF.PickleOperations(RecOutputMeta,'r', 'N/A')
     Meta=MetaInput[0]
     Status=Meta.Status[-1]
-    print(len(Program))
-    print(Status)
     if Program[Status]!='Custom':
         #Standard process here
         Result=StandardProcess(Program,Status,FreshStart)
-        print(Status)
         if Result[0]:
              FreshStart=Result[1]
              continue
         else:
-             print(Result)
              Status=8
              break
 
