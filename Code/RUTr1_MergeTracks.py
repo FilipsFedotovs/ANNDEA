@@ -127,7 +127,7 @@ if Log and (os.path.isfile(required_eval_file_location)==False or Mode=='RESET')
     print(UF.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
     data=pd.read_csv(input_file_location,
                 header=0,
-                usecols=[PM.Rec_Track_ID,PM.Rec_Track_Domain,PM.x,PM.y,PM.z,PM.tx,PM.ty,PM.MC_Track_ID,PM.MC_Event_ID])
+                usecols=[TrackID,BrickID,PM.x,PM.y,PM.z,PM.tx,PM.ty,PM.MC_Track_ID,PM.MC_Event_ID])
 
     total_rows=len(data)
     print(UF.TimeStamp(),'The raw data has ',total_rows,' hits')
@@ -205,7 +205,7 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         print(UF.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
         data=pd.read_csv(input_file_location,
                     header=0,
-                    usecols=[PM.Rec_Track_ID,PM.Rec_Track_Domain,PM.x,PM.y,PM.z,PM.tx,PM.ty])
+                    usecols=[TrackID,BrickID,PM.x,PM.y,PM.z,PM.tx,PM.ty])
         total_rows=len(data.axes[0])
         print(UF.TimeStamp(),'The raw data has ',total_rows,' hits')
         print(UF.TimeStamp(),'Removing unreconstructed hits...')
