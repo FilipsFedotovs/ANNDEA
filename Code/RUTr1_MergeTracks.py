@@ -481,6 +481,8 @@ else:
 if Mode=='CLEANUP':
     UpdateStatus(5)
     Status=5
+# ###### Stage 1
+Program.append('Custom')
 # ###### Stage 0
 # prog_entry=[]
 # job_sets=[]
