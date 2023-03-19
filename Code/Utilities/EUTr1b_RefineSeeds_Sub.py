@@ -81,16 +81,16 @@ from alive_progress import alive_bar
 with alive_bar(limit,force_tty=True, title='Analysing data...') as bar:
     for s in range(0,limit):
      bar()
-     track=tracks.pop(0)
+     otrack=tracks.pop(0)
 
-     track=EMO(track[:2])
+     track=EMO(otrack[:2])
 
      track.Decorate(segments)
      try:
        track.GetTrInfo()
      except:
        continue
-     GoodTracks.append([track[:2][0],track[:2][1],track.DOCA,track.SLG,track.STG,track.Opening_Angle])
+     GoodTracks.append([otrack[:2][0],otrack[:2][1],track.DOCA,track.SLG,track.STG,track.Opening_Angle])
 
 print(UF.TimeStamp(),bcolors.OKGREEN+'The sample generation has been completed..'+bcolors.ENDC)
 del tracks
