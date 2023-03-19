@@ -81,6 +81,8 @@ if args.TrackName == 'MC_Track_ID':
   y_min = y_min.rename(columns={'y':'y_min'})
   y_min = y_min[['y_min', 'MC_Track']]
   newdata = pd.merge(newdata,y_min,how='inner',on=['MC_Track'])
+  print(newdata)
+  newdata = pd.merge(newdata,mother,how='inner',on=['MC_Track'])
   newdata = newdata.loc[newdata['Track_length'] > 0]
   print(newdata)
   exit()
