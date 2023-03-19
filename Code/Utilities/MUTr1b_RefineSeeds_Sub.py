@@ -111,7 +111,13 @@ print(UF.TimeStamp(),bcolors.OKGREEN+'Data has been successfully loaded and prep
 #create seeds
 GoodTracks=[]
 print(UF.TimeStamp(),'Beginning the sample generation part...')
+ic=0
+inf=0
+qc=0
+nnf=0
 for s in range(0,limit):
+     print(ic,inf,qc,nnf)
+     ic+=1
      track=tracks.pop(0)
 
      label=track[2]
@@ -124,20 +130,25 @@ for s in range(0,limit):
          num_label = 0
      track.LabelSeed(num_label)
      track.Decorate(segments)
+
      try:
        track.GetTrInfo()
      except:
        continue
+     inf+=1
      keep_seed=True
      if track.TrackQualityCheck(MaxDOCA,MaxSLG,MaxSTG, MaxAngle):
+         qc+=1
          for m in range(len(Metas)):
              if track.FitSeed(Metas[m],Models[m])==False:
                 keep_seed=False
          if keep_seed:
+            nnf+=1
             GoodTracks.append(track)
      else:
          del track
          continue
+print(ic,inf,qc,nnf)
 print(UF.TimeStamp(),bcolors.OKGREEN+'The sample generation has been completed..'+bcolors.ENDC)
 del tracks
 del segments
