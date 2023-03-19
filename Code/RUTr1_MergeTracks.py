@@ -790,7 +790,6 @@ while Status<len(Program):
         no_iter=int(math.ceil(float(len(base_data)/float(MaxSegments))))
         if no_iter==1:
             UpdateStatus(7)
-            continue
         else:
             ('WIP')
     elif Status==7:
