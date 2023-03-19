@@ -53,9 +53,6 @@ if args.TrackName == 'MC_Track_ID':
   z_max = z_max.rename(columns={'z':'z_max'})
   newdata = pd.merge(z_max,z_min,how='inner',on=['MC_Track'])
   newdata['Track_length'] = newdata['z_max'] - newdata['z_min']
-  #newdata = pd.merge(newdata,mother,how='inner',on=['MC_Track'])
-  #newdata = newdata.loc[newdata['Track_length'] > 0]
-  print(newdata)
   
   newdata = pd.merge(newdata, rowdata[['x','MC_Track','z']].rename(columns={'x':'x_min'}), how='inner', left_on=['MC_Track','z_min'], right_on=['MC_Track','z'])
   newdata.drop(['z'], axis=1, inplace=True)
@@ -74,7 +71,6 @@ if args.TrackName == 'MC_Track_ID':
   
   newdata = newdata.loc[newdata['Track_length'] > 0]
   print(newdata)
-  exit()
   
   newdata['delta_x'] = newdata['x_max'] - newdata['x_min']
   newdata['delta_y'] = newdata['y_max'] - newdata['y_min']
