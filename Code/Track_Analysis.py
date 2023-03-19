@@ -68,14 +68,13 @@ if args.TrackName == 'MC_Track_ID':
 
   newdata = pd.merge(newdata, rowdata[['y','MC_Track','z']].rename(columns={'y':'y_max'}), how='inner', left_on=['MC_Track','z_max'], right_on=['MC_Track','z'])
   newdata.drop(['z'], axis=1, inplace=True)
-  
+  print(newdata)
+  exit()
   mother = rowdata[['MotherPDG','MC_Track']]
   newdata = pd.merge(newdata,rowdata,how='inner',on=['MC_Track'])
   
   
   newdata = newdata.loc[newdata['Track_length'] > 0]
-  print(newdata)
-  exit()
   
   
   newdata['delta_x'] = newdata['x_max'] - newdata['x_min']
