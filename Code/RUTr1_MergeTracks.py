@@ -551,8 +551,8 @@ print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Create'))
 Program.append(prog_entry)
 # ###### Stage 5
 Program.append('Custom')
-print(Program)
-
+print(len(Program))
+print(Status)
 while Status<len(Program):
     if Program[Status]!='Custom':
         #Standard process here
