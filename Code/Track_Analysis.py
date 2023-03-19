@@ -45,11 +45,7 @@ if args.TrackName == 'MC_Track_ID':
   rowdata['MC_Track'] = rowdata['MC_Track_ID'] + '-' + rowdata['MC_Event_ID']
   rowdata.drop(['MC_Track_ID','MC_Event_ID'], axis=1, inplace=True)
   
-  mother = rowdata[['MotherPDG','MC_Track_ID','MC_Event_ID']]
-  mother['MC_Track_ID'] = mother['MC_Track_ID'].astype(str)
-  mother['MC_Event_ID'] = mother['MC_Event_ID'].astype(str)
-  mother['MC_Track'] = mother['MC_Track_ID'] + '-' + mother['MC_Event_ID']
-  mother.drop(['MC_Track_ID','MC_Event_ID'], axis=1, inplace=True)
+  mother = rowdata[['MotherPDG','MC_Track']]
   
   
   #calculate the Track Length
