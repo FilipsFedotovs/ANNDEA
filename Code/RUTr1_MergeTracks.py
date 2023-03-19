@@ -578,12 +578,14 @@ while Status<len(Program):
                     if i==0:
                        output_file_location=EOS_DIR+'/ANNDEA/Data/TEST_SET/Temp_EUTr1a'+'_'+RecBatchID+'_'+str(0)+'/EUTr1a_'+RecBatchID+'_RawSeeds_'+str(i)+'.csv'
                        result=pd.read_csv(output_file_location,names = ['Segment_1','Segment_2'])
+                       print(UF.TimeStamp(),'Set',str(i), 'contains', len(result), 'seeds',bcolors.ENDC)
                     else:
                         output_file_location=EOS_DIR+'/ANNDEA/Data/TEST_SET/Temp_EUTr1a'+'_'+RecBatchID+'_'+str(0)+'/EUTr1a_'+RecBatchID+'_RawSeeds_'+str(i)+'.csv'
                         new_result=pd.read_csv(output_file_location,names = ['Segment_1','Segment_2'])
+                        print(UF.TimeStamp(),'Set',str(i), 'contains', len(new_result), 'seeds',bcolors.ENDC)
                         result=pd.concat([result,new_result])
 
-                    print(UF.TimeStamp(),'Set',str(i), 'contains', Records, 'seeds',bcolors.ENDC)
+
         Records=len(result)
         result["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(result['Segment_1'], result['Segment_2'])]
         print(result)
@@ -729,6 +731,7 @@ while Status<len(Program):
                          for k in range(JobSet[i][j]):
                               required_output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RUTr1b_'+RecBatchID+'_'+str(i)+'/RUTr1b_'+RecBatchID+'_RefinedSeeds_'+str(i)+'_'+str(j)+'_'+str(k)+'.pkl'
                               new_data=UF.PickleOperations(required_output_file_location,'r','N/A')[0]
+                              print(UF.TimeStamp(),'Set',str(i)+'_'+str(j)+'_'+str(k), 'contains', len(new_data), 'seeds',bcolors.ENDC)
                               if base_data == None:
                                     base_data = new_data
                               else:
