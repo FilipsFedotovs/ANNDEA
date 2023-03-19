@@ -52,21 +52,21 @@ if args.TrackName == 'MC_Track_ID':
   z_min = z_min.rename(columns={'z':'z_min'})
   z_max = z_max.rename(columns={'z':'z_max'})
   newdata = pd.merge(z_max,z_min,how='inner',on=['MC_Track'])
-
+  newdata.drop(['z'], axis=1, inplace=True)
   newdata['Track_length'] = newdata['z_max'] - newdata['z_min']
   #newdata = pd.merge(newdata,mother,how='inner',on=['MC_Track'])
   #newdata = newdata.loc[newdata['Track_length'] > 0]
   print(newdata)
-  
-  newdata = pd.merge(newdata, rowdata[['x','MC_Track','z']].rename(columns={'x':'x_max'}), how='inner', left_on=['MC_Track','z_max'], right_on=['MC_Track','z'])
 
   newdata = pd.merge(newdata, rowdata[['x','MC_Track','z']].rename(columns={'x':'x_max'}), how='inner', left_on=['MC_Track','z_max'], right_on=['MC_Track','z'])
 
-  newdata = pd.merge(newdata, rowdata[['x','MC_Track','z']].rename(columns={'x':'x_min'}), how='inner', left_on=['MC_Track','z_min'], right_on=['MC_Track','z'])
+  newdata = pd.merge(newdata, rowdata[['x','MC_Track','z']].rename(columns={'x':'x_max'}), how='inner', left_on=['MC_Track','z_max'], right_on=['MC_Track','z'])
 
-  newdata = pd.merge(newdata, rowdata[['x','MC_Track','z']].rename(columns={'x':'x_min'}), how='inner', left_on=['MC_Track','z_min'], right_on=['MC_Track','z'])
+  newdata = pd.merge(newdata, rowdata[['y','MC_Track','z']].rename(columns={'y':'y_min'}), how='inner', left_on=['MC_Track','z_min'], right_on=['MC_Track','z'])
 
- 
+  newdata = pd.merge(newdata, rowdata[['y','MC_Track','z']].rename(columns={'y':'y_min'}), how='inner', left_on=['MC_Track','z_min'], right_on=['MC_Track','z'])
+
+
   newdata = newdata.loc[newdata['Track_length'] > 0]
   print(newdata)
   exit()
