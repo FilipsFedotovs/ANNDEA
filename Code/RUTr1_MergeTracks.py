@@ -447,7 +447,7 @@ print(UF.TimeStamp(),'Current status has a stage',Status,bcolors.ENDC)
 
 
 
-
+UpdateStatus(0)
 ################ Set the execution sequence for the script
 Program=[]
 
@@ -551,8 +551,7 @@ print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Create'))
 Program.append(prog_entry)
 # ###### Stage 5
 Program.append('Custom')
-print(len(Program))
-print(Status)
+
 while Status<len(Program):
     if Program[Status]!='Custom':
         #Standard process here
