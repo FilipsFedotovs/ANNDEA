@@ -747,7 +747,7 @@ while Status<len(Program):
         UpdateStatus(4)
     elif Status==5:
         print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
-        print(UF.TimeStamp(),bcolors.BOLD+'Stage '+str(Status)+':'+bcolors.ENDC+' Analysing the training samples')
+        print(UF.TimeStamp(),bcolors.BOLD+'Stage '+str(Status)+':'+bcolors.ENDC+' Analysing the fitted seeds')
         JobSet=[]
         for i in range(len(JobSets)):
              JobSet.append([])
@@ -804,6 +804,7 @@ while Status<len(Program):
         print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(Status)+' has successfully completed'+bcolors.ENDC)
         UpdateStatus(6)
     elif Status==6:
+        input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1c_'+RecBatchID+'_Fit_Seeds.pkl'
         print(UF.TimeStamp(), "Loading fit track seeds from the file",bcolors.OKBLUE+input_file_location+bcolors.ENDC)
         base_data=UF.PickleOperations(input_file_location,'r','N/A')[0]
         print(UF.TimeStamp(), bcolors.OKGREEN+"Loading is successful, there are "+str(len(base_data))+" fit seeds..."+bcolors.ENDC)
