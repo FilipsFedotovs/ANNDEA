@@ -57,29 +57,17 @@ if args.TrackName == 'MC_Track_ID':
   #newdata = newdata.loc[newdata['Track_length'] > 0]
   print(newdata)
   
-  x_max = pd.merge(newdata, rowdata, how='inner', left_on=['MC_Track','z_max'], right_on=['MC_Track','z'])
-  x_max = x_max.rename(columns={'x':'x_max'})
-  x_max = x_max[['x_max', 'MC_Track']]
-  newdata = pd.merge(newdata,x_max,how='inner',on=['MC_Track'])
-  print(newdata)
+  newdata = pd.merge(newdata, rowdata[['x','MC_Track','z']].rename(columns={'x':'x_min'}), how='inner', left_on=['MC_Track','z_min'], right_on=['MC_Track','z'])
+  newdata.drop(['z'], axis=1, inplace=True)
 
-  x_min = pd.merge(newdata, rowdata, how='inner', left_on=['MC_Track','z_min'], right_on=['MC_Track','z'])
-  x_min = x_min.rename(columns={'x':'x_min'})
-  x_min = x_min[['x_min', 'MC_Track']]
-  newdata = pd.merge(newdata,x_min,how='inner',on=['MC_Track'])
-  print(newdata)
+  newdata = pd.merge(newdata, rowdata[['x','MC_Track','z']].rename(columns={'x':'x_max'}), how='inner', left_on=['MC_Track','z_max'], right_on=['MC_Track','z'])
+  newdata.drop(['z'], axis=1, inplace=True)
 
-  y_max = pd.merge(newdata, rowdata, how='inner', left_on=['MC_Track','z_max'], right_on=['MC_Track','z'])
-  y_max = y_max.rename(columns={'y':'y_max'})
-  y_max = y_max[['y_max', 'MC_Track']]
-  newdata = pd.merge(newdata,y_max,how='inner',on=['MC_Track'])
-  print(newdata)
+  newdata = pd.merge(newdata, rowdata[['y','MC_Track','z']].rename(columns={'y':'y_min'}), how='inner', left_on=['MC_Track','z_min'], right_on=['MC_Track','z'])
+  newdata.drop(['z'], axis=1, inplace=True)
 
-  y_min = pd.merge(newdata, rowdata, how='inner', left_on=['MC_Track','z_min'], right_on=['MC_Track','z'])
-  y_min = y_min.rename(columns={'y':'y_min'})
-  y_min = y_min[['y_min', 'MC_Track']]
-  newdata = pd.merge(newdata,y_min,how='inner',on=['MC_Track'])
-  print(newdata)
+  newdata = pd.merge(newdata, rowdata[['y','MC_Track','z']].rename(columns={'y':'y_max'}), how='inner', left_on=['MC_Track','z_max'], right_on=['MC_Track','z'])
+  newdata.drop(['z'], axis=1, inplace=True)
   
   mother = rowdata[['MotherPDG','MC_Track']]
   newdata = pd.merge(newdata,rowdata,how='inner',on=['MC_Track'])
