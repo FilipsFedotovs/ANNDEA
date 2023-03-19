@@ -40,7 +40,6 @@ import pandas as pd #We use Panda for a routine data processing
 import gc  #Helps to clear memory
 import UtilityFunctions as UF
 from UtilityFunctions import EMO
-import ast
 
 input_segment_file_location=EOS_DIR+'/ANNDEA/Data/TEST_SET/EUTr1_'+BatchID+'_TRACK_SEGMENTS.csv'
 input_track_file_location=EOS_DIR+'/ANNDEA/Data/TEST_SET/EUTr1b_'+BatchID+'_SEED_TRUTH_COMBINATIONS.csv'
@@ -76,43 +75,27 @@ limit=len(tracks)
 track_counter=0
 print(UF.TimeStamp(),bcolors.OKGREEN+'Data has been successfully loaded and prepared..'+bcolors.ENDC)
 #create seeds
-GoodTracks=[]
+GoodTracks=[['DOCA','SLG','STG','Opening_Angle']]
 print(UF.TimeStamp(),'Beginning the sample analysis part...')
-ini=0
-inf=0
-cq=0
-nnc=0
-print('here')
-exit()
+
+
 for s in range(0,limit):
-     print(ini,inf,cq,nnc)
-     ini+=1
+
      track=tracks.pop(0)
 
      track=EMO(track[:2])
-
 
      track.Decorate(segments)
      try:
        track.GetTrInfo()
      except:
        continue
-     inf+=1
-     keep_seed=True
-     if track.TrackQualityCheck(MaxDOCA,MaxSLG,MaxSTG, MaxAngle):
-         cq+=1
-         for m in range(len(Metas)):
-             if track.FitSeed(Metas[m],Models[m])==False:
-                keep_seed=False
-         if keep_seed:
-            GoodTracks.append(track)
-            nnc+=1
-     else:
-         del track
-         continue
+     print(track.DOCA,track.SLG,track.STG,track.Opening_Angle)
+     GoodTracks.append([track.DOCA,track.SLG,track.STG,track.Opening_Angle])
+
 print(UF.TimeStamp(),bcolors.OKGREEN+'The sample generation has been completed..'+bcolors.ENDC)
 del tracks
 del segments
 gc.collect()
-print(UF.PickleOperations(output_file_location,'w', GoodTracks)[1])
+UF.LogOperations(output_file_location,'w', GoodTracks)
 
