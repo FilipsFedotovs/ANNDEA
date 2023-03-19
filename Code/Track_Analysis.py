@@ -45,8 +45,6 @@ if args.TrackName == 'MC_Track_ID':
   rowdata['MC_Track'] = rowdata['MC_Track_ID'] + '-' + rowdata['MC_Event_ID']
   rowdata.drop(['MC_Track_ID','MC_Event_ID'], axis=1, inplace=True)
   
-  mother = rowdata[['MotherPDG','MC_Track']]
-  
   
   #calculate the Track Length
   z_min = rowdata.groupby(['MC_Track']).z.min().reset_index() 
@@ -82,7 +80,11 @@ if args.TrackName == 'MC_Track_ID':
   y_min = y_min[['y_min', 'MC_Track']]
   newdata = pd.merge(newdata,y_min,how='inner',on=['MC_Track'])
   print(newdata)
-  newdata = pd.merge(newdata,mother,how='inner',on=['MC_Track'])
+  
+  mother = rowdata[['MotherPDG','MC_Track']]
+  newdata = pd.merge(newdata,rowdata,how='inner',on=['MC_Track'])
+  
+  
   newdata = newdata.loc[newdata['Track_length'] > 0]
   print(newdata)
   exit()
