@@ -550,6 +550,8 @@ Program.append('Custom')
 
 Program.append(prog_entry)
 
+print(Program)
+
 while Status<len(Program):
     if Program[Status]!='Custom':
         #Standard process here
@@ -742,7 +744,7 @@ while Status<len(Program):
         print(UF.TimeStamp(),'The output compression ratio is ', Compression_Ratio, ' %',bcolors.ENDC)
         output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1c_'+RecBatchID+'_Fit_Seeds.pkl'
         print(UF.PickleOperations(output_file_location,'w',base_data)[1])
-        if args.Log=='Y':
+        if Log:
              print(UF.TimeStamp(),'Initiating the logging...')
              eval_data_file=EOS_DIR+'/ANNDEA/Data/TEST_SET/EUTr1b_'+RecBatchID+'_SEED_TRUTH_COMBINATIONS.csv'
              eval_data=pd.read_csv(eval_data_file,header=0,usecols=['Segment_1','Segment_2'])
