@@ -75,7 +75,7 @@ limit=len(tracks)
 track_counter=0
 print(UF.TimeStamp(),bcolors.OKGREEN+'Data has been successfully loaded and prepared..'+bcolors.ENDC)
 #create seeds
-GoodTracks=[['DOCA','SLG','STG','Opening_Angle']]
+GoodTracks=[['Segment1','Segment2','DOCA','SLG','STG','Opening_Angle']]
 print(UF.TimeStamp(),'Beginning the sample analysis part...')
 from alive_progress import alive_bar
 with alive_bar(limit,force_tty=True, title='Analysing data...') as bar:
@@ -90,7 +90,7 @@ with alive_bar(limit,force_tty=True, title='Analysing data...') as bar:
        track.GetTrInfo()
      except:
        continue
-     GoodTracks.append([track.DOCA,track.SLG,track.STG,track.Opening_Angle])
+     GoodTracks.append([track[:2][0],track[:2][1],track.DOCA,track.SLG,track.STG,track.Opening_Angle])
 
 print(UF.TimeStamp(),bcolors.OKGREEN+'The sample generation has been completed..'+bcolors.ENDC)
 del tracks
