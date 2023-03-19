@@ -448,6 +448,7 @@ print(UF.TimeStamp(),'Current status has a stage',Status,bcolors.ENDC)
 
 
 UpdateStatus(0)
+Status=0
 ################ Set the execution sequence for the script
 Program=[]
 
