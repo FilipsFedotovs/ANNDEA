@@ -62,8 +62,7 @@ if args.TrackName == 'MC_Track_ID':
   x_max = x_max.rename(columns={'x':'x_max'})
   x_max = x_max[['x_max', 'MC_Track']]
   newdata = pd.merge(newdata,x_max,how='inner',on=['MC_Track'])
-  print(newdata)
-  exit()
+
   x_min = pd.merge(newdata, rowdata, how='inner', left_on=['MC_Track','z_min'], right_on=['MC_Track','z'])
   x_min = x_min.rename(columns={'x':'x_min'})
   x_min = x_min[['x_min', 'MC_Track']]
@@ -81,7 +80,7 @@ if args.TrackName == 'MC_Track_ID':
   y_min = y_min[['y_min', 'MC_Track']]
   newdata = pd.merge(newdata,y_min,how='inner',on=['MC_Track'])
   print(newdata)
-  
+  exit()
   mother = rowdata[['MotherPDG','MC_Track']]
   newdata = pd.merge(newdata,rowdata,how='inner',on=['MC_Track'])
   
