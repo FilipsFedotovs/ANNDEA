@@ -13,40 +13,18 @@ class bcolors:
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
 parser = argparse.ArgumentParser(description='select cut parameters')
-parser.add_argument('--MaxDOCA',help="Maximum DOCA allowed", default='50')
-parser.add_argument('--MaxAngle',help="Maximum magnitude of angle allowed", default='1')
-parser.add_argument('--MaxSTG',help="Maximum Segment Transverse gap per SLG", default='50')
-parser.add_argument('--MaxSLG',help="Maximum Segment Longitudinal Gap", default='4000')
-parser.add_argument('--i',help="Set number", default='1')
-parser.add_argument('--j',help="Subset number", default='1')
-parser.add_argument('--k',help="Fraction number", default='1')
-parser.add_argument('--p',help="Path to the output file", default='')
-parser.add_argument('--o',help="Path to the output file name", default='')
-parser.add_argument('--pfx',help="Path to the output file name", default='')
-parser.add_argument('--sfx',help="Path to the output file name", default='')
 parser.add_argument('--EOS',help="EOS location", default='')
 parser.add_argument('--AFS',help="AFS location", default='')
-parser.add_argument('--ModelName',help="WHat ANN model would you like to use?", default="['MH_GNN_5FTR_4_120_4_120']")
 parser.add_argument('--BatchID',help="Give this training sample batch an ID", default='SHIP_UR_v1')
 parser.add_argument('--PY',help="Python libraries directory location", default='.')
 ########################################     Main body functions    #########################################
 args = parser.parse_args()
-i=int(args.i)    #This is just used to name the output file
-j=int(args.j)  #The subset helps to determine what portion of the track list is used to create the Seeds
-k=int(args.k)  #The subset helps to determine what portion of the track list is used to create the Seeds
-p=args.p
-o=args.o
-sfx=args.sfx
-pfx=args.pfx
+
 AFS_DIR=args.AFS
 EOS_DIR=args.EOS
 PY_DIR=args.PY
 
 BatchID=args.BatchID
-Models=[]
-Metas=[]
-EOSsubDIR=EOS_DIR+'/'+'ANNDEA'
-EOSsubModelDIR=EOSsubDIR+'/'+'Models'
 
 ########################################    Import libraries    #############################################
 
@@ -64,10 +42,6 @@ import UtilityFunctions as UF
 from UtilityFunctions import EMO
 import ast
 
-MaxDOCA=float(args.MaxDOCA)
-MaxSTG=float(args.MaxSTG)
-MaxSLG=float(args.MaxSLG)
-MaxAngle=float(args.MaxAngle)
 input_segment_file_location=EOS_DIR+'/ANNDEA/Data/TEST_SET/EUTr1_'+BatchID+'_TRACK_SEGMENTS.csv'
 input_track_file_location=EOS_DIR+'/ANNDEA/Data/TEST_SET/EUTr1b_'+BatchID+'_SEED_TRUTH_COMBINATIONS.csv'
 output_file_location=EOS_DIR+'/ANNDEA/Data/TEST_SET/'+BatchID+'_SEED_TRUTH_ANALYSIS.csv'
