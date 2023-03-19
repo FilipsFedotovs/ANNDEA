@@ -125,8 +125,13 @@ print(UF.TimeStamp(),bcolors.OKGREEN+'Data has been successfully loaded and prep
 #create seeds
 GoodTracks=[]
 print(UF.TimeStamp(),'Beginning the sample generation part...')
+ini=0
+inf=0
+cq=0
+nnc=0
 for s in range(0,limit):
-
+     print(ini,inf,cq,nnc)
+     ini+=1
      track=tracks.pop(0)
 
      track=EMO(track[:2])
@@ -137,13 +142,16 @@ for s in range(0,limit):
        track.GetTrInfo()
      except:
        continue
+     inf+=1
      keep_seed=True
      if track.TrackQualityCheck(MaxDOCA,MaxSLG,MaxSTG, MaxAngle):
+         cq+=1
          for m in range(len(Metas)):
              if track.FitSeed(Metas[m],Models[m])==False:
                 keep_seed=False
          if keep_seed:
             GoodTracks.append(track)
+            nnc+=1
      else:
          del track
          continue
