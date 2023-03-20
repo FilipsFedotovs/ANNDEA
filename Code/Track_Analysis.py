@@ -58,6 +58,7 @@ if args.TrackName == 'MC_Track_ID':
   #newdata = newdata.loc[newdata['Track_length'] > 0]
   print(newdata)
 
+  #I have simplified the code and it works:
   newdata = pd.merge(newdata, rowdata[['x','MC_Track','z']].rename(columns={'x':'x_min'}), how='inner', left_on=['MC_Track','z_min'], right_on=['MC_Track','z'])
   newdata.drop(['z'], axis=1, inplace=True)
 
@@ -72,8 +73,7 @@ if args.TrackName == 'MC_Track_ID':
 
 
   newdata = newdata.loc[newdata['Track_length'] > 0]
-  print(newdata)
-  exit()
+
   
   
   newdata['delta_x'] = newdata['x_max'] - newdata['x_min']
