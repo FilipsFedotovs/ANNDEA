@@ -149,7 +149,7 @@ if ModelMeta.ModelType=='CNN':
 
 elif ModelMeta.ModelType=='GNN':
        import torch
-       criterion = torch.nn.CrossEntropyLoss()
+       criterion = torch.nn.NLLLoss()
        if len(ModelMeta.TrainSessionsData)==0:
            TrainSamples=UF.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_TRACK_SEEDS_OUTPUT_1.pkl','r', 'N/A')[0]
            print(UF.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_TRACK_SEEDS_OUTPUT_1.pkl','r', 'N/A')[1])
