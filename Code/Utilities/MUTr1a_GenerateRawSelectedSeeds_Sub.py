@@ -88,8 +88,7 @@ data_header=pd.merge(data_header, data_end_header, how="inner", on=["Rec_Seg_ID"
 #Doing a plate region cut for the Main Data
 #data_header.drop(data_header.index[data_header['e_z'] > (PlateZ+MaxSLG)], inplace = True) #Not applicable for TSU
 data_header.drop(data_header.index[data_header['z'] < PlateZ], inplace = True)
-print(data_header)
-exit()
+
 Records=len(data_header.axes[0])
 print(UF.TimeStamp(),'There are total of ', Records, 'tracks in the data set')
 
@@ -103,6 +102,8 @@ data_e=data_e.rename(columns={"y": "e_y"})
 data_e.drop(['z_x'],axis=1,inplace=True)
 data_e.drop(['z_y'],axis=1,inplace=True)
 data=pd.merge(data_s, data_e, how="inner", on=["Rec_Seg_ID",'MC_Mother_Track_ID']) #Combining datasets so for each track we know its starting and ending coordinates
+print(data)
+exit()
 del data_e
 del data_s
 gc.collect()
