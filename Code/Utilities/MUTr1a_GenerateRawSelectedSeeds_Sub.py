@@ -102,8 +102,7 @@ data_e=data_e.rename(columns={"y": "e_y"})
 data_e.drop(['z_x'],axis=1,inplace=True)
 data_e.drop(['z_y'],axis=1,inplace=True)
 data=pd.merge(data_s, data_e, how="inner", on=["Rec_Seg_ID",'MC_Mother_Track_ID']) #Combining datasets so for each track we know its starting and ending coordinates
-print(data)
-exit()
+
 del data_e
 del data_s
 gc.collect()
@@ -122,6 +121,9 @@ Records=len(r_data.axes[0])
 print(UF.TimeStamp(),'There are  ', Records, 'segments in the starting plate')
 
 r_data=r_data.iloc[StartDataCut:min(EndDataCut,Records)]
+
+print(r_data)
+exit()
 
 
 Records=len(r_data.axes[0])
