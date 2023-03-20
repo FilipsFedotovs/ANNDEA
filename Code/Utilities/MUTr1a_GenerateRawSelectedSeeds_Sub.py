@@ -164,11 +164,10 @@ for i in range(0,Steps):
   merged_data['STG']=np.sqrt((merged_data['x']-merged_data['e_x'])**2+((merged_data['y']-merged_data['e_y'])**2)) #Calculating the Euclidean distance between Track start hits
   merged_data['DynamicCut']=MaxSTG+(merged_data['SLG']*0.96)
 
-  merged_data.drop(merged_data.index[merged_data['SLG'] < 0], inplace = True) #Removed - it is a very stringent cut
+  #merged_data.drop(merged_data.index[merged_data['SLG'] < 0], inplace = True) #Removed - it is a very stringent cut
   merged_data.drop(merged_data.index[merged_data['SLG'] > MaxSLG], inplace = True) #Dropping the track segment combinations where the length of the gap between segments is too large
   merged_data.drop(merged_data.index[merged_data['STG'] > merged_data['DynamicCut']], inplace = True)
-  print(merged_data)
-  exit()
+
   merged_data.drop(['y','z','x','e_x','e_y','e_z','join_key','STG','SLG','DynamicCut'],axis=1,inplace=True) #Removing the information that we don't need anymore
   if merged_data.empty==False:
     merged_data.drop(merged_data.index[merged_data['Segment_1'] == merged_data['Segment_2']], inplace = True) #Removing the cases where Seed tracks are the same
