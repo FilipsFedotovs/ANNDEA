@@ -162,7 +162,7 @@ for i in range(0,Steps):
   merged_data['STG']=np.sqrt((merged_data['x']-merged_data['e_x'])**2+((merged_data['y']-merged_data['e_y'])**2)) #Calculating the Euclidean distance between Track start hits
   merged_data['DynamicCut']=MaxSTG+(merged_data['SLG']*0.96)
 
-  #merged_data.drop(merged_data.index[merged_data['SLG'] < 0], inplace = True) #Removed - it is a very stringent cut
+  merged_data.drop(merged_data.index[merged_data['SLG'] < 0], inplace = True) #Removed - it is a very stringent cut
   merged_data.drop(merged_data.index[merged_data['SLG'] > MaxSLG], inplace = True) #Dropping the track segment combinations where the length of the gap between segments is too large
   merged_data.drop(merged_data.index[merged_data['STG'] > merged_data['DynamicCut']], inplace = True)
   print(merged_data)
