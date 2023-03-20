@@ -86,10 +86,11 @@ data_end_header=data_end_header.reset_index()
 data_start_header=data_start_header.reset_index()
 data_end_header=data_end_header.rename(columns={"z": "e_z"})
 data_start_header=data_start_header.rename(columns={"z": "s_z"})
-print(data_end_header)
-print(data_start_header)
-exit()
+
 data_header=pd.merge(data_header, data_end_header, how="inner", on=["Rec_Seg_ID"]) #Shrinking the Track data so just a star hit for each track is present.
+data_header=pd.merge(data_header, data_start_header, how="inner", on=["Rec_Seg_ID"]) #Shrinking the Track data so just a star hit for each track is present.
+print(data_header)
+exit()
 #Doing a plate region cut for the Main Data
 #data_header.drop(data_header.index[data_header['e_z'] > (PlateZ+MaxSLG)], inplace = True) #Not applicable for TSU
 data_header.drop(data_header.index[data_header['z'] < PlateZ], inplace = True)
