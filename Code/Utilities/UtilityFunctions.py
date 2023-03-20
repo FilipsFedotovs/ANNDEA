@@ -403,10 +403,10 @@ class EMO:
       def PrepareSeedPrint(self,MM):
           __TempTrack=copy.deepcopy(self.Hits)
 
-          self.Resolution=MM.ModelParameters[11][3]
-          self.bX=int(round(MM.ModelParameters[11][0]/self.Resolution,0))
-          self.bY=int(round(MM.ModelParameters[11][1]/self.Resolution,0))
-          self.bZ=int(round(MM.ModelParameters[11][2]/self.Resolution,0))
+          self.Resolution=MM.ModelParameters[-1][3]
+          self.bX=int(round(MM.ModelParameters[-1][0]/self.Resolution,0))
+          self.bY=int(round(MM.ModelParameters[-1][1]/self.Resolution,0))
+          self.bZ=int(round(MM.ModelParameters[-1][2]/self.Resolution,0))
           self.H=(self.bX)*2
           self.W=(self.bY)*2
           self.L=(self.bZ)
@@ -490,8 +490,8 @@ class EMO:
                      __X.append(__hits[0])
                      __Y.append(__hits[1])
                      __Z.append(__hits[2])
-              __dUpX=MM.ModelParameters[11][0]-max(__X)
-              __dDownX=MM.ModelParameters[11][0]+min(__X)
+              __dUpX=MM.ModelParameters[-1][0]-max(__X)
+              __dDownX=MM.ModelParameters[-1][0]+min(__X)
               __dX=(__dUpX+__dDownX)/2
               __xshift=__dUpX-__dX
               __X=[]
@@ -500,8 +500,8 @@ class EMO:
                      __hits[0]=__hits[0]+__xshift
                      __X.append(__hits[0])
              ##########Y
-              __dUpY=MM.ModelParameters[11][1]-max(__Y)
-              __dDownY=MM.ModelParameters[11][1]+min(__Y)
+              __dUpY=MM.ModelParameters[-1][1]-max(__Y)
+              __dDownY=MM.ModelParameters[-1][1]+min(__Y)
               __dY=(__dUpY+__dDownY)/2
               __yshift=__dUpY-__dY
               __Y=[]
@@ -509,7 +509,7 @@ class EMO:
                  for __hits in __Tracks:
                      __hits[1]=__hits[1]+__yshift
                      __Y.append(__hits[1])
-              __min_scale=max(max(__X)/(MM.ModelParameters[11][0]-(2*self.Resolution)),max(__Y)/(MM.ModelParameters[11][1]-(2*self.Resolution)), max(__Z)/(MM.ModelParameters[11][2]-(2*self.Resolution)))
+              __min_scale=max(max(__X)/(MM.ModelParameters[-1][0]-(2*self.Resolution)),max(__Y)/(MM.ModelParameters[-1][1]-(2*self.Resolution)), max(__Z)/(MM.ModelParameters[-1][2]-(2*self.Resolution)))
               for __Tracks in __TempTrack:
                  for __hits in __Tracks:
                      __hits[0]=int(round(__hits[0]/__min_scale,0))
@@ -1690,13 +1690,13 @@ def GenerateModel(ModelMeta,TrainParams=None):
             OutputLayer=[]
             ImageLayer=[]
             for el in ModelMeta.ModelParameters:
-              if ModelMeta.ModelParameters.index(el)<=4 and len(el)>0:
+              if len(el)==7:
                  HiddenLayer.append(el)
-              elif ModelMeta.ModelParameters.index(el)<=9 and len(el)>0:
+              elif len(el)==3:
                  FullyConnectedLayer.append(el)
-              elif ModelMeta.ModelParameters.index(el)==10:
+              elif len(el)==2:
                  OutputLayer=el
-              elif ModelMeta.ModelParameters.index(el)==11:
+              elif len(el)==4:
                  ImageLayer=el
             H=int(round(ImageLayer[0]/ImageLayer[3],0))*2
             W=int(round(ImageLayer[1]/ImageLayer[3],0))*2
