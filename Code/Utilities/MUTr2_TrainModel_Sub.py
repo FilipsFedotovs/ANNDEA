@@ -77,11 +77,12 @@ def GNNtrain(model, Sample,optimizer):
     model.train()
     for data in Sample:
         out = model(data.x, data.edge_index, data.edge_attr, data.batch)
+        optimizer.zero_grad()
         # data.y = torch.argmax(data.y, dim=1)
         loss = criterion(out, data.y.long())
         loss.backward()  # Derive gradients.
         optimizer.step()  # Update parameters based on gradients.
-        optimizer.zero_grad()
+        
 
     return loss
 
@@ -91,10 +92,9 @@ def GNNvalidate(model, Sample):
     loss_accumulative = 0
     for data in Sample:
          out = model(data.x, data.edge_index, data.edge_attr, data.batch)
-        #  pred = out.argmax(dim=1)  # Use the class with the highest probability.
+         pred = out.argmax(dim=1)  # Use the class with the highest probability.
         #  y_index = data.y.argmax(dim=1)
-        #  correct += int((pred == y_index).sum())  # Check against ground-truth labels.
-         #data.y = torch.argmax(data.y, dim=1)
+         correct += int((pred == y_index).sum())  # Check against ground-truth labels.
          loss = criterion(out, data.y.long())
          loss_accumulative += float(loss)
     return (correct / len(Sample.dataset), loss_accumulative/len(Sample.dataset))
@@ -118,6 +118,8 @@ Model_Meta_Path=EOSsubModelDIR+'/'+ModelName+'_Meta'
 Model_Path=EOSsubModelDIR+'/'+ModelName
 ModelMeta=UF.PickleOperations(Model_Meta_Path, 'r', 'N/A')[0]
 ValSamples=UF.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_TRACK_SEEDS_OUTPUT.pkl','r', 'N/A')[0]
+print(ValSamples)
+exit()
 print(UF.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_TRACK_SEEDS_OUTPUT.pkl','r', 'N/A')[1])
 train_set=1
 if ModelMeta.ModelType=='CNN':
