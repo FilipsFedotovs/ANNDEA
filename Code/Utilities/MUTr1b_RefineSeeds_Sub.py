@@ -118,8 +118,6 @@ for s in range(0,limit):
 
      label=track[2]
      track=EMO(track[:2])
-
-
      if label:
          num_label = 1
      else:
@@ -134,7 +132,6 @@ for s in range(0,limit):
 
      keep_seed=True
      if track.TrackQualityCheck(MaxDOCA,MaxSLG,MaxSTG, MaxAngle):
-         qc+=1
          for m in range(len(Metas)):
              if track.FitSeed(Metas[m],Models[m])==False:
                 keep_seed=False
