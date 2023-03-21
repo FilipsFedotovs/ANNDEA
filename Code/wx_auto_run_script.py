@@ -13,7 +13,7 @@ model_parameters_dict_cnn={
 }
 
 fixed_option_dict_cnn = {
-    "TrainSampleID": "SND_RTr_MC1_Train_Data_Combined",
+    "TrainSampleID": "SND_RTr_MC1_Train_Data_Combined_LC",
     "ModelType": "CNN",
     "ModelArchitecture" : "CNN",
 }
@@ -27,7 +27,7 @@ model_parameters_dict_gcn={
 
 
 fixed_option_dict_gcn = {
-    "TrainSampleID": "SND_RTr_MC1_Train_Data_Combined",
+    "TrainSampleID": "SND_RTr_MC1_Train_Data_Combined_LC",
     "ModelType": "GNN",
     "ModelArchitecture" : "GCN-4N-FC",
 }
@@ -41,7 +41,7 @@ model_parameters_dict_gmm={
 }
 
 fixed_option_dict_gmm = {
-    "TrainSampleID": "SND_RTr_MC1_Train_Data_Combined",
+    "TrainSampleID": "SND_RTr_MC1_Train_Data_Combined_LC",
     "ModelType": "GNN",
     "ModelArchitecture" : "GMM-5N-FC",
 }
@@ -70,7 +70,7 @@ train_parameter_dict_cnn = {
 train_parameter_dict_gnn = {
     "learning rate": 0.0001,
     "Batch size": 4,
-    "Epochs": 32,
+    "Epochs": 64,
 }
 
 
