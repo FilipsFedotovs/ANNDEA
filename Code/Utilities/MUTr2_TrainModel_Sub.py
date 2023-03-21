@@ -208,14 +208,15 @@ def main(self):
         try:
             model=tf.keras.models.load_model(Model_Path)
             print(K.eval(model.optimizer.lr))
-            K.set_value(model.optimizer.learning_rate, TrainParams[1])
+            K.set_value(model.optimizer.learning_rate, TrainParams[0])
             print(K.eval(model.optimizer.lr))
-            exit()
+
         except:
              print(UF.TimeStamp(), bcolors.WARNING+"Model/state data files are missing, skipping this step..." +bcolors.ENDC)
              model = UF.GenerateModel(ModelMeta,TrainParams)
              print(K.eval(model.optimizer.lr))
              exit()
+        exit()
         model.summary()
         records=[]
         for epoch in range(0, TrainParams[2]):
