@@ -79,7 +79,7 @@ def GNNtrain(model, Sample,optimizer):
         out = model(data.x, data.edge_index, data.edge_attr, data.batch)
         optimizer.zero_grad()
         # data.y = torch.argmax(data.y, dim=1)
-        loss = criterion(out, data.y.long())
+        loss = criterion(torch.log(1e-20+out), data.y.long())
         loss.backward()  # Derive gradients.
         optimizer.step()  # Update parameters based on gradients.
         
@@ -96,7 +96,7 @@ def GNNvalidate(model, Sample):
         #  y_index = data.y.argmax(dim=1)
          y_index = data.y.long()
          correct += int((pred == y_index).sum())  # Check against ground-truth labels.
-         loss = criterion(out, y_index)
+         loss = criterion(torch.log(1e-20+out), y_index)
          loss_accumulative += float(loss)
     return (correct / len(Sample.dataset), loss_accumulative/len(Sample.dataset))
 
