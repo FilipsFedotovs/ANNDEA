@@ -1616,7 +1616,7 @@ def GenerateModel(ModelMeta,TrainParams=None):
                         self.conv2 = GCNConv(HiddenLayer[0][0],HiddenLayer[1][0])
                         self.conv3 = GCNConv(HiddenLayer[1][0],HiddenLayer[2][0])
                         self.lin = Linear(HiddenLayer[2][0],OutputLayer[1])
-                    self.softmax = Softmax(dim=-1)
+                    #self.softmax = Softmax(dim=-1)
 
                 def forward(self, x, edge_index, edge_attr, batch):
                     # 1. Obtain node embeddings
@@ -1634,7 +1634,7 @@ def GenerateModel(ModelMeta,TrainParams=None):
                     # 3. Apply a final classifier
                     x = F.dropout(x, p=0.5, training=self.training)
                     x = self.lin(x)
-                    x = self.softmax(x)
+                    #x = self.softmax(x)
                     return x
             return GCN()
          elif ModelMeta.ModelArchitecture=='GMM-5N-FC':
@@ -1656,7 +1656,7 @@ def GenerateModel(ModelMeta,TrainParams=None):
                         self.conv2 = GMMConv(HiddenLayer[0][0],HiddenLayer[1][0],dim=3,kernel_size=HiddenLayer[1][1])
                         self.conv3 = GMMConv(HiddenLayer[1][0],HiddenLayer[2][0],dim=3,kernel_size=HiddenLayer[2][1])
                         self.lin = Linear(HiddenLayer[2][0],OutputLayer[1])
-                    self.softmax = Softmax(dim=-1)
+                    #self.softmax = Softmax(dim=-1)
 
                 def forward(self, x, edge_index, edge_attr, batch):
                     # 1. Obtain node embeddings
@@ -1671,7 +1671,7 @@ def GenerateModel(ModelMeta,TrainParams=None):
                     # 3. Apply a final classifier
                     x = F.dropout(x, p=0.5, training=self.training)
                     x = self.lin(x)
-                    x = self.softmax(x)
+                    #x = self.softmax(x)
                     return x
             return GMM()
 

@@ -83,7 +83,7 @@ def GNNtrain(model, Sample,optimizer):
     model.train()
     for data in Sample:
         out = model(data.x, data.edge_index, data.edge_attr, data.batch)
-        loss = criterion(torch.log(1e-20+out), data.y)
+        loss = criterion(out, data.y.long())
         loss.backward()  # Derive gradients.
         optimizer.step()  # Update parameters based on gradients.
         optimizer.zero_grad()
@@ -97,9 +97,9 @@ def GNNvalidate(model, Sample):
     for data in Sample:
          out = model(data.x, data.edge_index, data.edge_attr, data.batch)
          pred = out.argmax(dim=1)  # Use the class with highest probability.
-         y_index = data.y.argmax(dim=1)
+         y_index = data.y.long()
          correct += int((pred == y_index).sum())  # Check against ground-truth labels.
-         loss = criterion(torch.log(1e-20+out), data.y)
+         loss = criterion(torch.log(1e-20+out), data.y.long())
          loss_accumulative += float(loss)
     return (correct / len(Sample.dataset), loss_accumulative/len(Sample.dataset))
 
@@ -153,7 +153,7 @@ if ModelMeta.ModelType=='CNN':
 
 elif ModelMeta.ModelType=='GNN':
        import torch
-       criterion = torch.nn.NLLLoss()
+       criterion = torch.nn.CrossEntropyLoss()
        if len(ModelMeta.TrainSessionsData)==0:
            TrainSamples=UF.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_TRACK_OUTPUT_1.pkl','r', 'N/A')[0]
            print(UF.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_TRACK_OUTPUT_1.pkl','r', 'N/A')[1])
