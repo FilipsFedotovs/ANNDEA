@@ -62,7 +62,6 @@ parser.add_argument('--RequestExtCPU',help="Would you like to request extra CPUs
 parser.add_argument('--JobFlavour',help="Specifying the length of the HTCondor job walltime. Currently at 'workday' which is 8 hours.", default='workday')
 parser.add_argument('--TrackID',help="What track name is used?", default='ANN_Track_ID')
 parser.add_argument('--BrickID',help="What brick ID name is used?", default='ANN_Brick_ID')
-
 parser.add_argument('--Mode', help='Script will continue from the last checkpoint, unless you want to start from the scratch, then type "Reset"',default='')
 parser.add_argument('--ModelName',help="What  models would you like to use?", default="[]")
 parser.add_argument('--Patience',help="How many checks to do before resubmitting the job?", default='15')
@@ -272,9 +271,6 @@ MaxSegments=Meta.MaxSegments
 MaxSeeds=Meta.MaxSeeds
 VetoMotherTrack=Meta.VetoMotherTrack
 MinHitsTrack=Meta.MinHitsTrack
-
-
-
 
 #The function bellow helps to monitor the HTCondor jobs and keep the submission flow
 def AutoPilot(wait_min, interval_min, max_interval_tolerance,program):
@@ -518,45 +514,45 @@ Program.append(prog_entry)
 # ###### Stage 3
 Program.append('Custom')
 
-###### Stage 4
-prog_entry=[]
-job_sets=[]
-JobSet=[]
-for i in range(len(JobSets)):
-    JobSet.append([])
-    for j in range(len(JobSets[i][3])):
-            JobSet[i].append(JobSets[i][3][j])
-if type(JobSet) is int:
-            TotJobs=JobSet
-elif type(JobSet[0]) is int:
-            TotJobs=np.sum(JobSet)
-elif type(JobSet[0][0]) is int:
-            for lp in JobSet:
-                TotJobs+=np.sum(lp)
+# ###### Stage 4
+# prog_entry=[]
+# job_sets=[]
+# JobSet=[]
+# for i in range(len(JobSets)):
+#     JobSet.append([])
+#     for j in range(len(JobSets[i][3])):
+#             JobSet[i].append(JobSets[i][3][j])
+# if type(JobSet) is int:
+#             TotJobs=JobSet
+# elif type(JobSet[0]) is int:
+#             TotJobs=np.sum(JobSet)
+# elif type(JobSet[0][0]) is int:
+#             for lp in JobSet:
+#                 TotJobs+=np.sum(lp)
 
-prog_entry.append(' Sending tracks to the HTCondor, so track segment combination pairs can be formed...')
-prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','RefinedSeeds','RUTr1b','.pkl',RecBatchID,JobSet,'RUTr1b_RefineSeeds_Sub.py'])
-prog_entry.append([" --MaxSTG ", " --MaxSLG ", " --MaxDOCA ", " --MaxAngle "," --ModelName "])
-prog_entry.append([MaxSTG, MaxSLG, MaxDOCA, MaxAngle,'"'+str(ModelName)+'"'])
-prog_entry.append(TotJobs)
-prog_entry.append(LocalSub)
-prog_entry.append(['',''])
-if Mode=='RESET':
-        print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Delete'))
-    #Setting up folders for the output. The reconstruction of just one brick can easily generate >100k of files. Keeping all that blob in one directory can cause problems on lxplus.
-print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Create'))
-
-
+# prog_entry.append(' Sending tracks to the HTCondor, so track segment combination pairs can be formed...')
+# prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','RefinedSeeds','RUTr1b','.pkl',RecBatchID,JobSet,'RUTr1b_RefineSeeds_Sub.py'])
+# prog_entry.append([" --MaxSTG ", " --MaxSLG ", " --MaxDOCA ", " --MaxAngle "," --ModelName "])
+# prog_entry.append([MaxSTG, MaxSLG, MaxDOCA, MaxAngle,'"'+str(ModelName)+'"'])
+# prog_entry.append(TotJobs)
+# prog_entry.append(LocalSub)
+# prog_entry.append(['',''])
+# if Mode=='RESET':
+#         print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Delete'))
+#     #Setting up folders for the output. The reconstruction of just one brick can easily generate >100k of files. Keeping all that blob in one directory can cause problems on lxplus.
+# print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Create'))
 
 
-Program.append(prog_entry)
-# ###### Stage 5
-Program.append('Custom')
 
-#Stage 6
-Program.append('Custom')
 
-Program.append('Custom')
+# Program.append(prog_entry)
+# # ###### Stage 5
+# Program.append('Custom')
+#
+# #Stage 6
+# Program.append('Custom')
+#
+# Program.append('Custom')
 
 
 while Status<len(Program):
