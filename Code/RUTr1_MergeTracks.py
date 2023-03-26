@@ -509,37 +509,38 @@ if Mode=='RESET':
 print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Create'))
 Program.append(prog_entry)
 
-# ###### Stage 3
-# ###### Stage 1
+
 Program.append('Custom - PickR')
 
-# ###### Stage 4
-# prog_entry=[]
-# job_sets=[]
-# JobSet=[]
-# for i in range(len(JobSets)):
-#     JobSet.append([])
-#     for j in range(len(JobSets[i][3])):
-#             JobSet[i].append(JobSets[i][3][j])
-# if type(JobSet) is int:
-#             TotJobs=JobSet
-# elif type(JobSet[0]) is int:
-#             TotJobs=np.sum(JobSet)
-# elif type(JobSet[0][0]) is int:
-#             for lp in JobSet:
-#                 TotJobs+=np.sum(lp)
+####### Stage 4
+print(ModelName)
+exit()
+prog_entry=[]
+job_sets=[]
+JobSet=[]
+for i in range(len(JobSets)):
+    JobSet.append([])
+    for j in range(len(JobSets[i][3])):
+            JobSet[i].append(JobSets[i][3][j])
+if type(JobSet) is int:
+            TotJobs=JobSet
+elif type(JobSet[0]) is int:
+            TotJobs=np.sum(JobSet)
+elif type(JobSet[0][0]) is int:
+            for lp in JobSet:
+                TotJobs+=np.sum(lp)
 
-# prog_entry.append(' Sending tracks to the HTCondor, so track segment combination pairs can be formed...')
-# prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','RefinedSeeds','RUTr1b','.pkl',RecBatchID,JobSet,'RUTr1b_RefineSeeds_Sub.py'])
-# prog_entry.append([" --MaxSTG ", " --MaxSLG ", " --MaxDOCA ", " --MaxAngle "," --ModelName "])
-# prog_entry.append([MaxSTG, MaxSLG, MaxDOCA, MaxAngle,'"'+str(ModelName)+'"'])
-# prog_entry.append(TotJobs)
-# prog_entry.append(LocalSub)
-# prog_entry.append(['',''])
-# if Mode=='RESET':
-#         print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Delete'))
-#     #Setting up folders for the output. The reconstruction of just one brick can easily generate >100k of files. Keeping all that blob in one directory can cause problems on lxplus.
-# print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Create'))
+prog_entry.append(' Sending tracks to the HTCondor, so track segment combination pairs can be formed...')
+prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','RefinedSeeds','RUTr1b','.pkl',RecBatchID,JobSet,'RUTr1b_RefineSeeds_Sub.py'])
+prog_entry.append([" --MaxSTG ", " --MaxSLG ", " --MaxDOCA ", " --MaxAngle "," --ModelName "])
+prog_entry.append([MaxSTG, MaxSLG, MaxDOCA, MaxAngle,'"'+str(ModelName)+'"'])
+prog_entry.append(TotJobs)
+prog_entry.append(LocalSub)
+prog_entry.append(['',''])
+if Mode=='RESET':
+        print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Delete'))
+    #Setting up folders for the output. The reconstruction of just one brick can easily generate >100k of files. Keeping all that blob in one directory can cause problems on lxplus.
+print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Create'))
 
 
 
