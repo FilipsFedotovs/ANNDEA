@@ -557,7 +557,8 @@ Program.append('Custom - Refine1')
 
 while Status<len(Program):
     print(Program)
-    print(Program[Status][:6])
+    print(Program[Status])
+    
     x=input()
     if Program[Status][:6]!='Custom':
         #Standard process here
