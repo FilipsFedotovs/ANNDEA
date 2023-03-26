@@ -472,8 +472,6 @@ if Log:
     Program.append(prog_entry)
 
 else:
-    Program.append('Custom')
-    Program.append('Custom')
     UpdateStatus(2)
     Status=2
 
@@ -481,7 +479,7 @@ if Mode=='CLEANUP':
     UpdateStatus(5)
     Status=5
 # ###### Stage 1
-Program.append('Custom')
+Program.append('Custom - PickE')
 
 # ###### Stage 2
 prog_entry=[]
@@ -512,7 +510,8 @@ print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Create'))
 Program.append(prog_entry)
 
 # ###### Stage 3
-Program.append('Custom')
+# ###### Stage 1
+Program.append('Custom - PickR')
 
 # ###### Stage 4
 # prog_entry=[]
@@ -556,7 +555,7 @@ Program.append('Custom')
 
 
 while Status<len(Program):
-    if Program[Status]!='Custom':
+    if Program[Status][:6]!='Custom':
         #Standard process here
         Result=StandardProcess(Program,Status,FreshStart)
         if Result[0]:
@@ -564,7 +563,7 @@ while Status<len(Program):
         else:
              Status=8
              break
-    elif Status==1:
+    elif Program[Status]=='Custom - PickE':
         print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
         print(UF.TimeStamp(),bcolors.BOLD+'Status ',Status,': Collecting and de-duplicating the results from previous stage')
         print(UF.TimeStamp(),'Loading preselected data from ',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
@@ -616,7 +615,7 @@ while Status<len(Program):
         print(UF.TimeStamp(),bcolors.OKGREEN+'Stage',Status,' has successfully completed'+bcolors.ENDC)
         UpdateStatus(2)
 
-    elif Status==3:
+    elif Program[Status]=='Custom - PickR':
         print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
         print(UF.TimeStamp(),bcolors.BOLD+'Stage '+str(Status)+':'+bcolors.ENDC+' Collecting and de-duplicating the results from stage 2')
         min_i=0
