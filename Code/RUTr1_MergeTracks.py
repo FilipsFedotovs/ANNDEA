@@ -513,8 +513,6 @@ Program.append(prog_entry)
 Program.append('Custom - PickR')
 
 ####### Stage 4
-print(ModelName)
-exit()
 prog_entry=[]
 job_sets=[]
 JobSet=[]
@@ -532,8 +530,8 @@ elif type(JobSet[0][0]) is int:
 
 prog_entry.append(' Sending tracks to the HTCondor, so track segment combination pairs can be formed...')
 prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','RefinedSeeds','RUTr1b','.pkl',RecBatchID,JobSet,'RUTr1b_RefineSeeds_Sub.py'])
-prog_entry.append([" --MaxSTG ", " --MaxSLG ", " --MaxDOCA ", " --MaxAngle "," --ModelName "])
-prog_entry.append([MaxSTG, MaxSLG, MaxDOCA, MaxAngle,'"'+str(ModelName)+'"'])
+prog_entry.append([" --MaxSTG ", " --MaxSLG ", " --MaxDOCA ", " --MaxAngle "," --ModelName "," --FirstTime "])
+prog_entry.append([MaxSTG, MaxSLG, MaxDOCA, MaxAngle,'"'+str(ModelName[0])+'"', 'True'])
 prog_entry.append(TotJobs)
 prog_entry.append(LocalSub)
 prog_entry.append(['',''])
@@ -542,6 +540,8 @@ if Mode=='RESET':
     #Setting up folders for the output. The reconstruction of just one brick can easily generate >100k of files. Keeping all that blob in one directory can cause problems on lxplus.
 print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Create'))
 
+###### Stage 5
+Program.append('Custom - Refine1')
 
 
 
@@ -715,7 +715,7 @@ while Status<len(Program):
         FreshStart=False
         print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(Status)+' has successfully completed'+bcolors.ENDC)
         UpdateStatus(4)
-    elif Status==5:
+    elif Program[Status]=='Custom - Refine1':
         print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
         print(UF.TimeStamp(),bcolors.BOLD+'Stage '+str(Status)+':'+bcolors.ENDC+' Analysing the fitted seeds')
         JobSet=[]
