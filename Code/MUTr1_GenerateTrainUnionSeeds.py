@@ -269,6 +269,7 @@ def StandardProcess(program,status,freshstart):
                                     program[status][1][9],
                                     False,
                                     program[status][6])
+        print(program)
         print(bad_pop)
         exit()
         if len(bad_pop)==0:
