@@ -163,7 +163,7 @@ for i in range(0,Steps):
   merged_data['SLG']=merged_data['z']-merged_data['e_z'] #Calculating the Euclidean distance between Track start hits
   merged_data['STG']=np.sqrt((merged_data['x']-merged_data['e_x'])**2+((merged_data['y']-merged_data['e_y'])**2)) #Calculating the Euclidean distance between Track start hits
 
-  merged_data['DynamicCut']=abs(MaxSTG+(merged_data['SLG']*0.96))
+  merged_data['DynamicCut']=MaxSTG+(abs(merged_data['SLG'])*0.96)
 
   merged_data.drop(merged_data.index[merged_data['SLG'] < -MaxSLG], inplace = True) #Removed - it is a very stringent cut
   print(merged_data)
