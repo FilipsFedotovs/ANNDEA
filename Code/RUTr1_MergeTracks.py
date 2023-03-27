@@ -323,14 +323,14 @@ def StandardProcess(program,status,freshstart):
                                     program[status][1][9],
                                     False,
                                     program[status][6])
-        print(program[status][4])
-        exit()
+
+
         if len(bad_pop)==0:
              print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
              UpdateStatus(status+1)
              return True,False
 
-        
+
 
         elif (program[status][4])==len(bad_pop):
                  bad_pop=UF.CreateCondorJobs(program[status][1][0],
@@ -368,7 +368,7 @@ def StandardProcess(program,status,freshstart):
 
 
         elif len(bad_pop)>0:
-            if freshstart:
+            # if freshstart:
                    print(UF.TimeStamp(),bcolors.WARNING+'Warning, there are still', len(bad_pop), 'HTCondor jobs remaining'+bcolors.ENDC)
                    print(bcolors.BOLD+'If you would like to wait and exit please enter E'+bcolors.ENDC)
                    print(bcolors.BOLD+'If you would like to wait please enter enter the maximum wait time in minutes'+bcolors.ENDC)
@@ -406,24 +406,24 @@ def StandardProcess(program,status,freshstart):
                       else:
                           print(UF.TimeStamp(),bcolors.FAIL+'Stage '+str(status)+' is uncompleted...'+bcolors.ENDC)
                           return False,False
-            else:
-                      _cnt=0
-                      for bp in bad_pop:
-                           if _cnt>SubGap:
-                              print(UF.TimeStamp(),'Pausing submissions for  ',str(int(SubPause/60)), 'minutes to relieve congestion...',bcolors.ENDC)
-                              time.sleep(SubPause)
-                              _cnt=0
-                           UF.SubmitJobs2Condor(bp,program[status][5],RequestExtCPU,JobFlavour)
-                           _cnt+=bp[6]
-                      if program[status][5]:
-                           print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
-                           return True,False
-                      elif AutoPilot(600,time_int,Patience,program[status]):
-                           print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+ 'has successfully completed'+bcolors.ENDC)
-                           return True,False
-                      else:
-                          print(UF.TimeStamp(),bcolors.FAIL+'Stage '+str(status)+' is uncompleted...'+bcolors.ENDC)
-                          return False,False
+            # else:
+            #           _cnt=0
+            #           for bp in bad_pop:
+            #                if _cnt>SubGap:
+            #                   print(UF.TimeStamp(),'Pausing submissions for  ',str(int(SubPause/60)), 'minutes to relieve congestion...',bcolors.ENDC)
+            #                   time.sleep(SubPause)
+            #                   _cnt=0
+            #                UF.SubmitJobs2Condor(bp,program[status][5],RequestExtCPU,JobFlavour)
+            #                _cnt+=bp[6]
+            #           if program[status][5]:
+            #                print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
+            #                return True,False
+            #           elif AutoPilot(600,time_int,Patience,program[status]):
+            #                print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+ 'has successfully completed'+bcolors.ENDC)
+            #                return True,False
+            #           else:
+            #               print(UF.TimeStamp(),bcolors.FAIL+'Stage '+str(status)+' is uncompleted...'+bcolors.ENDC)
+            #               return False,False
 
 def UpdateStatus(status):
     Meta.UpdateStatus(status)
