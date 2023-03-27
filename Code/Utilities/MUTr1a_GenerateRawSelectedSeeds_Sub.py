@@ -179,7 +179,8 @@ for i in range(0,Steps):
 
   print(merged_data_pos)
   print(merged_data_neg)
-  exit()
+  x=input()
+  merged_data=pd.concat([merged_data_pos,merged_data_neg])
 
 
 
