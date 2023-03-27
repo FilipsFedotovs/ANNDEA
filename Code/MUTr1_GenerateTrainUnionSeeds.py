@@ -209,7 +209,8 @@ TotJobs=0
 for j in range(0,len(JobSets)):
           for sj in range(0,int(JobSets[j][2])):
               TotJobs+=1
-
+print(JobSets)
+exit()
 # ########################################     Preset framework parameters    #########################################
 FreshStart=True
 Program=[]
