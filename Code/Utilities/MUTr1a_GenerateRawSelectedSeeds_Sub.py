@@ -166,12 +166,21 @@ for i in range(0,Steps):
   merged_data['DynamicCut']=MaxSTG+(abs(merged_data['SLG'])*0.96)
 
   merged_data.drop(merged_data.index[merged_data['SLG'] < -MaxSLG], inplace = True) #Removed - it is a very stringent cut
-  print(merged_data)
+
   merged_data.drop(merged_data.index[merged_data['SLG'] > MaxSLG], inplace = True) #Dropping the track segment combinations where the length of the gap between segments is too large
 
-  merged_data.drop(merged_data.index[merged_data['STG'] > merged_data['DynamicCut']], inplace = True)
-  print(merged_data)
+  merged_data_pos=merged_data.drop(merged_data.index[merged_data['SLG'] < 0])
+
+  merged_data_neg=merged_data.drop(merged_data.index[merged_data['SLG'] >= 0])
+
+  print(merged_data_pos)
+  print(merged_data_neg)
   exit()
+
+
+  merged_data.drop(merged_data.index[merged_data['STG'] > merged_data['DynamicCut']], inplace = True)
+
+
   merged_data.drop(['y','z','x','e_x','e_y','e_z','join_key','STG','SLG','DynamicCut'],axis=1,inplace=True) #Removing the information that we don't need anymore
   if merged_data.empty==False:
     merged_data.drop(merged_data.index[merged_data['Segment_1'] == merged_data['Segment_2']], inplace = True) #Removing the cases where Seed tracks are the same
