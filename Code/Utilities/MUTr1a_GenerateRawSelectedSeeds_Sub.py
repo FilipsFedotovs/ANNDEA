@@ -173,13 +173,11 @@ for i in range(0,Steps):
 
   merged_data_neg=merged_data.drop(merged_data.index[merged_data['SLG'] >= 0])
 
-  merged_data_pos.drop(merged_data_pos.index[merged_data_pos['STG'] > merged_data_pos['DynamicCut']], inplace = True)
+  merged_data_pos.drop(merged_data_pos.index[merged_data_pos['STG'] > merged_data_pos['DynamicCut']], inplace = True) #If the tracks don't overlap we allow some deviation which increase with the gap size
 
-  merged_data_neg.drop(merged_data_neg.index[merged_data_neg['STG'] > MaxSTG], inplace = True)
+  merged_data_neg.drop(merged_data_neg.index[merged_data_neg['STG'] > MaxSTG], inplace = True) #If tracks overlap we keep the minimum STG
 
-  print(merged_data_pos)
-  print(merged_data_neg)
-  x=input()
+
   merged_data=pd.concat([merged_data_pos,merged_data_neg])
 
 
