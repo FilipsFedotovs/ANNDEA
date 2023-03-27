@@ -209,8 +209,7 @@ TotJobs=0
 for j in range(0,len(JobSets)):
           for sj in range(0,int(JobSets[j][2])):
               TotJobs+=1
-print(JobSets)
-exit()
+
 # ########################################     Preset framework parameters    #########################################
 FreshStart=True
 Program=[]
@@ -270,6 +269,8 @@ def StandardProcess(program,status,freshstart):
                                     program[status][1][9],
                                     False,
                                     program[status][6])
+        print(bad_pop)
+        exit()
         if len(bad_pop)==0:
              print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
              return True,False
