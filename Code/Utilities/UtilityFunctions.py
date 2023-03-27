@@ -399,7 +399,22 @@ class EMO:
           else:
                 raise ValueError("Method 'DecorateTrackGeoInfo' works only if 'Decorate' method has been acted upon the seed before")
       def TrackQualityCheck(self,MaxDoca,MaxSLG, MaxSTG,MaxAngle):
-                    return (self.DOCA<=MaxDoca and self.SLG>=-MaxSLG and self.SLG<=MaxSLG and self.STG<=abs(MaxSTG+(self.SLG*0.96)) and abs(self.Opening_Angle)<=MaxAngle)
+                    if self.DOCA>MaxDoca:
+                        return False
+                    else:
+                        if abs(self.Opening_Angle)>MaxAngle:
+                            return False
+                        else:
+                            if self.SLG>=0:
+                                if self.SLG>MaxSLG:
+                                   return False
+                                else:
+                                    return self.STG<=MaxSTG+(self.SLG*0.96)
+                            else:
+                                if self.SLG<-MaxSLG:
+                                   return False
+                                else:
+                                    return self.STG<=MaxSTG
 
       def PrepareSeedPrint(self,MM):
           __TempTrack=copy.deepcopy(self.Hits)
