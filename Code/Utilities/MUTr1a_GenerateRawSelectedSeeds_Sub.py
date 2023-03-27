@@ -175,6 +175,8 @@ for i in range(0,Steps):
 
   merged_data_pos.drop(merged_data_pos.index[merged_data_pos['STG'] > merged_data_pos['DynamicCut']], inplace = True)
 
+  merged_data_neg.drop(merged_data_neg.index[merged_data_neg['STG'] > MaxSTG], inplace = True)
+
   print(merged_data_pos)
   print(merged_data_neg)
   exit()
