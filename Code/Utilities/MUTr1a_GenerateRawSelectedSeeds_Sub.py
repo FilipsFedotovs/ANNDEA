@@ -173,12 +173,14 @@ for i in range(0,Steps):
 
   merged_data_neg=merged_data.drop(merged_data.index[merged_data['SLG'] >= 0])
 
+  merged_data_pos.drop(merged_data.index[merged_data['STG'] > merged_data['DynamicCut']], inplace = True)
+
   print(merged_data_pos)
   print(merged_data_neg)
   exit()
 
 
-  merged_data.drop(merged_data.index[merged_data['STG'] > merged_data['DynamicCut']], inplace = True)
+
 
 
   merged_data.drop(['y','z','x','e_x','e_y','e_z','join_key','STG','SLG','DynamicCut'],axis=1,inplace=True) #Removing the information that we don't need anymore
