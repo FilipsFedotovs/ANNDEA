@@ -323,6 +323,8 @@ def StandardProcess(program,status,freshstart):
                                     program[status][1][9],
                                     False,
                                     program[status][6])
+        print(len(bad_pop))
+        exit()
         if len(bad_pop)==0:
              print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
              UpdateStatus(status+1)
@@ -443,8 +445,8 @@ print(UF.TimeStamp(),'Current status has a stage',Status,bcolors.ENDC)
 
 
 
-UpdateStatus(0)
-Status=0
+# UpdateStatus(0)
+# Status=0
 ################ Set the execution sequence for the script
 Program=[]
 
