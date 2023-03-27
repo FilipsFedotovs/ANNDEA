@@ -323,14 +323,15 @@ def StandardProcess(program,status,freshstart):
                                     program[status][1][9],
                                     False,
                                     program[status][6])
-
+        print(program[status][4])
+        exit()
         if len(bad_pop)==0:
              print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
              UpdateStatus(status+1)
              return True,False
 
-        print(program[status][4])
-        exit()
+        
+
         elif (program[status][4])==len(bad_pop):
                  bad_pop=UF.CreateCondorJobs(program[status][1][0],
                                     program[status][1][1],
