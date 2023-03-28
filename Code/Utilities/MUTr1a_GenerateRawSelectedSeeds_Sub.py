@@ -165,7 +165,7 @@ for i in range(0,Steps):
 
   merged_data['DynamicCut']=MaxSTG+(abs(merged_data['SLG'])*0.96)
 
-  merged_data.drop(merged_data.index[merged_data['SLG'] < -MaxSLG], inplace = True) #Removed - it is a very stringent cut
+  #merged_data.drop(merged_data.index[merged_data['SLG'] < -MaxSLG], inplace = True) #Removed - it is a very stringent cut
 
   merged_data.drop(merged_data.index[merged_data['SLG'] > MaxSLG], inplace = True) #Dropping the track segment combinations where the length of the gap between segments is too large
 
