@@ -1851,6 +1851,8 @@ def CreateCondorJobs(AFS,EOS,PY,path,o,pfx,sfx,ID,loop_params,OptionHeader,Optio
         from alive_progress import alive_bar
         bad_pop=[]
         TotJobs=0
+        print(loop_params)
+        exit()
         if type(loop_params) is int:
             nest_lvl=1
             TotJobs=loop_params
