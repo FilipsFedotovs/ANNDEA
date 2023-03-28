@@ -241,8 +241,6 @@ def AutoPilot(wait_min, interval_min, max_interval_tolerance,program):
                                     program[1][9],
                                     False,
                                     program[6])
-         print(bad_pop)
-         print(len(bad_pop))
          if len(bad_pop)>0:
                print(UF.TimeStamp(),bcolors.WARNING+'Autopilot status update: There are still', len(bad_pop), 'HTCondor jobs remaining'+bcolors.ENDC)
                if interval%max_interval_tolerance==0:
