@@ -1867,6 +1867,7 @@ def CreateCondorJobs(AFS,EOS,PY,path,o,pfx,sfx,ID,loop_params,OptionHeader,Optio
         with alive_bar(TotJobs,force_tty=True, title='Checking the results from HTCondor') as bar:
              if nest_lvl==2:
                  print('nest 2')
+                 print(loop_params)
                  exit()
                  for i in range(len(loop_params)):
                      for j in range(loop_params[i]):
@@ -1878,11 +1879,9 @@ def CreateCondorJobs(AFS,EOS,PY,path,o,pfx,sfx,ID,loop_params,OptionHeader,Optio
                                MSGName = AFS + '/HTCondor/MSG/Temp_'+pfx+'_'+ID+'_'+str(i)+'/MSG_'+pfx+'_'+ ID+'_' + str(i) + '_' + str(j)
                                ScriptName = AFS + '/Code/Utilities/'+Sub_File
                                if os.path.isfile(required_output_file_location)!=True:
-                                  bad_pop.append([OptionHeader+[' --i ', ' --j ', ' --p ', ' --o ',' --pfx ', ' --sfx ', Exception[0]], OptionLine+[i, j, path,o, pfx, sfx, Exception[1][j][0]], SHName, SUBName, MSGName, ScriptName, 1, 'ANNDEA-'+pfx+'-'+ID, Log,GPU])
+                                  bad_pop.append([OptionHeader+[' --i ', ' --j ', ' --p ', ' --o ',' --pfx ', ' --sfx ', Exception[0]], OptionLine+[i, j, path,o, pfx, sfx, Exception[1][j][0]], SHName, SUBName, MSGName, ScriptName, 1, 'ANNDEA-'+pfx+'-'+ID, Log, GPU])
 
              if nest_lvl==3:
-                 print('nest 3')
-                 exit()
                  for i in range(len(loop_params)):
                      for j in range(len(loop_params[i])):
                          for k in range(loop_params[i][j]):
