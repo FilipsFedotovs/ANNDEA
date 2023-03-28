@@ -1864,10 +1864,14 @@ def CreateCondorJobs(AFS,EOS,PY,path,o,pfx,sfx,ID,loop_params,OptionHeader,Optio
         OptionHeader+=[' --EOS '," --AFS ", " --PY ", " --BatchID "]
         OptionLine+=[EOS, AFS, PY, ID]
         TotJobs=int(TotJobs)
+
         with alive_bar(TotJobs,force_tty=True, title='Checking the results from HTCondor') as bar:
              if nest_lvl==2:
                  for i in range(len(loop_params)):
+                     print(loop_params[i])
+                     exit()
                      for j in range(int(loop_params[i][2])):
+
                                required_output_file_location=EOS+'/'+path+'/Temp_'+pfx+'_'+ID+'_'+str(i)+'/'+pfx+'_'+ID+'_'+o+'_'+str(i)+'_'+str(j)+sfx
                                bar.text = f'-> Checking whether the file : {required_output_file_location}, exists...'
                                bar()
