@@ -1864,7 +1864,7 @@ def CreateCondorJobs(AFS,EOS,PY,path,o,pfx,sfx,ID,loop_params,OptionHeader,Optio
         elif type(loop_params[0][0]) is float:
             nest_lvl=2
             for lp in loop_params:
-                TotJobs+=np.sum(*int(lp[2]))
+                TotJobs+=np.sum(int(lp[2]))
         print(TotJobs)
         print(nest_lvl)
         exit()
