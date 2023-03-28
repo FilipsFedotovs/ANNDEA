@@ -1861,10 +1861,6 @@ def CreateCondorJobs(AFS,EOS,PY,path,o,pfx,sfx,ID,loop_params,OptionHeader,Optio
             nest_lvl=3
             for lp in loop_params:
                 TotJobs+=np.sum(lp)
-        elif type(loop_params[0][0]) is float:
-            nest_lvl=2
-            for lp in loop_params:
-                TotJobs+=np.sum(int(lp[2]))
         OptionHeader+=[' --EOS '," --AFS ", " --PY ", " --BatchID "]
         OptionLine+=[EOS, AFS, PY, ID]
         TotJobs=int(TotJobs)

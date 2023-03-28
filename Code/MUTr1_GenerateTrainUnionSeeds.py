@@ -390,7 +390,7 @@ elif type(job_sets[0][0]) is int:
                             TotJobs+=np.sum(lp)
 
 prog_entry.append(' Sending hit cluster to the HTCondor, so tack segment combination pairs can be formed...')
-prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/','RawSeedsRes','MUTr1a','.csv',TrainSampleID,JobSets,'MUTr1a_GenerateRawSelectedSeeds_Sub.py'])
+prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/','RawSeedsRes','MUTr1a','.csv',TrainSampleID,job_sets,'MUTr1a_GenerateRawSelectedSeeds_Sub.py'])
 prog_entry.append([ " --MaxSegments ", " --MaxSLG "," --MaxSTG "," --VetoMotherTrack "])
 prog_entry.append([MaxSegments, MaxSLG, MaxSTG,'"'+str(VetoMotherTrack)+'"'])
 prog_entry.append(TotJobs)
