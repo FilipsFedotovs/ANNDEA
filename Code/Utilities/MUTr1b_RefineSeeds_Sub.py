@@ -134,9 +134,10 @@ for s in range(0,limit):
      print('Doca:',track.DOCA)
      print('SLG:',track.SLG)
      print('STG:',track.STG)
-     print('MaxSTG:',MaxSTG+(track.SLG*0.96))
-     print(track.Opening_Angle)
+     print('MaxSTG:',MaxSTG+(abs(track.SLG)*0.96))
+     print('Angle',track.Opening_Angle)
      print(track.TrackQualityCheck(MaxDOCA,MaxSLG,MaxSTG, MaxAngle))
+     print('Label',track.Label)
      x=input()
      if track.TrackQualityCheck(MaxDOCA,MaxSLG,MaxSTG, MaxAngle):
          for m in range(len(Metas)):
