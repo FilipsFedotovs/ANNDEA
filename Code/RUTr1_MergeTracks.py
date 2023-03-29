@@ -730,6 +730,63 @@ while Status<len(Program):
                 if Result:
                     print('WiP')
                     exit()
+                    print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
+                    print(UF.TimeStamp(),bcolors.BOLD+'Stage '+str(Status)+':'+bcolors.ENDC+' Analysing the fitted seeds')
+                    JobSet=[]
+                    for i in range(len(JobSets)):
+                         JobSet.append([])
+                         for j in range(len(JobSets[i][3])):
+                             JobSet[i].append(JobSets[i][3][j])
+                    base_data = None
+                    with alive_bar(len(JobSets),force_tty=True, title='Checking the results from HTCondor') as bar:
+                     for i in range(0,len(JobSet)):
+                            bar()
+                            for j in range(len(JobSet[i])):
+                                     for k in range(JobSet[i][j]):
+                                          required_output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RUTr1b_'+RecBatchID+'_'+str(i)+'/RUTr1b_'+RecBatchID+'_RefinedSeeds_'+str(i)+'_'+str(j)+'_'+str(k)+'.pkl'
+                                          new_data=UF.PickleOperations(required_output_file_location,'r','N/A')[0]
+                                          print(UF.TimeStamp(),'Set',str(i)+'_'+str(j)+'_'+str(k), 'contains', len(new_data), 'seeds',bcolors.ENDC)
+                                          if base_data == None:
+                                                base_data = new_data
+                                          else:
+                                                base_data+=new_data
+                    Records=len(base_data)
+                    print(UF.TimeStamp(),'The output contains', Records, 'raw images',bcolors.ENDC)
+
+                    base_data=list(set(base_data))
+                    Records_After_Compression=len(base_data)
+                    if Records>0:
+                                          Compression_Ratio=int((Records_After_Compression/Records)*100)
+                    else:
+                                          CompressionRatio=0
+                    print(UF.TimeStamp(),'The output compression ratio is ', Compression_Ratio, ' %',bcolors.ENDC)
+                    output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1c_'+RecBatchID+'_Fit_Seeds.pkl'
+                    print(UF.PickleOperations(output_file_location,'w',base_data)[1])
+                    if Log:
+                         print(UF.TimeStamp(),'Initiating the logging...')
+                         eval_data_file=EOS_DIR+'/ANNDEA/Data/TEST_SET/EUTr1b_'+RecBatchID+'_SEED_TRUTH_COMBINATIONS.csv'
+                         eval_data=pd.read_csv(eval_data_file,header=0,usecols=['Segment_1','Segment_2'])
+                         eval_data["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(eval_data['Segment_1'], eval_data['Segment_2'])]
+                         eval_data.drop(['Segment_1'],axis=1,inplace=True)
+                         eval_data.drop(['Segment_2'],axis=1,inplace=True)
+                         rec_no=0
+                         eval_no=0
+                         rec_list=[]
+                         for rd in base_data:
+                             rec_list.append([rd.Header[0],rd.Header[1]])
+                         del base_data
+                         rec = pd.DataFrame(rec_list, columns = ['Segment_1','Segment_2'])
+                         rec["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(rec['Segment_1'], rec['Segment_2'])]
+                         rec.drop(['Segment_1'],axis=1,inplace=True)
+                         rec.drop(['Segment_2'],axis=1,inplace=True)
+                         rec_eval=pd.merge(eval_data, rec, how="inner", on=['Seed_ID'])
+                         eval_no=len(rec_eval)
+                         rec_no=(len(rec)-len(rec_eval))
+                         UF.LogOperations(EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv', 'a', [[3,'ANN Seed Fit',rec_no,eval_no,eval_no/(rec_no+eval_no),eval_no/len(eval_data)]])
+                         print(UF.TimeStamp(), bcolors.OKGREEN+"The log data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv'+bcolors.ENDC)
+                    del new_data
+                    print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(Status)+' has successfully completed'+bcolors.ENDC)
+                    UpdateStatus(Status+1)
 
 
 
