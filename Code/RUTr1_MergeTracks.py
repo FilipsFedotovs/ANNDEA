@@ -684,8 +684,6 @@ while Status<len(Program):
         FreshStart=False
         print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(Status)+' has successfully completed'+bcolors.ENDC)
         UpdateStatus(4)
-    print(Program[Status])
-
     else:
         for md in range(len(ModelName)):
             if Program[Status]==md:
