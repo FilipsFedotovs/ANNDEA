@@ -136,7 +136,7 @@ if FirstTime:
            continue
          keep_seed=True
          if track.TrackQualityCheck(MaxDOCA,MaxSLG,MaxSTG, MaxAngle):
-                 if track.FitSeed(ModelMeta,model)==False:
+                 #if track.FitSeed(ModelMeta,model)==False:
                     GoodTracks.append(track)
          else:
              del track
