@@ -547,7 +547,7 @@ Program.append('Custom')
 
 
 while Status<len(Program):
-    if Program[Status][:6]!='Custom':
+    if Program[Status][:6]!='Custom' and (Program[Status] in ModelName)==False:
         #Standard process here
         Result=StandardProcess(Program,Status,FreshStart)
         if Result[0]:

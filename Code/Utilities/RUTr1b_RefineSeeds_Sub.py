@@ -44,7 +44,7 @@ EOS_DIR=args.EOS
 PY_DIR=args.PY
 
 BatchID=args.BatchID
-FirstTime=args.FirstTime=='True'
+FirstTime=args.FirstTime
 
 EOSsubDIR=EOS_DIR+'/'+'ANNDEA'
 EOSsubModelDIR=EOSsubDIR+'/'+'Models'
@@ -69,7 +69,7 @@ ModelName=args.ModelName
 
 
 
-if ModelName!='_':
+if ModelName!='Blank':
     Model_Meta_Path=EOSsubModelDIR+'/'+ModelName+'_Meta'
     Model_Path=EOSsubModelDIR+'/'+ModelName
     print(Model_Path)
@@ -89,14 +89,14 @@ if ModelName!='_':
         model = UF.GenerateModel(ModelMeta).to(device)
         model.load_state_dict(torch.load(Model_Path))
 
-if FirstTime:
+if FirstTime=='True':
     MaxDOCA=float(args.MaxDOCA)
     MaxSTG=float(args.MaxSTG)
     MaxSLG=float(args.MaxSLG)
     MaxAngle=float(args.MaxAngle)
     input_segment_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1_'+BatchID+'_TRACK_SEGMENTS.csv'
-    input_track_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RUTr1a'+'_'+BatchID+'_'+str(i)+'/RUTr1a_'+BatchID+'_SelectedSeeds_'+str(i)+'_'+str(j)+'_'+str(k)+'.csv'
-    output_file_location=EOS_DIR+'/'+p+'/Temp_RUTr1b'+'_'+BatchID+'_'+str(i)+'/'+pfx+'_'+BatchID+'_'+o+'_'+str(i)+'_'+str(j)+'_'+str(k)+sfx
+    input_track_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RUTr1'+ModelName+'_'+BatchID+'_'+str(i)+'/RUTr1a_'+BatchID+'_SelectedSeeds_'+str(i)+'_'+str(j)+'_'+str(k)+'.csv'
+    output_file_location=EOS_DIR+'/'+p+'/Temp_RUTr1b'+ModelName+'_'+BatchID+'_'+str(i)+'/'+pfx+ModelName+'_'+BatchID+'_'+o+'_'+str(i)+'_'+str(j)+'_'+str(k)+sfx
     print(UF.TimeStamp(),'Loading the data')
     tracks=pd.read_csv(input_track_file_location)
     tracks_1=tracks.drop(['Segment_2'],axis=1)
