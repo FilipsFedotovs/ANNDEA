@@ -522,9 +522,11 @@ Program.append('Custom - PickR')
 ####### Stage 4
 for md in ModelName:
     Program.append(md)
-print(Program)
-exit()
+
 while Status<len(Program):
+    print(Status)
+    print(Program[Status])
+    x=input()
     if Program[Status][:6]!='Custom' and (Program[Status] in ModelName)==False:
         #Standard process here
         Result=StandardProcess(Program,Status,FreshStart)
