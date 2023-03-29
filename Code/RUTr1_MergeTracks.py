@@ -449,8 +449,8 @@ print(UF.TimeStamp(),'Current status has a stage',Status,bcolors.ENDC)
 
 
 
-UpdateStatus(0)
-Status=0
+# UpdateStatus(0)
+# Status=0
 ################ Set the execution sequence for the script
 Program=[]
 
@@ -724,6 +724,8 @@ while Status<len(Program):
                 #Setting up folders for the output. The reconstruction of just one brick can easily generate >100k of files. Keeping all that blob in one directory can cause problems on lxplus.
                 print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Create'))
                 print(Program_Dummy[Status][4])
+                print(Program_Dummy)
+                print(JobSet)
                 exit()
                 Result=StandardProcess(Program_Dummy,Status,FreshStart)
                 if Result:
