@@ -695,8 +695,6 @@ while Status<len(Program):
                 Program_Dummy=[]
                 Meta=UF.PickleOperations(RecOutputMeta,'r', 'N/A')[0]
                 JobSets=Meta.JobSets
-                print(JobSets)
-                exit()
                 for i in range(len(JobSets)):
                     JobSet.append([])
                     for j in range(len(JobSets[i][3])):
