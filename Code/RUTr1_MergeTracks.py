@@ -522,30 +522,8 @@ Program.append('Custom - PickR')
 ####### Stage 4
 for md in ModelName:
     Program.append(md)
-
-
-
-if Mode=='RESET':
-        print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Delete'))
-    #Setting up folders for the output. The reconstruction of just one brick can easily generate >100k of files. Keeping all that blob in one directory can cause problems on lxplus.
-print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Create'))
-Program.append(prog_entry)
-
-###### Stage 5
-Program.append('Custom - Refine1')
-
-
-
-Program.append(prog_entry)
-# ###### Stage 5
-Program.append('Custom')
-
-#Stage 6
-Program.append('Custom')
-
-Program.append('Custom')
-
-
+print(Program)
+exit()
 while Status<len(Program):
     if Program[Status][:6]!='Custom' and (Program[Status] in ModelName)==False:
         #Standard process here
@@ -706,6 +684,8 @@ while Status<len(Program):
         FreshStart=False
         print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(Status)+' has successfully completed'+bcolors.ENDC)
         UpdateStatus(4)
+    print(Program[Status])
+
     else:
         for md in range(len(ModelName)):
             if Program[Status]==md:
