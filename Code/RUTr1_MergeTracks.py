@@ -719,14 +719,14 @@ while Status<len(Program):
                 for dum in range(0,Status):
                     Program_Dummy.append('DUM')
                 Program_Dummy.append(prog_entry)
-                print(Program_Dummy)
-                print(Status)
-                exit()
                 if Mode=='RESET':
                     print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Delete'))
                 #Setting up folders for the output. The reconstruction of just one brick can easily generate >100k of files. Keeping all that blob in one directory can cause problems on lxplus.
                 print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Create'))
                 Result=StandardProcess(Program,Status,FreshStart)
+                if Result:
+                    print('WiP')
+                    exit()
 
 
 
