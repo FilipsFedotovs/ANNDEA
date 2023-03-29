@@ -96,7 +96,7 @@ if FirstTime=='True':
     MaxAngle=float(args.MaxAngle)
     input_segment_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1_'+BatchID+'_TRACK_SEGMENTS.csv'
     input_track_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RUTr1a'+'_'+BatchID+'_'+str(i)+'/RUTr1a_'+BatchID+'_SelectedSeeds_'+str(i)+'_'+str(j)+'_'+str(k)+'.csv'
-    output_file_location=EOS_DIR+'/'+p+'/Temp_RUTr1b'+ModelName+'_'+BatchID+'_'+str(i)+'/'+pfx+'_'+BatchID+'_'+o+'_'+str(i)+'_'+str(j)+'_'+str(k)+sfx
+    output_file_location=EOS_DIR+'/'+p+'/Temp_RUTr1'+ModelName+'_'+BatchID+'_'+str(i)+'/'+pfx+'_'+BatchID+'_'+o+'_'+str(i)+'_'+str(j)+'_'+str(k)+sfx
     print(UF.TimeStamp(),'Loading the data')
     tracks=pd.read_csv(input_track_file_location)
     tracks_1=tracks.drop(['Segment_2'],axis=1)
