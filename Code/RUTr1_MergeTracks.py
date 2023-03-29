@@ -692,6 +692,7 @@ while Status<len(Program):
                 prog_entry=[]
                 job_sets=[]
                 JobSet=[]
+                TotJobs=0
                 Program_Dummy=[]
                 Meta=UF.PickleOperations(RecOutputMeta,'r', 'N/A')[0]
                 JobSets=Meta.JobSets
