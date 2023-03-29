@@ -124,7 +124,6 @@ if FirstTime=='True':
     del track_list
     gc.collect()
     limit=len(tracks)
-    limit=100
     track_counter=0
     print(UF.TimeStamp(),bcolors.OKGREEN+'Data has been successfully loaded and prepared..'+bcolors.ENDC)
     #create seeds
