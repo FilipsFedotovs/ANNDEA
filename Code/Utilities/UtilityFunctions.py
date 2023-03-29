@@ -411,7 +411,7 @@ class EMO:
                                 else:
                                     return self.STG<=MaxSTG+(self.SLG*0.96)
                             else:
-                                # if self.SLG<-MaxSLG:
+                                if self.SLG<-MaxSLG:
                                 #    return False
                                 # else:
                                     return self.STG<=MaxSTG
