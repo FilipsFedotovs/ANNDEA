@@ -131,15 +131,15 @@ for s in range(0,limit):
        continue
 
      keep_seed=True
-     # if track.Label==1:
-     #     print('Doca:',track.DOCA)
-     #     print('SLG:',track.SLG)
-     #     print('STG:',track.STG)
-     #     print('MaxSTG:',MaxSTG+(abs(track.SLG)*0.96))
-     #     print('Angle',track.Opening_Angle)
-     #     print(track.TrackQualityCheck(MaxDOCA,MaxSLG,MaxSTG, MaxAngle))
-     #     print('Label',track.Label)
-     #     x=input()
+     if track.Label==1:
+         print('Doca:',track.DOCA)
+         print('SLG:',track.SLG)
+         print('STG:',track.STG)
+         print('MaxSTG:',MaxSTG+(abs(track.SLG)*0.96))
+         print('Angle',track.Opening_Angle)
+         print(track.TrackQualityCheck(MaxDOCA,MaxSLG,MaxSTG, MaxAngle))
+         print('Label',track.Label)
+         x=input()
      if track.TrackQualityCheck(MaxDOCA,MaxSLG,MaxSTG, MaxAngle):
          for m in range(len(Metas)):
              if track.FitSeed(Metas[m],Models[m])==False:
