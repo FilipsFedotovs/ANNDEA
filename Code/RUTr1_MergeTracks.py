@@ -715,7 +715,7 @@ while Status<len(Program):
                     prog_entry.append([MaxSTG, MaxSLG, MaxDOCA, MaxAngle,'"'+ModelName[md]+'"', 'True'])
                 else:
                     prog_entry.append([MaxSTG, MaxSLG, MaxDOCA, MaxAngle,'"'+ModelName[md]+'"', 'False'])
-                prog_entry.append(TotJobs)
+                prog_entry.append(JobSet)
                 prog_entry.append(LocalSub)
                 prog_entry.append(['',''])
                 for dum in range(0,Status):
@@ -728,7 +728,6 @@ while Status<len(Program):
                 print(Program_Dummy[Status][4])
                 print(Program_Dummy)
                 print(JobSet)
-                exit()
                 Result=StandardProcess(Program_Dummy,Status,FreshStart)
                 if Result:
                     print('WiP')
