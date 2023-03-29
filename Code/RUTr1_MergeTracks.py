@@ -688,7 +688,7 @@ while Status<len(Program):
         UpdateStatus(4)
     else:
         for md in range(len(ModelName)):
-            if Program[Status]==md:
+            if Program[Status]==ModelName[md]:
                 prog_entry=[]
                 job_sets=[]
                 JobSet=[]
