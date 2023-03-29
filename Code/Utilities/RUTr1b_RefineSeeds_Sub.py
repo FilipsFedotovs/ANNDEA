@@ -71,20 +71,20 @@ Model_Meta_Path=EOSsubModelDIR+'/'+ModelName+'_Meta'
 Model_Path=EOSsubModelDIR+'/'+ModelName
 print(Model_Path)
 ModelMeta=UF.PickleOperations(Model_Meta_Path, 'r', 'N/A')[0]
-if ModelMeta.ModelFramework=='Tensorflow':
-    import tensorflow as tf
-    from tensorflow import keras
-
-    model=tf.keras.models.load_model(Model_Path)
-if ModelMeta.ModelFramework=='PyTorch':
-    import torch
-    from torch import optim
-    Model_Meta_Path=EOSsubModelDIR+'/'+ModelName+'_Meta'
-    Model_Path=EOSsubModelDIR+'/'+ModelName
-    ModelMeta=UF.PickleOperations(Model_Meta_Path, 'r', 'N/A')[0]
-    device = torch.device('cpu')
-    model = UF.GenerateModel(ModelMeta).to(device)
-    model.load_state_dict(torch.load(Model_Path))
+# if ModelMeta.ModelFramework=='Tensorflow':
+#     import tensorflow as tf
+#     from tensorflow import keras
+#
+#     model=tf.keras.models.load_model(Model_Path)
+# if ModelMeta.ModelFramework=='PyTorch':
+#     import torch
+#     from torch import optim
+#     Model_Meta_Path=EOSsubModelDIR+'/'+ModelName+'_Meta'
+#     Model_Path=EOSsubModelDIR+'/'+ModelName
+#     ModelMeta=UF.PickleOperations(Model_Meta_Path, 'r', 'N/A')[0]
+#     device = torch.device('cpu')
+#     model = UF.GenerateModel(ModelMeta).to(device)
+#     model.load_state_dict(torch.load(Model_Path))
 
 if FirstTime:
     MaxDOCA=float(args.MaxDOCA)
