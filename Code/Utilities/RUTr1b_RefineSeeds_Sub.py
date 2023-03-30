@@ -153,8 +153,6 @@ if FirstTime=='True':
     gc.collect()
     print(UF.PickleOperations(output_file_location,'w', GoodTracks)[1])
 else:
-    print('Wip')
-    exit()
     input_seed_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RUTr1'+FirstTime+'_'+BatchID+'_0/RUTr1'+str(ModelName)+'_'+BatchID+'_Input_Seeds_'+str(i)+'.pkl'
     output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RUTr1'+str(ModelName)+'_'+BatchID+'_0/RUTr1'+str(ModelName)+'_'+BatchID+'_Output_Seeds_'+str(i)+'.pkl'
     print(UF.TimeStamp(),'Loading the data')
