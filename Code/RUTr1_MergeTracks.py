@@ -758,33 +758,37 @@ while Status<len(Program):
                     else:
                                           CompressionRatio=0
                     print(UF.TimeStamp(),'The output compression ratio is ', Compression_Ratio, ' %',bcolors.ENDC)
-                    output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1c_'+RecBatchID+'_Fit_Seeds.pkl'
-                    print(UF.PickleOperations(output_file_location,'w',base_data)[1])
-                    if Log:
-                         print(UF.TimeStamp(),'Initiating the logging...')
-                         eval_data_file=EOS_DIR+'/ANNDEA/Data/TEST_SET/EUTr1b_'+RecBatchID+'_SEED_TRUTH_COMBINATIONS.csv'
-                         eval_data=pd.read_csv(eval_data_file,header=0,usecols=['Segment_1','Segment_2'])
-                         eval_data["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(eval_data['Segment_1'], eval_data['Segment_2'])]
-                         eval_data.drop(['Segment_1'],axis=1,inplace=True)
-                         eval_data.drop(['Segment_2'],axis=1,inplace=True)
-                         rec_no=0
-                         eval_no=0
-                         rec_list=[]
-                         for rd in base_data:
-                             rec_list.append([rd.Header[0],rd.Header[1]])
-                         del base_data
-                         rec = pd.DataFrame(rec_list, columns = ['Segment_1','Segment_2'])
-                         rec["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(rec['Segment_1'], rec['Segment_2'])]
-                         rec.drop(['Segment_1'],axis=1,inplace=True)
-                         rec.drop(['Segment_2'],axis=1,inplace=True)
-                         rec_eval=pd.merge(eval_data, rec, how="inner", on=['Seed_ID'])
-                         eval_no=len(rec_eval)
-                         rec_no=(len(rec)-len(rec_eval))
-                         UF.LogOperations(EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv', 'a', [[3,ModelName[md],rec_no,eval_no,eval_no/(rec_no+eval_no),eval_no/len(eval_data)]])
-                         print(UF.TimeStamp(), bcolors.OKGREEN+"The log data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv'+bcolors.ENDC)
-                    del new_data
-                    print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(Status)+' has successfully completed'+bcolors.ENDC)
-                    UpdateStatus(Status+1)
+                    if md==len(ModelName)-1:
+                        output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1c_'+RecBatchID+'_Fit_Seeds.pkl'
+                        print(UF.PickleOperations(output_file_location,'w',base_data)[1])
+                        if Log:
+                             print(UF.TimeStamp(),'Initiating the logging...')
+                             eval_data_file=EOS_DIR+'/ANNDEA/Data/TEST_SET/EUTr1b_'+RecBatchID+'_SEED_TRUTH_COMBINATIONS.csv'
+                             eval_data=pd.read_csv(eval_data_file,header=0,usecols=['Segment_1','Segment_2'])
+                             eval_data["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(eval_data['Segment_1'], eval_data['Segment_2'])]
+                             eval_data.drop(['Segment_1'],axis=1,inplace=True)
+                             eval_data.drop(['Segment_2'],axis=1,inplace=True)
+                             rec_no=0
+                             eval_no=0
+                             rec_list=[]
+                             for rd in base_data:
+                                 rec_list.append([rd.Header[0],rd.Header[1]])
+                             del base_data
+                             rec = pd.DataFrame(rec_list, columns = ['Segment_1','Segment_2'])
+                             rec["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(rec['Segment_1'], rec['Segment_2'])]
+                             rec.drop(['Segment_1'],axis=1,inplace=True)
+                             rec.drop(['Segment_2'],axis=1,inplace=True)
+                             rec_eval=pd.merge(eval_data, rec, how="inner", on=['Seed_ID'])
+                             eval_no=len(rec_eval)
+                             rec_no=(len(rec)-len(rec_eval))
+                             UF.LogOperations(EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv', 'a', [[3,ModelName[md],rec_no,eval_no,eval_no/(rec_no+eval_no),eval_no/len(eval_data)]])
+                             print(UF.TimeStamp(), bcolors.OKGREEN+"The log data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv'+bcolors.ENDC)
+                        del new_data
+                        print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(Status)+' has successfully completed'+bcolors.ENDC)
+                        UpdateStatus(Status+1)
+                    else:
+                        output_split=np.ceil(Records_After_Compression/PM.MaxSegments)
+                        print(output_split)
 
 
 
