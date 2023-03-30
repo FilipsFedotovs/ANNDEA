@@ -763,6 +763,7 @@ while Status<len(Program):
                     TotJobs=0
                     while keep_testing:
                         test_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RUTr1'+ModelName[md-1]+'_'+RecBatchID+'_0/RUTr1'+str(ModelName[md])+'_'+RecBatchID+'_Input_Seeds_'+str(TotJobs)+'.pkl'
+                        print(test_file_location)
                         if os.path.isfile(test_file_location):
                             TotJobs+=1
                         else:
@@ -824,8 +825,8 @@ while Status<len(Program):
 
                 else:
                         output_split=int(np.ceil(Records_After_Compression/PM.MaxSegments))
-                        for os in range(output_split):
-                            output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RUTr1'+ModelName[md]+'_'+RecBatchID+'_0/RUTr1'+str(ModelName[md+1])+'_'+RecBatchID+'_Input_Seeds_'+str(os)+'.pkl'
+                        for os_itr in range(output_split):
+                            output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RUTr1'+ModelName[md]+'_'+RecBatchID+'_0/RUTr1'+str(ModelName[md+1])+'_'+RecBatchID+'_Input_Seeds_'+str(os_itr)+'.pkl'
                             print(UF.PickleOperations(output_file_location,'w',base_data[os*PM.MaxSegments:(os+1)*PM.MaxSegments])[1])
 
                 if Log:
