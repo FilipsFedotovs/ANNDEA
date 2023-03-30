@@ -689,75 +689,77 @@ while Status<len(Program):
     else:
         for md in range(len(ModelName)):
             if Program[Status]==ModelName[md]:
-                prog_entry=[]
-                job_sets=[]
-                JobSet=[]
-                TotJobs=0
-                Program_Dummy=[]
-                Meta=UF.PickleOperations(RecOutputMeta,'r', 'N/A')[0]
-                JobSets=Meta.JobSets
-                for i in range(len(JobSets)):
-                    JobSet.append([])
-                    for j in range(len(JobSets[i][3])):
-                            JobSet[i].append(JobSets[i][3][j])
-                if type(JobSet) is int:
-                            TotJobs=JobSet
-                elif type(JobSet[0]) is int:
-                            TotJobs=np.sum(JobSet)
-                elif type(JobSet[0][0]) is int:
-                            for lp in JobSet:
-                                TotJobs+=np.sum(lp)
-
-                prog_entry.append(' Sending tracks to the HTCondor, so track segment combination pairs can be formed...')
-                prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','RefinedSeeds','RUTr1'+ModelName[md],'.pkl',RecBatchID,JobSet,'RUTr1b_RefineSeeds_Sub.py'])
-
-                prog_entry.append([" --MaxSTG ", " --MaxSLG ", " --MaxDOCA ", " --MaxAngle "," --ModelName "," --FirstTime "])
                 if md==0:
-                    prog_entry.append([MaxSTG, MaxSLG, MaxDOCA, MaxAngle,'"'+ModelName[md]+'"', 'True'])
-                else:
-                    prog_entry.append([MaxSTG, MaxSLG, MaxDOCA, MaxAngle,'"'+ModelName[md]+'"', 'False'])
-                prog_entry.append(TotJobs)
-                prog_entry.append(LocalSub)
-                prog_entry.append(['',''])
-                for dum in range(0,Status):
-                    Program_Dummy.append('DUM')
-                Program_Dummy.append(prog_entry)
-                if Mode=='RESET':
-                    print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Delete'))
-                #Setting up folders for the output. The reconstruction of just one brick can easily generate >100k of files. Keeping all that blob in one directory can cause problems on lxplus.
-                print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Create'))
-                Result=StandardProcess(Program_Dummy,Status,FreshStart)
-                if Result:
-                    print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
-                    print(UF.TimeStamp(),bcolors.BOLD+'Stage '+str(Status)+':'+bcolors.ENDC+' Analysing the fitted seeds')
+                    prog_entry=[]
+                    job_sets=[]
                     JobSet=[]
+                    TotJobs=0
+                    Program_Dummy=[]
+                    Meta=UF.PickleOperations(RecOutputMeta,'r', 'N/A')[0]
+                    JobSets=Meta.JobSets
                     for i in range(len(JobSets)):
-                         JobSet.append([])
-                         for j in range(len(JobSets[i][3])):
-                             JobSet[i].append(JobSets[i][3][j])
-                    base_data = None
-                    with alive_bar(len(JobSets),force_tty=True, title='Checking the results from HTCondor') as bar:
-                     for i in range(0,len(JobSet)):
-                            bar()
-                            for j in range(len(JobSet[i])):
-                                     for k in range(JobSet[i][j]):
-                                          required_output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RUTr1'+ModelName[md]+'_'+RecBatchID+'_'+str(i)+'/RUTr1'+ModelName[md]+'_'+RecBatchID+'_RefinedSeeds_'+str(i)+'_'+str(j)+'_'+str(k)+'.pkl'
-                                          new_data=UF.PickleOperations(required_output_file_location,'r','N/A')[0]
-                                          print(UF.TimeStamp(),'Set',str(i)+'_'+str(j)+'_'+str(k), 'contains', len(new_data), 'seeds',bcolors.ENDC)
-                                          if base_data == None:
-                                                base_data = new_data
-                                          else:
-                                                base_data+=new_data
-                    Records=len(base_data)
-                    print(UF.TimeStamp(),'The output contains', Records, 'raw images',bcolors.ENDC)
+                        JobSet.append([])
+                        for j in range(len(JobSets[i][3])):
+                                JobSet[i].append(JobSets[i][3][j])
+                    if type(JobSet) is int:
+                                TotJobs=JobSet
+                    elif type(JobSet[0]) is int:
+                                TotJobs=np.sum(JobSet)
+                    elif type(JobSet[0][0]) is int:
+                                for lp in JobSet:
+                                    TotJobs+=np.sum(lp)
 
-                    base_data=list(set(base_data))
-                    Records_After_Compression=len(base_data)
-                    if Records>0:
-                                          Compression_Ratio=int((Records_After_Compression/Records)*100)
+                    prog_entry.append(' Sending tracks to the HTCondor, so track segment combination pairs can be formed...')
+                    prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','RefinedSeeds','RUTr1'+ModelName[md],'.pkl',RecBatchID,JobSet,'RUTr1b_RefineSeeds_Sub.py'])
+
+                    prog_entry.append([" --MaxSTG ", " --MaxSLG ", " --MaxDOCA ", " --MaxAngle "," --ModelName "," --FirstTime "])
+                    if md==0:
+                        prog_entry.append([MaxSTG, MaxSLG, MaxDOCA, MaxAngle,'"'+ModelName[md]+'"', 'True'])
                     else:
-                                          CompressionRatio=0
-                    print(UF.TimeStamp(),'The output compression ratio is ', Compression_Ratio, ' %',bcolors.ENDC)
+                        prog_entry.append([MaxSTG, MaxSLG, MaxDOCA, MaxAngle,'"'+ModelName[md]+'"', 'False'])
+                    prog_entry.append(TotJobs)
+                    prog_entry.append(LocalSub)
+                    prog_entry.append(['',''])
+                    for dum in range(0,Status):
+                        Program_Dummy.append('DUM')
+                    Program_Dummy.append(prog_entry)
+                    if Mode=='RESET':
+                        print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Delete'))
+                    #Setting up folders for the output. The reconstruction of just one brick can easily generate >100k of files. Keeping all that blob in one directory can cause problems on lxplus.
+                    print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Create'))
+                    Result=StandardProcess(Program_Dummy,Status,FreshStart)
+                    if Result:
+                        print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
+                        print(UF.TimeStamp(),bcolors.BOLD+'Stage '+str(Status)+':'+bcolors.ENDC+' Analysing the fitted seeds')
+                        JobSet=[]
+                        for i in range(len(JobSets)):
+                             JobSet.append([])
+                             for j in range(len(JobSets[i][3])):
+                                 JobSet[i].append(JobSets[i][3][j])
+                        base_data = None
+                        with alive_bar(len(JobSets),force_tty=True, title='Checking the results from HTCondor') as bar:
+                         for i in range(0,len(JobSet)):
+                                bar()
+                                for j in range(len(JobSet[i])):
+                                         for k in range(JobSet[i][j]):
+                                              required_output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RUTr1'+ModelName[md]+'_'+RecBatchID+'_'+str(i)+'/RUTr1'+ModelName[md]+'_'+RecBatchID+'_RefinedSeeds_'+str(i)+'_'+str(j)+'_'+str(k)+'.pkl'
+                                              new_data=UF.PickleOperations(required_output_file_location,'r','N/A')[0]
+                                              print(UF.TimeStamp(),'Set',str(i)+'_'+str(j)+'_'+str(k), 'contains', len(new_data), 'seeds',bcolors.ENDC)
+                                              if base_data == None:
+                                                    base_data = new_data
+                                              else:
+                                                    base_data+=new_data
+                        Records=len(base_data)
+                        print(UF.TimeStamp(),'The output contains', Records, 'raw images',bcolors.ENDC)
+
+                        base_data=list(set(base_data))
+                        Records_After_Compression=len(base_data)
+                        if Records>0:
+                                              Compression_Ratio=int((Records_After_Compression/Records)*100)
+                        else:
+                                              CompressionRatio=0
+                        print(UF.TimeStamp(),'The output compression ratio is ', Compression_Ratio, ' %',bcolors.ENDC)
+
                     if md==len(ModelName)-1:
                         output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1c_'+RecBatchID+'_Fit_Seeds.pkl'
                         print(UF.PickleOperations(output_file_location,'w',base_data)[1])
@@ -787,8 +789,13 @@ while Status<len(Program):
                         print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(Status)+' has successfully completed'+bcolors.ENDC)
                         UpdateStatus(Status+1)
                     else:
-                        output_split=np.ceil(Records_After_Compression/PM.MaxSegments)
+                        output_split=int(np.ceil(Records_After_Compression/PM.MaxSegments))
+                        for os in range(output_split):
+                            output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1'+str(ModelName[md+1])+'_'+RecBatchID+'_Input_Seeds_'+str(os)+'.pkl'
+                            print(output_file_location)
+                            print(os*PM.MaxSegments,(os+1)*PM.MaxSegments)
                         print(output_split)
+                        exit()
 
 
 
