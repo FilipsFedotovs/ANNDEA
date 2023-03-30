@@ -763,7 +763,15 @@ while Status<len(Program):
                     if md==len(ModelName)-1:
                         output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1c_'+RecBatchID+'_Fit_Seeds.pkl'
                         print(UF.PickleOperations(output_file_location,'w',base_data)[1])
-                        if Log:
+
+
+                    else:
+                        output_split=int(np.ceil(Records_After_Compression/PM.MaxSegments))
+                        for os in range(output_split):
+                            output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1'+str(ModelName[md+1])+'_'+RecBatchID+'_Input_Seeds_'+str(os)+'.pkl'
+                            print(UF.PickleOperations(output_file_location,'w',base_data[os*PM.MaxSegments:(os+1)*PM.MaxSegments])[1])
+
+                    if Log:
                              print(UF.TimeStamp(),'Initiating the logging...')
                              eval_data_file=EOS_DIR+'/ANNDEA/Data/TEST_SET/EUTr1b_'+RecBatchID+'_SEED_TRUTH_COMBINATIONS.csv'
                              eval_data=pd.read_csv(eval_data_file,header=0,usecols=['Segment_1','Segment_2'])
@@ -783,20 +791,11 @@ while Status<len(Program):
                              rec_eval=pd.merge(eval_data, rec, how="inner", on=['Seed_ID'])
                              eval_no=len(rec_eval)
                              rec_no=(len(rec)-len(rec_eval))
-                             UF.LogOperations(EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv', 'a', [[3,ModelName[md],rec_no,eval_no,eval_no/(rec_no+eval_no),eval_no/len(eval_data)]])
+                             UF.LogOperations(EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv', 'a', [[3+md,ModelName[md],rec_no,eval_no,eval_no/(rec_no+eval_no),eval_no/len(eval_data)]])
                              print(UF.TimeStamp(), bcolors.OKGREEN+"The log data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv'+bcolors.ENDC)
-                        del new_data
-                        print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(Status)+' has successfully completed'+bcolors.ENDC)
-                        UpdateStatus(Status+1)
-                    else:
-                        output_split=int(np.ceil(Records_After_Compression/PM.MaxSegments))
-                        for os in range(output_split):
-                            output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1'+str(ModelName[md+1])+'_'+RecBatchID+'_Input_Seeds_'+str(os)+'.pkl'
-                            print(output_file_location)
-                            print(os*PM.MaxSegments,(os+1)*PM.MaxSegments)
-                        print(output_split)
-                        exit()
-
+                    del new_data
+                    print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(Status)+' has successfully completed'+bcolors.ENDC)
+                    UpdateStatus(Status+1)
 
 
     # elif Status==6:
