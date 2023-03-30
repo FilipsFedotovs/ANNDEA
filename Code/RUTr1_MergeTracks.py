@@ -790,9 +790,9 @@ while Status<len(Program):
                         with alive_bar(len(JobSets),force_tty=True, title='Checking the results from HTCondor') as bar:
                          for i in range(0,TotJobs):
                                               bar()
-                                              required_output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RUTr1'+str(ModelName[md])+'_'+RecBatchID+'_0/RUTr1'+str(ModelName[md])+'_'+RecBatchID+'_Output_Seeds_'+str(i)+'.pkl'
+                                              required_output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RUTr1'+ModelName[md]+'_'+RecBatchID+'_0/RUTr1'+ModelName[md]+'_'+RecBatchID+'_OutputSeeds_'+str(i)+'.pkl'
                                               new_data=UF.PickleOperations(required_output_file_location,'r','N/A')[0]
-                                              print(UF.TimeStamp(),'Set',str(i)+'_'+str(j)+'_'+str(k), 'contains', len(new_data), 'seeds',bcolors.ENDC)
+                                              print(UF.TimeStamp(),'Set',str(i), 'contains', len(new_data), 'seeds',bcolors.ENDC)
                                               if base_data == None:
                                                     base_data = new_data
                                               else:
