@@ -827,7 +827,7 @@ while Status<len(Program):
                         output_split=int(np.ceil(Records_After_Compression/PM.MaxSegments))
                         for os_itr in range(output_split):
                             output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RUTr1'+ModelName[md]+'_'+RecBatchID+'_0/RUTr1'+str(ModelName[md+1])+'_'+RecBatchID+'_Input_Seeds_'+str(os_itr)+'.pkl'
-                            print(UF.PickleOperations(output_file_location,'w',base_data[os*PM.MaxSegments:(os+1)*PM.MaxSegments])[1])
+                            print(UF.PickleOperations(output_file_location,'w',base_data[os_itr*PM.MaxSegments:(os_itr+1)*PM.MaxSegments])[1])
 
                 if Log:
                              print(UF.TimeStamp(),'Initiating the logging...')
