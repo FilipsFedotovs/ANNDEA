@@ -768,10 +768,8 @@ while Status<len(Program):
                             TotJobs+=1
                         else:
                             keep_testing=False
-                    print(TotJobs)
-                    exit()
                     prog_entry.append(' Sending tracks to the HTCondor, so track segment combination pairs can be formed...')
-                    prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','RefinedSeeds','RUTr1'+ModelName[md],'.pkl',RecBatchID,JobSet,'RUTr1b_RefineSeeds_Sub.py'])
+                    prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','RefinedSeeds','RUTr1'+ModelName[md],'.pkl',RecBatchID,[TotJobs],'RUTr1b_RefineSeeds_Sub.py'])
 
                     prog_entry.append([" --MaxSTG ", " --MaxSLG ", " --MaxDOCA ", " --MaxAngle "," --ModelName "," --FirstTime "])
                     prog_entry.append([MaxSTG, MaxSLG, MaxDOCA, MaxAngle,'"'+ModelName[md]+'"', ModelName[md-1]])
@@ -785,6 +783,8 @@ while Status<len(Program):
                         print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Delete'))
                     #Setting up folders for the output. The reconstruction of just one brick can easily generate >100k of files. Keeping all that blob in one directory can cause problems on lxplus.
                     print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Create'))
+                    print(prog_entry)
+                    exit()
                     Result=StandardProcess(Program_Dummy,Status,FreshStart)
                     if Result:
                         print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
