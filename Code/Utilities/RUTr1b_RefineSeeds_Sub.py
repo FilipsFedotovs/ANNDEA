@@ -155,4 +155,62 @@ if FirstTime=='True':
 else:
     print('Wip')
     exit()
+    input_track_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RUTr1a'+'_'+BatchID+'_'+str(i)+'/RUTr1a_'+BatchID+'_SelectedSeeds_'+str(i)+'_'+str(j)+'_'+str(k)+'.csv'
+    output_file_location=EOS_DIR+'/'+p+'/Temp_RUTr1'+ModelName+'_'+BatchID+'_'+str(i)+'/'+pfx+'_'+BatchID+'_'+o+'_'+str(i)+'_'+str(j)+'_'+str(k)+sfx
+    print(UF.TimeStamp(),'Loading the data')
+    tracks=pd.read_csv(input_track_file_location)
+    tracks_1=tracks.drop(['Segment_2'],axis=1)
+    tracks_1=tracks_1.rename(columns={"Segment_1": "Rec_Seg_ID"})
+    tracks_2=tracks.drop(['Segment_1'],axis=1)
+    tracks_2=tracks_2.rename(columns={"Segment_2": "Rec_Seg_ID"})
+    track_list=result = pd.concat([tracks_1,tracks_2])
+    track_list=track_list.sort_values(['Rec_Seg_ID'])
+    track_list.drop_duplicates(subset="Rec_Seg_ID",keep='first',inplace=True)
+    segments=pd.read_csv(input_segment_file_location)
+    print(UF.TimeStamp(),'Analysing the data')
+    segments=pd.merge(segments, track_list, how="inner", on=["Rec_Seg_ID"]) #Shrinking the Track data so just a star hit for each segment is present.
+    segments["x"] = pd.to_numeric(segments["x"],downcast='float')
+    segments["y"] = pd.to_numeric(segments["y"],downcast='float')
+    segments["z"] = pd.to_numeric(segments["z"],downcast='float')
+    segments["tx"] = pd.to_numeric(segments["tx"],downcast='float')
+    segments["ty"] = pd.to_numeric(segments["ty"],downcast='float')
+
+    # reorder the columns
+    segments = segments[['x','y','z','tx','ty', 'Rec_Seg_ID']]
+    segments = segments.values.tolist() #Convirting the result to List data type
+    tracks = tracks.values.tolist() #Convirting the result to List data type
+    del tracks_1
+    del tracks_2
+    del track_list
+    gc.collect()
+    limit=len(tracks)
+    track_counter=0
+    print(UF.TimeStamp(),bcolors.OKGREEN+'Data has been successfully loaded and prepared..'+bcolors.ENDC)
+    #create seeds
+    GoodTracks=[]
+    print(UF.TimeStamp(),'Beginning the sample generation part...')
+    for s in range(0,limit):
+         track=tracks.pop(0)
+         track=EMO(track[:2])
+         track.Decorate(segments)
+         try:
+           track.GetTrInfo()
+         except:
+           continue
+         keep_seed=True
+         if track.TrackQualityCheck(MaxDOCA,MaxSLG,MaxSTG, MaxAngle):
+                 if ModelName!='Blank':
+                    if track.FitSeed(ModelMeta,model):
+                       GoodTracks.append(track)
+                 else:
+                     GoodTracks.append(track)
+         else:
+             del track
+             continue
+    print(UF.TimeStamp(),bcolors.OKGREEN+'The sample generation has been completed..'+bcolors.ENDC)
+    del tracks
+    del segments
+    gc.collect()
+    print(UF.PickleOperations(output_file_location,'w', GoodTracks)[1])
+
 
