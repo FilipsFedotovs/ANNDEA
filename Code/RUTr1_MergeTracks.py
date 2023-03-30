@@ -728,8 +728,6 @@ while Status<len(Program):
                 print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Create'))
                 Result=StandardProcess(Program_Dummy,Status,FreshStart)
                 if Result:
-                    print('WiP')
-                    exit()
                     print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
                     print(UF.TimeStamp(),bcolors.BOLD+'Stage '+str(Status)+':'+bcolors.ENDC+' Analysing the fitted seeds')
                     JobSet=[]
@@ -743,7 +741,7 @@ while Status<len(Program):
                             bar()
                             for j in range(len(JobSet[i])):
                                      for k in range(JobSet[i][j]):
-                                          required_output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RUTr1b_'+RecBatchID+'_'+str(i)+'/RUTr1b_'+RecBatchID+'_RefinedSeeds_'+str(i)+'_'+str(j)+'_'+str(k)+'.pkl'
+                                          required_output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RUTr1'+ModelName[md]+'_'+RecBatchID+'_'+str(i)+'/RUTr1'+ModelName[md]+'_'+RecBatchID+'_RefinedSeeds_'+str(i)+'_'+str(j)+'_'+str(k)+'.pkl'
                                           new_data=UF.PickleOperations(required_output_file_location,'r','N/A')[0]
                                           print(UF.TimeStamp(),'Set',str(i)+'_'+str(j)+'_'+str(k), 'contains', len(new_data), 'seeds',bcolors.ENDC)
                                           if base_data == None:
@@ -782,7 +780,7 @@ while Status<len(Program):
                          rec_eval=pd.merge(eval_data, rec, how="inner", on=['Seed_ID'])
                          eval_no=len(rec_eval)
                          rec_no=(len(rec)-len(rec_eval))
-                         UF.LogOperations(EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv', 'a', [[3,'ANN Seed Fit',rec_no,eval_no,eval_no/(rec_no+eval_no),eval_no/len(eval_data)]])
+                         UF.LogOperations(EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv', 'a', [[3,ModelName[md],rec_no,eval_no,eval_no/(rec_no+eval_no),eval_no/len(eval_data)]])
                          print(UF.TimeStamp(), bcolors.OKGREEN+"The log data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv'+bcolors.ENDC)
                     del new_data
                     print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(Status)+' has successfully completed'+bcolors.ENDC)
