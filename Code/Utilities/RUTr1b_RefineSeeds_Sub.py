@@ -161,7 +161,7 @@ else:
     #create seeds
     GoodSeeds=[]
     print(UF.TimeStamp(),'Beginning the sample generation part...')
-    for s in seeds[:10]:
+    for s in seeds:
                 if s.FitSeed(ModelMeta,model):
                        GoodSeeds.append(s)
     print(UF.TimeStamp(),bcolors.OKGREEN+'The sample generation has been completed..'+bcolors.ENDC)

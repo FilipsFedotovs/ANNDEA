@@ -524,9 +524,6 @@ for md in ModelName:
     Program.append(md)
 
 while Status<len(Program):
-    print(Status)
-    print(Program[Status])
-    x=input()
     if Program[Status][:6]!='Custom' and (Program[Status] in ModelName)==False:
         #Standard process here
         Result=StandardProcess(Program,Status,FreshStart)
