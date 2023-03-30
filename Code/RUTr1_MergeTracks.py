@@ -786,18 +786,11 @@ while Status<len(Program):
                     if Result:
                         print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
                         print(UF.TimeStamp(),bcolors.BOLD+'Stage '+str(Status)+':'+bcolors.ENDC+' Analysing the fitted seeds')
-                        JobSet=[]
-                        for i in range(len(JobSets)):
-                             JobSet.append([])
-                             for j in range(len(JobSets[i][3])):
-                                 JobSet[i].append(JobSets[i][3][j])
                         base_data = None
                         with alive_bar(len(JobSets),force_tty=True, title='Checking the results from HTCondor') as bar:
-                         for i in range(0,len(JobSet)):
-                                bar()
-                                for j in range(len(JobSet[i])):
-                                         for k in range(JobSet[i][j]):
-                                              required_output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RUTr1'+ModelName[md]+'_'+RecBatchID+'_'+str(i)+'/RUTr1'+ModelName[md]+'_'+RecBatchID+'_RefinedSeeds_'+str(i)+'_'+str(j)+'_'+str(k)+'.pkl'
+                         for i in range(0,TotJobs):
+                                              bar()
+                                              required_output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RUTr1'+str(ModelName[md])+'_'+RecBatchID+'_0/RUTr1'+str(ModelName[md])+'_'+RecBatchID+'_Output_Seeds_'+str(i)+'.pkl'
                                               new_data=UF.PickleOperations(required_output_file_location,'r','N/A')[0]
                                               print(UF.TimeStamp(),'Set',str(i)+'_'+str(j)+'_'+str(k), 'contains', len(new_data), 'seeds',bcolors.ENDC)
                                               if base_data == None:
@@ -805,7 +798,7 @@ while Status<len(Program):
                                               else:
                                                     base_data+=new_data
                         Records=len(base_data)
-                        print(UF.TimeStamp(),'The output contains', Records, 'raw images',bcolors.ENDC)
+                        print(UF.TimeStamp(),'The output contains', Records, 'fit images',bcolors.ENDC)
 
                         base_data=list(set(base_data))
                         Records_After_Compression=len(base_data)
