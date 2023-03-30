@@ -763,7 +763,6 @@ while Status<len(Program):
                     TotJobs=0
                     while keep_testing:
                         test_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RUTr1'+ModelName[md-1]+'_'+RecBatchID+'_0/RUTr1'+str(ModelName[md])+'_'+RecBatchID+'_Input_Seeds_'+str(TotJobs)+'.pkl'
-                        print(test_file_location)
                         if os.path.isfile(test_file_location):
                             TotJobs+=1
                         else:
@@ -783,8 +782,6 @@ while Status<len(Program):
                         print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Delete'))
                     #Setting up folders for the output. The reconstruction of just one brick can easily generate >100k of files. Keeping all that blob in one directory can cause problems on lxplus.
                     print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Create'))
-                    print(prog_entry)
-                    exit()
                     Result=StandardProcess(Program_Dummy,Status,FreshStart)
                     if Result:
                         print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
