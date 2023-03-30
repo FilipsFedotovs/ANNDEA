@@ -162,14 +162,9 @@ else:
     GoodSeeds=[]
     print(UF.TimeStamp(),'Beginning the sample generation part...')
     for s in seeds:
-        print(s.FitSeed(ModelMeta,model))
-                #if s.FitSeed(ModelMeta,model):
-                       #print()
-                       #GoodTracks.append(track)
-    # print(UF.TimeStamp(),bcolors.OKGREEN+'The sample generation has been completed..'+bcolors.ENDC)
-    # del tracks
-    # del segments
-    # gc.collect()
-    # print(UF.PickleOperations(output_file_location,'w', GoodTracks)[1])
+                if s.FitSeed(ModelMeta,model):
+                       GoodSeeds.append(s)
+    print(UF.TimeStamp(),bcolors.OKGREEN+'The sample generation has been completed..'+bcolors.ENDC)
+    print(UF.PickleOperations(output_file_location,'w', GoodSeeds)[1])
 
 
