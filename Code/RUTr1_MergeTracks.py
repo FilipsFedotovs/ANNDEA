@@ -698,10 +698,8 @@ while Status<len(Program):
                 bar()
                 for t in range(len(base_data[tr].Hits)):
                     for h in range(len(base_data[tr].Hits[t])):
-                        base_data[tr].Hits[t][h]=(base_data[tr].Hits[t][h][2])
-                        maxx=max(base_data[tr].Hits[t][h],maxx)
-        print(maxx)
-        exit()
+                        base_data[tr].Hits[t][h]=((base_data[tr].Hits[t][h][2])-332755)/1315
+
         # with alive_bar(len(base_data),force_tty=True, title="Remove overlapping hits from the seeds...") as bar:
         #     for tr in range(len(base_data)):
         #                 bar()
