@@ -696,16 +696,18 @@ while Status<len(Program):
                 for t in range(len(base_data[tr].Hits)):
                     for h in range(len(base_data[tr].Hits[t])):
                         base_data[tr].Hits[t][h]=base_data[tr].Hits[t][h][2]
-        exit()
+        with alive_bar(len(base_data),force_tty=True, title="Remove overlapping hits from the seeds...") as bar:
+            for tr in range(len(base_data)):
+                bar()
+                for h1 in range(len(base_data[tr].Hits[0])):
+                    for h2 in range(len(base_data[tr].Hits[1])):
 
-        for tr in base_data:
-            print(tr.SLG)
-            overlap=False
-            for h1 in tr.Hits[0]:
-                for h2 in tr.Hits[1]:
-                    if h1[2]==h2[2]:
-                        print(h1[2],h2[2])
-                        overlap=True
+                        print(list(set(h1) & set(h2)))
+                        print(h1,h2)
+                        x=input()
+                        #base_data[tr].Hits[t][h]=base_data[tr].Hits[t][h][2]
+
+
 
             print(tr.Hits)
             print(overlap)
