@@ -697,6 +697,7 @@ while Status<len(Program):
             for h1 in tr.Hits:
                 for h2 in tr.Hits:
                     if h1[2]==h2[2]:
+                        print(h1[2],h2[2])
                         overlap=True
 
             print(tr.Hits)
