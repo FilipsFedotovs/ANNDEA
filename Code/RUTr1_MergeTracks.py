@@ -700,14 +700,10 @@ while Status<len(Program):
             for tr in range(len(base_data)):
                         bar()
                         if base_data[tr].SLG<0:
-                            print(base_data[tr].Hits[0],base_data[tr].Hits[1])
                             overlap=list(set(base_data[tr].Hits[0]) & set(base_data[tr].Hits[1]))
                             for ovp in overlap:
                                 base_data[tr].Hits[0].remove(ovp)
-                            print(base_data[tr].Hits[0],base_data[tr].Hits[1])
-
-                            x=input()
-                        #base_data[tr].Hits[t][h]=base_data[tr].Hits[t][h][2]
+        exit()
 
 
 
