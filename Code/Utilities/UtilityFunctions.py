@@ -1265,7 +1265,7 @@ def GenerateModel(ModelMeta,TrainParams=None):
          import torch_geometric
          from torch_geometric.nn import MessagePassing
          from torch_geometric.nn import global_mean_pool
-         print(ModelMeta.ModelArchitecture)
+
          if ModelMeta.ModelArchitecture=='TCN':
             from MTr_IN import InteractionNetwork as IN
             class MLP(nn.Module):
@@ -1667,11 +1667,11 @@ def GenerateModel(ModelMeta,TrainParams=None):
             HiddenLayer=[]
             OutputLayer=[]
             for el in ModelMeta.ModelParameters:
-              if len(el)==1:
+              if ModelMeta.ModelParameters.index(el)<=4 and len(el)>0:
                  HiddenLayer.append(el)
-              elif len(el)==2:
+              elif ModelMeta.ModelParameters.index(el)==10:
                  OutputLayer=el
-            print(HiddenLayer[0][0])
+
             class GMM(torch.nn.Module):
                 def __init__(self):
                     super(GMM, self).__init__()
