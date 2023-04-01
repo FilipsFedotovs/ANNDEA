@@ -449,8 +449,8 @@ print(UF.TimeStamp(),'Current status has a stage',Status,bcolors.ENDC)
 
 
 
-UpdateStatus(7)
-Status=7
+UpdateStatus(6)
+Status=6
 ################ Set the execution sequence for the script
 Program=[]
 
@@ -698,7 +698,6 @@ while Status<len(Program):
                 for t in range(len(base_data[tr].Hits)):
                     for h in range(len(base_data[tr].Hits[t])):
                         base_data[tr].Hits[t][h]=int(((base_data[tr].Hits[t][h][2])-255170)/1315)
-                        print(base_data[tr].Hits[t][h])
         # with alive_bar(len(base_data),force_tty=True, title="Remove overlapping hits from the seeds...") as bar:
         #     for tr in range(len(base_data)):
         #                 bar()
