@@ -1736,7 +1736,7 @@ def GenerateModel(ModelMeta,TrainParams=None):
                         model.add(Conv3D(Nodes, activation=act_fun_list[HL[2]],kernel_size=(KS[0],KS[1],KS[2]),kernel_initializer='he_uniform', input_shape=(H,W,L,1)))
                      else:
                         model.add(Conv3D(Nodes, activation=act_fun_list[HL[2]],kernel_size=(KS[0],KS[1],KS[2]),kernel_initializer='he_uniform'))
-                     if PS>1:
+                     if PS[0]>1 and PS[1]>1 and PS[2]>1:
                         model.add(MaxPooling3D(pool_size=(PS[0], PS[1], PS[2])))
                      model.add(BatchNormalization(center=HL[4]>1, scale=HL[5]>1))
                      model.add(Dropout(DR))
