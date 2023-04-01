@@ -701,9 +701,9 @@ while Status<len(Program):
                 bar()
                 for h1 in range(len(base_data[tr].Hits[0])):
                     for h2 in range(len(base_data[tr].Hits[1])):
-
-                        print(list(set(h1) & set(h2)))
-                        print(h1,h2)
+                        print(base_data[tr].SLG)
+                        print(list(set(base_data[tr].Hits[0][h1]) & set(base_data[tr].Hits[0][h2])))
+                        print(base_data[tr].Hits[0][h1],base_data[tr].Hits[0][h2])
                         x=input()
                         #base_data[tr].Hits[t][h]=base_data[tr].Hits[t][h][2]
 
