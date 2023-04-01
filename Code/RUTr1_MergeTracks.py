@@ -698,13 +698,13 @@ while Status<len(Program):
                 for t in range(len(base_data[tr].Hits)):
                     for h in range(len(base_data[tr].Hits[t])):
                         base_data[tr].Hits[t][h]=base_data[tr].Hits[t][h][2]
-        with alive_bar(len(base_data),force_tty=True, title="Remove overlapping hits from the seeds...") as bar:
-            for tr in range(len(base_data)):
-                        bar()
-                        if base_data[tr].SLG<0:
-                            overlap=list(set(base_data[tr].Hits[0]) & set(base_data[tr].Hits[1]))
-                            for ovp in overlap:
-                                base_data[tr].Hits[0].remove(ovp)
+        # with alive_bar(len(base_data),force_tty=True, title="Remove overlapping hits from the seeds...") as bar:
+        #     for tr in range(len(base_data)):
+        #                 bar()
+        #                 if base_data[tr].SLG<0:
+        #                     overlap=list(set(base_data[tr].Hits[0]) & set(base_data[tr].Hits[1]))
+        #                     for ovp in overlap:
+        #                         base_data[tr].Hits[0].remove(ovp)
         base_data=[tr for tr in base_data if tr.Fit >= Acceptance]
         print(UF.TimeStamp(), bcolors.OKGREEN+"The refining was successful, "+str(len(base_data))+" track seeds remain..."+bcolors.ENDC)
         output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1c_'+RecBatchID+'_Fit_Filtered_Seeds.pkl'
