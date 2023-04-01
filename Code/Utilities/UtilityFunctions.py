@@ -1671,7 +1671,7 @@ def GenerateModel(ModelMeta,TrainParams=None):
                  HiddenLayer.append(el)
               elif len(el)==2:
                  OutputLayer=el
-
+            print(HiddenLayer[0][0])
             class GMM(torch.nn.Module):
                 def __init__(self):
                     super(GMM, self).__init__()
