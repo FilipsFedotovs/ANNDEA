@@ -1234,8 +1234,7 @@ class EMO:
                               res_fits.append(new_fit[hd])
                       return res_fits
       def ProjectVectorElements(m,v):
-                  print(m,v)
-                  exit()
+                  print(m[0],v)
                   if (len(m[0])!=len(v)):
                       raise Exception('Number of vector columns is not equal to number of acting matrix rows')
                   else:
