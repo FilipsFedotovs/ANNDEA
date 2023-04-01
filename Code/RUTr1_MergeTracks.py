@@ -753,7 +753,7 @@ while Status<len(Program):
                                          print(SubjectSeed.Header,SubjectSeed.Hits)
                                          print('---------------')
                                          print(ObjectSeed.Header,ObjectSeed.Hits)
-                                         x=input()
+                                         # x=input()
                  SeedCounter+=1
                  bar()
          print(str(InitialDataLength), "vertices from different files were merged into", str(len(base_data)), 'vertices with higher multiplicity...')
