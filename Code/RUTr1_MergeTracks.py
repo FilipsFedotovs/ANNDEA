@@ -692,10 +692,10 @@ while Status<len(Program):
         print(UF.TimeStamp(), bcolors.OKGREEN+"Loading is successful, there are "+str(len(base_data))+" fit seeds..."+bcolors.ENDC)
         print(UF.TimeStamp(), "Stripping non-z information from seeds...")
         for tr in range(len(base_data)):
-            for t in range(len(base_data[tr].hits)):
-                for h in range(len(base_data[tr].hits[t])):
-                    base_data[tr].hits[t][h]=base_data[tr].hits[t][h]
-            print(base_data[tr].hits)
+            for t in range(len(base_data[tr].Hits)):
+                for h in range(len(base_data[tr].Hits[t])):
+                    base_data[tr].Hits[t][h]=base_data[tr].Hits[t][h]
+            print(base_data[tr].Hits)
             x=input()
 
         for tr in base_data:
