@@ -699,17 +699,18 @@ while Status<len(Program):
         with alive_bar(len(base_data),force_tty=True, title="Remove overlapping hits from the seeds...") as bar:
             for tr in range(len(base_data)):
                         bar()
-                        print(base_data[tr].SLG)
-                        print(list(set(base_data[tr].Hits[0]) & set(base_data[tr].Hits[1])))
-                        print(base_data[tr].Hits[0],base_data[tr].Hits[1])
-                        x=input()
+                        if base_data[tr].SLG<0:
+                            print(base_data[tr].Hits[0],base_data[tr].Hits[1])
+                            overlap=list(set(base_data[tr].Hits[0]) & set(base_data[tr].Hits[1]))
+                            for ovp in overlap:
+                                base_data[tr].Hits[0].remove(ovp)
+                            print(base_data[tr].Hits[0],base_data[tr].Hits[1])
+
+                            x=input()
                         #base_data[tr].Hits[t][h]=base_data[tr].Hits[t][h][2]
 
 
 
-            print(tr.Hits)
-            print(overlap)
-            x=input()
     else:
         for md in range(len(ModelName)):
             if Program[Status]==ModelName[md]:
