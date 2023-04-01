@@ -1730,7 +1730,7 @@ def GenerateModel(ModelMeta,TrainParams=None):
             for HL in HiddenLayer:
                      Nodes=HL[0]*16
                      KS=HL[2]
-                     print(HL)
+                     print(HL[2])
                      PS=HL[3]
                      DR=float(HL[6]-1)/10.0
                      if HiddenLayer.index(HL)==0:
