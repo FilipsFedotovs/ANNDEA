@@ -694,8 +694,8 @@ while Status<len(Program):
         for tr in base_data:
             print(tr.SLG)
             overlap=False
-            for h1 in tr.Hits:
-                for h2 in tr.Hits:
+            for h1 in tr.Hits[0]:
+                for h2 in tr.Hits[1]:
                     if h1[2]==h2[2]:
                         print(h1[2],h2[2])
                         overlap=True
