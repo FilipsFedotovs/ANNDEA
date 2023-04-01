@@ -742,17 +742,17 @@ while Status<len(Program):
                  for ObjectSeed in base_data[SeedCounter+1:]:
                          print('---------------')
                          print('---------------')
-                         print(SubjectSeed.Hits)
+                         print(SubjectSeed.Header,SubjectSeed.Hits)
                          print('---------------')
-                         print(ObjectSeed.Hits)
+                         print(ObjectSeed.Header,ObjectSeed.Hits)
                          if SubjectSeed.InjectTrackSeed(ObjectSeed):
 
                                          base_data.pop(base_data.index(ObjectSeed))
                                          print('---------------')
                                          print('---------------')
-                                         print(SubjectSeed.Hits)
+                                         print(SubjectSeed.Header,SubjectSeed.Hits)
                                          print('---------------')
-                                         print(ObjectSeed.Hits)
+                                         print(ObjectSeed.Header,ObjectSeed.Hits)
                                          x=input()
                  SeedCounter+=1
                  bar()
