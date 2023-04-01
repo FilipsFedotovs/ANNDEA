@@ -449,8 +449,8 @@ print(UF.TimeStamp(),'Current status has a stage',Status,bcolors.ENDC)
 
 
 
-UpdateStatus(4)
-Status=4
+UpdateStatus(5)
+Status=5
 ################ Set the execution sequence for the script
 Program=[]
 
@@ -694,7 +694,7 @@ while Status<len(Program):
         for tr in range(len(base_data)):
             for t in range(len(base_data[tr].Hits)):
                 for h in range(len(base_data[tr].Hits[t])):
-                    base_data[tr].Hits[t][h]=base_data[tr].Hits[t][h]
+                    base_data[tr].Hits[t][h]=base_data[tr].Hits[t][h][2]
             print(base_data[tr].Hits)
             x=input()
 
