@@ -449,8 +449,8 @@ print(UF.TimeStamp(),'Current status has a stage',Status,bcolors.ENDC)
 
 
 
-# UpdateStatus(5)
-# Status=5
+UpdateStatus(0)
+Status=0
 ################ Set the execution sequence for the script
 Program=[]
 
@@ -523,6 +523,8 @@ Program.append('Custom - PickR')
 for md in ModelName:
     Program.append(md)
 
+Program.append('Custom - RemoveOverlap')
+
 while Status<len(Program):
     if Program[Status][:6]!='Custom' and (Program[Status] in ModelName)==False:
         #Standard process here
@@ -582,7 +584,7 @@ while Status<len(Program):
         print(UF.TimeStamp(), bcolors.OKGREEN+"The log data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv'+bcolors.ENDC)
         FreshStart=False
         print(UF.TimeStamp(),bcolors.OKGREEN+'Stage',Status,' has successfully completed'+bcolors.ENDC)
-        UpdateStatus(2)
+        UpdateStatus(Status+1)
 
     elif Program[Status]=='Custom - PickR':
         print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
@@ -683,6 +685,14 @@ while Status<len(Program):
         FreshStart=False
         print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(Status)+' has successfully completed'+bcolors.ENDC)
         UpdateStatus(4)
+    elif Program[Status]=='Custom - RemoveOverlap':
+        input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1c_'+RecBatchID+'_Fit_Seeds.pkl'
+        print(UF.TimeStamp(), "Loading fit track seeds from the file",bcolors.OKBLUE+input_file_location+bcolors.ENDC)
+        base_data=UF.PickleOperations(input_file_location,'r','N/A')[0]
+        print(UF.TimeStamp(), bcolors.OKGREEN+"Loading is successful, there are "+str(len(base_data))+" fit seeds..."+bcolors.ENDC)
+        print(UF.TimeStamp(), "Merging seeds that have an overlap along z-axis...")
+        for tr in base_data:
+            print(tr.Hits)
     else:
         for md in range(len(ModelName)):
             if Program[Status]==ModelName[md]:
