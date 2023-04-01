@@ -704,10 +704,14 @@ while Status<len(Program):
                         if base_data[tr].SLG<0:
                             print(min(base_data[tr].Hits[0]),max(base_data[tr].Hits[0]))
                             print(min(base_data[tr].Hits[1]),max(base_data[tr].Hits[1]))
+                            if max(base_data[tr].Hits[0])>max(base_data[tr].Hits[1]):
+                               base_data[tr].Hits[0]= [h for h in base_data[tr].Hits[0] if h < max(base_data[tr].Hits[1])]
+                            print(min(base_data[tr].Hits[0]),max(base_data[tr].Hits[0]))
+                            print(min(base_data[tr].Hits[1]),max(base_data[tr].Hits[1]))
                             x=input()
-                            overlap=list(set(base_data[tr].Hits[0]) & set(base_data[tr].Hits[1]))
-                            for ovp in overlap:
-                                base_data[tr].Hits[0].remove(ovp)
+                            # overlap=list(set(base_data[tr].Hits[0]) & set(base_data[tr].Hits[1]))
+                            # for ovp in overlap:
+                            #     base_data[tr].Hits[0].remove(ovp)
         base_data=[tr for tr in base_data if tr.Fit >= Acceptance]
         print(UF.TimeStamp(), bcolors.OKGREEN+"The refining was successful, "+str(len(base_data))+" track seeds remain..."+bcolors.ENDC)
         output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1c_'+RecBatchID+'_Fit_Filtered_Seeds.pkl'
