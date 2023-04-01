@@ -1729,15 +1729,15 @@ def GenerateModel(ModelMeta,TrainParams=None):
             model = Sequential()
             for HL in HiddenLayer:
                      Nodes=HL[0]*16
-                     KS=(HL[2]*2)+1
+                     KS=HL[2]
                      PS=HL[3]
                      DR=float(HL[6]-1)/10.0
                      if HiddenLayer.index(HL)==0:
-                        model.add(Conv3D(Nodes, activation=act_fun_list[HL[1]],kernel_size=(KS,KS,KS),kernel_initializer='he_uniform', input_shape=(H,W,L,1)))
+                        model.add(Conv3D(Nodes, activation=act_fun_list[HL[1]],kernel_size=(KS[0],KS[1],KS[2]),kernel_initializer='he_uniform', input_shape=(H,W,L,1)))
                      else:
-                        model.add(Conv3D(Nodes, activation=act_fun_list[HL[1]],kernel_size=(KS,KS,KS),kernel_initializer='he_uniform'))
+                        model.add(Conv3D(Nodes, activation=act_fun_list[HL[1]],kernel_size=(KS[0],KS[1],KS[2]),kernel_initializer='he_uniform'))
                      if PS>1:
-                        model.add(MaxPooling3D(pool_size=(PS, PS, PS)))
+                        model.add(MaxPooling3D(pool_size=(PS[0], PS[1], PS[2])))
                      model.add(BatchNormalization(center=HL[4]>1, scale=HL[5]>1))
                      model.add(Dropout(DR))
             model.add(Flatten())
