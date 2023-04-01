@@ -906,10 +906,8 @@ class EMO:
           self_matx=EMO.DensityMatrix(OtherSeed.Header,self.Header)
           if EMO.Overlap(self_matx)==False:
               return EMO.Overlap(self_matx)
-          print(OtherSeed.Header,self.Header)
-          print(self_matx)
-          exit()
           new_seed_header=EMO.ProjectVectorElements(self_matx,self.Header)
+          print(self_matx,self.Hits)
           new_self_hits=EMO.ProjectVectorElements(self_matx,self.Hits)
           new_self_fit=EMO.ProjectVectorElements(self_matx,self.FIT)
           remain_1_s = EMO.GenerateInverseVector(self.Header,new_seed_header)
@@ -1236,6 +1234,8 @@ class EMO:
                               res_fits.append(new_fit[hd])
                       return res_fits
       def ProjectVectorElements(m,v):
+                  print(m,v)
+                  exit()
                   if (len(m[0])!=len(v)):
                       raise Exception('Number of vector columns is not equal to number of acting matrix rows')
                   else:
