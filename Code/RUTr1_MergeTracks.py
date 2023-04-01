@@ -691,10 +691,10 @@ while Status<len(Program):
         base_data=UF.PickleOperations(input_file_location,'r','N/A')[0]
         print(UF.TimeStamp(), bcolors.OKGREEN+"Loading is successful, there are "+str(len(base_data))+" fit seeds..."+bcolors.ENDC)
         print(UF.TimeStamp(), "Stripping non-z information from seeds...")
-        for tr in base_data:
-            for t in tr.Hits:
-                for h in t:
-                    h=h[2]
+        for tr in range(len(base_data)):
+            for t in range(len(tr.Hits)):
+                for h in range(len(t)):
+                    base_data[tr][t][h]=base_data[tr][t][h]
             print(tr.Hits)
             x=input()
 
