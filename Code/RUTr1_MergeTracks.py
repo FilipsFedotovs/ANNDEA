@@ -714,6 +714,7 @@ while Status<len(Program):
             UpdateStatus(Status+1)
         else:
             ('WIP')
+            UpdateStatus(Status+1)
 
 
 
