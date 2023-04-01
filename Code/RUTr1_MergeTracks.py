@@ -699,7 +699,7 @@ while Status<len(Program):
                     for h in range(len(base_data[tr].Hits[t])):
                         print(base_data[tr].Hits[t][h][2])
                         x=input()
-                        base_data[tr].Hits[t][h]=(base_data[tr].Hits[t][h][2]-50000)/1350
+                        base_data[tr].Hits[t][h]=(base_data[tr].Hits[t][h][2])
         # with alive_bar(len(base_data),force_tty=True, title="Remove overlapping hits from the seeds...") as bar:
         #     for tr in range(len(base_data)):
         #                 bar()
@@ -742,7 +742,11 @@ while Status<len(Program):
 
 
                  for ObjectSeed in base_data[SeedCounter+1:]:
+                         print(SubjectSeed.Hits)
+                         print('---------------')
+                         print(ObjectSeed.Hits)
                          if SubjectSeed.InjectTrackSeed(ObjectSeed):
+
                                          base_data.pop(base_data.index(ObjectSeed))
                  SeedCounter+=1
                  bar()
