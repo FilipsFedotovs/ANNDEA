@@ -906,7 +906,9 @@ class EMO:
           self_matx=EMO.DensityMatrix(OtherSeed.Header,self.Header)
           if EMO.Overlap(self_matx)==False:
               return EMO.Overlap(self_matx)
-
+          print(OtherSeed.Header,self.Header)
+          print(self_matx)
+          exit()
           new_seed_header=EMO.ProjectVectorElements(self_matx,self.Header)
           new_self_hits=EMO.ProjectVectorElements(self_matx,self.Hits)
           new_self_fit=EMO.ProjectVectorElements(self_matx,self.FIT)
