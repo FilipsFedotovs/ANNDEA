@@ -702,6 +702,9 @@ while Status<len(Program):
             for tr in range(len(base_data)):
                         bar()
                         if base_data[tr].SLG<0:
+                            print(min(base_data[tr].Hits[0]),max(base_data[tr].Hits[0]))
+                            print(min(base_data[tr].Hits[1]),max(base_data[tr].Hits[1]))
+                            x=input()
                             overlap=list(set(base_data[tr].Hits[0]) & set(base_data[tr].Hits[1]))
                             for ovp in overlap:
                                 base_data[tr].Hits[0].remove(ovp)
