@@ -1265,7 +1265,7 @@ def GenerateModel(ModelMeta,TrainParams=None):
          import torch_geometric
          from torch_geometric.nn import MessagePassing
          from torch_geometric.nn import global_mean_pool
-
+         print(ModelMeta.ModelArchitecture)
          if ModelMeta.ModelArchitecture=='TCN':
             from MTr_IN import InteractionNetwork as IN
             class MLP(nn.Module):
