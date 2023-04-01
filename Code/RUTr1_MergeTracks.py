@@ -692,7 +692,16 @@ while Status<len(Program):
         print(UF.TimeStamp(), bcolors.OKGREEN+"Loading is successful, there are "+str(len(base_data))+" fit seeds..."+bcolors.ENDC)
         print(UF.TimeStamp(), "Merging seeds that have an overlap along z-axis...")
         for tr in base_data:
+            print(tr.SLG)
+            overlap=False
+            for h1 in tr.Hits:
+                for h2 in tr.Hits:
+                    if h1[2]==h2[2]:
+                        overlap=True
+
             print(tr.Hits)
+            print(overlap)
+            x=input()
     else:
         for md in range(len(ModelName)):
             if Program[Status]==ModelName[md]:
