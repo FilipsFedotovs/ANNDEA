@@ -711,6 +711,7 @@ while Status<len(Program):
                             # x=input()
                             print(base_data[tr].Hits[0],base_data[tr].Hits[1])
                             base_data[tr].Hits[0]+=base_data[tr].Hits[1]
+                            base_data[tr].Hits[1]=base_data[tr].Hits[0]
                             print(base_data[tr].Hits[0],base_data[tr].Hits[1])
                             x=input()
                             # overlap=list(set(base_data[tr].Hits[0]) & set(base_data[tr].Hits[1]))
