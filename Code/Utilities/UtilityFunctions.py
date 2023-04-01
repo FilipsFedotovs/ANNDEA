@@ -1667,9 +1667,9 @@ def GenerateModel(ModelMeta,TrainParams=None):
             HiddenLayer=[]
             OutputLayer=[]
             for el in ModelMeta.ModelParameters:
-              if ModelMeta.ModelParameters.index(el)<=4 and len(el)>0:
+              if len(el)==1:
                  HiddenLayer.append(el)
-              elif ModelMeta.ModelParameters.index(el)==10:
+              elif len(el)==2:
                  OutputLayer=el
 
             class GMM(torch.nn.Module):
