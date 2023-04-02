@@ -746,7 +746,7 @@ while Status<len(Program):
                                 print(SubjectSeed.Hits,ObjectSeed.Hits)
                                 print(SubjectSeed.FIT,ObjectSeed.FIT)
                                 print('#########################')
-                                x=input()
+                                #x=input()
                             # if SeedCounter>=19:
                             #      print('---------------')
                             #      print('---------------')
