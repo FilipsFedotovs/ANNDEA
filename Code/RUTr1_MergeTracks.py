@@ -740,7 +740,6 @@ while Status<len(Program):
 
 
                  for ObjectSeed in base_data[SeedCounter+1:]:
-                            print(SubjectSeed.Header,ObjectSeed.Header)
                             if SubjectSeed.InjectTrackSeed(ObjectSeed)==1:
                                 print(SubjectSeed.Header,ObjectSeed.Header)
                                 print(SubjectSeed.InjectTrackSeed(ObjectSeed))
