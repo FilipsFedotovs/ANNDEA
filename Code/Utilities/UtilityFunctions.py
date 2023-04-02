@@ -912,6 +912,11 @@ class EMO:
                 print(self.FIT,OtherSeed.FIT)
                 ovlp_index=[self.Header.index(Overlap[0]),OtherSeed.Header.index(Overlap[0])]
                 print(ovlp_index)
+                for sh in range(len(self.Header)):
+                    for oh in range(len(OtherSeed.Header)):
+                        if sh!=ovlp_index[0] and oh!=ovlp_index[0]:
+                            print('Combo:',self.Header[sh],OtherSeed.Header[oh])
+
                 return 1
 
           self_matx=EMO.DensityMatrix(OtherSeed.Header,self.Header)
