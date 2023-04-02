@@ -963,6 +963,7 @@ class EMO:
               self.FIT[(self.Header.index(Overlap[0]))]+=OtherSeed.FIT[(OtherSeed.Header.index(Overlap[0]))]
               self.FIT[(self.Header.index(Overlap[1]))]+=OtherSeed.FIT[(OtherSeed.Header.index(Overlap[1]))]
               print(self.FIT,OtherSeed.FIT)
+              x=input()
               return True
           # self_matx=EMO.DensityMatrix(OtherSeed.Header,self.Header)
           # print(self_matx)
