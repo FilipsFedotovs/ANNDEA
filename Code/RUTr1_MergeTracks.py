@@ -743,6 +743,7 @@ while Status<len(Program):
                             if SubjectSeed.InjectTrackSeed(ObjectSeed)==1:
                                 print(SubjectSeed.Header,ObjectSeed.Header)
                                 print(SubjectSeed.InjectTrackSeed(ObjectSeed))
+                                print(SubjectSeed.Header,ObjectSeed.Header)
                                 x=input()
                             # if SeedCounter>=19:
                             #      print('---------------')
