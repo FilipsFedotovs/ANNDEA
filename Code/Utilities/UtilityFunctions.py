@@ -938,6 +938,7 @@ class EMO:
                 print(oh_injest)
                 oh_injest=list(set(oh_injest))
                 print(oh_injest)
+                print(sh_remove)
                 if lost_fit==pot_fit==0:
                    for oh in oh_injest:
                        self.Header.append(OtherSeed.Header[oh])
