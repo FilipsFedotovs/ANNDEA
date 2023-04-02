@@ -925,6 +925,8 @@ class EMO:
                                pot_fit+=OtherSeed.FIT[oh]
                                sh_remove.append(sh)
                                oh_injest.append(oh)
+                            else:
+                               oh_injest.append(oh)
                 print(lost_fit,pot_fit,sh_remove,oh_injest)
 
 
