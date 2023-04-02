@@ -953,9 +953,11 @@ class EMO:
                        self.Hits.append(OtherSeed.Hits[oh])
                        self.FIT.append(OtherSeed.FIT[oh])
                 print(lost_fit,pot_fit,sh_remove,oh_injest)
-                return 1
+                return True
           else:
-              return ('Overlap',Overlap)
+              self.FIT[(self.Header.index(Overlap[0]))]+=OtherSeed.FIT[(OtherSeed.Header.index(Overlap[0]))]
+              self.FIT[(self.Header.index(Overlap[1]))]+=OtherSeed.FIT[(OtherSeed.Header.index(Overlap[1]))]
+              return True
           # self_matx=EMO.DensityMatrix(OtherSeed.Header,self.Header)
           # print(self_matx)
           # if EMO.Overlap(self_matx)==False:
