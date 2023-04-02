@@ -907,6 +907,9 @@ class EMO:
           if len(Overlap)==0:
                 return False
           elif len(Overlap)==1:
+                print(self.Hits,OtherSeed.Hits)
+                print(self.Fit,OtherSeed.Fit)
+                print(self.FIT,OtherSeed.FIT)
                 return 1
 
           self_matx=EMO.DensityMatrix(OtherSeed.Header,self.Header)
