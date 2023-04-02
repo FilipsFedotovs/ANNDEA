@@ -908,17 +908,28 @@ class EMO:
               return EMO.Overlap(self_matx)
 
           new_seed_header=EMO.ProjectVectorElements(self_matx,self.Header)
-          print(self_matx,self.Hits)
+          print('new seed header',new_seed_header)
           new_self_hits=EMO.ProjectVectorElements(self_matx,self.Hits)
+          print('new seed hits',new_self_hits)
           new_self_fit=EMO.ProjectVectorElements(self_matx,self.FIT)
+          print('new seed fit',new_self_fit)
           remain_1_s = EMO.GenerateInverseVector(self.Header,new_seed_header)
+          print('remain1',remain_1_s)
           remain_1_o = EMO.GenerateInverseVector(OtherSeed.Header,new_seed_header)
+          print('remain o;',remain_1_o)
           OtherSeed.Header=EMO.ProjectVectorElements([remain_1_o],OtherSeed.Header)
+          print('Os header',OtherSeed.Header)
           self.Header=EMO.ProjectVectorElements([remain_1_s],self.Header)
+          print('s Head', self.Header)
           OtherSeed.Hits=EMO.ProjectVectorElements([remain_1_o],OtherSeed.Hits)
+          print('Other hits', OtherSeed.Hits)
           self.Hits=EMO.ProjectVectorElements([remain_1_s],self.Hits)
+          print('Self hits',self.Hits)
           OtherSeed.FIT=EMO.ProjectVectorElements([remain_1_o],OtherSeed.FIT)
+          print('Other fit',OtherSeed.FIT)
           self.FIT=EMO.ProjectVectorElements([remain_1_s],self.FIT)
+          print('Self fit',self.FIT)
+          print(len(OtherSeed.Header),len(self.Header))
           if (len(OtherSeed.Header))==0:
               self.Header+=new_seed_header
               self.Hits+=new_self_hits
@@ -1235,7 +1246,6 @@ class EMO:
                               res_fits.append(new_fit[hd])
                       return res_fits
       def ProjectVectorElements(m,v):
-                  print(m[0],v)
                   if (len(m[0])!=len(v)):
                       raise Exception('Number of vector columns is not equal to number of acting matrix rows')
                   else:
