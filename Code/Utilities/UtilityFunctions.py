@@ -912,10 +912,13 @@ class EMO:
                 print(self.FIT,OtherSeed.FIT)
                 ovlp_index=[self.Header.index(Overlap[0]),OtherSeed.Header.index(Overlap[0])]
                 print(ovlp_index)
+                sh_remove=[]
+                oh_injest=[]
                 for sh in range(len(self.Header)):
                     for oh in range(len(OtherSeed.Header)):
                         if sh!=ovlp_index[0] and oh!=ovlp_index[0]:
                             print('Combo:',self.Header[sh],OtherSeed.Header[oh])
+                            print(EMO.HitOverlap(self.Hits[sh],OtherSeed.Hits[oh]))
 
                 return 1
 
@@ -1148,7 +1151,21 @@ class EMO:
                         dot = magA
                     pA = a0 + (_A * dot)
             return pA,pB,np.linalg.norm(pA-pB)
-      
+      def HitOverlap(a,b):
+
+                 min_a=min(a)
+                 min_b=min(b)
+                 max_a=max(a)
+                 max_b=max(b)
+                 if (min_b>=min_a) and (max_b<=max_a):
+                     return(True)
+                 elif (min_a>=min_b) and (max_a<=max_b):
+                     return(True)
+                 elif (max_a>min_b) and (max_a<max_b):
+                     return(True)
+                 elif (max_b>min_a) and (max_b<max_a):
+                     return(True)
+                 return(False)
       def Product(a,b):
          if type(a) is str:
              if type(b) is str:
