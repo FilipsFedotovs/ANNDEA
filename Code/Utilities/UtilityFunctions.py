@@ -904,6 +904,14 @@ class EMO:
              self.ClassHeaders=Mmeta.ClassHeaders+['Other']
       def InjectTrackSeed(self,OtherSeed):
           Overlap=list(set(self.Header) & set(OtherSeed.Header))
+          print('SH',self.Header)
+          print('OH',OtherSeed.Header)
+          print('SH_Hits',self.Hits)
+          print('OH_Hits',OtherSeed.Header)
+          print('SH_Fits',self.FIT)
+          print('OH_Fits',OtherSeed.FIT)
+          print(Overlap)
+          print(len(Overlap))
           if len(Overlap)==0:
                 return False
           elif len(Overlap)==1:

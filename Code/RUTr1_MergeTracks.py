@@ -742,12 +742,6 @@ while Status<len(Program):
                  for ObjectSeed in base_data[SeedCounter+1:]:
                             result=SubjectSeed.InjectTrackSeed(ObjectSeed)
                             if result!=False:
-                                print('#############',result,'############')
-                                print(SubjectSeed.Header,ObjectSeed.Header)
-                                print(SubjectSeed.Hits,ObjectSeed.Hits)
-                                print(SubjectSeed.FIT,ObjectSeed.FIT)
-                                print(SubjectSeed.InjectTrackSeed(ObjectSeed))
-                                print('---------------')
                                 print(SubjectSeed.Header,ObjectSeed.Header)
                                 print(SubjectSeed.Hits,ObjectSeed.Hits)
                                 print(SubjectSeed.FIT,ObjectSeed.FIT)
