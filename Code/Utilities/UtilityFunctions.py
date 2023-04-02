@@ -907,7 +907,7 @@ class EMO:
           print('SH',self.Header)
           print('OH',OtherSeed.Header)
           print('SH_Hits',self.Hits)
-          print('OH_Hits',OtherSeed.Header)
+          print('OH_Hits',OtherSeed.Hits)
           print('SH_Fits',self.FIT)
           print('OH_Fits',OtherSeed.FIT)
           print(Overlap)
