@@ -903,21 +903,19 @@ class EMO:
              self.Class=M(graph.x, graph.edge_index, graph.edge_attr,graph.batch).tolist()[0]
              self.ClassHeaders=Mmeta.ClassHeaders+['Other']
       def InjectTrackSeed(self,OtherSeed):
-          Overlap=list(set(self.Header) & set(OtherSeed.Header))
-          print('SH',self.Header)
-          print('OH',OtherSeed.Header)
-          print('SH_Hits',self.Hits)
-          print('OH_Hits',OtherSeed.Hits)
-          print('SH_Fits',self.FIT)
-          print('OH_Fits',OtherSeed.FIT)
-          print(Overlap)
-          print(len(Overlap))
-          if len(Overlap)==0:
+          Overlap=list(set(self.Header) & set(OtherSeed.Header)) #Basic check - does the other seed have at least one track segment in common?
+
+          if len(Overlap)==0: #If not, we don't care and no injection is required
                 return False
-          elif len(Overlap)==1:
-                print(self.Hits,OtherSeed.Hits)
-                print(self.Fit,OtherSeed.Fit)
-                print(self.FIT,OtherSeed.FIT)
+          elif len(Overlap)==1: #The scenario where there is one track segment in common
+                print('SH',self.Header)
+                print('OH',OtherSeed.Header)
+                print('SH_Hits',self.Hits)
+                print('OH_Hits',OtherSeed.Hits)
+                print('SH_Fits',self.FIT)
+                print('OH_Fits',OtherSeed.FIT)
+                print(Overlap)
+                print(len(Overlap))
                 ovlp_index=[self.Header.index(Overlap[0]),OtherSeed.Header.index(Overlap[0])]
                 print(ovlp_index)
                 sh_remove=[]
@@ -955,7 +953,16 @@ class EMO:
                        self.Header.append(OtherSeed.Header[oh])
                        self.Hits.append(OtherSeed.Hits[oh])
                        self.FIT.append(OtherSeed.FIT[oh])
+                print('-----------------------')
                 print(lost_fit,pot_fit,sh_remove,oh_injest)
+                print('SH',self.Header)
+                print('OH',OtherSeed.Header)
+                print('SH_Hits',self.Hits)
+                print('OH_Hits',OtherSeed.Hits)
+                print('SH_Fits',self.FIT)
+                print('OH_Fits',OtherSeed.FIT)
+                print(Overlap)
+                print(len(Overlap))
                 return True
           else:
               print(self.FIT,OtherSeed.FIT)
