@@ -740,21 +740,24 @@ while Status<len(Program):
 
 
                  for ObjectSeed in base_data[SeedCounter+1:]:
-                            if SeedCounter>=19:
-                                 print('---------------')
-                                 print('---------------')
-                                 print(SubjectSeed.Header,SubjectSeed.Hits)
-                                 print('---------------')
-                                 print(ObjectSeed.Header,ObjectSeed.Hits)
-                            if SubjectSeed.InjectTrackSeed(ObjectSeed):
-                                             if SeedCounter>19:
-                                                 print('---------------')
-                                                 print('---------------')
-                                                 print(SubjectSeed.Header,SubjectSeed.Hits)
-                                                 print('---------------')
-                                                 print(ObjectSeed.Header,ObjectSeed.Hits)
-                                                 x=input()
-                                             base_data.pop(base_data.index(ObjectSeed))
+                            print(SubjectSeed.Header,ObjectSeed.Header)
+                            print(SubjectSeed.InjectTrackSeed(ObjectSeed))
+                            x=input()
+                            # if SeedCounter>=19:
+                            #      print('---------------')
+                            #      print('---------------')
+                            #      print(SubjectSeed.Header,SubjectSeed.Hits)
+                            #      print('---------------')
+                            #      print(ObjectSeed.Header,ObjectSeed.Hits)
+                            # if SubjectSeed.InjectTrackSeed(ObjectSeed):
+                            #                  if SeedCounter>19:
+                            #                      print('---------------')
+                            #                      print('---------------')
+                            #                      print(SubjectSeed.Header,SubjectSeed.Hits)
+                            #                      print('---------------')
+                            #                      print(ObjectSeed.Header,ObjectSeed.Hits)
+                            #                      x=input()
+                            #                  base_data.pop(base_data.index(ObjectSeed))
 
 
                  SeedCounter+=1
