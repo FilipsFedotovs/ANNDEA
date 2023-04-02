@@ -904,9 +904,10 @@ class EMO:
              self.ClassHeaders=Mmeta.ClassHeaders+['Other']
       def InjectTrackSeed(self,OtherSeed):
           self_matx=EMO.DensityMatrix(OtherSeed.Header,self.Header)
+          print(self_matx)
           if EMO.Overlap(self_matx)==False:
               return EMO.Overlap(self_matx)
-
+          
           new_seed_header=EMO.ProjectVectorElements(self_matx,self.Header)
           print('new seed header',new_seed_header)
           new_self_hits=EMO.ProjectVectorElements(self_matx,self.Hits)
