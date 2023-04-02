@@ -741,8 +741,10 @@ while Status<len(Program):
 
                  for ObjectSeed in base_data[SeedCounter+1:]:
                             print(SubjectSeed.Header,ObjectSeed.Header)
-                            print(SubjectSeed.InjectTrackSeed(ObjectSeed))
-                            x=input()
+                            if SubjectSeed.InjectTrackSeed(ObjectSeed)==1:
+                                print(SubjectSeed.Header,ObjectSeed.Header)
+                                print(SubjectSeed.InjectTrackSeed(ObjectSeed))
+                                x=input()
                             # if SeedCounter>=19:
                             #      print('---------------')
                             #      print('---------------')
