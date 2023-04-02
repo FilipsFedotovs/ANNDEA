@@ -945,10 +945,12 @@ class EMO:
                        self.Hits.append(OtherSeed.Hits[oh])
                        self.FIT.append(OtherSeed.FIT[oh])
                 elif lost_fit<pot_fit:
+                    inx_drop=0
                     for sh in sh_remove:
-                       self.Header.pop(sh)
-                       self.Hits.pop(sh)
-                       self.FIT.pop(sh)
+                       self.Header.pop(sh-inx_drop)
+                       self.Hits.pop(sh-inx_drop)
+                       self.FIT.pop(sh-inx_drop)
+                       inx_drop+=1
                     for oh in oh_injest:
                        self.Header.append(OtherSeed.Header[oh])
                        self.Hits.append(OtherSeed.Hits[oh])
@@ -956,8 +958,11 @@ class EMO:
                 print(lost_fit,pot_fit,sh_remove,oh_injest)
                 return True
           else:
+              print(self.FIT,OtherSeed.FIT)
+              x=input()
               self.FIT[(self.Header.index(Overlap[0]))]+=OtherSeed.FIT[(OtherSeed.Header.index(Overlap[0]))]
               self.FIT[(self.Header.index(Overlap[1]))]+=OtherSeed.FIT[(OtherSeed.Header.index(Overlap[1]))]
+              print(self.FIT,OtherSeed.FIT)
               return True
           # self_matx=EMO.DensityMatrix(OtherSeed.Header,self.Header)
           # print(self_matx)
