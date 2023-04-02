@@ -740,19 +740,23 @@ while Status<len(Program):
 
 
                  for ObjectSeed in base_data[SeedCounter+1:]:
-
-                         try:
-                             if SubjectSeed.InjectTrackSeed(ObjectSeed):
+                            if SeedCounter>=19:
+                                 print('---------------')
+                                 print('---------------')
+                                 print(SubjectSeed.Header,SubjectSeed.Hits)
+                                 print('---------------')
+                                 print(ObjectSeed.Header,ObjectSeed.Hits)
+                            if SubjectSeed.InjectTrackSeed(ObjectSeed):
 
                                              base_data.pop(base_data.index(ObjectSeed))
-
-                         except:
+                            if SeedCounter>=19:
                              print('---------------')
                              print('---------------')
                              print(SubjectSeed.Header,SubjectSeed.Hits)
                              print('---------------')
                              print(ObjectSeed.Header,ObjectSeed.Hits)
                              x=input()
+
                  SeedCounter+=1
                  bar()
          print(str(InitialDataLength), "vertices from different files were merged into", str(len(base_data)), 'vertices with higher multiplicity...')
