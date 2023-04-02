@@ -908,16 +908,16 @@ class EMO:
           if len(Overlap)==0: #If not, we don't care and no injection is required
                 return False
           elif len(Overlap)==1: #The scenario where there is one track segment in common
-                print('SH',self.Header)
-                print('OH',OtherSeed.Header)
-                print('SH_Hits',self.Hits)
-                print('OH_Hits',OtherSeed.Hits)
-                print('SH_Fits',self.FIT)
-                print('OH_Fits',OtherSeed.FIT)
-                print(Overlap)
-                print(len(Overlap))
+                # print('SH',self.Header)
+                # print('OH',OtherSeed.Header)
+                # print('SH_Hits',self.Hits)
+                # print('OH_Hits',OtherSeed.Hits)
+                # print('SH_Fits',self.FIT)
+                # print('OH_Fits',OtherSeed.FIT)
+                # print(Overlap)
+                # print(len(Overlap))
                 ovlp_index=[self.Header.index(Overlap[0]),OtherSeed.Header.index(Overlap[0])]
-                print(ovlp_index)
+                # print(ovlp_index)
                 sh_remove=[]
                 oh_injest=[]
                 lost_fit=0
@@ -925,7 +925,7 @@ class EMO:
                 for sh in range(len(self.Header)):
                     for oh in range(len(OtherSeed.Header)):
                         if sh!=ovlp_index[0] and oh!=ovlp_index[1]:
-                            print('Combo:',self.Header[sh],OtherSeed.Header[oh])
+                            # print('Combo:',self.Header[sh],OtherSeed.Header[oh])
                             if EMO.HitOverlap(self.Hits[sh],OtherSeed.Hits[oh]):
                                lost_fit+=self.FIT[sh]
                                pot_fit+=OtherSeed.FIT[oh]
@@ -933,10 +933,10 @@ class EMO:
                                oh_injest.append(oh)
                             else:
                                oh_injest.append(oh)
-                print(oh_injest)
+                # print(oh_injest)
                 oh_injest=list(set(oh_injest))
-                print(oh_injest)
-                print(sh_remove)
+                # print(oh_injest)
+                # print(sh_remove)
                 if lost_fit==pot_fit==0:
                    for oh in oh_injest:
                        self.Header.append(OtherSeed.Header[oh])
@@ -953,25 +953,25 @@ class EMO:
                        self.Header.append(OtherSeed.Header[oh])
                        self.Hits.append(OtherSeed.Hits[oh])
                        self.FIT.append(OtherSeed.FIT[oh])
-                print('-----------------------')
-                print(lost_fit,pot_fit,sh_remove,oh_injest)
-                print('SH',self.Header)
-                print('OH',OtherSeed.Header)
-                print('SH_Hits',self.Hits)
-                print('OH_Hits',OtherSeed.Hits)
-                print('SH_Fits',self.FIT)
-                print('OH_Fits',OtherSeed.FIT)
-                print(Overlap)
-                print(len(Overlap))
-                x=input()
+                # print('-----------------------')
+                # print(lost_fit,pot_fit,sh_remove,oh_injest)
+                # print('SH',self.Header)
+                # print('OH',OtherSeed.Header)
+                # print('SH_Hits',self.Hits)
+                # print('OH_Hits',OtherSeed.Hits)
+                # print('SH_Fits',self.FIT)
+                # print('OH_Fits',OtherSeed.FIT)
+                # print(Overlap)
+                # print(len(Overlap))
+                # x=input()
                 return True
           else:
-              print(self.FIT,OtherSeed.FIT)
-              x=input()
+              # print(self.FIT,OtherSeed.FIT)
+              # x=input()
               self.FIT[(self.Header.index(Overlap[0]))]+=OtherSeed.FIT[(OtherSeed.Header.index(Overlap[0]))]
               self.FIT[(self.Header.index(Overlap[1]))]+=OtherSeed.FIT[(OtherSeed.Header.index(Overlap[1]))]
-              print(self.FIT,OtherSeed.FIT)
-              x=input()
+              # print(self.FIT,OtherSeed.FIT)
+              # x=input()
               return True
           # self_matx=EMO.DensityMatrix(OtherSeed.Header,self.Header)
           # print(self_matx)
