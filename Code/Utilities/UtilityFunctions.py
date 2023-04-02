@@ -910,6 +910,8 @@ class EMO:
                 print(self.Hits,OtherSeed.Hits)
                 print(self.Fit,OtherSeed.Fit)
                 print(self.FIT,OtherSeed.FIT)
+                ovlp_index=[self.Header.index(Overlap[0]),OtherSeed.Header.index(Overlap[0])]
+                print(ovlp_index)
                 return 1
 
           self_matx=EMO.DensityMatrix(OtherSeed.Header,self.Header)
