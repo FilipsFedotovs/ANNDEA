@@ -932,6 +932,15 @@ class EMO:
                        self.Header.append(OtherSeed.Header[oh])
                        self.Hits.append(OtherSeed.Hits[oh])
                        self.FIT.append(OtherSeed.FIT[oh])
+                elif lost_fit<pot_fit:
+                    for sh in sh_remove:
+                       self.Header.pop(OtherSeed.Header[sh])
+                       self.Hits.pop(OtherSeed.Hits[sh])
+                       self.FIT.pop(OtherSeed.FIT[sh])
+                    for oh in oh_injest:
+                       self.Header.append(OtherSeed.Header[oh])
+                       self.Hits.append(OtherSeed.Hits[oh])
+                       self.FIT.append(OtherSeed.FIT[oh])
                 print(lost_fit,pot_fit,sh_remove,oh_injest)
 
 
