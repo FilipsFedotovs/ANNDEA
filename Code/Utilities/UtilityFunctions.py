@@ -963,6 +963,7 @@ class EMO:
                 print('OH_Fits',OtherSeed.FIT)
                 print(Overlap)
                 print(len(Overlap))
+                x=input()
                 return True
           else:
               print(self.FIT,OtherSeed.FIT)
