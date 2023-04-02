@@ -926,7 +926,7 @@ class EMO:
                 pot_fit=0
                 for sh in range(len(self.Header)):
                     for oh in range(len(OtherSeed.Header)):
-                        if sh!=ovlp_index[0] and oh!=ovlp_index[0]:
+                        if sh!=ovlp_index[0] and oh!=ovlp_index[1]:
                             print('Combo:',self.Header[sh],OtherSeed.Header[oh])
                             if EMO.HitOverlap(self.Hits[sh],OtherSeed.Hits[oh]):
                                lost_fit+=self.FIT[sh]
@@ -937,7 +937,7 @@ class EMO:
                                oh_injest.append(oh)
                 print(oh_injest)
                 oh_injest=list(set(oh_injest))
-                print(oh_injest) 
+                print(oh_injest)
                 if lost_fit==pot_fit==0:
                    for oh in oh_injest:
                        self.Header.append(OtherSeed.Header[oh])
