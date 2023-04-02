@@ -749,7 +749,7 @@ while Status<len(Program):
                             if SubjectSeed.InjectTrackSeed(ObjectSeed):
 
                                              base_data.pop(base_data.index(ObjectSeed))
-                            if SeedCounter>=19:
+                            if SeedCounter>19:
                              print('---------------')
                              print('---------------')
                              print(SubjectSeed.Header,SubjectSeed.Hits)
