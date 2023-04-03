@@ -724,11 +724,7 @@ while Status<len(Program):
                 data[BrickID] = data[BrickID].astype(str)
                 data['Rec_Seg_ID'] = data[TrackID] + '-' + data[BrickID]
                 print(UF.TimeStamp(),'Mapping data...')
-                combined_data=pd.merge(data, map_data, how="inner", left_on=["Rec_Seg_ID"], right_on=['Old_Track_ID'])
-                print(data)
-                print(map_data)
-                print(combined_data)
-                exit()
+                combined_data=pd.merge(data, map_data, how="left", left_on=["Rec_Seg_ID"], right_on=['Old_Track_ID'])
                 selected_combined_data=combined_data.dropna(subset=['Old_Track_ID'])
                 print(selected_combined_data)
                 exit()
