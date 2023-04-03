@@ -745,7 +745,7 @@ while Status<len(Program):
                 Good_Tracks=Good_Tracks[['New_Track_Quarter','New_Track_ID',PM.Hit_ID]] #Just strip off the information that we don't need anymore
 
                 Bad_Tracks=selected_combined_data[selected_combined_data.No_Plates < selected_combined_data.No_Hits] #These are the bad guys. We need to remove this extra hits
-                Bad_Tracks=Bad_Tracks[['New_Track_Quarter''New_Track_ID',PM.x,PM.y,PM.z,PM.tx,PM.ty,PM.Hit_ID]]
+                Bad_Tracks=Bad_Tracks[['New_Track_Quarter','New_Track_ID',PM.x,PM.y,PM.z,PM.tx,PM.ty,PM.Hit_ID]]
                 print(Bad_Tracks)
                 exit()
                 #Id the problematic plates
