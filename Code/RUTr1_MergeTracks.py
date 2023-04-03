@@ -738,14 +738,16 @@ while Status<len(Program):
                 Hit_Map_Stats=Hit_Map_Stats[Hit_Map_Stats.No_Plates >= PM.MinHitsTrack]
                 Prop_No_Tracks=len(Hit_Map_Stats)
                 print(UF.TimeStamp(),bcolors.WARNING+'After dropping single hit tracks, left '+ str(Prop_No_Tracks)+' tracks...'+bcolors.ENDC)
+
+                selected_combined_data=pd.merge(selected_combined_data,Hit_Map_Stats,how='inner',on = ['New_Track_Quarter','New_Track_ID']) #Join back to the hit map
+                Good_Tracks=selected_combined_data[selected_combined_data.No_Plates == selected_combined_data.No_Hits] #For all good tracks the number of hits matches the number of plates, we won't touch them
+                print(Good_Tracks)
+                Good_Tracks=Good_Tracks[['New_Track_Quarter','New_Track_ID',PM.Hit_ID]] #Just strip off the information that we don't need anymore
+
+                Bad_Tracks=selected_combined_data[selected_combined_data.No_Plates < selected_combined_data.No_Hits] #These are the bad guys. We need to remove this extra hits
+                Bad_Tracks=Bad_Tracks[['New_Track_Quarter''New_Track_ID',PM.x,PM.y,PM.z,PM.tx,PM.ty,PM.Hit_ID]]
+                print(Bad_Tracks)
                 exit()
-                Hit_Map=pd.merge(Hit_Map,Hit_Map_Stats,how='inner',on = [RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID']) #Join back to the hit map
-                Good_Tracks=Hit_Map[Hit_Map.No_Plates == Hit_Map.No_Hits] #For all good tracks the number of hits matches the number of plates, we won't touch them
-                Good_Tracks=Good_Tracks[[RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID',PM.Hit_ID]] #Just strip off the information that we don't need anymore
-
-                Bad_Tracks=Hit_Map[Hit_Map.No_Plates < Hit_Map.No_Hits] #These are the bad guys. We need to remove this extra hits
-                Bad_Tracks=Bad_Tracks[[RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID',PM.x,PM.y,PM.z,PM.tx,PM.ty,PM.Hit_ID]]
-
                 #Id the problematic plates
                 Bad_Tracks_Stats=Bad_Tracks[[RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID',PM.z,PM.Hit_ID]]
                 Bad_Tracks_Stats=Bad_Tracks_Stats.groupby([RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID',PM.z]).agg({PM.Hit_ID: pd.Series.nunique}).reset_index() #Which plates have double hits?
