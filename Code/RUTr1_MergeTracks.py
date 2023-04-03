@@ -697,27 +697,13 @@ while Status<len(Program):
                 bar()
                 for t in range(len(base_data[tr].Hits)):
                     for h in range(len(base_data[tr].Hits[t])):
-                        base_data[tr].Hits[t][h]=int(((base_data[tr].Hits[t][h][2])-255170)/1315)
-        # with alive_bar(len(base_data),force_tty=True, title="Remove overlapping hits from the seeds...") as bar:
-        #     for tr in range(len(base_data)):
-        #                 bar()
-        #                 if base_data[tr].SLG<0:
-        #                     overlap=list(set(base_data[tr].Hits[0]) & set(base_data[tr].Hits[1]))
-        #                     for ovp in overlap:
-        #                         base_data[tr].Hits[0].remove(ovp)
+                        base_data[tr].Hits[t][h]=int(((base_data[tr].Hits[t][h][2])-255170)/1315) #Remove scaling factors
         base_data=[tr for tr in base_data if tr.Fit >= Acceptance]
         print(UF.TimeStamp(), bcolors.OKGREEN+"The refining was successful, "+str(len(base_data))+" track seeds remain..."+bcolors.ENDC)
         output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1c_'+RecBatchID+'_Fit_Filtered_Seeds.pkl'
         print(UF.PickleOperations(output_file_location,'w',base_data)[0])
-        no_iter=int(math.ceil(float(len(base_data)/float(MaxSegments))))
-        if no_iter==1:
-            UpdateStatus(Status+1)
-        else:
-            ('WIP')
-            UpdateStatus(Status+1)
-
-
-
+        #no_iter=int(math.ceil(float(len(base_data)/float(MaxSegments))))
+        UpdateStatus(Status+1)
 
     elif Program[Status]=='Custom - PerformMerging':
          print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
@@ -790,7 +776,7 @@ while Status<len(Program):
             rec_eval=pd.merge(eval_data, rec, how="inner", on=['Seed_ID'])
             eval_no=len(rec_eval)
             rec_no=(len(rec)-len(rec_eval))
-            UF.LogOperations(EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv', 'a', [[4,'Track Seed Merging',rec_no,eval_no,eval_no/(rec_no+eval_no),eval_no/len(eval_data)]])
+            UF.LogOperations(EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv', 'a', [[4+len(ModelName),'Track Seed Merging',rec_no,eval_no,eval_no/(rec_no+eval_no),eval_no/len(eval_data)]])
             print(UF.TimeStamp(), bcolors.OKGREEN+"The log data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv'+bcolors.ENDC)
          UpdateStatus(Status+1)
     else:
