@@ -717,7 +717,7 @@ while Status<len(Program):
                 print(UF.TimeStamp(),'The raw data has ',total_rows,' hits')
 
                 print(UF.TimeStamp(),'Removing unreconstructed hits...')
-                data.dropna(subset=[PM.Rec_Track_ID],inplace=True)
+                data.dropna(subset=[TrackID],inplace=True)
                 final_rows=len(data)
                 print(UF.TimeStamp(),'The cleaned data has ',final_rows,' hits')
                 data[TrackID] = data[TrackID].astype(str)
