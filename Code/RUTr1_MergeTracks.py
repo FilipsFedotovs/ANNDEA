@@ -712,8 +712,9 @@ while Status<len(Program):
                     if raw_name[l]=='/':
                         print(l,raw_name)
                         break
-                raw_name=raw_name[l:]
-                print(raw_name)
+                raw_name=raw_name[l+1:]
+                output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+raw_name+'_'+RecBatchID+'_MERGED.csv'
+                print(output_file_location)
                 exit()
 
                 print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
