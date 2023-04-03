@@ -708,7 +708,7 @@ while Status<len(Program):
         UpdateStatus(Status+1)
     elif Program[Status]=='Custom - TrackMapping':
                 raw_name=input_file_location[:-4]
-                for l in range(len(raw_name),0,-1):
+                for l in range(len(raw_name)-1,0,-1):
                     if raw_name[l]=='/':
                         print(l,raw_name)
                         break
