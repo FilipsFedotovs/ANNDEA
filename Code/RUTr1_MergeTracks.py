@@ -722,7 +722,7 @@ while Status<len(Program):
                 print(UF.TimeStamp(),'The cleaned data has ',final_rows,' hits')
                 data[TrackID] = data[TrackID].astype(str)
                 data[BrickID] = data[BrickID].astype(str)
-                data['Rec_Seg_ID'] = data[BrickID] + '-' + data[TrackID]
+                data['Rec_Seg_ID'] = data[TrackID] + '-' + data[BrickID]
                 print(UF.TimeStamp(),'Mapping data...')
                 combined_data=pd.merge(data, map_data, how="inner", left_on=["Rec_Seg_ID"], right_on=['Old_Track_ID'])
                 print(data)
