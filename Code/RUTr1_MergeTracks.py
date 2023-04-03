@@ -741,20 +741,19 @@ while Status<len(Program):
 
                 selected_combined_data=pd.merge(selected_combined_data,Hit_Map_Stats,how='inner',on = ['New_Track_Quarter','New_Track_ID']) #Join back to the hit map
                 Good_Tracks=selected_combined_data[selected_combined_data.No_Plates == selected_combined_data.No_Hits] #For all good tracks the number of hits matches the number of plates, we won't touch them
-                print(Good_Tracks)
+
                 Good_Tracks=Good_Tracks[['New_Track_Quarter','New_Track_ID',PM.Hit_ID]] #Just strip off the information that we don't need anymore
 
                 Bad_Tracks=selected_combined_data[selected_combined_data.No_Plates < selected_combined_data.No_Hits] #These are the bad guys. We need to remove this extra hits
                 Bad_Tracks=Bad_Tracks[['New_Track_Quarter','New_Track_ID',PM.x,PM.y,PM.z,PM.tx,PM.ty,PM.Hit_ID]]
-                print(Bad_Tracks)
-                exit()
-                #Id the problematic plates
-                Bad_Tracks_Stats=Bad_Tracks[[RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID',PM.z,PM.Hit_ID]]
-                Bad_Tracks_Stats=Bad_Tracks_Stats.groupby([RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID',PM.z]).agg({PM.Hit_ID: pd.Series.nunique}).reset_index() #Which plates have double hits?
-                Bad_Tracks_Stats=Bad_Tracks_Stats.rename(columns={PM.Hit_ID: "Problem"}) #Renaming the columns so they don't interfere once we join it back to the hit map
-                Bad_Tracks=pd.merge(Bad_Tracks,Bad_Tracks_Stats,how='inner',on = [RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID',PM.z])
 
-                print(selected_combined_data)
+                #Id the problematic plates
+                Bad_Tracks_Stats=Bad_Tracks[['New_Track_Quarter','New_Track_ID',PM.z,PM.Hit_ID]]
+                Bad_Tracks_Stats=Bad_Tracks_Stats.groupby(['New_Track_Quarter','New_Track_ID',PM.z]).agg({PM.Hit_ID: pd.Series.nunique}).reset_index() #Which plates have double hits?
+                Bad_Tracks_Stats=Bad_Tracks_Stats.rename(columns={PM.Hit_ID: "Problem"}) #Renaming the columns so they don't interfere once we join it back to the hit map
+                Bad_Tracks=pd.merge(Bad_Tracks,Bad_Tracks_Stats,how='inner',on = ['New_Track_Quarter','New_Track_ID',PM.z])
+
+                print(Bad_Tracks)
                 exit()
                 new_combined_data['New_Track_Quarter'] = new_combined_data['New_Track_Quarter'].fillna(new_combined_data[PM.Rec_Track_Domain])
                 new_combined_data['New_Track_ID'] = new_combined_data['New_Track_ID'].fillna(new_combined_data[PM.Rec_Track_ID])
