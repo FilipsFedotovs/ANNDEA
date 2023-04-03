@@ -715,13 +715,14 @@ while Status<len(Program):
                 map_data=pd.read_csv(EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1e_'+RecBatchID+'_Union_Tracks.csv',header=0)
                 total_rows=len(data.axes[0])
                 print(UF.TimeStamp(),'The raw data has ',total_rows,' hits')
+
                 print(UF.TimeStamp(),'Removing unreconstructed hits...')
                 data.dropna(subset=[PM.Rec_Track_ID],inplace=True)
                 final_rows=len(data)
                 print(UF.TimeStamp(),'The cleaned data has ',final_rows,' hits')
-                data[PM.Rec_Track_ID] = data[PM.Rec_Track_ID].astype(str)
-                data[PM.Rec_Track_Domain] = data[PM.Rec_Track_Domain].astype(str)
-                data['Rec_Seg_ID'] = data[PM.Rec_Track_Domain] + '-' + data[PM.Rec_Track_ID]
+                data[TrackID] = data[TrackID].astype(str)
+                data[BrickID] = data[BrickID].astype(str)
+                data['Rec_Seg_ID'] = data[BrickID] + '-' + data[TrackID]
                 print(data)
                 print(map_data)
                 exit()
