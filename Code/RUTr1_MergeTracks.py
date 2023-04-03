@@ -449,8 +449,8 @@ print(UF.TimeStamp(),'Current status has a stage',Status,bcolors.ENDC)
 
 
 
-# UpdateStatus(6)
-# Status=6
+UpdateStatus(8)
+Status=8
 ################ Set the execution sequence for the script
 Program=[]
 
@@ -877,9 +877,12 @@ while Status<len(Program):
                 #Sort the tracks and their hits by Track ID, Plate and distance to the perfect line
                 print(UF.TimeStamp(),'Sorting the tracks and their hits by Track ID, Plate and distance to the perfect line...')
                 Bad_Tracks.sort_values(['New_Track_Quarter','New_Track_ID',PM.z,'d_r'],ascending=[0,0,1,1],inplace=True)
-
+                before=len(Bad_Tracks)
+                print(UF.TimeStamp(),'Before de-duplicattion we had ',before,' hits involving problematic tracks.')
                 #If there are two hits per plate we will keep the one which is closer to the line
                 Bad_Tracks.drop_duplicates(subset=['New_Track_Quarter','New_Track_ID',PM.z],keep='first',inplace=True)
+                after=len(Bad_Tracks)
+                print(UF.TimeStamp(),'Now their number was dropped to ',after,' hits.')
                 Bad_Tracks=Bad_Tracks[['New_Track_Quarter','New_Track_ID',PM.Hit_ID]]
                 Good_Tracks=pd.concat([Good_Tracks,Bad_Tracks]) #Combine all ANNDEA tracks together
 
