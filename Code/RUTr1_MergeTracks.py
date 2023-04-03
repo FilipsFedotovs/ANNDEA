@@ -723,11 +723,11 @@ while Status<len(Program):
                 data[TrackID] = data[TrackID].astype(str)
                 data[BrickID] = data[BrickID].astype(str)
                 data['Rec_Seg_ID'] = data[BrickID] + '-' + data[TrackID]
-                print(data)
-                print(map_data)
-                exit()
                 print(UF.TimeStamp(),'Mapping data...')
-                new_combined_data=pd.merge(data, map_data, how="left", left_on=["Rec_Seg_ID"], right_on=['Old_Track_ID'])
+                combined_data=pd.merge(data, map_data, how="left", left_on=["Rec_Seg_ID"], right_on=['Old_Track_ID'])
+                selected_combined_data=combined_data.dropna(subset=['Old_Track_ID'],inplace=True)
+                print(selected_combined_data)
+                exit()
                 new_combined_data['New_Track_Quarter'] = new_combined_data['New_Track_Quarter'].fillna(new_combined_data[PM.Rec_Track_Domain])
                 new_combined_data['New_Track_ID'] = new_combined_data['New_Track_ID'].fillna(new_combined_data[PM.Rec_Track_ID])
                 new_combined_data[PM.Rec_Track_Domain]=new_combined_data['New_Track_Quarter']
