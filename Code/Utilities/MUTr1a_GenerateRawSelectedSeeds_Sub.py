@@ -162,28 +162,17 @@ for i in range(0,Steps):
   merged_data=pd.merge(data, r_temp_data, how="inner", on=['join_key']) #Merging Tracks to check whether they could form a seed
   merged_data['SLG']=merged_data['z']-merged_data['e_z'] #Calculating the Euclidean distance between Track start hits
   merged_data['STG']=np.sqrt((merged_data['x']-merged_data['e_x'])**2+((merged_data['y']-merged_data['e_y'])**2)) #Calculating the Euclidean distance between Track start hits
+  merged_data['DynamicCut']=MaxSTG+(merged_data['SLG']*0.96)
+  if MaxSLG>=0: #These are the cases to dela with the tracks that have no verlap along z-axis
+     merged_data.drop(merged_data.index[merged_data['SLG'] > MaxSLG], inplace = True) #Dropping the track segment combinations where the length of the gap between segments is too large
+     merged_data.drop(merged_data.index[merged_data['SLG'] < 0], inplace = True) #Dropping the track segment combinations where the length of the gap between segments is too large
+     merged_data.drop(merged_data.index[merged_data['STG'] > merged_data['DynamicCut']], inplace = True) #If the tracks don't overlap we allow some deviation which increase with the gap size
+  else: #Here is the case when we deal with overlapping tracks
+     merged_data.drop(merged_data.index[merged_data['SLG'] >= 0], inplace = True) #Dropping the track segment combinations where the length of the gap between segments is too large
+     merged_data.drop(merged_data.index[merged_data['SLG'] < MaxSLG], inplace = True) #Dropping the track segment combinations where the length of the gap between segments is too large
+     merged_data.drop(merged_data.index[merged_data['STG'] > MaxSTG], inplace = True) #If tracks overlap we keep the minimum STG
 
-  #merged_data['DynamicCut']=MaxSTG+(abs(merged_data['SLG'])*0.96)
-
-  #merged_data.drop(merged_data.index[merged_data['SLG'] < -MaxSLG], inplace = True) #Removed - it is a very stringent cut
-
-  #merged_data.drop(merged_data.index[merged_data['SLG'] > MaxSLG], inplace = True) #Dropping the track segment combinations where the length of the gap between segments is too large
-
-  merged_data=merged_data.drop(merged_data.index[merged_data['SLG'] >= 0])
-
-
-  #merged_data_pos.drop(merged_data_pos.index[merged_data_pos['STG'] > merged_data_pos['DynamicCut']], inplace = True) #If the tracks don't overlap we allow some deviation which increase with the gap size
-
-  merged_data.drop(merged_data.index[merged_data['STG'] > MaxSTG], inplace = True) #If tracks overlap we keep the minimum STG
-
-
-  #merged_data=pd.concat([merged_data_pos,merged_data_neg])
-
-
-
-
-
-  merged_data.drop(['y','z','x','e_x','e_y','e_z','join_key','STG','SLG'],axis=1,inplace=True) #Removing the information that we don't need anymore
+  merged_data.drop(['y','z','x','e_x','e_y','e_z','join_key','STG','SLG','DynamicCut'],axis=1,inplace=True) #Removing the information that we don't need anymore
   if merged_data.empty==False:
     merged_data.drop(merged_data.index[merged_data['Segment_1'] == merged_data['Segment_2']], inplace = True) #Removing the cases where Seed tracks are the same
     merged_data['Seed_Type']=True
@@ -202,8 +191,6 @@ for i in range(0,Steps):
       del result_list
       result_list=[]
       gc.collect()
-
-
 UF.LogOperations(output_file_location,'a',result_list) #Writing the remaining data into the csv
 UF.LogOperations(output_result_location,'w',[])
 print(UF.TimeStamp(), "Train seed generation is finished...")

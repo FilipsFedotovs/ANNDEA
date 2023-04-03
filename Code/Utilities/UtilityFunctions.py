@@ -399,22 +399,28 @@ class EMO:
           else:
                 raise ValueError("Method 'DecorateTrackGeoInfo' works only if 'Decorate' method has been acted upon the seed before")
       def TrackQualityCheck(self,MaxDoca,MaxSLG, MaxSTG,MaxAngle):
-                    if self.DOCA>MaxDoca:
+                    if self.DOCA>MaxDoca: #Check whether the seed passes the DOCA cut
                         return False
                     else:
-                        if abs(self.Opening_Angle)>MaxAngle:
+                        if abs(self.Opening_Angle)>MaxAngle: #Check whether the seed passes the Angle cut
                             return False
                         else:
-                            if self.SLG>=0:
+                            if MaxSLG>=0: #Non Overlapping track situation
+                                if self.SLG<0: #We don't care about overlapping tracks
                                    return False
-                            else:
-                                   return self.STG<=MaxSTG
-                           # else:
-
-                                # if self.SLG<-MaxSLG:
-                                # #    return False
-                                # # else:
-                                #     return self.STG<=MaxSTG
+                                else:
+                                    if self.SLG>=MaxSLG: #Non-overlapping tracks: max gap cut
+                                        return False
+                                    else:
+                                        return self.STG <= MaxSTG+(self.SLG*0.96) #Final cut on transverse displacement
+                            else: #Overalpping track situation
+                                if self.SLG >= 0: #Discard non-overlapping tracks
+                                   return False
+                                else:
+                                   if self.SLG < MaxSLG: #We apply the cut on the negative value
+                                        return False
+                                   else:
+                                        return self.STG <= MaxSTG #Still apply the STG cut
 
       def PrepareSeedPrint(self,MM):
           __TempTrack=copy.deepcopy(self.Hits)
