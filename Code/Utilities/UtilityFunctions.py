@@ -406,15 +406,15 @@ class EMO:
                             return False
                         else:
                             if self.SLG>=0:
-                                if self.SLG>MaxSLG:
                                    return False
-                                else:
-                                    return self.STG<=MaxSTG+(self.SLG*0.96)
                             else:
-                                if self.SLG<-MaxSLG:
-                                #    return False
-                                # else:
-                                    return self.STG<=MaxSTG
+                                   return self.STG<=MaxSTG
+                           # else:
+
+                                # if self.SLG<-MaxSLG:
+                                # #    return False
+                                # # else:
+                                #     return self.STG<=MaxSTG
 
       def PrepareSeedPrint(self,MM):
           __TempTrack=copy.deepcopy(self.Hits)
