@@ -82,6 +82,10 @@ parser.add_argument('--LocalSub',help="Local submission?", default='N')
 parser.add_argument('--SubPause',help="How long to wait in minutes after submitting 10000 jobs?", default='60')
 parser.add_argument('--SubGap',help="How long to wait in minutes after submitting 10000 jobs?", default='10000')
 parser.add_argument('--MinHitsTrack',help="What is the minimum number of hits per track?", default=PM.MinHitsTrack)
+parser.add_argument('--MaxSLG',help="Maximum allowed longitudinal gap value between segments", default='7000')
+parser.add_argument('--MaxSTG',help="Maximum allowed transverse gap value between segments per SLG length", default='160')
+parser.add_argument('--MaxDOCA',help="Maximum DOCA allowed", default='100')
+parser.add_argument('--MaxAngle',help="Maximum magnitude of angle allowed", default='3.6')
 
 ######################################## Parsing argument values  #############################################################
 args = parser.parse_args()
@@ -97,6 +101,11 @@ input_file_location=args.f
 JobFlavour=args.JobFlavour
 SubPause=int(args.SubPause)*60
 SubGap=int(args.SubGap)
+MaxSLG=float(args.MaxSLG)
+MaxSTG=float(args.MaxSTG)
+MaxDOCA=float(args.MaxDOCA)
+MaxSTG=float(args.MaxSTG)
+MaxAngle=float(args.MaxAngle)
 RequestExtCPU=(args.RequestExtCPU=='Y')
 Xmin,Xmax,Ymin,Ymax=float(args.Xmin),float(args.Xmax),float(args.Ymin),float(args.Ymax)
 SliceData=max(Xmin,Xmax,Ymin,Ymax)>0 #We don't slice data if all values are set to zero simultaneousy (which is the default setting)
@@ -187,7 +196,7 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         data = data.values.tolist()
         print(UF.TimeStamp(), bcolors.OKGREEN+"The track segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+output_file_location+bcolors.ENDC)
         Meta=UF.TrainingSampleMeta(TrainSampleID)
-        Meta.IniTrackSeedMetaData(PM.MaxSLG,PM.MaxSTG,PM.MaxDOCA,PM.MaxAngle,data,PM.MaxSegments,PM.VetoMotherTrack,PM.MaxSeeds,MinHitsTrack)
+        Meta.IniTrackSeedMetaData(MaxSLG,MaxSTG,MaxDOCA,MaxAngle,data,PM.MaxSegments,PM.VetoMotherTrack,PM.MaxSeeds,MinHitsTrack)
         Meta.UpdateStatus(0)
         print(UF.PickleOperations(TrainSampleOutputMeta,'w', Meta)[1])
         print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)

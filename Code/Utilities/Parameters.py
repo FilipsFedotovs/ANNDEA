@@ -40,12 +40,7 @@ MaxSeeds=50000
 # MaxTracksPerTrPool=20000
 
 ######List of geometrical constain parameters
-MaxSLG=7000
-MaxSTG=160#This parameter restricts the maximum length of of the longitudinal and transverse distance between track segments.
-MinHitsTrack=2
-MaxDOCA=50
-MaxAngle=1 #Seed Opening Angle (Magnitude) in radians
-VetoMotherTrack=[]
+MinHitsTrack=4
 
 # MaxTracksPerJob=20000
 # MaxEvalTracksPerJob=20000
