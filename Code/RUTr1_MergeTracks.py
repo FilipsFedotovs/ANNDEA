@@ -724,8 +724,8 @@ while Status<len(Program):
                 data[BrickID] = data[BrickID].astype(str)
                 data['Rec_Seg_ID'] = data[TrackID] + '-' + data[BrickID]
                 print(UF.TimeStamp(),'Mapping data...')
-                combined_data=pd.merge(data, map_data, how="left", left_on=["Rec_Seg_ID"], right_on=['Old_Track_ID'])
-                selected_combined_data=combined_data.dropna(subset=['Old_Track_ID'])
+
+                selected_combined_data=pd.merge(data, map_data, how="inner", left_on=["Rec_Seg_ID"], right_on=['Old_Track_ID'])
 
                 Hit_Map_Stats=selected_combined_data[['New_Track_Quarter','New_Track_ID',PM.z,PM.Hit_ID]] #Calculating the stats
 
@@ -874,13 +874,21 @@ while Status<len(Program):
 
                 #If there are two hits per plate we will keep the one which is closer to the line
                 Bad_Tracks.drop_duplicates(subset=['New_Track_Quarter','New_Track_ID',PM.z],keep='first',inplace=True)
+                Bad_Tracks=Bad_Tracks[['New_Track_Quarter','New_Track_ID',PM.Hit_ID]]
+                Good_Tracks=pd.concat([Good_Tracks,Bad_Tracks]) #Combine all ANNDEA tracks together
 
-                print(Bad_Tracks)
+
+
+
+                new_combined_data=pd.merge(data, Good_Tracks, how="left", on=[PM.Hit_ID])
+                print(new_combined_data)
+                new_combined_data['New_Track_Quarter'] = new_combined_data['New_Track_Quarter'].fillna(new_combined_data[BrickID])
+                new_combined_data['New_Track_ID'] = new_combined_data['New_Track_ID'].fillna(new_combined_data[TrackID])
+                print(new_combined_data)
+                new_combined_data[BrickID]=new_combined_data['New_Track_Quarter']
+                new_combined_data[TrackID]=new_combined_data['New_Track_ID']
+                print(new_combined_data)
                 exit()
-                new_combined_data['New_Track_Quarter'] = new_combined_data['New_Track_Quarter'].fillna(new_combined_data[PM.Rec_Track_Domain])
-                new_combined_data['New_Track_ID'] = new_combined_data['New_Track_ID'].fillna(new_combined_data[PM.Rec_Track_ID])
-                new_combined_data[PM.Rec_Track_Domain]=new_combined_data['New_Track_Quarter']
-                new_combined_data[PM.Rec_Track_ID]=new_combined_data['New_Track_ID']
                 print(UF.TimeStamp(),'Mapping data...')
                 new_combined_data=new_combined_data.drop(['Rec_Seg_ID'],axis=1)
                 new_combined_data=new_combined_data.drop(['Old_Track_ID'],axis=1)
