@@ -712,6 +712,8 @@ while Status<len(Program):
                     if raw_name[l]=='/':
                         print(l,raw_name)
                         break
+                raw_name=raw_name[l:]
+                print(raw_name)
                 exit()
 
                 print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
