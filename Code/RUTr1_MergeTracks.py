@@ -1145,7 +1145,7 @@ if Status<20:
     HTCondorTag="SoftUsed == \"ANNDEA-RUTr1b-"+RecBatchID+"\""
     UF.RecCleanUp(AFS_DIR, EOS_DIR, 'RUTr1b_'+RecBatchID, [], HTCondorTag)
     for p in Program:
-        if p[:6]!='Custom':
+        if p[:6]!='Custom' and (p in ModelName)==False:
            print(p)
            x=input()
            print(UF.TimeStamp(),UF.ManageTempFolders(p,'Delete'))
