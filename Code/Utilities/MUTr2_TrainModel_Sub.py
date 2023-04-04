@@ -152,9 +152,12 @@ elif ModelMeta.ModelType=='GNN':
        criterion = torch.nn.CrossEntropyLoss()
        index = 1
        file_name = EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_TRACK_SEEDS_OUTPUT_'+str(index)+'.pkl'
+       TrainSamples = []
        while os.path.isfile(file_name):
-            TrainSamples,info =UF.PickleOperations(file_name,'r', 'N/A')
+            newTrainSamples,info =UF.PickleOperations(file_name,'r', 'N/A')
+            TrainSamples += newTrainSamples
             print(info)
+            print(len(TrainSamples))
             index+=1
             file_name = EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_TRACK_SEEDS_OUTPUT_'+str(index)+'.pkl'
 
