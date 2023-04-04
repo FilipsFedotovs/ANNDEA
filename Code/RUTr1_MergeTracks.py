@@ -1144,6 +1144,13 @@ if Status<20:
 
     HTCondorTag="SoftUsed == \"ANNDEA-RUTr1b-"+RecBatchID+"\""
     UF.RecCleanUp(AFS_DIR, EOS_DIR, 'RUTr1b_'+RecBatchID, [], HTCondorTag)
+
+    HTCondorTag="SoftUsed == \"ANNDEA-RUTr1c-"+RecBatchID+"\""
+    UF.RecCleanUp(AFS_DIR, EOS_DIR, 'RUTr1c_'+RecBatchID, [], HTCondorTag)
+
+    HTCondorTag="SoftUsed == \"ANNDEA-RUTr1e-"+RecBatchID+"\""
+    UF.RecCleanUp(AFS_DIR, EOS_DIR, 'RUTr1e_'+RecBatchID, [], HTCondorTag)
+
     for p in Program:
         if p[:6]!='Custom' and (p in ModelName)==False:
            print(p)
