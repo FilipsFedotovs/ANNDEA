@@ -1146,6 +1146,8 @@ if Status<20:
     UF.RecCleanUp(AFS_DIR, EOS_DIR, 'RUTr1b_'+RecBatchID, [], HTCondorTag)
     for p in Program:
         if p[:6]!='Custom':
+           print(p)
+           x=input()
            print(UF.TimeStamp(),UF.ManageTempFolders(p,'Delete'))
     print(UF.TimeStamp(), bcolors.OKGREEN+"Reconstruction has been completed"+bcolors.ENDC)
 
