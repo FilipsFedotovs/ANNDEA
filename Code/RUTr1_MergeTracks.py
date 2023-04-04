@@ -1149,6 +1149,57 @@ if Status<20:
            print(p)
            x=input()
            print(UF.TimeStamp(),UF.ManageTempFolders(p,'Delete'))
+    for md in range(len(ModelName)):
+                if md==0:
+                    prog_entry=[]
+                    job_sets=[]
+                    JobSet=[]
+                    TotJobs=0
+                    Program_Dummy=[]
+                    Meta=UF.PickleOperations(RecOutputMeta,'r', 'N/A')[0]
+                    JobSets=Meta.JobSets
+                    for i in range(len(JobSets)):
+                        JobSet.append([])
+                        for j in range(len(JobSets[i][3])):
+                                JobSet[i].append(JobSets[i][3][j])
+                    if type(JobSet) is int:
+                                TotJobs=JobSet
+                    elif type(JobSet[0]) is int:
+                                TotJobs=np.sum(JobSet)
+                    elif type(JobSet[0][0]) is int:
+                                for lp in JobSet:
+                                    TotJobs+=np.sum(lp)
+
+                    prog_entry.append(' Sending tracks to the HTCondor, so track segment combination pairs can be formed...')
+                    prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','RefinedSeeds','RUTr1'+ModelName[md],'.pkl',RecBatchID,JobSet,'RUTr1b_RefineSeeds_Sub.py'])
+                    prog_entry.append([" --MaxSTG ", " --MaxSLG ", " --MaxDOCA ", " --MaxAngle "," --ModelName "," --FirstTime "])
+                    prog_entry.append([MaxSTG, MaxSLG, MaxDOCA, MaxAngle,'"'+ModelName[md]+'"', 'True'])
+                    prog_entry.append(TotJobs)
+                    prog_entry.append(LocalSub)
+                    prog_entry.append(['',''])
+                    print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Delete'))
+                    #Setting up folders for the output. The reconstruction of just one brick can easily generate >100k of files. Keeping all that blob in one directory can cause problems on lxplus.
+                else:
+                    prog_entry=[]
+                    TotJobs=0
+                    Program_Dummy=[]
+                    keep_testing=True
+                    TotJobs=0
+                    while keep_testing:
+                        test_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RUTr1'+ModelName[md-1]+'_'+RecBatchID+'_0/RUTr1'+str(ModelName[md])+'_'+RecBatchID+'_Input_Seeds_'+str(TotJobs)+'.pkl'
+                        if os.path.isfile(test_file_location):
+                            TotJobs+=1
+                        else:
+                            keep_testing=False
+                    prog_entry.append(' Sending tracks to the HTCondor, so track segment combination pairs can be formed...')
+                    prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','OutputSeeds','RUTr1'+ModelName[md],'.pkl',RecBatchID,TotJobs,'RUTr1b_RefineSeeds_Sub.py'])
+                    prog_entry.append([" --MaxSTG ", " --MaxSLG ", " --MaxDOCA ", " --MaxAngle "," --ModelName "," --FirstTime "])
+                    prog_entry.append([MaxSTG, MaxSLG, MaxDOCA, MaxAngle,'"'+ModelName[md]+'"', ModelName[md-1]])
+                    prog_entry.append(TotJobs)
+                    prog_entry.append(LocalSub)
+                    prog_entry.append(['',''])
+                    print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Delete')) #Deleting a specific set of created folders
+
     print(UF.TimeStamp(), bcolors.OKGREEN+"Reconstruction has been completed"+bcolors.ENDC)
 
 else:
