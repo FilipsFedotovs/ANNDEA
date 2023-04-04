@@ -130,20 +130,24 @@ def AutoPilot(wait_min, interval_min):
                  print(UF.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
                  print(bcolors.OKGREEN+"......................................................................."+bcolors.ENDC)
        else:
-                HTCondorTag="SoftUsed == \"ANNDEA-MUTr2-"+ModelName+"\""
-                q=schedd.query(constraint=HTCondorTag,projection=['CLusterID','JobStatus'])
-                if len(q)==0:
-                    print(UF.TimeStamp(),bcolors.FAIL+'The HTCondor job has failed, resubmitting...'+bcolors.ENDC)
-                    if Model_Meta.ModelType=='CNN':
-                        Job=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/','N/A','MUTr2','N/A',ModelName,1,OptionHeader,OptionLine,'MUTr2_TrainModel_Sub.py',False,"['','']", True, True)[0]
-                    else:
-                        Job=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/','N/A','MUTr2','N/A',ModelName,1,OptionHeader,OptionLine,'MUTr2_TrainModel_Sub.py',False,"['','']", True, False)[0]
+                try:
+                    HTCondorTag="SoftUsed == \"ANNDEA-MUTr2-"+ModelName+"\""
+                    q=schedd.query(constraint=HTCondorTag,projection=['CLusterID','JobStatus'])
+                    if len(q)==0:
+                        print(UF.TimeStamp(),bcolors.FAIL+'The HTCondor job has failed, resubmitting...'+bcolors.ENDC)
+                        if Model_Meta.ModelType=='CNN':
+                            Job=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/','N/A','MUTr2','N/A',ModelName,1,OptionHeader,OptionLine,'MUTr2_TrainModel_Sub.py',False,"['','']", True, True)[0]
+                        else:
+                            Job=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/','N/A','MUTr2','N/A',ModelName,1,OptionHeader,OptionLine,'MUTr2_TrainModel_Sub.py',False,"['','']", True, False)[0]
 
-                    UF.SubmitJobs2Condor(Job,False,False,JobFlavour)
-                    print(bcolors.BOLD+"The job has been submitted..."+bcolors.ENDC)
-                else:
-                    print(UF.TimeStamp(),bcolors.WARNING+'Warning, the training is still running on HTCondor, the job parameters are listed bellow:'+bcolors.ENDC)
-                    print(q)
+                        UF.SubmitJobs2Condor(Job,False,False,JobFlavour)
+                        print(bcolors.BOLD+"The job has been submitted..."+bcolors.ENDC)
+                    else:
+                        print(UF.TimeStamp(),bcolors.WARNING+'Warning, the training is still running on HTCondor, the job parameters are listed bellow:'+bcolors.ENDC)
+                        print(q)
+                        continue
+                except:
+                    print(UF.TimeStamp(),bcolors.FAIL+'No response from HTCondor, will check again in a while...:'+bcolors.ENDC)
                     continue
 
     return True
