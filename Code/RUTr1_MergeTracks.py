@@ -1145,7 +1145,7 @@ if Status<20:
     HTCondorTag="SoftUsed == \"ANNDEA-RUTr1b-"+RecBatchID+"\""
     UF.RecCleanUp(AFS_DIR, EOS_DIR, 'RUTr1b_'+RecBatchID, [], HTCondorTag)
     for p in Program:
-        if p!='Custom':
+        if p[:6]!='Custom':
            print(UF.TimeStamp(),UF.ManageTempFolders(p,'Delete'))
     print(UF.TimeStamp(), bcolors.OKGREEN+"Reconstruction has been completed"+bcolors.ENDC)
 
