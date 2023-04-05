@@ -35,6 +35,7 @@ from alive_progress import alive_bar
 import argparse
 import ast
 
+
 class bcolors:   #We use it for the interface
     HEADER = '\033[95m'
     OKBLUE = '\033[94m'
@@ -1153,8 +1154,6 @@ if Status<20:
 
     for p in Program:
         if p[:6]!='Custom' and (p in ModelName)==False:
-           print(p)
-           x=input()
            print(UF.TimeStamp(),UF.ManageTempFolders(p,'Delete'))
     for md in range(len(ModelName)):
                 if md==0:
