@@ -94,11 +94,9 @@ RequestExtCPU=(args.RequestExtCPU=='Y')
 Xmin,Xmax,Ymin,Ymax=float(args.Xmin),float(args.Xmax),float(args.Ymin),float(args.Ymax)
 SliceData=max(Xmin,Xmax,Ymin,Ymax)>0 #We don't slice data if all values are set to zero simultaneousy (which is the default setting)
 ModelName=ast.literal_eval(args.ModelName)
-
 Patience=int(args.Patience)
 Acceptance=float(args.Acceptance)
 initial_input_file_location=args.f
-
 Log=args.Log=='Y'
 Xmin,Xmax,Ymin,Ymax=float(args.Xmin),float(args.Xmax),float(args.Ymin),float(args.Ymax)
 SliceData=max(Xmin,Xmax,Ymin,Ymax)>0 #We don't slice data if all values are set to zero simultaneousy (which is the default setting)
@@ -113,7 +111,6 @@ else:
 RecOutputMeta=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_info.pkl'
 required_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1_'+RecBatchID+'_TRACK_SEGMENTS.csv'
 required_eval_file_location=EOS_DIR+'/ANNDEA/Data/TEST_SET/EUTr1_'+RecBatchID+'_TRACK_SEGMENTS.csv'
-
 ########################################     Phase 1 - Create compact source file    #########################################
 print(UF.TimeStamp(),bcolors.BOLD+'Stage 0:'+bcolors.ENDC+' Preparing the source data...')
 
@@ -130,7 +127,6 @@ if Log and (os.path.isfile(required_eval_file_location)==False or Mode=='RESET')
     data=pd.read_csv(initial_input_file_location,
                 header=0,
                 usecols=[TrackID,BrickID,PM.x,PM.y,PM.z,PM.tx,PM.ty,PM.MC_Track_ID,PM.MC_Event_ID])
-
     total_rows=len(data)
     print(UF.TimeStamp(),'The raw data has ',total_rows,' hits')
     print(UF.TimeStamp(),'Removing unreconstructed hits...')
@@ -139,11 +135,8 @@ if Log and (os.path.isfile(required_eval_file_location)==False or Mode=='RESET')
     print(UF.TimeStamp(),'The cleaned data has ',final_rows,' hits')
     data[PM.MC_Event_ID] = data[PM.MC_Event_ID].astype(str)
     data[PM.MC_Track_ID] = data[PM.MC_Track_ID].astype(str)
-
-
     data[BrickID] = data[BrickID].astype(str)
     data[TrackID] = data[TrackID].astype(str)
-
     data['Rec_Seg_ID'] = data[TrackID] + '-' + data[BrickID]
     data['MC_Mother_Track_ID'] = data[PM.MC_Event_ID] + '-' + data[PM.MC_Track_ID]
     data=data.drop([TrackID],axis=1)
@@ -410,24 +403,6 @@ def StandardProcess(program,status,freshstart):
                       else:
                           print(UF.TimeStamp(),bcolors.FAIL+'Stage '+str(status)+' is uncompleted...'+bcolors.ENDC)
                           return False,False
-            # else:
-            #           _cnt=0
-            #           for bp in bad_pop:
-            #                if _cnt>SubGap:
-            #                   print(UF.TimeStamp(),'Pausing submissions for  ',str(int(SubPause/60)), 'minutes to relieve congestion...',bcolors.ENDC)
-            #                   time.sleep(SubPause)
-            #                   _cnt=0
-            #                UF.SubmitJobs2Condor(bp,program[status][5],RequestExtCPU,JobFlavour)
-            #                _cnt+=bp[6]
-            #           if program[status][5]:
-            #                print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
-            #                return True,False
-            #           elif AutoPilot(600,time_int,Patience,program[status]):
-            #                print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+ 'has successfully completed'+bcolors.ENDC)
-            #                return True,False
-            #           else:
-            #               print(UF.TimeStamp(),bcolors.FAIL+'Stage '+str(status)+' is uncompleted...'+bcolors.ENDC)
-            #               return False,False
 
 def UpdateStatus(status):
     Meta.UpdateStatus(status)
@@ -483,7 +458,6 @@ else:
 if Mode=='CLEANUP':
     UpdateStatus(5)
     Status=5
-
 
 # ###### Stage 2
 prog_entry=[]
@@ -573,10 +547,8 @@ while Status<len(Program):
         new_output_file_location=EOS_DIR+'/ANNDEA/Data/TEST_SET/EUTr1b_'+RecBatchID+'_SEED_TRUTH_COMBINATIONS.csv'
         result.to_csv(new_output_file_location,index=False)
         eval_no=len(result)
-
         rec_data=pd.read_csv(required_file_location,header=0,
                     usecols=['Rec_Seg_ID'])
-
         rec_data.drop_duplicates(subset="Rec_Seg_ID",keep='first',inplace=True)
         rec_data.drop_duplicates(keep='first',inplace=True)
         rec_no=len(rec_data)
@@ -597,7 +569,6 @@ while Status<len(Program):
         print(UF.TimeStamp(),'Analysing the data sample in order to understand how many jobs to submit to HTCondor... ',bcolors.ENDC)
         data=pd.read_csv(required_file_location,header=0,
                     usecols=['z','Rec_Seg_ID'])
-
         data = data.groupby('Rec_Seg_ID')['z'].min()  #Keeping only starting hits for the each track record (we do not require the full information about track in this script)
         data=data.reset_index()
         data = data.groupby('z')['Rec_Seg_ID'].count()  #Keeping only starting hits for the each track record (we do not require the full information about track in this script)
@@ -669,7 +640,6 @@ while Status<len(Program):
                              rec_new.drop(['Segment_1'],axis=1,inplace=True)
                              rec_new.drop(['Segment_2'],axis=1,inplace=True)
                              rec = pd.concat([rec, rec_new], ignore_index=True)
-
                              rec.drop_duplicates(subset="Seed_ID",keep='first',inplace=True)
                     try:
                         rec_eval=pd.merge(eval_data, rec, how="inner", on=['Seed_ID'])
@@ -710,7 +680,6 @@ while Status<len(Program):
                         break
                 raw_name=raw_name[l+1:]
                 final_output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+raw_name+'_'+RecBatchID+'_MERGED.csv'
-
                 print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
                 print(UF.TimeStamp(),bcolors.BOLD+'Stage '+str(Status)+':'+bcolors.ENDC+' Taking the list of seeds previously generated by Stage '+str(Status-1)+' and mapping them to the input data')
                 print(UF.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+initial_input_file_location+bcolors.ENDC)
@@ -719,7 +688,6 @@ while Status<len(Program):
                 map_data=pd.read_csv(EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1e_'+RecBatchID+'_Union_Tracks.csv',header=0)
                 total_rows=len(data.axes[0])
                 print(UF.TimeStamp(),'The raw data has ',total_rows,' hits')
-
                 print(UF.TimeStamp(),'Removing unreconstructed hits...')
                 data.dropna(subset=[TrackID],inplace=True)
                 final_rows=len(data)
@@ -727,14 +695,10 @@ while Status<len(Program):
                 data[TrackID] = data[TrackID].astype(str)
                 data[BrickID] = data[BrickID].astype(str)
                 if os.path.isfile(EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1e_'+RecBatchID+'_Mapped_Tracks_Temp.csv')==False:
-
                     data['Rec_Seg_ID'] = data[TrackID] + '-' + data[BrickID]
                     print(UF.TimeStamp(),'Resolving duplicated hits...')
                     selected_combined_data=pd.merge(data, map_data, how="inner", left_on=["Rec_Seg_ID"], right_on=['Old_Track_ID'])
-
                     Hit_Map_Stats=selected_combined_data[['New_Track_Quarter','New_Track_ID',PM.z,PM.Hit_ID]] #Calculating the stats
-
-
                     Hit_Map_Stats=Hit_Map_Stats.groupby(['New_Track_Quarter','New_Track_ID']).agg({PM.z:pd.Series.nunique,PM.Hit_ID: pd.Series.nunique}).reset_index() #Calculate the number fo unique plates and hits
                     Ini_No_Tracks=len(Hit_Map_Stats)
                     print(UF.TimeStamp(),bcolors.WARNING+'The initial number of tracks is '+ str(Ini_No_Tracks)+bcolors.ENDC)
@@ -742,22 +706,17 @@ while Status<len(Program):
                     Hit_Map_Stats=Hit_Map_Stats[Hit_Map_Stats.No_Plates >= PM.MinHitsTrack]
                     Prop_No_Tracks=len(Hit_Map_Stats)
                     print(UF.TimeStamp(),bcolors.WARNING+'After dropping single hit tracks, left '+ str(Prop_No_Tracks)+' tracks...'+bcolors.ENDC)
-
                     selected_combined_data=pd.merge(selected_combined_data,Hit_Map_Stats,how='inner',on = ['New_Track_Quarter','New_Track_ID']) #Join back to the hit map
                     Good_Tracks=selected_combined_data[selected_combined_data.No_Plates == selected_combined_data.No_Hits] #For all good tracks the number of hits matches the number of plates, we won't touch them
-
                     Good_Tracks=Good_Tracks[['New_Track_Quarter','New_Track_ID',PM.Hit_ID]] #Just strip off the information that we don't need anymore
-
                     Bad_Tracks=selected_combined_data[selected_combined_data.No_Plates < selected_combined_data.No_Hits] #These are the bad guys. We need to remove this extra hits
                     Bad_Tracks=Bad_Tracks[['New_Track_Quarter','New_Track_ID',PM.x,PM.y,PM.z,PM.tx,PM.ty,PM.Hit_ID]]
-
                     #Id the problematic plates
                     Bad_Tracks_Stats=Bad_Tracks[['New_Track_Quarter','New_Track_ID',PM.z,PM.Hit_ID]]
                     Bad_Tracks_Stats=Bad_Tracks_Stats.groupby(['New_Track_Quarter','New_Track_ID',PM.z]).agg({PM.Hit_ID: pd.Series.nunique}).reset_index() #Which plates have double hits?
                     Bad_Tracks_Stats=Bad_Tracks_Stats.rename(columns={PM.Hit_ID: "Problem"}) #Renaming the columns, so they don't interfere once we join it back to the hit map
                     Bad_Tracks=pd.merge(Bad_Tracks,Bad_Tracks_Stats,how='inner',on = ['New_Track_Quarter','New_Track_ID',PM.z])
                     Bad_Tracks.sort_values(['New_Track_Quarter','New_Track_ID',PM.z],ascending=[0,0,1],inplace=True)
-
                     Bad_Tracks_Head=Bad_Tracks[['New_Track_Quarter','New_Track_ID']]
                     Bad_Tracks_Head.drop_duplicates(inplace=True)
                     Bad_Tracks_List=Bad_Tracks.values.tolist() #I find it is much easier to deal with tracks in list format when it comes to fitting
@@ -783,7 +742,6 @@ while Status<len(Program):
                                        else:
                                            continue
                                        bt+=1
-
 
                     with alive_bar(len(Bad_Tracks_Head),force_tty=True, title='Fitting the tracks...') as bar:
                      for bth in Bad_Tracks_Head:
@@ -833,11 +791,9 @@ while Status<len(Program):
                            t2x=np.polyfit(z,x,2)[0]
                            t1x=np.polyfit(z,x,2)[1]
                            ax=np.polyfit(z,x,2)[2]
-
                            t2y=np.polyfit(z,y,2)[0]
                            t1y=np.polyfit(z,y,2)[1]
                            ay=np.polyfit(z,y,2)[2]
-
                            bth.append(ax) #Append x intercept
                            bth.append(t1x) #Append x slope
                            bth.append(t2x) #Append a placeholder slope (for polynomial case)
@@ -845,7 +801,6 @@ while Status<len(Program):
                            bth.append(t1y) #Append x slope
                            bth.append(t2y) #Append a placeholder slope (for polynomial case)
                            del(bth[2])
-
 
                     #Once we get coefficients for all tracks we convert them back to Pandas dataframe and join back to the data
                     Bad_Tracks_Head=pd.DataFrame(Bad_Tracks_Head, columns = ['New_Track_Quarter','New_Track_ID','ax','t1x','t2x','ay','t1y','t2y'])
@@ -987,7 +942,6 @@ while Status<len(Program):
                     elif type(JobSet[0][0]) is int:
                                 for lp in JobSet:
                                     TotJobs+=np.sum(lp)
-
                     prog_entry.append(' Sending tracks to the HTCondor, so track segment combination pairs can be formed...')
                     prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','RefinedSeeds','RUTr1'+ModelName[md],'.pkl',RecBatchID,JobSet,'RUTr1b_RefineSeeds_Sub.py'])
                     prog_entry.append([" --MaxSTG ", " --MaxSLG ", " --MaxDOCA ", " --MaxAngle "," --ModelName "," --FirstTime "])
