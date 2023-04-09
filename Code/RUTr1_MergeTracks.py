@@ -849,13 +849,8 @@ while Status<len(Program):
 
                     #Once we get coefficients for all tracks we convert them back to Pandas dataframe and join back to the data
                     Bad_Tracks_Head=pd.DataFrame(Bad_Tracks_Head, columns = ['New_Track_Quarter','New_Track_ID','ax','t1x','t2x','ay','t1y','t2y'])
-
-
-
                     print(UF.TimeStamp(),'Removing problematic hits...')
                     Bad_Tracks=pd.merge(Bad_Tracks,Bad_Tracks_Head,how='inner',on = ['New_Track_Quarter','New_Track_ID'])
-
-
 
                     print(UF.TimeStamp(),'Calculating x and y coordinates of the fitted line for all plates in the track...')
                     #Calculating x and y coordinates of the fitted line for all plates in the track
@@ -957,7 +952,6 @@ while Status<len(Program):
             rec_2['New_Track_ID']=rec_2['Q']+'-'+rec_2['Track_ID']
             rec_2.drop(['Q'],axis=1,inplace=True)
             rec_2.drop(['Track_ID'],axis=1,inplace=True)
-
             rec=pd.merge(rec_1, rec_2, how="inner", on=['New_Track_ID'])
             rec.drop(['New_Track_ID'],axis=1,inplace=True)
             rec.drop(rec.index[rec['Segment_1'] == rec['Segment_2']], inplace = True)
