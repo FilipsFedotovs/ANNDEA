@@ -71,10 +71,16 @@ for m in ModelName:
         import tensorflow as tf
         from tensorflow import keras
         Models.append(tf.keras.models.load_model(Model_Path))
+   
     if ModelMeta.ModelFramework=='PyTorch':
-        import tensorflow as tf
-        from tensorflow import keras
-        Models.append(tf.keras.models.load_model(Model_Path))
+        import torch
+        from torch import optim
+        Model_Meta_Path=EOSsubModelDIR+'/'+ModelName+'_Meta'
+        Model_Path=EOSsubModelDIR+'/'+ModelName
+        ModelMeta=UF.PickleOperations(Model_Meta_Path, 'r', 'N/A')[0]
+        device = torch.device('cpu')
+        model = UF.GenerateModel(ModelMeta).to(device)
+        model.load_state_dict(torch.load(Model_Path))
 
 MaxDOCA=float(args.MaxDOCA)
 MaxSTG=float(args.MaxSTG)
