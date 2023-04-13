@@ -71,8 +71,11 @@ for m in ModelName:
         import tensorflow as tf
         from tensorflow import keras
         Models.append(tf.keras.models.load_model(Model_Path))
-print(Metas)
-exit()
+    if ModelMeta.ModelFramework=='PyTorch':
+        import tensorflow as tf
+        from tensorflow import keras
+        Models.append(tf.keras.models.load_model(Model_Path))
+
 MaxDOCA=float(args.MaxDOCA)
 MaxSTG=float(args.MaxSTG)
 MaxSLG=float(args.MaxSLG)
