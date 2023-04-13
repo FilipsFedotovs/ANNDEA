@@ -75,12 +75,13 @@ for m in ModelName:
     if ModelMeta.ModelFramework=='PyTorch':
         import torch
         from torch import optim
-        Model_Meta_Path=EOSsubModelDIR+'/'+ModelName+'_Meta'
-        Model_Path=EOSsubModelDIR+'/'+ModelName
+        Model_Meta_Path=EOSsubModelDIR+'/'+m+'_Meta'
+        Model_Path=EOSsubModelDIR+'/'+m
         ModelMeta=UF.PickleOperations(Model_Meta_Path, 'r', 'N/A')[0]
         device = torch.device('cpu')
         model = UF.GenerateModel(ModelMeta).to(device)
         model.load_state_dict(torch.load(Model_Path))
+        Models.append(model)
 
 MaxDOCA=float(args.MaxDOCA)
 MaxSTG=float(args.MaxSTG)
