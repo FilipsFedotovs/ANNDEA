@@ -154,7 +154,10 @@ for s in range(0,limit):
      #     x=input()
      if track.TrackQualityCheck(MaxDOCA,MaxSLG,MaxSTG, MaxAngle):
          for m in range(len(Metas)):
+             print( track.FitSeed(Metas[m],Models[m]))
+             exit()
              if track.FitSeed(Metas[m],Models[m])==False:
+                
                 keep_seed=False
          if keep_seed:
 
