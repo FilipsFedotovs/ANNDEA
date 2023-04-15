@@ -67,7 +67,7 @@ initial_input_file_location=args.f
 MinHits=int(args.MinHits)
 def FitPlate(PlateZ,dx,dy,input_data):
     print([PlateZ,dx,dy])
-    change_df = pd.DataFrame([PlateZ,dx,dy], columns = ['Plate_ID','dx','dy'])
+    change_df = pd.DataFrame([[PlateZ,dx,dy]], columns = ['Plate_ID','dx','dy'])
     temp_data=input_data[['FEDRA_Track_ID','x','y','z','Track_Hit_No']]
     temp_data=pd.merge(temp_data,change_df,on='Plate_ID',how='left')
     print(temp_data)
