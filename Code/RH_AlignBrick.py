@@ -109,14 +109,13 @@ with alive_bar(len(Tracks_Head),force_tty=True, title='Building track representa
                        del Tracks_List[bt]
                        bt-=1
                        trigger=True
-                       print(bth)
-                       x=input()
                    elif trigger:
                         break
                    else:
                         continue
                    bt+=1
-
+print(Tracks_Head[:3])
+exit()
 # print(new_combined_data)
 # exit()
 #     new_combined_data = new_combined_data.drop(["Rec_Seg_No"],axis=1)
