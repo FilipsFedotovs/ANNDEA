@@ -83,9 +83,9 @@ track_no_data=data.groupby(['FEDRA_Track_ID'],as_index=False).count()
 track_no_data=track_no_data.drop(['Hit_ID','y','z','tx','ty'],axis=1)
 track_no_data=track_no_data.rename(columns={'x': "Track_Hit_No"})
 new_combined_data=pd.merge(data, track_no_data, how="left", on=['FEDRA_Track_ID'])
+new_combined_data = new_combined_data[new_combined_data.Track_Hit_No >= MinHits]
 print(new_combined_data)
 exit()
-#     new_combined_data = new_combined_data[new_combined_data.Rec_Seg_No >= MinHitsTrack]
 #     new_combined_data = new_combined_data.drop(["Rec_Seg_No"],axis=1)
 #     new_combined_data=new_combined_data.sort_values(['Rec_Seg_ID',PM.x],ascending=[1,1])
 #     grand_final_rows=len(new_combined_data)
