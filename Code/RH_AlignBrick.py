@@ -65,35 +65,12 @@ Mode=args.Mode.upper()
 RecBatchID=args.RecBatchID
 initial_input_file_location=args.f
 MinHits=int(args.MinHits)
-########################################     Phase 1 - Create compact source file    #########################################
-print(UF.TimeStamp(),bcolors.BOLD+'Stage 0:'+bcolors.ENDC+' Preparing the source data...')
-print(UF.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+initial_input_file_location+bcolors.ENDC)
-data=pd.read_csv(initial_input_file_location,
-                header=0)
-
-total_rows=len(data)
-print(UF.TimeStamp(),'The raw data has ',total_rows,' hits')
-print(UF.TimeStamp(),'Removing unreconstructed hits...')
-data=data.dropna()
-final_rows=len(data)
-print(UF.TimeStamp(),'The cleaned data has ',final_rows,' hits')
-print(UF.TimeStamp(),'Removing tracks which have less than',MinHits,'hits...')
-track_no_data=data.groupby(['FEDRA_Track_ID'],as_index=False).count()
-track_no_data=track_no_data.drop(['Hit_ID','y','z','tx','ty'],axis=1)
-track_no_data=track_no_data.rename(columns={'x': "Track_Hit_No"})
-new_combined_data=pd.merge(data, track_no_data, how="left", on=['FEDRA_Track_ID'])
-new_combined_data = new_combined_data[new_combined_data.Track_Hit_No >= MinHits]
-new_combined_data=new_combined_data.drop(['Hit_ID','tx','ty'],axis=1)
-new_combined_data=new_combined_data.sort_values(['FEDRA_Track_ID','z'],ascending=[1,1])
-new_combined_data['FEDRA_Track_ID']=new_combined_data['FEDRA_Track_ID'].astype(int)
-new_combined_data['Plate_ID']=new_combined_data['z'].astype(int)
-print(new_combined_data)
-exit()
-
-
-def FitPlate(PlateZ):
-    Bad_Track_Pool=[]
-    temp_data=new_combined_data[['FEDRA_Track_ID','x','y','z','Track_Hit_No']]
+def FitPlate(PlateZ,dx,dy,input_data):
+    change_df = pd.DataFrame ([PlateZ,dx,dy], columns = ['Plate_ID','dx','dy'])
+    temp_data=input_data[['FEDRA_Track_ID','x','y','z','Track_Hit_No']]
+    temp_data=pd.merge(temp_data,change_df,on='Plate_ID',how='left')
+    print(temp_data)
+    exit()
     Tracks_Head=temp_data[['FEDRA_Track_ID']]
     Tracks_Head.drop_duplicates(inplace=True)
     Tracks_List=temp_data.values.tolist() #I find it is much easier to deal with tracks in list format when it comes to fitting
@@ -157,8 +134,34 @@ def FitPlate(PlateZ):
     temp_data=temp_data.agg({'d_r':'sum','Track_Hit_No':'sum'})
     temp_data=temp_data.values.tolist()
     fit=temp_data[0]/temp_data[1]
-    print(fit)
-    exit()
+    return fit
+########################################     Phase 1 - Create compact source file    #########################################
+print(UF.TimeStamp(),bcolors.BOLD+'Stage 0:'+bcolors.ENDC+' Preparing the source data...')
+print(UF.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+initial_input_file_location+bcolors.ENDC)
+data=pd.read_csv(initial_input_file_location,
+                header=0)
+
+total_rows=len(data)
+print(UF.TimeStamp(),'The raw data has ',total_rows,' hits')
+print(UF.TimeStamp(),'Removing unreconstructed hits...')
+data=data.dropna()
+final_rows=len(data)
+print(UF.TimeStamp(),'The cleaned data has ',final_rows,' hits')
+print(UF.TimeStamp(),'Removing tracks which have less than',MinHits,'hits...')
+track_no_data=data.groupby(['FEDRA_Track_ID'],as_index=False).count()
+track_no_data=track_no_data.drop(['Hit_ID','y','z','tx','ty'],axis=1)
+track_no_data=track_no_data.rename(columns={'x': "Track_Hit_No"})
+new_combined_data=pd.merge(data, track_no_data, how="left", on=['FEDRA_Track_ID'])
+new_combined_data = new_combined_data[new_combined_data.Track_Hit_No >= MinHits]
+new_combined_data=new_combined_data.drop(['Hit_ID','tx','ty'],axis=1)
+new_combined_data=new_combined_data.sort_values(['FEDRA_Track_ID','z'],ascending=[1,1])
+new_combined_data['FEDRA_Track_ID']=new_combined_data['FEDRA_Track_ID'].astype(int)
+new_combined_data['Plate_ID']=new_combined_data['z'].astype(int)
+print(FitPlate(-7794,10,0,new_combined_data))
+exit()
+
+
+
 # print(new_combined_data)
 # exit()
 #     new_combined_data = new_combined_data.drop(["Rec_Seg_No"],axis=1)
