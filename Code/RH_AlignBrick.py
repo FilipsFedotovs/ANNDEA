@@ -118,12 +118,10 @@ with alive_bar(len(Tracks_Head),force_tty=True, title='Fitting the tracks...') a
      for bth in Tracks_Head:
        bar()
        x,y,z=[],[],[]
-       for i in bth[1][0]:
-           x.append(i)
-       for j in bth[1][2]:
-           y.append(j)
-       for k in bth[1][3]:
-           z.append(k)
+       for b in bth[1]:
+           x.append(b[0])
+           y.append(b[1])
+           z.append(b[2])
        print(x,y,z)
        exit()
        x=[bth[1][0][0],bth[1][1][0]]
