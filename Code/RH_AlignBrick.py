@@ -109,7 +109,7 @@ with alive_bar(len(Tracks_Head),force_tty=True, title='Building track representa
                        del Tracks_List[bt]
                        bt-=1
                        trigger=True
-                       print(bth[0],Tracks_List[bt])
+                       print(bth,Tracks_List[bt])
                        x=input()
                    elif trigger:
                         break
