@@ -90,7 +90,7 @@ new_combined_data['FEDRA_Track_ID']=new_combined_data['FEDRA_Track_ID'].astype(i
 Bad_Track_Pool=[]
 
 
-temp_data=new_combined_data[['FEDRA_Track_ID','x','y','z']]
+temp_data=new_combined_data[['FEDRA_Track_ID','x','y','z','Track_Hit_No']]
 
 Tracks_Head=temp_data[['FEDRA_Track_ID']]
 Tracks_Head.drop_duplicates(inplace=True)
@@ -107,7 +107,7 @@ with alive_bar(len(Tracks_Head),force_tty=True, title='Building track representa
                while bt<(len(Tracks_List)):
                    if bth[0]==Tracks_List[bt][0]:
 
-                       bth[1].append(Tracks_List[bt][1:])
+                       bth[1].append(Tracks_List[bt][1:4])
                        del Tracks_List[bt]
                        bt-=1
                        trigger=True
