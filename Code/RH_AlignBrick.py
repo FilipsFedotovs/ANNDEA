@@ -122,11 +122,6 @@ with alive_bar(len(Tracks_Head),force_tty=True, title='Fitting the tracks...') a
            x.append(b[0])
            y.append(b[1])
            z.append(b[2])
-       print(x,y,z)
-       exit()
-       x=[bth[1][0][0],bth[1][1][0]]
-       y=[bth[1][0][1],bth[1][1][1]]
-       z=[bth[2][0][2],bth[2][1][2]]
        tx=np.polyfit(z,x,1)[0]
        ax=np.polyfit(z,x,1)[1]
        ty=np.polyfit(z,y,1)[0]
