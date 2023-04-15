@@ -137,7 +137,9 @@ with alive_bar(len(Tracks_Head),force_tty=True, title='Fitting the tracks...') a
        bth.append(ay) #Append x intercept
        bth.append(ty) #Append x slope
        bth.append(0) #Append a placeholder slope (for polynomial case)
-       del(bth[2])
+       del(bth[1])
+       print(bth)
+       exit()
 
 #                        else: #Three pr more trusted hits - In these cases whe we fit a polynomial of the second degree and the equations of the line are x=ax+(t1x*z)+(t2x*z*z) and y=ay+(t1y*z)+(t2y*z*z)
 #                            x,y,z=[],[],[]
