@@ -70,6 +70,10 @@ def FitPlate(PlateZ,dx,dy,input_data):
     change_df = pd.DataFrame([[PlateZ,dx,dy]], columns = ['Plate_ID','dx','dy'])
     temp_data=input_data[['FEDRA_Track_ID','x','y','z','Track_Hit_No','Plate_ID']]
     temp_data=pd.merge(temp_data,change_df,on='Plate_ID',how='left')
+    temp_data['dx'] = temp_data['dx'].fillna(0.0)
+    temp_data['dy'] = temp_data['dy'].fillna(0.0)
+    temp_data['x']=temp_data['x']+temp_data['dx']
+    temp_data['y']=temp_data['y']+temp_data['dy']
     print(temp_data)
     exit()
     Tracks_Head=temp_data[['FEDRA_Track_ID']]
