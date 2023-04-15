@@ -91,7 +91,7 @@ print(new_combined_data)
 exit()
 
 
-def FitPlate(PlateZ,)
+def FitPlate(PlateZ):
     Bad_Track_Pool=[]
     temp_data=new_combined_data[['FEDRA_Track_ID','x','y','z','Track_Hit_No']]
     Tracks_Head=temp_data[['FEDRA_Track_ID']]
