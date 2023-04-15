@@ -151,7 +151,7 @@ temp_data['d_r']=temp_data['d_x']**2+temp_data['d_y']**2
 temp_data['d_r'] = temp_data['d_r'].astype(float)
 temp_data['d_r']=np.sqrt(temp_data['d_r']) #Absolute distance
 temp_data=temp_data[['FEDRA_Track_ID','Track_Hit_No','d_r']]
-temp_data=temp_data.groupby(['FEDRA_Track_ID','Track_Hit_No']).agg({'d_r':'sum'})
+temp_data=temp_data.groupby(['FEDRA_Track_ID','Track_Hit_No']).agg({'d_r':'sum'}).reset_index()
 temp_data=temp_data.agg({'d_r':'sum','Track_Hit_No':'sum'})
 print(temp_data)
 exit()
