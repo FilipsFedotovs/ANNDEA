@@ -86,30 +86,36 @@ new_combined_data = new_combined_data[new_combined_data.Track_Hit_No >= MinHits]
 new_combined_data=new_combined_data.drop(['Hit_ID','tx','ty'],axis=1)
 new_combined_data=new_combined_data.sort_values(['FEDRA_Track_ID','z'],ascending=[1,1])
 new_combined_data['FEDRA_Track_ID']=new_combined_data['FEDRA_Track_ID'].astype(int)
+
 Bad_Track_Pool=[]
-temp_data=new_combined_data[['FEDRA_Track_ID','x','y','z']].values.tolist()
-print(temp_data)
-exit()
-# #Bellow we build the track representatation that we can use to fit slopes
-# with alive_bar(len(temp_data),force_tty=True, title='Building track representations...') as bar:
-#             for bth in Bad_Tracks_Head:
-#                bar()
-#                bth.append([])
-#                bt=0
-#                trigger=False
-#                while bt<(len(Bad_Tracks_List)):
-#                    if (bth[0]==Bad_Tracks_List[bt][0] and bth[1]==Bad_Tracks_List[bt][1]):
-#                       if Bad_Tracks_List[bt][8]==1: #We only build polynomials for hits in a track that do not have duplicates - these are 'trusted hits'
-#                          bth[2].append(Bad_Tracks_List[bt][2:-2])
-#                       del Bad_Tracks_List[bt]
-#                       bt-=1
-#                       trigger=True
-#                    elif trigger:
-#                        break
-#                    else:
-#                        continue
-#                    bt+=1
-#
+temp_data=new_combined_data[['FEDRA_Track_ID','x','y','z']]
+
+Tracks_Head=temp_data[['FEDRA_Track_ID']]
+Tracks_Head.drop_duplicates(inplace=True)
+Tracks_List=temp_data.values.tolist() #I find it is much easier to deal with tracks in list format when it comes to fitting
+Tracks_Head=Tracks_Head.values.tolist()
+Bad_Track_Pool=[]
+#Bellow we build the track representatation that we can use to fit slopes
+with alive_bar(len(Tracks_Head),force_tty=True, title='Building track representations...') as bar:
+            for bth in Tracks_Head:
+               bar()
+               bth.append([])
+               bt=0
+               trigger=False
+               while bt<(len(Tracks_List)):
+                   if bth[0]==Tracks_List[bt][0]:
+                       print(bth[0],Tracks_List[bt])
+                       x=input()
+                   #       bth[1].append(Bad_Tracks_List[bt][2:-2])
+                   #    del Bad_Tracks_List[bt]
+                   #    bt-=1
+                   #    trigger=True
+                   # elif trigger:
+                   #     break
+                   # else:
+                   #     continue
+                   # bt+=1
+
 # print(new_combined_data)
 # exit()
 #     new_combined_data = new_combined_data.drop(["Rec_Seg_No"],axis=1)
