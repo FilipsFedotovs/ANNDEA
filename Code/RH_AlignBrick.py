@@ -89,7 +89,7 @@ new_combined_data=new_combined_data.sort_values(['FEDRA_Track_ID','z'],ascending
 
 
 Bad_Track_Pool=[]
-temp_data=new_combined_data[['FEDRA_Track_ID','x','y','z']].values.to_list()
+temp_data=new_combined_data[['FEDRA_Track_ID','x','y','z']].values.tolist()
 print(temp_data)
 exit()
 # #Bellow we build the track representatation that we can use to fit slopes
