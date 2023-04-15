@@ -56,6 +56,7 @@ print(bcolors.HEADER+"##########################################################
 parser = argparse.ArgumentParser(description='This script prepares training data for training the tracking model')
 parser.add_argument('--Mode', help='Script will continue from the last checkpoint, unless you want to start from the scratch, then type "Reset"',default='')
 parser.add_argument('--RecBatchID',help="Give this training sample batch an ID", default='SHIP_UR_v1')
+parser.add_argument('--MinHits',help="What is the minimum number of hits per track?", default='2')
 parser.add_argument('--f',help="Please enter the full path to the file with track reconstruction", default='/afs/cern.ch/work/f/ffedship/public/SHIP/Source_Data/SHIP_Emulsion_Rec_Raw_UR.csv')
 
 ######################################## Parsing argument values  #############################################################
@@ -63,50 +64,25 @@ args = parser.parse_args()
 Mode=args.Mode.upper()
 RecBatchID=args.RecBatchID
 initial_input_file_location=args.f
-
+MinHits=int(args.MinHits)
 ########################################     Phase 1 - Create compact source file    #########################################
 print(UF.TimeStamp(),bcolors.BOLD+'Stage 0:'+bcolors.ENDC+' Preparing the source data...')
 print(UF.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+initial_input_file_location+bcolors.ENDC)
 data=pd.read_csv(initial_input_file_location,
-                header=0)#,
-                #usecols=[TrackID,BrickID,PM.x,PM.y,PM.z,PM.tx,PM.ty,PM.MC_Track_ID,PM.MC_Event_ID])
-print(data)
+                header=0)
+
+total_rows=len(data)
+print(UF.TimeStamp(),'The raw data has ',total_rows,' hits')
+print(UF.TimeStamp(),'Removing unreconstructed hits...')
+data=data.dropna()
+final_rows=len(data)
+print(UF.TimeStamp(),'The cleaned data has ',final_rows,' hits')
+compress_data=data.drop([PM.x,PM.y,PM.z,PM.tx,PM.ty],axis=1)
+print(UF.TimeStamp(),'Removing tracks which have less than',MinHits,'hits...')
+track_no_data=data.groupby(['FEDRA_Track_ID'],as_index=False).count()
+print(track_no_data)
 exit()
-#     total_rows=len(data)
-#     print(UF.TimeStamp(),'The raw data has ',total_rows,' hits')
-#     print(UF.TimeStamp(),'Removing unreconstructed hits...')
-#     data=data.dropna()
-#     final_rows=len(data)
-#     print(UF.TimeStamp(),'The cleaned data has ',final_rows,' hits')
-#     data[PM.MC_Event_ID] = data[PM.MC_Event_ID].astype(str)
-#     data[PM.MC_Track_ID] = data[PM.MC_Track_ID].astype(str)
-#     data[BrickID] = data[BrickID].astype(str)
-#     data[TrackID] = data[TrackID].astype(str)
-#     data['Rec_Seg_ID'] = data[TrackID] + '-' + data[BrickID]
-#     data['MC_Mother_Track_ID'] = data[PM.MC_Event_ID] + '-' + data[PM.MC_Track_ID]
-#     data=data.drop([TrackID],axis=1)
-#     data=data.drop([BrickID],axis=1)
-#     data=data.drop([PM.MC_Event_ID],axis=1)
-#     data=data.drop([PM.MC_Track_ID],axis=1)
-#     compress_data=data.drop([PM.x,PM.y,PM.z,PM.tx,PM.ty],axis=1)
-#     compress_data['MC_Mother_Track_No']= compress_data['MC_Mother_Track_ID']
-#     compress_data=compress_data.groupby(by=['Rec_Seg_ID','MC_Mother_Track_ID'])['MC_Mother_Track_No'].count().reset_index()
-#     compress_data=compress_data.sort_values(['Rec_Seg_ID','MC_Mother_Track_No'],ascending=[1,0])
-#     compress_data.drop_duplicates(subset='Rec_Seg_ID',keep='first',inplace=True)
-#     data=data.drop(['MC_Mother_Track_ID'],axis=1)
-#     compress_data=compress_data.drop(['MC_Mother_Track_No'],axis=1)
-#     data=pd.merge(data, compress_data, how="left", on=['Rec_Seg_ID'])
-#     if SliceData:
-#          print(UF.TimeStamp(),'Slicing the data...')
-#          ValidEvents=data.drop(data.index[(data[PM.x] > Xmax) | (data[PM.x] < Xmin) | (data[PM.y] > Ymax) | (data[PM.y] < Ymin)])
-#          ValidEvents.drop([PM.x,PM.y,PM.z,PM.tx,PM.ty,'MC_Mother_Track_ID'],axis=1,inplace=True)
-#          ValidEvents.drop_duplicates(subset='Rec_Seg_ID',keep='first',inplace=True)
-#          data=pd.merge(data, ValidEvents, how="inner", on=['Rec_Seg_ID'])
-#          final_rows=len(data.axes[0])
-#          print(UF.TimeStamp(),'The sliced data has ',final_rows,' hits')
-#     print(UF.TimeStamp(),'Removing tracks which have less than',MinHitsTrack,'hits...')
-#     track_no_data=data.groupby(['MC_Mother_Track_ID','Rec_Seg_ID'],as_index=False).count()
-#     track_no_data=track_no_data.drop([PM.y,PM.z,PM.tx,PM.ty],axis=1)
+#track_no_data=track_no_data.drop([,PM.z,PM.tx,PM.ty],axis=1)
 #     track_no_data=track_no_data.rename(columns={PM.x: "Rec_Seg_No"})
 #     new_combined_data=pd.merge(data, track_no_data, how="left", on=['Rec_Seg_ID','MC_Mother_Track_ID'])
 #     new_combined_data = new_combined_data[new_combined_data.Rec_Seg_No >= MinHitsTrack]
