@@ -150,7 +150,7 @@ temp_data['d_y']=temp_data['y']-temp_data['new_y']
 temp_data['d_r']=temp_data['d_x']**2+temp_data['d_y']**2
 temp_data['d_r'] = temp_data['d_r'].astype(float)
 temp_data['d_r']=np.sqrt(temp_data['d_r']) #Absolute distance
-temp_data=temp_data[['FEDRA_Track_ID','x','y','z','Track_Hit_No','d_r']]
+temp_data=temp_data[['FEDRA_Track_ID','Track_Hit_No','d_r']]
 print(temp_data)
 exit()
 # print(new_combined_data)
