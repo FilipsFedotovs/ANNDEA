@@ -34,8 +34,6 @@ import time
 from alive_progress import alive_bar
 import argparse
 import ast
-
-
 class bcolors:   #We use it for the interface
     HEADER = '\033[95m'
     OKBLUE = '\033[94m'
@@ -487,7 +485,6 @@ if Mode=='RESET':
 print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Create'))
 Program.append(prog_entry)
 
-
 Program.append('Custom - PickR')
 
 ####### Stage 4
@@ -531,7 +528,6 @@ while Status<len(Program):
                         new_result=pd.read_csv(output_file_location,names = ['Segment_1','Segment_2'])
                         print(UF.TimeStamp(),'Set',str(i), 'contains', len(new_result), 'seeds',bcolors.ENDC)
                         result=pd.concat([result,new_result])
-
 
         Records=len(result)
         result["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(result['Segment_1'], result['Segment_2'])]
@@ -722,7 +718,6 @@ while Status<len(Program):
                     Bad_Tracks_List=Bad_Tracks.values.tolist() #I find it is much easier to deal with tracks in list format when it comes to fitting
                     Bad_Tracks_Head=Bad_Tracks_Head.values.tolist()
                     Bad_Track_Pool=[]
-
                     #Bellow we build the track representatation that we can use to fit slopes
                     with alive_bar(len(Bad_Tracks_Head),force_tty=True, title='Building track representations...') as bar:
                                 for bth in Bad_Tracks_Head:
@@ -806,22 +801,18 @@ while Status<len(Program):
                     Bad_Tracks_Head=pd.DataFrame(Bad_Tracks_Head, columns = ['New_Track_Quarter','New_Track_ID','ax','t1x','t2x','ay','t1y','t2y'])
                     print(UF.TimeStamp(),'Removing problematic hits...')
                     Bad_Tracks=pd.merge(Bad_Tracks,Bad_Tracks_Head,how='inner',on = ['New_Track_Quarter','New_Track_ID'])
-
                     print(UF.TimeStamp(),'Calculating x and y coordinates of the fitted line for all plates in the track...')
                     #Calculating x and y coordinates of the fitted line for all plates in the track
                     Bad_Tracks['new_x']=Bad_Tracks['ax']+(Bad_Tracks[PM.z]*Bad_Tracks['t1x'])+((Bad_Tracks[PM.z]**2)*Bad_Tracks['t2x'])
                     Bad_Tracks['new_y']=Bad_Tracks['ay']+(Bad_Tracks[PM.z]*Bad_Tracks['t1y'])+((Bad_Tracks[PM.z]**2)*Bad_Tracks['t2y'])
-
                     #Calculating how far hits deviate from the fit polynomial
                     print(UF.TimeStamp(),'Calculating how far hits deviate from the fit polynomial...')
                     Bad_Tracks['d_x']=Bad_Tracks[PM.x]-Bad_Tracks['new_x']
                     Bad_Tracks['d_y']=Bad_Tracks[PM.y]-Bad_Tracks['new_y']
-
                     Bad_Tracks['d_r']=Bad_Tracks['d_x']**2+Bad_Tracks['d_y']**2
                     Bad_Tracks['d_r'] = Bad_Tracks['d_r'].astype(float)
                     Bad_Tracks['d_r']=np.sqrt(Bad_Tracks['d_r']) #Absolute distance
                     Bad_Tracks=Bad_Tracks[['New_Track_Quarter','New_Track_ID',PM.z,PM.Hit_ID,'d_r']]
-
                     #Sort the tracks and their hits by Track ID, Plate and distance to the perfect line
                     print(UF.TimeStamp(),'Sorting the tracks and their hits by Track ID, Plate and distance to the perfect line...')
                     Bad_Tracks.sort_values(['New_Track_Quarter','New_Track_ID',PM.z,'d_r'],ascending=[0,0,1,1],inplace=True)
@@ -837,7 +828,6 @@ while Status<len(Program):
                     data.drop(["Rec_Seg_ID"],axis=1,inplace=True)
                 else:
                     Good_Tracks=pd.read_csv(EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1e_'+RecBatchID+'_Mapped_Tracks_Temp.csv')
-
                 print(UF.TimeStamp(),'Mapping data...')
                 new_combined_data=pd.merge(data, Good_Tracks, how="left", on=[PM.Hit_ID])
                 new_combined_data['New_Track_Quarter'] = new_combined_data['New_Track_Quarter'].fillna(new_combined_data[BrickID])
@@ -855,7 +845,6 @@ while Status<len(Program):
          print(UF.TimeStamp(), "Loading fit track seeds from the file",bcolors.OKBLUE+input_file_location+bcolors.ENDC)
          base_data=UF.PickleOperations(input_file_location,'r','N/A')[0]
          print(UF.TimeStamp(), 'Ok starting the final merging of the remained tracks')
-
          InitialDataLength=len(base_data)
          SeedCounter=0
          SeedCounterContinue=True
@@ -1044,8 +1033,6 @@ while Status<len(Program):
                 if md==len(ModelName)-1:
                         output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1c_'+RecBatchID+'_Fit_Seeds.pkl'
                         print(UF.PickleOperations(output_file_location,'w',base_data)[1])
-
-
                 else:
                         output_split=int(np.ceil(Records_After_Compression/PM.MaxSegments))
                         for os_itr in range(output_split):
@@ -1086,16 +1073,12 @@ if Status<20:
     print(UF.TimeStamp(),'Performing the cleanup... ',bcolors.ENDC)
     HTCondorTag="SoftUsed == \"ANNDEA-RUTr1a-"+RecBatchID+"\""
     UF.RecCleanUp(AFS_DIR, EOS_DIR, 'RUTr1a_'+RecBatchID, [], HTCondorTag)
-
     HTCondorTag="SoftUsed == \"ANNDEA-RUTr1b-"+RecBatchID+"\""
     UF.RecCleanUp(AFS_DIR, EOS_DIR, 'RUTr1b_'+RecBatchID, [], HTCondorTag)
-
     HTCondorTag="SoftUsed == \"ANNDEA-RUTr1c-"+RecBatchID+"\""
     UF.RecCleanUp(AFS_DIR, EOS_DIR, 'RUTr1c_'+RecBatchID, [], HTCondorTag)
-
     HTCondorTag="SoftUsed == \"ANNDEA-RUTr1e-"+RecBatchID+"\""
     UF.RecCleanUp(AFS_DIR, EOS_DIR, 'RUTr1e_'+RecBatchID, [], HTCondorTag)
-
     for p in Program:
         if p[:6]!='Custom' and (p in ModelName)==False:
            print(UF.TimeStamp(),UF.ManageTempFolders(p,'Delete'))
@@ -1149,9 +1132,7 @@ if Status<20:
                     prog_entry.append(LocalSub)
                     prog_entry.append(['',''])
                     print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Delete')) #Deleting a specific set of created folders
-
     print(UF.TimeStamp(), bcolors.OKGREEN+"Reconstruction has been completed"+bcolors.ENDC)
-
 else:
     print(UF.TimeStamp(), bcolors.FAIL+"Reconstruction has not been completed as one of the processes has timed out. Please run the script again (without Reset Mode)."+bcolors.ENDC)
     exit()
