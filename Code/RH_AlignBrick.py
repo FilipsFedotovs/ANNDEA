@@ -62,9 +62,6 @@ parser.add_argument('--f',help="Please enter the full path to the file with trac
 args = parser.parse_args()
 Mode=args.Mode.upper()
 RecBatchID=args.RecBatchID
-ModelName=ast.literal_eval(args.ModelName)
-Patience=int(args.Patience)
-Acceptance=float(args.Acceptance)
 initial_input_file_location=args.f
 
 ########################################     Phase 1 - Create compact source file    #########################################
