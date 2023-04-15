@@ -77,7 +77,6 @@ print(UF.TimeStamp(),'Removing unreconstructed hits...')
 data=data.dropna()
 final_rows=len(data)
 print(UF.TimeStamp(),'The cleaned data has ',final_rows,' hits')
-compress_data=data.drop([PM.x,PM.y,PM.z,PM.tx,PM.ty],axis=1)
 print(UF.TimeStamp(),'Removing tracks which have less than',MinHits,'hits...')
 track_no_data=data.groupby(['FEDRA_Track_ID'],as_index=False).count()
 track_no_data=track_no_data.drop(['Hit_ID','y','z','tx','ty'],axis=1)
@@ -86,7 +85,7 @@ new_combined_data=pd.merge(data, track_no_data, how="left", on=['FEDRA_Track_ID'
 new_combined_data = new_combined_data[new_combined_data.Track_Hit_No >= MinHits]
 new_combined_data=new_combined_data.drop(['Hit_ID','tx','ty'],axis=1)
 new_combined_data=new_combined_data.sort_values(['FEDRA_Track_ID','z'],ascending=[1,1])
-
+new_combined_data=new_combined_data['FEDRA_Track_ID'].astype(str)
 
 Bad_Track_Pool=[]
 temp_data=new_combined_data[['FEDRA_Track_ID','x','y','z']].values.tolist()
