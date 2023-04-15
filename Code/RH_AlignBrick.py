@@ -104,17 +104,18 @@ with alive_bar(len(Tracks_Head),force_tty=True, title='Building track representa
                trigger=False
                while bt<(len(Tracks_List)):
                    if bth[0]==Tracks_List[bt][0]:
+
+                       bth[1].append(Tracks_List[bt][1:])
+                       del Tracks_List[bt]
+                       bt-=1
+                       trigger=True
                        print(bth[0],Tracks_List[bt])
                        x=input()
-                   #       bth[1].append(Bad_Tracks_List[bt][2:-2])
-                   #    del Bad_Tracks_List[bt]
-                   #    bt-=1
-                   #    trigger=True
-                   # elif trigger:
-                   #     break
-                   # else:
-                   #     continue
-                   # bt+=1
+                   elif trigger:
+                        break
+                   else:
+                        continue
+                   bt+=1
 
 # print(new_combined_data)
 # exit()
