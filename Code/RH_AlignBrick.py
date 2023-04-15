@@ -114,6 +114,71 @@ with alive_bar(len(Tracks_Head),force_tty=True, title='Building track representa
                    else:
                         continue
                    bt+=1
+with alive_bar(len(Tracks_Head),force_tty=True, title='Fitting the tracks...') as bar:
+     for bth in Tracks_Head:
+       bar()
+       x,y,z=[],[],[]
+       for i in bth[1][0]:
+           x.append(i)
+       for j in bth[1][2]:
+           y.append(j)
+       for k in bth[1][3]:
+           z.append(k)
+       print(x,y,z)
+       exit()
+       x=[bth[1][0][0],bth[1][1][0]]
+       y=[bth[1][0][1],bth[1][1][1]]
+       z=[bth[2][0][2],bth[2][1][2]]
+       tx=np.polyfit(z,x,1)[0]
+       ax=np.polyfit(z,x,1)[1]
+       ty=np.polyfit(z,y,1)[0]
+       ay=np.polyfit(z,y,1)[1]
+       bth.append(ax) #Append x intercept
+       bth.append(tx) #Append x slope
+       bth.append(0) #Append a placeholder slope (for polynomial case)
+       bth.append(ay) #Append x intercept
+       bth.append(ty) #Append x slope
+       bth.append(0) #Append a placeholder slope (for polynomial case)
+       del(bth[2])
+
+#                        else: #Three pr more trusted hits - In these cases whe we fit a polynomial of the second degree and the equations of the line are x=ax+(t1x*z)+(t2x*z*z) and y=ay+(t1y*z)+(t2y*z*z)
+#                            x,y,z=[],[],[]
+#                            for i in bth[2]:
+#                                x.append(i[0])
+#                            for j in bth[2]:
+#                                y.append(j[1])
+#                            for k in bth[2]:
+#                                z.append(k[2])
+#                            t2x=np.polyfit(z,x,2)[0]
+#                            t1x=np.polyfit(z,x,2)[1]
+#                            ax=np.polyfit(z,x,2)[2]
+#                            t2y=np.polyfit(z,y,2)[0]
+#                            t1y=np.polyfit(z,y,2)[1]
+#                            ay=np.polyfit(z,y,2)[2]
+#                            bth.append(ax) #Append x intercept
+#                            bth.append(t1x) #Append x slope
+#                            bth.append(t2x) #Append a placeholder slope (for polynomial case)
+#                            bth.append(ay) #Append x intercept
+#                            bth.append(t1y) #Append x slope
+#                            bth.append(t2y) #Append a placeholder slope (for polynomial case)
+#                            del(bth[2])
+#
+#                     #Once we get coefficients for all tracks we convert them back to Pandas dataframe and join back to the data
+#                     Bad_Tracks_Head=pd.DataFrame(Bad_Tracks_Head, columns = ['New_Track_Quarter','New_Track_ID','ax','t1x','t2x','ay','t1y','t2y'])
+#                     print(UF.TimeStamp(),'Removing problematic hits...')
+#                     Bad_Tracks=pd.merge(Bad_Tracks,Bad_Tracks_Head,how='inner',on = ['New_Track_Quarter','New_Track_ID'])
+#                     print(UF.TimeStamp(),'Calculating x and y coordinates of the fitted line for all plates in the track...')
+#                     #Calculating x and y coordinates of the fitted line for all plates in the track
+#                     Bad_Tracks['new_x']=Bad_Tracks['ax']+(Bad_Tracks[PM.z]*Bad_Tracks['t1x'])+((Bad_Tracks[PM.z]**2)*Bad_Tracks['t2x'])
+#                     Bad_Tracks['new_y']=Bad_Tracks['ay']+(Bad_Tracks[PM.z]*Bad_Tracks['t1y'])+((Bad_Tracks[PM.z]**2)*Bad_Tracks['t2y'])
+#                     #Calculating how far hits deviate from the fit polynomial
+#                     print(UF.TimeStamp(),'Calculating how far hits deviate from the fit polynomial...')
+#                     Bad_Tracks['d_x']=Bad_Tracks[PM.x]-Bad_Tracks['new_x']
+#                     Bad_Tracks['d_y']=Bad_Tracks[PM.y]-Bad_Tracks['new_y']
+#                     Bad_Tracks['d_r']=Bad_Tracks['d_x']**2+Bad_Tracks['d_y']**2
+#                     Bad_Tracks['d_r'] = Bad_Tracks['d_r'].astype(float)
+#                     Bad_Tracks['d_r']=np.sqrt(Bad_Tracks['d_r']) #Absolute distance
+#                     Bad_Tracks=Bad_Tracks[['New_Track_Quarter','New_Track_ID',PM.z,PM.Hit_ID,'d_r']]
 print(Tracks_Head[:3])
 exit()
 # print(new_combined_data)
