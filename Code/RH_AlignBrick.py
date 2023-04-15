@@ -66,7 +66,6 @@ RecBatchID=args.RecBatchID
 initial_input_file_location=args.f
 MinHits=int(args.MinHits)
 def FitPlate(PlateZ,dx,dy,input_data):
-    print([PlateZ,dx,dy])
     change_df = pd.DataFrame([[PlateZ,dx,dy]], columns = ['Plate_ID','dx','dy'])
     temp_data=input_data[['FEDRA_Track_ID','x','y','z','Track_Hit_No','Plate_ID']]
     temp_data=pd.merge(temp_data,change_df,on='Plate_ID',how='left')
@@ -74,17 +73,13 @@ def FitPlate(PlateZ,dx,dy,input_data):
     temp_data['dy'] = temp_data['dy'].fillna(0.0)
     temp_data['x']=temp_data['x']+temp_data['dx']
     temp_data['y']=temp_data['y']+temp_data['dy']
-    print(temp_data)
-    exit()
+    temp_data=temp_data[['FEDRA_Track_ID','x','y','z','Track_Hit_No']]
     Tracks_Head=temp_data[['FEDRA_Track_ID']]
     Tracks_Head.drop_duplicates(inplace=True)
     Tracks_List=temp_data.values.tolist() #I find it is much easier to deal with tracks in list format when it comes to fitting
     Tracks_Head=Tracks_Head.values.tolist()
-    Bad_Track_Pool=[]
     #Bellow we build the track representatation that we can use to fit slopes
-    with alive_bar(len(Tracks_Head),force_tty=True, title='Building track representations...') as bar:
-                for bth in Tracks_Head:
-                   bar()
+    for bth in Tracks_Head:
                    bth.append([])
                    bt=0
                    trigger=False
@@ -100,9 +95,7 @@ def FitPlate(PlateZ,dx,dy,input_data):
                        else:
                             continue
                        bt+=1
-    with alive_bar(len(Tracks_Head),force_tty=True, title='Fitting the tracks...') as bar:
-         for bth in Tracks_Head:
-           bar()
+    for bth in Tracks_Head:
            x,y,z=[],[],[]
            for b in bth[1]:
                x.append(b[0])
