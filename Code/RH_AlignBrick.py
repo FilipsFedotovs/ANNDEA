@@ -141,7 +141,6 @@ def AlignPlate(PlateZ,dx,dy,input_data):
     temp_data['dy'] = temp_data['dy'].fillna(0.0)
     temp_data['x']=temp_data['x']+temp_data['dx']
     temp_data['y']=temp_data['y']+temp_data['dy']
-    temp_data=temp_data[['FEDRA_Track_ID','x','y','z','Track_Hit_No']]
     temp_data = temp_data.drop(['dx','dy'],axis=1)
     return temp_data
 ########################################     Phase 1 - Create compact source file    #########################################
