@@ -67,7 +67,7 @@ Mode=args.Mode.upper()
 RecBatchID=args.RecBatchID
 initial_input_file_location=args.f
 MinHits=int(args.MinHits)
-print(initial_input_file_location[:-3])
+print(initial_input_file_location[:-4]+'_Aligned.csv')
 exit()
 def FitPlate(PlateZ,dx,dy,input_data):
     change_df = pd.DataFrame([[PlateZ,dx,dy]], columns = ['Plate_ID','dx','dy'])
