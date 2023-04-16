@@ -163,9 +163,8 @@ plates=plates.values.tolist() #I find it is much easier to deal with tracks in l
 print(UF.TimeStamp(),'There are ',len(plates),' plates')
 
 for p in plates:
-   print(int(p))
    def FitPlateFixed(x):
-       return FitPlate(p,x,0,new_combined_data)
+       return FitPlate(p[0],x,0,new_combined_data)
    print(FitPlateFixed(10))
 exit()
 
