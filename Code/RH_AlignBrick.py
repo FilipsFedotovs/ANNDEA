@@ -67,8 +67,7 @@ Mode=args.Mode.upper()
 RecBatchID=args.RecBatchID
 initial_input_file_location=args.f
 MinHits=int(args.MinHits)
-print(initial_input_file_location[:-4]+'_Aligned.csv')
-exit()
+output_file_location=initial_input_file_location[:-4]+'_Re-Aligned.csv'
 def FitPlate(PlateZ,dx,dy,input_data):
     change_df = pd.DataFrame([[PlateZ,dx,dy]], columns = ['Plate_ID','dx','dy'])
     temp_data=input_data[['FEDRA_Track_ID','x','y','z','Track_Hit_No','Plate_ID']]
@@ -204,5 +203,6 @@ raw_data['x']=raw_data['x']+raw_data['dx']
 raw_data['y']=raw_data['y']+raw_data['dy']
 raw_data = raw_data.drop(['Plate_ID','dx','dy'],axis=1)
 
-print(raw_data)
+raw_data.to_csv(output_file_location,index=False)
+print('Alignment has been completed...')
 
