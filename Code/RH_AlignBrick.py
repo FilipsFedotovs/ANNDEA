@@ -179,11 +179,11 @@ with alive_bar(tot_jobs,force_tty=True, title='Optimising the alignment configur
            return FitPlate(p[0],x,0,new_combined_data)
        def FitPlateFixedY(x):
            return FitPlate(p[0],0,x,new_combined_data)
-       res = minimize_scalar(FitPlateFixedX, bounds=(-200, 200), method='bounded')
+       res = minimize_scalar(FitPlateFixedX, bounds=(-500, 500), method='bounded')
        new_combined_data=AlignPlate(p[0],res.x,0,new_combined_data)
        print('Overall fit value:',FitPlateFixedX(0))
        bar()
-       res = minimize_scalar(FitPlateFixedY, bounds=(-200, 200), method='bounded')
+       res = minimize_scalar(FitPlateFixedY, bounds=(-500, 500), method='bounded')
        new_combined_data=AlignPlate(p[0],0,res.x,new_combined_data)
        bar()
        print('Overall fit value:',FitPlateFixedY(0))
