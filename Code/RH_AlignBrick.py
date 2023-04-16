@@ -172,15 +172,21 @@ plates.drop_duplicates(inplace=True)
 plates=plates.values.tolist() #I find it is much easier to deal with tracks in list format when it comes to fitting
 print(UF.TimeStamp(),'There are ',len(plates),' plates')
 
-for p in plates:
-   def FitPlateFixed(x):
-       return FitPlate(p[0],x,0,new_combined_data)
-   res = minimize_scalar(FitPlateFixed, bounds=(-200, 200), method='bounded')
-   print(FitPlateFixed(0))
-   new_combined_data=AlignPlate(p[0],res.x,0,new_combined_data)
-   print(FitPlateFixed(0))
-
-   exit()
+tot_jobs = len(plates)*2
+with alive_bar(tot_jobs,force_tty=True, title='Optimising the alignment configuration...') as bar:
+    for p in plates:
+       def FitPlateFixedX(x):
+           return FitPlate(p[0],x,0,new_combined_data)
+       def FitPlateFixedY(x):
+           return FitPlate(p[0],0,x,new_combined_data)
+       res = minimize_scalar(FitPlateFixedX, bounds=(-200, 200), method='bounded')
+       new_combined_data=AlignPlate(p[0],res.x,0,new_combined_data)
+       print('Overall fit value:',FitPlateFixedX(0))
+       bar()
+       res = minimize_scalar(FitPlateFixedX, bounds=(-200, 200), method='bounded')
+       new_combined_data=AlignPlate(p[0],res.x,0,new_combined_data)
+       bar()
+       print('Overall fit value:',FitPlateFixedY(0))
 
 
 
