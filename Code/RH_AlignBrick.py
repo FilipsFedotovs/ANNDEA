@@ -118,12 +118,10 @@ def FitPlate(PlateZ,dx,dy,input_data):
     Tracks_Head=pd.DataFrame(Tracks_Head, columns = ['FEDRA_Track_ID','ax','t1x','t2x','ay','t1y','t2y'])
 
     temp_data=pd.merge(temp_data,Tracks_Head,how='inner',on = ['FEDRA_Track_ID'])
-    print(UF.TimeStamp(),'Calculating x and y coordinates of the fitted line for all plates in the track...')
     #Calculating x and y coordinates of the fitted line for all plates in the track
     temp_data['new_x']=temp_data['ax']+(temp_data['z']*temp_data['t1x'])+((temp_data['z']**2)*temp_data['t2x'])
     temp_data['new_y']=temp_data['ay']+(temp_data['z']*temp_data['t1y'])+((temp_data['z']**2)*temp_data['t2y'])
     #Calculating how far hits deviate from the fit polynomial
-    print(UF.TimeStamp(),'Calculating how far hits deviate from the fit polynomial...')
     temp_data['d_x']=temp_data['x']-temp_data['new_x']
     temp_data['d_y']=temp_data['y']-temp_data['new_y']
     temp_data['d_r']=temp_data['d_x']**2+temp_data['d_y']**2
@@ -135,6 +133,17 @@ def FitPlate(PlateZ,dx,dy,input_data):
     temp_data=temp_data.values.tolist()
     fit=temp_data[0]/temp_data[1]
     return fit
+def AlignPlate(PlateZ,dx,dy,input_data):
+    change_df = pd.DataFrame([[PlateZ,dx,dy]], columns = ['Plate_ID','dx','dy'])
+    temp_data=input_data
+    temp_data=pd.merge(temp_data,change_df,on='Plate_ID',how='left')
+    temp_data['dx'] = temp_data['dx'].fillna(0.0)
+    temp_data['dy'] = temp_data['dy'].fillna(0.0)
+    temp_data['x']=temp_data['x']+temp_data['dx']
+    temp_data['y']=temp_data['y']+temp_data['dy']
+    temp_data=temp_data[['FEDRA_Track_ID','x','y','z','Track_Hit_No']]
+    temp_data = temp_data.drop(['dx','dy'],axis=1)
+    return temp_data
 ########################################     Phase 1 - Create compact source file    #########################################
 print(UF.TimeStamp(),bcolors.BOLD+'Stage 0:'+bcolors.ENDC+' Preparing the source data...')
 print(UF.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+initial_input_file_location+bcolors.ENDC)
@@ -169,7 +178,7 @@ for p in plates:
        return FitPlate(p[0],x,0,new_combined_data)
    res = minimize_scalar(FitPlateFixed, bounds=(-200, 200), method='bounded')
    print(res)
-exit()
+   exit()
 
 
 
