@@ -144,15 +144,14 @@ def AlignPlate(PlateZ,dx,dy,input_data):
     temp_data = temp_data.drop(['dx','dy'],axis=1)
     return temp_data
 ########################################     Phase 1 - Create compact source file    #########################################
-print(UF.TimeStamp(),bcolors.BOLD+'Stage 0:'+bcolors.ENDC+' Preparing the source data...')
 print(UF.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+initial_input_file_location+bcolors.ENDC)
-data=pd.read_csv(initial_input_file_location,
+raw_data=pd.read_csv(initial_input_file_location,
                 header=0)
 
-total_rows=len(data)
+total_rows=len(raw_data)
 print(UF.TimeStamp(),'The raw data has ',total_rows,' hits')
 print(UF.TimeStamp(),'Removing unreconstructed hits...')
-data=data.dropna()
+data=raw_data.dropna()
 final_rows=len(data)
 print(UF.TimeStamp(),'The cleaned data has ',final_rows,' hits')
 print(UF.TimeStamp(),'Removing tracks which have less than',MinHits,'hits...')
@@ -192,8 +191,15 @@ with alive_bar(tot_jobs,force_tty=True, title='Optimising the alignment configur
        bar()
        print('Overall fit value:',FitPlateFixedY(0))
        alignment_map.append(am)
-
-print(alignment_map)
-print(pd.DataFrame(alignment_map, columns = ['Plate_ID','dx','dy']))
-
+print(raw_data)
+print(UF.TimeStamp(),'Aligning the brick...')
+alignment_map=pd.DataFrame(alignment_map, columns = ['Plate_ID','dx','dy'])
+raw_data['Plate_ID']=new_combined_data['z'].astype(int)
+raw_data=pd.merge(raw_data,alignment_map,on='Plate_ID',how='left')
+raw_data['dx'] = raw_data['dx'].fillna(0.0)
+raw_data['dy'] = raw_data['dy'].fillna(0.0)
+raw_data['x']=raw_data['x']+raw_data['dx']
+raw_data['y']=raw_data['y']+raw_data['dy']
+raw_data = raw_data.drop(['Plate_ID','dx','dy'],axis=1)
+print(raw_data)
 
