@@ -158,6 +158,8 @@ new_combined_data['Plate_ID']=new_combined_data['z'].astype(int)
 
 print(UF.TimeStamp(),'Working out the number of plates to align')
 plates=new_combined_data[['Plate_ID']].sort_values(['Plate_ID'],ascending=[1])
+plates.drop_duplicates(inplace=True)
+plates=plates.values.tolist() #I find it is much easier to deal with tracks in list format when it comes to fitting
 print(plates)
 #print(FitPlate(-7794,0,0,new_combined_data))
 exit()
