@@ -155,7 +155,11 @@ new_combined_data=new_combined_data.drop(['Hit_ID','tx','ty'],axis=1)
 new_combined_data=new_combined_data.sort_values(['FEDRA_Track_ID','z'],ascending=[1,1])
 new_combined_data['FEDRA_Track_ID']=new_combined_data['FEDRA_Track_ID'].astype(int)
 new_combined_data['Plate_ID']=new_combined_data['z'].astype(int)
-print(FitPlate(-7794,0,0,new_combined_data))
+
+print(UF.TimeStamp(),'Working out the number of plates to align')
+plates=new_combined_data[['Plate_ID']].sort_values(['Plate_ID'],ascending=[1])
+print(plates)
+#print(FitPlate(-7794,0,0,new_combined_data))
 exit()
 
 
