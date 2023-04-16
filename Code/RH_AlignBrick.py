@@ -176,7 +176,7 @@ for p in plates:
    def FitPlateFixed(x):
        return FitPlate(p[0],x,0,new_combined_data)
    res = minimize_scalar(FitPlateFixed, bounds=(-200, 200), method='bounded')
-
+   print(FitPlateFixed(0))
    new_combined_data=AlignPlate(p[0],res.x,0,new_combined_data)
    print(FitPlateFixed(0))
 
