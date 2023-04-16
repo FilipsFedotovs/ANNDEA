@@ -34,6 +34,8 @@ import time
 from alive_progress import alive_bar
 import argparse
 import ast
+import scipy
+from scipy.optimize import minimize_scalar
 class bcolors:   #We use it for the interface
     HEADER = '\033[95m'
     OKBLUE = '\033[94m'
@@ -165,7 +167,8 @@ print(UF.TimeStamp(),'There are ',len(plates),' plates')
 for p in plates:
    def FitPlateFixed(x):
        return FitPlate(p[0],x,0,new_combined_data)
-   print(FitPlateFixed(10))
+   res = minimize_scalar(FitPlateFixed, bounds=(-200, 200), method='bounded')
+   print(res)
 exit()
 
 
