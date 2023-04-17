@@ -1785,6 +1785,12 @@ def GenerateModel(ModelMeta,TrainParams=None):
                         self.conv2 = GMMConv(HiddenLayer[0][0],HiddenLayer[1][0],dim=3,kernel_size=HiddenLayer[1][1])
                         self.conv3 = GMMConv(HiddenLayer[1][0],HiddenLayer[2][0],dim=3,kernel_size=HiddenLayer[2][1])
                         self.lin = Linear(HiddenLayer[2][0],OutputLayer[1])
+                    elif len(HiddenLayer)==4:
+                        self.conv1 = GMMConv(5 , HiddenLayer[0][0],dim=3,kernel_size=HiddenLayer[0][1])
+                        self.conv2 = GMMConv(HiddenLayer[0][0],HiddenLayer[1][0],dim=3,kernel_size=HiddenLayer[1][1])
+                        self.conv3 = GMMConv(HiddenLayer[1][0],HiddenLayer[2][0],dim=3,kernel_size=HiddenLayer[2][1])
+                        self.conv4 = GMMConv(HiddenLayer[2][0],HiddenLayer[3][0],dim=3,kernel_size=HiddenLayer[3][1])
+                        self.lin = Linear(HiddenLayer[3][0],OutputLayer[1])
                     self.softmax = Softmax(dim=-1)
 
                 def forward(self, x, edge_index, edge_attr, batch):
@@ -1795,6 +1801,15 @@ def GenerateModel(ModelMeta,TrainParams=None):
                         x = self.conv2(x, edge_index,edge_attr)
                         x = x.relu()
                         x = self.conv3(x, edge_index,edge_attr)
+                    elif len(HiddenLayer)==4:
+                        x = self.conv1(x, edge_index,edge_attr)
+                        x = x.relu()
+                        x = self.conv2(x, edge_index,edge_attr)
+                        x = x.relu()
+                        x = self.conv3(x, edge_index,edge_attr)
+                        x = x.relu()
+                        x = self.conv4(x, edge_index,edge_attr)
+
                     # 2. Readout layer
                     x = global_mean_pool(x, batch)  # [batch_size, hidden_channels]
                     # 3. Apply a final classifier
