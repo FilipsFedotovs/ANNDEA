@@ -602,7 +602,7 @@ class EMO:
       def AssignANNTrUID(self,ID):
           self.UTrID=ID
       def PrepareSeedGraph(self,MM):
-          if MM.ModelArchitecture=='GCN-4N-FC':
+          if (MM.ModelArchitecture=='GCN-4N-IC' or MM.ModelArchitecture=='GMM-4N-IC'):
                       __TempTrack=copy.deepcopy(self.Hits)
                       for __Tracks in __TempTrack:
                               for h in range(len(__Tracks)):
@@ -738,7 +738,7 @@ class EMO:
                           import torch_geometric
                           from torch_geometric.data import Data
                           self.GraphSeed = Data(x=torch.Tensor(Data_x), edge_index = torch.Tensor([top_edge, bottom_edge]).long(), edge_attr = torch.Tensor(edge_attr), pos = torch.Tensor(__graphData_pos))
-          if MM.ModelArchitecture=='GMM-5N-FC':
+          if MM.ModelArchitecture=='GMM-5N-FC' or MM.ModelArchitecture=='GCN-5N-FC':
                       __TempTrack=copy.deepcopy(self.Hits)
                       for __Tracks in __TempTrack:
                               for h in range(len(__Tracks)):
