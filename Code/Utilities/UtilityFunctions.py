@@ -1911,7 +1911,7 @@ def GenerateModel(ModelMeta,TrainParams=None):
                     x = self.lin(x)
                     x = self.softmax(x)
                     return x
-            return GCN()
+            return TAG()
          elif ModelMeta.ModelArchitecture=='GMM-5N-FC':
             from torch_geometric.nn import GMMConv
             HiddenLayer=[]
