@@ -1785,17 +1785,30 @@ def GenerateModel(ModelMeta,TrainParams=None):
                         self.conv2 = GCNConv(HiddenLayer[0][0],HiddenLayer[1][0])
                         self.conv3 = GCNConv(HiddenLayer[1][0],HiddenLayer[2][0])
                         self.lin = Linear(HiddenLayer[2][0],OutputLayer[1])
+                    elif len(HiddenLayer)==4:
+                        self.conv1 = GCNConv(5 , HiddenLayer[0][0])
+                        self.conv2 = GCNConv(HiddenLayer[0][0],HiddenLayer[1][0])
+                        self.conv3 = GCNConv(HiddenLayer[1][0],HiddenLayer[2][0])
+                        self.conv4 = GCNConv(HiddenLayer[2][0],HiddenLayer[3][0])
+                        self.lin = Linear(HiddenLayer[3][0],OutputLayer[1])
                     self.softmax = Softmax(dim=-1)
 
                 def forward(self, x, edge_index, edge_attr, batch):
                     # 1. Obtain node embeddings
                     if len(HiddenLayer)==3:
-
                         x = self.conv1(x, edge_index)
                         x = x.relu()
                         x = self.conv2(x, edge_index)
                         x = x.relu()
                         x = self.conv3(x, edge_index)
+                    elif len(HiddenLayer)==4:
+                        x = self.conv1(x, edge_index)
+                        x = x.relu()
+                        x = self.conv2(x, edge_index)
+                        x = x.relu()
+                        x = self.conv3(x, edge_index)
+                        x = x.relu()
+                        x = self.conv4(x, edge_index)
 
                     # 2. Readout layer
                     x = global_mean_pool(x, batch)  # [batch_size, hidden_channels]
