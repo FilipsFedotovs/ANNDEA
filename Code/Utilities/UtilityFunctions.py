@@ -824,7 +824,8 @@ class EMO:
                       __graphData_pos = []
                       for node in __graphData_nodes:
                         __graphData_pos.append(node[0:5])
-                      print(__graphData_pos)
+                      print(__graphData_pos[0])
+                      exit()
                       for g in __graphData_nodes:
                         g.append(g[3]+'-'+str(g[4]))
                         g[3]=float(g[3])
