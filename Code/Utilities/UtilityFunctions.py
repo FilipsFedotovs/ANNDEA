@@ -824,7 +824,7 @@ class EMO:
                     # position of nodes
                       __graphData_pos = []
                       for node in __graphData_nodes:
-                        __graphData_pos.append(node[0:7])
+                        __graphData_pos.append(node[0:5])
                       for g in __graphData_nodes:
                         g.append(g[5]+'-'+str(g[6]))
                         g[5]=float(g[5])
@@ -847,9 +847,8 @@ class EMO:
                         bottom_edge.append(node_ind_list.index(h[4]))
 
                       for h in __graphData_list:
-                        print(h)
-                        exit()
                         edge_attr.append(h[:4])
+
                       try:
                           __y=[]
                           for i in range(MM.ModelParameters[10][1]):
