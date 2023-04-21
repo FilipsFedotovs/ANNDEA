@@ -738,6 +738,144 @@ class EMO:
                           import torch_geometric
                           from torch_geometric.data import Data
                           self.GraphSeed = Data(x=torch.Tensor(Data_x), edge_index = torch.Tensor([top_edge, bottom_edge]).long(), edge_attr = torch.Tensor(edge_attr), pos = torch.Tensor(__graphData_pos))
+          if MM.ModelArchitecture[-5:]=='6N-IC':
+                      __TempTrack=copy.deepcopy(self.Hits)
+                      for __Tracks in __TempTrack:
+                              for h in range(len(__Tracks)):
+                                  __Tracks[h]=__Tracks[h][:5]
+
+                      __LongestDistance=0.0
+                      for __Track in __TempTrack:
+                        __Xdiff=float(__Track[len(__Track)-1][0])-float(__Track[0][0])
+                        __Ydiff=float(__Track[len(__Track)-1][1])-float(__Track[0][1])
+                        __Zdiff=float(__Track[len(__Track)-1][2])-float(__Track[0][2])
+                        __Distance=math.sqrt(__Xdiff**2+__Ydiff**2+__Zdiff**2)
+                        if __Distance>=__LongestDistance:
+                            __LongestDistance=__Distance
+                            __FinX=float(__Track[0][0])
+                            __FinY=float(__Track[0][1])
+                            __FinZ=float(__Track[0][2])
+                            self.LongestTrackInd=__TempTrack.index(__Track)
+                      # Shift
+                      for __Tracks in __TempTrack:
+                          for h in range(len(__Tracks)):
+                              __Tracks[h][0]=float(__Tracks[h][0])-__FinX
+                              __Tracks[h][1]=float(__Tracks[h][1])-__FinY
+                              __Tracks[h][2]=float(__Tracks[h][2])-__FinZ
+
+                      # Rescale
+                      for __Tracks in __TempTrack:
+                              for h in range(len(__Tracks)):
+                                  __Tracks[h][0]=__Tracks[h][0]/MM.ModelParameters[11][0]
+                                  __Tracks[h][1]=__Tracks[h][1]/MM.ModelParameters[11][1]
+                                  __Tracks[h][2]=__Tracks[h][2]/MM.ModelParameters[11][2]
+
+                      import pandas as pd
+# Graph representation v2 (fully connected)
+                      for el in range(len(__TempTrack[0])):
+                         __TempTrack[0][el].append('0')
+                         __TempTrack[0][el].append(el)
+
+                      try:
+                          for el in range(len(__TempTrack[1])):
+                             __TempTrack[1][el].append('1')
+                             __TempTrack[1][el].append(el)
+
+                          __graphData_x =__TempTrack[0]+__TempTrack[1]
+                      except:
+                          __graphData_x =__TempTrack[0]
+
+                      __graphData_x = pd.DataFrame (__graphData_x, columns = ['x', 'y', 'z', 'TrackID', 'NodeIndex'])
+                      __graphData_x['dummy'] = 'dummy'
+                      __graphData_x_r = __graphData_x
+
+                      __graphData_join = pd.merge(
+                      __graphData_x,
+                      __graphData_x_r,
+                      how="inner",
+                      on="dummy",
+                      suffixes=('_l','_r'),
+                      )
+                      __graphData_join = __graphData_join.drop(__graphData_join.index[__graphData_join['TrackID_l']==__graphData_join['TrackID_r']] & __graphData_join.index[__graphData_join['NodeIndex_l']==__graphData_join['NodeIndex_r']])
+
+                      __graphData_join['d_z'] = np.sqrt((__graphData_join['z_l'] - __graphData_join['z_r'])**2)
+                      __graphData_join['d_xy'] = np.sqrt((__graphData_join['x_l'] - __graphData_join['x_r'])**2 + (__graphData_join['y_l'] - __graphData_join['y_r'])**2)
+                      __graphData_join['d_xyz'] = np.sqrt((__graphData_join['x_l'] - __graphData_join['x_r'])**2 + (__graphData_join['y_l'] - __graphData_join['y_r'])**2 + (__graphData_join['z_l'] - __graphData_join['z_r'])**2)
+                      __graphData_join['ConnectionType'] = __graphData_join['TrackID_l'] == __graphData_join['TrackID_r']
+                      __graphData_join.drop(['x_l', 'y_l', 'z_l', 'x_r', 'y_r', 'z_r', 'dummy'], axis = 1, inplace = True)
+
+                      __graphData_join[['ConnectionType']] = __graphData_join[['ConnectionType']].astype(float)
+                      __graphData_join[['NodeIndex_l']] = __graphData_join[['NodeIndex_l']].astype(str)
+                      __graphData_join[['NodeIndex_r']] = __graphData_join[['NodeIndex_r']].astype(str)
+
+                      __graphData_join['LeftKey'] = __graphData_join['TrackID_l'] +'-'+ __graphData_join['NodeIndex_l']
+                      __graphData_join['RightKey'] = __graphData_join['TrackID_r'] +'-'+ __graphData_join['NodeIndex_r']
+
+                      __graphData_join.drop(['NodeIndex_l', 'TrackID_l', 'NodeIndex_r', 'TrackID_r'], axis = 1, inplace = True)
+
+                      __graphData_list = __graphData_join.values.tolist()
+
+
+                      try:
+                        __graphData_nodes =__TempTrack[0]+__TempTrack[1]
+                      except:
+                        __graphData_nodes =__TempTrack[0]
+
+                    # position of nodes
+                      __graphData_pos = []
+                      for node in __graphData_nodes:
+                        print(node)
+                        exit()
+                        __graphData_pos.append(node[0:5])
+
+                      for g in __graphData_nodes:
+                        g.append(g[3]+'-'+str(g[4]))
+                        g[3]=float(g[3])
+
+
+                      Data_x = []
+                      for g in __graphData_nodes:
+                        Data_x.append(g[:4])
+
+
+                      node_ind_list=[]
+                      for g in __graphData_nodes:
+                        node_ind_list.append(g[5])
+
+
+                      top_edge = []
+                      bottom_edge = []
+                      edge_attr = []
+
+
+
+                      for h in __graphData_list:
+                        top_edge.append(node_ind_list.index(h[5]))
+
+                      for h in __graphData_list:
+                        bottom_edge.append(node_ind_list.index(h[4]))
+
+                      for h in __graphData_list:
+                        edge_attr.append(h[:4])
+
+
+                      try:
+                          __y=[]
+                          for i in range(MM.ModelParameters[10][1]):
+                            if self.Label==i:
+                                __y.append(1)
+                            else:
+                                __y.append(0)
+                          __graphData_y = (__y)
+                          import torch
+                          import torch_geometric
+                          from torch_geometric.data import Data
+                          self.GraphSeed = Data(x=torch.Tensor(Data_x), edge_index = torch.Tensor([top_edge, bottom_edge]).long(), edge_attr = torch.Tensor(edge_attr),y=torch.Tensor([__graphData_y]), pos = torch.Tensor(__graphData_pos))
+                      except:
+                          import torch
+                          import torch_geometric
+                          from torch_geometric.data import Data
+                          self.GraphSeed = Data(x=torch.Tensor(Data_x), edge_index = torch.Tensor([top_edge, bottom_edge]).long(), edge_attr = torch.Tensor(edge_attr), pos = torch.Tensor(__graphData_pos))
           if MM.ModelArchitecture[-5:]=='5N-FC':
                       __TempTrack=copy.deepcopy(self.Hits)
                       for __Tracks in __TempTrack:
@@ -1742,6 +1880,46 @@ def GenerateModel(ModelMeta,TrainParams=None):
                     torch.manual_seed(12345)
                     if len(HiddenLayer)==3:
                         self.conv1 = GCNConv(4 , HiddenLayer[0][0])
+                        self.conv2 = GCNConv(HiddenLayer[0][0],HiddenLayer[1][0])
+                        self.conv3 = GCNConv(HiddenLayer[1][0],HiddenLayer[2][0])
+                        self.lin = Linear(HiddenLayer[2][0],OutputLayer[1])
+                    self.softmax = Softmax(dim=-1)
+
+                def forward(self, x, edge_index, edge_attr, batch):
+                    # 1. Obtain node embeddings
+                    if len(HiddenLayer)==3:
+
+                        x = self.conv1(x, edge_index)
+                        x = x.relu()
+                        x = self.conv2(x, edge_index)
+                        x = x.relu()
+                        x = self.conv3(x, edge_index)
+
+                    # 2. Readout layer
+                    x = global_mean_pool(x, batch)  # [batch_size, hidden_channels]
+
+                    # 3. Apply a final classifier
+                    x = F.dropout(x, p=0.5, training=self.training)
+                    x = self.lin(x)
+                    x = self.softmax(x)
+                    return x
+            return GCN()
+         elif ModelMeta.ModelArchitecture=='GCN-6N-IC':
+            from torch_geometric.nn import GCNConv
+            HiddenLayer=[]
+            OutputLayer=[]
+            for el in ModelMeta.ModelParameters:
+              if ModelMeta.ModelParameters.index(el)<=4 and len(el)>0:
+                 HiddenLayer.append(el)
+              elif ModelMeta.ModelParameters.index(el)==10:
+                 OutputLayer=el
+
+            class GCN(torch.nn.Module):
+                def __init__(self):
+                    super(GCN, self).__init__()
+                    torch.manual_seed(12345)
+                    if len(HiddenLayer)==3:
+                        self.conv1 = GCNConv(6 , HiddenLayer[0][0])
                         self.conv2 = GCNConv(HiddenLayer[0][0],HiddenLayer[1][0])
                         self.conv3 = GCNConv(HiddenLayer[1][0],HiddenLayer[2][0])
                         self.lin = Linear(HiddenLayer[2][0],OutputLayer[1])
