@@ -743,7 +743,8 @@ class EMO:
                       for __Tracks in __TempTrack:
                               for h in range(len(__Tracks)):
                                   __Tracks[h]=__Tracks[h][:5]
-
+                      print(__TempTrack)
+                      
                       __LongestDistance=0.0
                       for __Track in __TempTrack:
                         __Xdiff=float(__Track[len(__Track)-1][0])-float(__Track[0][0])
