@@ -822,9 +822,10 @@ class EMO:
 
                     # position of nodes
                       __graphData_pos = []
+                      print(__graphData_nodes[:10])
+                      exit()
                       for node in __graphData_nodes:
-                        print(node)
-                        exit()
+
                         __graphData_pos.append(node[0:5])
 
                       for g in __graphData_nodes:
