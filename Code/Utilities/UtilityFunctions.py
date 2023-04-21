@@ -847,10 +847,6 @@ class EMO:
 
                       for h in __graphData_list:
                         edge_attr.append(h[:4])
-                      print(top_edge)
-                      print(bottom_edge)
-                      exit()
-
                       try:
                           __y=[]
                           for i in range(MM.ModelParameters[10][1]):
