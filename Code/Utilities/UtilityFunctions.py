@@ -830,12 +830,10 @@ class EMO:
                       Data_x = []
                       for g in __graphData_nodes:
                         Data_x.append(g[:6])
-                      print(__graphData_nodes)
-                      print(Data_x[0])
-                      exit()
                       node_ind_list=[]
                       for g in __graphData_nodes:
-                        node_ind_list.append(g[5])
+                        node_ind_list.append(g[7])
+                      print(node_ind_list)
                       exit()
 
                       top_edge = []
