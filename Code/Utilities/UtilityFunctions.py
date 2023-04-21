@@ -824,18 +824,15 @@ class EMO:
                       __graphData_pos = []
                       for node in __graphData_nodes:
                         __graphData_pos.append(node[0:7])
-                      print(__graphData_pos[0])
-                      exit()
                       for g in __graphData_nodes:
-                        g.append(g[3]+'-'+str(g[4]))
-                        g[3]=float(g[3])
-                      print(__graphData_nodes)
-
+                        g.append(g[5]+'-'+str(g[6]))
+                        g[5]=float(g[5])
                       Data_x = []
                       for g in __graphData_nodes:
-                        Data_x.append(g[:4])
-                      print(Data_x)
-
+                        Data_x.append(g[:6])
+                      print(__graphData_nodes)
+                      print(Data_x[0])
+                      exit()
                       node_ind_list=[]
                       for g in __graphData_nodes:
                         node_ind_list.append(g[5])
