@@ -823,7 +823,7 @@ class EMO:
                     # position of nodes
                       __graphData_pos = []
                       for node in __graphData_nodes:
-                        __graphData_pos.append(node[0:6])
+                        __graphData_pos.append(node[0:7])
                       print(__graphData_pos[0])
                       exit()
                       for g in __graphData_nodes:
