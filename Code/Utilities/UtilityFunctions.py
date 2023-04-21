@@ -812,8 +812,6 @@ class EMO:
                       __graphData_join['RightKey'] = __graphData_join['TrackID_r'] +'-'+ __graphData_join['NodeIndex_r']
 
                       __graphData_join.drop(['NodeIndex_l', 'TrackID_l', 'NodeIndex_r', 'TrackID_r'], axis = 1, inplace = True)
-                      print(__graphData_join)
-                      exit()
                       __graphData_list = __graphData_join.values.tolist()
 
 
@@ -835,12 +833,12 @@ class EMO:
                       Data_x = []
                       for g in __graphData_nodes:
                         Data_x.append(g[:4])
-
+                      print(Data_x)
 
                       node_ind_list=[]
                       for g in __graphData_nodes:
                         node_ind_list.append(g[5])
-
+                      exit()
 
                       top_edge = []
                       bottom_edge = []
