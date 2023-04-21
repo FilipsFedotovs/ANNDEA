@@ -743,8 +743,7 @@ class EMO:
                       for __Tracks in __TempTrack:
                               for h in range(len(__Tracks)):
                                   __Tracks[h]=__Tracks[h][:5]
-                      print(__TempTrack)
-                      
+
                       __LongestDistance=0.0
                       for __Track in __TempTrack:
                         __Xdiff=float(__Track[len(__Track)-1][0])-float(__Track[0][0])
@@ -798,6 +797,8 @@ class EMO:
                       on="dummy",
                       suffixes=('_l','_r'),
                       )
+                      print(__graphData_join)
+                      exit()
                       __graphData_join = __graphData_join.drop(__graphData_join.index[__graphData_join['TrackID_l']==__graphData_join['TrackID_r']] & __graphData_join.index[__graphData_join['NodeIndex_l']==__graphData_join['NodeIndex_r']])
 
                       __graphData_join['d_z'] = np.sqrt((__graphData_join['z_l'] - __graphData_join['z_r'])**2)
@@ -825,16 +826,13 @@ class EMO:
 
                     # position of nodes
                       __graphData_pos = []
-                      print(__graphData_nodes[:10])
-                      exit()
                       for node in __graphData_nodes:
-
                         __graphData_pos.append(node[0:5])
-
+                      print(__graphData_pos)
                       for g in __graphData_nodes:
                         g.append(g[3]+'-'+str(g[4]))
                         g[3]=float(g[3])
-
+                      print(__graphData_nodes)
 
                       Data_x = []
                       for g in __graphData_nodes:
