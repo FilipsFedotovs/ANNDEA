@@ -795,16 +795,16 @@ class EMO:
                       on="dummy",
                       suffixes=('_l','_r'),
                       )
-                      print(__graphData_join)
-                      exit()
+
                       __graphData_join = __graphData_join.drop(__graphData_join.index[__graphData_join['TrackID_l']==__graphData_join['TrackID_r']] & __graphData_join.index[__graphData_join['NodeIndex_l']==__graphData_join['NodeIndex_r']])
 
                       __graphData_join['d_z'] = np.sqrt((__graphData_join['z_l'] - __graphData_join['z_r'])**2)
                       __graphData_join['d_xy'] = np.sqrt((__graphData_join['x_l'] - __graphData_join['x_r'])**2 + (__graphData_join['y_l'] - __graphData_join['y_r'])**2)
                       __graphData_join['d_xyz'] = np.sqrt((__graphData_join['x_l'] - __graphData_join['x_r'])**2 + (__graphData_join['y_l'] - __graphData_join['y_r'])**2 + (__graphData_join['z_l'] - __graphData_join['z_r'])**2)
                       __graphData_join['ConnectionType'] = __graphData_join['TrackID_l'] == __graphData_join['TrackID_r']
-                      __graphData_join.drop(['x_l', 'y_l', 'z_l', 'x_r', 'y_r', 'z_r', 'dummy'], axis = 1, inplace = True)
-
+                      __graphData_join.drop(['x_l', 'y_l', 'z_l', 'x_r', 'y_r', 'z_r', 'dummy','tx_l','ty_l','tx_r','ty_r'], axis = 1, inplace = True)
+                      print(__graphData_join)
+                      exit()
                       __graphData_join[['ConnectionType']] = __graphData_join[['ConnectionType']].astype(float)
                       __graphData_join[['NodeIndex_l']] = __graphData_join[['NodeIndex_l']].astype(str)
                       __graphData_join[['NodeIndex_r']] = __graphData_join[['NodeIndex_r']].astype(str)
