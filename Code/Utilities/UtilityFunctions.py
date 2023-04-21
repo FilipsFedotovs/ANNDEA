@@ -710,7 +710,7 @@ class EMO:
                       edge_attr = []
 
 
-
+                      print(Data_x[0])
                       for h in __graphData_list:
                         top_edge.append(node_ind_list.index(h[5]))
 
@@ -718,6 +718,7 @@ class EMO:
                         bottom_edge.append(node_ind_list.index(h[4]))
 
                       for h in __graphData_list:
+                        print(h)
                         edge_attr.append(h[:4])
 
 
