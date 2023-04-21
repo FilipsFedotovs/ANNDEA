@@ -833,9 +833,6 @@ class EMO:
                       node_ind_list=[]
                       for g in __graphData_nodes:
                         node_ind_list.append(g[7])
-                      print(node_ind_list)
-                      exit()
-
                       top_edge = []
                       bottom_edge = []
                       edge_attr = []
@@ -850,7 +847,9 @@ class EMO:
 
                       for h in __graphData_list:
                         edge_attr.append(h[:4])
-
+                      print(top_edge)
+                      print(bottom_edge)
+                      exit()
 
                       try:
                           __y=[]
