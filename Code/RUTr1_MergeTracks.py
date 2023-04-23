@@ -246,10 +246,7 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         print(UF.TimeStamp(), bcolors.OKGREEN+"The track segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+required_file_location+bcolors.ENDC)
         Meta=UF.TrainingSampleMeta(RecBatchID)
         Meta.IniTrackSeedMetaData(MaxSLG,MaxSTG,MaxDOCA,MaxAngle,data,MaxSegments,VetoMotherTrack,MaxSeeds,MinHitsTrack)
-        if Log:
-            Meta.UpdateStatus(-2)
-        else:
-            Meta.UpdateStatus(1)
+        Meta.UpdateStatus(0)
         print(UF.PickleOperations(RecOutputMeta,'w', Meta)[1])
         print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
         print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 0 has successfully completed'+bcolors.ENDC)
@@ -420,7 +417,6 @@ else:
     Status=Meta.Status[-1]
 
 print(UF.TimeStamp(),'Current status has a stage',Status,bcolors.ENDC)
-exit()
 ################ Set the execution sequence for the script
 Program=[]
 
