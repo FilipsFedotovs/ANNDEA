@@ -1043,16 +1043,7 @@ class EMO:
           if len(Overlap)==0: #If not, we don't care and no injection is required
                 return False
           elif len(Overlap)==1: #The scenario where there is one track segment in common
-                # print('SH',self.Header)
-                # print('OH',OtherSeed.Header)
-                # print('SH_Hits',self.Hits)
-                # print('OH_Hits',OtherSeed.Hits)
-                # print('SH_Fits',self.FIT)
-                # print('OH_Fits',OtherSeed.FIT)
-                # print(Overlap)
-                # print(len(Overlap))
                 ovlp_index=[self.Header.index(Overlap[0]),OtherSeed.Header.index(Overlap[0])]
-                # print(ovlp_index)
                 sh_remove=[]
                 oh_injest=[]
                 lost_fit=0
@@ -1068,10 +1059,7 @@ class EMO:
                                oh_injest.append(oh)
                             else:
                                oh_injest.append(oh)
-                # print(oh_injest)
                 oh_injest=list(set(oh_injest))
-                # print(oh_injest)
-                # print(sh_remove)
                 if lost_fit==pot_fit==0:
                    for oh in oh_injest:
                        self.Header.append(OtherSeed.Header[oh])
@@ -1088,128 +1076,11 @@ class EMO:
                        self.Header.append(OtherSeed.Header[oh])
                        self.Hits.append(OtherSeed.Hits[oh])
                        self.FIT.append(OtherSeed.FIT[oh])
-                # print('-----------------------')
-                # print(lost_fit,pot_fit,sh_remove,oh_injest)
-                # print('SH',self.Header)
-                # print('OH',OtherSeed.Header)
-                # print('SH_Hits',self.Hits)
-                # print('OH_Hits',OtherSeed.Hits)
-                # print('SH_Fits',self.FIT)
-                # print('OH_Fits',OtherSeed.FIT)
-                # print(Overlap)
-                # print(len(Overlap))
-                # x=input()
                 return True
           else:
-              # print(self.FIT,OtherSeed.FIT)
-              # x=input()
               self.FIT[(self.Header.index(Overlap[0]))]+=OtherSeed.FIT[(OtherSeed.Header.index(Overlap[0]))]
               self.FIT[(self.Header.index(Overlap[1]))]+=OtherSeed.FIT[(OtherSeed.Header.index(Overlap[1]))]
-              # print(self.FIT,OtherSeed.FIT)
-              # x=input()
               return True
-          # self_matx=EMO.DensityMatrix(OtherSeed.Header,self.Header)
-          # print(self_matx)
-          # if EMO.Overlap(self_matx)==False:
-          #     return EMO.Overlap(self_matx)
-          #
-          # new_seed_header=EMO.ProjectVectorElements(self_matx,self.Header)
-          # print('new seed header',new_seed_header)
-          # new_self_hits=EMO.ProjectVectorElements(self_matx,self.Hits)
-          # print('new seed hits',new_self_hits)
-          # new_self_fit=EMO.ProjectVectorElements(self_matx,self.FIT)
-          # print('new seed fit',new_self_fit)
-          # remain_1_s = EMO.GenerateInverseVector(self.Header,new_seed_header)
-          # print('remain1',remain_1_s)
-          # remain_1_o = EMO.GenerateInverseVector(OtherSeed.Header,new_seed_header)
-          # print('remain o;',remain_1_o)
-          # OtherSeed.Header=EMO.ProjectVectorElements([remain_1_o],OtherSeed.Header)
-          # print('Os header',OtherSeed.Header)
-          # self.Header=EMO.ProjectVectorElements([remain_1_s],self.Header)
-          # print('s Head', self.Header)
-          # OtherSeed.Hits=EMO.ProjectVectorElements([remain_1_o],OtherSeed.Hits)
-          # print('Other hits', OtherSeed.Hits)
-          # self.Hits=EMO.ProjectVectorElements([remain_1_s],self.Hits)
-          # print('Self hits',self.Hits)
-          # OtherSeed.FIT=EMO.ProjectVectorElements([remain_1_o],OtherSeed.FIT)
-          # print('Other fit',OtherSeed.FIT)
-          # self.FIT=EMO.ProjectVectorElements([remain_1_s],self.FIT)
-          # print('Self fit',self.FIT)
-          # print(len(OtherSeed.Header),len(self.Header))
-          # if (len(OtherSeed.Header))==0:
-          #     self.Header+=new_seed_header
-          #     self.Hits+=new_self_hits
-          #     self.FIT+=new_self_fit
-          #     self.Fit=sum(self.FIT)/len(self.FIT)
-          #     self.Partition=len(self.Header)
-          #     if len(self.FIT)!=len(self.Header):
-          #         raise Exception('Fit error')
-          #         exit()
-          #
-          #     return True
-          # if (len(self.Header))==0:
-          #     self.Header+=new_seed_header
-          #     self.Hits+=new_self_hits
-          #     self.FIT+=new_self_fit
-          #     self.Header+=OtherSeed.Header
-          #     self.Hits+=OtherSeed.Hits
-          #     self.FIT+=OtherSeed.FIT
-          #     self.Fit=sum(self.FIT)/len(self.FIT)
-          #     self.Partition=len(self.Header)
-          #     if len(self.FIT)!=len(self.Header):
-          #         raise Exception('Fit error')
-          #         exit()
-          #     return True
-          # self_2_matx=EMO.DensityMatrix(OtherSeed.Hits,self.Hits)
-          # other_2_matx=EMO.DensityMatrix(self.Hits,OtherSeed.Hits)
-          # #print('Test',self_2_matx,self_2_matx)
-          # last_s_seed_header=EMO.ProjectVectorElements(self_2_matx,self.Header)
-          # last_o_seed_header=EMO.ProjectVectorElements(other_2_matx,OtherSeed.Header)
-          # remain_2_s = EMO.GenerateInverseVector(self.Header,last_s_seed_header)
-          # remain_2_o = EMO.GenerateInverseVector(OtherSeed.Header,last_o_seed_header)
-          #
-          # new_seed_header+=EMO.ProjectVectorElements([remain_2_s],self.Header)
-          # new_seed_header+=EMO.ProjectVectorElements([remain_2_o],OtherSeed.Header)
-          # new_self_fit+=EMO.ProjectVectorElements([remain_2_s],self.FIT)
-          # new_self_fit+=EMO.ProjectVectorElements([remain_2_o],OtherSeed.FIT)
-          # new_self_hits+=EMO.ProjectVectorElements([remain_2_s],self.Hits)
-          # new_self_hits+=EMO.ProjectVectorElements([remain_2_o],OtherSeed.Hits)
-          #
-          #
-          # last_remain_headers_s = EMO.GenerateInverseVector(self.Header,new_seed_header)
-          # last_remain_headers_o = EMO.GenerateInverseVector(OtherSeed.Header,new_seed_header)
-          # last_self_headers=EMO.ProjectVectorElements([last_remain_headers_s],self.Header)
-          # last_other_headers=EMO.ProjectVectorElements([last_remain_headers_o],OtherSeed.Header)
-          # if (len(last_other_headers))==0:
-          #     self.Header=new_seed_header
-          #     self.Hits=new_self_hits
-          #     self.FIT=new_self_fit
-          #     self.Fit=sum(self.FIT)/len(self.FIT)
-          #     self.Partition=len(self.Header)
-          #     if len(self.FIT)!=len(self.Header):
-          #         raise Exception('Fit error')
-          #         exit()
-          #     return True
-          #
-          # last_self_hits=EMO.ProjectVectorElements([last_remain_headers_s],self.Hits)
-          # last_other_hits=EMO.ProjectVectorElements([last_remain_headers_o],OtherSeed.Hits)
-          # last_self_fits=EMO.ProjectVectorElements([last_remain_headers_s],self.FIT)
-          # last_other_fits=EMO.ProjectVectorElements([last_remain_headers_o],OtherSeed.FIT)
-          # last_remain_matr=EMO.DensityMatrix(last_other_hits,last_self_hits)
-          #
-          # new_seed_header+=EMO.ReplaceWeakerTracks(last_remain_matr,last_other_headers,last_self_headers,last_other_fits,last_self_fits)
-          # new_self_fit+=EMO.ReplaceWeakerFits(new_seed_header,last_self_headers,last_other_headers,last_other_fits,last_self_fits)[0:len(EMO.ReplaceWeakerFits(new_seed_header,last_self_headers,last_other_headers,last_other_fits,last_self_fits))]
-          # new_self_hits+=EMO.ReplaceWeakerTracks(last_remain_matr,last_other_hits,last_self_hits,last_other_fits,last_self_fits)
-          # self.Header=new_seed_header
-          # self.Hits=new_self_hits
-          # self.FIT=new_self_fit
-          # self.Avg_Fit=sum(self.FIT)/len(self.FIT)
-          # self.Partition=len(self.Header)
-          # if len(self.FIT)!=len(self.Header):
-          #         raise Exception('Fit error')
-          #         exit()
-          #
-          # return True
       @staticmethod
       def unit_vector(vector):
           return vector / np.linalg.norm(vector)
@@ -2170,6 +2041,58 @@ def GenerateModel(ModelMeta,TrainParams=None):
                         self.conv2 = GMMConv(HiddenLayer[0][0],HiddenLayer[1][0],dim=4,kernel_size=HiddenLayer[1][1])
                         self.conv3 = GMMConv(HiddenLayer[1][0],HiddenLayer[2][0],dim=4,kernel_size=HiddenLayer[2][1])
                         self.conv4 = GMMConv(HiddenLayer[2][0],HiddenLayer[3][0],dim=4,kernel_size=HiddenLayer[3][1])
+                        self.lin = Linear(HiddenLayer[3][0],OutputLayer[1])
+                    self.softmax = Softmax(dim=-1)
+
+                def forward(self, x, edge_index, edge_attr, batch):
+                    # 1. Obtain node embeddings
+                    if len(HiddenLayer)==3:
+                        x = self.conv1(x, edge_index,edge_attr)
+                        x = x.relu()
+                        x = self.conv2(x, edge_index,edge_attr)
+                        x = x.relu()
+                        x = self.conv3(x, edge_index,edge_attr)
+                    elif len(HiddenLayer)==4:
+                        x = self.conv1(x, edge_index,edge_attr)
+                        x = x.relu()
+                        x = self.conv2(x, edge_index,edge_attr)
+                        x = x.relu()
+                        x = self.conv3(x, edge_index,edge_attr)
+                        x = x.relu()
+                        x = self.conv4(x, edge_index,edge_attr)
+
+                    # 2. Readout layer
+                    x = global_mean_pool(x, batch)  # [batch_size, hidden_channels]
+                    # 3. Apply a final classifier
+                    x = F.dropout(x, p=0.5, training=self.training)
+                    x = self.lin(x)
+                    x = self.softmax(x)
+                    return x
+            return GMM()
+         elif ModelMeta.ModelArchitecture=='GMM-6N-IC':
+            from torch_geometric.nn import GMMConv
+            HiddenLayer=[]
+            OutputLayer=[]
+            for el in ModelMeta.ModelParameters:
+              if ModelMeta.ModelParameters.index(el)<=4 and len(el)>0:
+                 HiddenLayer.append(el)
+              elif ModelMeta.ModelParameters.index(el)==10:
+                 OutputLayer=el
+
+            class GMM(torch.nn.Module):
+                def __init__(self):
+                    super(GMM, self).__init__()
+                    torch.manual_seed(12345)
+                    if len(HiddenLayer)==3:
+                        self.conv1 = GMMConv(6 , HiddenLayer[0][0],dim=6,kernel_size=HiddenLayer[0][1])
+                        self.conv2 = GMMConv(HiddenLayer[0][0],HiddenLayer[1][0],dim=6,kernel_size=HiddenLayer[1][1])
+                        self.conv3 = GMMConv(HiddenLayer[1][0],HiddenLayer[2][0],dim=6,kernel_size=HiddenLayer[2][1])
+                        self.lin = Linear(HiddenLayer[2][0],OutputLayer[1])
+                    elif len(HiddenLayer)==4:
+                        self.conv1 = GMMConv(4 , HiddenLayer[0][0],dim=6,kernel_size=HiddenLayer[0][1])
+                        self.conv2 = GMMConv(HiddenLayer[0][0],HiddenLayer[1][0],dim=6,kernel_size=HiddenLayer[1][1])
+                        self.conv3 = GMMConv(HiddenLayer[1][0],HiddenLayer[2][0],dim=6,kernel_size=HiddenLayer[2][1])
+                        self.conv4 = GMMConv(HiddenLayer[2][0],HiddenLayer[3][0],dim=6,kernel_size=HiddenLayer[3][1])
                         self.lin = Linear(HiddenLayer[3][0],OutputLayer[1])
                     self.softmax = Softmax(dim=-1)
 
