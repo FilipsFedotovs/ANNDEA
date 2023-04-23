@@ -420,7 +420,7 @@ else:
     Status=Meta.Status[-1]
 
 print(UF.TimeStamp(),'Current status has a stage',Status,bcolors.ENDC)
-
+exit()
 ################ Set the execution sequence for the script
 Program=[]
 
@@ -846,6 +846,7 @@ while Status<len(Program):
          base_data=UF.PickleOperations(input_file_location,'r','N/A')[0]
          print(UF.TimeStamp(), 'Ok starting the final merging of the remained tracks')
          InitialDataLength=len(base_data)
+         exit()
          SeedCounter=0
          SeedCounterContinue=True
          with alive_bar(len(base_data),force_tty=True, title='Checking the results from HTCondor') as bar:
