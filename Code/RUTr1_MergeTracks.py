@@ -865,9 +865,10 @@ while Status<len(Program):
             print(combined_data)
             TP = combined_data['True'].sum()
             P = combined_data['True'].count()
+            Min_Acceptance=combined_data['Fit'].min()
             FP=P-TP
             Ini_Precision=TP/P
-            print(TP,P,FP,Ini_Precision)
+            print(TP,P,FP,Ini_Precision,Min_Acceptance)
             exit()
          SeedCounter=0
          SeedCounterContinue=True
