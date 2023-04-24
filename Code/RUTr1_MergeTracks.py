@@ -869,7 +869,8 @@ while Status<len(Program):
             FP=P-TP
             Ini_Precision=TP/P
             F1=(2*(Ini_Precision))/(Ini_Precision+1.0)
-            print(TP,P,FP,Ini_Precision,Min_Acceptance,F1)
+            iterations=int((1.0-Min_Acceptance)/0.01)
+            print(TP,P,FP,Ini_Precision,Min_Acceptance,F1,iterations)
             exit()
          SeedCounter=0
          SeedCounterContinue=True
