@@ -868,7 +868,8 @@ while Status<len(Program):
             Min_Acceptance=round(combined_data['Fit'].min(),2)
             FP=P-TP
             Ini_Precision=TP/P
-            print(TP,P,FP,Ini_Precision,Min_Acceptance)
+            F1=(2*(Ini_Precision))/(Ini_Precision+1.0)
+            print(TP,P,FP,Ini_Precision,Min_Acceptance,F1)
             exit()
          SeedCounter=0
          SeedCounterContinue=True
