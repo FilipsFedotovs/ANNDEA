@@ -845,7 +845,7 @@ while Status<len(Program):
          print(UF.TimeStamp(), 'Ok starting the final merging of the remained tracks')
          InitialDataLength=len(base_data)
          if CalibrateAcceptance:
-            print(UF.TimeStamp(),'Initiating the logging...')
+            print(UF.TimeStamp(),'Calibrating the acceptance...')
             eval_data_file=EOS_DIR+'/ANNDEA/Data/TEST_SET/EUTr1b_'+RecBatchID+'_SEED_TRUTH_COMBINATIONS.csv'
             eval_data=pd.read_csv(eval_data_file,header=0,usecols=['Segment_1','Segment_2'])
             eval_data["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(eval_data['Segment_1'], eval_data['Segment_2'])]
@@ -906,6 +906,7 @@ while Status<len(Program):
          output_csv_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1e_'+RecBatchID+'_Union_Tracks.csv'
          csv_out=[['Old_Track_ID','New_Track_Quarter','New_Track_ID']]
          for Tr in base_data:
+            if Tr.Fit>=Acceptance:
              for TH in Tr.Header:
                  csv_out.append([TH,RecBatchID,Tr.UTrID])
          print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
