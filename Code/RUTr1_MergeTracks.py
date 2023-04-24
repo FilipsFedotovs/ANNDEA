@@ -851,6 +851,7 @@ while Status<len(Program):
             eval_data["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(eval_data['Segment_1'], eval_data['Segment_2'])]
             eval_data.drop(['Segment_1'],axis=1,inplace=True)
             eval_data.drop(['Segment_2'],axis=1,inplace=True)
+            eval_data['True']=1
             csv_out=[]
             for Tr in base_data:
                   csv_out.append([Tr.Header[0],Tr.Header[1],Tr.Fit])
@@ -858,7 +859,8 @@ while Status<len(Program):
             rec_data["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(rec_data['Segment_1'], rec_data['Segment_2'])]
             rec_data.drop(['Segment_1'],axis=1,inplace=True)
             rec_data.drop(['Segment_2'],axis=1,inplace=True)
-            print(rec_data)
+            combined_data=pd.merge(rec_data,eval_data,how='left',on='Seed_ID')
+            print(combined_data)
             exit()
          SeedCounter=0
          SeedCounterContinue=True
