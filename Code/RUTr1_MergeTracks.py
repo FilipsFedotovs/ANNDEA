@@ -842,6 +842,8 @@ while Status<len(Program):
          input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1c_'+RecBatchID+'_Fit_Filtered_Seeds.pkl'
          print(UF.TimeStamp(), "Loading fit track seeds from the file",bcolors.OKBLUE+input_file_location+bcolors.ENDC)
          base_data=UF.PickleOperations(input_file_location,'r','N/A')[0]
+         print(UF.TimeStamp(), "Stripping off the seeds with low acceptance...")
+         base_data=[tr for tr in base_data if tr.Fit >= Acceptance]
          print(UF.TimeStamp(), 'Ok starting the final merging of the remained tracks')
          InitialDataLength=len(base_data)
          if CalibrateAcceptance:
@@ -906,7 +908,6 @@ while Status<len(Program):
          output_csv_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1e_'+RecBatchID+'_Union_Tracks.csv'
          csv_out=[['Old_Track_ID','New_Track_Quarter','New_Track_ID']]
          for Tr in base_data:
-            if Tr.Fit>=Acceptance:
              for TH in Tr.Header:
                  csv_out.append([TH,RecBatchID,Tr.UTrID])
          print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
