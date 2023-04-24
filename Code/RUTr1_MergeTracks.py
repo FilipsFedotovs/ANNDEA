@@ -72,6 +72,7 @@ parser.add_argument('--Ymin',help="This option restricts data to only those even
 parser.add_argument('--Ymax',help="This option restricts data to only those events that have tracks with hits y-coordinates that are below this value", default='0')
 parser.add_argument('--Log',help="Would you like to log the performance of this reconstruction? (Only available with MC data)", default='N')
 parser.add_argument('--Acceptance',help="What is the ANN fit acceptance?", default='0.5')
+parser.add_argument('--CalibrateAcceptance',help="Would you like to recalibrate the acceptance?", default='N')
 
 ######################################## Parsing argument values  #############################################################
 args = parser.parse_args()
@@ -94,6 +95,7 @@ SliceData=max(Xmin,Xmax,Ymin,Ymax)>0 #We don't slice data if all values are set 
 ModelName=ast.literal_eval(args.ModelName)
 Patience=int(args.Patience)
 Acceptance=float(args.Acceptance)
+CalibrateAcceptance=(args.CalibrateAcceptance=='Y')
 initial_input_file_location=args.f
 Log=args.Log=='Y'
 Xmin,Xmax,Ymin,Ymax=float(args.Xmin),float(args.Xmax),float(args.Ymin),float(args.Ymax)
@@ -842,7 +844,15 @@ while Status<len(Program):
          base_data=UF.PickleOperations(input_file_location,'r','N/A')[0]
          print(UF.TimeStamp(), 'Ok starting the final merging of the remained tracks')
          InitialDataLength=len(base_data)
-         exit()
+         if CalibrateAcceptance:
+            print(UF.TimeStamp(),'Initiating the logging...')
+            eval_data_file=EOS_DIR+'/ANNDEA/Data/TEST_SET/EUTr1b_'+RecBatchID+'_SEED_TRUTH_COMBINATIONS.csv'
+            eval_data=pd.read_csv(eval_data_file,header=0,usecols=['Segment_1','Segment_2'])
+            eval_data["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(eval_data['Segment_1'], eval_data['Segment_2'])]
+            eval_data.drop(['Segment_1'],axis=1,inplace=True)
+            eval_data.drop(['Segment_2'],axis=1,inplace=True)
+            print(eval_data)
+            exit()
          SeedCounter=0
          SeedCounterContinue=True
          with alive_bar(len(base_data),force_tty=True, title='Checking the results from HTCondor') as bar:
