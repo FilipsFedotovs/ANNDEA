@@ -869,8 +869,18 @@ while Status<len(Program):
             FP=P-TP
             Ini_Precision=TP/P
             F1=(2*(Ini_Precision))/(Ini_Precision+1.0)
-            iterations=int((1.0-Min_Acceptance)/0.01)
-            print(TP,P,FP,Ini_Precision,Min_Acceptance,F1,iterations)
+            iterations=int((1.0-Min_Acceptance)/0.001)
+            for i in range(1,iterations):
+                cut_off=Min_Acceptance+(i/0.001)
+                print('Cutoff at:',cut_off)
+                cut_data=combined_data.drop(combined_data.index[combined_data['Fit'] < cut_off])
+                tp = cut_data['True'].sum()
+                p=cut_data['True'].count()
+                precision=tp/p
+                recall=tp/TP
+                f1=(2*(precision*recall))/(precision+recall)
+                print('Cutoff at:',cut_off,'; Precision:', precision, '; Recall:', recall, '; F1:', f1)
+                x=input()
             exit()
          SeedCounter=0
          SeedCounterContinue=True
