@@ -854,7 +854,11 @@ while Status<len(Program):
             csv_out=[['Segment_1','Segment_2','Fit']]
             for Tr in base_data:
                   csv_out.append([Tr.Header[0],Tr.Header[1],Tr.Fit])
-            print(csv_out)
+            rec_data = pd.DataFrame(csv_out, columns = ['Segment_1','Segment_2','Fit'])
+            rec_data["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(rec_data['Segment_1'], rec_data['Segment_2'])]
+            rec_data.drop(['Segment_1'],axis=1,inplace=True)
+            rec_data.drop(['Segment_2'],axis=1,inplace=True)
+            print(rec_data)
             exit()
          SeedCounter=0
          SeedCounterContinue=True
