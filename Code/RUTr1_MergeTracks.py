@@ -851,6 +851,7 @@ while Status<len(Program):
             eval_data["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(eval_data['Segment_1'], eval_data['Segment_2'])]
             eval_data.drop(['Segment_1'],axis=1,inplace=True)
             eval_data.drop(['Segment_2'],axis=1,inplace=True)
+            csv_out=[]
             for Tr in base_data:
                   csv_out.append([Tr.Header[0],Tr.Header[1],Tr.Fit])
             rec_data = pd.DataFrame(csv_out, columns = ['Segment_1','Segment_2','Fit'])
