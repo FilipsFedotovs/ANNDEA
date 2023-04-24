@@ -864,7 +864,8 @@ while Status<len(Program):
             combined_data.drop(['Seed_ID'],axis=1,inplace=True)
             print(combined_data)
             TP = combined_data['True'].sum()
-            print(TP)
+            FP = combined_data['True'].count()
+            print(TP,FP)
             exit()
          SeedCounter=0
          SeedCounterContinue=True
