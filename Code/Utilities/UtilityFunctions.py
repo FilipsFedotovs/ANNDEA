@@ -1134,6 +1134,8 @@ class EMO:
                   raise Exception('Fit error')
                   exit()
               return True
+          _other_seed_header3=copy.deepcopy(OtherSeed.Header)
+          _other_seed_hits3=copy.deepcopy(OtherSeed.Hits)
           _self_seed_header3=copy.deepcopy(self.Header)
           _self_seed_hits3=copy.deepcopy(self.Hits)
 
@@ -1200,11 +1202,13 @@ class EMO:
               print('_other_seed_header2',_other_seed_header2)
               print('_self_seed_header3',_self_seed_header3)
               print('_self_seed_hits3',_self_seed_hits3)
+              print('_other_seed_header3',_other_seed_header3)
+              print('_other_seed_hits3',_other_seed_hits3)
               print('Remain2_s',_new_remain2_s)
               print('Remain2_o',_new_remain2_o)
               print('_self_m2',_self_m2)
               print('_other_m2',_other_m2)
-              
+
               print('Matrx',EMO.ProjectVectorElements(_smatr,_PostTrace[0]))
               print('matrix',_smatr)
               exit()
