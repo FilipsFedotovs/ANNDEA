@@ -1475,7 +1475,7 @@ class EMO:
                       print('resdel',res_vector,delete_vec)
                       final_vector=[]
                       for mel in m:
-                          if (mel in res_vector) and (mel in f)==False:
+                          if (mel in res_vector) and (mel in final_vector)==False:
                              final_vector.append(mel)
                       for fel in f:
                           if (fel in delete_vec)==False:
@@ -1501,7 +1501,7 @@ class EMO:
                               res_vector+=del_temp_vec
                       final_vector=[]
                       for mel in m:
-                          if (mel in res_vector) and (mel in f)==False:
+                          if (mel in res_vector) and (mel in final_vector)==False:
                              final_vector.append(mel)
                       for fel in f:
                           if (fel in delete_vec)==False:
