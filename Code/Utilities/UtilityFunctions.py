@@ -1504,7 +1504,7 @@ class EMO:
                           if (mel in res_vector) and (mel in final_vector)==False:
                              final_vector.append(mel)
                       for fel in f:
-                          if (fel in delete_vec)==False:
+                          if (fel in delete_vec)==False and (fel in final_vector)==False:
                              final_vector.append(fel)
                       return(final_vector)
       def ReplaceWeakerFits(h,l_f,l_m,m_fit,f_fit):
