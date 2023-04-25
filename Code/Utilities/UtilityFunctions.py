@@ -1198,6 +1198,7 @@ class EMO:
                   exit()
           if len(self.Header)!=len(self.Hits):
               print('Error',self.Header,self.Hits)
+              print('ErrorFit',self.FIT,OtherSeed.FIT)
               print('IniTrace',_IniTrace)
               print('PostTrace',_PostTrace)
               print('Overlap',_ovl)
