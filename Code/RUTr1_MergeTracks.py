@@ -695,7 +695,7 @@ while Status<len(Program):
                 data['Rec_Seg_ID'] = data[TrackID] + '-' + data[BrickID]
                 print(UF.TimeStamp(),'Resolving duplicated hits...')
                 #selected_combined_data=pd.merge(data, map_data, how="inner", left_on=["Rec_Seg_ID"], right_on=['Old_Track_ID'])
-                selected_combined_data=pd.merge(data, map_data, how="right", left_on=["Rec_Seg_ID"], right_on=['Old_Track_ID'])
+                selected_combined_data=pd.merge(data, map_data, how="left", left_on=["Rec_Seg_ID"], right_on=['Old_Track_ID'])
                 # Hit_Map_Stats=selected_combined_data[['New_Track_Quarter','New_Track_ID',PM.z,PM.Hit_ID]] #Calculating the stats
                 # Hit_Map_Stats=Hit_Map_Stats.groupby(['New_Track_Quarter','New_Track_ID']).agg({PM.z:pd.Series.nunique,PM.Hit_ID: pd.Series.nunique}).reset_index() #Calculate the number fo unique plates and hits
                 # Ini_No_Tracks=len(Hit_Map_Stats)
@@ -835,7 +835,6 @@ while Status<len(Program):
                 new_combined_data=selected_combined_data
                 new_combined_data['New_Track_Quarter'] = new_combined_data['New_Track_Quarter'].fillna(new_combined_data[BrickID])
                 new_combined_data['New_Track_ID'] = new_combined_data['New_Track_ID'].fillna(new_combined_data[TrackID])
-                print(new_combined_data)
 
                 new_combined_data=new_combined_data.rename(columns={'New_Track_Quarter': RecBatchID+'_Brick_ID','New_Track_ID': RecBatchID+'_Track_ID'})
                 new_combined_data.to_csv(final_output_file_location,index=False)
