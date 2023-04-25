@@ -1183,7 +1183,7 @@ class EMO:
           last_self_fits=EMO.ProjectVectorElements([last_remain_headers_s],self.FIT)
           last_other_fits=EMO.ProjectVectorElements([last_remain_headers_o],OtherSeed.FIT)
           last_remain_matr=EMO.DensityMatrix(last_other_hits,last_self_hits)
-
+          _last_remaining_matr2=copy.deepcopy(last_remain_matr)
           new_seed_header+=EMO.ReplaceWeakerTracks(last_remain_matr,last_other_headers,last_self_headers,last_other_fits,last_self_fits)
           new_self_fit+=EMO.ReplaceWeakerFits(new_seed_header,last_self_headers,last_other_headers,last_other_fits,last_self_fits)[0:len(EMO.ReplaceWeakerFits(new_seed_header,last_self_headers,last_other_headers,last_other_fits,last_self_fits))]
           new_self_hits+=EMO.ReplaceWeakerTracks(last_remain_matr,last_other_hits,last_self_hits,last_other_fits,last_self_fits)
@@ -1220,6 +1220,7 @@ class EMO:
               print('_last_remaining_oheaders2',_last_remaining_oheaders2)
               print('_last_remaining_shits2',_last_remaining_shits2)
               print('_last_remaining_ohits2',_last_remaining_ohits2)
+              print('_last_remaining_matr2',_last_remaining_matr2)
               print('Matrx',EMO.ProjectVectorElements(_smatr,_PostTrace[0]))
               print('matrix',_smatr)
               exit()
