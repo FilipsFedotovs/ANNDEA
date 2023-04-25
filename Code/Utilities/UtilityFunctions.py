@@ -1470,6 +1470,7 @@ class EMO:
                               delete_vec+=del_temp_vec
                           else:
                               res_vector+=del_temp_vec
+                      print('resdel',res_vector,delete_vec)
                       final_vector=[]
                       for mel in m:
                           if (mel in res_vector):
