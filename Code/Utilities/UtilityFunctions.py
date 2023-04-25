@@ -1401,11 +1401,8 @@ class EMO:
             for j in m:
                 row=[]
                 for i in f:
-                    print('j',j,'i',i)
                     row.append(EMO.Product(j,i))
-                    print('row',row)
                 matrix.append(row)
-            print('matrix',matrix)
             return matrix
       def ReplaceWeakerTracks(matx,m,f,m_fit,f_fit):
                       res_vector=[]
