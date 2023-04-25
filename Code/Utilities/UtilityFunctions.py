@@ -1083,6 +1083,8 @@ class EMO:
               return True
       def InjectDistantTrackSeed(self,OtherSeed):
 
+          _trace=[OtherSeed.Header,OtherSeed.Hits]
+
           self_matx=EMO.DensityMatrix(OtherSeed.Header,self.Header)
           if EMO.Overlap(self_matx)==False:
               return EMO.Overlap(self_matx)
@@ -1171,6 +1173,7 @@ class EMO:
                   exit()
           if len(self.Header)!=len(self.Hits):
               print('Error',self.Header,self.Hits)
+              print(_trace)
               exit()
           return True
       @staticmethod
