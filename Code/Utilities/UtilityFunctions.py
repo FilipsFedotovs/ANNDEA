@@ -1184,7 +1184,7 @@ class EMO:
           last_other_fits=EMO.ProjectVectorElements([last_remain_headers_o],OtherSeed.FIT)
           last_remain_matr=EMO.DensityMatrix(last_other_hits,last_self_hits)
           _last_remaining_matr2=copy.deepcopy(last_remain_matr)
-          _weak=EMO.ReplaceWeakerTracks(last_remain_matr,last_other_headers,last_self_headers,last_other_fits,last_self_fits)
+          _weak=EMO.ReplaceWeakerTracks(last_remain_matr,last_other_hits,last_self_hits,last_other_fits,last_self_fits)
           new_seed_header+=EMO.ReplaceWeakerTracks(last_remain_matr,last_other_headers,last_self_headers,last_other_fits,last_self_fits)
           new_self_fit+=EMO.ReplaceWeakerFits(new_seed_header,last_self_headers,last_other_headers,last_other_fits,last_self_fits)[0:len(EMO.ReplaceWeakerFits(new_seed_header,last_self_headers,last_other_headers,last_other_fits,last_self_fits))]
           new_self_hits+=EMO.ReplaceWeakerTracks(last_remain_matr,last_other_hits,last_self_hits,last_other_fits,last_self_fits)
