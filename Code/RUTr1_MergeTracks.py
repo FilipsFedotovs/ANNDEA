@@ -694,7 +694,8 @@ while Status<len(Program):
 #                if os.path.isfile(EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1e_'+RecBatchID+'_Mapped_Tracks_Temp.csv')==False:
                 data['Rec_Seg_ID'] = data[TrackID] + '-' + data[BrickID]
                 print(UF.TimeStamp(),'Resolving duplicated hits...')
-                selected_combined_data=pd.merge(data, map_data, how="inner", left_on=["Rec_Seg_ID"], right_on=['Old_Track_ID'])
+                #selected_combined_data=pd.merge(data, map_data, how="inner", left_on=["Rec_Seg_ID"], right_on=['Old_Track_ID'])
+                selected_combined_data=pd.merge(data, map_data, how="left", left_on=["Rec_Seg_ID"], right_on=['Old_Track_ID'])
                 # Hit_Map_Stats=selected_combined_data[['New_Track_Quarter','New_Track_ID',PM.z,PM.Hit_ID]] #Calculating the stats
                 # Hit_Map_Stats=Hit_Map_Stats.groupby(['New_Track_Quarter','New_Track_ID']).agg({PM.z:pd.Series.nunique,PM.Hit_ID: pd.Series.nunique}).reset_index() #Calculate the number fo unique plates and hits
                 # Ini_No_Tracks=len(Hit_Map_Stats)
