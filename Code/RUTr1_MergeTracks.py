@@ -900,14 +900,19 @@ while Status<len(Program):
 
                  for ObjectSeed in base_data[SeedCounter+1:]:
                           #if SubjectSeed.InjectTrackSeed(ObjectSeed):
+                        sh=SubjectSeed.Header
+                        oh=ObjectSeed.Header
+                        shits=SubjectSeed.Hits
+                        ohits=ObjectSeed.Hits
                         try:
-                            print(SubjectSeed.Header)
-                            print(ObjectSeed.Header)
-                            print(SubjectSeed.Hits)
-                            print(ObjectSeed.Hits)
                             if SubjectSeed.InjectDistantTrackSeed(ObjectSeed):
                                 base_data.pop(base_data.index(ObjectSeed))
                         except:
+                            print(sh)
+                            print(oh)
+                            print(shits)
+                            print(ohits)
+                            print('---------------------')
                             print(SubjectSeed.Header)
                             print(ObjectSeed.Header)
                             print(SubjectSeed.Hits)
