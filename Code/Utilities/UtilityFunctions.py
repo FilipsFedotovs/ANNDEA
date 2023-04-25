@@ -1083,14 +1083,14 @@ class EMO:
               return True
       def InjectDistantTrackSeed(self,OtherSeed):
 
-          _IniTrace=[OtherSeed.Header,OtherSeed.Hits]
+          _IniTrace=[OtherSeed.Header,OtherSeed.Hits,OtherSeed.Fit]
 
           self_matx=EMO.DensityMatrix(OtherSeed.Header,self.Header)
           if EMO.Overlap(self_matx)==False:
               return EMO.Overlap(self_matx)
           _ovl=EMO.Overlap(self_matx)
           _smatr=self_matx
-          _PostTrace=[self.Header,self.Hits]
+          _PostTrace=[self.Header,self.Hits,self.Fit]
           new_seed_header=EMO.ProjectVectorElements(self_matx,self.Header)
           _new_sd_hd=copy.deepcopy(new_seed_header)
           new_self_hits=EMO.ProjectVectorElements(self_matx,self.Hits)
