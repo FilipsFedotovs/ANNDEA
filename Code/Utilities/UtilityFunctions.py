@@ -1401,7 +1401,7 @@ class EMO:
             for j in m:
                 row=[]
                 for i in f:
-                    print(j,i)
+                    print('j',j,'i',i)
                     row.append(EMO.Product(j,i))
                     print(row)
                 matrix.append(row)
