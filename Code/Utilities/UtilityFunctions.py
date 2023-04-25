@@ -1139,6 +1139,8 @@ class EMO:
 
           self_2_matx=EMO.DensityMatrix(OtherSeed.Hits,self.Hits)
           other_2_matx=EMO.DensityMatrix(self.Hits,OtherSeed.Hits)
+          _self_m2=copy.deepcopy(self_2_matx)
+          _other_m2=copy.deepcopy(other_2_matx)
           last_s_seed_header=EMO.ProjectVectorElements(self_2_matx,self.Header)
           last_o_seed_header=EMO.ProjectVectorElements(other_2_matx,OtherSeed.Header)
           remain_2_s = EMO.GenerateInverseVector(self.Header,last_s_seed_header)
@@ -1200,6 +1202,9 @@ class EMO:
               print('_self_seed_hits3',_self_seed_hits3)
               print('Remain2_s',_new_remain2_s)
               print('Remain2_o',_new_remain2_o)
+              print('_self_m2',_self_m2)
+              print('_other_m2',_other_m2)
+              
               print('Matrx',EMO.ProjectVectorElements(_smatr,_PostTrace[0]))
               print('matrix',_smatr)
               exit()
