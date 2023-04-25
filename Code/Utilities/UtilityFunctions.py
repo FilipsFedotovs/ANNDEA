@@ -1362,9 +1362,9 @@ class EMO:
                  a_temp=[]
                  b_temp=[]
                  for el in a:
-                     a_temp.append(el)
+                     a_temp.append(el[2])
                  for el in b:
-                     b_temp.append(el)
+                     b_temp.append(el[2])
                  min_a=min(a_temp)
                  min_b=min(b_temp)
                  max_a=max(a_temp)
