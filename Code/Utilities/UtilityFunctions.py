@@ -1223,6 +1223,7 @@ class EMO:
               print('_last_remaining_ohits2',_last_remaining_ohits2)
               print('_last_remaining_matr2',_last_remaining_matr2)
               print('weak',_weak)
+              print('weak2',EMO.ReplaceWeakerTracksTest(last_remain_matr,last_other_hits,last_self_hits,last_other_fits,last_self_fits))
               print('Matrx',EMO.ProjectVectorElements(_smatr,_PostTrace[0]))
               print('matrix',_smatr)
               exit()
@@ -1448,6 +1449,32 @@ class EMO:
                     row.append(EMO.Product(j,i))
                 matrix.append(row)
             return matrix
+      def ReplaceWeakerTracksTest(matx,m,f,m_fit,f_fit):
+                      res_vector=[]
+                      delete_vec=[]
+                      for j in range(len(m)):
+                          accumulative_fit_f=0
+                          accumulative_fit_m=m_fit[j]
+                          del_temp_vec=[]
+                          counter=0
+                          for i in range(len(matx[j])):
+                                  if matx[j][i]==1:
+                                      accumulative_fit_f+=f_fit[i]
+                                      del_temp_vec.append(f[i])
+                                      counter+=1
+                          if (accumulative_fit_m>accumulative_fit_f/counter):
+                              res_vector.append(m[j])
+                              delete_vec+=del_temp_vec
+                          else:
+                              res_vector+=del_temp_vec
+                      final_vector=[]
+                      for mel in m:
+                          if (mel in res_vector):
+                             final_vector.append(mel)
+                      for fel in f:
+                          if (fel in delete_vec)==False:
+                             final_vector.append(fel)
+                      return(final_vector)
       def ReplaceWeakerTracks(matx,m,f,m_fit,f_fit):
                       res_vector=[]
                       delete_vec=[]
