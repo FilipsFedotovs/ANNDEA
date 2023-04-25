@@ -1455,6 +1455,7 @@ class EMO:
                       for j in range(len(m)):
                           accumulative_fit_f=0
                           accumulative_fit_m=m_fit[j]
+                          print(accumulative_fit_m)
                           del_temp_vec=[]
                           counter=0
                           for i in range(len(matx[j])):
@@ -1462,6 +1463,8 @@ class EMO:
                                       accumulative_fit_f+=f_fit[i]
                                       del_temp_vec.append(f[i])
                                       counter+=1
+                          print(accumulative_fit_m,accumulative_fit_f,counter)
+                          
                           if (accumulative_fit_m>accumulative_fit_f/counter):
                               res_vector.append(m[j])
                               delete_vec+=del_temp_vec
