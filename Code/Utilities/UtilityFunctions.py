@@ -1180,6 +1180,7 @@ class EMO:
               print('Overlap',_ovl)
               print('New Seed Header',_new_sd_hd)
               print('New Seed Hits',_new_seed_hits)
+              print('Matrx',EMO.ProjectVectorElements(_smatr,_new_sd_hd))
               print('matrix',_smatr)
               exit()
           return True
