@@ -455,6 +455,8 @@ if Mode=='CLEANUP':
     UpdateStatus(5)
     Status=5
 
+UpdateStatus(0)
+
 # ###### Stage 2
 prog_entry=[]
 job_sets=[]
@@ -897,7 +899,8 @@ while Status<len(Program):
 
 
                  for ObjectSeed in base_data[SeedCounter+1:]:
-                            if SubjectSeed.InjectTrackSeed(ObjectSeed):
+                            #if SubjectSeed.InjectTrackSeed(ObjectSeed):
+                            if SubjectSeed.InjectDistantTrackSeed(ObjectSeed):
                                 base_data.pop(base_data.index(ObjectSeed))
                  SeedCounter+=1
                  bar()
