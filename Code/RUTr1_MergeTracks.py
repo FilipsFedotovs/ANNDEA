@@ -456,7 +456,7 @@ if Mode=='CLEANUP':
     Status=5
 
 UpdateStatus(0)
-
+Status=0
 # ###### Stage 2
 prog_entry=[]
 job_sets=[]
