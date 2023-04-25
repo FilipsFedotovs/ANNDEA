@@ -1092,9 +1092,9 @@ class EMO:
           _smatr=self_matx
           _PostTrace=[self.Header,self.Hits]
           new_seed_header=EMO.ProjectVectorElements(self_matx,self.Header)
-          _new_sd_hd=new_seed_header
+          _new_sd_hd=copy.deepcopy(new_seed_header)
           new_self_hits=EMO.ProjectVectorElements(self_matx,self.Hits)
-          _new_seed_hits=new_self_hits
+          _new_seed_hits=copy.deepcopy(new_self_hits)
           new_self_fit=EMO.ProjectVectorElements(self_matx,self.FIT)
           remain_1_s = EMO.GenerateInverseVector(self.Header,new_seed_header)
           remain_1_o = EMO.GenerateInverseVector(OtherSeed.Header,new_seed_header)
