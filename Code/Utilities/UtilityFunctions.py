@@ -1082,6 +1082,7 @@ class EMO:
               self.FIT[(self.Header.index(Overlap[1]))]+=OtherSeed.FIT[(OtherSeed.Header.index(Overlap[1]))]
               return True
       def InjectDistantTrackSeed(self,OtherSeed):
+
           self_matx=EMO.DensityMatrix(OtherSeed.Header,self.Header)
           if EMO.Overlap(self_matx)==False:
               return EMO.Overlap(self_matx)
@@ -1168,7 +1169,9 @@ class EMO:
           if len(self.FIT)!=len(self.Header):
                   raise Exception('Fit error')
                   exit()
-
+          if len(self.Header)!=len(self.Hits):
+              print('Error',self.Header,self.Hits)
+              exit()
           return True
       @staticmethod
       def unit_vector(vector):
