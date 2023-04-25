@@ -455,8 +455,8 @@ if Mode=='CLEANUP':
     UpdateStatus(5)
     Status=5
 
-UpdateStatus(0)
-Status=0
+UpdateStatus(5)
+Status=5
 # ###### Stage 2
 prog_entry=[]
 job_sets=[]
@@ -900,8 +900,16 @@ while Status<len(Program):
 
                  for ObjectSeed in base_data[SeedCounter+1:]:
                             #if SubjectSeed.InjectTrackSeed(ObjectSeed):
+                        try:
                             if SubjectSeed.InjectDistantTrackSeed(ObjectSeed):
                                 base_data.pop(base_data.index(ObjectSeed))
+                        except:
+                            print(SubjectSeed.Header)
+                            print(ObjectSeed.Header)
+                            print(SubjectSeed.Hits)
+                            print(ObjectSeed.Hits)
+                            exit()
+
                  SeedCounter+=1
                  bar()
          print(str(InitialDataLength), "vertices from different files were merged into", str(len(base_data)), 'vertices with higher multiplicity...')
