@@ -455,8 +455,8 @@ if Mode=='CLEANUP':
     UpdateStatus(5)
     Status=5
 
-UpdateStatus(0)
-Status=0
+UpdateStatus(5)
+Status=5
 # ###### Stage 2
 prog_entry=[]
 job_sets=[]
@@ -899,21 +899,20 @@ while Status<len(Program):
 
 
                  for ObjectSeed in base_data[SeedCounter+1:]:
-                     if SubjectSeed.Header[0]=='86053.0-SND_B31_3_2_2':
-                            #if SubjectSeed.InjectTrackSeed(ObjectSeed):
-                        #try:
+                          #if SubjectSeed.InjectTrackSeed(ObjectSeed):
+                        try:
                             print(SubjectSeed.Header)
                             print(ObjectSeed.Header)
                             print(SubjectSeed.Hits)
                             print(ObjectSeed.Hits)
                             if SubjectSeed.InjectDistantTrackSeed(ObjectSeed):
                                 base_data.pop(base_data.index(ObjectSeed))
-                        #except:
-                                print(SubjectSeed.Header)
-                                print(ObjectSeed.Header)
-                                print(SubjectSeed.Hits)
-                                print(ObjectSeed.Hits)
-                            # exit()
+                        except:
+                            print(SubjectSeed.Header)
+                            print(ObjectSeed.Header)
+                            print(SubjectSeed.Hits)
+                            print(ObjectSeed.Hits)
+                            exit()
 
                  SeedCounter+=1
                  bar()
