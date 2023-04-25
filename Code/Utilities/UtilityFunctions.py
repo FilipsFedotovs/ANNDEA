@@ -1225,6 +1225,7 @@ class EMO:
               print('_last_remaining_matr2',_last_remaining_matr2)
               print('weak',_weak)
               print('weak2',EMO.ReplaceWeakerTracksTest(last_remain_matr,last_other_hits,last_self_hits,last_other_fits,last_self_fits))
+              print('weakhdr',EMO.ReplaceWeakerTracks(last_remain_matr,last_other_headers,last_self_headers,last_other_fits,last_self_fits))
               print('Matrx',EMO.ProjectVectorElements(_smatr,_PostTrace[0]))
               print('matrix',_smatr)
               exit()
@@ -1503,7 +1504,7 @@ class EMO:
                           if (mel in res_vector):
                              final_vector.append(mel)
                       for fel in f:
-                          if (fel in delete_vec)==False and (fel in res_vector)==False:
+                          if (fel in delete_vec)==False:
                              final_vector.append(fel)
                       return(final_vector)
       def ReplaceWeakerFits(h,l_f,l_m,m_fit,f_fit):
