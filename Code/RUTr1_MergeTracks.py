@@ -933,6 +933,8 @@ while Status<len(Program):
          for Tr in base_data:
              for TH in Tr.Header:
                  csv_out.append([TH,RecBatchID,Tr.UTrID])
+         print(csv_out)
+         exit()
          print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
          print(UF.TimeStamp(), "Saving the results into the file",bcolors.OKBLUE+output_csv_location+bcolors.ENDC)
          UF.LogOperations(output_csv_location,'w', csv_out)
