@@ -1088,9 +1088,12 @@ class EMO:
           self_matx=EMO.DensityMatrix(OtherSeed.Header,self.Header)
           if EMO.Overlap(self_matx)==False:
               return EMO.Overlap(self_matx)
+          _ovl=EMO.Overlap(self_matx)
 
           new_seed_header=EMO.ProjectVectorElements(self_matx,self.Header)
+          _new_sd_hd=new_seed_header
           new_self_hits=EMO.ProjectVectorElements(self_matx,self.Hits)
+          _new_seed_hits=new_self_hits
           new_self_fit=EMO.ProjectVectorElements(self_matx,self.FIT)
           remain_1_s = EMO.GenerateInverseVector(self.Header,new_seed_header)
           remain_1_o = EMO.GenerateInverseVector(OtherSeed.Header,new_seed_header)
@@ -1174,6 +1177,9 @@ class EMO:
           if len(self.Header)!=len(self.Hits):
               print('Error',self.Header,self.Hits)
               print(_trace)
+              print('Overlap',_ovl)
+              print('New Seed Header',_new_sd_hd)
+              print('New Seed Hits',_new_seed_hits)
               exit()
           return True
       @staticmethod
