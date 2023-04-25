@@ -150,7 +150,7 @@ print(UF.TimeStamp(),bcolors.BOLD+'Stage 3:'+bcolors.ENDC+' Analyzing track reco
 
 
 raw_data_mc=raw_data.groupby(by=['MC_Mother_Track_ID']+MCCategories)[PM.Hit_ID].nunique().reset_index()
-raw_data_mc.drop(raw_data_mc.index[(raw_data_mc[PM.Hit_ID] < 2)],inplace=True)
+raw_data_mc.drop(raw_data_mc.index[(raw_data_mc[PM.Hit_ID] < 4)],inplace=True)
 raw_data_mc.rename(columns={PM.Hit_ID: "MC_Mother_Track_Size"},inplace=True)
 mc_data_tot=raw_data_mc['MC_Mother_Track_ID'].nunique()
 print(UF.TimeStamp(),'Total number of MC tracks is:',mc_data_tot)
@@ -160,7 +160,7 @@ for RN in RecNames:
   raw_data_rec=raw_data_rec[[RN,PM.Hit_ID]]
   raw_data_temp_rec=raw_data_rec[[RN,PM.Hit_ID]].rename(columns={PM.Hit_ID: RN+'_Size'})
   raw_data_temp_rec=raw_data_temp_rec.groupby(by=[RN])[RN+'_Size'].nunique().reset_index()
-  raw_data_temp_rec.drop(raw_data_temp_rec.index[(raw_data_temp_rec[RN+'_Size'] < 2)],inplace=True)
+  raw_data_temp_rec.drop(raw_data_temp_rec.index[(raw_data_temp_rec[RN+'_Size'] < 4)],inplace=True)
   rec_data_tot=raw_data_temp_rec[RN].nunique()
   data_rec=pd.merge(raw_data_rec[[RN,PM.Hit_ID]],raw_data_temp_rec,how='inner', on =[RN])
   data_rec=pd.merge(data_rec,data_mc,how='inner', on =[PM.Hit_ID])
