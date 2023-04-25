@@ -1156,6 +1156,7 @@ class EMO:
           new_self_fit+=EMO.ProjectVectorElements([remain_2_o],OtherSeed.FIT)
           new_self_hits+=EMO.ProjectVectorElements([remain_2_s],self.Hits)
           new_self_hits+=EMO.ProjectVectorElements([remain_2_o],OtherSeed.Hits)
+          _new_seed_hits2=copy.deepcopy(new_self_hits)
 
 
           last_remain_headers_s = EMO.GenerateInverseVector(self.Header,new_seed_header)
@@ -1211,6 +1212,7 @@ class EMO:
               print('_self_m2',_self_m2)
               print('_other_m2',_other_m2)
               print('New Seed Header2',_new_sd_hd2)
+              print('New Seed Hits2',_new_seed_hits2)
               print('Matrx',EMO.ProjectVectorElements(_smatr,_PostTrace[0]))
               print('matrix',_smatr)
               exit()
