@@ -1089,7 +1089,7 @@ class EMO:
           if EMO.Overlap(self_matx)==False:
               return EMO.Overlap(self_matx)
           _ovl=EMO.Overlap(self_matx)
-
+          _smatr=self_matx
           new_seed_header=EMO.ProjectVectorElements(self_matx,self.Header)
           _new_sd_hd=new_seed_header
           new_self_hits=EMO.ProjectVectorElements(self_matx,self.Hits)
@@ -1180,6 +1180,7 @@ class EMO:
               print('Overlap',_ovl)
               print('New Seed Header',_new_sd_hd)
               print('New Seed Hits',_new_seed_hits)
+              print('matrix',_smatr)
               exit()
           return True
       @staticmethod
