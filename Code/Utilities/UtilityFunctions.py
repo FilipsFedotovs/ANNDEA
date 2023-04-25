@@ -1178,6 +1178,8 @@ class EMO:
 
           last_self_hits=EMO.ProjectVectorElements([last_remain_headers_s],self.Hits)
           last_other_hits=EMO.ProjectVectorElements([last_remain_headers_o],OtherSeed.Hits)
+          _last_remaining_shits2=copy.deepcopy(last_self_hits)
+          _last_remaining_ohits2=copy.deepcopy(last_other_hits)
           last_self_fits=EMO.ProjectVectorElements([last_remain_headers_s],self.FIT)
           last_other_fits=EMO.ProjectVectorElements([last_remain_headers_o],OtherSeed.FIT)
           last_remain_matr=EMO.DensityMatrix(last_other_hits,last_self_hits)
@@ -1216,6 +1218,8 @@ class EMO:
               print('New Seed Hits2',_new_seed_hits2)
               print('_last_remaining_sheaders2',_last_remaining_sheaders2)
               print('_last_remaining_oheaders2',_last_remaining_oheaders2)
+              print('_last_remaining_shits2',_last_remaining_shits2)
+              print('_last_remaining_ohits2',_last_remaining_ohits2)
               print('Matrx',EMO.ProjectVectorElements(_smatr,_PostTrace[0]))
               print('matrix',_smatr)
               exit()
