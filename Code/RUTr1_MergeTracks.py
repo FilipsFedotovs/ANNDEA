@@ -835,6 +835,8 @@ while Status<len(Program):
                 new_combined_data=selected_combined_data
                 new_combined_data['New_Track_Quarter'] = new_combined_data['New_Track_Quarter'].fillna(new_combined_data[BrickID])
                 new_combined_data['New_Track_ID'] = new_combined_data['New_Track_ID'].fillna(new_combined_data[TrackID])
+                print(new_combined_data)
+                exit()
                 new_combined_data=new_combined_data.rename(columns={'New_Track_Quarter': RecBatchID+'_Brick_ID','New_Track_ID': RecBatchID+'_Track_ID'})
                 new_combined_data.to_csv(final_output_file_location,index=False)
                 print(UF.TimeStamp(), bcolors.OKGREEN+"The merged track data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+final_output_file_location+bcolors.ENDC)
