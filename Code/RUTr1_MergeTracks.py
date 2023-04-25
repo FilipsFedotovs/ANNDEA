@@ -902,6 +902,10 @@ while Status<len(Program):
                      if SubjectSeed.Header[0]=='86053.0-SND_B31_3_2_2':
                             #if SubjectSeed.InjectTrackSeed(ObjectSeed):
                         #try:
+                            print(SubjectSeed.Header)
+                            print(ObjectSeed.Header)
+                            print(SubjectSeed.Hits)
+                            print(ObjectSeed.Hits)
                             if SubjectSeed.InjectDistantTrackSeed(ObjectSeed):
                                 base_data.pop(base_data.index(ObjectSeed))
                         #except:
