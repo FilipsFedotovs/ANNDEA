@@ -907,7 +907,8 @@ while Status<len(Program):
                         try:
                             if SubjectSeed.InjectDistantTrackSeed(ObjectSeed):
                                 base_data.pop(base_data.index(ObjectSeed))
-                        except:
+                        except Exception as e:
+                            print(e)
                             print(sh)
                             print(oh)
                             print(shits)
