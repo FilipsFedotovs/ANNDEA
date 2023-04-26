@@ -94,13 +94,14 @@ raw_data[PM.MC_Track_ID] = raw_data[PM.MC_Track_ID].astype(str)
 raw_data[PM.Hit_ID] = raw_data[PM.Hit_ID].astype(str)
 raw_data['MC_Mother_Track_ID'] = raw_data[PM.MC_Event_ID] + '-' + raw_data[PM.MC_Track_ID]
 raw_data.drop([PM.MC_Event_ID,PM.MC_Track_ID],axis=1,inplace=True)
-print(raw_data)
-exit()
+
 for rn in range(len(RecNames)):
     raw_data[TrackID[rn][0]] = raw_data[TrackID[rn][0]].astype(str)
     raw_data[TrackID[rn][1]] = raw_data[TrackID[rn][1]].astype(str)
     raw_data[RecNames[rn]] = raw_data[TrackID[rn][0]] + '-' + raw_data[TrackID[rn][1]]
     raw_data.drop([TrackID[rn][0],TrackID[rn][1]],axis=1,inplace=True)
+print(raw_data)
+exit()
 if SkipRcmb:
     print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
     print(UF.TimeStamp(),bcolors.BOLD+'Stage 2:'+bcolors.ENDC+' Calculating recombination metrics...')
