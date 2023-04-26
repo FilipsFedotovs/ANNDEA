@@ -181,12 +181,12 @@ for RN in RecNames:
   data_temp_rec=data_temp_rec.groupby(by=['MC_Mother_Track_ID'])[RN+'_Segmentation'].nunique().reset_index()
 
   data_rec=pd.merge(data_rec,data_temp_rec,how='inner', on =['MC_Mother_Track_ID'])
-  print(data_rec)
-  continue
+
   data_rec.sort_values(by=[RN,RN+'_Overlap'], ascending=[1,0],inplace=True)
 
   data_rec.drop_duplicates(subset=[RN],keep='first',inplace=True)
-
+  print(data_rec)
+  continue
   data_rec.drop([RN],axis=1,inplace=True)
   rec_data_mtch=data_rec['MC_Mother_Track_ID'].nunique()
   raw_data_mc=pd.merge(raw_data_mc,data_rec,how='left', on =['MC_Mother_Track_ID'])
