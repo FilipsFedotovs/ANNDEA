@@ -162,10 +162,11 @@ for RN in RecNames:
   raw_data_rec=raw_data.drop(raw_data.index[(raw_data[RN] == 'nan-nan')])
   raw_data_rec=raw_data_rec[[RN,PM.Hit_ID]]
   print(raw_data_rec)
-  continue
   raw_data_temp_rec=raw_data_rec[[RN,PM.Hit_ID]].rename(columns={PM.Hit_ID: RN+'_Size'})
   raw_data_temp_rec=raw_data_temp_rec.groupby(by=[RN])[RN+'_Size'].nunique().reset_index()
   raw_data_temp_rec.drop(raw_data_temp_rec.index[(raw_data_temp_rec[RN+'_Size'] < MinHitsTrack)],inplace=True)
+  print(raw_data_temp_rec)
+  continue
   rec_data_tot=raw_data_temp_rec[RN].nunique()
   data_rec=pd.merge(raw_data_rec[[RN,PM.Hit_ID]],raw_data_temp_rec,how='inner', on =[RN])
   data_rec=pd.merge(data_rec,data_mc,how='inner', on =[PM.Hit_ID])
