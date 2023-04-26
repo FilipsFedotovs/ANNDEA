@@ -100,11 +100,6 @@ for rn in range(len(RecNames)):
     raw_data[TrackID[rn][1]] = raw_data[TrackID[rn][1]].astype(str)
     raw_data[RecNames[rn]] = raw_data[TrackID[rn][0]] + '-' + raw_data[TrackID[rn][1]]
     raw_data.drop([TrackID[rn][0],TrackID[rn][1]],axis=1,inplace=True)
-    print(TrackID[rn][0],TrackID[rn][1])
-    print(RecNames[rn])
-    x=input()
-print(raw_data)
-exit()
 if SkipRcmb:
     print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
     print(UF.TimeStamp(),bcolors.BOLD+'Stage 2:'+bcolors.ENDC+' Calculating recombination metrics...')
