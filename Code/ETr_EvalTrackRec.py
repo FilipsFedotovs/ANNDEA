@@ -174,7 +174,7 @@ for RN in RecNames:
   data_rec=data_rec.rename(columns={PM.Hit_ID: RN+'_Overlap'})
   data_rec=data_rec.groupby(by=[RN,RN+'_Size','MC_Mother_Track_ID'])[RN+'_Overlap'].nunique().reset_index()
   data_rec.drop(data_rec.index[(data_rec[RN+'_Overlap'] < 2)],inplace=True)
-  print(rec_data)
+  print(data_rec)
   continue
   data_temp_rec=data_rec[[RN,'MC_Mother_Track_ID']].rename(columns={RN: RN+'_Segmentation'})
 
