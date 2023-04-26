@@ -155,9 +155,6 @@ raw_data_mc.rename(columns={PM.Hit_ID: "MC_Mother_Track_Size"},inplace=True)
 mc_data_tot=raw_data_mc['MC_Mother_Track_ID'].nunique()
 print(UF.TimeStamp(),'Total number of MC tracks is:',mc_data_tot)
 data_mc=pd.merge(raw_data[['MC_Mother_Track_ID',PM.Hit_ID]],raw_data_mc,how='inner', on =['MC_Mother_Track_ID'])
-print(raw_data_mc)
-print(data_mc)
-exit()
 for RN in RecNames:
   #raw_data_rec=raw_data.drop(raw_data.index[(raw_data[RN] == 'nan-nan')])
   raw_data_rec = raw_data[raw_data[RN].str.contains("nan") == False]
@@ -185,8 +182,8 @@ for RN in RecNames:
 
   data_rec.drop([RN],axis=1,inplace=True)
   rec_data_mtch=data_rec['MC_Mother_Track_ID'].nunique()
-  raw_data_mc=pd.merge(raw_data_mc,data_rec,how='left', on =['MC_Mother_Track_ID'])
-  print(raw_data_mc)
+  raw_data_mc_loc=pd.merge(raw_data_mc,data_rec,how='left', on =['MC_Mother_Track_ID'])
+  print(raw_data_mc_loc)
   continue
   print(UF.TimeStamp(), bcolors.OKGREEN+'Recombination metrics for ',bcolors.BOLD+RN+bcolors.ENDC,bcolors.OKGREEN+' are ready and listed bellow:'+bcolors.ENDC)
   print(UF.TimeStamp(),'Total number of reconstructed tracks :',bcolors.BOLD+str(rec_data_tot)+bcolors.ENDC)
