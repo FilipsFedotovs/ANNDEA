@@ -186,15 +186,15 @@ for RN in RecNames:
   print(UF.TimeStamp(), bcolors.OKGREEN+'Recombination metrics for ',bcolors.BOLD+RN+bcolors.ENDC,bcolors.OKGREEN+' are ready and listed bellow:'+bcolors.ENDC)
   print(UF.TimeStamp(),'Total number of reconstructed tracks :',bcolors.BOLD+str(rec_data_tot)+bcolors.ENDC)
   print(UF.TimeStamp(),'But the number of those tracks matched to MC tracks is:',bcolors.BOLD+str(rec_data_mtch)+bcolors.ENDC)
-  if raw_data_mc["MC_Mother_Track_Size"].sum()>0:
+  if raw_data_mc_loc["MC_Mother_Track_Size"].sum()>0:
     Recall=raw_data_mc_loc[RN+'_Overlap'].sum()/raw_data_mc_loc["MC_Mother_Track_Size"].sum()
   else:
     Recall=0
-  if raw_data_mc[RN+'_Size'].sum()>0:
+  if raw_data_mc_loc[RN+'_Size'].sum()>0:
     Precision=raw_data_mc_loc[RN+'_Overlap'].sum()/raw_data_mc_loc[RN+'_Size'].sum()
   else:
       Precision=0
-  Segmentation=raw_data_mc[RN+'_Segmentation'].mean()
+  Segmentation=raw_data_mc_loc[RN+'_Segmentation'].mean()
   print(UF.TimeStamp(),'Average track reconstruction efficiency:',bcolors.BOLD+str(round(Recall,2)*100), '%'+bcolors.ENDC)
   print(UF.TimeStamp(),'Average track reconstruction purity:',bcolors.BOLD+str(round(Precision,2)*100), '%'+bcolors.ENDC)
   print(UF.TimeStamp(),'Average track segmentation:',bcolors.BOLD+str(round(Segmentation,2))+bcolors.ENDC)
