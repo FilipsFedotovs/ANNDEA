@@ -81,10 +81,6 @@ raw_data=pd.read_csv(input_file_location,header=0,usecols=columns_to_extract)[co
 total_rows=len(raw_data.axes[0])
 print(UF.TimeStamp(),'The raw data has ',total_rows,' hits')
 
-print(raw_data)
-exit()
-
-
 
 if SliceData:
            print(UF.TimeStamp(),'Slicing the data...')
@@ -92,12 +88,14 @@ if SliceData:
            final_rows=len(raw_data.axes[0])
            print(UF.TimeStamp(),'The sliced raw data has ',final_rows,' hits')
 raw_data.drop([PM.x,PM.y,PM.z],axis=1,inplace=True)
+
 raw_data[PM.MC_Event_ID] = raw_data[PM.MC_Event_ID].astype(str)
 raw_data[PM.MC_Track_ID] = raw_data[PM.MC_Track_ID].astype(str)
 raw_data[PM.Hit_ID] = raw_data[PM.Hit_ID].astype(str)
 raw_data['MC_Mother_Track_ID'] = raw_data[PM.MC_Event_ID] + '-' + raw_data[PM.MC_Track_ID]
 raw_data.drop([PM.MC_Event_ID,PM.MC_Track_ID],axis=1,inplace=True)
-
+print(raw_data)
+exit()
 for rn in range(len(RecNames)):
     raw_data[TrackID[rn][0]] = raw_data[TrackID[rn][0]].astype(str)
     raw_data[TrackID[rn][1]] = raw_data[TrackID[rn][1]].astype(str)
