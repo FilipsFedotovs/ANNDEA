@@ -161,20 +161,16 @@ for RN in RecNames:
   #raw_data_rec=raw_data.drop(raw_data.index[(raw_data[RN] == 'nan-nan')])
   raw_data_rec = raw_data[raw_data[RN].str.contains("nan") == False]
   raw_data_rec=raw_data_rec[[RN,PM.Hit_ID]]
-  print(raw_data_rec)
   raw_data_temp_rec=raw_data_rec[[RN,PM.Hit_ID]].rename(columns={PM.Hit_ID: RN+'_Size'})
   raw_data_temp_rec=raw_data_temp_rec.groupby(by=[RN])[RN+'_Size'].nunique().reset_index()
   raw_data_temp_rec.drop(raw_data_temp_rec.index[(raw_data_temp_rec[RN+'_Size'] < MinHitsTrack)],inplace=True)
-  print(raw_data_temp_rec)
 
   rec_data_tot=raw_data_temp_rec[RN].nunique()
-  print(rec_data_tot)
   data_rec=pd.merge(raw_data_rec[[RN,PM.Hit_ID]],raw_data_temp_rec,how='inner', on =[RN])
   data_rec=pd.merge(data_rec,data_mc,how='inner', on =[PM.Hit_ID])
   data_rec=data_rec.rename(columns={PM.Hit_ID: RN+'_Overlap'})
   data_rec=data_rec.groupby(by=[RN,RN+'_Size','MC_Mother_Track_ID'])[RN+'_Overlap'].nunique().reset_index()
   data_rec.drop(data_rec.index[(data_rec[RN+'_Overlap'] < 2)],inplace=True)
-  print(data_rec)
   data_temp_rec=data_rec[[RN,'MC_Mother_Track_ID']].rename(columns={RN: RN+'_Segmentation'})
 
 
@@ -185,11 +181,12 @@ for RN in RecNames:
   data_rec.sort_values(by=[RN,RN+'_Overlap'], ascending=[1,0],inplace=True)
 
   data_rec.drop_duplicates(subset=[RN],keep='first',inplace=True)
-  print(data_rec)
-  continue
+
   data_rec.drop([RN],axis=1,inplace=True)
   rec_data_mtch=data_rec['MC_Mother_Track_ID'].nunique()
   raw_data_mc=pd.merge(raw_data_mc,data_rec,how='left', on =['MC_Mother_Track_ID'])
+  print(raw_data_mc)
+  continue
   print(UF.TimeStamp(), bcolors.OKGREEN+'Recombination metrics for ',bcolors.BOLD+RN+bcolors.ENDC,bcolors.OKGREEN+' are ready and listed bellow:'+bcolors.ENDC)
   print(UF.TimeStamp(),'Total number of reconstructed tracks :',bcolors.BOLD+str(rec_data_tot)+bcolors.ENDC)
   print(UF.TimeStamp(),'But the number of those tracks matched to MC tracks is:',bcolors.BOLD+str(rec_data_mtch)+bcolors.ENDC)
