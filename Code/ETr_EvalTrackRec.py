@@ -169,13 +169,15 @@ for RN in RecNames:
 
   rec_data_tot=raw_data_temp_rec[RN].nunique()
   print(rec_data_tot)
-  continue
   data_rec=pd.merge(raw_data_rec[[RN,PM.Hit_ID]],raw_data_temp_rec,how='inner', on =[RN])
   data_rec=pd.merge(data_rec,data_mc,how='inner', on =[PM.Hit_ID])
   data_rec=data_rec.rename(columns={PM.Hit_ID: RN+'_Overlap'})
   data_rec=data_rec.groupby(by=[RN,RN+'_Size','MC_Mother_Track_ID'])[RN+'_Overlap'].nunique().reset_index()
   data_rec.drop(data_rec.index[(data_rec[RN+'_Overlap'] < 2)],inplace=True)
+  print(rec_data)
+  continue
   data_temp_rec=data_rec[[RN,'MC_Mother_Track_ID']].rename(columns={RN: RN+'_Segmentation'})
+
 
   data_temp_rec=data_temp_rec.groupby(by=['MC_Mother_Track_ID'])[RN+'_Segmentation'].nunique().reset_index()
   data_rec=pd.merge(data_rec,data_temp_rec,how='inner', on =['MC_Mother_Track_ID'])
