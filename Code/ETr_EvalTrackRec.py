@@ -183,17 +183,15 @@ for RN in RecNames:
   data_rec.drop([RN],axis=1,inplace=True)
   rec_data_mtch=data_rec['MC_Mother_Track_ID'].nunique()
   raw_data_mc_loc=pd.merge(raw_data_mc,data_rec,how='left', on =['MC_Mother_Track_ID'])
-  print(raw_data_mc_loc)
-  continue
   print(UF.TimeStamp(), bcolors.OKGREEN+'Recombination metrics for ',bcolors.BOLD+RN+bcolors.ENDC,bcolors.OKGREEN+' are ready and listed bellow:'+bcolors.ENDC)
   print(UF.TimeStamp(),'Total number of reconstructed tracks :',bcolors.BOLD+str(rec_data_tot)+bcolors.ENDC)
   print(UF.TimeStamp(),'But the number of those tracks matched to MC tracks is:',bcolors.BOLD+str(rec_data_mtch)+bcolors.ENDC)
   if raw_data_mc["MC_Mother_Track_Size"].sum()>0:
-    Recall=raw_data_mc[RN+'_Overlap'].sum()/raw_data_mc["MC_Mother_Track_Size"].sum()
+    Recall=raw_data_mc_loc[RN+'_Overlap'].sum()/raw_data_mc_loc["MC_Mother_Track_Size"].sum()
   else:
     Recall=0
   if raw_data_mc[RN+'_Size'].sum()>0:
-    Precision=raw_data_mc[RN+'_Overlap'].sum()/raw_data_mc[RN+'_Size'].sum()
+    Precision=raw_data_mc_loc[RN+'_Overlap'].sum()/raw_data_mc_loc[RN+'_Size'].sum()
   else:
       Precision=0
   Segmentation=raw_data_mc[RN+'_Segmentation'].mean()
@@ -203,7 +201,7 @@ for RN in RecNames:
 print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
 print(UF.TimeStamp(),bcolors.BOLD+'Stage 4:'+bcolors.ENDC+' Writing the output...')
 output_file_location=EOS_DIR+'/ANNDEA/Data/TEST_SET/'+ofn+'_ETr_rec_stats.csv'
-raw_data_mc.to_csv(output_file_location,index=False)
+raw_data_mc_loc.to_csv(output_file_location,index=False)
 print(UF.TimeStamp(), bcolors.OKGREEN+"The track reconstruction stats for further analysis are written there:"+bcolors.ENDC, bcolors.OKBLUE+output_file_location+bcolors.ENDC)
 print(bcolors.HEADER+"############################################# End of the program ################################################"+bcolors.ENDC)
 #End of the script
