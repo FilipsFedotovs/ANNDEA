@@ -418,7 +418,7 @@ else:
     print(UF.TimeStamp(),'Analysing the current script status...',bcolors.ENDC)
     Status=Meta.Status[-1]
 
-print(UF.TimeStamp(),'Current status has a stage',Status,bcolors.ENDC)
+print(UF.TimeStamp(),'Current status is ',Status,bcolors.ENDC)
 ################ Set the execution sequence for the script
 Program=[]
 
@@ -470,7 +470,7 @@ elif type(JobSet[0]) is int:
 elif type(JobSet[0][0]) is int:
             for lp in JobSet:
                 TotJobs+=np.sum(lp)
-prog_entry.append(' Sending tracks to the HTCondor, so track segment combination pairs can be formed...')
+prog_entry.append(' Sending tracks to the HTCondor, so track segment combinations can be formed...')
 prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','RawSeedsRes','RUTr1a','.csv',RecBatchID,JobSet,'RUTr1a_GenerateRawSelectedSeeds_Sub.py'])
 prog_entry.append([ " --MaxSegments ", " --MaxSLG "," --MaxSTG "])
 prog_entry.append([MaxSegments, MaxSLG, MaxSTG])
@@ -548,7 +548,7 @@ while Status<len(Program):
         rec_no=len(rec_data)
         rec_no=(rec_no**2)-rec_no-eval_no
         UF.LogOperations(EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv', 'w', [['Step_No','Step_Desc','Fake_Seeds','Truth_Seeds','Precision','Recall'],[1,'Initial Sampling',rec_no,eval_no,eval_no/(rec_no+eval_no),1.0]])
-        print(UF.TimeStamp(), bcolors.OKGREEN+"The log data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv'+bcolors.ENDC)
+        print(UF.TimeStamp(), bcolors.OKGREEN+"The process log has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv'+bcolors.ENDC)
         FreshStart=False
         print(UF.TimeStamp(),bcolors.OKGREEN+'Stage',Status,' has successfully completed'+bcolors.ENDC)
         UpdateStatus(Status+1)
@@ -643,7 +643,7 @@ while Status<len(Program):
                     except:
                         continue
              UF.LogOperations(EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv', 'a', [[2,'SLG and STG cuts',rec_no,eval_no,eval_no/(rec_no+eval_no),eval_no/len(eval_data)]])
-             print(UF.TimeStamp(), bcolors.OKGREEN+"The log data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv'+bcolors.ENDC)
+             print(UF.TimeStamp(), bcolors.OKGREEN+"The log has been created successfully at "+bcolors.ENDC, bcolors.OKBLUE+EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv'+bcolors.ENDC)
          except:
              print(UF.TimeStamp(), bcolors.WARNING+'Log creation has failed'+bcolors.ENDC)
         FreshStart=False
@@ -651,7 +651,7 @@ while Status<len(Program):
         UpdateStatus(Status+1)
     elif Program[Status]=='Custom - RemoveOverlap':
         input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1c_'+RecBatchID+'_Fit_Seeds.pkl'
-        print(UF.TimeStamp(), "Loading fit track seeds from the file",bcolors.OKBLUE+input_file_location+bcolors.ENDC)
+        print(UF.TimeStamp(), "Loading the fit track seeds from the file",bcolors.OKBLUE+input_file_location+bcolors.ENDC)
         base_data=UF.PickleOperations(input_file_location,'r','N/A')[0]
         print(UF.TimeStamp(), bcolors.OKGREEN+"Loading is successful, there are "+str(len(base_data))+" fit seeds..."+bcolors.ENDC)
         with alive_bar(len(base_data),force_tty=True, title="Stripping non-z information from seeds...") as bar:
@@ -846,7 +846,7 @@ while Status<len(Program):
          base_data=UF.PickleOperations(input_file_location,'r','N/A')[0]
          print(UF.TimeStamp(), "Stripping off the seeds with low acceptance...")
          base_data=[tr for tr in base_data if tr.Fit >= Acceptance]
-         print(UF.TimeStamp(), 'Ok starting the final merging of the remained tracks')
+         print(UF.TimeStamp(), 'Ok starting the final merging of the remaining tracks')
          InitialDataLength=len(base_data)
          if CalibrateAcceptance:
             print(UF.TimeStamp(),'Calibrating the acceptance...')
@@ -884,8 +884,6 @@ while Status<len(Program):
                 recall=tp/TP
                 f1=(2*(precision*recall))/(precision+recall)
                 print('Cutoff at:',cut_off,'; Precision:', precision, '; Recall:', recall, '; F1:', f1)
-                x=input()
-            print(cut_data)
             exit()
          SeedCounter=0
          SeedCounterContinue=True
@@ -898,30 +896,15 @@ while Status<len(Program):
 
 
                  for ObjectSeed in base_data[SeedCounter+1:]:
-                          #if SubjectSeed.InjectTrackSeed(ObjectSeed):
-                        sh=SubjectSeed.Header
-                        oh=ObjectSeed.Header
-                        shits=SubjectSeed.Hits
-                        ohits=ObjectSeed.Hits
-                        try:
+                          if MaxSLG>=0:
                             if SubjectSeed.InjectDistantTrackSeed(ObjectSeed):
                                 base_data.pop(base_data.index(ObjectSeed))
-                        except Exception as e:
-                            print(e)
-                            print(sh)
-                            print(oh)
-                            print(shits)
-                            print(ohits)
-                            print('---------------------')
-                            print(SubjectSeed.Header)
-                            print(ObjectSeed.Header)
-                            print(SubjectSeed.Hits)
-                            print(ObjectSeed.Hits)
-                            exit()
-
+                          else:
+                            if SubjectSeed.InjectTrackSeed(ObjectSeed):
+                                base_data.pop(base_data.index(ObjectSeed))
                  SeedCounter+=1
                  bar()
-         print(str(InitialDataLength), "vertices from different files were merged into", str(len(base_data)), 'vertices with higher multiplicity...')
+         print(str(InitialDataLength), "segment pairs from different files were merged into", str(len(base_data)), 'tracks...')
          for v in range(0,len(base_data)):
              base_data[v].AssignANNTrUID(v)
 
@@ -1130,72 +1113,70 @@ while Status<len(Program):
     Status=Meta.Status[-1]
 
 if Status<20:
-    # Removing the temp files that were generated by the process
-    # print(UF.TimeStamp(),'Performing the cleanup... ',bcolors.ENDC)
-    # HTCondorTag="SoftUsed == \"ANNDEA-RUTr1a-"+RecBatchID+"\""
-    # UF.RecCleanUp(AFS_DIR, EOS_DIR, 'RUTr1a_'+RecBatchID, [], HTCondorTag)
-    # HTCondorTag="SoftUsed == \"ANNDEA-RUTr1b-"+RecBatchID+"\""
-    # UF.RecCleanUp(AFS_DIR, EOS_DIR, 'RUTr1b_'+RecBatchID, [], HTCondorTag)
-    # HTCondorTag="SoftUsed == \"ANNDEA-RUTr1c-"+RecBatchID+"\""
-    # UF.RecCleanUp(AFS_DIR, EOS_DIR, 'RUTr1c_'+RecBatchID, [], HTCondorTag)
-    # HTCondorTag="SoftUsed == \"ANNDEA-RUTr1e-"+RecBatchID+"\""
-    # UF.RecCleanUp(AFS_DIR, EOS_DIR, 'RUTr1e_'+RecBatchID, [], HTCondorTag)
-    # for p in Program:
-    #     if p[:6]!='Custom' and (p in ModelName)==False:
-    #        print(UF.TimeStamp(),UF.ManageTempFolders(p,'Delete'))
-    # for md in range(len(ModelName)):
-    #             if md==0:
-    #                 prog_entry=[]
-    #                 job_sets=[]
-    #                 JobSet=[]
-    #                 TotJobs=0
-    #                 Program_Dummy=[]
-    #                 Meta=UF.PickleOperations(RecOutputMeta,'r', 'N/A')[0]
-    #                 JobSets=Meta.JobSets
-    #                 for i in range(len(JobSets)):
-    #                     JobSet.append([])
-    #                     for j in range(len(JobSets[i][3])):
-    #                             JobSet[i].append(JobSets[i][3][j])
-    #                 if type(JobSet) is int:
-    #                             TotJobs=JobSet
-    #                 elif type(JobSet[0]) is int:
-    #                             TotJobs=np.sum(JobSet)
-    #                 elif type(JobSet[0][0]) is int:
-    #                             for lp in JobSet:
-    #                                 TotJobs+=np.sum(lp)
-    #
-    #                 prog_entry.append(' Sending tracks to the HTCondor, so track segment combination pairs can be formed...')
-    #                 prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','RefinedSeeds','RUTr1'+ModelName[md],'.pkl',RecBatchID,JobSet,'RUTr1b_RefineSeeds_Sub.py'])
-    #                 prog_entry.append([" --MaxSTG ", " --MaxSLG ", " --MaxDOCA ", " --MaxAngle "," --ModelName "," --FirstTime "])
-    #                 prog_entry.append([MaxSTG, MaxSLG, MaxDOCA, MaxAngle,'"'+ModelName[md]+'"', 'True'])
-    #                 prog_entry.append(TotJobs)
-    #                 prog_entry.append(LocalSub)
-    #                 prog_entry.append(['',''])
-    #                 print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Delete'))
-    #                 #Setting up folders for the output. The reconstruction of just one brick can easily generate >100k of files. Keeping all that blob in one directory can cause problems on lxplus.
-    #             else:
-    #                 prog_entry=[]
-    #                 TotJobs=0
-    #                 Program_Dummy=[]
-    #                 keep_testing=True
-    #                 TotJobs=0
-    #                 while keep_testing:
-    #                     test_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RUTr1'+ModelName[md-1]+'_'+RecBatchID+'_0/RUTr1'+str(ModelName[md])+'_'+RecBatchID+'_Input_Seeds_'+str(TotJobs)+'.pkl'
-    #                     if os.path.isfile(test_file_location):
-    #                         TotJobs+=1
-    #                     else:
-    #                         keep_testing=False
-    #                 prog_entry.append(' Sending tracks to the HTCondor, so track segment combination pairs can be formed...')
-    #                 prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','OutputSeeds','RUTr1'+ModelName[md],'.pkl',RecBatchID,TotJobs,'RUTr1b_RefineSeeds_Sub.py'])
-    #                 prog_entry.append([" --MaxSTG ", " --MaxSLG ", " --MaxDOCA ", " --MaxAngle "," --ModelName "," --FirstTime "])
-    #                 prog_entry.append([MaxSTG, MaxSLG, MaxDOCA, MaxAngle,'"'+ModelName[md]+'"', ModelName[md-1]])
-    #                 prog_entry.append(TotJobs)
-    #                 prog_entry.append(LocalSub)
-    #                 prog_entry.append(['',''])
-    #                 print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Delete')) #Deleting a specific set of created folders
-    print(UF.TimeStamp(), bcolors.OKGREEN+"Reconstruction has been completed"+bcolors.ENDC)
+    #Removing the temp files that were generated by the process
+    print(UF.TimeStamp(),'Performing the cleanup... ',bcolors.ENDC)
+    HTCondorTag="SoftUsed == \"ANNDEA-RUTr1a-"+RecBatchID+"\""
+    UF.RecCleanUp(AFS_DIR, EOS_DIR, 'RUTr1a_'+RecBatchID, [], HTCondorTag)
+    HTCondorTag="SoftUsed == \"ANNDEA-RUTr1b-"+RecBatchID+"\""
+    UF.RecCleanUp(AFS_DIR, EOS_DIR, 'RUTr1b_'+RecBatchID, [], HTCondorTag)
+    HTCondorTag="SoftUsed == \"ANNDEA-RUTr1c-"+RecBatchID+"\""
+    UF.RecCleanUp(AFS_DIR, EOS_DIR, 'RUTr1c_'+RecBatchID, [], HTCondorTag)
+    HTCondorTag="SoftUsed == \"ANNDEA-RUTr1e-"+RecBatchID+"\""
+    UF.RecCleanUp(AFS_DIR, EOS_DIR, 'RUTr1e_'+RecBatchID, [], HTCondorTag)
+    for p in Program:
+        if p[:6]!='Custom' and (p in ModelName)==False:
+           print(UF.TimeStamp(),UF.ManageTempFolders(p,'Delete'))
+    for md in range(len(ModelName)):
+                if md==0:
+                    prog_entry=[]
+                    job_sets=[]
+                    JobSet=[]
+                    TotJobs=0
+                    Program_Dummy=[]
+                    Meta=UF.PickleOperations(RecOutputMeta,'r', 'N/A')[0]
+                    JobSets=Meta.JobSets
+                    for i in range(len(JobSets)):
+                        JobSet.append([])
+                        for j in range(len(JobSets[i][3])):
+                                JobSet[i].append(JobSets[i][3][j])
+                    if type(JobSet) is int:
+                                TotJobs=JobSet
+                    elif type(JobSet[0]) is int:
+                                TotJobs=np.sum(JobSet)
+                    elif type(JobSet[0][0]) is int:
+                                for lp in JobSet:
+                                    TotJobs+=np.sum(lp)
+
+                    prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','RefinedSeeds','RUTr1'+ModelName[md],'.pkl',RecBatchID,JobSet,'RUTr1b_RefineSeeds_Sub.py'])
+                    prog_entry.append([" --MaxSTG ", " --MaxSLG ", " --MaxDOCA ", " --MaxAngle "," --ModelName "," --FirstTime "])
+                    prog_entry.append([MaxSTG, MaxSLG, MaxDOCA, MaxAngle,'"'+ModelName[md]+'"', 'True'])
+                    prog_entry.append(TotJobs)
+                    prog_entry.append(LocalSub)
+                    prog_entry.append(['',''])
+                    print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Delete'))
+                    #Setting up folders for the output. The reconstruction of just one brick can easily generate >100k of files. Keeping all that blob in one directory can cause problems on lxplus.
+                else:
+                    prog_entry=[]
+                    TotJobs=0
+                    Program_Dummy=[]
+                    keep_testing=True
+                    TotJobs=0
+                    while keep_testing:
+                        test_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RUTr1'+ModelName[md-1]+'_'+RecBatchID+'_0/RUTr1'+str(ModelName[md])+'_'+RecBatchID+'_Input_Seeds_'+str(TotJobs)+'.pkl'
+                        if os.path.isfile(test_file_location):
+                            TotJobs+=1
+                        else:
+                            keep_testing=False
+                    prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','OutputSeeds','RUTr1'+ModelName[md],'.pkl',RecBatchID,TotJobs,'RUTr1b_RefineSeeds_Sub.py'])
+                    prog_entry.append([" --MaxSTG ", " --MaxSLG ", " --MaxDOCA ", " --MaxAngle "," --ModelName "," --FirstTime "])
+                    prog_entry.append([MaxSTG, MaxSLG, MaxDOCA, MaxAngle,'"'+ModelName[md]+'"', ModelName[md-1]])
+                    prog_entry.append(TotJobs)
+                    prog_entry.append(LocalSub)
+                    prog_entry.append(['',''])
+                    print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Delete')) #Deleting a specific set of created folders
+    print(UF.TimeStamp(), bcolors.OKGREEN+"Segment merging has been completed"+bcolors.ENDC)
 else:
-    print(UF.TimeStamp(), bcolors.FAIL+"Reconstruction has not been completed as one of the processes has timed out. Please run the script again (without Reset Mode)."+bcolors.ENDC)
+    print(UF.TimeStamp(), bcolors.FAIL+"Segment merging has not been completed as one of the processes has timed out. Please run the script again (without Reset Mode)."+bcolors.ENDC)
     exit()
 
 
