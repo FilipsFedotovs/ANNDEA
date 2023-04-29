@@ -494,7 +494,8 @@ Program.append('Custom - RemoveOverlap')
 Program.append('Custom - PerformMerging')
 
 Program.append('Custom - TrackMapping')
-
+UpdateStatus(0)
+Status=0
 while Status<len(Program):
     if Program[Status][:6]!='Custom' and (Program[Status] in ModelName)==False:
         #Standard process here
