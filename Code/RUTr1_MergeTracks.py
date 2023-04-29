@@ -494,8 +494,6 @@ Program.append('Custom - RemoveOverlap')
 Program.append('Custom - PerformMerging')
 
 Program.append('Custom - TrackMapping')
-UpdateStatus(9)
-Status=9
 while Status<len(Program):
     if Program[Status][:6]!='Custom' and (Program[Status] in ModelName)==False:
         #Standard process here
@@ -1157,6 +1155,9 @@ if Status<20:
                     prog_entry.append(TotJobs)
                     prog_entry.append(LocalSub)
                     prog_entry.append(['',''])
+
+                    print(prog_entry)
+                    exit()
                     print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Delete'))
                     #Setting up folders for the output. The reconstruction of just one brick can easily generate >100k of files. Keeping all that blob in one directory can cause problems on lxplus.
                 else:
