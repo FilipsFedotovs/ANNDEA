@@ -2736,6 +2736,7 @@ def LoadRenderImages(Seeds,StartSeed,EndSeed,num_classes=2):
     return (ImagesX,ImagesY)
 
 def ManageTempFolders(spi,op_type):
+    print(spi)
     if type(spi[1][8]) is int:
        _tot=spi[1][8]
     else:
