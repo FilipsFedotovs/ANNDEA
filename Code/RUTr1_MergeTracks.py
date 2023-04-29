@@ -831,6 +831,7 @@ while Status<len(Program):
                 else:
                     Good_Tracks=pd.read_csv(EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1e_'+RecBatchID+'_Mapped_Tracks_Temp.csv')
                 print(UF.TimeStamp(),'Mapping data...')
+                data=pd.read_csv(args.f,header=0)
                 new_combined_data=pd.merge(data, Good_Tracks, how="left", on=[PM.Hit_ID])
                 new_combined_data['Temp_Track_Quarter'] = new_combined_data['Temp_Track_Quarter'].fillna(new_combined_data[BrickID])
                 new_combined_data['Temp_Track_ID'] = new_combined_data['Temp_Track_ID'].fillna(new_combined_data[TrackID])
