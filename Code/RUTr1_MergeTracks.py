@@ -452,8 +452,8 @@ else:
     Status=2
 
 if Mode=='CLEANUP':
-    UpdateStatus(5)
-    Status=5
+    UpdateStatus(19)
+    Status=19
 
 # ###### Stage 2
 prog_entry=[]
@@ -681,6 +681,8 @@ while Status<len(Program):
                 data=pd.read_csv(args.f,header=0)
                 print(UF.TimeStamp(),'Loading mapped data from',bcolors.OKBLUE+EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1e_'+RecBatchID+'_Union_Tracks.csv'+bcolors.ENDC)
                 map_data=pd.read_csv(EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1e_'+RecBatchID+'_Union_Tracks.csv',header=0)
+                print(map_data)
+                exit()
                 total_rows=len(data.axes[0])
                 print(UF.TimeStamp(),'The raw data has ',total_rows,' hits')
                 print(UF.TimeStamp(),'Removing unreconstructed hits...')
@@ -910,7 +912,7 @@ while Status<len(Program):
 
          output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1e_'+RecBatchID+'_Union_Tracks.pkl'
          output_csv_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1e_'+RecBatchID+'_Union_Tracks.csv'
-         csv_out=[['Old_Track_ID','New_Track_Quarter','New_Track_ID']]
+         csv_out=[['Old_Track_ID','Temp_Track_Quarter','Temp_Track_ID']]
          for Tr in base_data:
              for TH in Tr.Header:
                  csv_out.append([TH,RecBatchID,Tr.UTrID])
