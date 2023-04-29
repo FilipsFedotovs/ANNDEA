@@ -1149,7 +1149,7 @@ if Status<20:
                     elif type(JobSet[0][0]) is int:
                                 for lp in JobSet:
                                     TotJobs+=np.sum(lp)
-
+                    prog_entry.append(' Blank placeholder')
                     prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','RefinedSeeds','RUTr1'+ModelName[md],'.pkl',RecBatchID,JobSet,'RUTr1b_RefineSeeds_Sub.py'])
                     prog_entry.append([" --MaxSTG ", " --MaxSLG ", " --MaxDOCA ", " --MaxAngle "," --ModelName "," --FirstTime "])
                     prog_entry.append([MaxSTG, MaxSLG, MaxDOCA, MaxAngle,'"'+ModelName[md]+'"', 'True'])
