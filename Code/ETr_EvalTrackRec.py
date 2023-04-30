@@ -47,13 +47,14 @@ import Parameters as PM #This is where we keep framework global parameters
 parser = argparse.ArgumentParser(description='This script compares the ouput of the previous step with the output of ANNDEA reconstructed data to calculate reconstruction performance.')
 parser.add_argument('--f',help="Please enter the full path to the file with track reconstruction", default='/afs/cern.ch/work/f/ffedship/public/SHIP/Source_Data/SHIP_Emulsion_FEDRA_Raw_UR.csv')
 parser.add_argument('--TrackID',help="Name of the control track", default="[['Brick_ID','FEDRA_Track_ID']]")
-parser.add_argument('--SkipRcmb',help="Skip recombination calculations (to reduce CPU load)", default="N")
+parser.add_argument('--SkipRcmb',help="Skip recombination calculations (to reduce CPU load)", default="Y")
 parser.add_argument('--MCCategories',help="What MC categories present in the MC data would you like to split by?", default="[]")
 parser.add_argument('--RecNames',help="What Names would you like to assign to the reconstruction methods that generated the tracks?", default="['FEDRA']")
 parser.add_argument('--Xmin',help="This option restricts data to only those events that have tracks with hits x-coordinates that are above this value", default='0')
 parser.add_argument('--Xmax',help="This option restricts data to only those events that have tracks with hits x-coordinates that are below this value", default='0')
 parser.add_argument('--Ymin',help="This option restricts data to only those events that have tracks with hits y-coordinates that are above this value", default='0')
 parser.add_argument('--Ymax',help="This option restricts data to only those events that have tracks with hits y-coordinates that are below this value", default='0')
+parser.add_argument('--MinHitsTrack',help="What is the minimum number of hits per track?", default=PM.MinHitsTrack)
 args = parser.parse_args()
 
 ######################################## Welcome message  #############################################################
@@ -71,6 +72,8 @@ MCCategories=ast.literal_eval(args.MCCategories)
 RecNames=ast.literal_eval(args.RecNames)
 input_file_location=args.f
 SkipRcmb=args.SkipRcmb=='N'
+MinHitsTrack=int(args.MinHitsTrack)
+
 Xmin,Xmax,Ymin,Ymax=float(args.Xmin),float(args.Xmax),float(args.Ymin),float(args.Ymax)
 SliceData=max(Xmin,Xmax,Ymin,Ymax)>0 #We don't slice data if all values are set to zero simultaneousy (which is the default setting)
 ofn=(args.f[(args.f.rfind('/'))+1:-4])
@@ -89,14 +92,13 @@ total_rows=len(raw_data.axes[0])
 print(UF.TimeStamp(),'The raw data has ',total_rows,' hits')
 
 
-
-
 if SliceData:
            print(UF.TimeStamp(),'Slicing the data...')
            raw_data=raw_data.drop(raw_data.index[(raw_data[PM.x] > Xmax) | (raw_data[PM.x] < Xmin) | (raw_data[PM.y] > Ymax) | (raw_data[PM.y] < Ymin)])
            final_rows=len(raw_data.axes[0])
            print(UF.TimeStamp(),'The sliced raw data has ',final_rows,' hits')
 raw_data.drop([PM.x,PM.y,PM.z],axis=1,inplace=True)
+
 raw_data[PM.MC_Event_ID] = raw_data[PM.MC_Event_ID].astype(str)
 raw_data[PM.MC_Track_ID] = raw_data[PM.MC_Track_ID].astype(str)
 raw_data[PM.Hit_ID] = raw_data[PM.Hit_ID].astype(str)
@@ -150,24 +152,24 @@ if SkipRcmb:
         print(UF.TimeStamp(),'Therefore the recall of the '+RN+': is' ,bcolors.BOLD+str(Recall), '%'+bcolors.ENDC)
         print(UF.TimeStamp(),'And the precision of the '+RN+': is',bcolors.BOLD+str(Precision), '%'+bcolors.ENDC)
 
-
-
 print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
 print(UF.TimeStamp(),bcolors.BOLD+'Stage 3:'+bcolors.ENDC+' Analyzing track reconstruction metrics...')
 
 
-raw_data_mc=raw_data.groupby(by=['MC_Mother_Track_ID']+MCCategories)[PM.Hit_ID].nunique().reset_index()
-raw_data_mc.drop(raw_data_mc.index[(raw_data_mc[PM.Hit_ID] < 2)],inplace=True)
+raw_data_mc=raw_data[['MC_Mother_Track_ID',PM.Hit_ID]+MCCategories].groupby(by=['MC_Mother_Track_ID']+MCCategories)[PM.Hit_ID].nunique().reset_index()
+raw_data_mc.drop(raw_data_mc.index[(raw_data_mc[PM.Hit_ID] < MinHitsTrack)],inplace=True)
 raw_data_mc.rename(columns={PM.Hit_ID: "MC_Mother_Track_Size"},inplace=True)
 mc_data_tot=raw_data_mc['MC_Mother_Track_ID'].nunique()
 print(UF.TimeStamp(),'Total number of MC tracks is:',mc_data_tot)
 data_mc=pd.merge(raw_data[['MC_Mother_Track_ID',PM.Hit_ID]],raw_data_mc,how='inner', on =['MC_Mother_Track_ID'])
 for RN in RecNames:
-  raw_data_rec=raw_data.drop(raw_data.index[(raw_data[RN] == 'nan-nan')])
+  #raw_data_rec=raw_data.drop(raw_data.index[(raw_data[RN] == 'nan-nan')])
+  raw_data_rec = raw_data[raw_data[RN].str.contains("nan") == False]
   raw_data_rec=raw_data_rec[[RN,PM.Hit_ID]]
   raw_data_temp_rec=raw_data_rec[[RN,PM.Hit_ID]].rename(columns={PM.Hit_ID: RN+'_Size'})
   raw_data_temp_rec=raw_data_temp_rec.groupby(by=[RN])[RN+'_Size'].nunique().reset_index()
-  raw_data_temp_rec.drop(raw_data_temp_rec.index[(raw_data_temp_rec[RN+'_Size'] < 2)],inplace=True)
+  raw_data_temp_rec.drop(raw_data_temp_rec.index[(raw_data_temp_rec[RN+'_Size'] < MinHitsTrack)],inplace=True)
+
   rec_data_tot=raw_data_temp_rec[RN].nunique()
   data_rec=pd.merge(raw_data_rec[[RN,PM.Hit_ID]],raw_data_temp_rec,how='inner', on =[RN])
   data_rec=pd.merge(data_rec,data_mc,how='inner', on =[PM.Hit_ID])
@@ -176,7 +178,9 @@ for RN in RecNames:
   data_rec.drop(data_rec.index[(data_rec[RN+'_Overlap'] < 2)],inplace=True)
   data_temp_rec=data_rec[[RN,'MC_Mother_Track_ID']].rename(columns={RN: RN+'_Segmentation'})
 
+
   data_temp_rec=data_temp_rec.groupby(by=['MC_Mother_Track_ID'])[RN+'_Segmentation'].nunique().reset_index()
+
   data_rec=pd.merge(data_rec,data_temp_rec,how='inner', on =['MC_Mother_Track_ID'])
 
   data_rec.sort_values(by=[RN,RN+'_Overlap'], ascending=[1,0],inplace=True)
@@ -185,27 +189,27 @@ for RN in RecNames:
 
   data_rec.drop([RN],axis=1,inplace=True)
   rec_data_mtch=data_rec['MC_Mother_Track_ID'].nunique()
-  raw_data_mc=pd.merge(raw_data_mc,data_rec,how='left', on =['MC_Mother_Track_ID'])
+  raw_data_mc_loc=pd.merge(raw_data_mc,data_rec,how='left', on =['MC_Mother_Track_ID'])
   print(UF.TimeStamp(), bcolors.OKGREEN+'Recombination metrics for ',bcolors.BOLD+RN+bcolors.ENDC,bcolors.OKGREEN+' are ready and listed bellow:'+bcolors.ENDC)
   print(UF.TimeStamp(),'Total number of reconstructed tracks :',bcolors.BOLD+str(rec_data_tot)+bcolors.ENDC)
   print(UF.TimeStamp(),'But the number of those tracks matched to MC tracks is:',bcolors.BOLD+str(rec_data_mtch)+bcolors.ENDC)
-  if raw_data_mc["MC_Mother_Track_Size"].sum()>0:
-    Recall=raw_data_mc[RN+'_Overlap'].sum()/raw_data_mc["MC_Mother_Track_Size"].sum()
+  if raw_data_mc_loc["MC_Mother_Track_Size"].sum()>0:
+    Recall=raw_data_mc_loc[RN+'_Overlap'].sum()/raw_data_mc_loc["MC_Mother_Track_Size"].sum()
   else:
     Recall=0
-  if raw_data_mc[RN+'_Size'].sum()>0:
-    Precision=raw_data_mc[RN+'_Overlap'].sum()/raw_data_mc[RN+'_Size'].sum()
+  if raw_data_mc_loc[RN+'_Size'].sum()>0:
+    Precision=raw_data_mc_loc[RN+'_Overlap'].sum()/raw_data_mc_loc[RN+'_Size'].sum()
   else:
       Precision=0
-  Segmentation=raw_data_mc[RN+'_Segmentation'].mean()
+  Segmentation=raw_data_mc_loc[RN+'_Segmentation'].mean()
   print(UF.TimeStamp(),'Average track reconstruction efficiency:',bcolors.BOLD+str(round(Recall,2)*100), '%'+bcolors.ENDC)
   print(UF.TimeStamp(),'Average track reconstruction purity:',bcolors.BOLD+str(round(Precision,2)*100), '%'+bcolors.ENDC)
   print(UF.TimeStamp(),'Average track segmentation:',bcolors.BOLD+str(round(Segmentation,2))+bcolors.ENDC)
-print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
-print(UF.TimeStamp(),bcolors.BOLD+'Stage 4:'+bcolors.ENDC+' Writing the output...')
-output_file_location=EOS_DIR+'/ANNDEA/Data/TEST_SET/'+ofn+'_ETr_rec_stats.csv'
-raw_data_mc.to_csv(output_file_location,index=False)
-print(UF.TimeStamp(), bcolors.OKGREEN+"The track reconstruction stats for further analysis are written there:"+bcolors.ENDC, bcolors.OKBLUE+output_file_location+bcolors.ENDC)
+  print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
+  print(UF.TimeStamp(),bcolors.BOLD+'Stage 4:'+bcolors.ENDC+' Writing the output...')
+  output_file_location=EOS_DIR+'/ANNDEA/Data/TEST_SET/'+ofn+'_'+RN+'_ETr_rec_stats.csv'
+  raw_data_mc_loc.to_csv(output_file_location,index=False)
+  print(UF.TimeStamp(), bcolors.OKGREEN+"The track reconstruction stats for further analysis are written there:"+bcolors.ENDC, bcolors.OKBLUE+output_file_location+bcolors.ENDC)
 print(bcolors.HEADER+"############################################# End of the program ################################################"+bcolors.ENDC)
 #End of the script
 

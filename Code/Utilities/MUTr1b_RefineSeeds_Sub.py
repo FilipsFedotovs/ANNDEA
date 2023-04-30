@@ -71,6 +71,18 @@ for m in ModelName:
         import tensorflow as tf
         from tensorflow import keras
         Models.append(tf.keras.models.load_model(Model_Path))
+   
+    if ModelMeta.ModelFramework=='PyTorch':
+        import torch
+        from torch import optim
+        Model_Meta_Path=EOSsubModelDIR+'/'+m+'_Meta'
+        Model_Path=EOSsubModelDIR+'/'+m
+        ModelMeta=UF.PickleOperations(Model_Meta_Path, 'r', 'N/A')[0]
+        device = torch.device('cpu')
+        model = UF.GenerateModel(ModelMeta).to(device)
+        model.load_state_dict(torch.load(Model_Path))
+        Models.append(model)
+
 MaxDOCA=float(args.MaxDOCA)
 MaxSTG=float(args.MaxSTG)
 MaxSLG=float(args.MaxSLG)
@@ -111,33 +123,40 @@ print(UF.TimeStamp(),bcolors.OKGREEN+'Data has been successfully loaded and prep
 #create seeds
 GoodTracks=[]
 print(UF.TimeStamp(),'Beginning the sample generation part...')
+
 for s in range(0,limit):
+      
+        
      track=tracks.pop(0)
 
      label=track[2]
      track=EMO(track[:2])
-
-
      if label:
          num_label = 1
      else:
          num_label = 0
      track.LabelSeed(num_label)
      track.Decorate(segments)
+
      try:
        track.GetTrInfo()
      except:
        continue
+
      keep_seed=True
+
      if track.TrackQualityCheck(MaxDOCA,MaxSLG,MaxSTG, MaxAngle):
          for m in range(len(Metas)):
+             
              if track.FitSeed(Metas[m],Models[m])==False:
+                
                 keep_seed=False
          if keep_seed:
             GoodTracks.append(track)
      else:
          del track
          continue
+
 print(UF.TimeStamp(),bcolors.OKGREEN+'The sample generation has been completed..'+bcolors.ENDC)
 del tracks
 del segments

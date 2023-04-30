@@ -5,10 +5,7 @@
 
 ########################################    Import libraries    #############################################
 import argparse
-import pandas as pd #We use Panda for a routine data processing
-import math #We use it for data manipulation
-import gc  #Helps to clear memory
-import ast
+import sys
 
 
 
@@ -27,10 +24,30 @@ parser.add_argument('--AFS',help="AFS directory location", default='.')
 parser.add_argument('--BatchID',help="Give this training sample batch an ID", default='SHIP_UR_v1')
 parser.add_argument('--MaxSegments',help="A maximum number of track combinations that will be used in a particular HTCondor job for this script", default='20000')
 parser.add_argument('--VetoMotherTrack',help="Skip Invalid Mother_IDs", default="[]")
+parser.add_argument('--PY',help="Python libraries directory location", default='.')
+args = parser.parse_args()
 
+
+#Loading Directory locations
+EOS_DIR=args.EOS
+AFS_DIR=args.AFS
+PY_DIR=args.PY
+if PY_DIR!='': #Temp solution
+    sys.path=['',PY_DIR]
+    sys.path.append('/usr/lib64/python36.zip')
+    sys.path.append('/usr/lib64/python3.6')
+    sys.path.append('/usr/lib64/python3.6/lib-dynload')
+    sys.path.append('/usr/lib64/python3.6/site-packages')
+    sys.path.append('/usr/lib/python3.6/site-packages')
+sys.path.append(AFS_DIR+'/Code/Utilities')
+import UtilityFunctions as UF #This is where we keep routine utility functions
+import pandas as pd #We use Panda for a routine data processing
+import math #We use it for data manipulation
+import gc  #Helps to clear memory
+import ast
 
 ######################################## Set variables  #############################################################
-args = parser.parse_args()
+
 i=int(args.i)    #This is just used to name the output file
 p=args.p
 o=args.o
@@ -41,16 +58,13 @@ VetoMotherTrack=ast.literal_eval(args.VetoMotherTrack)
 ########################################     Preset framework parameters    #########################################
 MaxRecords=10000000 #A set parameter that helps to manage memory load of this script (Please do not exceed 10000000)
 MaxSegments=int(args.MaxSegments)
-#Loading Directory locations
-EOS_DIR=args.EOS
-AFS_DIR=args.AFS
-
-import UtilityFunctions as UF #This is where we keep routine utility functions
 
 #Specifying the full path to input/output files
 input_file_location=EOS_DIR+'/ANNDEA/Data/TEST_SET/EUTr1_'+BatchID+'_TRACK_SEGMENTS.csv'
-output_file_location=EOS_DIR+p+'/'+pfx+'_'+BatchID+'_RawSeeds_'+str(i)+sfx
-output_result_location=EOS_DIR+'/'+p+'/'+pfx+'_'+BatchID+'_'+o+'_'+str(i)+sfx
+
+output_result_location=EOS_DIR+p+'/Temp_'+pfx+'_'+BatchID+'_'+str(0)+'/'+pfx+'_'+BatchID+'_'+o+'_'+str(i)+sfx
+output_file_location=EOS_DIR+p+'/Temp_'+pfx+'_'+BatchID+'_'+str(0)+'/'+pfx+'_'+BatchID+'_RawSeeds_'+str(i)+sfx
+
 print(UF.TimeStamp(), "Modules Have been imported successfully...")
 print(UF.TimeStamp(),'Loading pre-selected data from ',input_file_location)
 data=pd.read_csv(input_file_location,header=0,
@@ -60,7 +74,7 @@ data.drop_duplicates(subset="Rec_Seg_ID",keep='first',inplace=True)
 print(UF.TimeStamp(),'Creating segment combinations... ')
 
 #Doing a plate region cut for the Main Data
-Records=len(data.axes[0])
+Records=len(data)
 print(UF.TimeStamp(),'There are total of ', Records, 'tracks in the data set')
 Cut=math.ceil(MaxRecords/Records) #Even if use only a max of 20000 track on the right join we cannot perform the full outer join due to the memory limitations, we do it in a small 'cuts'
 Steps=math.ceil(MaxSegments/Cut)  #Calculating number of cuts
@@ -74,7 +88,9 @@ EndDataCut=(i+1)*MaxSegments
 #Specifying the right join
 
 r_data=data.rename(columns={"Rec_Seg_ID": "Segment_2"})
-
+r_data=r_data.iloc[StartDataCut:min(EndDataCut,Records)]
+Records=len(r_data)
+print(UF.TimeStamp(),'However we will only attempt  ', Records, 'track segments in the starting plate')
 data=data.rename(columns={"Rec_Seg_ID": "Segment_1"})
 
 result_list=[]  #We will keep the result in list rather then Panda Dataframe to save memory
@@ -109,7 +125,6 @@ for i in range(0,Steps):
       result_list=[]
       gc.collect()
 
-print(result_list,output_file_location)
 UF.LogOperations(output_file_location,'a',result_list) #Writing the remaining data into the csv
 UF.LogOperations(output_result_location,'w',[])
 print(UF.TimeStamp(), "Eval seed generation is finished...")

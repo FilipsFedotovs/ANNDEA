@@ -10,8 +10,10 @@ y='y' #Column name for y-coordinate of the track hit
 tx='tx' #Column name x-coordinate of the track hit
 ty='ty' #Column name for y-coordinate of the track hit
 z='z' #Column name for z-coordinate of the track hit
-Rec_Track_ID='FEDRA_Track_ID' #Column nameActual track id for FEDRA (or other reconstruction software)
-Rec_Track_Domain='FEDRA_Brick_ID' #Quarter of the ECC where the track is reconstructed If not present in the data please put the Track ID (the same as above)
+
+Rec_Track_ID='ANN_Track_ID' #Column nameActual track id for FEDRA (or other reconstruction software)
+Rec_Track_Domain='ANN_Brick_ID' #Quarter of the ECC where the track is reconstructed If not present in the data please put the Track ID (the same as above)
+
 MC_Track_ID='MC_Track_ID'  #Column name for Track ID for MC Truth reconstruction data
 MC_Event_ID='MC_Event_ID' #Column name for Event id for MC truth reconstruction data (If absent please enter the MCTrack as for above)
 MinHitsTrack=2
@@ -40,11 +42,7 @@ MaxSeeds=50000
 # MaxTracksPerTrPool=20000
 
 ######List of geometrical constain parameters
-MaxSLG=7000
-MaxSTG=160#This parameter restricts the maximum length of of the longitudinal and transverse distance between track segments.
-MinHitsTrack=2
-MaxDOCA=50
-MaxAngle=1 #Seed Opening Angle (Magnitude) in radians
+MinHitsTrack=4
 VetoMotherTrack=[]
 
 # MaxTracksPerJob=20000

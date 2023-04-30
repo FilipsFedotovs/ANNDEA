@@ -24,10 +24,9 @@ parser.add_argument('--MaxSLG',help="Maximum allowed longitudinal gap value betw
 parser.add_argument('--MaxSTG',help="Maximum allowed transverse gap value between segments per SLG length", default='1000')
 parser.add_argument('--EOS',help="EOS directory location", default='.')
 parser.add_argument('--AFS',help="AFS directory location", default='.')
-parser.add_argument('--PY',help="Python libraries directory location", default='.')
 parser.add_argument('--BatchID',help="Give this training sample batch an ID", default='SHIP_UR_v1')
 parser.add_argument('--MaxSegments',help="A maximum number of track combinations that will be used in a particular HTCondor job for this script", default='20000')
-
+parser.add_argument('--PY',help="Python libraries directory location", default='.')
 
 ######################################## Set variables  #############################################################
 args = parser.parse_args()
@@ -47,6 +46,7 @@ MaxSegments=int(args.MaxSegments)
 #Loading Directory locations
 EOS_DIR=args.EOS
 AFS_DIR=args.AFS
+PY_DIR=args.PY
 if PY_DIR!='': #Temp solution
     sys.path=['',PY_DIR]
     sys.path.append('/usr/lib64/python36.zip')
@@ -62,8 +62,8 @@ import gc  #Helps to clear memory
 import numpy as np
 #Specifying the full path to input/output files
 input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1_'+BatchID+'_TRACK_SEGMENTS.csv'
-output_file_location=EOS_DIR+p+'/'+pfx+'_'+BatchID+'_RawSeeds_'+str(i)+'_'+str(j)+sfx
-output_result_location=EOS_DIR+'/'+p+'/'+pfx+'_'+BatchID+'_'+o+'_'+str(i)+'_'+str(j)+sfx
+output_file_location=EOS_DIR+p+'/Temp_'+pfx+'_'+BatchID+'_'+str(i)+'/'+pfx+'_'+BatchID+'_RawSeeds_'+str(i)+'_'+str(j)+sfx
+output_result_location=EOS_DIR+'/'+p+'/Temp_'+pfx+'_'+BatchID+'_'+str(i)+'/'+pfx+'_'+BatchID+'_'+o+'_'+str(i)+'_'+str(j)+sfx
 print(UF.TimeStamp(), "Modules Have been imported successfully...")
 print(UF.TimeStamp(),'Loading pre-selected data from ',input_file_location)
 data=pd.read_csv(input_file_location,header=0,
@@ -106,7 +106,6 @@ r_data.drop(r_data.index[r_data['z'] != PlateZ], inplace = True)
 
 Records=len(r_data)
 print(UF.TimeStamp(),'There are  ', Records, 'segments in the starting plate')
-
 r_data=r_data.iloc[StartDataCut:min(EndDataCut,Records)]
 Records=len(r_data)
 print(UF.TimeStamp(),'However we will only attempt  ', Records, 'track segments in the starting plate')
@@ -149,11 +148,16 @@ for i in range(0,Steps):
 
   merged_data['SLG']=merged_data['z']-merged_data['e_z'] #Calculating the Euclidean distance between Track start hits
   merged_data['STG']=np.sqrt((merged_data['x']-merged_data['e_x'])**2+((merged_data['y']-merged_data['e_y'])**2)) #Calculating the Euclidean distance between Track start hits
-  merged_data['DynamicCut']=MaxSTG+(merged_data['SLG']*0.96)
+  merged_data['DynamicCut']=MaxSTG+(abs(merged_data['SLG'])*0.96)
 
-  merged_data.drop(merged_data.index[merged_data['SLG'] < 0], inplace = True) #Dropping the Seeds that are too far apart
-  merged_data.drop(merged_data.index[merged_data['SLG'] > MaxSLG], inplace = True) #Dropping the track segment combinations where the length of the gap between segments is too large
-  merged_data.drop(merged_data.index[merged_data['STG'] > merged_data['DynamicCut']], inplace = True)
+  if MaxSLG>=0: #These are the cases to dela with the tracks that have no verlap along z-axis
+     merged_data.drop(merged_data.index[merged_data['SLG'] > MaxSLG], inplace = True) #Dropping the track segment combinations where the length of the gap between segments is too large
+     merged_data.drop(merged_data.index[merged_data['SLG'] < 0], inplace = True) #Dropping the track segment combinations where the length of the gap between segments is too large
+     merged_data.drop(merged_data.index[merged_data['STG'] > merged_data['DynamicCut']], inplace = True) #If the tracks don't overlap we allow some deviation which increase with the gap size
+  else: #Here is the case when we deal with overlapping tracks
+     merged_data.drop(merged_data.index[merged_data['SLG'] >= 0], inplace = True) #Dropping the track segment combinations where the length of the gap between segments is too large
+     merged_data.drop(merged_data.index[merged_data['SLG'] < MaxSLG], inplace = True) #Dropping the track segment combinations where the length of the gap between segments is too large
+     merged_data.drop(merged_data.index[merged_data['STG'] > MaxSTG], inplace = True) #If tracks overlap we keep the minimum STG
   merged_data.drop(['y','z','x','e_x','e_y','e_z','join_key','STG','SLG','DynamicCut'],axis=1,inplace=True) #Removing the information that we don't need anymore
 
   if merged_data.empty==False:
@@ -170,7 +174,7 @@ for i in range(0,Steps):
 
 UF.LogOperations(output_file_location,'a',result_list) #Writing the remaining data into the csv
 UF.LogOperations(output_result_location,'w',[])
-print(UF.TimeStamp(), "Train seed generation is finished...")
+print(UF.TimeStamp(), "Reconstruction seed generation is finished...")
 #End of the script
 
 

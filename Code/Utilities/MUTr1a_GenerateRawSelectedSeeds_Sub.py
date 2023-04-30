@@ -84,9 +84,11 @@ data_end_header = data.groupby('Rec_Seg_ID')['z'].max()  #Keeping only ending hi
 data_end_header=data_end_header.reset_index()
 data_end_header=data_end_header.rename(columns={"z": "e_z"})
 data_header=pd.merge(data_header, data_end_header, how="inner", on=["Rec_Seg_ID"]) #Shrinking the Track data so just a star hit for each track is present.
+
 #Doing a plate region cut for the Main Data
 #data_header.drop(data_header.index[data_header['e_z'] > (PlateZ+MaxSLG)], inplace = True) #Not applicable for TSU
 data_header.drop(data_header.index[data_header['z'] < PlateZ], inplace = True)
+
 Records=len(data_header.axes[0])
 print(UF.TimeStamp(),'There are total of ', Records, 'tracks in the data set')
 
@@ -100,6 +102,7 @@ data_e=data_e.rename(columns={"y": "e_y"})
 data_e.drop(['z_x'],axis=1,inplace=True)
 data_e.drop(['z_y'],axis=1,inplace=True)
 data=pd.merge(data_s, data_e, how="inner", on=["Rec_Seg_ID",'MC_Mother_Track_ID']) #Combining datasets so for each track we know its starting and ending coordinates
+
 del data_e
 del data_s
 gc.collect()
@@ -118,7 +121,6 @@ Records=len(r_data.axes[0])
 print(UF.TimeStamp(),'There are  ', Records, 'segments in the starting plate')
 
 r_data=r_data.iloc[StartDataCut:min(EndDataCut,Records)]
-
 
 Records=len(r_data.axes[0])
 print(UF.TimeStamp(),'However we will only attempt  ', Records, 'track segments in the starting plate')
@@ -161,9 +163,15 @@ for i in range(0,Steps):
   merged_data['SLG']=merged_data['z']-merged_data['e_z'] #Calculating the Euclidean distance between Track start hits
   merged_data['STG']=np.sqrt((merged_data['x']-merged_data['e_x'])**2+((merged_data['y']-merged_data['e_y'])**2)) #Calculating the Euclidean distance between Track start hits
   merged_data['DynamicCut']=MaxSTG+(merged_data['SLG']*0.96)
-  merged_data.drop(merged_data.index[merged_data['SLG'] < 0], inplace = True) #Dropping the Seeds that are too far apart
-  merged_data.drop(merged_data.index[merged_data['SLG'] > MaxSLG], inplace = True) #Dropping the track segment combinations where the length of the gap between segments is too large
-  merged_data.drop(merged_data.index[merged_data['STG'] > merged_data['DynamicCut']], inplace = True)
+  if MaxSLG>=0: #These are the cases to dela with the tracks that have no verlap along z-axis
+     merged_data.drop(merged_data.index[merged_data['SLG'] > MaxSLG], inplace = True) #Dropping the track segment combinations where the length of the gap between segments is too large
+     merged_data.drop(merged_data.index[merged_data['SLG'] < 0], inplace = True) #Dropping the track segment combinations where the length of the gap between segments is too large
+     merged_data.drop(merged_data.index[merged_data['STG'] > merged_data['DynamicCut']], inplace = True) #If the tracks don't overlap we allow some deviation which increase with the gap size
+  else: #Here is the case when we deal with overlapping tracks
+     merged_data.drop(merged_data.index[merged_data['SLG'] >= 0], inplace = True) #Dropping the track segment combinations where the length of the gap between segments is too large
+     merged_data.drop(merged_data.index[merged_data['SLG'] < MaxSLG], inplace = True) #Dropping the track segment combinations where the length of the gap between segments is too large
+     merged_data.drop(merged_data.index[merged_data['STG'] > MaxSTG], inplace = True) #If tracks overlap we keep the minimum STG
+
   merged_data.drop(['y','z','x','e_x','e_y','e_z','join_key','STG','SLG','DynamicCut'],axis=1,inplace=True) #Removing the information that we don't need anymore
   if merged_data.empty==False:
     merged_data.drop(merged_data.index[merged_data['Segment_1'] == merged_data['Segment_2']], inplace = True) #Removing the cases where Seed tracks are the same
@@ -183,8 +191,6 @@ for i in range(0,Steps):
       del result_list
       result_list=[]
       gc.collect()
-
-
 UF.LogOperations(output_file_location,'a',result_list) #Writing the remaining data into the csv
 UF.LogOperations(output_result_location,'w',[])
 print(UF.TimeStamp(), "Train seed generation is finished...")
