@@ -2637,7 +2637,7 @@ def CreateCondorJobs(AFS,EOS,PY,path,o,pfx,sfx,ID,loop_params,OptionHeader,Optio
                                bad_pop.append([OH+[' --i ', ' --p ', ' --o ',' --pfx ', ' --sfx '], OL+['$1', path,o, pfx, sfx], SHName, SUBName, MSGName, ScriptName, loop_params, 'ANNDEA-'+pfx+'-'+ID, Log,GPU])
         return(bad_pop)
    return []
-def SubmitJobs2Condor(job,local=False,ExtCPU=False,JobFlavour='workday'):
+def SubmitJobs2Condor(job,local=False,ExtCPU=1,JobFlavour='workday', ExtMemory='2 GB'):
     if local:
        OptionLine = job[0][0]+str(job[1][0])
        for line in range(1,len(job[0])):
@@ -2673,9 +2673,11 @@ def SubmitJobs2Condor(job,local=False,ExtCPU=False,JobFlavour='workday'):
         if job[9]:
             f.write('request_gpus = 1')
             f.write("\n")
-        if ExtCPU and job[9]==False:
-            f.write('RequestCpus = 4')
+        if ExtCPU>1 and job[9]==False:
+            f.write('request_cpus = '+str(ExtCPU))
             f.write("\n")
+        f.write('request_memory = '+str(ExtMemory))
+        f.write("\n")
         f.write('arguments = $(Process)')
         f.write("\n")
         f.write('+SoftUsed = '+'"'+job[7]+'"')
@@ -2736,7 +2738,6 @@ def LoadRenderImages(Seeds,StartSeed,EndSeed,num_classes=2):
     return (ImagesX,ImagesY)
 
 def ManageTempFolders(spi,op_type):
-    print(spi[1])
     if type(spi[1][8]) is int:
        _tot=spi[1][8]
     else:
