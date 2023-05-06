@@ -197,7 +197,7 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         print(UF.TimeStamp(), bcolors.OKGREEN+"The track segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+output_file_location+bcolors.ENDC)
         Meta=UF.TrainingSampleMeta(TrainSampleID)
         Meta.IniTrackMetaData(ClassHeaders,ClassNames,ClassValues,PM.MaxSegments,no_submissions,MinHitsTrack)
-        Meta.UpdateStatus(1)
+        Meta.UpdateStatus(0)
         print(UF.PickleOperations(TrainSampleOutputMeta,'w', Meta)[1])
         print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
         print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 0 has successfully completed'+bcolors.ENDC)
@@ -368,8 +368,8 @@ if Mode=='RESET':
     HTCondorTag="SoftUsed == \"ANNDEA-MCTr1b-"+TrainSampleID+"\""
     UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MCTr1b_'+TrainSampleID, ['MCTr1b'+TrainSampleID], HTCondorTag)
     FreshStart=False
-    UpdateStatus(1)
-    Status=1
+    UpdateStatus(0)
+    Status=0
 else:
     print(UF.TimeStamp(),'Analysing the current script status...',bcolors.ENDC)
     Status=Meta.Status[-1]
@@ -393,6 +393,7 @@ Program.append('Custom')
 Program.append('Custom')
 
 while Status<len(Program):
+      print
       if Program[Status]!='Custom':
         #Standard process here
         Result=StandardProcess(Program,Status,FreshStart)
