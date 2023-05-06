@@ -47,7 +47,7 @@ parser.add_argument('--Samples',help="How many samples? Please enter the number 
 parser.add_argument('--TrainSampleSize',help="Maximum number of samples per Training file", default='50000')
 parser.add_argument('--ClassHeaders',help="What class headers to use?", default="['EM Background']")
 parser.add_argument('--ClassNames',help="What class headers to use?", default="[['Flag','ProcID']]")
-parser.add_argument('--ClassValues',help="What class values to use?", default="[['13','-13'],['8']]")
+parser.add_argument('--ClassValues',help="What class values to use?", default="[['11','-11'],['8']]")
 ######################################## Parsing argument values  #############################################################
 args = parser.parse_args()
 Mode=args.Mode.upper()
@@ -100,6 +100,8 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
                     header=0,
                     usecols=ColumnsToImport)
         total_rows=len(data.axes[0])
+        print(data)
+        exit()
         print(UF.TimeStamp(),'The raw data has ',total_rows,' hits')
         print(UF.TimeStamp(),'Removing unreconstructed hits...')
         data=data.dropna()
