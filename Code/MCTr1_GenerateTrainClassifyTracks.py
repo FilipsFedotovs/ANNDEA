@@ -35,7 +35,6 @@ print(bcolors.HEADER+"##########################################################
 #Setting the parser - this script is usually not run directly, but is used by a Master version Counterpart that passes the required arguments
 parser = argparse.ArgumentParser(description='This script prepares training data for training the tracking model')
 parser.add_argument('--Mode', help='Script will continue from the last checkpoint, unless you want to start from the scratch, then type "Reset"',default='')
-parser.add_argument('--ModelName',help="WHat GNN model would you like to use?", default="['MH_GNN_5FTR_4_120_4_120']")
 parser.add_argument('--Patience',help="How many checks to do before resubmitting the job?", default='15')
 parser.add_argument('--TrainSampleID',help="Give this training sample batch an ID", default='SHIP_UR_v1')
 parser.add_argument('--f',help="Please enter the full path to the file with track reconstruction", default='/afs/cern.ch/work/f/ffedship/public/SHIP/Source_Data/SHIP_Emulsion_FEDRA_Raw_UR.csv')
@@ -48,14 +47,16 @@ parser.add_argument('--TrainSampleSize',help="Maximum number of samples per Trai
 parser.add_argument('--ClassHeaders',help="What class headers to use?", default="['EM Background']")
 parser.add_argument('--ClassNames',help="What class headers to use?", default="[['Flag','ProcID']]")
 parser.add_argument('--ClassValues',help="What class values to use?", default="[['11','-11'],['8']]")
+parser.add_argument('--TrackID',help="What track name is used?", default='ANN_Track_ID')
+parser.add_argument('--BrickID',help="What brick ID name is used?", default='ANN_Brick_ID')
 ######################################## Parsing argument values  #############################################################
 args = parser.parse_args()
 Mode=args.Mode.upper()
-ModelName=ast.literal_eval(args.ModelName)
 ClassHeaders=ast.literal_eval(args.ClassHeaders)
 ClassNames=ast.literal_eval(args.ClassNames)
 ClassValues=ast.literal_eval(args.ClassValues)
-
+TrackID=args.TrackID
+BrickID=args.BrickID
 TrainSampleID=args.TrainSampleID
 Patience=int(args.Patience)
 TrainSampleSize=int(args.TrainSampleSize)
@@ -82,7 +83,7 @@ EOSsubDIR=EOS_DIR+'/'+'ANNDEA'
 EOSsubModelDIR=EOSsubDIR+'/'+'Models'
 TrainSampleOutputMeta=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_info.pkl'
 required_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MCTr1_'+TrainSampleID+'_TRACKS.csv'
-ColumnsToImport=[PM.Rec_Track_ID,PM.Rec_Track_Domain,PM.x,PM.y,PM.z,PM.tx,PM.ty,PM.MC_Track_ID,PM.MC_Event_ID]
+ColumnsToImport=[TrackID,BrickID,PM.x,PM.y,PM.z,PM.tx,PM.ty,PM.MC_Track_ID,PM.MC_Event_ID]
 ExtraColumns=[]
 for i in ClassNames:
     for j in i:
@@ -100,8 +101,6 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
                     header=0,
                     usecols=ColumnsToImport)
         total_rows=len(data.axes[0])
-        print(data)
-        exit()
         print(UF.TimeStamp(),'The raw data has ',total_rows,' hits')
         print(UF.TimeStamp(),'Removing unreconstructed hits...')
         data=data.dropna()
@@ -111,15 +110,17 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         for i in ExtraColumns:
             data[i]=data[i].astype(str)
         data[PM.MC_Track_ID] = data[PM.MC_Track_ID].astype(str)
-        data[PM.Rec_Track_ID] = data[PM.Rec_Track_ID].astype(str)
-        data[PM.Rec_Track_Domain] = data[PM.Rec_Track_Domain].astype(str)
+        data[TrackID] = data[TrackID].astype(str)
+        data[BrickID] = data[BrickID].astype(str)
         data[PM.MC_Event_ID] = data[PM.MC_Event_ID].astype(str)
-        data['Rec_Seg_ID'] = data[PM.Rec_Track_Domain] + '-' + data[PM.Rec_Track_ID]
+        data['Rec_Seg_ID'] = data[BrickID] + '-' + data[TrackID]
         data['MC_Mother_Track_ID'] = data[PM.MC_Event_ID] + '-' + data[PM.MC_Track_ID]
         data=data.drop([PM.Rec_Track_ID],axis=1)
         data=data.drop([PM.Rec_Track_Domain],axis=1)
         data=data.drop([PM.MC_Event_ID],axis=1)
         data=data.drop([PM.MC_Track_ID],axis=1)
+        print(data)
+        exit()
         compress_data=data.drop([PM.x,PM.y,PM.z,PM.tx,PM.ty],axis=1)
 
         compress_data['MC_Mother_Track_No']= compress_data['MC_Mother_Track_ID']
