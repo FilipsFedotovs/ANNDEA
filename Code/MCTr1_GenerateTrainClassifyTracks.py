@@ -386,6 +386,10 @@ prog_entry.append(JobSets)
 prog_entry.append(LocalSub)
 prog_entry.append(['',''])
 Program.append(prog_entry)
+if Mode=='RESET':
+   print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Delete'))
+#Setting up folders for the output. The reconstruction of just one brick can easily generate >100k of files. Keeping all that blob in one directory can cause problems on lxplus.
+print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Create'))
 
 ###### Stage 1
 Program.append('Custom')
