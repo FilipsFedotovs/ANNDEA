@@ -52,6 +52,7 @@ parser.add_argument('--BrickID',help="What brick ID name is used?", default='ANN
 parser.add_argument('--ReqMemory',help="How uch memory to request?", default='2 GB')
 parser.add_argument('--RequestExtCPU',help="Would you like to request extra CPUs?", default=1)
 parser.add_argument('--JobFlavour',help="Specifying the length of the HTCondor job walltime. Currently at 'workday' which is 8 hours.", default='workday')
+parser.add_argument('--RemoveTracksZ',help="This option enables to remove particular tracks of starting Z-coordinate", default='[]')
 ######################################## Parsing argument values  #############################################################
 args = parser.parse_args()
 Mode=args.Mode.upper()
@@ -69,7 +70,7 @@ SliceData=max(Xmin,Xmax,Ymin,Ymax)>0 #We don't slice data if all values are set 
 RequestExtCPU=int(args.RequestExtCPU)
 ReqMemory=args.ReqMemory
 JobFlavour=args.JobFlavour
-
+RemoveTracksZ=ast.literal_eval(args.RemoveTracksZ)
 #Loading Directory locations
 csv_reader=open('../config',"r")
 config = list(csv.reader(csv_reader))
@@ -125,6 +126,15 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         data=data.drop([PM.Rec_Track_Domain],axis=1)
         data=data.drop([PM.MC_Event_ID],axis=1)
         data=data.drop([PM.MC_Track_ID],axis=1)
+        if len(RemoveTracksZ)>0:
+            print(UF.TimeStamp(),'Removing tracks based on start point')
+            TracksZdf = pd.DataFrame(RemoveTracksZ, columns = ['Bad_z'], dtype=float)
+            data_aggregated=data.groupby(['Rec_Seg_ID'])['z'].min().reset_index()
+            data_aggregated=data_aggregated.rename(columns={'z': "PosBad_Z"})
+            data=pd.merge(data, data_aggregated, how="left", on=['Rec_Seg_ID'])
+            data=pd.merge(data, TracksZdf, how="left", left_on=["PosBad_Z"], right_on=['Bad_z'])
+            data=data[data['Bad_z'].isnull()]
+            data=data.drop(['Bad_z', 'PosBad_Z'],axis=1)
         print(data)
         exit()
         compress_data=data.drop([PM.x,PM.y,PM.z,PM.tx,PM.ty],axis=1)
