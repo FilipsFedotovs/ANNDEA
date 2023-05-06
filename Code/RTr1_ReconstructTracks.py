@@ -58,7 +58,7 @@ parser.add_argument('--SubGap',help="How long to wait in minutes after submittin
 parser.add_argument('--RecBatchID',help="Give this reconstruction batch an ID", default='Test_Batch')
 parser.add_argument('--LocalSub',help="Local submission?", default='N')
 parser.add_argument('--ForceStatus',help="Would you like the program run from specific status number? (Only for advance users)", default='0')
-parser.add_argument('--RequestExtCPU',help="Would you like to request extra CPUs?", default='N')
+parser.add_argument('--RequestExtCPU',help="Would you like to request extra CPUs?", default=1)
 parser.add_argument('--JobFlavour',help="Specifying the length of the HTCondor job walltime. Currently at 'workday' which is 8 hours.", default='workday')
 parser.add_argument('--f',help="Please enter the full path to the file with track reconstruction", default='/eos/experiment/ship/ANNDEA/Data/SND_Emulsion_FEDRA_Raw_B31.csv')
 parser.add_argument('--Xmin',help="This option restricts data to only those events that have tracks with hits x-coordinates that are above this value", default='0')
@@ -69,6 +69,7 @@ parser.add_argument('--Z_overlap',help="Enter the level of overlap in integer nu
 parser.add_argument('--Y_overlap',help="Enter the level of overlap in integer number between reconstruction blocks along y-axis. (In order to avoid segmentation this value should be more than 1)", default='2')
 parser.add_argument('--X_overlap',help="Enter the level of overlap in integer number between reconstruction blocks along x-axis. (In order to avoid segmentation this value should be more than 1)", default='2')
 parser.add_argument('--CheckPoint',help="Save cluster sets during individual cluster tracking.", default='N')
+parser.add_argument('--ReqMemory',help="How much memory?", default='2 GB')
 
 ######################################## Parsing argument values  #############################################################
 args = parser.parse_args()
@@ -84,7 +85,8 @@ if LocalSub:
 else:
     time_int=10
 JobFlavour=args.JobFlavour
-RequestExtCPU=(args.RequestExtCPU=='Y')
+RequestExtCPU=int(args.RequestExtCPU)
+ReqMemory=args.ReqMemory
 input_file_location=args.f
 Xmin,Xmax,Ymin,Ymax=float(args.Xmin),float(args.Xmax),float(args.Ymin),float(args.Ymax)
 Z_overlap,Y_overlap,X_overlap=int(args.Z_overlap),int(args.Y_overlap),int(args.X_overlap)
@@ -232,7 +234,7 @@ def AutoPilot(wait_min, interval_min, max_interval_tolerance,program):
                print(UF.TimeStamp(),bcolors.WARNING+'Autopilot status update: There are still', len(bad_pop), 'HTCondor jobs remaining'+bcolors.ENDC)
                if interval%max_interval_tolerance==0:
                   for bp in bad_pop:
-                      UF.SubmitJobs2Condor(bp,program[5],RequestExtCPU,JobFlavour)
+                      UF.SubmitJobs2Condor(bp,program[5],RequestExtCPU,JobFlavour,ReqMemory)
                   print(UF.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
          else:
               return True,False
@@ -281,7 +283,7 @@ def StandardProcess(program,status,freshstart):
                               print(UF.TimeStamp(),'Pausing submissions for  ',str(int(SubPause/60)), 'minutes to relieve congestion...',bcolors.ENDC)
                               time.sleep(SubPause)
                               _cnt=0
-                          UF.SubmitJobs2Condor(bp,program[status][5],RequestExtCPU,JobFlavour)
+                          UF.SubmitJobs2Condor(bp,program[status][5],RequestExtCPU,JobFlavour,ReqMemory)
                           _cnt+=bp[6]
                  if program[status][5]:
                     print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
@@ -311,7 +313,7 @@ def StandardProcess(program,status,freshstart):
                               print(UF.TimeStamp(),'Pausing submissions for  ',str(int(SubPause/60)), 'minutes to relieve congestion...',bcolors.ENDC)
                               time.sleep(SubPause)
                               _cnt=0
-                           UF.SubmitJobs2Condor(bp,program[status][5],RequestExtCPU,JobFlavour)
+                           UF.SubmitJobs2Condor(bp,program[status][5],RequestExtCPU,JobFlavour,ReqMemory)
                            _cnt+=bp[6]
                       print(UF.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
                       if program[status][5]:
@@ -340,7 +342,7 @@ def StandardProcess(program,status,freshstart):
                               print(UF.TimeStamp(),'Pausing submissions for  ',str(int(SubPause/60)), 'minutes to relieve congestion...',bcolors.ENDC)
                               time.sleep(SubPause)
                               _cnt=0
-                           UF.SubmitJobs2Condor(bp,program[status][5],RequestExtCPU,JobFlavour)
+                           UF.SubmitJobs2Condor(bp,program[status][5],RequestExtCPU,JobFlavour,ReqMemory)
                            _cnt+=bp[6]
                       if program[status][5]:
                            print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)

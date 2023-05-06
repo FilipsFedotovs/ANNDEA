@@ -48,7 +48,7 @@ parser.add_argument('--TrainParams',help="Please enter the train params: '[<Lear
 parser.add_argument('--TrainSampleID',help="Give name to this train sample", default='SHIP_TrainSample_v1')
 parser.add_argument('--Mode',help="Please enter 'Reset' if you want to overwrite the existing model", default='')
 parser.add_argument('--JobFlavour',help="Specifying the length of the HTCondor job walltime. Currently at 'workday' which is 8 hours.", default='workday')
-parser.add_argument('--ReqMemory',help="Specifying the length of the HTCondor job walltime. Currently at 'workday' which is 8 hours.", default='2 GB')
+parser.add_argument('--ReqMemory',help="How much memory to request?", default='2 GB')
 parser.add_argument('--Wait',help="How many minutes to wait for a job", default='30')
 parser.add_argument('--RequestExtCPU',help="Would you like to request extra CPUs? How Many?", default=1)
 args = parser.parse_args()
