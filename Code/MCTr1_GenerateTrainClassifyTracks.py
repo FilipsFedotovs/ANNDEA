@@ -396,6 +396,7 @@ while Status<len(Program):
       if Program[Status]!='Custom':
         #Standard process here
         Result=StandardProcess(Program,Status,FreshStart)
+        print(Result)
         if Result[0]:
             FreshStart=Result[1]
             if args.ForceStatus=='':
