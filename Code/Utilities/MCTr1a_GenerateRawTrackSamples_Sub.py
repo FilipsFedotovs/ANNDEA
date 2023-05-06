@@ -35,11 +35,7 @@ sfx=args.sfx
 pfx=args.pfx
 BatchID=args.BatchID
 
-ExtraColumns=[]
-for j in ClassNames:
-    for k in j:
-        if (k in ExtraColumns)==False:
-            ExtraColumns.append(k)
+
 
 ########################################     Preset framework parameters    #########################################
 MaxSegments=int(args.MaxSegments)
@@ -62,6 +58,11 @@ import ast
 from UtilityFunctions import EMO
 ClassNames=ast.literal_eval(args.ClassNames)
 ClassValues=ast.literal_eval(args.ClassValues)
+ExtraColumns=[]
+for j in ClassNames:
+    for k in j:
+        if (k in ExtraColumns)==False:
+            ExtraColumns.append(k)
 #Specifying the full path to input/output files
 input_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MCTr1_'+BatchID+'_TRACKS.csv'
 output_file_location=EOS_DIR+p+'/'+pfx+'_'+BatchID+'_'+o+'_'+str(i)+sfx
