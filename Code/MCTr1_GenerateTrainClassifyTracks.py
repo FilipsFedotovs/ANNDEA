@@ -211,7 +211,7 @@ ClassValues=Meta.ClassValues
 JobSets=Meta.JobSets
 MaxSegments=Meta.MaxSegments
 TotJobs=JobSets
-exit()
+
 
 ########################################     Preset framework parameters    #########################################
 FreshStart=True
@@ -373,8 +373,8 @@ if Mode=='RESET':
 else:
     print(UF.TimeStamp(),'Analysing the current script status...',bcolors.ENDC)
     Status=Meta.Status[-1]
-print(UF.TimeStamp(),'There are 8 stages (0-7) of this script',status,bcolors.ENDC)
-print(UF.TimeStamp(),'Current status has a stage',status,bcolors.ENDC)
+print(UF.TimeStamp(),'There are 8 stages (0-7) of this script',Status,bcolors.ENDC)
+print(UF.TimeStamp(),'Current status has a stage',Status,bcolors.ENDC)
 
 ###### Stage 0
 prog_entry=[]
