@@ -49,6 +49,9 @@ parser.add_argument('--ClassNames',help="What class headers to use?", default="[
 parser.add_argument('--ClassValues',help="What class values to use?", default="[['11','-11'],['8']]")
 parser.add_argument('--TrackID',help="What track name is used?", default='ANN_Track_ID')
 parser.add_argument('--BrickID',help="What brick ID name is used?", default='ANN_Brick_ID')
+parser.add_argument('--ReqMemory',help="How uch memory to request?", default='2 GB')
+parser.add_argument('--RequestExtCPU',help="Would you like to request extra CPUs?", default=1)
+parser.add_argument('--JobFlavour',help="Specifying the length of the HTCondor job walltime. Currently at 'workday' which is 8 hours.", default='workday')
 ######################################## Parsing argument values  #############################################################
 args = parser.parse_args()
 Mode=args.Mode.upper()
@@ -63,6 +66,9 @@ TrainSampleSize=int(args.TrainSampleSize)
 input_file_location=args.f
 Xmin,Xmax,Ymin,Ymax=float(args.Xmin),float(args.Xmax),float(args.Ymin),float(args.Ymax)
 SliceData=max(Xmin,Xmax,Ymin,Ymax)>0 #We don't slice data if all values are set to zero simultaneousy (which is the default setting)
+RequestExtCPU=int(args.RequestExtCPU)
+ReqMemory=args.ReqMemory
+JobFlavour=args.JobFlavour
 
 #Loading Directory locations
 csv_reader=open('../config',"r")
