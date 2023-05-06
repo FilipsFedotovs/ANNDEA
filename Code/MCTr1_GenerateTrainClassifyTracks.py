@@ -74,6 +74,8 @@ parser.add_argument('--RemoveTracksZ',help="This option enables to remove partic
 parser.add_argument('--MinHitsTrack',help="What is the minimum number of hits per track?", default=PM.MinHitsTrack)
 parser.add_argument('--SubPause',help="How long to wait in minutes after submitting 10000 jobs?", default='60')
 parser.add_argument('--SubGap',help="How long to wait in minutes after submitting 10000 jobs?", default='10000')
+parser.add_argument('--PY',help="Python libraries directory location", default='.')
+
 ######################################## Parsing argument values  #############################################################
 args = parser.parse_args()
 Mode=args.Mode.upper()
@@ -379,7 +381,7 @@ print(UF.TimeStamp(),'Current status has a stage',Status,bcolors.ENDC)
 ###### Stage 0
 prog_entry=[]
 prog_entry.append(' Sending hit cluster to the HTCondor, so tack segment combination pairs can be formed...')
-prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/','RawSeedsRes','MCTr1a','.pkl',TrainSampleID,JobSets,'MCTr1a_GenerateRawTrackSamples_Sub.py'])
+prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/','IDseeds','MCTr1a','.pkl',TrainSampleID,JobSets,'MCTr1a_GenerateRawTrackSamples_Sub.py'])
 prog_entry.append([ " --MaxSegments ", " --ClassNames "," --ClassValues "])
 prog_entry.append([MaxSegments,'"'+str(ClassNames)+'"','"'+str(ClassValues)+'"'])
 prog_entry.append(JobSets)

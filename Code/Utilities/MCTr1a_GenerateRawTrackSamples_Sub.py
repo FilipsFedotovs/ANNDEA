@@ -3,13 +3,10 @@
 #Made by Filips Fedotovs
 #Current version 1.0
 
+
 ########################################    Import libraries    #############################################
 import argparse
-import pandas as pd #We use Panda for a routine data processing
-import gc  #Helps to clear memory
-import ast
-from UtilityFunctions import EMO
-
+import sys
 
 
 
@@ -37,8 +34,7 @@ o=args.o
 sfx=args.sfx
 pfx=args.pfx
 BatchID=args.BatchID
-ClassNames=ast.literal_eval(args.ClassNames)
-ClassValues=ast.literal_eval(args.ClassValues)
+
 ExtraColumns=[]
 for j in ClassNames:
     for k in j:
@@ -50,9 +46,22 @@ MaxSegments=int(args.MaxSegments)
 #Loading Directory locations
 EOS_DIR=args.EOS
 AFS_DIR=args.AFS
-
+PY_DIR=args.PY
+if PY_DIR!='': #Temp solution
+    sys.path=['',PY_DIR]
+    sys.path.append('/usr/lib64/python36.zip')
+    sys.path.append('/usr/lib64/python3.6')
+    sys.path.append('/usr/lib64/python3.6/lib-dynload')
+    sys.path.append('/usr/lib64/python3.6/site-packages')
+    sys.path.append('/usr/lib/python3.6/site-packages')
+sys.path.append(AFS_DIR+'/Code/Utilities')
 import UtilityFunctions as UF #This is where we keep routine utility functions
-
+import pandas as pd #We use Panda for a routine data processing
+import gc  #Helps to clear memory
+import ast
+from UtilityFunctions import EMO
+ClassNames=ast.literal_eval(args.ClassNames)
+ClassValues=ast.literal_eval(args.ClassValues)
 #Specifying the full path to input/output files
 input_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MCTr1_'+BatchID+'_TRACKS.csv'
 output_file_location=EOS_DIR+p+'/'+pfx+'_'+BatchID+'_'+o+'_'+str(i)+sfx
