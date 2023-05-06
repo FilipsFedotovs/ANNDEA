@@ -24,7 +24,7 @@ parser.add_argument('--BatchID',help="Give this training sample batch an ID", de
 parser.add_argument('--MaxSegments',help="A maximum number of track combinations that will be used in a particular HTCondor job for this script", default='20000')
 parser.add_argument('--ClassNames',help="What class headers to use?", default="[['Flag','ProcID']]")
 parser.add_argument('--ClassValues',help="What class values to use?", default="[['13','-13'],['8']]")
-
+parser.add_argument('--PY',help="Python libraries directory location", default='.')
 
 ######################################## Set variables  #############################################################
 args = parser.parse_args()
