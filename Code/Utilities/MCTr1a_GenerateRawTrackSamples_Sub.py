@@ -99,7 +99,7 @@ for s in range(0,limit):
 
             pos_counter=track_column_headers.index(ClassNames[i][j])
             print(track[pos_counter],pos_counter,track,ClassValues[i][j])
-
+            print('Comp',track[pos_counter],ClassValues[i][j])
             if (str(track[pos_counter]) in ClassValues[i][j])==False:
 
                     class_flag=True
