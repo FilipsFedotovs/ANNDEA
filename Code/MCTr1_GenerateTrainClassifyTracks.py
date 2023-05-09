@@ -426,8 +426,7 @@ while Status<len(Program):
                     base_data=UF.PickleOperations(req_file,'r', 'N/A')[0]
                     ExtractedData=[]
                     min_len=len([j for j in base_data if j.Label==0])
-                    print(min_len)
-                    exit()
+                    print(1,min_len)
                     for j in range(len(ClassHeaders)+1):
                         if len([k for k in base_data if k.Label==j])!=0:
                            ExtractedData.append([k for k in base_data if k.Label==j])
@@ -436,6 +435,7 @@ while Status<len(Program):
                     for s in range(len(ExtractedData)):
                         TotalData+=random.sample(ExtractedData[s],min_len)
                     print(UF.PickleOperations(output_file_location,'w', TotalData)[1])
+                    print(2,min_len)
             exit()
             print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 1 has successfully completed'+bcolors.ENDC)
             UpdateStatus(Status)
