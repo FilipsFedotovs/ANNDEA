@@ -424,6 +424,7 @@ while Status<len(Program):
                     req_file=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/Temp_MCTr1a_'+TrainSampleID+'_0/MCTr1a_'+TrainSampleID+'_IDseeds_'+str(i)+'.pkl'
                     output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/Temp_MCTr1a_'+TrainSampleID+'_0/MCTr1b_'+TrainSampleID+'_SelectedTrackSamples_'+str(i)+'.pkl'
                     base_data=UF.PickleOperations(req_file,'r', 'N/A')[0]
+                    print(len(base_data))
                     ExtractedData=[]
                     min_len=len([j for j in base_data if j.Label==0])
                     print(1,min_len)
