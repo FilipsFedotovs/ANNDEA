@@ -421,7 +421,7 @@ while Status<len(Program):
             print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
             print(UF.TimeStamp(),bcolors.BOLD+'Stage 1:'+bcolors.ENDC+' Collecting and de-duplicating the results from stage 1')
             for i in range(JobSets):
-                    req_file=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/Temp_MCTr1a_'+TrainSampleID+'_0/MCTr1a_'+TrainSampleID+'_RawTrackSamples_'+str(i)+'.pkl'
+                    req_file=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/Temp_MCTr1a_'+TrainSampleID+'_0/MCTr1a_'+TrainSampleID+'_IDseeds_'+str(i)+'.pkl'
                     output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/Temp_MCTr1a_'+TrainSampleID+'_0/MCTr1b_'+TrainSampleID+'_SelectedTrackSamples_'+str(i)+'.pkl'
                     base_data=UF.PickleOperations(req_file,'r', 'N/A')[0]
                     ExtractedData=[]
