@@ -99,10 +99,12 @@ for s in range(0,limit):
 
             pos_counter=track_column_headers.index(ClassNames[i][j])
             print(track[pos_counter],pos_counter,track,ClassValues[i][j])
-            exit()
-            if (track[pos_counter] in ClassValues[i][j])==False:
-                    class_flag=True
 
+            if (track[pos_counter] in ClassValues[i][j])==False:
+
+                    class_flag=True
+        print(class_flag)
+        x=input()
         if class_flag==False:
             break
         else:
