@@ -96,22 +96,15 @@ for s in range(0,limit):
     for i in range(len(ClassNames)):
         class_flag=False
         for j in range(len(ClassNames[i])):
-            print(ClassNames[i])
             pos_counter=track_column_headers.index(ClassNames[i][j])
-            print(track[pos_counter],pos_counter,track,ClassValues[i][j])
-            print('Comp',track[pos_counter],ClassValues[i][j])
             if (str(track[pos_counter]) in ClassValues[i][j])==False:
 
                     class_flag=True
-        print(class_flag)
 
         if class_flag==False:
             break
         else:
                label+=1
-    print(track)
-    print(label)
-    x=input()
     track_obj.LabelTrack(label)
     track_obj.Decorate(track_data)
     GoodTracks.append(track_obj)
