@@ -436,6 +436,7 @@ while Status<len(Program):
                     for s in range(len(ExtractedData)):
                         TotalData+=random.sample(ExtractedData[s],min_len)
                     print(UF.PickleOperations(output_file_location,'w', TotalData)[1])
+            exit()
             print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 1 has successfully completed'+bcolors.ENDC)
             UpdateStatus(Status)
             continue
