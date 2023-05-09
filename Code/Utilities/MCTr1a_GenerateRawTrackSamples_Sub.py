@@ -104,11 +104,14 @@ for s in range(0,limit):
 
                     class_flag=True
         print(class_flag)
-        x=input()
+
         if class_flag==False:
             break
         else:
                label+=1
+    print(track)
+    print(label)
+    x=input()
     track_obj.LabelTrack(label)
     track_obj.Decorate(track_data)
     GoodTracks.append(track_obj)
