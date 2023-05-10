@@ -366,7 +366,7 @@ def StandardProcess(program,status,freshstart):
 if Mode=='RESET':
     print(UF.TimeStamp(),'Performing the cleanup... ',bcolors.ENDC)
     HTCondorTag="SoftUsed == \"ANNDEA-MCTr1a-"+TrainSampleID+"\""
-    UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MCTr1a_'+TrainSampleID, ['MCTr1a', 'MCTr1_'+TrainSampleID], HTCondorTag)
+    UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MCTr1a_'+TrainSampleID, [], HTCondorTag)
     FreshStart=False
     UpdateStatus(0)
     Status=0
