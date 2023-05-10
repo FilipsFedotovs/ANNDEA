@@ -435,7 +435,7 @@ while Status<len(Program):
                     print(UF.PickleOperations(output_file_location,'w', TotalData)[1])
             print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 2 has successfully completed'+bcolors.ENDC)
             UpdateStatus(Status+1)
-            print(Status)
+            Status+=1
             continue
 
           if Status==2:
@@ -447,7 +447,7 @@ while Status<len(Program):
                     base_data=UF.PickleOperations(req_file,'r', 'N/A')[0]
                     TotalData+=base_data
               ValidationSampleSize=int(round(min((len(TotalData)*float(PM.valRatio)),PM.MaxValSampleSize),0))
-              print(len(TotalData,ValidationSampleSize))
+              print(len(TotalData),ValidationSampleSize)
               exit()
               random.shuffle(TotalData)
               output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_TRACK_OUTPUT.pkl'
@@ -467,6 +467,7 @@ while Status<len(Program):
               UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MCTr1b_'+TrainSampleID, ['MCTr1b'+TrainSampleID], HTCondorTag)
               print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 6 has successfully completed'+bcolors.ENDC)
               UpdateStatus(Status + 1)
+              Status+=1
               continue
       print(UF.TimeStamp(),'Loading previously saved data from ',bcolors.OKBLUE+TrainSampleOutputMeta+bcolors.ENDC)
       MetaInput=UF.PickleOperations(TrainSampleOutputMeta,'r', 'N/A')
