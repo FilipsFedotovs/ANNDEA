@@ -447,8 +447,6 @@ while Status<len(Program):
                     base_data=UF.PickleOperations(req_file,'r', 'N/A')[0]
                     TotalData+=base_data
               ValidationSampleSize=int(round(min((len(TotalData)*float(PM.valRatio)),PM.MaxValSampleSize),0))
-              print(len(TotalData),ValidationSampleSize)
-              exit()
               random.shuffle(TotalData)
               output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_TRACK_OUTPUT.pkl'
               print(UF.PickleOperations(output_file_location,'w', TotalData[:ValidationSampleSize])[1])
@@ -458,13 +456,6 @@ while Status<len(Program):
                   output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_TRACK_OUTPUT_'+str(i+1)+'.pkl'
                   print(UF.PickleOperations(output_file_location,'w', TotalData[(i*TrainSampleSize):min(len(TotalData),((i+1)*TrainSampleSize))])[1])
               print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 2 has successfully completed'+bcolors.ENDC)
-
-
-              print(UF.TimeStamp(),'Performing the cleanup... ',bcolors.ENDC)
-              HTCondorTag="SoftUsed == \"ANNDEA-MCTr1a-"+TrainSampleID+"\""
-              UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MCTr1a_'+TrainSampleID, ['MCTr1a', 'MCTr1_'+TrainSampleID], HTCondorTag)
-              HTCondorTag="SoftUsed == \"ANNDEA-MCTr1b-"+TrainSampleID+"\""
-              UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MCTr1b_'+TrainSampleID, ['MCTr1b'+TrainSampleID], HTCondorTag)
               print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 6 has successfully completed'+bcolors.ENDC)
               UpdateStatus(Status + 1)
               Status+=1
@@ -473,13 +464,21 @@ while Status<len(Program):
       MetaInput=UF.PickleOperations(TrainSampleOutputMeta,'r', 'N/A')
       Meta=MetaInput[0]
       Status=Meta.Status[-1]
-      print(Status)
-# if status==4:
-#      print(UF.TimeStamp(), bcolors.OKGREEN+"Train sample generation has been completed"+bcolors.ENDC)
-#      exit()
-# else:
-#      print(UF.TimeStamp(), bcolors.FAIL+"Reconstruction has not been completed as one of the processes has timed out. Please run the script again (without Reset Mode)."+bcolors.ENDC)
-#      exit()
+if Status==4:
+     print('Here')
+     #    for p in Program:
+     #    if p[:6]!='Custom' and (p in ModelName)==False:
+     #       print(UF.TimeStamp(),UF.ManageTempFolders(p,'Delete'))
+     #          print(UF.TimeStamp(),'Performing the cleanup... ',bcolors.ENDC)
+     #          HTCondorTag="SoftUsed == \"ANNDEA-MCTr1a-"+TrainSampleID+"\""
+     #          UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MCTr1a_'+TrainSampleID, ['MCTr1a', 'MCTr1_'+TrainSampleID], HTCondorTag)
+     #          HTCondorTag="SoftUsed == \"ANNDEA-MCTr1b-"+TrainSampleID+"\""
+     #          UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MCTr1b_'+TrainSampleID, ['MCTr1b'+TrainSampleID], HTCondorTag)
+     # print(UF.TimeStamp(), bcolors.OKGREEN+"Train sample generation has been completed"+bcolors.ENDC)
+     # exit()
+else:
+      print(UF.TimeStamp(), bcolors.FAIL+"Reconstruction has not been completed as one of the processes has timed out. Please run the script again (without Reset Mode)."+bcolors.ENDC)
+      exit()
 
 
 
