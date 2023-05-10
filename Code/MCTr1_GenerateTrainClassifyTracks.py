@@ -460,10 +460,20 @@ while Status<len(Program):
               Status+=1
               continue
       print(UF.TimeStamp(),'Loading previously saved data from ',bcolors.OKBLUE+TrainSampleOutputMeta+bcolors.ENDC)
+      print(UF.TimeStamp(),'Would you like to delete Temporary files?')
+      user_response=input()
+      if user_response=='y' or user_response=='Y':
+               Status=3
+               UpdateStatus(Status)
+               continue
+      else:
+               print(UF.TimeStamp(), bcolors.OKGREEN+"Train sample generation has been completed"+bcolors.ENDC)
+               exit()
       MetaInput=UF.PickleOperations(TrainSampleOutputMeta,'r', 'N/A')
       Meta=MetaInput[0]
       Status=Meta.Status[-1]
 if Status==3:
+
      print('Here')
      #    for p in Program:
      #    if p[:6]!='Custom' and (p in ModelName)==False:
