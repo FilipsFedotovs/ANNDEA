@@ -89,7 +89,7 @@ def GNNtrain(model, Sample,optimizer):
         loss.backward()  # Derive gradients.
         optimizer.step()  # Update parameters based on gradients.
         optimizer.zero_grad()
-
+        print(loss)
     return loss
 
 def GNNvalidate(model, Sample):
@@ -259,10 +259,7 @@ def main(self):
         records=[]
         for epoch in range(0, TrainParams[2]):
             train_loss,itr= GNNtrain(model,TrainSamples, optimizer),len(TrainSamples.dataset)
-            print(train_loss)
             val=GNNvalidate(model,  ValSamples)
-            print(val)
-            exit()
             val_loss=val[1]
             val_acc=val[0]
             test_loss=val_loss
