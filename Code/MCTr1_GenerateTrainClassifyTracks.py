@@ -375,7 +375,7 @@ else:
     Status=Meta.Status[-1]
 
 UpdateStatus(0)
-
+Status=0
 ###### Stage 0
 prog_entry=[]
 prog_entry.append(UF.TimeStamp()+bcolors.BOLD+'Stage 1:'+bcolors.ENDC+' Sending hit cluster to the HTCondor, so tack segment combination pairs can be formed...')
