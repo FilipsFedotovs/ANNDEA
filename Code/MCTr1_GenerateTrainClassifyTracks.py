@@ -433,8 +433,9 @@ while Status<len(Program):
                     for s in range(len(ExtractedData)):
                         TotalData+=random.sample(ExtractedData[s],min_len)
                     print(UF.PickleOperations(output_file_location,'w', TotalData)[1])
-            print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 1 has successfully completed'+bcolors.ENDC)
+            print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 2 has successfully completed'+bcolors.ENDC)
             UpdateStatus(Status+1)
+            print(Status)
             continue
 
           if Status==2:
@@ -471,6 +472,7 @@ while Status<len(Program):
       MetaInput=UF.PickleOperations(TrainSampleOutputMeta,'r', 'N/A')
       Meta=MetaInput[0]
       Status=Meta.Status[-1]
+      print(Status)
 # if status==4:
 #      print(UF.TimeStamp(), bcolors.OKGREEN+"Train sample generation has been completed"+bcolors.ENDC)
 #      exit()
