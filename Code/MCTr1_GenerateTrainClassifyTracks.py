@@ -430,7 +430,7 @@ while Status<len(Program):
                     print(len([j for j in base_data if j.Label==0]))
                     print(len([j for j in base_data if j.Label==1]))
                     print(len([j for j in base_data if j.Label==2]))
-                    exit()
+
                     for j in range(len(ClassHeaders)+1):
                         if len([k for k in base_data if k.Label==j])!=0:
                            ExtractedData.append([k for k in base_data if k.Label==j])
