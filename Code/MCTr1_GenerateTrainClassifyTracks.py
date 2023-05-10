@@ -434,7 +434,7 @@ while Status<len(Program):
                         TotalData+=random.sample(ExtractedData[s],min_len)
                     print(UF.PickleOperations(output_file_location,'w', TotalData)[1])
             print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 1 has successfully completed'+bcolors.ENDC)
-            UpdateStatus(Status)
+            UpdateStatus(Status+1)
             continue
 
           if Status==2:
@@ -465,9 +465,9 @@ while Status<len(Program):
               HTCondorTag="SoftUsed == \"ANNDEA-MCTr1b-"+TrainSampleID+"\""
               UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MCTr1b_'+TrainSampleID, ['MCTr1b'+TrainSampleID], HTCondorTag)
               print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 6 has successfully completed'+bcolors.ENDC)
-              UpdateStatus(3)
+              UpdateStatus(Status + 1)
               continue
-      print(UF.TimeStamp(),'Loading previously saved data from ',bcolors.OKBLUE+RecOutputMeta+bcolors.ENDC)
+      print(UF.TimeStamp(),'Loading previously saved data from ',bcolors.OKBLUE+TrainSampleOutputMeta+bcolors.ENDC)
       MetaInput=UF.PickleOperations(TrainSampleOutputMeta,'r', 'N/A')
       Meta=MetaInput[0]
       Status=Meta.Status[-1]
