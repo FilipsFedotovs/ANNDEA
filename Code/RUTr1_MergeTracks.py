@@ -970,6 +970,7 @@ while Status<len(Program):
                     JobSets=Meta.JobSets
                     for i in range(len(JobSets)):
                         JobSet.append([])
+                        print(JobSets[i][len(JobSets[i])-1])
                         for j in range(len(JobSets[i][len(JobSets[i])-1])):
                                 JobSet[i].append(JobSets[i][len(JobSets[i])-1][j])
                     if type(JobSet) is int:
