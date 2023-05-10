@@ -450,8 +450,8 @@ if Log:
     Program.append('Custom - PickE')
 
 else:
-    UpdateStatus(2)
-    Status=2
+    UpdateStatus(0)
+    Status=0
 
 if Mode=='CLEANUP':
     UpdateStatus(19)
@@ -970,9 +970,8 @@ while Status<len(Program):
                     JobSets=Meta.JobSets
                     for i in range(len(JobSets)):
                         JobSet.append([])
-                        print(JobSets[i][len(JobSets[i])-1])
-                        for j in range(len(JobSets[i][len(JobSets[i])-1])):
-                                JobSet[i].append(JobSets[i][len(JobSets[i])-1][j])
+                        for j in range(len(JobSets[i][3])):
+                                JobSet[i].append(JobSets[i][3][j])
                     if type(JobSet) is int:
                                 TotJobs=JobSet
                     elif type(JobSet[0]) is int:
