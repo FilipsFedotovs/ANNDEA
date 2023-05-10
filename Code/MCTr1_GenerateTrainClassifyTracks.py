@@ -399,7 +399,6 @@ Program.append('Custom')
 Program.append('Custom')
 
 while Status<len(Program):
-      print
       if Program[Status]!='Custom':
         #Standard process here
         Result=StandardProcess(Program,Status,FreshStart)
@@ -419,7 +418,7 @@ while Status<len(Program):
       if Program[Status]=='Custom':
           if Status==1:
             print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
-            print(UF.TimeStamp(),bcolors.BOLD+'Stage 2:'+bcolors.ENDC+' Collecting and de-duplicating the results from stage 0')
+            print(UF.TimeStamp(),bcolors.BOLD+'Stage 2:'+bcolors.ENDC+' Collecting and de-duplicating the results from stage 1')
             for i in range(JobSets):
                     req_file=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/Temp_MCTr1a_'+TrainSampleID+'_0/MCTr1a_'+TrainSampleID+'_IDseeds_'+str(i)+'.pkl'
                     output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/Temp_MCTr1a_'+TrainSampleID+'_0/MCTr1b_'+TrainSampleID+'_SelectedTrackSamples_'+str(i)+'.pkl'
@@ -469,6 +468,10 @@ while Status<len(Program):
           UpdateStatus(4)
           status=4
           continue
+      print(UF.TimeStamp(),'Loading previously saved data from ',bcolors.OKBLUE+RecOutputMeta+bcolors.ENDC)
+      MetaInput=UF.PickleOperations(TrainSampleOutputMeta,'r', 'N/A')
+      Meta=MetaInput[0]
+      Status=Meta.Status[-1]    
 # if status==4:
 #      print(UF.TimeStamp(), bcolors.OKGREEN+"Train sample generation has been completed"+bcolors.ENDC)
 #      exit()
