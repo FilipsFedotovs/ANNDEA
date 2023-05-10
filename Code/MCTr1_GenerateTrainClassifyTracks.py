@@ -374,6 +374,7 @@ else:
     print(UF.TimeStamp(),'Analysing the current script status...',bcolors.ENDC)
     Status=Meta.Status[-1]
 
+UpdateStatus(0)
 
 ###### Stage 0
 prog_entry=[]
