@@ -971,6 +971,7 @@ while Status<len(Program):
                     print(JobSets)
                     for i in range(len(JobSets)):
                         JobSet.append([])
+                        print(JobSets[i])
                         for j in range(len(JobSets[i][3])):
                                 JobSet[i].append(JobSets[i][3][j])
                     if type(JobSet) is int:
