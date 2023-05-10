@@ -968,12 +968,10 @@ while Status<len(Program):
                     Program_Dummy=[]
                     Meta=UF.PickleOperations(RecOutputMeta,'r', 'N/A')[0]
                     JobSets=Meta.JobSets
-                    print(JobSets)
                     for i in range(len(JobSets)):
                         JobSet.append([])
-                        print(JobSets[i])
-                        for j in range(len(JobSets[i][3])):
-                                JobSet[i].append(JobSets[i][3][j])
+                        for j in range(len(JobSets[i][len(JobSets[i])-1])):
+                                JobSet[i].append(JobSets[i][len(JobSets[i])-1][j])
                     if type(JobSet) is int:
                                 TotJobs=JobSet
                     elif type(JobSet[0]) is int:
