@@ -456,7 +456,6 @@ while Status<len(Program):
                   output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_TRACK_OUTPUT_'+str(i+1)+'.pkl'
                   print(UF.PickleOperations(output_file_location,'w', TotalData[(i*TrainSampleSize):min(len(TotalData),((i+1)*TrainSampleSize))])[1])
               print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 2 has successfully completed'+bcolors.ENDC)
-              print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 6 has successfully completed'+bcolors.ENDC)
               UpdateStatus(Status + 1)
               Status+=1
               continue
@@ -464,7 +463,7 @@ while Status<len(Program):
       MetaInput=UF.PickleOperations(TrainSampleOutputMeta,'r', 'N/A')
       Meta=MetaInput[0]
       Status=Meta.Status[-1]
-if Status==4:
+if Status==3:
      print('Here')
      #    for p in Program:
      #    if p[:6]!='Custom' and (p in ModelName)==False:
