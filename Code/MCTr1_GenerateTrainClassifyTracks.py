@@ -366,17 +366,14 @@ def StandardProcess(program,status,freshstart):
 if Mode=='RESET':
     print(UF.TimeStamp(),'Performing the cleanup... ',bcolors.ENDC)
     HTCondorTag="SoftUsed == \"ANNDEA-MCTr1a-"+TrainSampleID+"\""
-    UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MCTr1a_'+TrainSampleID, ['MCTr1a'+TrainSampleID], HTCondorTag)
-    HTCondorTag="SoftUsed == \"ANNDEA-MCTr1b-"+TrainSampleID+"\""
-    UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MCTr1b_'+TrainSampleID, ['MCTr1b'+TrainSampleID], HTCondorTag)
+    UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MCTr1a_'+TrainSampleID, ['MCTr1a', 'MCTr1_'+TrainSampleID], HTCondorTag)
     FreshStart=False
     UpdateStatus(0)
     Status=0
 else:
     print(UF.TimeStamp(),'Analysing the current script status...',bcolors.ENDC)
     Status=Meta.Status[-1]
-print(UF.TimeStamp(),'There are 8 stages (0-7) of this script',Status,bcolors.ENDC)
-print(UF.TimeStamp(),'Current status has a stage',Status+1,bcolors.ENDC)
+
 
 ###### Stage 0
 prog_entry=[]
@@ -397,6 +394,9 @@ print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Create'))
 Program.append('Custom')
 ###### Stage 2
 Program.append('Custom')
+
+print(UF.TimeStamp(),'There are ',len(Program),' stages of this script', bcolors.ENDC)
+print(UF.TimeStamp(),'Current status has a stage',Status+1,bcolors.ENDC)
 
 while Status<len(Program):
       if Program[Status]!='Custom':
@@ -463,8 +463,8 @@ while Status<len(Program):
       print(UF.TimeStamp(),'Would you like to delete Temporary files?')
       user_response=input()
       if user_response=='y' or user_response=='Y':
-               Status=3
-               UpdateStatus(Status)
+               UpdateStatus(Status+1)
+               Status+=1
                continue
       else:
                print(UF.TimeStamp(), bcolors.OKGREEN+"Train sample generation has been completed"+bcolors.ENDC)
@@ -473,18 +473,13 @@ while Status<len(Program):
       Meta=MetaInput[0]
       Status=Meta.Status[-1]
 if Status==3:
-
-     print('Here')
-     #    for p in Program:
-     #    if p[:6]!='Custom' and (p in ModelName)==False:
-     #       print(UF.TimeStamp(),UF.ManageTempFolders(p,'Delete'))
-     #          print(UF.TimeStamp(),'Performing the cleanup... ',bcolors.ENDC)
-     #          HTCondorTag="SoftUsed == \"ANNDEA-MCTr1a-"+TrainSampleID+"\""
-     #          UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MCTr1a_'+TrainSampleID, ['MCTr1a', 'MCTr1_'+TrainSampleID], HTCondorTag)
-     #          HTCondorTag="SoftUsed == \"ANNDEA-MCTr1b-"+TrainSampleID+"\""
-     #          UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MCTr1b_'+TrainSampleID, ['MCTr1b'+TrainSampleID], HTCondorTag)
-     # print(UF.TimeStamp(), bcolors.OKGREEN+"Train sample generation has been completed"+bcolors.ENDC)
-     # exit()
+        for p in Program:
+              print(UF.TimeStamp(),UF.ManageTempFolders(p,'Delete'))
+              print(UF.TimeStamp(),'Performing the cleanup... ',bcolors.ENDC)
+              HTCondorTag="SoftUsed == \"ANNDEA-MCTr1a-"+TrainSampleID+"\""
+              UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MCTr1a_'+TrainSampleID, ['MCTr1a', 'MCTr1_'+TrainSampleID], HTCondorTag)
+        print(UF.TimeStamp(), bcolors.OKGREEN+"Train sample generation has been completed"+bcolors.ENDC)
+        exit()
 else:
       print(UF.TimeStamp(), bcolors.FAIL+"Reconstruction has not been completed as one of the processes has timed out. Please run the script again (without Reset Mode)."+bcolors.ENDC)
       exit()
