@@ -370,9 +370,10 @@ Program.append(prog_entry)
 
 Program.append('Custom')
 Program.append('Custom')
+print(Program)
 
 while Status<len(Program):
-    if Program[Status][:6]!='Custom':
+    if Program[Status]!='Custom':
         #Standard process here
         Result=StandardProcess(Program,Status,FreshStart)
         if Result[0]:
