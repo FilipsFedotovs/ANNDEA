@@ -382,8 +382,61 @@ while Status<len(Program):
              Status=20
              break
     else:
-        print('Wip')
-        exit()
+        if status==1:
+            print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
+            print(UF.TimeStamp(),bcolors.BOLD+'Stage 2:'+bcolors.ENDC+' Collecting and de-duplicating the results from stage 1')
+            req_file=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RCTr1a_'+RecBatchID+'_0/RCTr1a_'+RecBatchID+'_ClassifiedTrackSamples_0.pkl'
+            base_data=UF.PickleOperations(req_file,'r', 'N/A')[0]
+            ExtractedHeader=['Rec_Seg_ID']+base_data[0].ClassHeaders
+            ExtractedData=[]
+            for i in base_data:
+                ExtractedData.append(i.Header+i.Class)
+            print(ExtractedData)
+            exit()
+            for i in range(1,JobSets):
+                    req_file=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RCTr1a_'+RecBatchID+'_0/MCTr1a'+'_'+RecBatchID+'_ClassifiedTrackSamples_'+str(i)+'.pkl'
+                    base_data=UF.PickleOperations(req_file,'r', 'N/A')[0]
+                    for i in base_data:
+                         ExtractedData.append(i.Header+i.Class)
+
+            ExtractedData = pd.DataFrame (ExtractedData, columns = ExtractedHeader)
+            data=pd.read_csv(args.f,header=0)
+            data.drop(base_data[0].ClassHeaders,axis=1,errors='ignore',inplace=True)
+            total_rows=len(data.axes[0])
+            print(UF.TimeStamp(),'The raw data has ',total_rows,' hits')
+            print(UF.TimeStamp(),'Removing unreconstructed hits...')
+            data=data.dropna(subset=[PM.Rec_Track_ID])
+            final_rows=len(data.axes[0])
+            print(UF.TimeStamp(),'The cleaned data has ',final_rows,' hits')
+            data['Rec_Seg_ID'] = data[PM.Rec_Track_Domain].astype(str) + '-' + data[PM.Rec_Track_ID].astype(str)
+
+            if SliceData:
+                 print(UF.TimeStamp(),'Slicing the data...')
+                 ValidEvents=data.drop(data.index[(data[PM.x] > Xmax) | (data[PM.x] < Xmin) | (data[PM.y] > Ymax) | (data[PM.y] < Ymin)])
+                 ValidEvents=ValidEvents[['Rec_Seg_ID']]
+                 ValidEvents.drop_duplicates(subset='Rec_Seg_ID',keep='first',inplace=True)
+                 data=pd.merge(data, ValidEvents, how="inner", on=['Rec_Seg_ID'])
+                 final_rows=len(data.axes[0])
+                 print(UF.TimeStamp(),'The sliced data has ',final_rows,' hits')
+            print(UF.TimeStamp(),'Removing tracks which have less than',PM.MinHitsTrack,'hits...')
+            track_no_data=data.groupby(['Rec_Seg_ID'],as_index=False).count()
+            track_no_data=track_no_data[['Rec_Seg_ID',PM.x]]
+            track_no_data=track_no_data.rename(columns={PM.x: "Rec_Seg_No"})
+            new_combined_data=pd.merge(data, track_no_data, how="left", on=['Rec_Seg_ID'])
+            new_combined_data = new_combined_data[new_combined_data.Rec_Seg_No >= PM.MinHitsTrack]
+            new_combined_data = new_combined_data.drop(["Rec_Seg_No"],axis=1)
+            new_combined_data=new_combined_data.sort_values(['Rec_Seg_ID',PM.x],ascending=[1,1])
+            grand_final_rows=len(new_combined_data.axes[0])
+            print(UF.TimeStamp(),'The cleaned data has ',grand_final_rows,' hits')
+            final_data=pd.merge(new_combined_data,ExtractedData,how='inner',on=['Rec_Seg_ID'])
+            final_data=final_data.drop(['Rec_Seg_ID'],axis=1)
+            output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_CLASSIFIED_TRACKS.csv'
+            final_data.to_csv(output_file_location,index=False)
+            print(UF.TimeStamp(), bcolors.OKGREEN+"The classified track data has been written to"+bcolors.ENDC, bcolors.OKBLUE+output_file_location+bcolors.ENDC)
+            print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 2 has successfully completed'+bcolors.ENDC)
+            UpdateStatus(3)
+            status=3
+            continue
         # for md in range(len(ModelName)):
         #     if Program[Status]==ModelName[md]:
         #         if md==0:
