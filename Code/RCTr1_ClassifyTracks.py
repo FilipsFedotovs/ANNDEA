@@ -403,7 +403,14 @@ while Status<len(Program):
             data['Rec_Seg_ID'] = data[TrackID].astype(str) + '-' + data[BrickID].astype(str)
             data=pd.merge(data,ExtractedData,how='left',on=['Rec_Seg_ID'])
             data=data.drop(['Rec_Seg_ID'],axis=1)
-            print(data)
+            raw_name=initial_input_file_location[:-4]
+            for l in range(len(raw_name)-1,0,-1):
+                    if raw_name[l]=='/':
+                        print(l,raw_name)
+                        break
+            raw_name=raw_name[l+1:]
+            final_output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+raw_name+'_'+RecBatchID+'_CLASSIFIED_TRACKS.csv'
+            print(final_output_file_location)
             exit()
             output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_CLASSIFIED_TRACKS.csv'
             data.to_csv(output_file_location,index=False)
