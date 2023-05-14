@@ -138,6 +138,17 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         data['Rec_Seg_ID'] = data[TrackID] + '-' + data[BrickID]
         data=data.drop([TrackID],axis=1)
         data=data.drop([BrickID],axis=1)
+        if len(RemoveTracksZ)>0:
+            print(UF.TimeStamp(),'Removing tracks based on start point')
+            TracksZdf = pd.DataFrame(RemoveTracksZ, columns = ['Bad_z'], dtype=float)
+            data_aggregated=data.groupby(['Rec_Seg_ID'])['z'].min().reset_index()
+            data_aggregated=data_aggregated.rename(columns={'z': "PosBad_Z"})
+            data=pd.merge(data, data_aggregated, how="left", on=['Rec_Seg_ID'])
+            data=pd.merge(data, TracksZdf, how="left", left_on=["PosBad_Z"], right_on=['Bad_z'])
+            data=data[data['Bad_z'].isnull()]
+            data=data.drop(['Bad_z', 'PosBad_Z'],axis=1)
+        final_rows=len(data.axes[0])
+        print(UF.TimeStamp(),'After removing tracks that start at the specific plates we have',final_rows,' hits left')
         print(data[PM.z].min())
         exit()
         if SliceData:
