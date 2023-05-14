@@ -121,8 +121,7 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
            ClassValues=Meta.ClassValues
            ClassNames=Meta.ClassNames
            MaxSegments=PM.MaxSegments
-           print(ClassHeaders,ClassNames)
-           exit()
+           MinHitsTrack=Meta.MinHitsTrack
         print(UF.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+initial_input_file_location+bcolors.ENDC)
         data=pd.read_csv(initial_input_file_location,
                     header=0,
@@ -139,6 +138,7 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         data['Rec_Seg_ID'] = data[TrackID] + '-' + data[BrickID]
         data=data.drop([TrackID],axis=1)
         data=data.drop([BrickID],axis=1)
+
         if SliceData:
              print(UF.TimeStamp(),'Slicing the data...')
              ValidEvents=data.drop(data.index[(data[PM.x] > Xmax) | (data[PM.x] < Xmin) | (data[PM.y] > Ymax) | (data[PM.y] < Ymin)])
@@ -148,6 +148,8 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
              final_rows=len(data.axes[0])
              print(UF.TimeStamp(),'The sliced data has ',final_rows,' hits')
         print(UF.TimeStamp(),'Removing tracks which have less than',MinHitsTrack,'hits...')
+        print(data)
+        exit()
         track_no_data=data.groupby(['Rec_Seg_ID'],as_index=False).count()
         track_no_data=track_no_data.drop([PM.y,PM.z,PM.tx,PM.ty],axis=1)
         track_no_data=track_no_data.rename(columns={PM.x: "Track_No"})
