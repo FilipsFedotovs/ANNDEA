@@ -138,7 +138,7 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         data['Rec_Seg_ID'] = data[TrackID] + '-' + data[BrickID]
         data=data.drop([TrackID],axis=1)
         data=data.drop([BrickID],axis=1)
-        print(data.groupby(by=PM.z))
+        print(data[PM.x].min())
         exit()
         if SliceData:
              print(UF.TimeStamp(),'Slicing the data...')
