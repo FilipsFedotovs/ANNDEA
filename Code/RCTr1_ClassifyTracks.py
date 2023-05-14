@@ -149,8 +149,6 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
             data=data.drop(['Bad_z', 'PosBad_Z'],axis=1)
         final_rows=len(data.axes[0])
         print(UF.TimeStamp(),'After removing tracks that start at the specific plates we have',final_rows,' hits left')
-        print(data[PM.z].min())
-        exit()
         if SliceData:
              print(UF.TimeStamp(),'Slicing the data...')
              ValidEvents=data.drop(data.index[(data[PM.x] > Xmax) | (data[PM.x] < Xmin) | (data[PM.y] > Ymax) | (data[PM.y] < Ymin)])
@@ -160,8 +158,6 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
              final_rows=len(data.axes[0])
              print(UF.TimeStamp(),'The sliced data has ',final_rows,' hits')
         print(UF.TimeStamp(),'Removing tracks which have less than',MinHitsTrack,'hits...')
-        print(data)
-        exit()
         track_no_data=data.groupby(['Rec_Seg_ID'],as_index=False).count()
         track_no_data=track_no_data.drop([PM.y,PM.z,PM.tx,PM.ty],axis=1)
         track_no_data=track_no_data.rename(columns={PM.x: "Track_No"})
@@ -177,37 +173,31 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         new_combined_data=new_combined_data.rename(columns={PM.tx: "tx"})
         new_combined_data=new_combined_data.rename(columns={PM.ty: "ty"})
         new_combined_data.to_csv(required_file_location,index=False)
-        data=new_combined_data[['Rec_Seg_ID','z']]
+        data=new_combined_data[['Rec_Seg_ID']]
         print(UF.TimeStamp(),'Analysing the data sample in order to understand how many jobs to submit to HTCondor... ',bcolors.ENDC)
-        data = data.groupby('Rec_Seg_ID')['z'].min()  #Keeping only starting hits for the each track record (we do not require the full information about track in this script)
-        data=data.reset_index()
-        data = data.groupby('z')['Rec_Seg_ID'].count()  #Keeping only starting hits for the each track record (we do not require the full information about track in this script)
-        data=data.reset_index()
-        data=data.sort_values(['z'],ascending=True)
-        data['Sub_Sets']=np.ceil(data['Rec_Seg_ID']/PM.MaxSegments)
-        data['Sub_Sets'] = data['Sub_Sets'].astype(int)
+        data.drop_duplicates(subset='Rec_Seg_ID',keep='first',inplace=True)
         data = data.values.tolist()
+        no_submissions=math.ceil(len(data)/MaxSegments)
         print(UF.TimeStamp(), bcolors.OKGREEN+"The track segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+required_file_location+bcolors.ENDC)
         Meta=UF.TrainingSampleMeta(RecBatchID)
-        Meta.IniTrackSeedMetaData(MaxSLG,MaxSTG,MaxDOCA,MaxAngle,data,MaxSegments,VetoMotherTrack,MaxSeeds,MinHitsTrack)
-        Meta.UpdateStatus(0)
+        Meta.IniTrackMetaData(ClassHeaders,ClassNames,ClassValues,MaxSegments,no_submissions)
+        Meta.UpdateStatus(1)
         print(UF.PickleOperations(RecOutputMeta,'w', Meta)[1])
         print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
         print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 0 has successfully completed'+bcolors.ENDC)
+
 elif os.path.isfile(RecOutputMeta)==True:
     print(UF.TimeStamp(),'Loading previously saved data from ',bcolors.OKBLUE+RecOutputMeta+bcolors.ENDC)
     MetaInput=UF.PickleOperations(RecOutputMeta,'r', 'N/A')
     Meta=MetaInput[0]
-MaxSLG=Meta.MaxSLG
-MaxSTG=Meta.MaxSTG
-MaxDOCA=Meta.MaxDOCA
-MaxAngle=Meta.MaxAngle
+ClassHeaders=Meta.ClassHeaders
+ClassNames=Meta.ClassNames
+ClassValues=Meta.ClassValues
 JobSets=Meta.JobSets
 MaxSegments=Meta.MaxSegments
-MaxSeeds=Meta.MaxSeeds
-VetoMotherTrack=Meta.VetoMotherTrack
-MinHitsTrack=Meta.MinHitsTrack
-
+TotJobs=JobSets
+print(TotJobs)
+exit()
 #The function bellow helps to monitor the HTCondor jobs and keep the submission flow
 def AutoPilot(wait_min, interval_min, max_interval_tolerance,program):
      print(UF.TimeStamp(),'Going on an autopilot mode for ',wait_min, 'minutes while checking HTCondor every',interval_min,'min',bcolors.ENDC)
