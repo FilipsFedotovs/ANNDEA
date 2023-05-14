@@ -391,8 +391,6 @@ while Status<len(Program):
             ExtractedData=[]
             for i in base_data:
                 ExtractedData.append(i.Header+i.Class)
-            print(ExtractedData)
-            exit()
             for i in range(1,JobSets):
                     req_file=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RCTr1a_'+RecBatchID+'_0/MCTr1a'+'_'+RecBatchID+'_ClassifiedTrackSamples_'+str(i)+'.pkl'
                     base_data=UF.PickleOperations(req_file,'r', 'N/A')[0]
@@ -400,6 +398,8 @@ while Status<len(Program):
                          ExtractedData.append(i.Header+i.Class)
 
             ExtractedData = pd.DataFrame (ExtractedData, columns = ExtractedHeader)
+            print(ExtractedData)
+            exit()
             data=pd.read_csv(args.f,header=0)
             data.drop(base_data[0].ClassHeaders,axis=1,errors='ignore',inplace=True)
             total_rows=len(data.axes[0])
