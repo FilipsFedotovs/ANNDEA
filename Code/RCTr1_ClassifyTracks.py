@@ -62,7 +62,7 @@ parser.add_argument('--JobFlavour',help="Specifying the length of the HTCondor j
 parser.add_argument('--TrackID',help="What track name is used?", default='ANN_Track_ID')
 parser.add_argument('--BrickID',help="What brick ID name is used?", default='ANN_Brick_ID')
 parser.add_argument('--Mode', help='Script will continue from the last checkpoint, unless you want to start from the scratch, then type "Reset"',default='')
-parser.add_argument('--ModelName',help="What  models would you like to use?", default="[]")
+parser.add_argument('--ModelName',help="What  model would you like to use?", default="1T_GMM_IC_6_150_4_ANNDEA_ID_model")
 parser.add_argument('--Patience',help="How many checks to do before resubmitting the job?", default='15')
 parser.add_argument('--RecBatchID',help="Give this training sample batch an ID", default='SHIP_UR_v1')
 parser.add_argument('--f',help="Please enter the full path to the file with track reconstruction", default='/afs/cern.ch/work/f/ffedship/public/SHIP/Source_Data/SHIP_Emulsion_Rec_Raw_UR.csv')
@@ -93,7 +93,7 @@ RemoveTracksZ=ast.literal_eval(args.RemoveTracksZ)
 ReqMemory=args.ReqMemory
 Xmin,Xmax,Ymin,Ymax=float(args.Xmin),float(args.Xmax),float(args.Ymin),float(args.Ymax)
 SliceData=max(Xmin,Xmax,Ymin,Ymax)>0 #We don't slice data if all values are set to zero simultaneousy (which is the default setting)
-ModelName=ast.literal_eval(args.ModelName)
+ModelName=args.ModelName
 Patience=int(args.Patience)
 initial_input_file_location=args.f
 Xmin,Xmax,Ymin,Ymax=float(args.Xmin),float(args.Xmax),float(args.Ymin),float(args.Ymax)
