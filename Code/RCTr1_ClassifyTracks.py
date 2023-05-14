@@ -382,7 +382,7 @@ while Status<len(Program):
              Status=20
              break
     else:
-        if status==1:
+        if Status==1:
             print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
             print(UF.TimeStamp(),bcolors.BOLD+'Stage 2:'+bcolors.ENDC+' Collecting and de-duplicating the results from stage 1')
             req_file=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RCTr1a_'+RecBatchID+'_0/RCTr1a_'+RecBatchID+'_ClassifiedTrackSamples_0.pkl'
