@@ -5,10 +5,10 @@
 
 ########################################    Import libraries    #############################################
 import argparse
-import pandas as pd #We use Panda for a routine data processing
-import gc  #Helps to clear memory
-import ast
-from UtilityFunctions import EMO
+import sys
+########################################    Import libraries    #############################################
+import argparse
+
 
 
 
@@ -26,6 +26,7 @@ parser.add_argument('--AFS',help="AFS directory location", default='.')
 parser.add_argument('--BatchID',help="Give this training sample batch an ID", default='SHIP_UR_v1')
 parser.add_argument('--MaxSegments',help="A maximum number of track combinations that will be used in a particular HTCondor job for this script", default='20000')
 parser.add_argument('--ModelName',help="WHat ANN model would you like to use?", default='MH_GNN_5FTR_4_120_4_120')
+parser.add_argument('--PY',help="Python libraries directory location", default='.')
 
 ######################################## Set variables  #############################################################
 args = parser.parse_args()
@@ -42,9 +43,19 @@ MaxSegments=int(args.MaxSegments)
 #Loading Directory locations
 EOS_DIR=args.EOS
 AFS_DIR=args.AFS
-
+PY_DIR=args.PY
+if PY_DIR!='': #Temp solution
+    sys.path=['',PY_DIR]
+    sys.path.append('/usr/lib64/python36.zip')
+    sys.path.append('/usr/lib64/python3.6')
+    sys.path.append('/usr/lib64/python3.6/lib-dynload')
+    sys.path.append('/usr/lib64/python3.6/site-packages')
+    sys.path.append('/usr/lib/python3.6/site-packages')
+sys.path.append(AFS_DIR+'/Code/Utilities')
 import UtilityFunctions as UF #This is where we keep routine utility functions
-
+import pandas as pd #We use Panda for a routine data processing
+import gc  #Helps to clear memory
+from UtilityFunctions import EMO
 EOSsubDIR=EOS_DIR+'/'+'ANNDEA'
 EOSsubModelDIR=EOSsubDIR+'/'+'Models'
 Model_Meta_Path=EOSsubModelDIR+'/'+ModelName+'_Meta'
