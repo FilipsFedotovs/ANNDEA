@@ -180,7 +180,7 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         no_submissions=math.ceil(len(data)/MaxSegments)
         print(UF.TimeStamp(), bcolors.OKGREEN+"The track segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+required_file_location+bcolors.ENDC)
         Meta=UF.TrainingSampleMeta(RecBatchID)
-        Meta.IniTrackMetaData(ClassHeaders,ClassNames,ClassValues,MaxSegments,no_submissions)
+        Meta.IniTrackMetaData(ClassHeaders,ClassNames,ClassValues,MaxSegments,no_submissions,MinHitsTrack)
         Meta.UpdateStatus(1)
         print(UF.PickleOperations(RecOutputMeta,'w', Meta)[1])
         print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
