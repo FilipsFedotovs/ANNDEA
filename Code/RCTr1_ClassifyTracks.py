@@ -412,7 +412,7 @@ while Status<len(Program):
             print(UF.TimeStamp(), bcolors.OKGREEN+"The classified track data has been written to"+bcolors.ENDC, bcolors.OKBLUE+final_output_file_location+bcolors.ENDC)
             print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 1 has successfully completed'+bcolors.ENDC)
             UpdateStatus(2)
-            status=2
+            Status=2
             continue
     print(UF.TimeStamp(),'Loading previously saved data from ',bcolors.OKBLUE+RecOutputMeta+bcolors.ENDC)
     MetaInput=UF.PickleOperations(RecOutputMeta,'r', 'N/A')
