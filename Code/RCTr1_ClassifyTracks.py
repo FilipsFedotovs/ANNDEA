@@ -392,7 +392,7 @@ while Status<len(Program):
             for i in base_data:
                 ExtractedData.append(i.Header+i.Class)
             for i in range(1,JobSets):
-                    req_file=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RCTr1a_'+RecBatchID+'_0/MCTr1a'+'_'+RecBatchID+'_ClassifiedTrackSamples_'+str(i)+'.pkl'
+                    req_file=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RCTr1a_'+RecBatchID+'_0/RCTr1a'+'_'+RecBatchID+'_ClassifiedTrackSamples_'+str(i)+'.pkl'
                     base_data=UF.PickleOperations(req_file,'r', 'N/A')[0]
                     for i in base_data:
                          ExtractedData.append(i.Header+i.Class)
