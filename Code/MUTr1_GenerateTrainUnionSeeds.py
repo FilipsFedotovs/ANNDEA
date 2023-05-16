@@ -76,7 +76,7 @@ parser.add_argument('--Samples',help="How many samples? Please enter the number 
 parser.add_argument('--LabelRatio',help="What is the desired proportion of genuine seeds in the training/validation sets", default='0.5')
 parser.add_argument('--TrainSampleSize',help="Maximum number of samples per Training file", default='50000')
 parser.add_argument('--ForceStatus',help="Would you like the program run from specific status number? (Only for advance users)", default='')
-parser.add_argument('--RequestExtCPU',help="Would you like to request extra CPUs?", default='N')
+parser.add_argument('--RequestExtCPU',help="Would you like to request extra CPUs?", default=1)
 parser.add_argument('--JobFlavour',help="Specifying the length of the HTCondor job walltime. Currently at 'workday' which is 8 hours.", default='workday')
 parser.add_argument('--LocalSub',help="Local submission?", default='N')
 parser.add_argument('--SubPause',help="How long to wait in minutes after submitting 10000 jobs?", default='60')
@@ -86,7 +86,7 @@ parser.add_argument('--MaxSLG',help="Maximum allowed longitudinal gap value betw
 parser.add_argument('--MaxSTG',help="Maximum allowed transverse gap value between segments per SLG length", default='160')
 parser.add_argument('--MaxDOCA',help="Maximum DOCA allowed", default='100')
 parser.add_argument('--MaxAngle',help="Maximum magnitude of angle allowed", default='3.6')
-
+parser.add_argument('--ReqMemory',help="How uch memory to request?", default='2 GB')
 ######################################## Parsing argument values  #############################################################
 args = parser.parse_args()
 Mode=args.Mode.upper()
@@ -106,7 +106,8 @@ MaxSTG=float(args.MaxSTG)
 MaxDOCA=float(args.MaxDOCA)
 MaxSTG=float(args.MaxSTG)
 MaxAngle=float(args.MaxAngle)
-RequestExtCPU=(args.RequestExtCPU=='Y')
+RequestExtCPU=int(args.RequestExtCPU)
+ReqMemory=args.ReqMemory
 Xmin,Xmax,Ymin,Ymax=float(args.Xmin),float(args.Xmax),float(args.Ymin),float(args.Ymax)
 SliceData=max(Xmin,Xmax,Ymin,Ymax)>0 #We don't slice data if all values are set to zero simultaneousy (which is the default setting)
 LocalSub=(args.LocalSub=='Y')
@@ -254,7 +255,7 @@ def AutoPilot(wait_min, interval_min, max_interval_tolerance,program):
                print(UF.TimeStamp(),bcolors.WARNING+'Autopilot status update: There are still', len(bad_pop), 'HTCondor jobs remaining'+bcolors.ENDC)
                if interval%max_interval_tolerance==0:
                   for bp in bad_pop:
-                      UF.SubmitJobs2Condor(bp,program[5],RequestExtCPU,JobFlavour)
+                      UF.SubmitJobs2Condor(bp,program[5],RequestExtCPU,JobFlavour,ReqMemory)
                   print(UF.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
          else:
               return True,False
@@ -305,7 +306,7 @@ def StandardProcess(program,status,freshstart):
                               print(UF.TimeStamp(),'Pausing submissions for  ',str(int(SubPause/60)), 'minutes to relieve congestion...',bcolors.ENDC)
                               time.sleep(SubPause)
                               _cnt=0
-                          UF.SubmitJobs2Condor(bp,program[status][5],RequestExtCPU,JobFlavour)
+                          UF.SubmitJobs2Condor(bp,program[status][5],RequestExtCPU,JobFlavour,ReqMemory)
                           _cnt+=bp[6]
                  if program[status][5]:
                     print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
@@ -332,7 +333,7 @@ def StandardProcess(program,status,freshstart):
                       HTCondorTag="SoftUsed == \"ANNDEA-"+program[status][1][5]+"-"+TrainSampleID+"\""
                       UF.TrainCleanUp(AFS_DIR, EOS_DIR, program[status][1][5]+'_'+TrainSampleID, [], HTCondorTag)
                       for bp in bad_pop:
-                           UF.SubmitJobs2Condor(bp,program[status][5],RequestExtCPU,JobFlavour)
+                           UF.SubmitJobs2Condor(bp,program[status][5],RequestExtCPU,JobFlavour,ReqMemory)
                       print(UF.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
                       if program[status][5]:
                           print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
@@ -357,7 +358,7 @@ def StandardProcess(program,status,freshstart):
                       HTCondorTag="SoftUsed == \"ANNDEA-"+program[status][1][5]+"-"+TrainSampleID+"\""
                       UF.TrainCleanUp(AFS_DIR, EOS_DIR, program[status][1][5]+'_'+TrainSampleID, [], HTCondorTag)
                       for bp in bad_pop:
-                           UF.SubmitJobs2Condor(bp,program[status][5],RequestExtCPU,JobFlavour)
+                           UF.SubmitJobs2Condor(bp,program[status][5],RequestExtCPU,JobFlavour,ReqMemory)
                       if program[status][5]:
                            print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
                            return True,False

@@ -57,7 +57,7 @@ parser = argparse.ArgumentParser(description='This script prepares training data
 parser.add_argument('--SubPause',help="How long to wait in minutes after submitting 10000 jobs?", default='60')
 parser.add_argument('--SubGap',help="How long to wait in minutes after submitting 10000 jobs?", default='10000')
 parser.add_argument('--LocalSub',help="Local submission?", default='N')
-parser.add_argument('--RequestExtCPU',help="Would you like to request extra CPUs?", default='N')
+parser.add_argument('--RequestExtCPU',help="Would you like to request extra CPUs? How Many?", default=1)
 parser.add_argument('--JobFlavour',help="Specifying the length of the HTCondor job walltime. Currently at 'workday' which is 8 hours.", default='workday')
 parser.add_argument('--TrackID',help="What track name is used?", default='ANN_Track_ID')
 parser.add_argument('--BrickID',help="What brick ID name is used?", default='ANN_Brick_ID')
@@ -73,6 +73,7 @@ parser.add_argument('--Ymax',help="This option restricts data to only those even
 parser.add_argument('--Log',help="Would you like to log the performance of this reconstruction? (Only available with MC data)", default='N')
 parser.add_argument('--Acceptance',help="What is the ANN fit acceptance?", default='0.5')
 parser.add_argument('--CalibrateAcceptance',help="Would you like to recalibrate the acceptance?", default='N')
+parser.add_argument('--ReqMemory',help="Specifying the length of the HTCondor job walltime. Currently at 'workday' which is 8 hours.", default='2 GB')
 
 ######################################## Parsing argument values  #############################################################
 args = parser.parse_args()
@@ -89,7 +90,8 @@ if LocalSub:
 else:
     time_int=10
 JobFlavour=args.JobFlavour
-RequestExtCPU=(args.RequestExtCPU=='Y')
+RequestExtCPU=int(args.RequestExtCPU)
+ReqMemory=args.ReqMemory
 Xmin,Xmax,Ymin,Ymax=float(args.Xmin),float(args.Xmax),float(args.Ymin),float(args.Ymax)
 SliceData=max(Xmin,Xmax,Ymin,Ymax)>0 #We don't slice data if all values are set to zero simultaneousy (which is the default setting)
 ModelName=ast.literal_eval(args.ModelName)
@@ -293,7 +295,7 @@ def AutoPilot(wait_min, interval_min, max_interval_tolerance,program):
                print(UF.TimeStamp(),bcolors.WARNING+'Autopilot status update: There are still', len(bad_pop), 'HTCondor jobs remaining'+bcolors.ENDC)
                if interval%max_interval_tolerance==0:
                   for bp in bad_pop:
-                      UF.SubmitJobs2Condor(bp,program[5],RequestExtCPU,JobFlavour)
+                      UF.SubmitJobs2Condor(bp,program[5],RequestExtCPU,JobFlavour,ReqMemory)
                   print(UF.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
          else:
               return True,False
@@ -348,7 +350,7 @@ def StandardProcess(program,status,freshstart):
                               print(UF.TimeStamp(),'Pausing submissions for  ',str(int(SubPause/60)), 'minutes to relieve congestion...',bcolors.ENDC)
                               time.sleep(SubPause)
                               _cnt=0
-                          UF.SubmitJobs2Condor(bp,program[status][5],RequestExtCPU,JobFlavour)
+                          UF.SubmitJobs2Condor(bp,program[status][5],RequestExtCPU,JobFlavour,ReqMemory)
                           _cnt+=bp[6]
                  if program[status][5]:
                     print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
@@ -378,7 +380,7 @@ def StandardProcess(program,status,freshstart):
                               print(UF.TimeStamp(),'Pausing submissions for  ',str(int(SubPause/60)), 'minutes to relieve congestion...',bcolors.ENDC)
                               time.sleep(SubPause)
                               _cnt=0
-                           UF.SubmitJobs2Condor(bp,program[status][5],RequestExtCPU,JobFlavour)
+                           UF.SubmitJobs2Condor(bp,program[status][5],RequestExtCPU,JobFlavour,ReqMemory)
                            _cnt+=bp[6]
                       print(UF.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
                       if program[status][5]:
@@ -448,8 +450,8 @@ if Log:
     Program.append('Custom - PickE')
 
 else:
-    UpdateStatus(2)
-    Status=2
+    UpdateStatus(0)
+    Status=0
 
 if Mode=='CLEANUP':
     UpdateStatus(19)

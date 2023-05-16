@@ -77,7 +77,6 @@ if ModelName!='Blank':
     if ModelMeta.ModelFramework=='Tensorflow':
         import tensorflow as tf
         from tensorflow import keras
-
         model=tf.keras.models.load_model(Model_Path)
     if ModelMeta.ModelFramework=='PyTorch':
         import torch
