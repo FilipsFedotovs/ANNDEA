@@ -473,8 +473,10 @@ while Status<len(Program):
       Status=Meta.Status[-1]
 if Status==3:
         for p in Program:
-              print(UF.TimeStamp(),UF.ManageTempFolders(p,'Delete'))
               print(UF.TimeStamp(),'Performing the cleanup... ',bcolors.ENDC)
+              print(UF.TimeStamp(),UF.ManageTempFolders(p,'Delete'))
+              exit()
+
               HTCondorTag="SoftUsed == \"ANNDEA-MCTr1a-"+TrainSampleID+"\""
               UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MCTr1a_'+TrainSampleID, ['MCTr1a', 'MCTr1_'+TrainSampleID], HTCondorTag)
         print(UF.TimeStamp(), bcolors.OKGREEN+"Train sample generation has been completed"+bcolors.ENDC)
