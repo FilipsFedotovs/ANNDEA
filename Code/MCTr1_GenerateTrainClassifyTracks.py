@@ -118,8 +118,9 @@ for i in ClassNames:
 
 ########################################     Phase 1 - Create compact source file    #########################################
 print(UF.TimeStamp(),bcolors.BOLD+'Stage 0:'+bcolors.ENDC+' Preparing the source data...')
-
-if os.path.isfile(required_file_location)==False or Mode=='RESET':
+if Mode.upper() == 'CLEANUP':
+   Status=4
+elif os.path.isfile(required_file_location)==False or Mode=='RESET':
         print(UF.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
         data=pd.read_csv(input_file_location,
                     header=0,
