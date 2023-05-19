@@ -2782,10 +2782,7 @@ def ManageTempFolders(spi,op_type):
                   continue
        return 'Temporary folders have been created'
     if op_type=='Delete':
-       print(spi[1][8])
-       print(type(spi[1][8]) is int)
-       exit()
-       if type(spi[1][8]) is int:
+       if (type(spi[1][8]) is int):
            shutil.rmtree(spi[1][1]+spi[1][3]+'Temp_'+spi[1][5]+'_'+spi[1][7]+'_'+str(0),True)
            shutil.rmtree(spi[1][0]+'/HTCondor/SUB/Temp_'+spi[1][5]+'_'+spi[1][7]+'_'+str(0),True)
            shutil.rmtree(spi[1][0]+'/HTCondor/SH/Temp_'+spi[1][5]+'_'+spi[1][7]+'_'+str(0),True)
