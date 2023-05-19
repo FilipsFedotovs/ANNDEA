@@ -120,6 +120,8 @@ for i in ClassNames:
 print(UF.TimeStamp(),bcolors.BOLD+'Stage 0:'+bcolors.ENDC+' Preparing the source data...')
 if Mode.upper() == 'CLEANUP':
    Status=4
+   MetaInput=UF.PickleOperations(TrainSampleOutputMeta,'r', 'N/A')
+   Meta=MetaInput[0]
 elif os.path.isfile(required_file_location)==False or Mode=='RESET':
         print(UF.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
         data=pd.read_csv(input_file_location,
@@ -208,13 +210,13 @@ elif os.path.isfile(TrainSampleOutputMeta)==True:
     print(UF.TimeStamp(),'Loading previously saved data from ',bcolors.OKBLUE+TrainSampleOutputMeta+bcolors.ENDC)
     MetaInput=UF.PickleOperations(TrainSampleOutputMeta,'r', 'N/A')
     Meta=MetaInput[0]
-if Mode.upper() != 'CLEANUP':
-    ClassHeaders=Meta.ClassHeaders
-    ClassNames=Meta.ClassNames
-    ClassValues=Meta.ClassValues
-    JobSets=Meta.JobSets
-    MaxSegments=Meta.MaxSegments
-    TotJobs=JobSets
+
+ClassHeaders=Meta.ClassHeaders
+ClassNames=Meta.ClassNames
+ClassValues=Meta.ClassValues
+JobSets=Meta.JobSets
+MaxSegments=Meta.MaxSegments
+TotJobs=JobSets
 
 
 ########################################     Preset framework parameters    #########################################
