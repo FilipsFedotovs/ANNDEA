@@ -477,6 +477,7 @@ while Status<len(Program):
       Status=Meta.Status[-1]
 if Status==3:
         for p in Program:
+            if p!='Custom':
               print(UF.TimeStamp(),'Performing the cleanup... ',bcolors.ENDC)
               print(UF.TimeStamp(),UF.ManageTempFolders(p,'Delete'))
               HTCondorTag="SoftUsed == \"ANNDEA-MCTr1a-"+TrainSampleID+"\""
