@@ -208,12 +208,13 @@ elif os.path.isfile(TrainSampleOutputMeta)==True:
     print(UF.TimeStamp(),'Loading previously saved data from ',bcolors.OKBLUE+TrainSampleOutputMeta+bcolors.ENDC)
     MetaInput=UF.PickleOperations(TrainSampleOutputMeta,'r', 'N/A')
     Meta=MetaInput[0]
-ClassHeaders=Meta.ClassHeaders
-ClassNames=Meta.ClassNames
-ClassValues=Meta.ClassValues
-JobSets=Meta.JobSets
-MaxSegments=Meta.MaxSegments
-TotJobs=JobSets
+if Mode.upper() != 'CLEANUP':
+    ClassHeaders=Meta.ClassHeaders
+    ClassNames=Meta.ClassNames
+    ClassValues=Meta.ClassValues
+    JobSets=Meta.JobSets
+    MaxSegments=Meta.MaxSegments
+    TotJobs=JobSets
 
 
 ########################################     Preset framework parameters    #########################################
