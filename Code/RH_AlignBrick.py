@@ -262,6 +262,7 @@ with alive_bar(tot_jobs,force_tty=True, title='Optimising the angle alignment co
        am=[p[0]]
        def FitPlateFixedTX(x):
            return FitPlateAngle(p[0],x,0,new_combined_data)
+       print(FitPlateFixedTX(0))
        exit()
        def FitPlateFixedTY(x):
            return FitPlate(p[0],0,x,new_combined_data)
