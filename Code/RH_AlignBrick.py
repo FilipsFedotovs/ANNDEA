@@ -128,6 +128,75 @@ def FitPlate(PlateZ,dx,dy,input_data):
     temp_data=temp_data.values.tolist()
     fit=temp_data[0]/temp_data[1]
     return fit
+
+def FitPlateAngle(PlateZ,dtx,dty,input_data):
+    change_df = pd.DataFrame([[PlateZ,dtx,dty]], columns = ['Plate_ID','dtx','dty'])
+    temp_data=input_data[['FEDRA_Track_ID','x','y','z','tx','ty','Track_Hit_No','Plate_ID']]
+    temp_data=pd.merge(temp_data,change_df,on='Plate_ID',how='left')
+    print(temp_data)
+    exit()
+    temp_data['dx'] = temp_data['dx'].fillna(0.0)
+    temp_data['dy'] = temp_data['dy'].fillna(0.0)
+    temp_data['x']=temp_data['x']+temp_data['dx']
+    temp_data['y']=temp_data['y']+temp_data['dy']
+    temp_data=temp_data[['FEDRA_Track_ID','x','y','z','Track_Hit_No']]
+    Tracks_Head=temp_data[['FEDRA_Track_ID']]
+    Tracks_Head.drop_duplicates(inplace=True)
+    Tracks_List=temp_data.values.tolist() #I find it is much easier to deal with tracks in list format when it comes to fitting
+    Tracks_Head=Tracks_Head.values.tolist()
+    #Bellow we build the track representatation that we can use to fit slopes
+    for bth in Tracks_Head:
+                   bth.append([])
+                   bt=0
+                   trigger=False
+                   while bt<(len(Tracks_List)):
+                       if bth[0]==Tracks_List[bt][0]:
+
+                           bth[1].append(Tracks_List[bt][1:4])
+                           del Tracks_List[bt]
+                           bt-=1
+                           trigger=True
+                       elif trigger:
+                            break
+                       else:
+                            continue
+                       bt+=1
+    for bth in Tracks_Head:
+           x,y,z=[],[],[]
+           for b in bth[1]:
+               x.append(b[0])
+               y.append(b[1])
+               z.append(b[2])
+           tx=np.polyfit(z,x,1)[0]
+           ax=np.polyfit(z,x,1)[1]
+           ty=np.polyfit(z,y,1)[0]
+           ay=np.polyfit(z,y,1)[1]
+           bth.append(ax) #Append x intercept
+           bth.append(tx) #Append x slope
+           bth.append(0) #Append a placeholder slope (for polynomial case)
+           bth.append(ay) #Append x intercept
+           bth.append(ty) #Append x slope
+           bth.append(0) #Append a placeholder slope (for polynomial case)
+           del(bth[1])
+    #Once we get coefficients for all tracks we convert them back to Pandas dataframe and join back to the data
+    Tracks_Head=pd.DataFrame(Tracks_Head, columns = ['FEDRA_Track_ID','ax','t1x','t2x','ay','t1y','t2y'])
+
+    temp_data=pd.merge(temp_data,Tracks_Head,how='inner',on = ['FEDRA_Track_ID'])
+    #Calculating x and y coordinates of the fitted line for all plates in the track
+    temp_data['new_x']=temp_data['ax']+(temp_data['z']*temp_data['t1x'])+((temp_data['z']**2)*temp_data['t2x'])
+    temp_data['new_y']=temp_data['ay']+(temp_data['z']*temp_data['t1y'])+((temp_data['z']**2)*temp_data['t2y'])
+    #Calculating how far hits deviate from the fit polynomial
+    temp_data['d_x']=temp_data['x']-temp_data['new_x']
+    temp_data['d_y']=temp_data['y']-temp_data['new_y']
+    temp_data['d_r']=temp_data['d_x']**2+temp_data['d_y']**2
+    temp_data['d_r'] = temp_data['d_r'].astype(float)
+    temp_data['d_r']=np.sqrt(temp_data['d_r']) #Absolute distance
+    temp_data=temp_data[['FEDRA_Track_ID','Track_Hit_No','d_r']]
+    temp_data=temp_data.groupby(['FEDRA_Track_ID','Track_Hit_No']).agg({'d_r':'sum'}).reset_index()
+    temp_data=temp_data.agg({'d_r':'sum','Track_Hit_No':'sum'})
+    temp_data=temp_data.values.tolist()
+    fit=temp_data[0]/temp_data[1]
+    return fit
 def AlignPlate(PlateZ,dx,dy,input_data):
     change_df = pd.DataFrame([[PlateZ,dx,dy]], columns = ['Plate_ID','dx','dy'])
     temp_data=input_data
@@ -155,9 +224,7 @@ track_no_data=track_no_data.drop(['Hit_ID','y','z','tx','ty'],axis=1)
 track_no_data=track_no_data.rename(columns={'x': "Track_Hit_No"})
 new_combined_data=pd.merge(data, track_no_data, how="left", on=['FEDRA_Track_ID'])
 new_combined_data = new_combined_data[new_combined_data.Track_Hit_No >= MinHits]
-print(new_combined_data)
 new_combined_data=new_combined_data.drop(['Hit_ID'],axis=1)
-print(new_combined_data)
 new_combined_data=new_combined_data.sort_values(['FEDRA_Track_ID','z'],ascending=[1,1])
 new_combined_data['FEDRA_Track_ID']=new_combined_data['FEDRA_Track_ID'].astype(int)
 new_combined_data['Plate_ID']=new_combined_data['z'].astype(int)
@@ -169,13 +236,34 @@ plates=plates.values.tolist() #I find it is much easier to deal with tracks in l
 print(UF.TimeStamp(),'There are ',len(plates),' plates')
 
 tot_jobs = len(plates)*2
-alignment_map=[]
-with alive_bar(tot_jobs,force_tty=True, title='Optimising the alignment configuration...') as bar:
+# alignment_map=[]
+# with alive_bar(tot_jobs,force_tty=True, title='Optimising the spatial alignment configuration...') as bar:
+#     for p in plates:
+#        am=[p[0]]
+#        def FitPlateFixedX(x):
+#            return FitPlate(p[0],x,0,new_combined_data)
+#        def FitPlateFixedY(x):
+#            return FitPlate(p[0],0,x,new_combined_data)
+#        res = minimize_scalar(FitPlateFixedX, bounds=(-500, 500), method='bounded')
+#        new_combined_data=AlignPlate(p[0],res.x,0,new_combined_data)
+#        am.append(res.x)
+#        print('Overall fit value:',FitPlateFixedX(0))
+#        bar()
+#        res = minimize_scalar(FitPlateFixedY, bounds=(-500, 500), method='bounded')
+#        new_combined_data=AlignPlate(p[0],0,res.x,new_combined_data)
+#        am.append(res.x)
+#        bar()
+#        print('Overall fit value:',FitPlateFixedY(0))
+#        alignment_map.append(am)
+
+angle_alignment_map=[]
+with alive_bar(tot_jobs,force_tty=True, title='Optimising the angle alignment configuration...') as bar:
     for p in plates:
        am=[p[0]]
-       def FitPlateFixedX(x):
-           return FitPlate(p[0],x,0,new_combined_data)
-       def FitPlateFixedY(x):
+       def FitPlateFixedTX(x):
+           return FitPlateAngle(p[0],x,0,new_combined_data)
+       exit()
+       def FitPlateFixedTY(x):
            return FitPlate(p[0],0,x,new_combined_data)
        res = minimize_scalar(FitPlateFixedX, bounds=(-500, 500), method='bounded')
        new_combined_data=AlignPlate(p[0],res.x,0,new_combined_data)
@@ -187,7 +275,8 @@ with alive_bar(tot_jobs,force_tty=True, title='Optimising the alignment configur
        am.append(res.x)
        bar()
        print('Overall fit value:',FitPlateFixedY(0))
-       alignment_map.append(am)
+       angle_alignment_map.append(am)
+exit()
 print(raw_data)
 exit()
 print(UF.TimeStamp(),'Aligning the brick...')
