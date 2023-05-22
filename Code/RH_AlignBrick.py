@@ -138,8 +138,6 @@ def FitPlateAngle(PlateZ,dtx,dty,input_data):
     temp_data['tx']=temp_data['tx']+temp_data['dtx']
     temp_data['ty']=temp_data['ty']+temp_data['dty']
     temp_data=temp_data[['FEDRA_Track_ID','x','y','z','tx','ty','Track_Hit_No']]
-    print(temp_data)
-    exit()
     Tracks_Head=temp_data[['FEDRA_Track_ID']]
     Tracks_Head.drop_duplicates(inplace=True)
     Tracks_List=temp_data.values.tolist() #I find it is much easier to deal with tracks in list format when it comes to fitting
@@ -168,20 +166,16 @@ def FitPlateAngle(PlateZ,dtx,dty,input_data):
                y.append(b[1])
                z.append(b[2])
            tx=np.polyfit(z,x,1)[0]
-           ax=np.polyfit(z,x,1)[1]
            ty=np.polyfit(z,y,1)[0]
-           ay=np.polyfit(z,y,1)[1]
-           bth.append(ax) #Append x intercept
            bth.append(tx) #Append x slope
-           bth.append(0) #Append a placeholder slope (for polynomial case)
-           bth.append(ay) #Append x intercept
            bth.append(ty) #Append x slope
-           bth.append(0) #Append a placeholder slope (for polynomial case)
            del(bth[1])
     #Once we get coefficients for all tracks we convert them back to Pandas dataframe and join back to the data
-    Tracks_Head=pd.DataFrame(Tracks_Head, columns = ['FEDRA_Track_ID','ax','t1x','t2x','ay','t1y','t2y'])
+    Tracks_Head=pd.DataFrame(Tracks_Head, columns = ['FEDRA_Track_ID','ntx','nty'])
 
     temp_data=pd.merge(temp_data,Tracks_Head,how='inner',on = ['FEDRA_Track_ID'])
+    print(temp_data)
+    exit()
     #Calculating x and y coordinates of the fitted line for all plates in the track
     temp_data['new_x']=temp_data['ax']+(temp_data['z']*temp_data['t1x'])+((temp_data['z']**2)*temp_data['t2x'])
     temp_data['new_y']=temp_data['ay']+(temp_data['z']*temp_data['t1y'])+((temp_data['z']**2)*temp_data['t2y'])
