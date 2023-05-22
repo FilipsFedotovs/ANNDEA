@@ -53,6 +53,7 @@ parser = argparse.ArgumentParser(description='This script prepares training data
 parser.add_argument('--Mode', help='Script will continue from the last checkpoint, unless you want to start from the scratch, then type "Reset"',default='')
 parser.add_argument('--RecBatchID',help="Give this training sample batch an ID", default='SHIP_UR_v1')
 parser.add_argument('--MinHits',help="What is the minimum number of hits per track?", default='2')
+parser.add_argument('--ScalingFactor',help="What is the minimum number of hits per track?", default='10')
 parser.add_argument('--f',help="Please enter the full path to the file with track reconstruction", default='/afs/cern.ch/work/f/ffedship/public/SHIP/Source_Data/SHIP_Emulsion_Rec_Raw_UR.csv')
 
 ######################################## Parsing argument values  #############################################################
@@ -61,6 +62,7 @@ Mode=args.Mode.upper()
 RecBatchID=args.RecBatchID
 initial_input_file_location=args.f
 MinHits=int(args.MinHits)
+scaling_factor=int(args.ScalingFactor)
 output_file_location=initial_input_file_location[:-4]+'_Re-Aligned.csv'
 def FitPlate(PlateZ,dx,dy,input_data):
     change_df = pd.DataFrame([[PlateZ,dx,dy]], columns = ['Plate_ID','dx','dy'])
@@ -129,14 +131,14 @@ def FitPlate(PlateZ,dx,dy,input_data):
     fit=temp_data[0]/temp_data[1]
     return fit
 
-def FitPlateAngle(PlateZ,dtx,dty,input_data):
+def FitPlateAngle(PlateZ,dtx,dty,input_data,scaling):
     change_df = pd.DataFrame([[PlateZ,dtx,dty]], columns = ['Plate_ID','dtx','dty'])
     temp_data=input_data[['FEDRA_Track_ID','x','y','z','tx','ty','Track_Hit_No','Plate_ID']]
     temp_data=pd.merge(temp_data,change_df,on='Plate_ID',how='left')
     temp_data['dtx'] = temp_data['dtx'].fillna(0.0)
     temp_data['dty'] = temp_data['dty'].fillna(0.0)
-    temp_data['dtx'] = temp_data['dtx']/100
-    temp_data['dty'] = temp_data['dty']/100
+    temp_data['dtx'] = temp_data['dtx']/scaling
+    temp_data['dty'] = temp_data['dty']/scaling
     temp_data['tx']=temp_data['tx']+temp_data['dtx']
     temp_data['ty']=temp_data['ty']+temp_data['dty']
     temp_data=temp_data[['FEDRA_Track_ID','x','y','z','tx','ty','Track_Hit_No']]
@@ -203,10 +205,12 @@ def AlignPlate(PlateZ,dx,dy,input_data):
     temp_data = temp_data.drop(['dx','dy'],axis=1)
     return temp_data
 
-def AlignPlateAngle(PlateZ,dtx,dty,input_data):
+def AlignPlateAngle(PlateZ,dtx,dty,input_data,scaling):
     change_df = pd.DataFrame([[PlateZ,dtx,dty]], columns = ['Plate_ID','dtx','dty'])
     temp_data=input_data
     temp_data=pd.merge(temp_data,change_df,on='Plate_ID',how='left')
+    temp_data['dtx'] = temp_data['dtx']/scaling
+    temp_data['dty'] = temp_data['dty']/scaling
     temp_data['dtx'] = temp_data['dtx'].fillna(0.0)
     temp_data['dty'] = temp_data['dty'].fillna(0.0)
     temp_data['tx']=temp_data['tx']+temp_data['dtx']
@@ -267,16 +271,16 @@ with alive_bar(tot_jobs,force_tty=True, title='Optimising the angle alignment co
     for p in plates:
        am=[p[0]]
        def FitPlateFixedTX(x):
-           return FitPlateAngle(p[0],x,0,new_combined_data)
+           return FitPlateAngle(p[0],x,0,new_combined_data,scaling_factor)
        def FitPlateFixedTY(x):
-           return FitPlateAngle(p[0],0,x,new_combined_data)
-       res = minimize_scalar(FitPlateFixedTX, bounds=(-100, 100), method='bounded')
-       new_combined_data=AlignPlateAngle(p[0],res.x,0,new_combined_data)
+           return FitPlateAngle(p[0],0,x,new_combined_data,scaling_factor)
+       res = minimize_scalar(FitPlateFixedTX, bounds=(-scaling_factor, scaling_factor), method='bounded')
+       new_combined_data=AlignPlateAngle(p[0],res.x,0,new_combined_data,scaling_factor)
        am.append(res.x)
        print('Overall fit value:',FitPlateFixedTX(0))
        bar()
-       res = minimize_scalar(FitPlateFixedTY, bounds=(-100, 100), method='bounded')
-       new_combined_data=AlignPlateAngle(p[0],0,res.x,new_combined_data)
+       res = minimize_scalar(FitPlateFixedTY, bounds=(-scaling_factor, scaling_factor), method='bounded')
+       new_combined_data=AlignPlateAngle(p[0],0,res.x,new_combined_data,scaling_factor)
        am.append(res.x)
        bar()
        print('Overall fit value:',FitPlateFixedTY(0))
