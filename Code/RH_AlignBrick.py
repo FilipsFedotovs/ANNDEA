@@ -132,7 +132,8 @@ def FitPlate(PlateZ,dx,dy,input_data):
 def FitPlateAngle(PlateZ,dtx,dty,input_data):
     change_df = pd.DataFrame([[PlateZ,dtx,dty]], columns = ['Plate_ID','dtx','dty'])
     temp_data=input_data[['FEDRA_Track_ID','x','y','z','tx','ty','Track_Hit_No','Plate_ID']]
-    temp_data=pd.merge(temp_data,change_df,on='Plate_ID',how='left')
+    temp_data=pd.merge(temp_data,change_df,on='Plate_ID',how='inner')
+
     temp_data['dtx'] = temp_data['dtx'].fillna(0.0)
     temp_data['dty'] = temp_data['dty'].fillna(0.0)
     print(temp_data)
