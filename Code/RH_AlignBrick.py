@@ -240,25 +240,25 @@ plates=plates.values.tolist() #I find it is much easier to deal with tracks in l
 print(UF.TimeStamp(),'There are ',len(plates),' plates')
 
 tot_jobs = len(plates)*2
-# alignment_map=[]
-# with alive_bar(tot_jobs,force_tty=True, title='Optimising the spatial alignment configuration...') as bar:
-#     for p in plates:
-#        am=[p[0]]
-#        def FitPlateFixedX(x):
-#            return FitPlate(p[0],x,0,new_combined_data)
-#        def FitPlateFixedY(x):
-#            return FitPlate(p[0],0,x,new_combined_data)
-#        res = minimize_scalar(FitPlateFixedX, bounds=(-500, 500), method='bounded')
-#        new_combined_data=AlignPlate(p[0],res.x,0,new_combined_data)
-#        am.append(res.x)
-#        print('Overall fit value:',FitPlateFixedX(0))
-#        bar()
-#        res = minimize_scalar(FitPlateFixedY, bounds=(-500, 500), method='bounded')
-#        new_combined_data=AlignPlate(p[0],0,res.x,new_combined_data)
-#        am.append(res.x)
-#        bar()
-#        print('Overall fit value:',FitPlateFixedY(0))
-#        alignment_map.append(am)
+alignment_map=[]
+with alive_bar(tot_jobs,force_tty=True, title='Optimising the spatial alignment configuration...') as bar:
+    for p in plates:
+       am=[p[0]]
+       def FitPlateFixedX(x):
+           return FitPlate(p[0],x,0,new_combined_data)
+       def FitPlateFixedY(x):
+           return FitPlate(p[0],0,x,new_combined_data)
+       res = minimize_scalar(FitPlateFixedX, bounds=(-500, 500), method='bounded')
+       new_combined_data=AlignPlate(p[0],res.x,0,new_combined_data)
+       am.append(res.x)
+       print('Overall fit value:',FitPlateFixedX(0))
+       bar()
+       res = minimize_scalar(FitPlateFixedY, bounds=(-500, 500), method='bounded')
+       new_combined_data=AlignPlate(p[0],0,res.x,new_combined_data)
+       am.append(res.x)
+       bar()
+       print('Overall fit value:',FitPlateFixedY(0))
+       alignment_map.append(am)
 
 angle_alignment_map=[]
 with alive_bar(tot_jobs,force_tty=True, title='Optimising the angle alignment configuration...') as bar:
@@ -280,9 +280,7 @@ with alive_bar(tot_jobs,force_tty=True, title='Optimising the angle alignment co
        print('Overall fit value:',FitPlateFixedTY(0))
        angle_alignment_map.append(am)
 
-print(angle_alignment_map)
-exit()
-print(UF.TimeStamp(),'Aligning the brick...')
+print(UF.TimeStamp(),'Aligning the brick spatial coordinates...')
 alignment_map=pd.DataFrame(alignment_map, columns = ['Plate_ID','dx','dy'])
 raw_data['Plate_ID']=raw_data['z'].astype(int)
 raw_data=pd.merge(raw_data,alignment_map,on='Plate_ID',how='inner')
@@ -290,7 +288,19 @@ raw_data['dx'] = raw_data['dx'].fillna(0.0)
 raw_data['dy'] = raw_data['dy'].fillna(0.0)
 raw_data['x']=raw_data['x']+raw_data['dx']
 raw_data['y']=raw_data['y']+raw_data['dy']
-raw_data = raw_data.drop(['Plate_ID','dx','dy'],axis=1)
+raw_data = raw_data.drop(['dx','dy'],axis=1)
+
+print(UF.TimeStamp(),'Aligning the brick angles...')
+angle_alignment_map=pd.DataFrame(alignment_map, columns = ['Plate_ID','dtx','dty'])
+raw_data=pd.merge(raw_data,angle_alignment_map,on='Plate_ID',how='inner')
+raw_data['dtx'] = raw_data['dtx'].fillna(0.0)
+raw_data['dty'] = raw_data['dty'].fillna(0.0)
+print(raw_data)
+raw_data['tx']=raw_data['tx']+raw_data['dtx']
+raw_data['ty']=raw_data['ty']+raw_data['dty']
+raw_data = raw_data.drop(['Plate_ID','dtx','dty'],axis=1)
+print(raw_data)
+exit()
 
 raw_data.to_csv(output_file_location,index=False)
 print('Alignment has been completed...')
