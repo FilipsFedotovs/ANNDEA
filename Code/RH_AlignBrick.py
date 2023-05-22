@@ -174,14 +174,13 @@ def FitPlateAngle(PlateZ,dtx,dty,input_data):
     Tracks_Head=pd.DataFrame(Tracks_Head, columns = ['FEDRA_Track_ID','ntx','nty'])
 
     temp_data=pd.merge(temp_data,Tracks_Head,how='inner',on = ['FEDRA_Track_ID'])
+
+    #Calculating x and y coordinates of the fitted line for all plates in the track
+    #Calculating how far hits deviate from the fit polynomial
+    temp_data['d_tx']=temp_data['tx']-temp_data['ntx']
+    temp_data['d_ty']=temp_data['ty']-temp_data['nty']
     print(temp_data)
     exit()
-    #Calculating x and y coordinates of the fitted line for all plates in the track
-    temp_data['new_x']=temp_data['ax']+(temp_data['z']*temp_data['t1x'])+((temp_data['z']**2)*temp_data['t2x'])
-    temp_data['new_y']=temp_data['ay']+(temp_data['z']*temp_data['t1y'])+((temp_data['z']**2)*temp_data['t2y'])
-    #Calculating how far hits deviate from the fit polynomial
-    temp_data['d_x']=temp_data['x']-temp_data['new_x']
-    temp_data['d_y']=temp_data['y']-temp_data['new_y']
     temp_data['d_r']=temp_data['d_x']**2+temp_data['d_y']**2
     temp_data['d_r'] = temp_data['d_r'].astype(float)
     temp_data['d_r']=np.sqrt(temp_data['d_r']) #Absolute distance
