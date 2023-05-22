@@ -183,8 +183,7 @@ def FitPlateAngle(PlateZ,dtx,dty,input_data):
     temp_data['d_tr']=temp_data['d_tx']**2+temp_data['d_ty']**2
     temp_data['d_tr'] = temp_data['d_tr'].astype(float)
     temp_data['d_tr']=np.sqrt(temp_data['d_tr']) #Absolute distance
-    print(temp_data)
-    exit()
+
     temp_data=temp_data[['FEDRA_Track_ID','Track_Hit_No','d_tr']]
     temp_data=temp_data.groupby(['FEDRA_Track_ID','Track_Hit_No']).agg({'d_tr':'sum'}).reset_index()
     temp_data=temp_data.agg({'d_tr':'sum','Track_Hit_No':'sum'})
