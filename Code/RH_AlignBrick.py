@@ -300,7 +300,7 @@ raw_data['tx']=raw_data['tx']+raw_data['dtx']
 raw_data['ty']=raw_data['ty']+raw_data['dty']
 raw_data = raw_data.drop(['Plate_ID','dtx','dty'],axis=1)
 print(raw_data)
-exit()
+
 
 raw_data.to_csv(output_file_location,index=False)
 print('Alignment has been completed...')
