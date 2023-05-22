@@ -291,7 +291,7 @@ raw_data['y']=raw_data['y']+raw_data['dy']
 raw_data = raw_data.drop(['dx','dy'],axis=1)
 
 print(UF.TimeStamp(),'Aligning the brick angles...')
-angle_alignment_map=pd.DataFrame(alignment_map, columns = ['Plate_ID','dtx','dty'])
+angle_alignment_map=pd.DataFrame(angle_alignment_map, columns = ['Plate_ID','dtx','dty'])
 raw_data=pd.merge(raw_data,angle_alignment_map,on='Plate_ID',how='inner')
 raw_data['dtx'] = raw_data['dtx'].fillna(0.0)
 raw_data['dty'] = raw_data['dty'].fillna(0.0)
@@ -300,7 +300,7 @@ raw_data['tx']=raw_data['tx']+raw_data['dtx']
 raw_data['ty']=raw_data['ty']+raw_data['dty']
 raw_data = raw_data.drop(['Plate_ID','dtx','dty'],axis=1)
 print(raw_data)
-
+exit()
 
 raw_data.to_csv(output_file_location,index=False)
 print('Alignment has been completed...')
