@@ -156,7 +156,7 @@ track_no_data=track_no_data.rename(columns={'x': "Track_Hit_No"})
 new_combined_data=pd.merge(data, track_no_data, how="left", on=['FEDRA_Track_ID'])
 new_combined_data = new_combined_data[new_combined_data.Track_Hit_No >= MinHits]
 print(new_combined_data)
-new_combined_data=new_combined_data.drop(['Hit_ID','tx','ty'],axis=1)
+new_combined_data=new_combined_data.drop(['Hit_ID'],axis=1)
 print(new_combined_data)
 new_combined_data=new_combined_data.sort_values(['FEDRA_Track_ID','z'],ascending=[1,1])
 new_combined_data['FEDRA_Track_ID']=new_combined_data['FEDRA_Track_ID'].astype(int)
