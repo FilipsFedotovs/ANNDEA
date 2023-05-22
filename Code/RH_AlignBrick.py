@@ -202,6 +202,17 @@ def AlignPlate(PlateZ,dx,dy,input_data):
     temp_data['y']=temp_data['y']+temp_data['dy']
     temp_data = temp_data.drop(['dx','dy'],axis=1)
     return temp_data
+
+def AlignPlateAngle(PlateZ,dtx,dty,input_data):
+    change_df = pd.DataFrame([[PlateZ,dtx,dty]], columns = ['Plate_ID','dtx','dty'])
+    temp_data=input_data
+    temp_data=pd.merge(temp_data,change_df,on='Plate_ID',how='left')
+    temp_data['dtx'] = temp_data['dtx'].fillna(0.0)
+    temp_data['dty'] = temp_data['dty'].fillna(0.0)
+    temp_data['tx']=temp_data['tx']+temp_data['dtx']
+    temp_data['ty']=temp_data['ty']+temp_data['dty']
+    temp_data = temp_data.drop(['dtx','dty'],axis=1)
+    return temp_data
 ########################################     Phase 1 - Create compact source file    #########################################
 print(UF.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+initial_input_file_location+bcolors.ENDC)
 raw_data=pd.read_csv(initial_input_file_location,
@@ -260,12 +271,12 @@ with alive_bar(tot_jobs,force_tty=True, title='Optimising the angle alignment co
        def FitPlateFixedTY(x):
            return FitPlateAngle(p[0],0,x,new_combined_data)
        res = minimize_scalar(FitPlateFixedTX, bounds=(-100, 100), method='bounded')
-       new_combined_data=AlignPlate(p[0],res.x,0,new_combined_data)
+       new_combined_data=AlignPlateAngle(p[0],res.x,0,new_combined_data)
        am.append(res.x)
        print('Overall fit value:',FitPlateFixedTX(0))
        bar()
        res = minimize_scalar(FitPlateFixedTY, bounds=(-100, 100), method='bounded')
-       new_combined_data=AlignPlate(p[0],0,res.x,new_combined_data)
+       new_combined_data=AlignPlateAngle(p[0],0,res.x,new_combined_data)
        am.append(res.x)
        bar()
        print('Overall fit value:',FitPlateFixedTY(0))
