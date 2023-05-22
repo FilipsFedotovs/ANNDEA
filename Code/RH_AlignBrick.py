@@ -224,7 +224,7 @@ final_rows=len(data)
 print(UF.TimeStamp(),'The cleaned data has ',final_rows,' hits')
 print(UF.TimeStamp(),'Removing tracks which have less than',MinHits,'hits...')
 track_no_data=data.groupby(['FEDRA_Track_ID'],as_index=False).count()
-track_no_data=track_no_data.drop(['Hit_ID','y','z','tx','ty'],axis=1)
+track_no_data=track_no_data.drop(['Hit_ID','y','z'],axis=1)
 track_no_data=track_no_data.rename(columns={'x': "Track_Hit_No"})
 new_combined_data=pd.merge(data, track_no_data, how="left", on=['FEDRA_Track_ID'])
 new_combined_data = new_combined_data[new_combined_data.Track_Hit_No >= MinHits]
@@ -260,6 +260,36 @@ with alive_bar(tot_jobs,force_tty=True, title='Optimising the spatial alignment 
        print('Overall fit value:',FitPlateFixedY(0))
        alignment_map.append(am)
 
+print(UF.TimeStamp(),'Aligning the brick spatial coordinates...')
+alignment_map=pd.DataFrame(alignment_map, columns = ['Plate_ID','dx','dy'])
+raw_data['Plate_ID']=raw_data['z'].astype(int)
+raw_data=pd.merge(raw_data,alignment_map,on='Plate_ID',how='inner')
+raw_data['dx'] = raw_data['dx'].fillna(0.0)
+raw_data['dy'] = raw_data['dy'].fillna(0.0)
+raw_data['x']=raw_data['x']+raw_data['dx']
+raw_data['y']=raw_data['y']+raw_data['dy']
+raw_data = raw_data.drop(['dx','dy'],axis=1)
+
+
+data=raw_data.dropna()
+final_rows=len(data)
+print(UF.TimeStamp(),'The cleaned data has ',final_rows,' hits')
+print(UF.TimeStamp(),'Removing tracks which have less than',MinHits,'hits...')
+track_no_data=data.groupby(['FEDRA_Track_ID'],as_index=False).count()
+track_no_data=track_no_data.drop(['Hit_ID','y','z','tx','ty'],axis=1)
+track_no_data=track_no_data.rename(columns={'x': "Track_Hit_No"})
+new_combined_data=pd.merge(data, track_no_data, how="left", on=['FEDRA_Track_ID'])
+new_combined_data = new_combined_data[new_combined_data.Track_Hit_No >= MinHits]
+new_combined_data=new_combined_data.drop(['Hit_ID'],axis=1)
+new_combined_data=new_combined_data.sort_values(['FEDRA_Track_ID','z'],ascending=[1,1])
+new_combined_data['FEDRA_Track_ID']=new_combined_data['FEDRA_Track_ID'].astype(int)
+new_combined_data['Plate_ID']=new_combined_data['z'].astype(int)
+
+print(UF.TimeStamp(),'Working out the number of plates to align')
+plates=new_combined_data[['Plate_ID']].sort_values(['Plate_ID'],ascending=[1])
+plates.drop_duplicates(inplace=True)
+plates=plates.values.tolist() #I find it is much easier to deal with tracks in list format when it comes to fitting
+print(UF.TimeStamp(),'There are ',len(plates),' plates')
 angle_alignment_map=[]
 with alive_bar(tot_jobs,force_tty=True, title='Optimising the angle alignment configuration...') as bar:
     for p in plates:
@@ -280,15 +310,7 @@ with alive_bar(tot_jobs,force_tty=True, title='Optimising the angle alignment co
        print('Overall fit value:',FitPlateFixedTY(0))
        angle_alignment_map.append(am)
 
-print(UF.TimeStamp(),'Aligning the brick spatial coordinates...')
-alignment_map=pd.DataFrame(alignment_map, columns = ['Plate_ID','dx','dy'])
-raw_data['Plate_ID']=raw_data['z'].astype(int)
-raw_data=pd.merge(raw_data,alignment_map,on='Plate_ID',how='inner')
-raw_data['dx'] = raw_data['dx'].fillna(0.0)
-raw_data['dy'] = raw_data['dy'].fillna(0.0)
-raw_data['x']=raw_data['x']+raw_data['dx']
-raw_data['y']=raw_data['y']+raw_data['dy']
-raw_data = raw_data.drop(['dx','dy'],axis=1)
+
 
 print(UF.TimeStamp(),'Aligning the brick angles...')
 angle_alignment_map=pd.DataFrame(angle_alignment_map, columns = ['Plate_ID','dtx','dty'])
