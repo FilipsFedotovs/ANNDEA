@@ -24,17 +24,11 @@ if PY_DIR!='': #Temp solution - the decision was made to move all libraries to E
     sys.path.append('/usr/lib/python3.6/site-packages')
 sys.path.append(AFS_DIR+'/Code/Utilities')
 import UtilityFunctions as UF #This is where we keep routine utility functions
-import Parameters as PM #This is where we keep framework global parameters
 import pandas as pd #We use Panda for a routine data processing
 pd.options.mode.chained_assignment = None #Silence annoying warnings
-import math #We use it for data manipulation
 import numpy as np
-import os
-import time
 from alive_progress import alive_bar
 import argparse
-import ast
-import scipy
 from scipy.optimize import minimize_scalar
 class bcolors:   #We use it for the interface
     HEADER = '\033[95m'
@@ -161,7 +155,9 @@ track_no_data=track_no_data.drop(['Hit_ID','y','z','tx','ty'],axis=1)
 track_no_data=track_no_data.rename(columns={'x': "Track_Hit_No"})
 new_combined_data=pd.merge(data, track_no_data, how="left", on=['FEDRA_Track_ID'])
 new_combined_data = new_combined_data[new_combined_data.Track_Hit_No >= MinHits]
+print(new_combined_data)
 new_combined_data=new_combined_data.drop(['Hit_ID','tx','ty'],axis=1)
+print(new_combined_data)
 new_combined_data=new_combined_data.sort_values(['FEDRA_Track_ID','z'],ascending=[1,1])
 new_combined_data['FEDRA_Track_ID']=new_combined_data['FEDRA_Track_ID'].astype(int)
 new_combined_data['Plate_ID']=new_combined_data['z'].astype(int)
