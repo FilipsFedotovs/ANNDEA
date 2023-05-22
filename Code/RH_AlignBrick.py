@@ -193,6 +193,7 @@ with alive_bar(tot_jobs,force_tty=True, title='Optimising the alignment configur
        print('Overall fit value:',FitPlateFixedY(0))
        alignment_map.append(am)
 print(raw_data)
+exit()
 print(UF.TimeStamp(),'Aligning the brick...')
 alignment_map=pd.DataFrame(alignment_map, columns = ['Plate_ID','dx','dy'])
 raw_data['Plate_ID']=raw_data['z'].astype(int)
