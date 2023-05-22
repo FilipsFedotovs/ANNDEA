@@ -135,6 +135,11 @@ def FitPlateAngle(PlateZ,dtx,dty,input_data):
     temp_data=pd.merge(temp_data,change_df,on='Plate_ID',how='left')
     temp_data['dtx'] = temp_data['dtx'].fillna(0.0)
     temp_data['dty'] = temp_data['dty'].fillna(0.0)
+    print(temp_data)
+    temp_data['dtx'] = temp_data['dtx']/100
+    temp_data['dty'] = temp_data['dty']/100
+    print(temp_data)
+    exit()
     temp_data['tx']=temp_data['tx']+temp_data['dtx']
     temp_data['ty']=temp_data['ty']+temp_data['dty']
     temp_data=temp_data[['FEDRA_Track_ID','x','y','z','tx','ty','Track_Hit_No']]
@@ -255,11 +260,9 @@ with alive_bar(tot_jobs,force_tty=True, title='Optimising the angle alignment co
        am=[p[0]]
        def FitPlateFixedTX(x):
            return FitPlateAngle(p[0],x,0,new_combined_data)
-       print(FitPlateFixedTX(10))
-       exit()
        def FitPlateFixedTY(x):
-           return FitPlate(p[0],0,x,new_combined_data)
-       res = minimize_scalar(FitPlateFixedX, bounds=(-500, 500), method='bounded')
+           return FitPlateAngle(p[0],0,x,new_combined_data)
+       res = minimize_scalar(FitPlateFixedTX, bounds=(-100, 100), method='bounded')
        new_combined_data=AlignPlate(p[0],res.x,0,new_combined_data)
        am.append(res.x)
        print('Overall fit value:',FitPlateFixedX(0))
