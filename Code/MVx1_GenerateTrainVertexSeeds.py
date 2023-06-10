@@ -195,7 +195,7 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
             new_combined_data=pd.merge(new_combined_data, TracksZdf, how="left", left_on=["PosBad_Z"], right_on=['Bad_z'])
             new_combined_data=new_combined_data[new_combined_data['Bad_z'].isnull()]
             new_combined_data=new_combined_data.drop(['Bad_z', 'PosBad_Z'],axis=1)
-        final_rows=len(data.axes[0])
+        final_rows=len(new_combined_data.axes[0])
         print(UF.TimeStamp(),'After removing tracks that start at the specific plates we have',final_rows,' hits left')
         print(new_combined_data)
         exit()
