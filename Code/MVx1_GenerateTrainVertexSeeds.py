@@ -109,8 +109,7 @@ MaxSTG=float(args.MaxSTG)
 MaxAngle=float(args.MaxAngle)
 RequestExtCPU=int(args.RequestExtCPU)
 ReqMemory=args.ReqMemory
-RemoveTracksZ=ast.literal_eval(args.RemoveTracksZ) 
-print(RemoveTracksZ)
+RemoveTracksZ=ast.literal_eval(args.RemoveTracksZ)
 Xmin,Xmax,Ymin,Ymax=float(args.Xmin),float(args.Xmax),float(args.Ymin),float(args.Ymax)
 SliceData=max(Xmin,Xmax,Ymin,Ymax)>0 #We don't slice data if all values are set to zero simultaneousy (which is the default setting)
 LocalSub=(args.LocalSub=='Y')
@@ -139,14 +138,13 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
                             PM.MC_Track_ID,PM.MC_Event_ID,PM.MC_Mother_ID])
         total_rows=len(data)
         print(UF.TimeStamp(),'The raw data has ',total_rows,' hits')
-        print(data)
-        exit()
         print(UF.TimeStamp(),'Removing unreconstructed hits...')
         data=data.dropna()
         final_rows=len(data)
         print(UF.TimeStamp(),'The cleaned data has ',final_rows,' hits')
         data[PM.MC_Event_ID] = data[PM.MC_Event_ID].astype(str)
         data[PM.MC_Track_ID] = data[PM.MC_Track_ID].astype(str)
+        data[PM.MC_Mother_ID] = data[PM.MC_Mother_ID].astype(str)
         data[TrackID] = data[TrackID].astype(str)
         data[BrickID] = data[BrickID].astype(str)
         data['Rec_Seg_ID'] = data[TrackID] + '-' + data[BrickID]
@@ -173,7 +171,7 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
              final_rows=len(data.axes[0])
              print(UF.TimeStamp(),'The sliced data has ',final_rows,' hits')
 
-        output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MUTr1_'+TrainSampleID+'_TRACK_SEGMENTS.csv'
+        output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MVx1_'+TrainSampleID+'_TRACK_SEGMENTS.csv'
         print(UF.TimeStamp(),'Removing tracks which have less than',MinHitsTrack,'hits...')
         track_no_data=data.groupby(['MC_Mother_Track_ID','Rec_Seg_ID'],as_index=False).count()
         track_no_data=track_no_data.drop([PM.y,PM.z,PM.tx,PM.ty],axis=1)
@@ -189,6 +187,8 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         new_combined_data=new_combined_data.rename(columns={PM.z: "z"})
         new_combined_data=new_combined_data.rename(columns={PM.tx: "tx"})
         new_combined_data=new_combined_data.rename(columns={PM.ty: "ty"})
+        print(new_combined_data)
+        exit()
         new_combined_data.to_csv(output_file_location,index=False)
         data=new_combined_data[['Rec_Seg_ID','z']]
         print(UF.TimeStamp(),'Analysing the data sample in order to understand how many jobs to submit to HTCondor... ',bcolors.ENDC)
