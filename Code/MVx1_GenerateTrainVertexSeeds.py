@@ -197,8 +197,6 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
             new_combined_data=new_combined_data.drop(['Bad_z', 'PosBad_Z'],axis=1)
         final_rows=len(new_combined_data.axes[0])
         print(UF.TimeStamp(),'After removing tracks that start at the specific plates we have',final_rows,' hits left')
-        print(new_combined_data)
-        exit()
         new_combined_data.to_csv(output_file_location,index=False)
         data=new_combined_data[['Rec_Seg_ID','z']]
         print(UF.TimeStamp(),'Analysing the data sample in order to understand how many jobs to submit to HTCondor... ',bcolors.ENDC)
@@ -211,6 +209,7 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         data['Sub_Sets'] = data['Sub_Sets'].astype(int)
         data = data.values.tolist()
         print(UF.TimeStamp(), bcolors.OKGREEN+"The track segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+output_file_location+bcolors.ENDC)
+        exit()
         Meta=UF.TrainingSampleMeta(TrainSampleID)
         Meta.IniTrackSeedMetaData(MaxSLG,MaxSTG,MaxDOCA,MaxAngle,data,PM.MaxSegments,PM.VetoMotherTrack,PM.MaxSeeds,MinHitsTrack)
         Meta.UpdateStatus(0)
