@@ -135,7 +135,7 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
                     header=0,
                     usecols=[TrackID,BrickID,
                             PM.x,PM.y,PM.z,PM.tx,PM.ty,
-                            PM.MC_Track_ID,PM.MC_Event_ID,PM.MC_Mother_ID])
+                            PM.MC_Event_ID,PM.MC_VX_ID])
         total_rows=len(data)
         print(UF.TimeStamp(),'The raw data has ',total_rows,' hits')
         print(UF.TimeStamp(),'Removing unreconstructed hits...')
@@ -143,16 +143,17 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         final_rows=len(data)
         print(UF.TimeStamp(),'The cleaned data has ',final_rows,' hits')
         data[PM.MC_Event_ID] = data[PM.MC_Event_ID].astype(str)
-        data[PM.MC_Track_ID] = data[PM.MC_Track_ID].astype(str)
-        data[PM.MC_Mother_ID] = data[PM.MC_Mother_ID].astype(str)
+        data[PM.MC_VX_ID] = data[PM.MC_VX_ID].astype(str)
         data[TrackID] = data[TrackID].astype(str)
         data[BrickID] = data[BrickID].astype(str)
         data['Rec_Seg_ID'] = data[TrackID] + '-' + data[BrickID]
-        data['MC_Mother_Track_ID'] = data[PM.MC_Event_ID] + '-' + data[PM.MC_Track_ID]
+        data['MC_VX_ID'] = data[PM.MC_Event_ID] + '-' + data[PM.MC_VX_ID]
         data=data.drop([TrackID],axis=1)
         data=data.drop([BrickID],axis=1)
         data=data.drop([PM.MC_Event_ID],axis=1)
-        data=data.drop([PM.MC_Track_ID],axis=1)
+        data=data.drop([PM.MC_VX_ID],axis=1)
+        print(data)
+        exit()
         compress_data=data.drop([PM.x,PM.y,PM.z,PM.tx,PM.ty],axis=1)
         compress_data['MC_Mother_Track_No']= compress_data['MC_Mother_Track_ID']
         compress_data=compress_data.groupby(by=['Rec_Seg_ID','MC_Mother_Track_ID'])['MC_Mother_Track_No'].count().reset_index()

@@ -16,7 +16,7 @@ Rec_Track_Domain='SND_Train_RUTr_GMM_FEDRA_Phase2a_Test_Brick_ID' #Quarter of th
 
 MC_Track_ID='MC_Track_ID'  #Column name for Track ID for MC Truth reconstruction data
 MC_Event_ID='MC_Event_ID' #Column name for Event id for MC truth reconstruction data (If absent please enter the MCTrack as for above)
-MC_Mother_ID='MC_Mother_ID' 
+MC_VX_ID='MC_Mother_ID' 
 MinHitsTrack=2
 TST=0.0001
 valRatio=0.1
