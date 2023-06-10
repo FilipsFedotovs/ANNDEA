@@ -160,13 +160,11 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         data=data.drop(['MC_VX_ID'],axis=1)
         compress_data=compress_data.drop(['MC_Mother_No'],axis=1)
         data=pd.merge(data, compress_data, how="left", on=['Rec_Seg_ID'])
-        print(data)
-        exit()
 
         if SliceData:
              print(UF.TimeStamp(),'Slicing the data...')
              ValidEvents=data.drop(data.index[(data[PM.x] > Xmax) | (data[PM.x] < Xmin) | (data[PM.y] > Ymax) | (data[PM.y] < Ymin)])
-             ValidEvents.drop([PM.x,PM.y,PM.z,PM.tx,PM.ty,'MC_Mother_Track_ID'],axis=1,inplace=True)
+             ValidEvents.drop([PM.x,PM.y,PM.z,PM.tx,PM.ty,'MC_VX_ID'],axis=1,inplace=True)
              ValidEvents.drop_duplicates(subset='Rec_Seg_ID',keep='first',inplace=True)
              data=pd.merge(data, ValidEvents, how="inner", on=['Rec_Seg_ID'])
              final_rows=len(data.axes[0])
@@ -174,10 +172,10 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
 
         output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MVx1_'+TrainSampleID+'_TRACK_SEGMENTS.csv'
         print(UF.TimeStamp(),'Removing tracks which have less than',MinHitsTrack,'hits...')
-        track_no_data=data.groupby(['MC_Mother_Track_ID','Rec_Seg_ID'],as_index=False).count()
+        track_no_data=data.groupby(['MC_VX_ID','Rec_Seg_ID'],as_index=False).count()
         track_no_data=track_no_data.drop([PM.y,PM.z,PM.tx,PM.ty,PM.MC_Mother_ID],axis=1)
         track_no_data=track_no_data.rename(columns={PM.x: "Rec_Seg_No"})
-        new_combined_data=pd.merge(data, track_no_data, how="left", on=['Rec_Seg_ID','MC_Mother_Track_ID'])
+        new_combined_data=pd.merge(data, track_no_data, how="left", on=['Rec_Seg_ID','MC_VX_ID'])
         new_combined_data = new_combined_data[new_combined_data.Rec_Seg_No >= MinHitsTrack]
         new_combined_data = new_combined_data.drop(["Rec_Seg_No"],axis=1)
         new_combined_data=new_combined_data.sort_values(['Rec_Seg_ID',PM.x],ascending=[1,1])
