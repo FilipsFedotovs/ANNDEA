@@ -93,10 +93,9 @@ StartDataCut=j*MaxSegments
 EndDataCut=(j+1)*MaxSegments
 
 #Specifying the right join
-print(data)
-exit()
-r_data=data.rename(columns={"Rec_Seg_ID": "Segment_2"})
-r_data=r_data.rename(columns={'MC_Mother_Track_ID': "Mother_2"})
+
+r_data=data.rename(columns={"x": "r_x"})
+r_data=r_data.rename(columns={'MC_VX_ID': "Mother_2"})
 r_data.drop(r_data.index[r_data['z'] != PlateZ], inplace = True)
 
 Records=len(r_data.axes[0])
@@ -106,19 +105,19 @@ r_data=r_data.iloc[StartDataCut:min(EndDataCut,Records)]
 
 Records=len(r_data.axes[0])
 print(UF.TimeStamp(),'However we will only attempt  ', Records, 'track segments in the starting plate')
-r_data.drop(['y'],axis=1,inplace=True)
-r_data.drop(['x'],axis=1,inplace=True)
-r_data.drop(['z'],axis=1,inplace=True)
-data.drop(['e_y'],axis=1,inplace=True)
-data.drop(['e_x'],axis=1,inplace=True)
-data.drop(['e_z'],axis=1,inplace=True)
-data.drop(data.index[data['z'] <= PlateZ], inplace = True)
-data=data.rename(columns={"Rec_Seg_ID": "Segment_1"})
-data=data.rename(columns={'MC_Mother_Track_ID': "Mother_1"})
+r_data=r_data.rename(columns={"y": "r_y"})
+r_data=r_data.rename(columns={"z": "r_z"})
+data=data.rename(columns={"Rec_Seg_ID": "Track_1"})
+data=data.rename(columns={'MC_VX_ID': "Mother_1"})
+r_data=r_data.rename(columns={"Rec_Seg_ID": "Track_2"})
+r_data=r_data.rename(columns={'MC_VX_ID': "Mother_2"})
 data['join_key'] = 'join_key'
 r_data['join_key'] = 'join_key'
 
 result_list=[]  #We will keep the result in list rather then Panda Dataframe to save memory
+print(r_data)
+print(data)
+exit()
 
 #Downcasting Panda Data frame data types in order to save memory
 data["x"] = pd.to_numeric(data["x"],downcast='float')
