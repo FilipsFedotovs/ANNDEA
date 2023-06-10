@@ -153,12 +153,12 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         data=data.drop([PM.MC_Event_ID],axis=1)
         data=data.drop([PM.MC_VX_ID],axis=1)
         compress_data=data.drop([PM.x,PM.y,PM.z,PM.tx,PM.ty],axis=1)
-        compress_data['MC_Mother_No']= compress_data['MC_Mother_ID']
+        compress_data['MC_Mother_No']= compress_data['MC_VX_ID']
         compress_data=compress_data.groupby(by=['Rec_Seg_ID','MC_VX_ID'])['MC_Mother_No'].count().reset_index()
         compress_data=compress_data.sort_values(['Rec_Seg_ID','MC_Mother_No'],ascending=[1,0])
         compress_data.drop_duplicates(subset='Rec_Seg_ID',keep='first',inplace=True)
         print(data)
-        print(compess_data)
+        print(compress_data)
         exit()
         data=data.drop(['MC_Mother_ID'],axis=1)
         compress_data=compress_data.drop(['MC_Mother_Track_No'],axis=1)
