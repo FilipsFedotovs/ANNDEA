@@ -106,7 +106,6 @@ SubGap=int(args.SubGap)
 MaxDST=float(args.MaxDST)
 MaxVXT=float(args.MaxVXT)
 MaxDOCA=float(args.MaxDOCA)
-MaxSTG=float(args.MaxSTG)
 MaxAngle=float(args.MaxAngle)
 RequestExtCPU=int(args.RequestExtCPU)
 ReqMemory=args.ReqMemory
