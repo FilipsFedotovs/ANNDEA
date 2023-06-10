@@ -186,6 +186,17 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         new_combined_data=new_combined_data.rename(columns={PM.z: "z"})
         new_combined_data=new_combined_data.rename(columns={PM.tx: "tx"})
         new_combined_data=new_combined_data.rename(columns={PM.ty: "ty"})
+        if len(RemoveTracksZ)>0:
+            print(UF.TimeStamp(),'Removing tracks based on start point')
+            TracksZdf = pd.DataFrame(RemoveTracksZ, columns = ['Bad_z'], dtype=float)
+            data_aggregated=new_combined_data.groupby(['Rec_Seg_ID'])['z'].min().reset_index()
+            data_aggregated=data_aggregated.rename(columns={'z': "PosBad_Z"})
+            new_combined_data=pd.merge(new_combined_data, data_aggregated, how="left", on=['Rec_Seg_ID'])
+            new_combined_data=pd.merge(new_combined_data, TracksZdf, how="left", left_on=["PosBad_Z"], right_on=['Bad_z'])
+            new_combined_data=new_combined_data[data['Bad_z'].isnull()]
+            new_combined_data=new_combined_data.drop(['Bad_z', 'PosBad_Z'],axis=1)
+        final_rows=len(data.axes[0])
+        print(UF.TimeStamp(),'After removing tracks that start at the specific plates we have',final_rows,' hits left')
         print(new_combined_data)
         exit()
         new_combined_data.to_csv(output_file_location,index=False)
