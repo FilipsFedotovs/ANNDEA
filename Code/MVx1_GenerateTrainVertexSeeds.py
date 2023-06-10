@@ -87,6 +87,7 @@ parser.add_argument('--MaxSTG',help="Maximum allowed transverse gap value betwee
 parser.add_argument('--MaxDOCA',help="Maximum DOCA allowed", default='100')
 parser.add_argument('--MaxAngle',help="Maximum magnitude of angle allowed", default='3.6')
 parser.add_argument('--ReqMemory',help="How uch memory to request?", default='2 GB')
+parser.add_argument('--RemoveTracksZ',help="This option enables to remove particular tracks of starting Z-coordinate", default='[]')
 ######################################## Parsing argument values  #############################################################
 args = parser.parse_args()
 Mode=args.Mode.upper()
@@ -108,6 +109,8 @@ MaxSTG=float(args.MaxSTG)
 MaxAngle=float(args.MaxAngle)
 RequestExtCPU=int(args.RequestExtCPU)
 ReqMemory=args.ReqMemory
+RemoveTracksZ=ast.literal_eval(args.RemoveTracksZ) 
+print(RemoveTracksZ)
 Xmin,Xmax,Ymin,Ymax=float(args.Xmin),float(args.Xmax),float(args.Ymin),float(args.Ymax)
 SliceData=max(Xmin,Xmax,Ymin,Ymax)>0 #We don't slice data if all values are set to zero simultaneousy (which is the default setting)
 LocalSub=(args.LocalSub=='Y')
