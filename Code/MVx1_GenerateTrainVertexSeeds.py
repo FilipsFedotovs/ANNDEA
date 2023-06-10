@@ -115,13 +115,13 @@ if LocalSub:
    time_int=0
 else:
     time_int=10
-exit()
+
 
 #Establishing paths
 EOSsubDIR=EOS_DIR+'/'+'ANNDEA'
 EOSsubModelDIR=EOSsubDIR+'/'+'Models'
 TrainSampleOutputMeta=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_info.pkl'
-required_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MUTr1_'+TrainSampleID+'_TRACK_SEGMENTS.csv'
+required_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MVx1_'+TrainSampleID+'_TRACK_SEGMENTS.csv'
 
 
 ########################################     Phase 1 - Create compact source file    #########################################
@@ -133,9 +133,11 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
                     header=0,
                     usecols=[TrackID,BrickID,
                             PM.x,PM.y,PM.z,PM.tx,PM.ty,
-                            PM.MC_Track_ID,PM.MC_Event_ID])
+                            PM.MC_Track_ID,PM.MC_Event_ID,PM.MC_Mother_ID])
         total_rows=len(data)
         print(UF.TimeStamp(),'The raw data has ',total_rows,' hits')
+        print(data)
+        exit()
         print(UF.TimeStamp(),'Removing unreconstructed hits...')
         data=data.dropna()
         final_rows=len(data)
