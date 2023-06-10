@@ -82,11 +82,12 @@ parser.add_argument('--LocalSub',help="Local submission?", default='N')
 parser.add_argument('--SubPause',help="How long to wait in minutes after submitting 10000 jobs?", default='60')
 parser.add_argument('--SubGap',help="How long to wait in minutes after submitting 10000 jobs?", default='10000')
 parser.add_argument('--MinHitsTrack',help="What is the minimum number of hits per track?", default=PM.MinHitsTrack)
-parser.add_argument('--MaxSLG',help="Maximum allowed longitudinal gap value between segments", default='7000')
-parser.add_argument('--MaxSTG',help="Maximum allowed transverse gap value between segments per SLG length", default='160')
-parser.add_argument('--MaxDOCA',help="Maximum DOCA allowed", default='100')
+parser.add_argument('--MaxDST',help="Maximum distance between vertex seed track starting points", default='4000')
+parser.add_argument('--MaxVXT',help="Minimum distance from vertex origin to closest starting hit of any track in the seed", default='4000')
+parser.add_argument('--MaxDOCA',help="Maximum DOCA allowed", default='200')
 parser.add_argument('--MaxAngle',help="Maximum magnitude of angle allowed", default='3.6')
-parser.add_argument('--ReqMemory',help="How uch memory to request?", default='2 GB')
+parser.add_argument('--ReqMemory',help="How much memory to request?", default='2 GB')
+parser.add_argument('--FiducialVolumeCut',help="Limits on the vx, y, z coordinates of the vertex origin", default='[]')
 parser.add_argument('--RemoveTracksZ',help="This option enables to remove particular tracks of starting Z-coordinate", default='[]')
 ######################################## Parsing argument values  #############################################################
 args = parser.parse_args()
@@ -102,13 +103,14 @@ input_file_location=args.f
 JobFlavour=args.JobFlavour
 SubPause=int(args.SubPause)*60
 SubGap=int(args.SubGap)
-MaxSLG=float(args.MaxSLG)
-MaxSTG=float(args.MaxSTG)
+MaxDST=float(args.MaxDST)
+MaxVXT=float(args.MaxVXT)
 MaxDOCA=float(args.MaxDOCA)
 MaxSTG=float(args.MaxSTG)
 MaxAngle=float(args.MaxAngle)
 RequestExtCPU=int(args.RequestExtCPU)
 ReqMemory=args.ReqMemory
+FiducialVolumeCut=ast.literal_eval(args.FiducialVolumeCut)
 RemoveTracksZ=ast.literal_eval(args.RemoveTracksZ)
 Xmin,Xmax,Ymin,Ymax=float(args.Xmin),float(args.Xmax),float(args.Ymin),float(args.Ymax)
 SliceData=max(Xmin,Xmax,Ymin,Ymax)>0 #We don't slice data if all values are set to zero simultaneousy (which is the default setting)
@@ -209,9 +211,8 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         data['Sub_Sets'] = data['Sub_Sets'].astype(int)
         data = data.values.tolist()
         print(UF.TimeStamp(), bcolors.OKGREEN+"The track segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+output_file_location+bcolors.ENDC)
-        exit()
         Meta=UF.TrainingSampleMeta(TrainSampleID)
-        Meta.IniTrackSeedMetaData(MaxSLG,MaxSTG,MaxDOCA,MaxAngle,data,PM.MaxSegments,PM.VetoMotherTrack,PM.MaxSeeds,MinHitsTrack)
+        Meta.IniVertexSeedMetaData(MaxDST,MaxVXT,MaxDOCA,MaxAngle,data,PM.MaxSegments,PM.VetoVertex,PM.MaxSeeds,MinHitsTrack,FiducialVolumeCut)
         Meta.UpdateStatus(0)
         print(UF.PickleOperations(TrainSampleOutputMeta,'w', Meta)[1])
         print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
@@ -220,20 +221,22 @@ elif os.path.isfile(TrainSampleOutputMeta)==True:
     print(UF.TimeStamp(),'Loading previously saved data from ',bcolors.OKBLUE+TrainSampleOutputMeta+bcolors.ENDC)
     MetaInput=UF.PickleOperations(TrainSampleOutputMeta,'r', 'N/A')
     Meta=MetaInput[0]
-MaxSLG=Meta.MaxSLG
-MaxSTG=Meta.MaxSTG
+MaxDST=Meta.MaxDST
+MaxVXT=Meta.MaxVXT
 MaxDOCA=Meta.MaxDOCA
 MaxAngle=Meta.MaxAngle
 JobSets=Meta.JobSets
 MaxSegments=Meta.MaxSegments
 MaxSeeds=Meta.MaxSeeds
-VetoMotherTrack=Meta.VetoMotherTrack
+VetoVertex=Meta.VetoVertex
 MinHitsTrack=Meta.MinHitsTrack
+FiducialVolumeCut=Meta.FiducialVolumeCut
 TotJobs=0
 for j in range(0,len(JobSets)):
           for sj in range(0,int(JobSets[j][2])):
               TotJobs+=1
-
+print(JobSets)
+exit()
 # ########################################     Preset framework parameters    #########################################
 FreshStart=True
 Program=[]
