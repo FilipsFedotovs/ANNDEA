@@ -115,7 +115,7 @@ if LocalSub:
    time_int=0
 else:
     time_int=10
-
+exit()
 
 #Establishing paths
 EOSsubDIR=EOS_DIR+'/'+'ANNDEA'
