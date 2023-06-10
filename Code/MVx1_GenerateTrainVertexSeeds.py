@@ -234,8 +234,7 @@ TotJobs=0
 for j in range(0,len(JobSets)):
           for sj in range(0,int(JobSets[j][2])):
               TotJobs+=1
-print(JobSets)
-exit()
+
 # ########################################     Preset framework parameters    #########################################
 FreshStart=True
 Program=[]
@@ -389,8 +388,8 @@ def StandardProcess(program,status,freshstart):
 # #Reconstructing a single brick can cause in gereation of 100s of thousands of files - need to make sure that we remove them.
 if Mode=='RESET':
     print(UF.TimeStamp(),'Performing the cleanup... ',bcolors.ENDC)
-    HTCondorTag="SoftUsed == \"ANNDEA-MUTr1a-"+TrainSampleID+"\""
-    UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MUTr1_'+TrainSampleID, ['MUTr1a','MUTr1b','MUTr1c','MUTr1d'], HTCondorTag)
+    HTCondorTag="SoftUsed == \"ANNDEA-MVx1a-"+TrainSampleID+"\""
+    UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MVx1_'+TrainSampleID, ['MVx1a','MVx1b','MVx1c','MVx1d'], HTCondorTag)
     FreshStart=False
 if Mode=='CLEANUP':
     Status=6
@@ -416,6 +415,7 @@ elif type(job_sets[0][0]) is int:
                             TotJobs+=np.sum(lp)
 
 prog_entry.append(' Sending hit cluster to the HTCondor, so tack segment combination pairs can be formed...')
+exit()
 prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/','RawSeedsRes','MUTr1a','.csv',TrainSampleID,job_sets,'MUTr1a_GenerateRawSelectedSeeds_Sub.py'])
 prog_entry.append([ " --MaxSegments ", " --MaxSLG "," --MaxSTG "," --VetoMotherTrack "])
 prog_entry.append([MaxSegments, MaxSLG, MaxSTG,'"'+str(VetoMotherTrack)+'"'])
