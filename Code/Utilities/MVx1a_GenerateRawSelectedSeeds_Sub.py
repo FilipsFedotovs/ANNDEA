@@ -115,9 +115,6 @@ data['join_key'] = 'join_key'
 r_data['join_key'] = 'join_key'
 
 result_list=[]  #We will keep the result in list rather then Panda Dataframe to save memory
-print(r_data)
-print(data)
-exit()
 
 #Downcasting Panda Data frame data types in order to save memory
 data["x"] = pd.to_numeric(data["x"],downcast='float')
@@ -125,9 +122,9 @@ data["y"] = pd.to_numeric(data["y"],downcast='float')
 data["z"] = pd.to_numeric(data["z"],downcast='float')
 
 
-r_data["e_x"] = pd.to_numeric(r_data["e_x"],downcast='float')
-r_data["e_y"] = pd.to_numeric(r_data["e_y"],downcast='float')
-r_data["e_z"] = pd.to_numeric(r_data["e_z"],downcast='float')
+r_data["r_x"] = pd.to_numeric(r_data["r_x"],downcast='float')
+r_data["r_y"] = pd.to_numeric(r_data["r_y"],downcast='float')
+r_data["r_z"] = pd.to_numeric(r_data["r_z"],downcast='float')
 
 #Cleaning memory
 del data_header
@@ -141,6 +138,8 @@ for i in range(0,Steps):
   r_temp_data=r_data.iloc[0:min(Cut,len(r_data.axes[0]))] #Taking a small slice of the data
   r_data.drop(r_data.index[0:min(Cut,len(r_data.axes[0]))],inplace=True) #Shrinking the right join dataframe
   merged_data=pd.merge(data, r_temp_data, how="inner", on=['join_key']) #Merging Tracks to check whether they could form a seed
+  print(merged_data)
+  exit()
   merged_data['SLG']=merged_data['z']-merged_data['e_z'] #Calculating the Euclidean distance between Track start hits
   merged_data['STG']=np.sqrt((merged_data['x']-merged_data['e_x'])**2+((merged_data['y']-merged_data['e_y'])**2)) #Calculating the Euclidean distance between Track start hits
   merged_data['DynamicCut']=MaxSTG+(merged_data['SLG']*0.96)
