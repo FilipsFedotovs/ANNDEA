@@ -141,7 +141,6 @@ for i in range(0,Steps):
   merged_data['separation']=np.sqrt(((merged_data['x']-merged_data['r_x'])**2)+((merged_data['y']-merged_data['r_y'])**2)+((merged_data['z']-merged_data['r_z'])**2)) #Calculating the Euclidean distance between Track start hits
   merged_data.drop(merged_data.index[merged_data['separation'] >= MaxDST], inplace = True) #Dropping the track segment combinations where the length of the gap between segments is too large
   merged_data.drop(['y','z','x','r_x','r_y','r_z','join_key','separation'],axis=1,inplace=True) #Removing the information that we don't need anymore
-  print(merged_data)
   if merged_data.empty==False:
     merged_data.drop(merged_data.index[merged_data['Track_1'] == merged_data['Track_2']], inplace = True) #Removing the cases where Seed tracks are the same
     merged_data['Seed_Type']=True
@@ -152,8 +151,6 @@ for i in range(0,Steps):
         merged_data['Seed_Type']=(merged_data['Mother_1']==merged_data['Mother_2'])
     merged_data.drop(['Mother_1'],axis=1,inplace=True)
     merged_data.drop(['Mother_2'],axis=1,inplace=True)
-    print(merged_data)
-    exit()
     merged_list = merged_data.values.tolist() #Convirting the result to List data type
     result_list+=merged_list #Adding the result to the list
   if len(result_list)>=2000000: #Once the list gets too big we dump the results into csv to save memory
