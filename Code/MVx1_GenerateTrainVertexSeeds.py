@@ -427,7 +427,7 @@ if Mode=='RESET':
 #Setting up folders for the output. The reconstruction of just one brick can easily generate >100k of files. Keeping all that blob in one directory can cause problems on lxplus.
 print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Create'))
 ###### Stage 1
-#Program.append('Custom')
+Program.append('Custom')
 
 ###### Stage 2
 # prog_entry=[]
@@ -491,75 +491,76 @@ while Status<len(Program):
             Status=len(Program)+1
             break
 
-    # elif Status==1:
-    #    #Non standard processes (that don't follow the general pattern) have been coded here
-    #     print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
-    #     print(UF.TimeStamp(),bcolors.BOLD+'Stage 1:'+bcolors.ENDC+' Collecting and de-duplicating the results from stage 1')
-    #     min_i=0
-    #     for i in range(0,len(JobSets)): #//Temporarily measure to save space
-    #                test_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/Temp_MUTr1a_'+TrainSampleID+'_'+str(i)+'/MUTr1a_'+TrainSampleID+'_SelectedSeeds_'+str(i)+'_'+str(0)+'_'+str(0)+'.csv'
-    #                if os.path.isfile(test_file_location):
-    #                     min_i=max(0,i-1)
-    #     with alive_bar(len(JobSets)-min_i,force_tty=True, title='Checking the results from HTCondor') as bar:
-    #         for i in range(min_i,len(JobSets)): #//Temporarily measure to save space
-    #             bar.text = f'-> Analysing set : {i}...'
-    #             bar()
-    #             Meta=UF.PickleOperations(TrainSampleOutputMeta,'r', 'N/A')[0]
-    #             MaxSLG=Meta.MaxSLG
-    #             JobSets=Meta.JobSets
-    #             if len(Meta.JobSets[i])>3:
-    #                Meta.JobSets[i]=Meta.JobSets[i][:4]
-    #                Meta.JobSets[i][3]=[]
-    #             else:
-    #                Meta.JobSets[i].append([])
-    #             for j in range(0,int(JobSets[i][2])):
+    elif Status==1:
+       #Non standard processes (that don't follow the general pattern) have been coded here
+        print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
+        print(UF.TimeStamp(),bcolors.BOLD+'Stage 1:'+bcolors.ENDC+' Collecting and de-duplicating the results from stage 1')
+        min_i=0
+        for i in range(0,len(JobSets)): #//Temporarily measure to save space
+                   test_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/Temp_MVx1a_'+TrainSampleID+'_'+str(i)+'/MVx1a_'+TrainSampleID+'_SelectedSeeds_'+str(i)+'_'+str(0)+'_'+str(0)+'.csv'
+                   if os.path.isfile(test_file_location):
+                        min_i=max(0,i-1)
+        with alive_bar(len(JobSets)-min_i,force_tty=True, title='Checking the results from HTCondor') as bar:
+            for i in range(min_i,len(JobSets)): #//Temporarily measure to save space
+                bar.text = f'-> Analysing set : {i}...'
+                bar()
+                Meta=UF.PickleOperations(TrainSampleOutputMeta,'r', 'N/A')[0]
+                MaxDST=Meta.MaxDST
+                JobSets=Meta.JobSets
+                if len(Meta.JobSets[i])>3:
+                   Meta.JobSets[i]=Meta.JobSets[i][:4]
+                   Meta.JobSets[i][3]=[]
+                else:
+                   Meta.JobSets[i].append([])
+                for j in range(0,int(JobSets[i][2])):
 
-    #                output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/Temp_MUTr1a_'+TrainSampleID+'_'+str(i)+'/MUTr1a_'+TrainSampleID+'_RawSeeds_'+str(i)+'_'+str(j)+'.csv'
+                   output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/Temp_MVx1a_'+TrainSampleID+'_'+str(i)+'/MVx1a_'+TrainSampleID+'_RawSeeds_'+str(i)+'_'+str(j)+'.csv'
 
-    #                if os.path.isfile(output_file_location)==False:
-    #                   Meta.JobSets[j].append(0)
-    #                   continue #Skipping because not all jobs necesseraly produce the required file (if statistics are too low)
-    #                else:
-    #                 result=pd.read_csv(output_file_location,names = ['Segment_1','Segment_2', 'Seed_Type'])
-    #                 Records=len(result)
-    #                 print(UF.TimeStamp(),'Set',str(i),'and subset', str(j), 'contains', Records, 'seeds',bcolors.ENDC)
-    #                 result["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(result['Segment_1'], result['Segment_2'])]
-    #                 result.drop_duplicates(subset="Seed_ID",keep='first',inplace=True)
-    #                 result.drop(result.index[result['Segment_1'] == result['Segment_2']], inplace = True)
-    #                 result.drop(["Seed_ID"],axis=1,inplace=True)
-    #                 Records_After_Compression=len(result)
-    #                 if Records>0:
-    #                   Compression_Ratio=int((Records_After_Compression/Records)*100)
-    #                 else:
-    #                   Compression_Ratio=0
-    #                 print(UF.TimeStamp(),'Set',str(i),'and subset', str(j), 'compression ratio is ', Compression_Ratio, ' %',bcolors.ENDC)
-    #                 fractions=int(math.ceil(Records_After_Compression/MaxSeeds))
-    #                 Meta.JobSets[i][3].append(fractions)
-    #                 for k in range(0,fractions):
-    #                  new_output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/Temp_MUTr1a_'+TrainSampleID+'_'+str(i)+'/MUTr1a_'+TrainSampleID+'_SelectedSeeds_'+str(i)+'_'+str(j)+'_'+str(k)+'.csv'
-    #                  result[(k*MaxSeeds):min(Records_After_Compression,((k+1)*MaxSeeds))].to_csv(new_output_file_location,index=False)
-    #             print(UF.PickleOperations(TrainSampleOutputMeta,'w', Meta)[1])
+                   if os.path.isfile(output_file_location)==False:
+                      Meta.JobSets[j].append(0)
+                      continue #Skipping because not all jobs necesseraly produce the required file (if statistics are too low)
+                   else:
+                    result=pd.read_csv(output_file_location,names = ['Track_1','Track_2', 'Seed_Type'])
+                    Records=len(result)
+                    print(UF.TimeStamp(),'Set',str(i),'and subset', str(j), 'contains', Records, 'seeds',bcolors.ENDC)
+                    result["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(result['Track_1'], result['Track_2'])]
+                    result.drop_duplicates(subset="Seed_ID",keep='first',inplace=True)
+                    result.drop(result.index[result['Track_1'] == result['Track_2']], inplace = True)
+                    result.drop(["Seed_ID"],axis=1,inplace=True)
+                    Records_After_Compression=len(result)
+                    if Records>0:
+                      Compression_Ratio=int((Records_After_Compression/Records)*100)
+                    else:
+                      Compression_Ratio=0
+                    print(UF.TimeStamp(),'Set',str(i),'and subset', str(j), 'compression ratio is ', Compression_Ratio, ' %',bcolors.ENDC)
+                    fractions=int(math.ceil(Records_After_Compression/MaxSeeds))
+                    Meta.JobSets[i][3].append(fractions)
+                    for k in range(0,fractions):
+                     new_output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/Temp_MVx1a_'+TrainSampleID+'_'+str(i)+'/MVx1a_'+TrainSampleID+'_SelectedSeeds_'+str(i)+'_'+str(j)+'_'+str(k)+'.csv'
+                     result[(k*MaxSeeds):min(Records_After_Compression,((k+1)*MaxSeeds))].to_csv(new_output_file_location,index=False)
+                print(UF.PickleOperations(TrainSampleOutputMeta,'w', Meta)[1])
 
         #Part of the program needs to be rewritten
-        # job_sets=[]
-        # JobSets=Meta.JobSets
-        # for i in range(len(JobSets)):
-        #              job_sets.append([])
-        #              for j in range(len(JobSets[i][3])):
-        #                  job_sets[i].append(JobSets[i][3][j])
-        # TotJobs=0
-        # if type(job_sets) is int:
-        #                         TotJobs=job_sets
-        # elif type(job_sets[0]) is int:
-        #                         TotJobs=np.sum(job_sets)
-        # elif type(job_sets[0][0]) is int:
-        #                         for lp in job_sets:
-        #                             TotJobs+=np.sum(lp)
+        job_sets=[]
+        JobSets=Meta.JobSets
+        for i in range(len(JobSets)):
+                     job_sets.append([])
+                     for j in range(len(JobSets[i][3])):
+                         job_sets[i].append(JobSets[i][3][j])
+        TotJobs=0
+        if type(job_sets) is int:
+                                TotJobs=job_sets
+        elif type(job_sets[0]) is int:
+                                TotJobs=np.sum(job_sets)
+        elif type(job_sets[0][0]) is int:
+                                for lp in job_sets:
+                                    TotJobs+=np.sum(lp)
+        exit()
 
         # prog_entry=[]
         # prog_entry.append(' Taking the list of seeds previously generated by Stage 2, converting them into Emulsion Objects and doing more rigorous selection')
-        # prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/','RefinedSeeds','MUTr1b','.pkl',TrainSampleID,job_sets,'MUTr1b_RefineSeeds_Sub.py'])
-        # prog_entry.append([" --MaxSTG ", " --MaxSLG ", " --MaxDOCA ", " --MaxAngle "," --ModelName "])
+        # prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/','RefinedSeeds','MVx1b','.pkl',TrainSampleID,job_sets,'MVx1b_RefineSeeds_Sub.py'])
+        # prog_entry.append([" --MaxDST ", " --MaxSLG ", " --MaxDOCA ", " --MaxAngle "," --ModelName "])
         # prog_entry.append([MaxSTG, MaxSLG, MaxDOCA, MaxAngle,'"'+str(ModelName)+'"'])
         # prog_entry.append(TotJobs)
         # prog_entry.append(LocalSub)
