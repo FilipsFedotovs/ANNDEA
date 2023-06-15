@@ -496,7 +496,7 @@ class EMO:
                                    else:
                                         return self.STG <= MaxSTG #Still apply the STG cut
                                    ######
-      def VertexQualityCheck(self,MaxDoca,MaxDST, MaxVXT,MaxAngle, FiducialVolumeCut):
+      def VertexQualityCheck(self,MaxDoca, MaxVXT,MaxAngle, FiducialVolumeCut):
           if len(FiducialVolumeCut) >= 6:
                 MinX = FiducialVolumeCut[0] 
                 MaxX = FiducialVolumeCut[1]
@@ -504,8 +504,8 @@ class EMO:
                 MaxY = FiducialVolumeCut[3]
                 MinZ = FiducialVolumeCut[4] 
                 MaxZ = FiducialVolumeCut[5]
-                return (self.DOCA<=MaxDoca and min(self.V_Tr)<=MaxDST and self.Vx>=MinX and self.Vx<=MaxX and self.Vy>=MinY and self.Vy<=MaxY and self.Vz>=MinZ and self.Vz<=MaxZ and abs(self.angle)<=MaxAngle)
-          return (self.DOCA<=MaxDoca and min(self.V_Tr)<=MaxDST and abs(self.angle)<=MaxAngle)
+                return (self.DOCA<=MaxDoca and min(self.V_Tr)<=MaxVXT and self.Vx>=MinX and self.Vx<=MaxX and self.Vy>=MinY and self.Vy<=MaxY and self.Vz>=MinZ and self.Vz<=MaxZ and abs(self.angle)<=MaxAngle)
+          return (self.DOCA<=MaxDoca and min(self.V_Tr)<=MaxVXT and abs(self.angle)<=MaxAngle)
     
       def PrepareSeedPrint(self,MM):
           __TempTrack=copy.deepcopy(self.Hits)
