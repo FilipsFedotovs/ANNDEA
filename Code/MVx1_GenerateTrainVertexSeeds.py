@@ -465,8 +465,8 @@ if Mode=='RESET':
 print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Create'))
 
 
-# ###### Stage 3
-# Program.append('Custom')
+###### Stage 3
+Program.append('Custom')
 ###### Stage 4
 # Program.append('Custom')
 ###### Stage 5
@@ -570,54 +570,54 @@ while Status<len(Program):
         print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 1 has successfully completed'+bcolors.ENDC)
         Status=2
         UpdateStatus(Status)
-    #elif Status==3:
-        # print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
-        # print(UF.TimeStamp(),bcolors.BOLD+'Stage 3:'+bcolors.ENDC+' Analysing the training samples')
-        # JobSet=[]
-        # for i in range(len(JobSets)):
-        #      JobSet.append([])
-        #      for j in range(len(JobSets[i][3])):
-        #          JobSet[i].append(JobSets[i][3][j])
-        # for i in range(0,len(JobSet)):
-        #      output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MUTr1c_'+TrainSampleID+'_CompressedSeeds_'+str(i)+'.pkl'
-        #      if os.path.isfile(output_file_location)==False:
-        #         if os.path.isfile(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MUTr1c_'+TrainSampleID+'_Temp_Stats.csv')==False:
-        #            UF.LogOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MUTr1c_'+TrainSampleID+'_Temp_Stats.csv','w', [[0,0]])
-        #         Temp_Stats=UF.LogOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MUTr1c_'+TrainSampleID+'_Temp_Stats.csv','r', '_')
+    elif Status==3:
+        print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
+        print(UF.TimeStamp(),bcolors.BOLD+'Stage 3:'+bcolors.ENDC+' Analysing the training samples')
+        JobSet=[]
+        for i in range(len(JobSets)):
+             JobSet.append([])
+             for j in range(len(JobSets[i][3])):
+                 JobSet[i].append(JobSets[i][3][j])
+        for i in range(0,len(JobSet)):
+             output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MVx1c_'+TrainSampleID+'_CompressedSeeds_'+str(i)+'.pkl'
+             if os.path.isfile(output_file_location)==False:
+                if os.path.isfile(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MVx1c_'+TrainSampleID+'_Temp_Stats.csv')==False:
+                   UF.LogOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MVx1c_'+TrainSampleID+'_Temp_Stats.csv','w', [[0,0]])
+                Temp_Stats=UF.LogOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MVx1c_'+TrainSampleID+'_Temp_Stats.csv','r', '_')
 
-        #         TotalImages=int(Temp_Stats[0][0])
-        #         TrueSeeds=int(Temp_Stats[0][1])
-        #         base_data = None
-        #         for j in range(len(JobSet[i])):
-        #                  for k in range(JobSet[i][j]):
-        #                       required_output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/Temp_MUTr1b_'+TrainSampleID+'_'+str(i)+'/MUTr1b_'+TrainSampleID+'_'+'RefinedSeeds'+'_'+str(i)+'_'+str(j) + '_' + str(k)+'.pkl'
-        #                       new_data=UF.PickleOperations(required_output_file_location,'r','N/A')[0]
-        #                       if base_data == None:
-        #                             base_data = new_data
-        #                       else:
-        #                             base_data+=new_data
-        #         try:
-        #             Records=len(base_data)
-        #             print(UF.TimeStamp(),'Set',str(i),'contains', Records, 'raw images',bcolors.ENDC)
+                TotalImages=int(Temp_Stats[0][0])
+                TrueSeeds=int(Temp_Stats[0][1])
+                base_data = None
+                for j in range(len(JobSet[i])):
+                         for k in range(JobSet[i][j]):
+                              required_output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/Temp_MVx1b_'+TrainSampleID+'_'+str(i)+'/MVx1b_'+TrainSampleID+'_'+'RefinedSeeds'+'_'+str(i)+'_'+str(j) + '_' + str(k)+'.pkl'
+                              new_data=UF.PickleOperations(required_output_file_location,'r','N/A')[0]
+                              if base_data == None:
+                                    base_data = new_data
+                              else:
+                                    base_data+=new_data
+                try:
+                    Records=len(base_data)
+                    print(UF.TimeStamp(),'Set',str(i),'contains', Records, 'raw images',bcolors.ENDC)
 
-        #             base_data=list(set(base_data))
-        #             Records_After_Compression=len(base_data)
-        #             if Records>0:
-        #                       Compression_Ratio=int((Records_After_Compression/Records)*100)
-        #             else:
-        #                       CompressionRatio=0
-        #             TotalImages+=Records_After_Compression
-        #             TrueSeeds+=sum(1 for im in base_data if im.Label == 1)
-        #             print(UF.TimeStamp(),'Set',str(i),'compression ratio is ', Compression_Ratio, ' %',bcolors.ENDC)
-        #             print(UF.PickleOperations(output_file_location,'w',base_data)[1])
-        #         except:
-        #             continue
-        #         del new_data
-        #         UF.LogOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MUTr1c_'+TrainSampleID+'_Temp_Stats.csv','w', [[TotalImages,TrueSeeds]])
-        # print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 4 has successfully completed'+bcolors.ENDC)
-        # Status=4
-        # UpdateStatus(Status)
-        # continue
+                    base_data=list(set(base_data))
+                    Records_After_Compression=len(base_data)
+                    if Records>0:
+                              Compression_Ratio=int((Records_After_Compression/Records)*100)
+                    else:
+                              CompressionRatio=0
+                    TotalImages+=Records_After_Compression
+                    TrueSeeds+=sum(1 for im in base_data if im.Label == 1)
+                    print(UF.TimeStamp(),'Set',str(i),'compression ratio is ', Compression_Ratio, ' %',bcolors.ENDC)
+                    print(UF.PickleOperations(output_file_location,'w',base_data)[1])
+                except:
+                    continue
+                del new_data
+                UF.LogOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MVx1c_'+TrainSampleID+'_Temp_Stats.csv','w', [[TotalImages,TrueSeeds]])
+        print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 4 has successfully completed'+bcolors.ENDC)
+        Status=4
+        UpdateStatus(Status)
+        continue
     # elif Status==4:
     #        print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
     #        print(UF.TimeStamp(),bcolors.BOLD+'Stage 4:'+bcolors.ENDC+' Resampling the results from the previous stage')
