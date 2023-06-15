@@ -117,7 +117,7 @@ for s in range(0,limit):
      track.Decorate(segments)
 
      #try:
-     track.GetTrInfo()
+     track.GetVXInfo()
      print(track.Vx)
      exit()
     #  except:
