@@ -71,12 +71,10 @@ input_track_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/Temp_MVx1a_'+BatchID+'
 output_file_location=EOS_DIR+'/'+p+'/Temp_'+pfx+'_'+BatchID+'_'+str(i)+'/'+pfx+'_'+BatchID+'_'+o+'_'+str(i)+'_'+str(j)+'_'+str(k)+sfx
 print(UF.TimeStamp(),'Loading the data')
 tracks=pd.read_csv(input_track_file_location)
-print(tracks)
-exit()
 tracks_1=tracks.drop(['Track_2'],axis=1)
 tracks_1=tracks_1.rename(columns={"Track_1": "Rec_Seg_ID"})
-tracks_2=tracks.drop(['Segment_1'],axis=1)
-tracks_2=tracks_2.rename(columns={"Segment_2": "Rec_Seg_ID"})
+tracks_2=tracks.drop(['Track_1'],axis=1)
+tracks_2=tracks_2.rename(columns={"Track_2": "Rec_Seg_ID"})
 track_list=result = pd.concat([tracks_1,tracks_2])
 track_list=track_list.sort_values(['Rec_Seg_ID'])
 track_list.drop_duplicates(subset="Rec_Seg_ID",keep='first',inplace=True)
@@ -90,7 +88,7 @@ segments["tx"] = pd.to_numeric(segments["tx"],downcast='float')
 segments["ty"] = pd.to_numeric(segments["ty"],downcast='float')
 
 # reorder the columns
-segments = segments[['x','y','z','tx','ty', 'Rec_Seg_ID', 'MC_Mother_Track_ID', 'Seed_Type']]
+segments = segments[['x','y','z','tx','ty', 'Rec_Seg_ID', 'MC_VX_ID', 'Seed_Type']]
 segments = segments.values.tolist() #Convirting the result to List data type
 tracks = tracks.values.tolist() #Convirting the result to List data type
 
@@ -104,7 +102,8 @@ print(UF.TimeStamp(),bcolors.OKGREEN+'Data has been successfully loaded and prep
 #create seeds
 GoodTracks=[]
 print(UF.TimeStamp(),'Beginning the sample generation part...')
-
+print(tracks)
+exit()
 for s in range(0,limit):
       
         
