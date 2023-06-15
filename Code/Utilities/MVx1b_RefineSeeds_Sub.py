@@ -116,23 +116,22 @@ for s in range(0,limit):
      track.LabelSeed(num_label)
      track.Decorate(segments)
 
-     #try:
-     track.GetVXInfo()
-     print(track.Vx)
-     exit()
-    #  except:
-    #    continue
+     try:
+        track.GetVXInfo()
+     except:
+       continue
 
      keep_seed=True
 
-     if track.TrackQualityCheck(MaxDOCA,MaxSLG,MaxSTG, MaxAngle):
-         for m in range(len(Metas)):
-             
-             if track.FitSeed(Metas[m],Models[m])==False:
-                
-                keep_seed=False
+     if track.VertexQualityCheck(MaxDOCA,MaxDST,MaxVXT, MaxAngle, FiducialVolumeCut):
          if keep_seed:
             GoodTracks.append(track)
+            print(tracks.DOCA)
+            print('########')
+            print(tracks.angle)
+            print('########')
+            print(tracks.V_Tr)
+            print('################')
      else:
          del track
          continue
