@@ -102,7 +102,8 @@ print(UF.TimeStamp(),bcolors.OKGREEN+'Data has been successfully loaded and prep
 #create seeds
 GoodTracks=[]
 print(UF.TimeStamp(),'Beginning the sample generation part...')
-for s in range(0,limit):
+#for s in range(0,limit):
+for s in range(0,100):
       
         
      track=tracks.pop(0)
