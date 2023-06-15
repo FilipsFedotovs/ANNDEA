@@ -496,7 +496,7 @@ class EMO:
                                    else:
                                         return self.STG <= MaxSTG #Still apply the STG cut
                                    ######
-      def VertexQualityCheck(self,MaxDoca, MaxVXT,MaxAngle, FiducialVolumeCut):
+      def VertexQualityCheck(self,MaxDoca, MaxVXT, MaxAngle, FiducialVolumeCut):
           if len(FiducialVolumeCut) >= 6:
                 MinX = FiducialVolumeCut[0] 
                 MaxX = FiducialVolumeCut[1]

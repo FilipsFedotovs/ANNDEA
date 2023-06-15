@@ -126,6 +126,7 @@ for s in range(0,limit):
      if track.VertexQualityCheck(MaxDOCA,MaxVXT, MaxAngle, FiducialVolumeCut):
          if keep_seed:
             GoodTracks.append(track)
+            print('pass')
             print(track.DOCA)
             print('########')
             print(track.angle)
@@ -133,6 +134,13 @@ for s in range(0,limit):
             print(track.V_Tr)
             print('################')
      else:
+         print('fail')
+         print(track.DOCA)
+         print('########')
+         print(track.angle)
+         print('########')
+         print(track.V_Tr)
+         print('################')
          del track
          continue
 
