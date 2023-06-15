@@ -410,6 +410,68 @@ class EMO:
                  raise ValueError("Method 'DecorateTrackGeoInfo' currently works for seeds with partition of 2 only")
           else:
                 raise ValueError("Method 'DecorateTrackGeoInfo' works only if 'Decorate' method has been acted upon the seed before")
+      def GetVXInfo(self):
+          if hasattr(self,'Hits'):
+             if self.Partition==2:
+                __XZ1=EMO.GetEquationOfTrack(self.Hits[0])[0]
+                __XZ2=EMO.GetEquationOfTrack(self.Hits[1])[0]
+                __YZ1=EMO.GetEquationOfTrack(self.Hits[0])[1]
+                __YZ2=EMO.GetEquationOfTrack(self.Hits[1])[1]
+                __X1S=EMO.GetEquationOfTrack(self.Hits[0])[3]
+                __X2S=EMO.GetEquationOfTrack(self.Hits[1])[3]
+                __Y1S=EMO.GetEquationOfTrack(self.Hits[0])[4]
+                __Y2S=EMO.GetEquationOfTrack(self.Hits[1])[4]
+                __Z1S=EMO.GetEquationOfTrack(self.Hits[0])[5]
+                __Z2S=EMO.GetEquationOfTrack(self.Hits[1])[5]
+                __vector_1_st = np.array([np.polyval(__XZ1,self.Hits[0][0][2]),np.polyval(__YZ1,self.Hits[0][0][2]),self.Hits[0][0][2]])
+                __vector_1_end = np.array([np.polyval(__XZ1,self.Hits[0][len(self.Hits[0])-1][2]),np.polyval(__YZ1,self.Hits[0][len(self.Hits[0])-1][2]),self.Hits[0][len(self.Hits[0])-1][2]])
+                __vector_2_st = np.array([np.polyval(__XZ2,self.Hits[0][0][2]),np.polyval(__YZ2,self.Hits[0][0][2]),self.Hits[0][0][2]])
+                __vector_2_end = np.array([np.polyval(__XZ2,self.Hits[0][len(self.Hits[0])-1][2]),np.polyval(__YZ2,self.Hits[0][len(self.Hits[0])-1][2]),self.Hits[0][len(self.Hits[0])-1][2]])
+                __result=EMO.closestDistanceBetweenLines(__vector_1_st,__vector_1_end,__vector_2_st,__vector_2_end,clampAll=False,clampA0=False,clampA1=False,clampB0=False,clampB1=False)
+                __midpoint=(__result[0]+__result[1])/2
+                __D1M=math.sqrt(((__midpoint[0]-__X1S)**2) + ((__midpoint[1]-__Y1S)**2) + ((__midpoint[2]-__Z1S)**2))
+                __D2M=math.sqrt(((__midpoint[0]-__X2S)**2) + ((__midpoint[1]-__Y2S)**2) + ((__midpoint[2]-__Z2S)**2))
+                __v1=np.subtract(__vector_1_end,__midpoint)
+                __v2=np.subtract(__vector_2_end,__midpoint)
+                self.angle=EMO.angle_between(__v1, __v2)
+                self.Vx=__midpoint[0]
+                self.Vy=__midpoint[1]
+                self.Vz=__midpoint[2]
+                self.DOCA=__result[2]
+                self.V_Tr=[__D1M,__D2M]
+                self.Tr_Tr=math.sqrt(((float(self.Hits[0][0][0])-float(self.Hits[1][0][0]))**2)+((float(self.Hits[0][0][1])-float(self.Hits[1][0][1]))**2)+((float(self.Hits[0][0][2])-float(self.Hits[1][0][2]))**2))
+             else:
+                 raise ValueError("Method 'DecorateSeedGeoInfo' currently works for seeds with track multiplicity of 2 only")
+          else:
+                raise ValueError("Method 'DecorateSeedGeoInfo' works only if 'DecorateTracks' method has been acted upon the seed before")
+        #         __XZ1=EMO.GetEquationOfTrack(self.Hits[0])[0]
+        #         __XZ2=EMO.GetEquationOfTrack(self.Hits[1])[0]
+        #         __YZ1=EMO.GetEquationOfTrack(self.Hits[0])[1]
+        #         __YZ2=EMO.GetEquationOfTrack(self.Hits[1])[1]
+        #         __vector_1_st = np.array([np.polyval(__XZ1,self.Hits[0][0][2]),np.polyval(__YZ1,self.Hits[0][0][2]),self.Hits[0][0][2]])
+        #         __vector_1_end = np.array([np.polyval(__XZ1,self.Hits[0][len(self.Hits[0])-1][2]),np.polyval(__YZ1,self.Hits[0][len(self.Hits[0])-1][2]),self.Hits[0][len(self.Hits[0])-1][2]])
+        #         __vector_2_st = np.array([np.polyval(__XZ2,self.Hits[0][0][2]),np.polyval(__YZ2,self.Hits[0][0][2]),self.Hits[0][0][2]])
+        #         __vector_2_end = np.array([np.polyval(__XZ2,self.Hits[0][len(self.Hits[0])-1][2]),np.polyval(__YZ2,self.Hits[0][len(self.Hits[0])-1][2]),self.Hits[0][len(self.Hits[0])-1][2]])
+        #         __result=EMO.closestDistanceBetweenLines(__vector_1_st,__vector_1_end,__vector_2_st,__vector_2_end,clampAll=False,clampA0=False,clampA1=False,clampB0=False,clampB1=False)
+        #         __midpoint=(__result[0]+__result[1])/2
+        #         __v1=np.subtract(__vector_1_end,__midpoint)
+        #         __v2=np.subtract(__vector_2_end,__midpoint)
+        #         if self.Hits[0][len(self.Hits)-1][2]>self.Hits[1][len(self.Hits)-1][2]: #Workout which track is leading (has highest z-coordinate)
+        #             __leading_seg=0
+        #             __subleading_seg=1
+        #         else:
+        #             __leading_seg=1
+        #             __subleading_seg=0
+        #         self.Opening_Angle=EMO.angle_between(__v1, __v2)
+        #         self.DOCA=__result[2]
+        #         __x2=float(self.Hits[__leading_seg][0][0])
+        #         __x1=self.Hits[__subleading_seg][len(self.Hits[__subleading_seg])-1][0]
+        #         __y2=float(self.Hits[__leading_seg][0][1])
+        #         __y1=self.Hits[__subleading_seg][len(self.Hits[__subleading_seg])-1][1]
+        #      else:
+        #          raise ValueError("Method 'DecorateTrackGeoInfo' currently works for seeds with partition of 2 only")
+        #   else:
+        #         raise ValueError("Method 'DecorateTrackGeoInfo' works only if 'Decorate' method has been acted upon the seed before")  
       def TrackQualityCheck(self,MaxDoca,MaxSLG, MaxSTG,MaxAngle):
                     if self.DOCA>MaxDoca: #Check whether the seed passes the DOCA cut
                         return False
