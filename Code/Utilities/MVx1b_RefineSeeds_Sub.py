@@ -102,8 +102,6 @@ print(UF.TimeStamp(),bcolors.OKGREEN+'Data has been successfully loaded and prep
 #create seeds
 GoodTracks=[]
 print(UF.TimeStamp(),'Beginning the sample generation part...')
-print(tracks)
-exit()
 for s in range(0,limit):
       
         
@@ -118,10 +116,12 @@ for s in range(0,limit):
      track.LabelSeed(num_label)
      track.Decorate(segments)
 
-     try:
-       track.GetTrInfo()
-     except:
-       continue
+     #try:
+     track.GetTrInfo()
+     print(track.Vx)
+     exit()
+    #  except:
+    #    continue
 
      keep_seed=True
 
