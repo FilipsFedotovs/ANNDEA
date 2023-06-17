@@ -468,9 +468,9 @@ print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Create'))
 ###### Stage 3
 Program.append('Custom')
 ###### Stage 4
-# Program.append('Custom')
+Program.append('Custom')
 ###### Stage 5
-#Program.append('Custom')
+Program.append('Custom')
 
 print(UF.TimeStamp(),'There are '+str(len(Program)+1)+' stages (0-'+str(len(Program)+1)+') of this script',bcolors.ENDC)
 print(UF.TimeStamp(),'Current stage has a code',Status,bcolors.ENDC)
