@@ -37,10 +37,10 @@ parser = argparse.ArgumentParser(description='This script helps to visualise the
 parser.add_argument('--StartImage',help="Please select the beginning Image", default='1')
 parser.add_argument('--Images',help="Please select the number of Images", default='1')
 parser.add_argument('--PlotType',help="Enter plot type: XZ/YZ/3D", default='XZ')
-parser.add_argument('--Res',help="Please enter the scaling resolution in microns", default=50)
+parser.add_argument('--Res',help="Please enter the scaling resolution in microns", default=10)
 parser.add_argument('--EImg',help="Enhance image?", default='Y')
-parser.add_argument('--MaxX',help="Enter max half height of the image in microns", default=1000)
-parser.add_argument('--MaxY',help="Enter max half width of the image in microns", default=1000)
+parser.add_argument('--MaxX',help="Enter max half height of the image in microns", default=3500)
+parser.add_argument('--MaxY',help="Enter max half width of the image in microns", default=3500)
 parser.add_argument('--MaxZ',help="Enter max length of the image in microns", default=20000)
 parser.add_argument('--TrainSampleID',help="What training sample to visualise?", default='SHIP_UR_v1')
 parser.add_argument('--Rescale',help="Rescale the images : Y/N ?", default='N')
@@ -81,9 +81,9 @@ print(bcolors.HEADER+"#########################                 PhD Student at U
 print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
 print(UF.TimeStamp(), bcolors.OKGREEN+"Modules Have been imported successfully..."+bcolors.ENDC)
 if args.Type=='Val':
- input_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_'+SeedType+'_OUTPUT.pkl'
+ input_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_'+SeedType+'_SEEDS_OUTPUT.pkl'
 else:
- input_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_'+SeedType+'_OUTPUT_'+args.Type+'.pkl'
+ input_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_'+SeedType+'_SEEDS_OUTPUT_'+args.Type+'.pkl'
 
 ImageObjectSet=UF.PickleOperations(input_file_location,'r', 'N/A')[0]
 
