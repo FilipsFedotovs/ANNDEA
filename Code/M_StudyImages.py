@@ -46,10 +46,12 @@ parser.add_argument('--TrainSampleID',help="What training sample to visualise?",
 parser.add_argument('--Rescale',help="Rescale the images : Y/N ?", default='N')
 parser.add_argument('--Type',help="Please enter the sample type: Val or number for the training set", default='1')
 parser.add_argument('--Label',help="Which labels would you like to see: 'ANY/Fake/Truth", default='ANY')
+parser.add_argument('--SeedType',help="", default='TRACK')
 ########################################     Main body functions    #########################################
 args = parser.parse_args()
 TrackNo=int(args.Images)
 TrainSampleID=args.TrainSampleID
+SeedType=args.SeedType
 resolution=float(args.Res)
 MaxX=float(args.MaxX)
 MaxY=float(args.MaxY)
@@ -79,9 +81,9 @@ print(bcolors.HEADER+"#########################                 PhD Student at U
 print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
 print(UF.TimeStamp(), bcolors.OKGREEN+"Modules Have been imported successfully..."+bcolors.ENDC)
 if args.Type=='Val':
- input_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_TRACK_OUTPUT.pkl'
+ input_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_'+SeedType+'_OUTPUT.pkl'
 else:
- input_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_TRACK_OUTPUT_'+args.Type+'.pkl'
+ input_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_'+SeedType+'_OUTPUT_'+args.Type+'.pkl'
 
 ImageObjectSet=UF.PickleOperations(input_file_location,'r', 'N/A')[0]
 
