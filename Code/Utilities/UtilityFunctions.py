@@ -67,6 +67,18 @@ class TrainingSampleMeta:
           self.MaxSeeds=MaxSeeds
           self.VetoMotherTrack=VetoMotherTrack
           self.MinHitsTrack=MinHitsTrack
+      def IniVertexSeedMetaData(self,MaxDST,MaxVXT,MaxDOCA,MaxAngle,JobSets,MaxSegments,VetoVertex,MaxSeeds,MinHitsTrack,FiducialVolumeCut
+                               ):
+          self.MaxDST=MaxDST 
+          self.MaxVXT=MaxVXT
+          self.MaxDOCA=MaxDOCA
+          self.MaxAngle=MaxAngle
+          self.JobSets=JobSets
+          self.MaxSegments=MaxSegments
+          self.MaxSeeds=MaxSeeds
+          self.VetoVertex=VetoVertex
+          self.MinHitsTrack=MinHitsTrack
+          self.FiducialVolumeCut = FiducialVolumeCut
       def UpdateHitClusterMetaData(self,NoS,NoNF,NoEF,NoSets):
           self.num_node_features=NoNF
           self.num_edge_features=NoEF
@@ -398,6 +410,68 @@ class EMO:
                  raise ValueError("Method 'DecorateTrackGeoInfo' currently works for seeds with partition of 2 only")
           else:
                 raise ValueError("Method 'DecorateTrackGeoInfo' works only if 'Decorate' method has been acted upon the seed before")
+      def GetVXInfo(self):
+          if hasattr(self,'Hits'):
+             if self.Partition==2:
+                __XZ1=EMO.GetEquationOfTrack(self.Hits[0])[0]
+                __XZ2=EMO.GetEquationOfTrack(self.Hits[1])[0]
+                __YZ1=EMO.GetEquationOfTrack(self.Hits[0])[1]
+                __YZ2=EMO.GetEquationOfTrack(self.Hits[1])[1]
+                __X1S=EMO.GetEquationOfTrack(self.Hits[0])[3]
+                __X2S=EMO.GetEquationOfTrack(self.Hits[1])[3]
+                __Y1S=EMO.GetEquationOfTrack(self.Hits[0])[4]
+                __Y2S=EMO.GetEquationOfTrack(self.Hits[1])[4]
+                __Z1S=EMO.GetEquationOfTrack(self.Hits[0])[5]
+                __Z2S=EMO.GetEquationOfTrack(self.Hits[1])[5]
+                __vector_1_st = np.array([np.polyval(__XZ1,self.Hits[0][0][2]),np.polyval(__YZ1,self.Hits[0][0][2]),self.Hits[0][0][2]])
+                __vector_1_end = np.array([np.polyval(__XZ1,self.Hits[0][len(self.Hits[0])-1][2]),np.polyval(__YZ1,self.Hits[0][len(self.Hits[0])-1][2]),self.Hits[0][len(self.Hits[0])-1][2]])
+                __vector_2_st = np.array([np.polyval(__XZ2,self.Hits[0][0][2]),np.polyval(__YZ2,self.Hits[0][0][2]),self.Hits[0][0][2]])
+                __vector_2_end = np.array([np.polyval(__XZ2,self.Hits[0][len(self.Hits[0])-1][2]),np.polyval(__YZ2,self.Hits[0][len(self.Hits[0])-1][2]),self.Hits[0][len(self.Hits[0])-1][2]])
+                __result=EMO.closestDistanceBetweenLines(__vector_1_st,__vector_1_end,__vector_2_st,__vector_2_end,clampAll=False,clampA0=False,clampA1=False,clampB0=False,clampB1=False)
+                __midpoint=(__result[0]+__result[1])/2
+                __D1M=math.sqrt(((__midpoint[0]-__X1S)**2) + ((__midpoint[1]-__Y1S)**2) + ((__midpoint[2]-__Z1S)**2))
+                __D2M=math.sqrt(((__midpoint[0]-__X2S)**2) + ((__midpoint[1]-__Y2S)**2) + ((__midpoint[2]-__Z2S)**2))
+                __v1=np.subtract(__vector_1_end,__midpoint)
+                __v2=np.subtract(__vector_2_end,__midpoint)
+                self.angle=EMO.angle_between(__v1, __v2)
+                self.Vx=__midpoint[0]
+                self.Vy=__midpoint[1]
+                self.Vz=__midpoint[2]
+                self.DOCA=__result[2]
+                self.V_Tr=[__D1M,__D2M]
+                self.Tr_Tr=math.sqrt(((float(self.Hits[0][0][0])-float(self.Hits[1][0][0]))**2)+((float(self.Hits[0][0][1])-float(self.Hits[1][0][1]))**2)+((float(self.Hits[0][0][2])-float(self.Hits[1][0][2]))**2))
+             else:
+                 raise ValueError("Method 'DecorateSeedGeoInfo' currently works for seeds with track multiplicity of 2 only")
+          else:
+                raise ValueError("Method 'DecorateSeedGeoInfo' works only if 'DecorateTracks' method has been acted upon the seed before")
+        #         __XZ1=EMO.GetEquationOfTrack(self.Hits[0])[0]
+        #         __XZ2=EMO.GetEquationOfTrack(self.Hits[1])[0]
+        #         __YZ1=EMO.GetEquationOfTrack(self.Hits[0])[1]
+        #         __YZ2=EMO.GetEquationOfTrack(self.Hits[1])[1]
+        #         __vector_1_st = np.array([np.polyval(__XZ1,self.Hits[0][0][2]),np.polyval(__YZ1,self.Hits[0][0][2]),self.Hits[0][0][2]])
+        #         __vector_1_end = np.array([np.polyval(__XZ1,self.Hits[0][len(self.Hits[0])-1][2]),np.polyval(__YZ1,self.Hits[0][len(self.Hits[0])-1][2]),self.Hits[0][len(self.Hits[0])-1][2]])
+        #         __vector_2_st = np.array([np.polyval(__XZ2,self.Hits[0][0][2]),np.polyval(__YZ2,self.Hits[0][0][2]),self.Hits[0][0][2]])
+        #         __vector_2_end = np.array([np.polyval(__XZ2,self.Hits[0][len(self.Hits[0])-1][2]),np.polyval(__YZ2,self.Hits[0][len(self.Hits[0])-1][2]),self.Hits[0][len(self.Hits[0])-1][2]])
+        #         __result=EMO.closestDistanceBetweenLines(__vector_1_st,__vector_1_end,__vector_2_st,__vector_2_end,clampAll=False,clampA0=False,clampA1=False,clampB0=False,clampB1=False)
+        #         __midpoint=(__result[0]+__result[1])/2
+        #         __v1=np.subtract(__vector_1_end,__midpoint)
+        #         __v2=np.subtract(__vector_2_end,__midpoint)
+        #         if self.Hits[0][len(self.Hits)-1][2]>self.Hits[1][len(self.Hits)-1][2]: #Workout which track is leading (has highest z-coordinate)
+        #             __leading_seg=0
+        #             __subleading_seg=1
+        #         else:
+        #             __leading_seg=1
+        #             __subleading_seg=0
+        #         self.Opening_Angle=EMO.angle_between(__v1, __v2)
+        #         self.DOCA=__result[2]
+        #         __x2=float(self.Hits[__leading_seg][0][0])
+        #         __x1=self.Hits[__subleading_seg][len(self.Hits[__subleading_seg])-1][0]
+        #         __y2=float(self.Hits[__leading_seg][0][1])
+        #         __y1=self.Hits[__subleading_seg][len(self.Hits[__subleading_seg])-1][1]
+        #      else:
+        #          raise ValueError("Method 'DecorateTrackGeoInfo' currently works for seeds with partition of 2 only")
+        #   else:
+        #         raise ValueError("Method 'DecorateTrackGeoInfo' works only if 'Decorate' method has been acted upon the seed before")  
       def TrackQualityCheck(self,MaxDoca,MaxSLG, MaxSTG,MaxAngle):
                     if self.DOCA>MaxDoca: #Check whether the seed passes the DOCA cut
                         return False
@@ -421,7 +495,18 @@ class EMO:
                                         return False
                                    else:
                                         return self.STG <= MaxSTG #Still apply the STG cut
-
+                                   ######
+      def VertexQualityCheck(self,MaxDoca, MaxVXT, MaxAngle, FiducialVolumeCut):
+          if len(FiducialVolumeCut) >= 6:
+                MinX = FiducialVolumeCut[0] 
+                MaxX = FiducialVolumeCut[1]
+                MinY = FiducialVolumeCut[2]
+                MaxY = FiducialVolumeCut[3]
+                MinZ = FiducialVolumeCut[4] 
+                MaxZ = FiducialVolumeCut[5]
+                return (self.DOCA<=MaxDoca and min(self.V_Tr)<=MaxVXT and self.Vx>=MinX and self.Vx<=MaxX and self.Vy>=MinY and self.Vy<=MaxY and self.Vz>=MinZ and self.Vz<=MaxZ and abs(self.angle)<=MaxAngle)
+          return (self.DOCA<=MaxDoca and min(self.V_Tr)<=MaxVXT and abs(self.angle)<=MaxAngle)
+    
       def PrepareSeedPrint(self,MM):
           __TempTrack=copy.deepcopy(self.Hits)
 
@@ -2267,6 +2352,9 @@ def GenerateModel(ModelMeta,TrainParams=None):
                         self.conv2 = GMMConv(HiddenLayer[0][0],HiddenLayer[1][0],dim=4,kernel_size=HiddenLayer[1][1])
                         self.conv3 = GMMConv(HiddenLayer[1][0],HiddenLayer[2][0],dim=4,kernel_size=HiddenLayer[2][1])
                         self.lin = Linear(HiddenLayer[2][0],OutputLayer[1])
+                    elif len(HiddenLayer)==1:
+                        self.conv1 = GMMConv(6 , HiddenLayer[0][0],dim=4,kernel_size=HiddenLayer[0][1])
+                        self.lin = Linear(HiddenLayer[0][0],OutputLayer[1])
                     elif len(HiddenLayer)==4:
                         self.conv1 = GMMConv(6 , HiddenLayer[0][0],dim=4,kernel_size=HiddenLayer[0][1])
                         self.conv2 = GMMConv(HiddenLayer[0][0],HiddenLayer[1][0],dim=4,kernel_size=HiddenLayer[1][1])
@@ -2283,6 +2371,9 @@ def GenerateModel(ModelMeta,TrainParams=None):
                         x = self.conv2(x, edge_index,edge_attr)
                         x = x.relu()
                         x = self.conv3(x, edge_index,edge_attr)
+                    elif len(HiddenLayer)==1:
+                        x = self.conv1(x, edge_index,edge_attr)
+                        x = x.relu()
                     elif len(HiddenLayer)==4:
                         x = self.conv1(x, edge_index,edge_attr)
                         x = x.relu()
