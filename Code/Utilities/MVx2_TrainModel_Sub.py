@@ -38,6 +38,7 @@ parser.add_argument('--PY',help="Python libraries directory location", default='
 ########################################     Initialising Variables    #########################################
 args = parser.parse_args()
 TrainParams=ast.literal_eval(args.TrainParams)
+print(TrainParams[0])
 TrainSampleID=args.TrainSampleID
 ModelName=args.BatchID
 ##################################   Loading Directory locations   ##################################################
