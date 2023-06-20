@@ -57,6 +57,7 @@ import ast
 import pandas as pd #We use Panda for a routine data processing
 import gc  #Helps to clear memory
 FiducialVolumeCut=ast.literal_eval(args.FiducialVolumeCut)
+print(FiducialVolumeCut[0])
 BatchID=args.BatchID
 Metas=[]
 EOSsubDIR=EOS_DIR+'/'+'ANNDEA'
