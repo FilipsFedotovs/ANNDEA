@@ -722,17 +722,17 @@ while Status<len(Program):
                exit() 
 if Status==6:
            print(UF.TimeStamp(),'Performing the cleanup... ',bcolors.ENDC)
-        #    for p in Program:
-        #     if p!='Custom':
-        #        print(UF.TimeStamp(),UF.ManageTempFolders(p,'Delete'))
-        #    HTCondorTag="SoftUsed == \"ANNDEA-MVx1-"+TrainSampleID+"\""
-        #    UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MVx1_'+TrainSampleID, ['MVx1_'+TrainSampleID], HTCondorTag)
-        #    HTCondorTag="SoftUsed == \"ANNDEA-MVx1c-"+TrainSampleID+"\""
-        #    UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MVx1c_'+TrainSampleID, ['MVx1c_'+TrainSampleID], HTCondorTag)
-        #    HTCondorTag="SoftUsed == \"ANNDEA-MVx1d-"+TrainSampleID+"\""
-        #    UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MVx1d_'+TrainSampleID, ['MVx1d_'+TrainSampleID], HTCondorTag)
-        #    print(UF.TimeStamp(), bcolors.OKGREEN+"Train sample generation has been completed"+bcolors.ENDC)
-        #    exit()
+           for p in Program:
+            if p!='Custom':
+               print(UF.TimeStamp(),UF.ManageTempFolders(p,'Delete'))
+           HTCondorTag="SoftUsed == \"ANNDEA-MVx1-"+TrainSampleID+"\""
+           UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MVx1_'+TrainSampleID, ['MVx1_'+TrainSampleID], HTCondorTag)
+           HTCondorTag="SoftUsed == \"ANNDEA-MVx1c-"+TrainSampleID+"\""
+           UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MVx1c_'+TrainSampleID, ['MVx1c_'+TrainSampleID], HTCondorTag)
+           HTCondorTag="SoftUsed == \"ANNDEA-MVx1d-"+TrainSampleID+"\""
+           UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MVx1d_'+TrainSampleID, ['MVx1d_'+TrainSampleID], HTCondorTag)
+           print(UF.TimeStamp(), bcolors.OKGREEN+"Train sample generation has been completed"+bcolors.ENDC)
+           exit()
 else:
     print(UF.TimeStamp(), bcolors.FAIL+"Reconstruction has not been completed as one of the processes has timed out or --ForceStatus!=0 option was chosen. Please run the script again (without Reset Mode)."+bcolors.ENDC)
     exit()

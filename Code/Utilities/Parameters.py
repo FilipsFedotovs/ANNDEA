@@ -45,7 +45,7 @@ MaxSeeds=50000
 ######List of geometrical constain parameters
 MinHitsTrack=4
 VetoMotherTrack=[]
-VetoVertex=[]
+VetoVertex=['-1', '-2']
 
 # MaxTracksPerJob=20000
 # MaxEvalTracksPerJob=20000
