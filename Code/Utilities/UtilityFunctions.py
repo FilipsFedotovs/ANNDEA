@@ -636,13 +636,13 @@ class EMO:
                    try:
                     __vector_1 = [__deltaZ,0]
                     __vector_2 = [__deltaZ, __deltaX]
-                    __ThetaAngle=EMO.Opening_Angle(__vector_1, __vector_2)
+                    __ThetaAngle=EMO.angle_between(__vector_1, __vector_2)
                    except:
                      __ThetaAngle=0.0
                    try:
                      __vector_1 = [__deltaZ,0]
                      __vector_2 = [__deltaZ, __deltaY]
-                     __PhiAngle=EMO.Opening_Angle(__vector_1, __vector_2)
+                     __PhiAngle=EMO.angle_between(__vector_1, __vector_2)
                    except:
                      __PhiAngle=0.0
                    __TotalDistance=math.sqrt((__deltaX**2)+(__deltaY**2)+(__deltaZ**2))
