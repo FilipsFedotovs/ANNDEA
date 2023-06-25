@@ -56,15 +56,12 @@ print(bcolors.HEADER+"##########################################################
 
 #Setting the parser - this script is usually not run directly, but is used by a Master version Counterpart that passes the required arguments
 parser = argparse.ArgumentParser(description='This script prepares training data for training the tracking model')
-parser.add_argument('--Mode', help='Script will continue from the last checkpoint, unless you want to start from the scratch, then type "Reset"',default='')
-parser.add_argument('--RecBatchID',help="Give this training sample batch an ID", default='SHIP_UR_v1')
+
 parser.add_argument('--MinHits',help="What is the minimum number of hits per track?", default='2')
 parser.add_argument('--f',help="Please enter the full path to the file with track reconstruction", default='/afs/cern.ch/work/f/ffedship/public/SHIP/Source_Data/SHIP_Emulsion_Rec_Raw_UR.csv')
 
 ######################################## Parsing argument values  #############################################################
 args = parser.parse_args()
-Mode=args.Mode.upper()
-RecBatchID=args.RecBatchID
 initial_input_file_location=args.f
 MinHits=int(args.MinHits)
 output_file_location=initial_input_file_location[:-4]+'_Re-Aligned.csv'
