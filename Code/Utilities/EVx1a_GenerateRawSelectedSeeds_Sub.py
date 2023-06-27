@@ -104,19 +104,19 @@ for i in range(0,Steps):
   r_temp_data=r_data.iloc[0:min(Cut,len(r_data.axes[0]))] #Taking a small slice of the data
   r_data.drop(r_data.index[0:min(Cut,len(r_data.axes[0]))],inplace=True) #Shrinking the right join dataframe
   merged_data=pd.merge(data, r_temp_data, how="inner", on=['MC_Vertex_ID']) #Merging Tracks to check whether they could form a seed
-  print(merged_data)
-  exit()
 
   if merged_data.empty==False:
     merged_data.drop(merged_data.index[merged_data['Segment_1'] == merged_data['Segment_2']], inplace = True) #Removing the cases where Seed tracks are the same
     merged_data['Seed_Type']=True
     if len(VetoVertex)>=1:
       for n in VetoVertex:
-        merged_data['Seed_Type']=((merged_data['MC_Mother_Track_ID'].str.contains(str('-'+n))==False) & (merged_data['Seed_Type']==True))
+        merged_data['Seed_Type']=((merged_data['MC_Vertex_ID'].str.contains(str('-'+n))==False) & (merged_data['Seed_Type']==True))
     else:
         merged_data['Seed_Type']=True
+    print(merged_data)
+    exit()
     merged_data.drop(merged_data.index[merged_data['Seed_Type'] == False], inplace = True)
-    merged_data.drop(['MC_Mother_Track_ID'],axis=1,inplace=True)
+    merged_data.drop(['MC_Vertex_ID'],axis=1,inplace=True)
     merged_data.drop(['Seed_Type'],axis=1,inplace=True)
     merged_list = merged_data.values.tolist() #Convirting the result to List data type
     result_list+=merged_list #Adding the result to the list
