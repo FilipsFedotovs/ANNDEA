@@ -75,6 +75,7 @@ parser.add_argument('--Acceptance',help="What is the ANN fit acceptance?", defau
 parser.add_argument('--CalibrateAcceptance',help="Would you like to recalibrate the acceptance?", default='N')
 parser.add_argument('--ReqMemory',help="Specifying the length of the HTCondor job walltime. Currently at 'workday' which is 8 hours.", default='2 GB')
 parser.add_argument('--RemoveTracksZ',help="This option enables to remove particular tracks of starting Z-coordinate", default='[]')
+parser.add_argument('--FiducialVolumeCut',help="Limits on the vx, y, z coordinates of the vertex origin", default='[]')
 
 ######################################## Parsing argument values  #############################################################
 args = parser.parse_args()
@@ -212,6 +213,7 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
            MaxSeeds=PM.MaxSeeds
            VetoTrack=PM.VetoVertex
            MinHitsTrack=Meta.MinHitsTrack
+           FiducialVolumeCut=ast.literal_eval(args.FiducialVolumeCut)
         print(UF.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+initial_input_file_location+bcolors.ENDC)
         data=pd.read_csv(initial_input_file_location,
                     header=0,
