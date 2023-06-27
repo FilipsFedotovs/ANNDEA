@@ -218,13 +218,6 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         data=pd.read_csv(initial_input_file_location,
                     header=0,
                     usecols=[TrackID,BrickID,PM.x,PM.y,PM.z,PM.tx,PM.ty])
-        print(data[PM.x].min())
-        print(data[PM.x].max())
-        print(data[PM.y].min())
-        print(data[PM.y].max())
-        print(data[PM.z].min())
-        print(data[PM.z].max())
-        exit()
         total_rows=len(data.axes[0])
         print(UF.TimeStamp(),'The raw data has ',total_rows,' hits')
         print(UF.TimeStamp(),'Removing unreconstructed hits...')
@@ -260,6 +253,15 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         new_combined_data=new_combined_data.rename(columns={PM.z: "z"})
         new_combined_data=new_combined_data.rename(columns={PM.tx: "tx"})
         new_combined_data=new_combined_data.rename(columns={PM.ty: "ty"})
+        if len(RemoveTracksZ)>0:
+             print(UF.TimeStamp(),'Removing tracks based on start point')
+             TracksZdf = pd.DataFrame(RemoveTracksZ, columns = ['Bad_z'], dtype=float)
+             data_aggregated=new_combined_data.groupby(['Rec_Seg_ID'])['z'].min().reset_index()
+             data_aggregated=data_aggregated.rename(columns={'z': "PosBad_Z"})
+             new_combined_data=pd.merge(new_combined_data, data_aggregated, how="left", on=['Rec_Seg_ID'])
+             new_combined_data=pd.merge(new_combined_data, TracksZdf, how="left", left_on=["PosBad_Z"], right_on=['Bad_z'])
+             new_combined_data=new_combined_data[new_combined_data['Bad_z'].isnull()]
+             new_combined_data=new_combined_data.drop(['Bad_z', 'PosBad_Z'],axis=1)
         new_combined_data.to_csv(required_file_location,index=False)
         data=new_combined_data[['Rec_Seg_ID','z']]
         print(UF.TimeStamp(),'Analysing the data sample in order to understand how many jobs to submit to HTCondor... ',bcolors.ENDC)
@@ -273,7 +275,7 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         data = data.values.tolist()
         print(UF.TimeStamp(), bcolors.OKGREEN+"The track segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+required_file_location+bcolors.ENDC)
         Meta=UF.TrainingSampleMeta(RecBatchID)
-        Meta.IniTrackSeedMetaData(MaxSLG,MaxSTG,MaxDOCA,MaxAngle,data,MaxSegments,VetoMotherTrack,MaxSeeds,MinHitsTrack)
+        IniVertexSeedMetaData(MaxDST,MaxVXT,MaxDOCA,MaxAngle,data,MaxSegments,PM.VetoVertex,MaxSeeds,MinHitsTrack,FiducialVolumeCut)
         Meta.UpdateStatus(0)
         print(UF.PickleOperations(RecOutputMeta,'w', Meta)[1])
         print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
@@ -282,14 +284,14 @@ elif os.path.isfile(RecOutputMeta)==True:
     print(UF.TimeStamp(),'Loading previously saved data from ',bcolors.OKBLUE+RecOutputMeta+bcolors.ENDC)
     MetaInput=UF.PickleOperations(RecOutputMeta,'r', 'N/A')
     Meta=MetaInput[0]
-MaxSLG=Meta.MaxSLG
-MaxSTG=Meta.MaxSTG
+MaxDST=Meta.MaxDST
+MaxVXT=Meta.MaxVXT
 MaxDOCA=Meta.MaxDOCA
 MaxAngle=Meta.MaxAngle
 JobSets=Meta.JobSets
 MaxSegments=Meta.MaxSegments
 MaxSeeds=Meta.MaxSeeds
-VetoMotherTrack=Meta.VetoMotherTrack
+VetoVertex=Meta.VetoVertex
 MinHitsTrack=Meta.MinHitsTrack
 
 #The function bellow helps to monitor the HTCondor jobs and keep the submission flow
@@ -433,10 +435,10 @@ def UpdateStatus(status):
 
 if Mode=='RESET':
     print(UF.TimeStamp(),'Performing the cleanup... ',bcolors.ENDC)
-    HTCondorTag="SoftUsed == \"ANNDEA-EUTr1a-"+RecBatchID+"\""
-    UF.EvalCleanUp(AFS_DIR, EOS_DIR, 'EUTr1a_'+RecBatchID, ['EUTr1a','EUTr1b'], HTCondorTag)
-    HTCondorTag="SoftUsed == \"ANNDEA-RUTr1a-"+RecBatchID+"\""
-    UF.RecCleanUp(AFS_DIR, EOS_DIR, 'RUTr1a_'+RecBatchID, ['RUTr1a',RecBatchID+'_REC_LOG.csv'], HTCondorTag)
+    HTCondorTag="SoftUsed == \"ANNDEA-EVx1a-"+RecBatchID+"\""
+    UF.EvalCleanUp(AFS_DIR, EOS_DIR, 'EVx1a_'+RecBatchID, ['EVx1a','EVx1b'], HTCondorTag)
+    HTCondorTag="SoftUsed == \"ANNDEA-RVx1a-"+RecBatchID+"\""
+    UF.RecCleanUp(AFS_DIR, EOS_DIR, 'RVx1a_'+RecBatchID, ['RVx1a',RecBatchID+'_REC_LOG.csv'], HTCondorTag)
     FreshStart=False
     UpdateStatus(0)
     Status=0
@@ -459,8 +461,8 @@ if Log:
     data.drop_duplicates(subset="Rec_Seg_ID",keep='first',inplace=True)  #Keeping only starting hits for each track record (we do not require the full information about track in this script)
     Records=len(data.axes[0])
     Sets=int(np.ceil(Records/MaxSegments))
-    prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TEST_SET/','RawSeedsRes','EUTr1a','.csv',RecBatchID,Sets,'EUTr1a_GenerateRawSelectedSeeds_Sub.py'])
-    prog_entry.append([" --MaxSegments ", " --VetoMotherTrack "])
+    prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TEST_SET/','RawSeedsRes','EVx1a','.csv',RecBatchID,Sets,'EVx1a_GenerateRawSelectedSeeds_Sub.py'])
+    prog_entry.append([" --MaxSegments ", " --VetoVertex "])
     prog_entry.append([MaxSegments, '"'+str(VetoMotherTrack)+'"'])
     prog_entry.append(Sets)
     prog_entry.append(LocalSub)
@@ -497,7 +499,7 @@ elif type(JobSet[0][0]) is int:
             for lp in JobSet:
                 TotJobs+=np.sum(lp)
 prog_entry.append(' Sending tracks to the HTCondor, so track segment combinations can be formed...')
-prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','RawSeedsRes','RUTr1a','.csv',RecBatchID,JobSet,'RUTr1a_GenerateRawSelectedSeeds_Sub.py'])
+prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','RawSeedsRes','RVx1a','.csv',RecBatchID,JobSet,'RVx1a_GenerateRawSelectedSeeds_Sub.py'])
 prog_entry.append([ " --MaxSegments ", " --MaxSLG "," --MaxSTG "])
 prog_entry.append([MaxSegments, MaxSLG, MaxSTG])
 prog_entry.append(np.sum(JobSet))
@@ -543,11 +545,11 @@ while Status<len(Program):
                     bar.text = f'-> Analysing set : {i}...'
                     bar()
                     if i==0:
-                       output_file_location=EOS_DIR+'/ANNDEA/Data/TEST_SET/Temp_EUTr1a'+'_'+RecBatchID+'_'+str(0)+'/EUTr1a_'+RecBatchID+'_RawSeeds_'+str(i)+'.csv'
+                       output_file_location=EOS_DIR+'/ANNDEA/Data/TEST_SET/Temp_EVx1a'+'_'+RecBatchID+'_'+str(0)+'/EVx1a_'+RecBatchID+'_RawSeeds_'+str(i)+'.csv'
                        result=pd.read_csv(output_file_location,names = ['Segment_1','Segment_2'])
                        print(UF.TimeStamp(),'Set',str(i), 'contains', len(result), 'seeds',bcolors.ENDC)
                     else:
-                        output_file_location=EOS_DIR+'/ANNDEA/Data/TEST_SET/Temp_EUTr1a'+'_'+RecBatchID+'_'+str(0)+'/EUTr1a_'+RecBatchID+'_RawSeeds_'+str(i)+'.csv'
+                        output_file_location=EOS_DIR+'/ANNDEA/Data/TEST_SET/Temp_EVx1a'+'_'+RecBatchID+'_'+str(0)+'/EVx1a_'+RecBatchID+'_RawSeeds_'+str(i)+'.csv'
                         new_result=pd.read_csv(output_file_location,names = ['Segment_1','Segment_2'])
                         print(UF.TimeStamp(),'Set',str(i), 'contains', len(new_result), 'seeds',bcolors.ENDC)
                         result=pd.concat([result,new_result])
@@ -563,7 +565,7 @@ while Status<len(Program):
         else:
                       Compression_Ratio=0
         print(UF.TimeStamp(),'Set',str(i), 'compression ratio is ', Compression_Ratio, ' %',bcolors.ENDC)
-        new_output_file_location=EOS_DIR+'/ANNDEA/Data/TEST_SET/EUTr1b_'+RecBatchID+'_SEED_TRUTH_COMBINATIONS.csv'
+        new_output_file_location=EOS_DIR+'/ANNDEA/Data/TEST_SET/EVx1b_'+RecBatchID+'_SEED_TRUTH_COMBINATIONS.csv'
         result.to_csv(new_output_file_location,index=False)
         eval_no=len(result)
         rec_data=pd.read_csv(required_file_location,header=0,
@@ -582,7 +584,7 @@ while Status<len(Program):
         print(UF.TimeStamp(),bcolors.BOLD+'Stage '+str(Status)+':'+bcolors.ENDC+' Collecting and de-duplicating the results from stage 2')
         min_i=0
         for i in range(0,len(JobSets)): #//Temporarily measure to save space
-                   test_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RUTr1a'+'_'+RecBatchID+'_'+str(i)+'/RUTr1a_'+RecBatchID+'_SelectedSeeds_'+str(i)+'_'+str(0)+'_'+str(0)+'.csv'
+                   test_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RVx1a'+'_'+RecBatchID+'_'+str(i)+'/RVx1a_'+RecBatchID+'_SelectedSeeds_'+str(i)+'_'+str(0)+'_'+str(0)+'.csv'
                    if os.path.isfile(test_file_location):
                         min_i=max(0,i-1)
         print(UF.TimeStamp(),'Analysing the data sample in order to understand how many jobs to submit to HTCondor... ',bcolors.ENDC)
@@ -609,7 +611,7 @@ while Status<len(Program):
                 else:
                    Meta.JobSets[i].append([])
                 for j in range(0,int(JobSets[i][2])):
-                   output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RUTr1a'+'_'+RecBatchID+'_'+str(i)+'/RUTr1a_'+RecBatchID+'_RawSeeds_'+str(i)+'_'+str(j)+'.csv'
+                   output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RVx1a'+'_'+RecBatchID+'_'+str(i)+'/RVx1a_'+RecBatchID+'_RawSeeds_'+str(i)+'_'+str(j)+'.csv'
 
                    if os.path.isfile(output_file_location)==False:
                       Meta.JobSets[j].append(0)
@@ -631,13 +633,13 @@ while Status<len(Program):
                     fractions=int(math.ceil(Records_After_Compression/MaxSeeds))
                     Meta.JobSets[i][3].append(fractions)
                     for k in range(0,fractions):
-                     new_output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RUTr1a'+'_'+RecBatchID+'_'+str(i)+'/RUTr1a_'+RecBatchID+'_SelectedSeeds_'+str(i)+'_'+str(j)+'_'+str(k)+'.csv'
+                     new_output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RVx1a'+'_'+RecBatchID+'_'+str(i)+'/RVx1a_'+RecBatchID+'_SelectedSeeds_'+str(i)+'_'+str(j)+'_'+str(k)+'.csv'
                      result[(k*MaxSeeds):min(Records_After_Compression,((k+1)*MaxSeeds))].to_csv(new_output_file_location,index=False)
                 print(UF.PickleOperations(RecOutputMeta,'w', Meta)[1])
         if Log:
          try:
              print(UF.TimeStamp(),'Initiating the logging...')
-             eval_data_file=EOS_DIR+'/ANNDEA/Data/TEST_SET/EUTr1b_'+RecBatchID+'_SEED_TRUTH_COMBINATIONS.csv'
+             eval_data_file=EOS_DIR+'/ANNDEA/Data/TEST_SET/EVx1b_'+RecBatchID+'_SEED_TRUTH_COMBINATIONS.csv'
              eval_data=pd.read_csv(eval_data_file,header=0,usecols=['Segment_1','Segment_2'])
              eval_data["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(eval_data['Segment_1'], eval_data['Segment_2'])]
              eval_data.drop(['Segment_1'],axis=1,inplace=True)
@@ -650,7 +652,7 @@ while Status<len(Program):
                     rec=None
                     for j in range(0,int(Meta.JobSets[i][2])):
                         for k in range(0,Meta.JobSets[i][3][j]):
-                          new_input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RUTr1a'+'_'+RecBatchID+'_'+str(i)+'/RUTr1a_'+RecBatchID+'_SelectedSeeds_'+str(i)+'_'+str(j)+'_'+str(k)+'.csv'
+                          new_input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RVx1a'+'_'+RecBatchID+'_'+str(i)+'/RVx1a_'+RecBatchID+'_SelectedSeeds_'+str(i)+'_'+str(j)+'_'+str(k)+'.csv'
                           if os.path.isfile(new_input_file_location)==False:
                                 break
                           else:
@@ -675,7 +677,7 @@ while Status<len(Program):
         print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(Status)+' has successfully completed'+bcolors.ENDC)
         UpdateStatus(Status+1)
     elif Program[Status]=='Custom - RemoveOverlap':
-        input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1c_'+RecBatchID+'_Fit_Seeds.pkl'
+        input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RVx1c_'+RecBatchID+'_Fit_Seeds.pkl'
         print(UF.TimeStamp(), "Loading the fit track seeds from the file",bcolors.OKBLUE+input_file_location+bcolors.ENDC)
         base_data=UF.PickleOperations(input_file_location,'r','N/A')[0]
         print(UF.TimeStamp(), bcolors.OKGREEN+"Loading is successful, there are "+str(len(base_data))+" fit seeds..."+bcolors.ENDC)
@@ -688,7 +690,7 @@ while Status<len(Program):
                         base_data[tr].Hits[t][h]=base_data[tr].Hits[t][h][2] #Remove scaling factors
         base_data=[tr for tr in base_data if tr.Fit >= Acceptance]
         print(UF.TimeStamp(), bcolors.OKGREEN+"The refining was successful, "+str(len(base_data))+" track seeds remain..."+bcolors.ENDC)
-        output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1c_'+RecBatchID+'_Fit_Filtered_Seeds.pkl'
+        output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RVx1c_'+RecBatchID+'_Fit_Filtered_Seeds.pkl'
         print(UF.PickleOperations(output_file_location,'w',base_data)[0])
         #no_iter=int(math.ceil(float(len(base_data)/float(MaxSegments))))
         UpdateStatus(Status+1)
@@ -703,11 +705,11 @@ while Status<len(Program):
                 print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
                 print(UF.TimeStamp(),bcolors.BOLD+'Stage '+str(Status)+':'+bcolors.ENDC+' Taking the list of seeds previously generated by Stage '+str(Status-1)+' and mapping them to the input data')
                 print(UF.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+initial_input_file_location+bcolors.ENDC)
-                required_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1_'+RecBatchID+'_TRACK_SEGMENTS.csv'
+                required_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RVx1_'+RecBatchID+'_TRACK_SEGMENTS.csv'
                 data=pd.read_csv(args.f,header=0)
                 data=data[[PM.Hit_ID,TrackID,BrickID,PM.x,PM.y,PM.z,PM.tx,PM.ty]]
-                print(UF.TimeStamp(),'Loading mapped data from',bcolors.OKBLUE+EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1e_'+RecBatchID+'_Union_Tracks.csv'+bcolors.ENDC)
-                map_data=pd.read_csv(EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1e_'+RecBatchID+'_Union_Tracks.csv',header=0)
+                print(UF.TimeStamp(),'Loading mapped data from',bcolors.OKBLUE+EOS_DIR+'/ANNDEA/Data/REC_SET/RVx1e_'+RecBatchID+'_Union_Tracks.csv'+bcolors.ENDC)
+                map_data=pd.read_csv(EOS_DIR+'/ANNDEA/Data/REC_SET/RVx1e_'+RecBatchID+'_Union_Tracks.csv',header=0)
                 total_rows=len(data.axes[0])
                 print(UF.TimeStamp(),'The raw data has ',total_rows,' hits')
                 print(UF.TimeStamp(),'Removing unreconstructed hits...')
@@ -716,7 +718,7 @@ while Status<len(Program):
                 print(UF.TimeStamp(),'The cleaned data has ',final_rows,' hits')
                 data[TrackID] = data[TrackID].astype(str)
                 data[BrickID] = data[BrickID].astype(str)
-                if os.path.isfile(EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1e_'+RecBatchID+'_Mapped_Tracks_Temp.csv')==False:
+                if os.path.isfile(EOS_DIR+'/ANNDEA/Data/REC_SET/RVx1e_'+RecBatchID+'_Mapped_Tracks_Temp.csv')==False:
                     data['Rec_Seg_ID'] = data[TrackID] + '-' + data[BrickID]
                     print(UF.TimeStamp(),'Resolving duplicated hits...')
                     selected_combined_data=pd.merge(data, map_data, how="left", left_on=["Rec_Seg_ID"], right_on=['Old_Track_ID'])
@@ -850,10 +852,10 @@ while Status<len(Program):
                     print(UF.TimeStamp(),'Now their number was dropped to ',after,' hits.')
                     Bad_Tracks=Bad_Tracks[['Temp_Track_Quarter','Temp_Track_ID',PM.Hit_ID]]
                     Good_Tracks=pd.concat([Good_Tracks,Bad_Tracks]) #Combine all ANNDEA tracks together
-                    Good_Tracks.to_csv(EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1e_'+RecBatchID+'_Mapped_Tracks_Temp.csv',index=False)
+                    Good_Tracks.to_csv(EOS_DIR+'/ANNDEA/Data/REC_SET/RVx1e_'+RecBatchID+'_Mapped_Tracks_Temp.csv',index=False)
                     data.drop(["Rec_Seg_ID"],axis=1,inplace=True)
                 else:
-                    Good_Tracks=pd.read_csv(EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1e_'+RecBatchID+'_Mapped_Tracks_Temp.csv')
+                    Good_Tracks=pd.read_csv(EOS_DIR+'/ANNDEA/Data/REC_SET/RVx1e_'+RecBatchID+'_Mapped_Tracks_Temp.csv')
                 print(UF.TimeStamp(),'Mapping data...')
                 data=pd.read_csv(args.f,header=0)
                 new_combined_data=pd.merge(data, Good_Tracks, how="left", on=[PM.Hit_ID])
@@ -869,7 +871,7 @@ while Status<len(Program):
          print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
          print(UF.TimeStamp(),bcolors.BOLD+'Stage '+str(Status)+':'+bcolors.ENDC+' Taking the list of seeds previously generated by Stage 2, converting them into Emulsion Objects and doing more rigorous selection')
          print(UF.TimeStamp(), "Starting the script from the scratch")
-         input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1c_'+RecBatchID+'_Fit_Filtered_Seeds.pkl'
+         input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RVx1c_'+RecBatchID+'_Fit_Filtered_Seeds.pkl'
          print(UF.TimeStamp(), "Loading fit track seeds from the file",bcolors.OKBLUE+input_file_location+bcolors.ENDC)
          base_data=UF.PickleOperations(input_file_location,'r','N/A')[0]
          print(UF.TimeStamp(), "Stripping off the seeds with low acceptance...")
@@ -878,7 +880,7 @@ while Status<len(Program):
          InitialDataLength=len(base_data)
          if CalibrateAcceptance:
             print(UF.TimeStamp(),'Calibrating the acceptance...')
-            eval_data_file=EOS_DIR+'/ANNDEA/Data/TEST_SET/EUTr1b_'+RecBatchID+'_SEED_TRUTH_COMBINATIONS.csv'
+            eval_data_file=EOS_DIR+'/ANNDEA/Data/TEST_SET/EVx1b_'+RecBatchID+'_SEED_TRUTH_COMBINATIONS.csv'
             eval_data=pd.read_csv(eval_data_file,header=0,usecols=['Segment_1','Segment_2'])
             eval_data["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(eval_data['Segment_1'], eval_data['Segment_2'])]
             eval_data.drop(['Segment_1'],axis=1,inplace=True)
@@ -936,12 +938,12 @@ while Status<len(Program):
          for v in range(0,len(base_data)):
              base_data[v].AssignANNTrUID(v)
 
-         output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1e_'+RecBatchID+'_Union_Tracks.pkl'
-         output_csv_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1e_'+RecBatchID+'_Union_Tracks.csv'
+         output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RVx1e_'+RecBatchID+'_Union_Tracks.pkl'
+         output_csv_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RVx1e_'+RecBatchID+'_Union_Tracks.csv'
          csv_out=[['Old_Track_ID','Temp_Track_Quarter','Temp_Track_ID']]
          for Tr in base_data:
              for TH in Tr.Header:
-                 csv_out.append([TH,RecBatchID,Tr.UTrID])
+                 csv_out.append([TH,RecBatchID,Tr.VxID])
 
          print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
          print(UF.TimeStamp(), "Saving the results into the file",bcolors.OKBLUE+output_csv_location+bcolors.ENDC)
@@ -950,7 +952,7 @@ while Status<len(Program):
          print(UF.PickleOperations(output_file_location,'w',base_data)[1])
          if args.Log=='Y':
             print(UF.TimeStamp(),'Initiating the logging...')
-            eval_data_file=EOS_DIR+'/ANNDEA/Data/TEST_SET/EUTr1b_'+RecBatchID+'_SEED_TRUTH_COMBINATIONS.csv'
+            eval_data_file=EOS_DIR+'/ANNDEA/Data/TEST_SET/EVx1b_'+RecBatchID+'_SEED_TRUTH_COMBINATIONS.csv'
             eval_data=pd.read_csv(eval_data_file,header=0,usecols=['Segment_1','Segment_2'])
             eval_data["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(eval_data['Segment_1'], eval_data['Segment_2'])]
             eval_data.drop(['Segment_1'],axis=1,inplace=True)
@@ -1004,7 +1006,7 @@ while Status<len(Program):
                                 for lp in JobSet:
                                     TotJobs+=np.sum(lp)
                     prog_entry.append(' Sending tracks to the HTCondor, so track segment combination pairs can be formed...')
-                    prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','RefinedSeeds','RUTr1'+ModelName[md],'.pkl',RecBatchID,JobSet,'RUTr1b_RefineSeeds_Sub.py'])
+                    prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','RefinedSeeds','RVx1'+ModelName[md],'.pkl',RecBatchID,JobSet,'RVx1b_RefineSeeds_Sub.py'])
                     prog_entry.append([" --MaxSTG ", " --MaxSLG ", " --MaxDOCA ", " --MaxAngle "," --ModelName "," --FirstTime "])
                     prog_entry.append([MaxSTG, MaxSLG, MaxDOCA, MaxAngle,'"'+ModelName[md]+'"', 'True'])
                     prog_entry.append(TotJobs)
@@ -1032,7 +1034,7 @@ while Status<len(Program):
                                 bar()
                                 for j in range(len(JobSet[i])):
                                          for k in range(JobSet[i][j]):
-                                              required_output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RUTr1'+ModelName[md]+'_'+RecBatchID+'_'+str(i)+'/RUTr1'+ModelName[md]+'_'+RecBatchID+'_RefinedSeeds_'+str(i)+'_'+str(j)+'_'+str(k)+'.pkl'
+                                              required_output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RVx1'+ModelName[md]+'_'+RecBatchID+'_'+str(i)+'/RVx1'+ModelName[md]+'_'+RecBatchID+'_RefinedSeeds_'+str(i)+'_'+str(j)+'_'+str(k)+'.pkl'
                                               new_data=UF.PickleOperations(required_output_file_location,'r','N/A')[0]
                                               print(UF.TimeStamp(),'Set',str(i)+'_'+str(j)+'_'+str(k), 'contains', len(new_data), 'seeds',bcolors.ENDC)
                                               if base_data == None:
@@ -1056,13 +1058,13 @@ while Status<len(Program):
                     keep_testing=True
                     TotJobs=0
                     while keep_testing:
-                        test_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RUTr1'+ModelName[md-1]+'_'+RecBatchID+'_0/RUTr1'+str(ModelName[md])+'_'+RecBatchID+'_Input_Seeds_'+str(TotJobs)+'.pkl'
+                        test_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RVx1'+ModelName[md-1]+'_'+RecBatchID+'_0/RVx1'+str(ModelName[md])+'_'+RecBatchID+'_Input_Seeds_'+str(TotJobs)+'.pkl'
                         if os.path.isfile(test_file_location):
                             TotJobs+=1
                         else:
                             keep_testing=False
                     prog_entry.append(' Sending tracks to the HTCondor, so track segment combination pairs can be formed...')
-                    prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','OutputSeeds','RUTr1'+ModelName[md],'.pkl',RecBatchID,TotJobs,'RUTr1b_RefineSeeds_Sub.py'])
+                    prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','OutputSeeds','RVx1'+ModelName[md],'.pkl',RecBatchID,TotJobs,'RVx1b_RefineSeeds_Sub.py'])
 
                     prog_entry.append([" --MaxSTG ", " --MaxSLG ", " --MaxDOCA ", " --MaxAngle "," --ModelName "," --FirstTime "])
                     prog_entry.append([MaxSTG, MaxSLG, MaxDOCA, MaxAngle,'"'+ModelName[md]+'"', ModelName[md-1]])
@@ -1084,7 +1086,7 @@ while Status<len(Program):
                         with alive_bar(len(JobSets),force_tty=True, title='Checking the results from HTCondor') as bar:
                          for i in range(0,TotJobs):
                                               bar()
-                                              required_output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RUTr1'+ModelName[md]+'_'+RecBatchID+'_0/RUTr1'+ModelName[md]+'_'+RecBatchID+'_OutputSeeds_'+str(i)+'.pkl'
+                                              required_output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RVx1'+ModelName[md]+'_'+RecBatchID+'_0/RVx1'+ModelName[md]+'_'+RecBatchID+'_OutputSeeds_'+str(i)+'.pkl'
                                               new_data=UF.PickleOperations(required_output_file_location,'r','N/A')[0]
                                               print(UF.TimeStamp(),'Set',str(i), 'contains', len(new_data), 'seeds',bcolors.ENDC)
                                               if base_data == None:
@@ -1103,16 +1105,16 @@ while Status<len(Program):
                         print(UF.TimeStamp(),'The output compression ratio is ', Compression_Ratio, ' %',bcolors.ENDC)
 
                 if md==len(ModelName)-1:
-                        output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1c_'+RecBatchID+'_Fit_Seeds.pkl'
+                        output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RVx1c_'+RecBatchID+'_Fit_Seeds.pkl'
                         print(UF.PickleOperations(output_file_location,'w',base_data)[1])
                 else:
                         output_split=int(np.ceil(Records_After_Compression/PM.MaxSegments))
                         for os_itr in range(output_split):
-                            output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RUTr1'+ModelName[md]+'_'+RecBatchID+'_0/RUTr1'+str(ModelName[md+1])+'_'+RecBatchID+'_Input_Seeds_'+str(os_itr)+'.pkl'
+                            output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RVx1'+ModelName[md]+'_'+RecBatchID+'_0/RVx1'+str(ModelName[md+1])+'_'+RecBatchID+'_Input_Seeds_'+str(os_itr)+'.pkl'
                             print(UF.PickleOperations(output_file_location,'w',base_data[os_itr*PM.MaxSegments:(os_itr+1)*PM.MaxSegments])[1])
                 if Log:
                              print(UF.TimeStamp(),'Initiating the logging...')
-                             eval_data_file=EOS_DIR+'/ANNDEA/Data/TEST_SET/EUTr1b_'+RecBatchID+'_SEED_TRUTH_COMBINATIONS.csv'
+                             eval_data_file=EOS_DIR+'/ANNDEA/Data/TEST_SET/EVx1b_'+RecBatchID+'_SEED_TRUTH_COMBINATIONS.csv'
                              eval_data=pd.read_csv(eval_data_file,header=0,usecols=['Segment_1','Segment_2'])
                              eval_data["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(eval_data['Segment_1'], eval_data['Segment_2'])]
                              eval_data.drop(['Segment_1'],axis=1,inplace=True)
@@ -1143,14 +1145,14 @@ while Status<len(Program):
 if Status<20:
     #Removing the temp files that were generated by the process
     print(UF.TimeStamp(),'Performing the cleanup... ',bcolors.ENDC)
-    HTCondorTag="SoftUsed == \"ANNDEA-RUTr1a-"+RecBatchID+"\""
-    UF.RecCleanUp(AFS_DIR, EOS_DIR, 'RUTr1a_'+RecBatchID, [], HTCondorTag)
-    HTCondorTag="SoftUsed == \"ANNDEA-RUTr1b-"+RecBatchID+"\""
-    UF.RecCleanUp(AFS_DIR, EOS_DIR, 'RUTr1b_'+RecBatchID, [], HTCondorTag)
-    HTCondorTag="SoftUsed == \"ANNDEA-RUTr1c-"+RecBatchID+"\""
-    UF.RecCleanUp(AFS_DIR, EOS_DIR, 'RUTr1c_'+RecBatchID, [], HTCondorTag)
-    HTCondorTag="SoftUsed == \"ANNDEA-RUTr1e-"+RecBatchID+"\""
-    UF.RecCleanUp(AFS_DIR, EOS_DIR, 'RUTr1e_'+RecBatchID, [], HTCondorTag)
+    HTCondorTag="SoftUsed == \"ANNDEA-RVx1a-"+RecBatchID+"\""
+    UF.RecCleanUp(AFS_DIR, EOS_DIR, 'RVx1a_'+RecBatchID, [], HTCondorTag)
+    HTCondorTag="SoftUsed == \"ANNDEA-RVx1b-"+RecBatchID+"\""
+    UF.RecCleanUp(AFS_DIR, EOS_DIR, 'RVx1b_'+RecBatchID, [], HTCondorTag)
+    HTCondorTag="SoftUsed == \"ANNDEA-RVx1c-"+RecBatchID+"\""
+    UF.RecCleanUp(AFS_DIR, EOS_DIR, 'RVx1c_'+RecBatchID, [], HTCondorTag)
+    HTCondorTag="SoftUsed == \"ANNDEA-RVx1e-"+RecBatchID+"\""
+    UF.RecCleanUp(AFS_DIR, EOS_DIR, 'RVx1e_'+RecBatchID, [], HTCondorTag)
     for p in Program:
         if p[:6]!='Custom' and (p in ModelName)==False:
            print(UF.TimeStamp(),UF.ManageTempFolders(p,'Delete'))
@@ -1176,7 +1178,7 @@ if Status<20:
                                 for lp in JobSet:
                                     TotJobs+=np.sum(lp)
                     prog_entry.append(' Blank placeholder')
-                    prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','RefinedSeeds','RUTr1'+ModelName[md],'.pkl',RecBatchID,JobSet,'RUTr1b_RefineSeeds_Sub.py'])
+                    prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','RefinedSeeds','RVx1'+ModelName[md],'.pkl',RecBatchID,JobSet,'RVx1b_RefineSeeds_Sub.py'])
                     prog_entry.append([" --MaxSTG ", " --MaxSLG ", " --MaxDOCA ", " --MaxAngle "," --ModelName "," --FirstTime "])
                     prog_entry.append([MaxSTG, MaxSLG, MaxDOCA, MaxAngle,'"'+ModelName[md]+'"', 'True'])
                     prog_entry.append(TotJobs)
@@ -1192,13 +1194,13 @@ if Status<20:
                     keep_testing=True
                     TotJobs=0
                     while keep_testing:
-                        test_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RUTr1'+ModelName[md-1]+'_'+RecBatchID+'_0/RUTr1'+str(ModelName[md])+'_'+RecBatchID+'_Input_Seeds_'+str(TotJobs)+'.pkl'
+                        test_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RVx1'+ModelName[md-1]+'_'+RecBatchID+'_0/RVx1'+str(ModelName[md])+'_'+RecBatchID+'_Input_Seeds_'+str(TotJobs)+'.pkl'
                         if os.path.isfile(test_file_location):
                             TotJobs+=1
                         else:
                             keep_testing=False
                     prog_entry.append(' Blank placeholder')
-                    prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','OutputSeeds','RUTr1'+ModelName[md],'.pkl',RecBatchID,TotJobs,'RUTr1b_RefineSeeds_Sub.py'])
+                    prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','OutputSeeds','RVx1'+ModelName[md],'.pkl',RecBatchID,TotJobs,'RVx1b_RefineSeeds_Sub.py'])
                     prog_entry.append([" --MaxSTG ", " --MaxSLG ", " --MaxDOCA ", " --MaxAngle "," --ModelName "," --FirstTime "])
                     prog_entry.append([MaxSTG, MaxSLG, MaxDOCA, MaxAngle,'"'+ModelName[md]+'"', ModelName[md-1]])
                     prog_entry.append(TotJobs)
