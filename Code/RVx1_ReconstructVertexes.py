@@ -475,53 +475,53 @@ if Log:
     # ###### Stage 1
     Program.append('Custom - PickE')
 
-else:
-    UpdateStatus(0)
-    Status=0
+# else:
+#     UpdateStatus(0)
+#     Status=0
 
-if Mode=='CLEANUP':
-    UpdateStatus(19)
-    Status=19
+# if Mode=='CLEANUP':
+#     UpdateStatus(19)
+#     Status=19
 
 # ###### Stage 2
-prog_entry=[]
-job_sets=[]
-JobSet=[]
-for i in range(len(JobSets)):
-    JobSet.append(int(JobSets[i][2]))
-TotJobs=0
+# prog_entry=[]
+# job_sets=[]
+# JobSet=[]
+# for i in range(len(JobSets)):
+#     JobSet.append(int(JobSets[i][2]))
+# TotJobs=0
 
-if type(JobSet) is int:
-            TotJobs=JobSet
-elif type(JobSet[0]) is int:
-            TotJobs=np.sum(JobSet)
-elif type(JobSet[0][0]) is int:
-            for lp in JobSet:
-                TotJobs+=np.sum(lp)
-prog_entry.append(' Sending tracks to the HTCondor, so track segment combinations can be formed...')
-prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','RawSeedsRes','RVx1a','.csv',RecBatchID,JobSet,'RVx1a_GenerateRawSelectedSeeds_Sub.py'])
-prog_entry.append([ " --MaxSegments ", " --MaxSLG "," --MaxSTG "])
-prog_entry.append([MaxSegments, MaxSLG, MaxSTG])
-prog_entry.append(np.sum(JobSet))
-prog_entry.append(LocalSub)
-prog_entry.append([" --PlateZ ",JobSets])
-if Mode=='RESET':
-        print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Delete'))
-    #Setting up folders for the output. The reconstruction of just one brick can easily generate >100k of files. Keeping all that blob in one directory can cause problems on lxplus.
-print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Create'))
-Program.append(prog_entry)
+# if type(JobSet) is int:
+#             TotJobs=JobSet
+# elif type(JobSet[0]) is int:
+#             TotJobs=np.sum(JobSet)
+# elif type(JobSet[0][0]) is int:
+#             for lp in JobSet:
+#                 TotJobs+=np.sum(lp)
+# prog_entry.append(' Sending tracks to the HTCondor, so track segment combinations can be formed...')
+# prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','RawSeedsRes','RVx1a','.csv',RecBatchID,JobSet,'RVx1a_GenerateRawSelectedSeeds_Sub.py'])
+# prog_entry.append([ " --MaxSegments ", " --MaxDST "," --MaxVXT "])
+# prog_entry.append([MaxSegments, MaxDST, MaxVXT])
+# prog_entry.append(np.sum(JobSet))
+# prog_entry.append(LocalSub)
+# prog_entry.append([" --PlateZ ",JobSets])
+# if Mode=='RESET':
+#         print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Delete'))
+#     #Setting up folders for the output. The reconstruction of just one brick can easily generate >100k of files. Keeping all that blob in one directory can cause problems on lxplus.
+# print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Create'))
+# Program.append(prog_entry)
 
-Program.append('Custom - PickR')
+# Program.append('Custom - PickR')
 
-####### Stage 4
-for md in ModelName:
-    Program.append(md)
+# ####### Stage 4
+# for md in ModelName:
+#     Program.append(md)
 
-Program.append('Custom - RemoveOverlap')
+# Program.append('Custom - RemoveOverlap')
 
-Program.append('Custom - PerformMerging')
+# Program.append('Custom - PerformMerging')
 
-Program.append('Custom - TrackMapping')
+# Program.append('Custom - TrackMapping')
 while Status<len(Program):
     if Program[Status][:6]!='Custom' and (Program[Status] in ModelName)==False:
         #Standard process here
