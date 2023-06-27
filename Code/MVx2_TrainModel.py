@@ -116,7 +116,7 @@ def AutoPilot(wait_min, interval_min):
        Model_Meta=Model_Meta_Raw[0]
        Model_Status=Model_Meta.ModelTrainStatus(PM.TST)
        if Model_Status==1:
-              print(UF.TimeStamp(),bcolors.WARNING+'Warning, the model seems to be over saturated'+bcolors.ENDC)
+              print(UF.TimeStamp(),bcolors.WARNING+'Warning, the model seems to be oversaturated'+bcolors.ENDC)
               print(UF.TimeStamp(),'Aborting the training...')
               exit()
        elif Model_Status==2:
@@ -147,7 +147,7 @@ def AutoPilot(wait_min, interval_min):
                         UF.SubmitJobs2Condor(Job,False,RequestExtCPU,JobFlavour,ReqMemory)
                         print(bcolors.BOLD+"The job has been submitted..."+bcolors.ENDC)
                     else:
-                        print(UF.TimeStamp(),bcolors.WARNING+'Warning, the training is still running on HTCondor, the job parameters are listed bellow:'+bcolors.ENDC)
+                        print(UF.TimeStamp(),bcolors.WARNING+'Warning, the training is still running on HTCondor, the job parameters are listed below:'+bcolors.ENDC)
                         print(q)
                         continue
                 except:
@@ -194,7 +194,7 @@ else:
        Model_Meta=Model_Meta_Raw[0]
        Models_Status=Model_Meta.ModelTrainStatus(PM.TST)
        if Models_Status==1:
-              print(UF.TimeStamp(),bcolors.WARNING+'Warning, the model seems to be over saturated'+bcolors.ENDC)
+              print(UF.TimeStamp(),bcolors.WARNING+'Warning, the model seems to be oversaturated'+bcolors.ENDC)
               print(bcolors.BOLD+'If you would like to stop training and exit please enter E'+bcolors.ENDC)
               print(bcolors.BOLD+'If you would like to resubmit your script and exit enter R'+bcolors.ENDC)
               print(bcolors.BOLD+'If you would like to continue training on autopilot please type waiting time in minutes'+bcolors.ENDC)
@@ -262,7 +262,7 @@ else:
            if len(q)==0:
                 print(UF.TimeStamp(),bcolors.FAIL+'HTCondor has failed...'+bcolors.ENDC)
            else:
-                print(UF.TimeStamp(),bcolors.WARNING+'Warning, the training is still running on HTCondor, the job parameters are listed bellow:'+bcolors.ENDC)
+                print(UF.TimeStamp(),bcolors.WARNING+'Warning, the training is still running on HTCondor, the job parameters are listed below:'+bcolors.ENDC)
                 print(q)
            print(bcolors.BOLD+'If you would like to wait and exit please enter E'+bcolors.ENDC)
            print(bcolors.BOLD+'If you would like to resubmit your script enter R'+bcolors.ENDC)
@@ -283,7 +283,7 @@ else:
            else:
               AutoPilot(int(UserAnswer),Wait)
      else:
-                 print(UF.TimeStamp(),bcolors.WARNING+'Warning! No existing meta files have been found, starting everything from the scratch.'+bcolors.ENDC)
+                 print(UF.TimeStamp(),bcolors.WARNING+'Warning! No existing meta files have been found, starting everything from scratch.'+bcolors.ENDC)
                  if ModelType=='CNN':
                          Job=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/','N/A','MVx2','N/A',ModelName,1,OptionHeader,OptionLine,'MVx2_TrainModel_Sub.py',False,"['','']", True, True)[0]
                  else:
@@ -305,7 +305,7 @@ else:
                  UF.SubmitJobs2Condor(Job,False,RequestExtCPU,JobFlavour,ReqMemory)
                  print(bcolors.BOLD+"The job has been submitted..."+bcolors.ENDC)
                  AutoPilot(600,Wait)
-print(UF.TimeStamp(),bcolors.OKGREEN+'Training is finished then, thank you and goodbye'+bcolors.ENDC)
+print(UF.TimeStamp(),bcolors.OKGREEN+'Training is finished, thank you and goodbye!'+bcolors.ENDC)
 print(bcolors.HEADER+"############################################# End of the program ################################################"+bcolors.ENDC)
 exit()
 
