@@ -102,6 +102,7 @@ Acceptance=float(args.Acceptance)
 CalibrateAcceptance=(args.CalibrateAcceptance=='Y')
 initial_input_file_location=args.f
 Log=args.Log=='Y'
+FiducialVolumeCut=ast.literal_eval(args.FiducialVolumeCut)
 RemoveTracksZ=ast.literal_eval(args.RemoveTracksZ)
 Xmin,Xmax,Ymin,Ymax=float(args.Xmin),float(args.Xmax),float(args.Ymin),float(args.Ymax)
 SliceData=max(Xmin,Xmax,Ymin,Ymax)>0 #We don't slice data if all values are set to zero simultaneousy (which is the default setting)
@@ -213,7 +214,6 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
            MaxSeeds=PM.MaxSeeds
            VetoTrack=PM.VetoVertex
            MinHitsTrack=Meta.MinHitsTrack
-           FiducialVolumeCut=ast.literal_eval(args.FiducialVolumeCut)
         print(UF.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+initial_input_file_location+bcolors.ENDC)
         data=pd.read_csv(initial_input_file_location,
                     header=0,
