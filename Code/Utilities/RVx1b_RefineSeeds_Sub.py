@@ -137,11 +137,11 @@ if FirstTime=='True':
          track=EMO(track[:2])
          track.Decorate(segments)
          try:
-           track.GetTrInfo()
+           track.GetVXInfo()
          except:
            continue
          keep_seed=True
-         if track.VertexQualityCheck(MaxDOCA,MaxVXT, MaxAngle, FiducialVolumeCut):
+         if track.VertexQualityCheck(MaxDOCA, MaxVXT, MaxAngle, FiducialVolumeCut):
                  if ModelName!='Blank':
                     if track.FitSeed(ModelMeta,model):
                        GoodTracks.append(track)
