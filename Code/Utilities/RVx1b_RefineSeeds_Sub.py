@@ -141,7 +141,7 @@ if FirstTime=='True':
          except:
            continue
          keep_seed=True
-         if track.TrackQualityCheck(MaxDOCA,MaxSLG,MaxSTG, MaxAngle):
+         if track.VertexQualityCheck(MaxDOCA,MaxVXT, MaxAngle, FiducialVolumeCut):
                  if ModelName!='Blank':
                     if track.FitSeed(ModelMeta,model):
                        GoodTracks.append(track)
