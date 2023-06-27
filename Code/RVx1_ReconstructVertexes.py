@@ -512,8 +512,6 @@ print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Create'))
 Program.append(prog_entry)
 
 Program.append('Custom - PickR')
-print(Program)
-exit()
 # ####### Stage 4
 # for md in ModelName:
 #     Program.append(md)
