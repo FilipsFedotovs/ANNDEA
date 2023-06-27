@@ -602,7 +602,7 @@ while Status<len(Program):
                 bar.text = f'-> Analysing set : {i}...'
                 bar()
                 Meta=UF.PickleOperations(RecOutputMeta,'r', 'N/A')[0]
-                MaxSLG=Meta.MaxSLG
+                MaxDST=Meta.MaxDST
                 JobSets=Meta.JobSets
                 if len(Meta.JobSets[i])>3:
                    Meta.JobSets[i]=Meta.JobSets[i][:4]
