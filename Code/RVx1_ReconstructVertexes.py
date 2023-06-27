@@ -191,8 +191,6 @@ if Log and (os.path.isfile(required_eval_file_location)==False or Mode=='RESET')
          new_combined_data=pd.merge(new_combined_data, TracksZdf, how="left", left_on=["PosBad_Z"], right_on=['Bad_z'])
          new_combined_data=new_combined_data[new_combined_data['Bad_z'].isnull()]
          new_combined_data=new_combined_data.drop(['Bad_z', 'PosBad_Z'],axis=1)
-    print(new_combined_data)
-    exit()
     new_combined_data.to_csv(required_eval_file_location,index=False)
     print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
     print(UF.TimeStamp(), bcolors.OKGREEN+"The track segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+required_eval_file_location+bcolors.ENDC)
@@ -206,18 +204,20 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
            print(UF.TimeStamp(),'Loading previously saved data from ',bcolors.OKBLUE+EOSsubModelMetaDIR+bcolors.ENDC)
            MetaInput=UF.PickleOperations(EOSsubModelMetaDIR,'r', 'N/A')
            Meta=MetaInput[0]
-           MaxSLG=Meta.MaxSLG
-           MaxSTG=Meta.MaxSTG
+           MaxDST=Meta.MaxDST
+           MaxVXT=Meta.MaxVXT
            MaxDOCA=Meta.MaxDOCA
            MaxAngle=Meta.MaxAngle
            MaxSegments=PM.MaxSegments
            MaxSeeds=PM.MaxSeeds
-           VetoMotherTrack=PM.VetoMotherTrack
+           VetoTrack=PM.VetoVertex
            MinHitsTrack=Meta.MinHitsTrack
         print(UF.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+initial_input_file_location+bcolors.ENDC)
         data=pd.read_csv(initial_input_file_location,
                     header=0,
                     usecols=[TrackID,BrickID,PM.x,PM.y,PM.z,PM.tx,PM.ty])
+        print(data)
+        exit()
         total_rows=len(data.axes[0])
         print(UF.TimeStamp(),'The raw data has ',total_rows,' hits')
         print(UF.TimeStamp(),'Removing unreconstructed hits...')
