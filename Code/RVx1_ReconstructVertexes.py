@@ -512,9 +512,9 @@ print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Create'))
 Program.append(prog_entry)
 
 Program.append('Custom - PickR')
-# ####### Stage 4
-# for md in ModelName:
-#     Program.append(md)
+####### Stage 4
+for md in ModelName:
+     Program.append(md)
 
 # Program.append('Custom - RemoveOverlap')
 
@@ -668,7 +668,7 @@ while Status<len(Program):
                         rec_no+=(len(rec)-len(rec_eval))
                     except:
                         continue
-             UF.LogOperations(EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv', 'a', [[2,'SLG and STG cuts',rec_no,eval_no,eval_no/(rec_no+eval_no),eval_no/len(eval_data)]])
+             UF.LogOperations(EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv', 'a', [[2,'DST cut',rec_no,eval_no,eval_no/(rec_no+eval_no),eval_no/len(eval_data)]])
              print(UF.TimeStamp(), bcolors.OKGREEN+"The log has been created successfully at "+bcolors.ENDC, bcolors.OKBLUE+EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv'+bcolors.ENDC)
          except:
              print(UF.TimeStamp(), bcolors.WARNING+'Log creation has failed'+bcolors.ENDC)
@@ -1006,8 +1006,8 @@ while Status<len(Program):
                                     TotJobs+=np.sum(lp)
                     prog_entry.append(' Sending tracks to the HTCondor, so track segment combination pairs can be formed...')
                     prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','RefinedSeeds','RVx1'+ModelName[md],'.pkl',RecBatchID,JobSet,'RVx1b_RefineSeeds_Sub.py'])
-                    prog_entry.append([" --MaxSTG ", " --MaxSLG ", " --MaxDOCA ", " --MaxAngle "," --ModelName "," --FirstTime "])
-                    prog_entry.append([MaxSTG, MaxSLG, MaxDOCA, MaxAngle,'"'+ModelName[md]+'"', 'True'])
+                    prog_entry.append([" --MaxDST ", " --MaxVXT ", " --MaxDOCA ", " --MaxAngle "," --ModelName "," --FirstTime ", " --FiducialVolumeCut "])
+                    prog_entry.append([MaxDST, MaxVXT, MaxDOCA, MaxAngle,'"'+ModelName[md]+'"', 'True', '"'+str(FiducialVolumeCut)+'"'])
                     prog_entry.append(TotJobs)
                     prog_entry.append(LocalSub)
                     prog_entry.append(['',''])
@@ -1065,8 +1065,8 @@ while Status<len(Program):
                     prog_entry.append(' Sending tracks to the HTCondor, so track segment combination pairs can be formed...')
                     prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','OutputSeeds','RVx1'+ModelName[md],'.pkl',RecBatchID,TotJobs,'RVx1b_RefineSeeds_Sub.py'])
 
-                    prog_entry.append([" --MaxSTG ", " --MaxSLG ", " --MaxDOCA ", " --MaxAngle "," --ModelName "," --FirstTime "])
-                    prog_entry.append([MaxSTG, MaxSLG, MaxDOCA, MaxAngle,'"'+ModelName[md]+'"', ModelName[md-1]])
+                    prog_entry.append([" --MaxDST ", " --MaxVXT ", " --MaxDOCA ", " --MaxAngle "," --ModelName "," --FirstTime "," --FiducialVolumeCut "])
+                    prog_entry.append([MaxDST, MaxVXT, MaxDOCA, MaxAngle,'"'+ModelName[md]+'"', ModelName[md-1], '"'+str(FiducialVolumeCut)+'"'])
                     prog_entry.append(TotJobs)
                     prog_entry.append(LocalSub)
                     prog_entry.append(['',''])
