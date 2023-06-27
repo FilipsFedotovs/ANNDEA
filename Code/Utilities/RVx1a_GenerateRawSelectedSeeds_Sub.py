@@ -59,7 +59,7 @@ import math #We use it for data manipulation
 import gc  #Helps to clear memory
 import numpy as np
 #Specifying the full path to input/output files
-input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1_'+BatchID+'_TRACK_SEGMENTS.csv'
+input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RVx1_'+BatchID+'_VERTEX_SEGMENTS.csv'
 output_file_location=EOS_DIR+p+'/Temp_'+pfx+'_'+BatchID+'_'+str(i)+'/'+pfx+'_'+BatchID+'_RawSeeds_'+str(i)+'_'+str(j)+sfx
 output_result_location=EOS_DIR+'/'+p+'/Temp_'+pfx+'_'+BatchID+'_'+str(i)+'/'+pfx+'_'+BatchID+'_'+o+'_'+str(i)+'_'+str(j)+sfx
 print(UF.TimeStamp(), "Modules Have been imported successfully...")
