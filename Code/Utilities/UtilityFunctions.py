@@ -131,6 +131,10 @@ class ModelMeta:
                   self.MaxSLG=DataMeta.MaxSLG
               if hasattr(DataMeta,'MaxSTG'):
                   self.MaxSTG=DataMeta.MaxSTG
+              if hasattr(DataMeta,'MaxDST'):
+                  self.MaxDST=DataMeta.MaxDST
+              if hasattr(DataMeta,'MaxVXT'):
+                  self.MaxVXT=DataMeta.MaxVXT
               if hasattr(DataMeta,'MaxDOCA'):
                   self.MaxDOCA=DataMeta.MaxDOCA
               if hasattr(DataMeta,'MaxAngle'):
