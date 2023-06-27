@@ -218,7 +218,12 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         data=pd.read_csv(initial_input_file_location,
                     header=0,
                     usecols=[TrackID,BrickID,PM.x,PM.y,PM.z,PM.tx,PM.ty])
-        print(data)
+        print(data[PM.x].min())
+        print(data[PM.x].max())
+        print(data[PM.y].min())
+        print(data[PM.y].max())
+        print(data[PM.z].min())
+        print(data[PM.z].max())
         exit()
         total_rows=len(data.axes[0])
         print(UF.TimeStamp(),'The raw data has ',total_rows,' hits')
