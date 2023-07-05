@@ -178,7 +178,8 @@ for n in PM.VetoVertex:
      raw_data_mc.drop(raw_data_mc.index[(raw_data_mc['MC_Mother_Vertex_ID'].str.contains(str('-'+n)))],inplace=True)
 mc_data_tot=raw_data_mc['MC_Mother_Vertex_ID'].nunique()
 print(UF.TimeStamp(),'Total number of MC verteces is:',mc_data_tot)
-data_mc=pd.merge(raw_data[['MC_Mother_Track_ID',PM.Hit_ID]],raw_data_mc,how='inner', on =['MC_Mother_Track_ID'])
+data_mc=pd.merge(raw_data[['MC_Mother_Vertex_ID','MC_Mother_Track_ID',PM.Hit_ID]],raw_data_mc,how='inner', on =['MC_Mother_Vertex_ID'])
+print(raw_data_mc)
 for RN in RecNames:
   #raw_data_rec=raw_data.drop(raw_data.index[(raw_data[RN] == 'nan-nan')])
   raw_data_rec = raw_data[raw_data[RN].str.contains("nan") == False]
