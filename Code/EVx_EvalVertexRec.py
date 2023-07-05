@@ -114,14 +114,14 @@ for rn in range(len(RecNames)):
     raw_data[TrackID[rn][1]] = raw_data[TrackID[rn][1]].astype(str)
     raw_data[TrackID[rn][2]] = raw_data[TrackID[rn][2]].astype(str)
     raw_data[RecNames[rn]] = raw_data[TrackID[rn][0]] + '-' + raw_data[TrackID[rn][1]]
-    raw_data[RecNames[rn] + 'VX'] = raw_data[TrackID[rn][0]] + '-' + raw_data[TrackID[rn][2]]
+    raw_data[RecNames[rn] + '-VX'] = raw_data[TrackID[rn][0]] + '-' + raw_data[TrackID[rn][2]]
     raw_data.drop([TrackID[rn][0],TrackID[rn][1],TrackID[rn][2]],axis=1,inplace=True)
-print(raw_data)
-exit()
+
+
+
 if SkipRcmb:
     print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
     print(UF.TimeStamp(),bcolors.BOLD+'Stage 2:'+bcolors.ENDC+' Calculating recombination metrics...')
-
 
     eval_data_comb=raw_data[['MC_Mother_Track_ID',PM.Hit_ID]]
     eval_data_comb=pd.merge(eval_data_comb,eval_data_comb[[PM.Hit_ID,'MC_Mother_Track_ID']].rename(columns={PM.Hit_ID: "Right_Hit"}),how='inner', on = ['MC_Mother_Track_ID'])
@@ -165,6 +165,8 @@ print(UF.TimeStamp(),bcolors.BOLD+'Stage 3:'+bcolors.ENDC+' Analyzing track reco
 
 
 raw_data_mc=raw_data[['MC_Mother_Track_ID',PM.Hit_ID]+MCCategories].groupby(by=['MC_Mother_Track_ID']+MCCategories)[PM.Hit_ID].nunique().reset_index()
+print(raw_data_mc)
+exit()
 raw_data_mc.drop(raw_data_mc.index[(raw_data_mc[PM.Hit_ID] < MinHitsTrack)],inplace=True)
 raw_data_mc.rename(columns={PM.Hit_ID: "MC_Mother_Track_Size"},inplace=True)
 mc_data_tot=raw_data_mc['MC_Mother_Track_ID'].nunique()
