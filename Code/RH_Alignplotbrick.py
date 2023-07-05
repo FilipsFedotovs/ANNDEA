@@ -73,8 +73,6 @@ def FitPlate(PlateZ,input_data):
     temp_data=input_data[['FEDRA_Track_ID','x','y','z','Track_Hit_No','Plate_ID']]
     temp_data=pd.merge(temp_data,change_df,on='Plate_ID',how='left')
     temp_data=temp_data[['FEDRA_Track_ID','x','y','z','Track_Hit_No']]
-    print(temp_data)
-    exit()
     Tracks_Head=temp_data[['FEDRA_Track_ID']]
     Tracks_Head.drop_duplicates(inplace=True)
     Tracks_List=temp_data.values.tolist() #I find it is much easier to deal with tracks in list format when it comes to fitting
@@ -126,7 +124,9 @@ def FitPlate(PlateZ,input_data):
     temp_data['d_r']=temp_data['d_x']**2+temp_data['d_y']**2
     temp_data['d_r'] = temp_data['d_r'].astype(float)
     temp_data['d_r']=np.sqrt(temp_data['d_r']) #Absolute distance
-    temp_data=temp_data[['FEDRA_Track_ID','Track_Hit_No','d_r']]
+    temp_data=temp_data[['FEDRA_Track_ID','Track_Hit_No','d_r', 'd_y', 'd_x']]
+    print(temp_data)
+    exit()
     temp_data=temp_data.groupby(['FEDRA_Track_ID','Track_Hit_No']).agg({'d_r':'sum'}).reset_index()
     temp_data=temp_data.agg({'d_r':'sum','Track_Hit_No':'sum'})
     temp_data=temp_data.values.tolist()
