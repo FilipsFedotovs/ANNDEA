@@ -64,8 +64,9 @@ parser.add_argument('--f',help="Please enter the full path to the file with trac
 args = parser.parse_args()
 initial_input_file_location=args.f
 MinHits=int(args.MinHits)
-output_file_location=initial_input_file_location[:-4]+'_Re-Aligned.csv'
-output_log_location=initial_input_file_location[:-4]+'_Alignment-log.csv'
+output_file_location=initial_input_file_location[:-4]+'_Re-Aligned_'+str(MinHits)+'.csv'
+output_log_location=initial_input_file_location[:-4]+'_Alignment-log_'+str(MinHits)+'.csv'
+output_temp_location=initial_input_file_location[:-4]+'_Alignment-start_'+str(MinHits)+'.csv'
 
 def FitPlate(PlateZ,dx,dy,input_data):
     change_df = pd.DataFrame([[PlateZ,dx,dy]], columns = ['Plate_ID','dx','dy'])
@@ -127,6 +128,8 @@ def FitPlate(PlateZ,dx,dy,input_data):
     temp_data['d_r']=temp_data['d_x']**2+temp_data['d_y']**2
     temp_data['d_r'] = temp_data['d_r'].astype(float)
     temp_data['d_r']=np.sqrt(temp_data['d_r']) #Absolute distance
+    print(temp_data)
+    exit()
     temp_data=temp_data[['FEDRA_Track_ID','Track_Hit_No','d_r']]
     temp_data=temp_data.groupby(['FEDRA_Track_ID','Track_Hit_No']).agg({'d_r':'sum'}).reset_index()
     temp_data=temp_data.agg({'d_r':'sum','Track_Hit_No':'sum'})
@@ -188,7 +191,7 @@ with alive_bar(tot_jobs,force_tty=True, title='Optimising the alignment configur
        am.append(res.x)
        print('Overall fit value:',FitPlateFixedX(0))
        iterator += 1
-       local_logdata = ["global vertical-horizontal plate alignment XY", iterator, p[0], FitPlateFixedX(0)]
+       local_logdata = ["global vertical-horizontal plate alignment XY", iterator, p[0], FitPlateFixedX(0), MinHits]
        global_logdata.append(local_logdata)
        bar()
        res = minimize_scalar(FitPlateFixedY, bounds=(-500, 500), method='bounded')
@@ -196,12 +199,12 @@ with alive_bar(tot_jobs,force_tty=True, title='Optimising the alignment configur
        am.append(res.x)
        bar()
        iterator += 1
-       local_logdata = ["global vertical-horizontal plate alignment XY", iterator, p[0], FitPlateFixedY(0)]
+       local_logdata = ["global vertical-horizontal plate alignment XY", iterator, p[0], FitPlateFixedY(0), MinHits]
        global_logdata.append(local_logdata)
     
        print('Overall fit value:',FitPlateFixedY(0))
        alignment_map.append(am)
-global_logdata = pd.DataFrame(global_logdata, columns = ['alignment type', 'iteration', 'plate location', 'Overall fit value'])
+global_logdata = pd.DataFrame(global_logdata, columns = ['alignment type', 'iteration', 'plate location', 'Overall fit value', 'Min Hits'])
 global_logdata.to_csv(output_log_location,index=False)
 
 print(UF.TimeStamp(),'Aligning the brick...')
