@@ -91,6 +91,7 @@ if os.path.isfile(input_file_location)!=True:
 
 raw_data=pd.read_csv(input_file_location,header=0,usecols=columns_to_extract)[columns_to_extract]
 raw_data=raw_data.drop(raw_data.index[(raw_data['MC_Event_ID'] != '31-96')])
+raw_data=raw_data.drop(raw_data.index[(raw_data['MotherPDG'] != 14)])
 print(raw_data)
 exit()
 
