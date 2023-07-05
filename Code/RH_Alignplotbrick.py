@@ -124,7 +124,7 @@ def FitPlate(PlateZ,input_data):
     temp_data['d_r']=temp_data['d_x']**2+temp_data['d_y']**2
     temp_data['d_r'] = temp_data['d_r'].astype(float)
     temp_data['d_r']=np.sqrt(temp_data['d_r']) #Absolute distance
-    temp_data=temp_data[['FEDRA_Track_ID','Track_Hit_No','d_r', 'd_y', 'd_x']]
+    temp_data=temp_data[['x','y','Plate_ID','d_r', 'd_x', 'd_y']]
     print(temp_data)
     exit()
     temp_data=temp_data.groupby(['FEDRA_Track_ID','Track_Hit_No']).agg({'d_r':'sum'}).reset_index()
