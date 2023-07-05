@@ -186,7 +186,7 @@ with alive_bar(tot_jobs,force_tty=True, title='Optimising the alignment configur
        am.append(res.x)
        print('Overall fit value:',FitPlateFixedX(0))
        iterator += 1
-       local_logdata = ["global vertical-horizontal plate alignment XY", iterator, p, FitPlateFixedX(0)]
+       local_logdata = ["global vertical-horizontal plate alignment XY", iterator, p[0], FitPlateFixedX(0)]
        global_logdata.append(local_logdata)
        bar()
        res = minimize_scalar(FitPlateFixedY, bounds=(-500, 500), method='bounded')
@@ -194,7 +194,7 @@ with alive_bar(tot_jobs,force_tty=True, title='Optimising the alignment configur
        am.append(res.x)
        bar()
        iterator += 1
-       local_logdata = ["global vertical-horizontal plate alignment XY", iterator, p, FitPlateFixedY(0)]
+       local_logdata = ["global vertical-horizontal plate alignment XY", iterator, p[0], FitPlateFixedY(0)]
        global_logdata.append(local_logdata)
     
        print('Overall fit value:',FitPlateFixedY(0))
