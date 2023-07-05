@@ -125,8 +125,6 @@ for rn in range(len(RecNames)):
             raw_data=pd.merge(raw_data, TracksZdf, how="left", left_on=["PosBad_Z"], right_on=['Bad_z'])
             raw_data=raw_data[raw_data['Bad_z'].isnull()]
             raw_data=raw_data.drop(['Bad_z', 'PosBad_Z'],axis=1)
-print(raw_data)
-exit()
 
 if SkipRcmb:
     print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
@@ -176,8 +174,13 @@ raw_data_mc=raw_data[['MC_Mother_Vertex_ID','MC_Mother_Track_ID',PM.Hit_ID]+MCCa
 raw_data_mc.drop(raw_data_mc.index[(raw_data_mc[PM.Hit_ID] < MinHitsTrack)],inplace=True)
 raw_data_mc=raw_data[['MC_Mother_Vertex_ID','MC_Mother_Track_ID']+MCCategories].groupby(by=['MC_Mother_Vertex_ID']+MCCategories)['MC_Mother_Track_ID'].nunique().reset_index()
 raw_data_mc.drop(raw_data_mc.index[(raw_data_mc['MC_Mother_Track_ID'] < 2)],inplace=True)
-mc_data_tot=raw_data_mc['MC_Mother_Track_ID'].nunique()
-print(UF.TimeStamp(),'Total number of MC tracks is:',mc_data_tot)
+mc_data_tot=raw_data_mc['MC_Mother_Vertex_ID'].nunique()
+print(mc_data_tot)
+for n in PM.VetoVertex:
+     mc_data_tot.drop(mc_data_tot.index[(mc_data_tot['MC_Mother_Vertex_ID'].str.contains(str('-'+n)))],inplace=True)
+print(mc_data_tot)
+exit()
+print(UF.TimeStamp(),'Total number of MC verteces is:',mc_data_tot)
 data_mc=pd.merge(raw_data[['MC_Mother_Track_ID',PM.Hit_ID]],raw_data_mc,how='inner', on =['MC_Mother_Track_ID'])
 for RN in RecNames:
   #raw_data_rec=raw_data.drop(raw_data.index[(raw_data[RN] == 'nan-nan')])
