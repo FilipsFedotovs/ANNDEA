@@ -169,6 +169,9 @@ plates.drop_duplicates(inplace=True)
 plates=plates.values.tolist() #I find it is much easier to deal with tracks in list format when it comes to fitting
 print(UF.TimeStamp(),'There are ',len(plates),' plates')
 
+global_logdata = []
+iterator = 0
+
 tot_jobs = len(plates)*2
 alignment_map=[]
 with alive_bar(tot_jobs,force_tty=True, title='Optimising the alignment configuration...') as bar:
@@ -182,13 +185,22 @@ with alive_bar(tot_jobs,force_tty=True, title='Optimising the alignment configur
        new_combined_data=AlignPlate(p[0],res.x,0,new_combined_data)
        am.append(res.x)
        print('Overall fit value:',FitPlateFixedX(0))
+       iterator += 1
+       local_logdata = ["global vertical-horizontal plate alignment XY", iterator, p, FitPlateFixedX(0)]
+       global_logdata.append(local_logdata)
        bar()
        res = minimize_scalar(FitPlateFixedY, bounds=(-500, 500), method='bounded')
        new_combined_data=AlignPlate(p[0],0,res.x,new_combined_data)
        am.append(res.x)
        bar()
+       iterator += 1
+       local_logdata = ["global vertical-horizontal plate alignment XY", iterator, p, FitPlateFixedY(0)]
+       global_logdata.append(local_logdata)
+    
        print('Overall fit value:',FitPlateFixedY(0))
        alignment_map.append(am)
+print(global_logdata)
+exit()
 print(raw_data)
 print(UF.TimeStamp(),'Aligning the brick...')
 alignment_map=pd.DataFrame(alignment_map, columns = ['Plate_ID','dx','dy'])
@@ -202,4 +214,5 @@ raw_data = raw_data.drop(['Plate_ID','dx','dy'],axis=1)
 
 raw_data.to_csv(output_file_location,index=False)
 print('Alignment has been completed...')
+
 
