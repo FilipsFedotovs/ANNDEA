@@ -55,6 +55,7 @@ parser.add_argument('--Xmax',help="This option restricts data to only those even
 parser.add_argument('--Ymin',help="This option restricts data to only those events that have tracks with hits y-coordinates that are above this value", default='0')
 parser.add_argument('--Ymax',help="This option restricts data to only those events that have tracks with hits y-coordinates that are below this value", default='0')
 parser.add_argument('--MinHitsTrack',help="What is the minimum number of hits per track?", default=PM.MinHitsTrack)
+parser.add_argument('--RemoveTracksZ',help="This option enables to remove particular tracks of starting Z-coordinate", default='[]')
 args = parser.parse_args()
 
 ######################################## Welcome message  #############################################################
@@ -73,6 +74,7 @@ RecNames=ast.literal_eval(args.RecNames)
 input_file_location=args.f
 SkipRcmb=args.SkipRcmb=='N'
 MinHitsTrack=int(args.MinHitsTrack)
+RemoveTracksZ=ast.literal_eval(args.RemoveTracksZ)
 
 Xmin,Xmax,Ymin,Ymax=float(args.Xmin),float(args.Xmax),float(args.Ymin),float(args.Ymax)
 SliceData=max(Xmin,Xmax,Ymin,Ymax)>0 #We don't slice data if all values are set to zero simultaneousy (which is the default setting)
@@ -88,8 +90,6 @@ if os.path.isfile(input_file_location)!=True:
                      exit()
 
 raw_data=pd.read_csv(input_file_location,header=0,usecols=columns_to_extract)[columns_to_extract]
-print(raw_data)
-exit()
 total_rows=len(raw_data.axes[0])
 print(UF.TimeStamp(),'The raw data has ',total_rows,' hits')
 
@@ -102,16 +102,22 @@ if SliceData:
 raw_data.drop([PM.x,PM.y,PM.z],axis=1,inplace=True)
 
 raw_data[PM.MC_Event_ID] = raw_data[PM.MC_Event_ID].astype(str)
+raw_data[PM.MC_VX_ID] = raw_data[PM.MC_VX_ID].astype(str)
 raw_data[PM.MC_Track_ID] = raw_data[PM.MC_Track_ID].astype(str)
 raw_data[PM.Hit_ID] = raw_data[PM.Hit_ID].astype(str)
 raw_data['MC_Mother_Track_ID'] = raw_data[PM.MC_Event_ID] + '-' + raw_data[PM.MC_Track_ID]
-raw_data.drop([PM.MC_Event_ID,PM.MC_Track_ID],axis=1,inplace=True)
+raw_data['MC_Mother_Vertex_ID'] = raw_data[PM.MC_Event_ID] + '-' + raw_data[PM.MC_VX_ID]
+raw_data.drop([PM.MC_Event_ID,PM.MC_Track_ID,PM.MC_VX_ID],axis=1,inplace=True)
 
 for rn in range(len(RecNames)):
     raw_data[TrackID[rn][0]] = raw_data[TrackID[rn][0]].astype(str)
     raw_data[TrackID[rn][1]] = raw_data[TrackID[rn][1]].astype(str)
+    raw_data[TrackID[rn][2]] = raw_data[TrackID[rn][2]].astype(str)
     raw_data[RecNames[rn]] = raw_data[TrackID[rn][0]] + '-' + raw_data[TrackID[rn][1]]
-    raw_data.drop([TrackID[rn][0],TrackID[rn][1]],axis=1,inplace=True)
+    raw_data[RecNames[rn] + 'VX'] = raw_data[TrackID[rn][0]] + '-' + raw_data[TrackID[rn][2]]
+    raw_data.drop([TrackID[rn][0],TrackID[rn][1],TrackID[rn][2]],axis=1,inplace=True)
+print(raw_data)
+exit()
 if SkipRcmb:
     print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
     print(UF.TimeStamp(),bcolors.BOLD+'Stage 2:'+bcolors.ENDC+' Calculating recombination metrics...')
