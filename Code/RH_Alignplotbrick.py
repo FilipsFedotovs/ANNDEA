@@ -69,7 +69,7 @@ output_log_location=initial_input_file_location[:-4]+'_Alignment-log_'+str(MinHi
 output_temp_location=initial_input_file_location[:-4]+'_Alignment-start_'+str(MinHits)+'.csv'
 
 def FitPlate(PlateZ,input_data):
-    change_df = pd.DataFrame([[PlateZ,dx,dy]], columns = ['Plate_ID'])
+    change_df = pd.DataFrame([[PlateZ]], columns = ['Plate_ID'])
     temp_data=input_data[['FEDRA_Track_ID','x','y','z','Track_Hit_No','Plate_ID']]
     temp_data=pd.merge(temp_data,change_df,on='Plate_ID',how='left')
     temp_data=temp_data[['FEDRA_Track_ID','x','y','z','Track_Hit_No']]
