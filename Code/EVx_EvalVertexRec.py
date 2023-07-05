@@ -172,13 +172,16 @@ print(UF.TimeStamp(),bcolors.BOLD+'Stage 3:'+bcolors.ENDC+' Analyzing track reco
 
 raw_data_mc=raw_data[['MC_Mother_Vertex_ID','MC_Mother_Track_ID',PM.Hit_ID]+MCCategories].groupby(by=['MC_Mother_Vertex_ID','MC_Mother_Track_ID']+MCCategories)[PM.Hit_ID].nunique().reset_index()
 raw_data_mc.drop(raw_data_mc.index[(raw_data_mc[PM.Hit_ID] < MinHitsTrack)],inplace=True)
+print(raw_data_mc.to_string())
+x = input()
 raw_data_mc=raw_data[['MC_Mother_Vertex_ID','MC_Mother_Track_ID']+MCCategories].groupby(by=['MC_Mother_Vertex_ID']+MCCategories)['MC_Mother_Track_ID'].nunique().reset_index()
 raw_data_mc.drop(raw_data_mc.index[(raw_data_mc['MC_Mother_Track_ID'] < 2)],inplace=True)
 mc_data_tot=raw_data_mc['MC_Mother_Vertex_ID'].nunique()
-print(raw_data_mc)
+print(raw_data_mc.to_string())
+x = input()
 for n in PM.VetoVertex:
      raw_data_mc.drop(raw_data_mc.index[(raw_data_mc['MC_Mother_Vertex_ID'].str.contains(str('-'+n))==False)],inplace=True)
-print(raw_data_mc)
+print(raw_data_mc.to_string())
 exit()
 print(UF.TimeStamp(),'Total number of MC verteces is:',mc_data_tot)
 data_mc=pd.merge(raw_data[['MC_Mother_Track_ID',PM.Hit_ID]],raw_data_mc,how='inner', on =['MC_Mother_Track_ID'])
