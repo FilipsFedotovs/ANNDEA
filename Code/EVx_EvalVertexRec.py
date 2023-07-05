@@ -90,6 +90,10 @@ if os.path.isfile(input_file_location)!=True:
                      exit()
 
 raw_data=pd.read_csv(input_file_location,header=0,usecols=columns_to_extract)[columns_to_extract]
+raw_data=raw_data.drop(raw_data.index[(raw_data['MotherPDG'] != 14)])
+print(raw_data.to_string())
+exit()
+
 total_rows=len(raw_data.axes[0])
 print(UF.TimeStamp(),'The raw data has ',total_rows,' hits')
 
