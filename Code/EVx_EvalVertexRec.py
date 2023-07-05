@@ -99,7 +99,7 @@ if SliceData:
            raw_data=raw_data.drop(raw_data.index[(raw_data[PM.x] > Xmax) | (raw_data[PM.x] < Xmin) | (raw_data[PM.y] > Ymax) | (raw_data[PM.y] < Ymin)])
            final_rows=len(raw_data.axes[0])
            print(UF.TimeStamp(),'The sliced raw data has ',final_rows,' hits')
-raw_data.drop([PM.x,PM.y,PM.z],axis=1,inplace=True)
+raw_data.drop([PM.x,PM.y],axis=1,inplace=True)
 
 raw_data[PM.MC_Event_ID] = raw_data[PM.MC_Event_ID].astype(str)
 raw_data[PM.MC_VX_ID] = raw_data[PM.MC_VX_ID].astype(str)
@@ -116,7 +116,8 @@ for rn in range(len(RecNames)):
     raw_data[RecNames[rn]] = raw_data[TrackID[rn][0]] + '-' + raw_data[TrackID[rn][1]]
     raw_data[RecNames[rn] + '-VX'] = raw_data[TrackID[rn][0]] + '-' + raw_data[TrackID[rn][2]]
     raw_data.drop([TrackID[rn][0],TrackID[rn][1],TrackID[rn][2]],axis=1,inplace=True)
-
+print(raw_data)
+exit()
 
 
 if SkipRcmb:
@@ -163,8 +164,6 @@ if SkipRcmb:
 print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
 print(UF.TimeStamp(),bcolors.BOLD+'Stage 3:'+bcolors.ENDC+' Analyzing track reconstruction metrics...')
 
-print(raw_data)
-exit()
 raw_data_mc=raw_data[['MC_Mother_Vertex_ID','MC_Mother_Track_ID',PM.Hit_ID]+MCCategories].groupby(by=['MC_Mother_Vertex_ID','MC_Mother_Track_ID']+MCCategories)[PM.Hit_ID].nunique().reset_index()
 raw_data_mc.drop(raw_data_mc.index[(raw_data_mc[PM.Hit_ID] < MinHitsTrack)],inplace=True)
 raw_data_mc=raw_data[['MC_Mother_Vertex_ID','MC_Mother_Track_ID']+MCCategories].groupby(by=['MC_Mother_Vertex_ID']+MCCategories)['MC_Mother_Track_ID'].nunique().reset_index()
