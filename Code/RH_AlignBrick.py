@@ -199,6 +199,7 @@ with alive_bar(tot_jobs,force_tty=True, title='Optimising the alignment configur
     
        print('Overall fit value:',FitPlateFixedY(0))
        alignment_map.append(am)
+global_logdata = pd.DataFrame(global_logdata, columns = ['alignment type', 'iteration', 'plate location', 'Overall fit value'])
 print(global_logdata)
 exit()
 print(raw_data)
