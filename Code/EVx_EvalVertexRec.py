@@ -116,9 +116,17 @@ for rn in range(len(RecNames)):
     raw_data[RecNames[rn]] = raw_data[TrackID[rn][0]] + '-' + raw_data[TrackID[rn][1]]
     raw_data[RecNames[rn] + '-VX'] = raw_data[TrackID[rn][0]] + '-' + raw_data[TrackID[rn][2]]
     raw_data.drop([TrackID[rn][0],TrackID[rn][1],TrackID[rn][2]],axis=1,inplace=True)
+    if len(RemoveTracksZ)>0:
+            print(UF.TimeStamp(),'Removing tracks based on start point')
+            TracksZdf = pd.DataFrame(RemoveTracksZ, columns = ['Bad_z'], dtype=float)
+            data_aggregated=raw_data.groupby([RecNames[rn]])[PM.z].min().reset_index()
+            data_aggregated=data_aggregated.rename(columns={PM.z: "PosBad_Z"})
+            raw_data=pd.merge(raw_data, data_aggregated, how="left", on=[RecNames[rn]])
+            raw_data=pd.merge(raw_data, TracksZdf, how="left", left_on=["PosBad_Z"], right_on=['Bad_z'])
+            raw_data=raw_data[raw_data['Bad_z'].isnull()]
+            raw_data=raw_data.drop(['Bad_z', 'PosBad_Z'],axis=1)
 print(raw_data)
 exit()
-
 
 if SkipRcmb:
     print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
