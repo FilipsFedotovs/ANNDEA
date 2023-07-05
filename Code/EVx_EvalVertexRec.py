@@ -92,8 +92,6 @@ if os.path.isfile(input_file_location)!=True:
 raw_data=pd.read_csv(input_file_location,header=0,usecols=columns_to_extract)[columns_to_extract]
 raw_data=raw_data.drop(raw_data.index[(raw_data['MC_Event_ID'] != '31-96')])
 #raw_data=raw_data.drop(raw_data.index[(raw_data['MotherPDG'] != 14)])
-print(raw_data)
-
 total_rows=len(raw_data.axes[0])
 print(UF.TimeStamp(),'The raw data has ',total_rows,' hits')
 
@@ -112,7 +110,6 @@ raw_data[PM.Hit_ID] = raw_data[PM.Hit_ID].astype(str)
 raw_data['MC_Mother_Track_ID'] = raw_data[PM.MC_Event_ID] + '-' + raw_data[PM.MC_Track_ID]
 raw_data['MC_Mother_Vertex_ID'] = raw_data[PM.MC_Event_ID] + '-' + raw_data[PM.MC_VX_ID]
 raw_data.drop([PM.MC_Event_ID,PM.MC_Track_ID,PM.MC_VX_ID],axis=1,inplace=True)
-print(raw_data)
 for rn in range(len(RecNames)):
     raw_data[TrackID[rn][0]] = raw_data[TrackID[rn][0]].astype(str)
     raw_data[TrackID[rn][1]] = raw_data[TrackID[rn][1]].astype(str)
@@ -129,7 +126,6 @@ for rn in range(len(RecNames)):
             raw_data=pd.merge(raw_data, TracksZdf, how="left", left_on=["PosBad_Z"], right_on=['Bad_z'])
             raw_data=raw_data[raw_data['Bad_z'].isnull()]
             raw_data=raw_data.drop(['Bad_z', 'PosBad_Z'],axis=1)
-print(raw_data)
 if SkipRcmb:
     print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
     print(UF.TimeStamp(),bcolors.BOLD+'Stage 2:'+bcolors.ENDC+' Calculating recombination metrics...')
@@ -176,24 +172,18 @@ print(UF.TimeStamp(),bcolors.BOLD+'Stage 3:'+bcolors.ENDC+' Analyzing track reco
 
 raw_data_mc=raw_data[['MC_Mother_Vertex_ID','MC_Mother_Track_ID',PM.Hit_ID]+MCCategories].groupby(by=['MC_Mother_Vertex_ID','MC_Mother_Track_ID']+MCCategories)[PM.Hit_ID].nunique().reset_index()
 raw_data_mc.drop(raw_data_mc.index[(raw_data_mc[PM.Hit_ID] < MinHitsTrack)],inplace=True)
-print(raw_data_mc.to_string())
-x = input()
 raw_data_mc=raw_data[['MC_Mother_Vertex_ID','MC_Mother_Track_ID']+MCCategories].groupby(by=['MC_Mother_Vertex_ID']+MCCategories)['MC_Mother_Track_ID'].nunique().reset_index()
-print(raw_data_mc.to_string())
-x = input()
 raw_data_mc.drop(raw_data_mc.index[(raw_data_mc['MC_Mother_Track_ID'] < 2)],inplace=True)
-mc_data_tot=raw_data_mc['MC_Mother_Vertex_ID'].nunique()
-print(raw_data_mc.to_string())
-x = input()
 for n in PM.VetoVertex:
      raw_data_mc.drop(raw_data_mc.index[(raw_data_mc['MC_Mother_Vertex_ID'].str.contains(str('-'+n)))],inplace=True)
-print(raw_data_mc.to_string())
-exit()
+mc_data_tot=raw_data_mc['MC_Mother_Vertex_ID'].nunique()
 print(UF.TimeStamp(),'Total number of MC verteces is:',mc_data_tot)
 data_mc=pd.merge(raw_data[['MC_Mother_Track_ID',PM.Hit_ID]],raw_data_mc,how='inner', on =['MC_Mother_Track_ID'])
 for RN in RecNames:
   #raw_data_rec=raw_data.drop(raw_data.index[(raw_data[RN] == 'nan-nan')])
   raw_data_rec = raw_data[raw_data[RN].str.contains("nan") == False]
+  print(raw_data_rec)
+  exit()
   raw_data_rec=raw_data_rec[[RN,PM.Hit_ID]]
   raw_data_temp_rec=raw_data_rec[[RN,PM.Hit_ID]].rename(columns={PM.Hit_ID: RN+'_Size'})
   raw_data_temp_rec=raw_data_temp_rec.groupby(by=[RN])[RN+'_Size'].nunique().reset_index()
