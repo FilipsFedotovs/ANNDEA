@@ -93,7 +93,6 @@ raw_data=pd.read_csv(input_file_location,header=0,usecols=columns_to_extract)[co
 raw_data=raw_data.drop(raw_data.index[(raw_data['MC_Event_ID'] != '31-96')])
 raw_data=raw_data.drop(raw_data.index[(raw_data['MotherPDG'] != 14)])
 print(raw_data)
-exit()
 
 total_rows=len(raw_data.axes[0])
 print(UF.TimeStamp(),'The raw data has ',total_rows,' hits')
@@ -113,7 +112,7 @@ raw_data[PM.Hit_ID] = raw_data[PM.Hit_ID].astype(str)
 raw_data['MC_Mother_Track_ID'] = raw_data[PM.MC_Event_ID] + '-' + raw_data[PM.MC_Track_ID]
 raw_data['MC_Mother_Vertex_ID'] = raw_data[PM.MC_Event_ID] + '-' + raw_data[PM.MC_VX_ID]
 raw_data.drop([PM.MC_Event_ID,PM.MC_Track_ID,PM.MC_VX_ID],axis=1,inplace=True)
-
+print(raw_data)
 for rn in range(len(RecNames)):
     raw_data[TrackID[rn][0]] = raw_data[TrackID[rn][0]].astype(str)
     raw_data[TrackID[rn][1]] = raw_data[TrackID[rn][1]].astype(str)
@@ -130,7 +129,7 @@ for rn in range(len(RecNames)):
             raw_data=pd.merge(raw_data, TracksZdf, how="left", left_on=["PosBad_Z"], right_on=['Bad_z'])
             raw_data=raw_data[raw_data['Bad_z'].isnull()]
             raw_data=raw_data.drop(['Bad_z', 'PosBad_Z'],axis=1)
-
+print(raw_data)
 if SkipRcmb:
     print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
     print(UF.TimeStamp(),bcolors.BOLD+'Stage 2:'+bcolors.ENDC+' Calculating recombination metrics...')
