@@ -65,6 +65,8 @@ args = parser.parse_args()
 initial_input_file_location=args.f
 MinHits=int(args.MinHits)
 output_file_location=initial_input_file_location[:-4]+'_Re-Aligned.csv'
+output_log_location=initial_input_file_location[:-4]+'_Alignment-log.csv'
+
 def FitPlate(PlateZ,dx,dy,input_data):
     change_df = pd.DataFrame([[PlateZ,dx,dy]], columns = ['Plate_ID','dx','dy'])
     temp_data=input_data[['FEDRA_Track_ID','x','y','z','Track_Hit_No','Plate_ID']]
@@ -200,9 +202,8 @@ with alive_bar(tot_jobs,force_tty=True, title='Optimising the alignment configur
        print('Overall fit value:',FitPlateFixedY(0))
        alignment_map.append(am)
 global_logdata = pd.DataFrame(global_logdata, columns = ['alignment type', 'iteration', 'plate location', 'Overall fit value'])
-print(global_logdata)
-exit()
-print(raw_data)
+global_logdata.to_csv(output_log_location,index=False)
+
 print(UF.TimeStamp(),'Aligning the brick...')
 alignment_map=pd.DataFrame(alignment_map, columns = ['Plate_ID','dx','dy'])
 raw_data['Plate_ID']=raw_data['z'].astype(int)
@@ -215,5 +216,6 @@ raw_data = raw_data.drop(['Plate_ID','dx','dy'],axis=1)
 
 raw_data.to_csv(output_file_location,index=False)
 print('Alignment has been completed...')
+print('Alignment has been saved 2 log file', output_log_location)
 
 
