@@ -180,7 +180,7 @@ mc_data_tot=raw_data_mc['MC_Mother_Vertex_ID'].nunique()
 print(raw_data_mc.to_string())
 x = input()
 for n in PM.VetoVertex:
-     raw_data_mc.drop(raw_data_mc.index[(raw_data_mc['MC_Mother_Vertex_ID'].str.contains(str('-'+n))==False)],inplace=True)
+     raw_data_mc.drop(raw_data_mc.index[(raw_data_mc['MC_Mother_Vertex_ID'].str.contains(str('-'+n)))],inplace=True)
 print(raw_data_mc.to_string())
 exit()
 print(UF.TimeStamp(),'Total number of MC verteces is:',mc_data_tot)
