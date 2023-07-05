@@ -72,7 +72,7 @@ def FitPlate(PlateZ,input_data):
     change_df = pd.DataFrame([[PlateZ]], columns = ['Plate_ID'])
     temp_data=input_data[['FEDRA_Track_ID','x','y','z','Track_Hit_No','Plate_ID']]
     temp_data=pd.merge(temp_data,change_df,on='Plate_ID',how='left')
-    temp_data=temp_data[['FEDRA_Track_ID','x','y','z','Track_Hit_No']]
+    temp_data=temp_data[['FEDRA_Track_ID','x','y','z','Track_Hit_No','Plate_ID']]
     Tracks_Head=temp_data[['FEDRA_Track_ID']]
     Tracks_Head.drop_duplicates(inplace=True)
     Tracks_List=temp_data.values.tolist() #I find it is much easier to deal with tracks in list format when it comes to fitting
