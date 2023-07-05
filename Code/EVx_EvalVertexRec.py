@@ -164,10 +164,10 @@ print(bcolors.HEADER+"##########################################################
 print(UF.TimeStamp(),bcolors.BOLD+'Stage 3:'+bcolors.ENDC+' Analyzing track reconstruction metrics...')
 
 
-raw_data_mc=raw_data[['MC_Mother_Track_ID',PM.Hit_ID]+MCCategories].groupby(by=['MC_Mother_Track_ID']+MCCategories)[PM.Hit_ID].nunique().reset_index()
+raw_data_mc=raw_data[['MC_Mother_Vertex_ID','MC_Mother_Track_ID',PM.Hit_ID]+MCCategories].groupby(by=['MC_Mother_Vertex_ID','MC_Mother_Track_ID']+MCCategories)[PM.Hit_ID].nunique().reset_index()
+raw_data_mc.drop(raw_data_mc.index[(raw_data_mc[PM.Hit_ID] < MinHitsTrack)],inplace=True)
 print(raw_data_mc)
 exit()
-raw_data_mc.drop(raw_data_mc.index[(raw_data_mc[PM.Hit_ID] < MinHitsTrack)],inplace=True)
 raw_data_mc.rename(columns={PM.Hit_ID: "MC_Mother_Track_Size"},inplace=True)
 mc_data_tot=raw_data_mc['MC_Mother_Track_ID'].nunique()
 print(UF.TimeStamp(),'Total number of MC tracks is:',mc_data_tot)
