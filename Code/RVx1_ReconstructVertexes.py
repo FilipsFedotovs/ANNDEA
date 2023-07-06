@@ -680,6 +680,7 @@ while Status<len(Program):
         print(UF.TimeStamp(), "Loading the fit track seeds from the file",bcolors.OKBLUE+input_file_location+bcolors.ENDC)
         base_data=UF.PickleOperations(input_file_location,'r','N/A')[0]
         print(UF.TimeStamp(), bcolors.OKGREEN+"Loading is successful, there are "+str(len(base_data))+" fit seeds..."+bcolors.ENDC)
+        print(base_data[0].__dir__())
         exit()
         with alive_bar(len(base_data),force_tty=True, title="Stripping non-z information from seeds...") as bar:
             for tr in range(len(base_data)):
