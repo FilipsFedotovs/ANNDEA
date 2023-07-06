@@ -699,6 +699,7 @@ while Status<len(Program):
         print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Create'))
         Result=StandardProcess(Program_Dummy,Status,FreshStart)
         if Result:
+            exit()
             print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
             print(UF.TimeStamp(),bcolors.BOLD+'Stage '+str(Status)+':'+bcolors.ENDC+' Analysing the fitted seeds')
             JobSet=[]
