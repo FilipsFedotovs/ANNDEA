@@ -62,7 +62,6 @@ for b in base_data:
    base_data_mini_list = [b.Header[0],b.Header[1],b.Fit]
    base_data_list.append(base_data_mini_list)
 data = pd.DataFrame(base_data_list,columns=['Track_1','Track_2','Seed_CNN_Fit'])
-print(data)
 
 SeedStart=i*MaxSegments
 SeedEnd=min(len(data),(i+1)*MaxSegments)
@@ -125,12 +124,8 @@ for seed in seeds:
         seed.append(OrthogonalSets)
         seed.append(LinkStrength)
         seed.append(UnlinkStrength)
-print(seeds)
-exit()
 Header=[['Track_1','Track_2','Seed_CNN_Fit', 'Links', 'AntiLinks', 'Link_Strength', 'AntiLink_Strenth']]
-UF.LogOperations(output_file_location,'StartLog', Header)
-UF.LogOperations(output_file_location,'UpdateLog', seeds)
+UF.LogOperations(output_file_location,'w', Header)
+UF.LogOperations(output_file_location,'a', seeds)
 
-UF.LogOperations(output_file_location,'a',result_list) #Writing the remaining data into the csv
-UF.LogOperations(output_result_location,'w',[])
-print(UF.TimeStamp(), "Seed generation is finished...")
+print(UF.TimeStamp(), "Seed link analysis is finished...")
