@@ -57,9 +57,11 @@ output_file_location=EOS_DIR+p+'/Temp_'+pfx+'_'+BatchID+'_'+str(0)+'/'+pfx+'_'+B
 print(UF.TimeStamp(), "Modules Have been imported successfully...")
 print(UF.TimeStamp(),'Loading pre-selected data from ',input_file_location)
 base_data=UF.PickleOperations(input_file_location,'r','N/A')[0]
-print(base_data)
-exit()
-
+base_data_list=[]
+for b in base_data:
+   base_data_mini_list = [b.Header[0],b.Header[1],b.Fit]
+   print(base_data_mini_list)
+   exit()
 
 print(UF.TimeStamp(),'Creating segment combinations... ')
 
