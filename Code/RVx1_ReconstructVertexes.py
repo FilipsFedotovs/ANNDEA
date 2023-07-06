@@ -748,6 +748,8 @@ while Status<len(Program):
              eval_data.drop(['Segment_2'],axis=1,inplace=True)
              eval_no=0
              rec_no=0
+             print(base_data)
+             exit()
              rec=base_data[['Track_1','Track_2']]
 
              rec["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(rec['Track_1'], rec['Track_2'])]
