@@ -822,7 +822,7 @@ while Status<len(Program):
               for v in range(0,len(VertexPool)):
                   VertexPool[v].AssignANNVxUID(v)
               if args.Log=='Y':
-                  #try:
+                  try:
                     csv_out=[]
                     for Vx in VertexPool:
                      for Tr in Vx.Header:
@@ -850,94 +850,12 @@ while Status<len(Program):
                     rec_no=(len(rec)-len(rec_eval))
                     UF.LogOperations(EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv', 'a', [[6,'Vertex Merging',rec_no,eval_no,eval_no/(rec_no+eval_no),eval_no/len(eval_data)]])
                     print(UF.TimeStamp(), bcolors.OKGREEN+"The log has been created successfully at "+bcolors.ENDC, bcolors.OKBLUE+EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv'+bcolors.ENDC)
-              #except:
+                  except:
                     print(UF.TimeStamp(), bcolors.WARNING+'Log creation has failed'+bcolors.ENDC)
-    #     base_data=UF.PickleOperations(input_file_location,'r','N/A')[0]
-    #     print(UF.TimeStamp(), bcolors.OKGREEN+"Loading is successful, there are "+str(len(base_data))+" fit seeds..."+bcolors.ENDC)
-    #     prog_entry=[]
-    #     N_Jobs=math.ceil(len(base_data)/MaxSeeds)
-    #     Program_Dummy=[]
-    #     prog_entry.append(' Sending vertexes to the HTCondor, so vertex can be subject to link analysis...')
-    #     prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','AnalyseSeedLinks','RVx1c','.csv',RecBatchID,N_Jobs,'RVx1c_AnalyseSeedLinks_Sub.py'])
-    #     prog_entry.append([" --MaxSegments "])
-    #     prog_entry.append([MaxSeeds])
-    #     prog_entry.append(N_Jobs)
-    #     prog_entry.append(LocalSub)
-    #     prog_entry.append(['',''])
-    #     for dum in range(0,Status):
-    #         Program_Dummy.append('DUM')
-    #     Program_Dummy.append(prog_entry)
-    #     if Mode=='RESET':
-    #         print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Delete'))
-    #     #Setting up folders for the output. The reconstruction of just one brick can easily generate >100k of files. Keeping all that blob in one directory can cause problems on lxplus.
-    #     print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Create'))
-    #     Result=StandardProcess(Program_Dummy,Status,FreshStart)
-    #     if Result:
-    #         print(UF.TimeStamp(),bcolors.OKGREEN+'All HTCondor Seed Creation jobs have finished'+bcolors.ENDC)
-    #         print(UF.TimeStamp(),'Collating the results...')
-    #         for f in range(N_Jobs):
-    #              req_file = EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RVx1c_'+RecBatchID+'_'+str(0)+'/RVx1c_'+RecBatchID+'_AnalyseSeedLinks_'+str(f)+'.csv'
-    #              progress=round((float(f)/float(N_Jobs))*100,2)
-    #              print(UF.TimeStamp(),'progress is ',progress,' %', end="\r", flush=True) #Progress display
-    #         if os.path.isfile(req_file)==False:
-    #              print(UF.TimeStamp(), bcolors.FAIL+"Critical fail: file",req_file,'is missing, please restart the script with the option "--Mode R"'+bcolors.ENDC)
-    #         elif os.path.isfile(req_file):
-    #              if (f)==0:
-    #                  base_data = pd.read_csv(req_file,usecols=['Track_1', 'Track_2','Seed_CNN_Fit','Link_Strength','AntiLink_Strenth'])
-    #              else:
-    #                  new_data = pd.read_csv(req_file,usecols=['Track_1', 'Track_2','Seed_CNN_Fit','Link_Strength','AntiLink_Strenth'])
-    #                  frames = [base_data, new_data]
-    #                  base_data = pd.concat(frames,ignore_index=True)
-    #                  Records=len(base_data)
-    #     print(UF.TimeStamp(),'The pre-analysed reconstructed set contains', Records, '2-track link-fitted seeds',bcolors.ENDC)
-    #     base_data['Seed_Link_Fit'] = base_data.apply(PM.Seed_Bond_Fit_Acceptance,axis=1)
-    #     base_data['Seed_Index'] = base_data.index
-    #     base_data.drop(base_data.index[base_data['Seed_Link_Fit'] < PM.link_acceptance],inplace=True)  # Dropping the seeds that don't pass the link fit threshold
-    #     base_data.drop(base_data.index[base_data['Seed_CNN_Fit'] < PM.pre_vx_acceptance],inplace=True)  # Dropping the seeds that don't pass the link fit threshold
-    #     Records_After_Compression=len(base_data)
-    #     if args.Log=='Y':
-    #       try:
-    #          print(UF.TimeStamp(),'Initiating the logging...')
-    #          eval_data_file=EOS_DIR+'/ANNDEA/Data/TEST_SET/EVx1b_'+RecBatchID+'_SEED_TRUTH_COMBINATIONS.csv'
-    #          eval_data=pd.read_csv(eval_data_file,header=0,usecols=['Segment_1','Segment_2'])
-    #          eval_data["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(eval_data['Segment_1'], eval_data['Segment_2'])]
-    #          eval_data.drop(['Segment_1'],axis=1,inplace=True)
-    #          eval_data.drop(['Segment_2'],axis=1,inplace=True)
-    #          eval_no=0
-    #          rec_no=0
-    #          print(base_data)
-    #          rec=base_data[['Track_1','Track_2']]
-
-    #          rec["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(rec['Track_1'], rec['Track_2'])]
-    #          rec.drop(['Track_1'],axis=1,inplace=True)
-    #          rec.drop(['Track_2'],axis=1,inplace=True)
-    #          rec_eval=pd.merge(eval_data, rec, how="inner", on=['Seed_ID'])
-    #          eval_no=len(rec_eval)
-    #          rec_no=(len(rec)-len(rec_eval))
-    #          UF.LogOperations(EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv', 'a', [[5,'Link Analysis',rec_no,eval_no,eval_no/(rec_no+eval_no),eval_no/len(eval_data)]])
-    #          print(UF.TimeStamp(), bcolors.OKGREEN+"The log has been created successfully at "+bcolors.ENDC, bcolors.OKBLUE+EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv'+bcolors.ENDC)
-    #       except:
-    #            print(UF.TimeStamp(), bcolors.WARNING+'Log creation has failed'+bcolors.ENDC)
-    #     print(UF.TimeStamp(), 'Decorating seed objects in ' + bcolors.ENDC,bcolors.OKBLUE + input_file_location + bcolors.ENDC)
-    #     base_data=base_data.values.tolist()
-    #     new_data=[]
-    #     for b in base_data:
-    #         new_data.append(b[6])
-    #     base_data=new_data
-    #     del new_data
-    #     print(UF.TimeStamp(), 'Loading seed object data from ', bcolors.OKBLUE + input_file_location + bcolors.ENDC)
-    #     object_data = UF.PickleOperations(input_file_location,'r','N/A')[0]
-    #     selected_objects=[]
-    #     for nd in range(len(base_data)):
-    #         selected_objects.append(object_data[base_data[nd]])
-    #         progress = round((float(nd) / float(len(base_data))) * 100, 1)
-    #         print(UF.TimeStamp(), 'Refining the seed objects, progress is ', progress, ' %', end="\r", flush=True)  # Progress display
-    #     del object_data
-    #     del base_data
-    #     output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RVx1c_'+RecBatchID+'_Link_Fit_Seeds.pkl'
-    #     print(UF.PickleOperations(output_file_location,'w',selected_objects)[0])
-    #     print(UF.TimeStamp(), bcolors.OKGREEN + str(len(selected_objects))+" seed objects are saved in" + bcolors.ENDC,bcolors.OKBLUE + output_file_location + bcolors.ENDC)
-    #     UpdateStatus(Status+1)
+              initial_data=pd.read_csv(initial_input_file_location,header=0)
+              print(initial_data)
+              exit()
+    
     else:
          for md in range(len(ModelName)):
             if Program[Status]==ModelName[md]:
