@@ -724,6 +724,29 @@ while Status<len(Program):
         base_data.drop(base_data.index[base_data['Seed_Link_Fit'] < PM.link_acceptance],inplace=True)  # Dropping the seeds that don't pass the link fit threshold
         base_data.drop(base_data.index[base_data['Seed_CNN_Fit'] < PM.pre_vx_acceptance],inplace=True)  # Dropping the seeds that don't pass the link fit threshold
         Records_After_Compression=len(base_data)
+        if args.Log=='Y':
+        #  try:
+             print(UF.TimeStamp(),'Initiating the logging...')
+             eval_data_file=EOS_DIR+'/ANNDEA/Data/TEST_SET/EVx1b_'+RecBatchID+'_SEED_TRUTH_COMBINATIONS.csv'
+             eval_data=pd.read_csv(eval_data_file,header=0,usecols=['Segment_1','Segment_2'])
+             eval_data["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(eval_data['Segment_1'], eval_data['Segment_2'])]
+             eval_data.drop(['Segment_1'],axis=1,inplace=True)
+             eval_data.drop(['Segment_2'],axis=1,inplace=True)
+             eval_no=0
+             rec_no=0
+             print(base_data)
+             rec=base_data[['Track_1','Track_2']]
+
+             rec["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(rec['Track_1'], rec['Track_2'])]
+             rec.drop(['Track_1'],axis=1,inplace=True)
+             rec.drop(['Track_2'],axis=1,inplace=True)
+             rec_eval=pd.merge(eval_data, rec, how="inner", on=['Seed_ID'])
+             eval_no=len(rec_eval)
+             rec_no=(len(rec)-len(rec_eval))
+             UF.LogOperations(EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv', 'a', [[5,'Link Analysis',rec_no,eval_no,eval_no/(rec_no+eval_no),eval_no/len(eval_data)]])
+             print(UF.TimeStamp(), bcolors.OKGREEN+"The log has been created successfully at "+bcolors.ENDC, bcolors.OKBLUE+EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv'+bcolors.ENDC)
+        #  except:
+        #       print(UF.TimeStamp(), bcolors.WARNING+'Log creation has failed'+bcolors.ENDC)
         print(UF.TimeStamp(), 'Decorating seed objects in ' + bcolors.ENDC,bcolors.OKBLUE + input_file_location + bcolors.ENDC)
         base_data=base_data.values.tolist()
         new_data=[]
@@ -738,30 +761,6 @@ while Status<len(Program):
             selected_objects.append(object_data[base_data[nd]])
             progress = round((float(nd) / float(len(base_data))) * 100, 1)
             print(UF.TimeStamp(), 'Refining the seed objects, progress is ', progress, ' %', end="\r", flush=True)  # Progress display
-        if args.Log=='Y':
-        #  try:
-             print(UF.TimeStamp(),'Initiating the logging...')
-             eval_data_file=EOS_DIR+'/ANNDEA/Data/TEST_SET/EVx1b_'+RecBatchID+'_SEED_TRUTH_COMBINATIONS.csv'
-             eval_data=pd.read_csv(eval_data_file,header=0,usecols=['Segment_1','Segment_2'])
-             eval_data["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(eval_data['Segment_1'], eval_data['Segment_2'])]
-             eval_data.drop(['Segment_1'],axis=1,inplace=True)
-             eval_data.drop(['Segment_2'],axis=1,inplace=True)
-             eval_no=0
-             rec_no=0
-             print(base_data)
-             exit()
-             rec=base_data[['Track_1','Track_2']]
-
-             rec["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(rec['Track_1'], rec['Track_2'])]
-             rec.drop(['Track_1'],axis=1,inplace=True)
-             rec.drop(['Track_2'],axis=1,inplace=True)
-             rec_eval=pd.merge(eval_data, rec, how="inner", on=['Seed_ID'])
-             eval_no=len(rec_eval)
-             rec_no=(len(rec)-len(rec_eval))
-             UF.LogOperations(EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv', 'a', [[5,'Link Analysis',rec_no,eval_no,eval_no/(rec_no+eval_no),eval_no/len(eval_data)]])
-             print(UF.TimeStamp(), bcolors.OKGREEN+"The log has been created successfully at "+bcolors.ENDC, bcolors.OKBLUE+EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv'+bcolors.ENDC)
-        #  except:
-        #       print(UF.TimeStamp(), bcolors.WARNING+'Log creation has failed'+bcolors.ENDC)
         del object_data
         del base_data
         output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RVx1c_'+RecBatchID+'_Link_Fit_Seeds.pkl'
