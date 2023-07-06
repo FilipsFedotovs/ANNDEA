@@ -682,24 +682,9 @@ while Status<len(Program):
         print(UF.TimeStamp(), bcolors.OKGREEN+"Loading is successful, there are "+str(len(base_data))+" fit seeds..."+bcolors.ENDC)
         prog_entry=[]
         TotJobs=math.ceil(len(base_data)/MaxSeeds)
-        print(TotJobs)
-        exit()
         Program_Dummy=[]
-        Meta=UF.PickleOperations(RecOutputMeta,'r', 'N/A')[0]
-        JobSets=Meta.JobSets
-        for i in range(len(JobSets)):
-            JobSet.append([])
-            for j in range(len(JobSets[i][3])):
-                    JobSet[i].append(JobSets[i][3][j])
-        if type(JobSet) is int:
-                    TotJobs=JobSet
-        elif type(JobSet[0]) is int:
-                    TotJobs=np.sum(JobSet)
-        elif type(JobSet[0][0]) is int:
-                    for lp in JobSet:
-                        TotJobs+=np.sum(lp)
-        prog_entry.append(' Sending tracks to the HTCondor, so track segment combination pairs can be formed...')
-        prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','RefinedSeeds','RVx1'+ModelName[md],'.pkl',RecBatchID,JobSet,'RVx1b_RefineSeeds_Sub.py'])
+        prog_entry.append(' Sending vertexes to the HTCondor, so vertex can be subject to link analysis...')
+        prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','AnalyseSeedLinks','RVx1c','.csv',RecBatchID,TotJobs,'RVx1c_AnalyseSeedLinks_Sub.py'])
         prog_entry.append([" --MaxDST ", " --MaxVXT ", " --MaxDOCA ", " --MaxAngle "," --ModelName "," --FirstTime ", " --FiducialVolumeCut "])
         prog_entry.append([MaxDST, MaxVXT, MaxDOCA, MaxAngle,'"'+ModelName[md]+'"', 'True', '"'+str(FiducialVolumeCut)+'"'])
         prog_entry.append(TotJobs)
