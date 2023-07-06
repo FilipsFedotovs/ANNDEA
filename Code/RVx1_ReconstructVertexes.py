@@ -718,14 +718,15 @@ while Status<len(Program):
                      frames = [base_data, new_data]
                      base_data = pd.concat(frames,ignore_index=True)
                      Records=len(base_data)
-            print(base_data)
-            exit()
-    #    print(UF.TimeStamp(),'The pre-analysed reconstructed set contains', Records, '2-track link-fitted seeds',bcolors.ENDC)
-    #    base_data['Seed_Link_Fit'] = base_data.apply(PM.Seed_Bond_Fit_Acceptance,axis=1)
-    #    base_data['Seed_Index'] = base_data.index
-    #    base_data.drop(base_data.index[base_data['Seed_Link_Fit'] < PM.link_acceptance],inplace=True)  # Dropping the seeds that don't pass the link fit threshold
-    #    base_data.drop(base_data.index[base_data['Seed_CNN_Fit'] < PM.pre_vx_acceptance],inplace=True)  # Dropping the seeds that don't pass the link fit threshold
-    #    Records_After_Compression=len(base_data)
+        print(UF.TimeStamp(),'The pre-analysed reconstructed set contains', Records, '2-track link-fitted seeds',bcolors.ENDC)
+        base_data['Seed_Link_Fit'] = base_data.apply(PM.Seed_Bond_Fit_Acceptance,axis=1)
+        print(base_data)
+        base_data['Seed_Index'] = base_data.index
+        base_data.drop(base_data.index[base_data['Seed_Link_Fit'] < PM.link_acceptance],inplace=True)  # Dropping the seeds that don't pass the link fit threshold
+        base_data.drop(base_data.index[base_data['Seed_CNN_Fit'] < PM.pre_vx_acceptance],inplace=True)  # Dropping the seeds that don't pass the link fit threshold
+        Records_After_Compression=len(base_data)
+        print(base_data)
+        exit()
     #    output_file_location=EOS_DIR+'/EDER-VIANN/Data/REC_SET/R5_E4_LINK_FIT_SEEDS.csv'
     #    print(UF.TimeStamp(),'Out of', Records, ' seeds, only', Records_After_Compression, 'pass the link selection criteria...' ,bcolors.ENDC)
     #    base_data.to_csv(output_file_location,index=False)
