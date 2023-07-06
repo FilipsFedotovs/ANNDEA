@@ -705,7 +705,7 @@ while Status<len(Program):
             print(UF.TimeStamp(),bcolors.OKGREEN+'All HTCondor Seed Creation jobs have finished'+bcolors.ENDC)
             print(UF.TimeStamp(),'Collating the results...')
             for f in range(N_Jobs):
-                 req_file = EOS_DIR+p+'/Temp_RVx1c_'+RecBatchID+'_'+str(0)+'/RVx1c_'+RecBatchID+'_AnalyseSeedLinks_'+str(f)+'.csv'
+                 req_file = EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RVx1c_'+RecBatchID+'_'+str(0)+'/RVx1c_'+RecBatchID+'_AnalyseSeedLinks_'+str(f)+'.csv'
                  progress=round((float(f)/float(N_Jobs))*100,2)
                  print(UF.TimeStamp(),'progress is ',progress,' %', end="\r", flush=True) #Progress display
             if os.path.isfile(req_file)==False:
