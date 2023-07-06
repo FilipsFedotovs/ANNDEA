@@ -720,13 +720,38 @@ while Status<len(Program):
                      Records=len(base_data)
         print(UF.TimeStamp(),'The pre-analysed reconstructed set contains', Records, '2-track link-fitted seeds',bcolors.ENDC)
         base_data['Seed_Link_Fit'] = base_data.apply(PM.Seed_Bond_Fit_Acceptance,axis=1)
-        print(base_data)
         base_data['Seed_Index'] = base_data.index
         base_data.drop(base_data.index[base_data['Seed_Link_Fit'] < PM.link_acceptance],inplace=True)  # Dropping the seeds that don't pass the link fit threshold
         base_data.drop(base_data.index[base_data['Seed_CNN_Fit'] < PM.pre_vx_acceptance],inplace=True)  # Dropping the seeds that don't pass the link fit threshold
         Records_After_Compression=len(base_data)
+        object_file_location = EOS_DIR + '/EDER-VIANN/Data/REC_SET/R4_R5_CNN_Fit_Seeds.pkl'
+        print(UF.TimeStamp(), bcolors.OKGREEN + "Evaluation result is saved in" + bcolors.ENDC,bcolors.OKBLUE + output_file_location + bcolors.ENDC)
+        print(UF.TimeStamp(), 'Decorating seed objects in ' + bcolors.ENDC,bcolors.OKBLUE + object_file_location + bcolors.ENDC)
+        base_data=base_data.values.tolist()
+        new_data=[]
+        for b in base_data:
+            new_data.append(b[6])
+        base_data=new_data
+        del new_data
         print(base_data)
         exit()
+        print(UF.TimeStamp(), 'Loading seed object data from ', bcolors.OKBLUE + object_file_location + bcolors.ENDC)
+        object_file = open(object_file_location, 'rb')
+        object_data = pickle.load(object_file)
+        object_file.close()
+        selected_objects=[]
+        for nd in range(len(base_data)):
+            selected_objects.append(object_data[base_data[nd]])
+            progress = round((float(nd) / float(len(base_data))) * 100, 1)
+            print(UF.TimeStamp(), 'Refining the seed objects, progress is ', progress, ' %', end="\r", flush=True)  # Progress display
+        del object_data
+        del base_data
+        gc.collect()
+        object_file_location = EOS_DIR + '/EDER-VIANN/Data/REC_SET/R5_R6_Link_Fit_Seeds.pkl'
+        obj_data_file=open(object_file_location,'wb')
+        pickle.dump(selected_objects,obj_data_file)
+        obj_data_file.close()
+        print(UF.TimeStamp(), bcolors.OKGREEN + str(len(selected_objects))+" seed objects are saved in" + bcolors.ENDC,bcolors.OKBLUE + object_file_location + bcolors.ENDC)
     #    output_file_location=EOS_DIR+'/EDER-VIANN/Data/REC_SET/R5_E4_LINK_FIT_SEEDS.csv'
     #    print(UF.TimeStamp(),'Out of', Records, ' seeds, only', Records_After_Compression, 'pass the link selection criteria...' ,bcolors.ENDC)
     #    base_data.to_csv(output_file_location,index=False)
