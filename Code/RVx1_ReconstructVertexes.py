@@ -790,47 +790,76 @@ while Status<len(Program):
         #Setting up folders for the output. The reconstruction of just one brick can easily generate >100k of files. Keeping all that blob in one directory can cause problems on lxplus.
         print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Create'))
         Result=StandardProcess(Program_Dummy,Status,FreshStart)
+        if Result:
+              print(UF.TimeStamp(), bcolors.OKGREEN + 'All HTCondor Seed Creation jobs have finished' + bcolors.ENDC)
+              print(UF.TimeStamp(), 'Collating the results...')
+              VertexPool=[]
+              for i in range(no_iter):
+                    progress = round((float(i) / float(no_iter)) * 100, 2)
+                    print(UF.TimeStamp(), 'progress is ', progress, ' %', end="\r", flush=True)
+                    required_file_location = EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RVx1d_'+RecBatchID+'_'+str(0)+'/RVx1d_'+RecBatchID+'_MergeVertices_'+str(f)+'.pkl'
+                    NewData=UF.PickleOperations(input_file_location,'r','N/A')[0]
+                    VertexPool+=NewData
+              print(UF.TimeStamp(), 'As a result of the previous operation',str(original_data_seeds),'seeds were merged into',str(len(VertexPool)),'vertices...')
+              comp_ratio = round((float(len(VertexPool)) / float(original_data_seeds)) * 100, 2)
+              print(UF.TimeStamp(), 'The compression ratio is',comp_ratio, '%...')
+              print(UF.TimeStamp(), 'Ok starting the final merging of the remained vertices')
+              InitialDataLength=len(VertexPool)
+              SeedCounter=0
+              SeedCounterContinue=True
+              while SeedCounterContinue:
+                  if SeedCounter==len(VertexPool):
+                                  SeedCounterContinue=False
+                                  break
+                  progress=round((float(SeedCounter)/float(len(VertexPool)))*100,0)
+                  print(UF.TimeStamp(),'progress is ',progress,' %', end="\r", flush=True) #Progress display
+                  SubjectSeed=VertexPool[SeedCounter]
+                  for ObjectSeed in VertexPool[SeedCounter+1:]:
+                              if SubjectSeed.InjectSeed(ObjectSeed):
+                                          VertexPool.pop(VertexPool.index(ObjectSeed))
+                  SeedCounter+=1
+              print(str(InitialDataLength), "vertices from different files were merged into", str(len(VertexPool)), 'vertices with higher multiplicity...')
+              exit()
+            #   for v in range(0,len(VertexPool)):
+            #       VertexPool[v].AssignCNNVxId(v)
+            #   output_file_location=EOS_DIR+'/EDER-VIANN/Data/REC_SET/R6_REC_VERTICES.pkl'
+            #   print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
+            #   print(UF.TimeStamp(), "Saving the results into the file",bcolors.OKBLUE+output_file_location+bcolors.ENDC)
+            #   open_file = open(output_file_location, "wb")
+            #   pickle.dump(VertexPool, open_file)
 
-    #     print(UF.TimeStamp(), bcolors.OKGREEN + 'All HTCondor Seed Creation jobs have finished' + bcolors.ENDC)
-    #     print(UF.TimeStamp(), 'Collating the results...')
-    #     VertexPool=[]
-    #     for i in range(no_iter):
-    #         progress = round((float(i) / float(no_iter)) * 100, 2)
-    #         print(UF.TimeStamp(), 'progress is ', progress, ' %', end="\r", flush=True)
-    #         required_file_location = EOS_DIR + '/EDER-VIANN/Data/REC_SET/R6_R6_Temp_Merged_Seeds_' + str(i) + '.pkl'
-    #         data_file = open(required_file_location, 'rb')
-    #         NewData=pickle.load(data_file)
-    #         data_file.close()
-    #         VertexPool+=NewData
-    #     print(UF.TimeStamp(), 'As a result of the previous operation',str(original_data_seeds),'seeds were merged into',str(len(VertexPool)),'vertices...')
-    #     comp_ratio = round((float(len(VertexPool)) / float(original_data_seeds)) * 100, 2)
-    #     print(UF.TimeStamp(), 'The compression ratio is',comp_ratio, '%...')
-    #     print(bcolors.BOLD + 'If you would like to reiterate the merging operation one more time please enter C' + bcolors.ENDC)
-    #     print(bcolors.BOLD + 'If you would like to merge all remaining vertices then enter F' + bcolors.ENDC)
-    #     UserAnswer = input(bcolors.BOLD + "Please, enter your option\n" + bcolors.ENDC)
-    #     if UserAnswer == 'C':
-    #         print(UF.TimeStamp(), 'OK, shuffling and preparing the set...')
-    #         random.shuffle(VertexPool)
-    #         output_file_location = EOS_DIR+'/EDER-VIANN/Data/REC_SET/R6_R6_Merged_Seeds_Temp.pkl'
-    #         open_file = open(output_file_location, "wb")
-    #         pickle.dump(VertexPool, open_file)
-    #         open_file.close()
-    #         print(UF.TimeStamp(), "Saving the temporarily file into", bcolors.OKBLUE + output_file_location + bcolors.ENDC)
-    #         UF.RecCleanUp(AFS_DIR, EOS_DIR, 'R6', ['R6_R6_Temp'], "SoftUsed == \"EDER-VIANN-R6\"")
-    #         no_iter = int(math.ceil(float(len(VertexPool) / float(PM.MaxSeedsPerVxPool))))
-    #         print(UF.TimeStamp(), "Submitting jobs to HTCondor...")
-    #         OptionHeader = [' --f ', ' --Set ', ' --EOS ', " --AFS ", ' --MaxPoolSeeds ']
-    #         OptionLine = [output_file_location, '$1', EOS_DIR, AFS_DIR, PM.MaxSeedsPerVxPool]
-    #         SHName = AFS_DIR + '/HTCondor/SH/SH_R6.sh'
-    #         SUBName = AFS_DIR + '/HTCondor/SUB/SUB_R6.sub'
-    #         MSGName = AFS_DIR + '/HTCondor/MSG/MSG_R6'
-    #         ScriptName = AFS_DIR + '/Code/Utilities/R6_BuildVertices_Sub.py '
-    #         UF.SubmitJobs2Condor(
-    #             [OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, no_iter, 'EDER-VIANN-R6', False,
-    #              False])
-    #         print(UF.TimeStamp(), bcolors.OKGREEN + "All ", no_iter,
-    #               " jobs have been submitted to HTCondor successfully..." + bcolors.ENDC)
-    #         exit()
+            #      if args.Log=='Y':
+            #       #try:
+            #         import pandas as pd
+            #         csv_out=[]
+            #         for Vx in VertexPool:
+            #          for Tr in Vx.TrackHeader:
+            #              csv_out.append([Tr,Vx.VX_CNN_ID])
+            #         print(UF.TimeStamp(),'Initiating the logging...')
+            #         eval_data_file=EOS_DIR+'/EDER-VIANN/Data/TEST_SET/E3_TRUTH_SEEDS.csv'
+            #         eval_data=pd.read_csv(eval_data_file,header=0,usecols=['Track_1','Track_2'])
+            #         eval_data["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(eval_data['Track_1'], eval_data['Track_2'])]
+            #         eval_data.drop(['Track_1'],axis=1,inplace=True)
+            #         eval_data.drop(['Track_2'],axis=1,inplace=True)
+            #         rec_no=0
+            #         eval_no=0
+            #         rec_list=[]
+            #         rec_1 = pd.DataFrame(csv_out, columns = ['Track_1','Seed_ID'])
+            #         rec_2 = pd.DataFrame(csv_out, columns = ['Track_2','Seed_ID'])
+            #         rec=pd.merge(rec_1, rec_2, how="inner", on=['Seed_ID'])
+            #         rec.drop(['Seed_ID'],axis=1,inplace=True)
+            #         rec.drop(rec.index[rec['Track_1'] == rec['Track_2']], inplace = True)
+            #         rec["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(rec['Track_1'], rec['Track_2'])]
+            #         rec.drop(['Track_1'],axis=1,inplace=True)
+            #         rec.drop(['Track_2'],axis=1,inplace=True)
+            #         rec.drop_duplicates(subset=['Seed_ID'], keep='first', inplace=True)
+            #         rec_eval=pd.merge(eval_data, rec, how="inner", on=['Seed_ID'])
+            #         eval_no=len(rec_eval)
+            #         rec_no=(len(rec)-len(rec_eval))
+            #         UF.LogOperations(EOS_DIR+'/EDER-VIANN/Data/REC_SET/R_LOG.csv', 'UpdateLog', [[6,'Vertex Building',rec_no,eval_no,eval_no/(rec_no+eval_no),eval_no/len(eval_data)]])
+            #         print(UF.TimeStamp(), bcolors.OKGREEN+"The log data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+EOS_DIR+'/EDER-VIANN/Data/REC_SET/R_LOG.csv'+bcolors.ENDC)
+                  # except:
+                  #   print(UF.TimeStamp(), bcolors.WARNING+'Log creation has failed'+bcolors.ENDC)
     #     base_data=UF.PickleOperations(input_file_location,'r','N/A')[0]
     #     print(UF.TimeStamp(), bcolors.OKGREEN+"Loading is successful, there are "+str(len(base_data))+" fit seeds..."+bcolors.ENDC)
     #     prog_entry=[]
