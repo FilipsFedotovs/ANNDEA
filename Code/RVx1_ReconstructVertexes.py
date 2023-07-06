@@ -739,7 +739,7 @@ while Status<len(Program):
             progress = round((float(nd) / float(len(base_data))) * 100, 1)
             print(UF.TimeStamp(), 'Refining the seed objects, progress is ', progress, ' %', end="\r", flush=True)  # Progress display
         if args.Log=='Y':
-         try:
+        #  try:
              print(UF.TimeStamp(),'Initiating the logging...')
              eval_data_file=EOS_DIR+'/ANNDEA/Data/TEST_SET/EVx1b_'+RecBatchID+'_SEED_TRUTH_COMBINATIONS.csv'
              eval_data=pd.read_csv(eval_data_file,header=0,usecols=['Segment_1','Segment_2'])
@@ -758,11 +758,10 @@ while Status<len(Program):
              rec_no=(len(rec)-len(rec_eval))
              UF.LogOperations(EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv', 'a', [[5,'Link Analysis',rec_no,eval_no,eval_no/(rec_no+eval_no),eval_no/len(eval_data)]])
              print(UF.TimeStamp(), bcolors.OKGREEN+"The log has been created successfully at "+bcolors.ENDC, bcolors.OKBLUE+EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv'+bcolors.ENDC)
-         except:
-              print(UF.TimeStamp(), bcolors.WARNING+'Log creation has failed'+bcolors.ENDC)
+        #  except:
+        #       print(UF.TimeStamp(), bcolors.WARNING+'Log creation has failed'+bcolors.ENDC)
         del object_data
         del base_data
-        gc.collect()
         output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RVx1c_'+RecBatchID+'_Link_Fit_Seeds.pkl'
         print(UF.PickleOperations(output_file_location,'w',selected_objects)[0])
         print(UF.TimeStamp(), bcolors.OKGREEN + str(len(selected_objects))+" seed objects are saved in" + bcolors.ENDC,bcolors.OKBLUE + output_file_location + bcolors.ENDC)
