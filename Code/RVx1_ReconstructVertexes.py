@@ -731,34 +731,42 @@ while Status<len(Program):
             new_data.append(b[6])
         base_data=new_data
         del new_data
-        print(base_data)
-        exit()
-        print(UF.TimeStamp(), 'Loading seed object data from ', bcolors.OKBLUE + object_file_location + bcolors.ENDC)
-        object_file = open(object_file_location, 'rb')
-        object_data = pickle.load(object_file)
-        object_file.close()
+        print(UF.TimeStamp(), 'Loading seed object data from ', bcolors.OKBLUE + input_file_location + bcolors.ENDC)
+        object_data = UF.PickleOperations(input_file_location,'r','N/A')[0]
         selected_objects=[]
         for nd in range(len(base_data)):
             selected_objects.append(object_data[base_data[nd]])
             progress = round((float(nd) / float(len(base_data))) * 100, 1)
             print(UF.TimeStamp(), 'Refining the seed objects, progress is ', progress, ' %', end="\r", flush=True)  # Progress display
+        if args.Log=='Y':
+         try:
+             print(UF.TimeStamp(),'Initiating the logging...')
+             eval_data_file=EOS_DIR+'/ANNDEA/Data/TEST_SET/EVx1b_'+RecBatchID+'_SEED_TRUTH_COMBINATIONS.csv'
+             eval_data=pd.read_csv(eval_data_file,header=0,usecols=['Segment_1','Segment_2'])
+             eval_data["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(eval_data['Segment_1'], eval_data['Segment_2'])]
+             eval_data.drop(['Segment_1'],axis=1,inplace=True)
+             eval_data.drop(['Segment_2'],axis=1,inplace=True)
+             eval_no=0
+             rec_no=0
+             rec=base_data[['Track_1','Track_2']]
+
+             rec["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(rec['Track_1'], rec['Track_2'])]
+             rec.drop(['Track_1'],axis=1,inplace=True)
+             rec.drop(['Track_2'],axis=1,inplace=True)
+             rec_eval=pd.merge(eval_data, rec, how="inner", on=['Seed_ID'])
+             eval_no=len(rec_eval)
+             rec_no=(len(rec)-len(rec_eval))
+             UF.LogOperations(EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv', 'a', [[5,'Link Analysis',rec_no,eval_no,eval_no/(rec_no+eval_no),eval_no/len(eval_data)]])
+             print(UF.TimeStamp(), bcolors.OKGREEN+"The log has been created successfully at "+bcolors.ENDC, bcolors.OKBLUE+EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv'+bcolors.ENDC)
+         except:
+              print(UF.TimeStamp(), bcolors.WARNING+'Log creation has failed'+bcolors.ENDC)
         del object_data
         del base_data
         gc.collect()
-        object_file_location = EOS_DIR + '/EDER-VIANN/Data/REC_SET/R5_R6_Link_Fit_Seeds.pkl'
-        obj_data_file=open(object_file_location,'wb')
-        pickle.dump(selected_objects,obj_data_file)
-        obj_data_file.close()
-        print(UF.TimeStamp(), bcolors.OKGREEN + str(len(selected_objects))+" seed objects are saved in" + bcolors.ENDC,bcolors.OKBLUE + object_file_location + bcolors.ENDC)
-    #    output_file_location=EOS_DIR+'/EDER-VIANN/Data/REC_SET/R5_E4_LINK_FIT_SEEDS.csv'
-    #    print(UF.TimeStamp(),'Out of', Records, ' seeds, only', Records_After_Compression, 'pass the link selection criteria...' ,bcolors.ENDC)
-    #    base_data.to_csv(output_file_location,index=False)
-    #         print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
-    #         print(UF.TimeStamp(),bcolors.BOLD+'Stage '+str(Status)+':'+bcolors.ENDC+' Analysing the fitted seeds')
-    #     output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RVx1c_'+RecBatchID+'_Fit_Filtered_Seeds.pkl'
-    #     print(UF.PickleOperations(output_file_location,'w',base_data)[0])
-    #     #no_iter=int(math.ceil(float(len(base_data)/float(MaxSegments))))
-    #     UpdateStatus(Status+1)
+        output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RVx1c_'+RecBatchID+'_Link_Fit_Seeds.pkl'
+        print(UF.PickleOperations(output_file_location,'w',selected_objects)[0])
+        print(UF.TimeStamp(), bcolors.OKGREEN + str(len(selected_objects))+" seed objects are saved in" + bcolors.ENDC,bcolors.OKBLUE + output_file_location + bcolors.ENDC)
+        UpdateStatus(Status+1)
     else:
          for md in range(len(ModelName)):
             if Program[Status]==ModelName[md]:
