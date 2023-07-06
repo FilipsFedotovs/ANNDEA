@@ -482,6 +482,9 @@ else:
 if Mode=='CLEANUP':
     UpdateStatus(19)
     Status=19
+UpdateStatus(6)    
+Status=6
+
 
 ###### Stage 2
 prog_entry=[]
@@ -681,13 +684,13 @@ while Status<len(Program):
         base_data=UF.PickleOperations(input_file_location,'r','N/A')[0]
         print(UF.TimeStamp(), bcolors.OKGREEN+"Loading is successful, there are "+str(len(base_data))+" fit seeds..."+bcolors.ENDC)
         prog_entry=[]
-        TotJobs=math.ceil(len(base_data)/MaxSeeds)
+        N_Jobs=math.ceil(len(base_data)/MaxSeeds)
         Program_Dummy=[]
         prog_entry.append(' Sending vertexes to the HTCondor, so vertex can be subject to link analysis...')
         prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','AnalyseSeedLinks','RVx1c','.csv',RecBatchID,TotJobs,'RVx1c_AnalyseSeedLinks_Sub.py'])
         prog_entry.append([" --MaxSegments "])
         prog_entry.append([MaxSeeds])
-        prog_entry.append(TotJobs)
+        prog_entry.append(N_Jobs)
         prog_entry.append(LocalSub)
         prog_entry.append(['',''])
         for dum in range(0,Status):
@@ -699,50 +702,39 @@ while Status<len(Program):
         print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Create'))
         Result=StandardProcess(Program_Dummy,Status,FreshStart)
         if Result:
+            print(UF.TimeStamp(),bcolors.OKGREEN+'All HTCondor Seed Creation jobs have finished'+bcolors.ENDC)
+            print(UF.TimeStamp(),'Collating the results...')
+            for f in range(N_Jobs):
+                 req_file = EOS_DIR+p+'/Temp_RVx1c_'+RecBatchID+'_'+str(0)+'/RVx1c_'+RecBatchID+'_AnalyseSeedLinks_'+str(f)+'.csv'
+                 progress=round((float(f)/float(N_Jobs))*100,2)
+                 print(UF.TimeStamp(),'progress is ',progress,' %', end="\r", flush=True) #Progress display
+            if os.path.isfile(req_file)==False:
+                 print(UF.TimeStamp(), bcolors.FAIL+"Critical fail: file",req_file,'is missing, please restart the script with the option "--Mode R"'+bcolors.ENDC)
+            elif os.path.isfile(req_file):
+                 if (f)==0:
+                     base_data = pd.read_csv(req_file,usecols=['Track_1', 'Track_2','Seed_CNN_Fit','Link_Strength','AntiLink_Strenth'])
+                 else:
+                     new_data = pd.read_csv(req_file,usecols=['Track_1', 'Track_2','Seed_CNN_Fit','Link_Strength','AntiLink_Strenth'])
+                     frames = [base_data, new_data]
+                     base_data = pd.concat(frames,ignore_index=True)
+                     Records=len(base_data)
+            print(base_data)
             exit()
-            print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
-            print(UF.TimeStamp(),bcolors.BOLD+'Stage '+str(Status)+':'+bcolors.ENDC+' Analysing the fitted seeds')
-            JobSet=[]
-            for i in range(len(JobSets)):
-                    JobSet.append([])
-                    for j in range(len(JobSets[i][3])):
-                        JobSet[i].append(JobSets[i][3][j])
-            base_data = None
-            with alive_bar(len(JobSets),force_tty=True, title='Checking the results from HTCondor') as bar:
-                for i in range(0,len(JobSet)):
-                    bar()
-                    for j in range(len(JobSet[i])):
-                                for k in range(JobSet[i][j]):
-                                    required_output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RVx1'+ModelName[md]+'_'+RecBatchID+'_'+str(i)+'/RVx1'+ModelName[md]+'_'+RecBatchID+'_RefinedSeeds_'+str(i)+'_'+str(j)+'_'+str(k)+'.pkl'
-                                    new_data=UF.PickleOperations(required_output_file_location,'r','N/A')[0]
-                                    print(UF.TimeStamp(),'Set',str(i)+'_'+str(j)+'_'+str(k), 'contains', len(new_data), 'seeds',bcolors.ENDC)
-                                    if base_data == None:
-                                        base_data = new_data
-                                    else:
-                                        base_data+=new_data
-            Records=len(base_data)
-            print(UF.TimeStamp(),'The output contains', Records, 'raw images',bcolors.ENDC)
-
-            base_data=list(set(base_data))
-            Records_After_Compression=len(base_data)
-            if Records>0:
-                                    Compression_Ratio=int((Records_After_Compression/Records)*100)
-            else:
-                                    CompressionRatio=0
-            print(UF.TimeStamp(),'The output compression ratio is ', Compression_Ratio, ' %',bcolors.ENDC)
-        with alive_bar(len(base_data),force_tty=True, title="Stripping non-z information from seeds...") as bar:
-            for tr in range(len(base_data)):
-                bar()
-                for t in range(len(base_data[tr].Hits)):
-                    for h in range(len(base_data[tr].Hits[t])):
-
-                        base_data[tr].Hits[t][h]=base_data[tr].Hits[t][h][2] #Remove scaling factors
-        base_data=[tr for tr in base_data if tr.Fit >= Acceptance]
-        print(UF.TimeStamp(), bcolors.OKGREEN+"The refining was successful, "+str(len(base_data))+" track seeds remain..."+bcolors.ENDC)
-        output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RVx1c_'+RecBatchID+'_Fit_Filtered_Seeds.pkl'
-        print(UF.PickleOperations(output_file_location,'w',base_data)[0])
-        #no_iter=int(math.ceil(float(len(base_data)/float(MaxSegments))))
-        UpdateStatus(Status+1)
+    #    print(UF.TimeStamp(),'The pre-analysed reconstructed set contains', Records, '2-track link-fitted seeds',bcolors.ENDC)
+    #    base_data['Seed_Link_Fit'] = base_data.apply(PM.Seed_Bond_Fit_Acceptance,axis=1)
+    #    base_data['Seed_Index'] = base_data.index
+    #    base_data.drop(base_data.index[base_data['Seed_Link_Fit'] < PM.link_acceptance],inplace=True)  # Dropping the seeds that don't pass the link fit threshold
+    #    base_data.drop(base_data.index[base_data['Seed_CNN_Fit'] < PM.pre_vx_acceptance],inplace=True)  # Dropping the seeds that don't pass the link fit threshold
+    #    Records_After_Compression=len(base_data)
+    #    output_file_location=EOS_DIR+'/EDER-VIANN/Data/REC_SET/R5_E4_LINK_FIT_SEEDS.csv'
+    #    print(UF.TimeStamp(),'Out of', Records, ' seeds, only', Records_After_Compression, 'pass the link selection criteria...' ,bcolors.ENDC)
+    #    base_data.to_csv(output_file_location,index=False)
+    #         print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
+    #         print(UF.TimeStamp(),bcolors.BOLD+'Stage '+str(Status)+':'+bcolors.ENDC+' Analysing the fitted seeds')
+    #     output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RVx1c_'+RecBatchID+'_Fit_Filtered_Seeds.pkl'
+    #     print(UF.PickleOperations(output_file_location,'w',base_data)[0])
+    #     #no_iter=int(math.ceil(float(len(base_data)/float(MaxSegments))))
+    #     UpdateStatus(Status+1)
     else:
          for md in range(len(ModelName)):
             if Program[Status]==ModelName[md]:
