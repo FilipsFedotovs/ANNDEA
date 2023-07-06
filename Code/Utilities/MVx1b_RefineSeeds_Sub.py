@@ -124,7 +124,7 @@ for s in range(0,limit):
 
      keep_seed=True
 
-     if track.VertexQualityCheck(MaxDOCA,MaxVXT, MaxAngle, FiducialVolumeCut):
+     if track.VertexQualityCheck(MaxDOCA, MaxVXT, MaxAngle, FiducialVolumeCut):
          if keep_seed:
             GoodTracks.append(track)
      else:
