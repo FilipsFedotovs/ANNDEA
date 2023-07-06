@@ -797,8 +797,8 @@ while Status<len(Program):
               for i in range(no_iter):
                     progress = round((float(i) / float(no_iter)) * 100, 2)
                     print(UF.TimeStamp(), 'progress is ', progress, ' %', end="\r", flush=True)
-                    required_file_location = EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RVx1d_'+RecBatchID+'_'+str(0)+'/RVx1d_'+RecBatchID+'_MergeVertices_'+str(f)+'.pkl'
-                    NewData=UF.PickleOperations(input_file_location,'r','N/A')[0]
+                    required_file_location = EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RVx1d_'+RecBatchID+'_'+str(0)+'/RVx1d_'+RecBatchID+'_MergeVertices_'+str(i)+'.pkl'
+                    NewData=UF.PickleOperations(required_file_location,'r','N/A')[0]
                     VertexPool+=NewData
               print(UF.TimeStamp(), 'As a result of the previous operation',str(original_data_seeds),'seeds were merged into',str(len(VertexPool)),'vertices...')
               comp_ratio = round((float(len(VertexPool)) / float(original_data_seeds)) * 100, 2)
