@@ -60,7 +60,6 @@ base_data=UF.PickleOperations(input_file_location,'r','N/A')[0]
 print(UF.TimeStamp(), "Loading is successful, there are total of "+str(len(base_data))+" vertexed seeds...")
 base_data=base_data[(i*MaxPoolSeeds):min(((i+1)*MaxPoolSeeds),len(base_data))]
 print(UF.TimeStamp(), "Out of these only "+str(len(base_data))+" vertexed seeds will be considered here...")
-output_file_location=EOS_DIR+'/EDER-VIANN/Data/REC_SET/R6_R6_Temp_Merged_Seeds_'+str(i)+'.pkl'
 print(UF.TimeStamp(), "Initiating the seed merging...")
 InitialDataLength=len(base_data)
 SeedCounter=0
