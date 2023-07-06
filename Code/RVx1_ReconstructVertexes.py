@@ -687,7 +687,7 @@ while Status<len(Program):
         N_Jobs=math.ceil(len(base_data)/MaxSeeds)
         Program_Dummy=[]
         prog_entry.append(' Sending vertexes to the HTCondor, so vertex can be subject to link analysis...')
-        prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','AnalyseSeedLinks','RVx1c','.csv',RecBatchID,TotJobs,'RVx1c_AnalyseSeedLinks_Sub.py'])
+        prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','AnalyseSeedLinks','RVx1c','.csv',RecBatchID,N_Jobs,'RVx1c_AnalyseSeedLinks_Sub.py'])
         prog_entry.append([" --MaxSegments "])
         prog_entry.append([MaxSeeds])
         prog_entry.append(N_Jobs)
