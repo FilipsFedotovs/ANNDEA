@@ -60,84 +60,77 @@ base_data=UF.PickleOperations(input_file_location,'r','N/A')[0]
 base_data_list=[]
 for b in base_data:
    base_data_mini_list = [b.Header[0],b.Header[1],b.Fit]
-   print(base_data_mini_list)
-   exit()
+   base_data_list.append(base_data_mini_list)
+data = pd.DataFrame(base_data_list,columns=['Track_1','Track_2','Seed_CNN_Fit'])
+print(data)
 
-print(UF.TimeStamp(),'Creating segment combinations... ')
+SeedStart=i*MaxSegments
+SeedEnd=min(len(data),(i+1)*MaxSegments)
+seeds=data.loc[SeedStart:SeedEnd-1]
+seeds_1=seeds.drop(['Track_2','Seed_CNN_Fit'],axis=1)
+seeds_1=seeds_1.rename(columns={"Track_1": "Track_ID"})
+seeds_2=seeds.drop(['Track_1','Seed_CNN_Fit'],axis=1)
+seeds_2=seeds_2.rename(columns={"Track_2": "Track_ID"})
+seed_list=result = pd.concat([seeds_1,seeds_2])
+seed_list=seed_list.sort_values(['Track_ID'])
+seed_list.drop_duplicates(subset="Track_ID",keep='first',inplace=True)
+data_l=pd.merge(seed_list,data , how="inner", left_on=["Track_ID"], right_on=["Track_1"] )
+data_l=data_l.drop(['Track_ID'],axis=1)
+data_r=pd.merge(seed_list, data , how="inner", left_on=["Track_ID"], right_on=["Track_2"] )
+data_r=data_r.drop(['Track_ID'],axis=1)
+data=pd.concat([data_l,data_r])
+data["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(data['Track_1'], data['Track_2'])]
+data.drop_duplicates(subset="Seed_ID",keep='first',inplace=True)
+data.drop(["Seed_ID"],axis=1,inplace=True)
+del seeds_1
+del seeds_2
+del seed_list
+del data_l
+del data_r
+data=data.values.tolist()
+seeds=seeds.values.tolist()
+for rows in seeds:
+    for i in range(4):
+       rows.append([])
+for seed in seeds:
+        for dt in data:
+           if (seed[0]==dt[0] and seed[1]!=dt[1]):
+              seed[3].append(dt[1])
+              seed[5].append(dt[2])
+           elif (seed[0]==dt[1] and seed[1]!=dt[0]):
+              seed[3].append(dt[0])
+              seed[5].append(dt[2])
+           if ((seed[1]==dt[0]) and seed[0]!=dt[1]):
+              seed[4].append(dt[1])
+              seed[6].append(dt[2])
+           elif (seed[1]==dt[1] and seed[0]!=dt[0]):
+              seed[4].append(dt[0])
+              seed[6].append(dt[2])
+        CommonSets = list(set(seed[3]).intersection(seed[4]))
+        LinkStrength=0.0
+        for CS in CommonSets:
+            Lindex=seed[3].index(CS)
+            Rindex=seed[4].index(CS)
+            LinkStrength+=seed[5][Lindex]
+            del seed[5][Lindex]
+            del seed[3][Lindex]
+            del seed[6][Rindex]
+            del seed[4][Rindex]
+        UnlinkStrength=sum(seed[6])+sum(seed[5])
+        seed.append(CommonSets)
+        CommonSetsNo= len(CommonSets)
+        OrthogonalSets=(len(seed[3])+len(seed[4]))
+        del seed[3:8]
+        seed.append(CommonSetsNo)
+        seed.append(OrthogonalSets)
+        seed.append(LinkStrength)
+        seed.append(UnlinkStrength)
+print(seeds)
+exit()
+Header=[['Track_1','Track_2','Seed_CNN_Fit', 'Links', 'AntiLinks', 'Link_Strength', 'AntiLink_Strenth']]
+UF.LogOperations(output_file_location,'StartLog', Header)
+UF.LogOperations(output_file_location,'UpdateLog', seeds)
 
-data_header = data.groupby('Rec_Seg_ID')['z'].min()  #Keeping only starting hits for the each track record (we do not require the full information about track in this script)
-data_header=data_header.reset_index()
-
-#Doing a plate region cut for the Main Data
-data_header.drop(data_header.index[data_header['z'] > (PlateZ+MaxDST)], inplace = True) #Not applicable for TSU
-data_header.drop(data_header.index[data_header['z'] < PlateZ], inplace = True)
-Records=len(data_header.axes[0])
-print(UF.TimeStamp(),'There are total of ', Records, 'tracks in the data set')
-
-Cut=math.ceil(MaxRecords/Records) #Even if use only a max of 20000 track on the right join we cannot perform the full outer join due to the memory limitations, we do it in a small 'cuts'
-Steps=math.ceil(MaxSegments/Cut)  #Calculating number of cuts
-data=pd.merge(data, data_header, how="inner", on=["Rec_Seg_ID","z"]) #Shrinking the Track data so just a star hit for each track is present.
-
-#What section of data will we cut?
-StartDataCut=j*MaxSegments
-EndDataCut=(j+1)*MaxSegments
-
-#Specifying the right join
-
-r_data=data.rename(columns={"x": "r_x"})
-r_data.drop(r_data.index[r_data['z'] != PlateZ], inplace = True)
-
-Records=len(r_data.axes[0])
-print(UF.TimeStamp(),'There are  ', Records, 'segments in the starting plate')
-
-r_data=r_data.iloc[StartDataCut:min(EndDataCut,Records)]
-
-Records=len(r_data.axes[0])
-print(UF.TimeStamp(),'However we will only attempt  ', Records, 'track segments in the starting plate')
-r_data=r_data.rename(columns={"y": "r_y"})
-r_data=r_data.rename(columns={"z": "r_z"})
-data=data.rename(columns={"Rec_Seg_ID": "Track_1"})
-r_data=r_data.rename(columns={"Rec_Seg_ID": "Track_2"})
-data['join_key'] = 'join_key'
-r_data['join_key'] = 'join_key'
-
-result_list=[]  #We will keep the result in list rather then Panda Dataframe to save memory
-
-#Downcasting Panda Data frame data types in order to save memory
-data["x"] = pd.to_numeric(data["x"],downcast='float')
-data["y"] = pd.to_numeric(data["y"],downcast='float')
-data["z"] = pd.to_numeric(data["z"],downcast='float')
-
-
-r_data["r_x"] = pd.to_numeric(r_data["r_x"],downcast='float')
-r_data["r_y"] = pd.to_numeric(r_data["r_y"],downcast='float')
-r_data["r_z"] = pd.to_numeric(r_data["r_z"],downcast='float')
-
-#Cleaning memory
-del data_header
-gc.collect()
-
-#Creating csv file for the results
-UF.LogOperations(output_file_location,'w',result_list)
-#This is where we start
-
-for i in range(0,Steps):
-  r_temp_data=r_data.iloc[0:min(Cut,len(r_data.axes[0]))] #Taking a small slice of the data
-  r_data.drop(r_data.index[0:min(Cut,len(r_data.axes[0]))],inplace=True) #Shrinking the right join dataframe
-  merged_data=pd.merge(data, r_temp_data, how="inner", on=['join_key']) #Merging Tracks to check whether they could form a seed
-  merged_data['separation']=np.sqrt(((merged_data['x']-merged_data['r_x'])**2)+((merged_data['y']-merged_data['r_y'])**2)+((merged_data['z']-merged_data['r_z'])**2)) #Calculating the Euclidean distance between Track start hits
-  merged_data.drop(merged_data.index[merged_data['separation'] >= MaxDST], inplace = True) #Dropping the track segment combinations where the length of the gap between segments is too large
-  merged_data.drop(['y','z','x','r_x','r_y','r_z','join_key','separation'],axis=1,inplace=True) #Removing the information that we don't need anymore
-  if merged_data.empty==False:
-    merged_data.drop(merged_data.index[merged_data['Track_1'] == merged_data['Track_2']], inplace = True) #Removing the cases where Seed tracks are the same
-    merged_list = merged_data.values.tolist() #Convirting the result to List data type
-    result_list+=merged_list #Adding the result to the list
-  if len(result_list)>=2000000: #Once the list gets too big we dump the results into csv to save memory
-      UF.LogOperations(output_file_location,'a',result_list) #Write to the csv
-      #Clearing the memory
-      del result_list
-      result_list=[]
-      gc.collect()
 UF.LogOperations(output_file_location,'a',result_list) #Writing the remaining data into the csv
 UF.LogOperations(output_result_location,'w',[])
 print(UF.TimeStamp(), "Seed generation is finished...")
