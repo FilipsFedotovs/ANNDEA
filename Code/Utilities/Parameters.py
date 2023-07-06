@@ -27,6 +27,7 @@ stepY=6000
 stepZ=12000
 cut_dt=0.2
 cut_dr=60
+MaxSeedsPerVxPool=20000
 testRatio=0.05
 MaxValSampleSize=50000
 num_node_features=5
