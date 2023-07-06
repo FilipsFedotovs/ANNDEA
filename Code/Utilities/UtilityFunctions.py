@@ -690,6 +690,8 @@ class EMO:
           del __TempTrack
       def AssignANNTrUID(self,ID):
           self.UTrID=ID
+      def AssignANNVxUID(self,ID):
+          self.UVxID=ID
       def PrepareSeedGraph(self,MM):
           if MM.ModelArchitecture[-5:]=='4N-IC':
                       __TempTrack=copy.deepcopy(self.Hits)

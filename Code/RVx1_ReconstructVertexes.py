@@ -819,47 +819,39 @@ while Status<len(Program):
                                           VertexPool.pop(VertexPool.index(ObjectSeed))
                   SeedCounter+=1
               print(str(InitialDataLength), "vertices from different files were merged into", str(len(VertexPool)), 'vertices with higher multiplicity...')
-              exit()
-            #   for v in range(0,len(VertexPool)):
-            #       VertexPool[v].AssignCNNVxId(v)
-            #   output_file_location=EOS_DIR+'/EDER-VIANN/Data/REC_SET/R6_REC_VERTICES.pkl'
-            #   print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
-            #   print(UF.TimeStamp(), "Saving the results into the file",bcolors.OKBLUE+output_file_location+bcolors.ENDC)
-            #   open_file = open(output_file_location, "wb")
-            #   pickle.dump(VertexPool, open_file)
-
-            #      if args.Log=='Y':
-            #       #try:
-            #         import pandas as pd
-            #         csv_out=[]
-            #         for Vx in VertexPool:
-            #          for Tr in Vx.TrackHeader:
-            #              csv_out.append([Tr,Vx.VX_CNN_ID])
-            #         print(UF.TimeStamp(),'Initiating the logging...')
-            #         eval_data_file=EOS_DIR+'/EDER-VIANN/Data/TEST_SET/E3_TRUTH_SEEDS.csv'
-            #         eval_data=pd.read_csv(eval_data_file,header=0,usecols=['Track_1','Track_2'])
-            #         eval_data["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(eval_data['Track_1'], eval_data['Track_2'])]
-            #         eval_data.drop(['Track_1'],axis=1,inplace=True)
-            #         eval_data.drop(['Track_2'],axis=1,inplace=True)
-            #         rec_no=0
-            #         eval_no=0
-            #         rec_list=[]
-            #         rec_1 = pd.DataFrame(csv_out, columns = ['Track_1','Seed_ID'])
-            #         rec_2 = pd.DataFrame(csv_out, columns = ['Track_2','Seed_ID'])
-            #         rec=pd.merge(rec_1, rec_2, how="inner", on=['Seed_ID'])
-            #         rec.drop(['Seed_ID'],axis=1,inplace=True)
-            #         rec.drop(rec.index[rec['Track_1'] == rec['Track_2']], inplace = True)
-            #         rec["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(rec['Track_1'], rec['Track_2'])]
-            #         rec.drop(['Track_1'],axis=1,inplace=True)
-            #         rec.drop(['Track_2'],axis=1,inplace=True)
-            #         rec.drop_duplicates(subset=['Seed_ID'], keep='first', inplace=True)
-            #         rec_eval=pd.merge(eval_data, rec, how="inner", on=['Seed_ID'])
-            #         eval_no=len(rec_eval)
-            #         rec_no=(len(rec)-len(rec_eval))
-            #         UF.LogOperations(EOS_DIR+'/EDER-VIANN/Data/REC_SET/R_LOG.csv', 'UpdateLog', [[6,'Vertex Building',rec_no,eval_no,eval_no/(rec_no+eval_no),eval_no/len(eval_data)]])
-            #         print(UF.TimeStamp(), bcolors.OKGREEN+"The log data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+EOS_DIR+'/EDER-VIANN/Data/REC_SET/R_LOG.csv'+bcolors.ENDC)
-                  # except:
-                  #   print(UF.TimeStamp(), bcolors.WARNING+'Log creation has failed'+bcolors.ENDC)
+              for v in range(0,len(VertexPool)):
+                  VertexPool[v].AssignANNVxUID(v)
+              if args.Log=='Y':
+                  #try:
+                    csv_out=[]
+                    for Vx in VertexPool:
+                     for Tr in Vx.Header:
+                         csv_out.append([Tr,Vx.UVxID])
+                    print(UF.TimeStamp(),'Initiating the logging...')
+                    eval_data_file=EOS_DIR+'/ANNDEA/Data/TEST_SET/EVx1b_'+RecBatchID+'_SEED_TRUTH_COMBINATIONS.csv'
+                    eval_data=pd.read_csv(eval_data_file,header=0,usecols=['Segment_1','Segment_2'])
+                    eval_data["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(eval_data['Segment_1'], eval_data['Segment_2'])]
+                    eval_data.drop(['Segment_1'],axis=1,inplace=True)
+                    eval_data.drop(['Segment_2'],axis=1,inplace=True)
+                    rec_no=0
+                    eval_no=0
+                    rec_list=[]
+                    rec_1 = pd.DataFrame(csv_out, columns = ['Track_1','Seed_ID'])
+                    rec_2 = pd.DataFrame(csv_out, columns = ['Track_2','Seed_ID'])
+                    rec=pd.merge(rec_1, rec_2, how="inner", on=['Seed_ID'])
+                    rec.drop(['Seed_ID'],axis=1,inplace=True)
+                    rec.drop(rec.index[rec['Track_1'] == rec['Track_2']], inplace = True)
+                    rec["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(rec['Track_1'], rec['Track_2'])]
+                    rec.drop(['Track_1'],axis=1,inplace=True)
+                    rec.drop(['Track_2'],axis=1,inplace=True)
+                    rec.drop_duplicates(subset=['Seed_ID'], keep='first', inplace=True)
+                    rec_eval=pd.merge(eval_data, rec, how="inner", on=['Seed_ID'])
+                    eval_no=len(rec_eval)
+                    rec_no=(len(rec)-len(rec_eval))
+                    UF.LogOperations(EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv', 'a', [[6,'Vertex Merging',rec_no,eval_no,eval_no/(rec_no+eval_no),eval_no/len(eval_data)]])
+                    print(UF.TimeStamp(), bcolors.OKGREEN+"The log has been created successfully at "+bcolors.ENDC, bcolors.OKBLUE+EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv'+bcolors.ENDC)
+              #except:
+                    print(UF.TimeStamp(), bcolors.WARNING+'Log creation has failed'+bcolors.ENDC)
     #     base_data=UF.PickleOperations(input_file_location,'r','N/A')[0]
     #     print(UF.TimeStamp(), bcolors.OKGREEN+"Loading is successful, there are "+str(len(base_data))+" fit seeds..."+bcolors.ENDC)
     #     prog_entry=[]
