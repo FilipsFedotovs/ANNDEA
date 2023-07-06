@@ -189,7 +189,8 @@ with alive_bar(tot_jobs,force_tty=True, title='Optimising the alignment configur
        am.append(res.x)
        print('Overall fit value:',FitPlateFixedX(0))
        iterator += 1
-       local_logdata = ["global vertical-horizontal plate alignment XY", iterator, p[0], FitPlateFixedX(0), MinHits]
+       Angle_radian = np.arctan2(dy, dx)
+       local_logdata = ["global vertical-horizontal plate alignment XY", iterator, p[0], FitPlateFixedX(0), MinHits, Angle_radian]
        global_logdata.append(local_logdata)
        bar()
        res = minimize_scalar(FitPlateFixedY, bounds=(-500, 500), method='bounded')
@@ -197,12 +198,13 @@ with alive_bar(tot_jobs,force_tty=True, title='Optimising the alignment configur
        am.append(res.x)
        bar()
        iterator += 1
-       local_logdata = ["global vertical-horizontal plate alignment XY", iterator, p[0], FitPlateFixedY(0), MinHits]
+       Angle_radian = np.arctan2(dy, dx)
+       local_logdata = ["global vertical-horizontal plate alignment XY", iterator, p[0], FitPlateFixedY(0), MinHits, Angle_radian]
        global_logdata.append(local_logdata)
     
        print('Overall fit value:',FitPlateFixedY(0))
        alignment_map.append(am)
-global_logdata = pd.DataFrame(global_logdata, columns = ['alignment type', 'iteration', 'plate location', 'Overall fit value', 'Min Hits'])
+global_logdata = pd.DataFrame(global_logdata, columns = ['alignment type', 'iteration', 'plate location', 'Overall fit value', 'Min Hits', 'Angle_radian'])
 global_logdata.to_csv(output_log_location,index=False)
 
 print(UF.TimeStamp(),'Aligning the brick...')
