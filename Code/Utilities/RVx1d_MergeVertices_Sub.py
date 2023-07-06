@@ -77,8 +77,5 @@ while SeedCounterContinue:
            base_data.pop(base_data.index(ObjectSeed))
     SeedCounter+=1
 print(str(InitialDataLength), "2-track vertices were merged into", str(len(base_data)), 'vertices with higher multiplicity...')
-exit()
-open_file = open(output_file_location, "wb")
-pickle.dump(base_data, open_file)
-open_file.close()
-print(UF.TimeStamp(), "Saving the results into the file",bcolors.OKBLUE+output_file_location+bcolors.ENDC)
+print(UF.PickleOperations(output_file_location,'w', base_data)[1])
+print(UF.TimeStamp(), "Saving the results into the file",output_file_location)
