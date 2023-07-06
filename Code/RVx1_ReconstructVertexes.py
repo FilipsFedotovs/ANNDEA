@@ -791,34 +791,6 @@ while Status<len(Program):
         print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Create'))
         Result=StandardProcess(Program_Dummy,Status,FreshStart)
 
-    # for i in range(no_iter):
-    #     required_file_location = EOS_DIR + '/EDER-VIANN/Data/REC_SET/R6_R6_Temp_Merged_Seeds_' + str(i) + '.pkl'
-    #     if os.path.isfile(required_file_location) == False:
-    #         OptionHeader = [' --f ', ' --Set ', ' --EOS ', " --AFS ", ' --MaxPoolSeeds ']
-    #         OptionLine = [input_file_location, i, EOS_DIR, AFS_DIR, PM.MaxSeedsPerVxPool]
-    #         SHName = AFS_DIR + '/HTCondor/SH/SH_R6_'+str(i)+'.sh'
-    #         SUBName = AFS_DIR + '/HTCondor/SUB/SUB_R6_'+str(i)+'.sub'
-    #         MSGName = AFS_DIR + '/HTCondor/MSG/MSG_R6_'+str(i)
-    #         ScriptName = AFS_DIR + '/Code/Utilities/R6_BuildVertices_Sub.py '
-    #         bad_pop.append(
-    #             [OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, 1, 'EDER-VIANN-R6', False,
-    #              False])
-    # if len(bad_pop)>0:
-    #     print(UF.TimeStamp(), bcolors.WARNING + 'Warning, there are still', len(bad_pop),
-    #           'HTCondor jobs remaining' + bcolors.ENDC)
-    #     print(bcolors.BOLD + 'If you would like to wait and try again later please enter W' + bcolors.ENDC)
-    #     print(bcolors.BOLD + 'If you would like to resubmit please enter R' + bcolors.ENDC)
-    #     UserAnswer = input(bcolors.BOLD + "Please, enter your option\n" + bcolors.ENDC)
-    #     if UserAnswer == 'W':
-    #         print(UF.TimeStamp(), 'OK, exiting now then')
-    #         exit()
-    #     if UserAnswer == 'R':
-    #         for bp in bad_pop:
-    #             UF.SubmitJobs2Condor(bp)
-    #         print(UF.TimeStamp(), bcolors.OKGREEN + "All jobs have been resubmitted" + bcolors.ENDC)
-    #         print(bcolors.BOLD + "Please check them in few hours" + bcolors.ENDC)
-    #         exit()
-    # else:
     #     print(UF.TimeStamp(), bcolors.OKGREEN + 'All HTCondor Seed Creation jobs have finished' + bcolors.ENDC)
     #     print(UF.TimeStamp(), 'Collating the results...')
     #     VertexPool=[]
