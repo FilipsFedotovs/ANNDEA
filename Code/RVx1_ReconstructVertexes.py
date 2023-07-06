@@ -724,8 +724,6 @@ while Status<len(Program):
         base_data.drop(base_data.index[base_data['Seed_Link_Fit'] < PM.link_acceptance],inplace=True)  # Dropping the seeds that don't pass the link fit threshold
         base_data.drop(base_data.index[base_data['Seed_CNN_Fit'] < PM.pre_vx_acceptance],inplace=True)  # Dropping the seeds that don't pass the link fit threshold
         Records_After_Compression=len(base_data)
-        object_file_location = EOS_DIR + '/EDER-VIANN/Data/REC_SET/R4_R5_CNN_Fit_Seeds.pkl'
-        print(UF.TimeStamp(), bcolors.OKGREEN + "Evaluation result is saved in" + bcolors.ENDC,bcolors.OKBLUE + output_file_location + bcolors.ENDC)
         print(UF.TimeStamp(), 'Decorating seed objects in ' + bcolors.ENDC,bcolors.OKBLUE + object_file_location + bcolors.ENDC)
         base_data=base_data.values.tolist()
         new_data=[]
