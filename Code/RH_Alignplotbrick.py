@@ -127,7 +127,7 @@ def FitPlate(PlateZ,input_data):
     temp_data=temp_data[['x','y','Plate_ID','d_r', 'd_x', 'd_y']]
     temp_data['angle']=np.arctan2(temp_data['d_y'],temp_data['d_x'])
     print(temp_data)
-    temp_data['angle']=np.degree(temp_data['angle'])
+    temp_data['angle']=np.degrees(temp_data['angle'])
     temp_data = temp_data[temp_data.Plate_ID == PlateZ]
     print(temp_data)
     exit()
