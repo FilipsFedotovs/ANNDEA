@@ -132,12 +132,14 @@ def FitPlate(PlateZ,input_data):
     import matplotlib
     temp_data.plot.scatter(x='x',
                              y='y',
-                            c='d_r')
+                            c='d_r').savefig('Test2.png')
+                            
     import matplotlib.pyplot as plt
     a = np.random.random((16, 16))
     plt.imshow(a, cmap='hot', interpolation='nearest')
-    plt.show()
+    plt.savefig('Test.png')
     print(temp_data)
+    
     exit()
 
 ########################################     Phase 1 - Create compact source file    #########################################
