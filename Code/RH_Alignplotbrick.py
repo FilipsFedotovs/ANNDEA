@@ -131,7 +131,7 @@ def FitPlate(PlateZ,input_data):
     temp_data=temp_data.drop(['Plate_ID','d_x','d_y'],axis=1)
     pd.DataFrame.plot.scatter(x=temp_data['x'],
                              y=temp_data['y'],
-                             c=temp_data['d_r'])
+                             s=temp_data['d_r'],c=temp_data['d_r'])
     print(temp_data)
     exit()
 
