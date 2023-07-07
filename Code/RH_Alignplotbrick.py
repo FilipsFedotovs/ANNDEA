@@ -125,9 +125,8 @@ def FitPlate(PlateZ,input_data):
     temp_data['d_r'] = temp_data['d_r'].astype(float)
     temp_data['d_r']=np.sqrt(temp_data['d_r']) #Absolute distance
     temp_data=temp_data[['x','y','Plate_ID','d_r', 'd_x', 'd_y']]
-    temp_data['dyx']=temp_data['d_y']/temp_data['d_x']
-    temp_data['angle']=np.arctan2(temp_data['dyx'])
-    print(temp_data['dyx'])
+    temp_data['angle']=np.arctan2(temp_data['d_y'],['dx'])
+    print(temp_data)
     temp_data['angle']=np.degree(temp_data['angle'])
     temp_data = temp_data[temp_data.Plate_ID == PlateZ]
     print(temp_data)
