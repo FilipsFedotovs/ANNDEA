@@ -129,7 +129,7 @@ def FitPlate(PlateZ,input_data):
     print(temp_data)
     temp_data['angle']=np.degrees(temp_data['angle'])
     temp_data = temp_data[temp_data.Plate_ID == PlateZ]
-    temp_data=temp_data.loc[(temp_data['d_y'] >= 0) & (temp_data['d_x'] <= 0 )]
+    temp_data=temp_data.loc[(temp_data['d_y'] >= 0) & (temp_data['d_x'] >= 0 )]
     print(temp_data)
     exit()
     temp_data=temp_data.groupby(['FEDRA_Track_ID','Track_Hit_No']).agg({'d_r':'sum'}).reset_index()
