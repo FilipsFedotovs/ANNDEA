@@ -133,6 +133,10 @@ def FitPlate(PlateZ,input_data):
     temp_data.plot.scatter(x='x',
                              y='y',
                             c='d_r')
+    import matplotlib.pyplot as plt
+    a = np.random.random((16, 16))
+    plt.imshow(a, cmap='hot', interpolation='nearest')
+    plt.show()
     print(temp_data)
     exit()
 
