@@ -129,6 +129,7 @@ def FitPlate(PlateZ,input_data):
     temp_data['angle']=np.degrees(temp_data['angle'])
     temp_data = temp_data[temp_data.Plate_ID == PlateZ]
     temp_data=temp_data.drop(['Plate_ID','d_x','d_y'],axis=1)
+    ax.scatter(temp_data.d_x, temp_data.d_y, c=temp_data.d_r,  cmap="copper")
     print(temp_data)
     exit()
 
