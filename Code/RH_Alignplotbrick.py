@@ -129,15 +129,11 @@ def FitPlate(PlateZ,input_data):
     temp_data['angle']=np.degrees(temp_data['angle'])
     temp_data = temp_data[temp_data.Plate_ID == PlateZ]
     temp_data=temp_data.drop(['Plate_ID','d_x','d_y'],axis=1)
-    import matplotlib
-    temp_data.plot.scatter(x='x',
-                             y='y',
-                            c='d_r').savefig('Test2.png')
-                            
+    import seaborn as sns
     import matplotlib.pyplot as plt
-    a = np.random.random((16, 16))
-    plt.imshow(a, cmap='hot', interpolation='nearest')
-    plt.savefig('Test.png')
+
+    sns.heatmap(temp_data.pivot(index='y', columns='x', values='d_r'))
+    plt.show()
     print(temp_data)
     
     exit()
