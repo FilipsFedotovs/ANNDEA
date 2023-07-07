@@ -130,10 +130,9 @@ def FitPlate(PlateZ,input_data):
     temp_data = temp_data[temp_data.Plate_ID == PlateZ]
     temp_data=temp_data.drop(['Plate_ID','d_x','d_y'],axis=1)
     import matplotlib
-    ax=temp_data.plot.scatter(x='x',
+    temp_data.plot.scatter(x='x',
                              y='y',
                             c='d_r')
-    ax.show()
     print(temp_data)
     exit()
 
