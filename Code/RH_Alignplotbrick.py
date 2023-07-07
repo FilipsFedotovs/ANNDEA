@@ -126,17 +126,11 @@ def FitPlate(PlateZ,input_data):
     temp_data['d_r']=np.sqrt(temp_data['d_r']) #Absolute distance
     temp_data=temp_data[['x','y','Plate_ID','d_r', 'd_x', 'd_y']]
     temp_data['angle']=np.arctan2(temp_data['d_y'],temp_data['d_x'])
-    print(temp_data)
     temp_data['angle']=np.degrees(temp_data['angle'])
     temp_data = temp_data[temp_data.Plate_ID == PlateZ]
-    temp_data=temp_data.loc[(temp_data['d_y'] <= 0) & (temp_data['d_x'] >= 0 )]
+    temp_data=temp_data.drop(['Plate_ID','d_x','d_y'],axis=1)
     print(temp_data)
     exit()
-    temp_data=temp_data.groupby(['FEDRA_Track_ID','Track_Hit_No']).agg({'d_r':'sum'}).reset_index()
-    temp_data=temp_data.agg({'d_r':'sum','Track_Hit_No':'sum'})
-    temp_data=temp_data.values.tolist()
-    fit=temp_data[0]/temp_data[1]
-    return fit
 
 ########################################     Phase 1 - Create compact source file    #########################################
 print(UF.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+initial_input_file_location+bcolors.ENDC)
