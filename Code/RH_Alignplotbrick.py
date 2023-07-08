@@ -145,7 +145,8 @@ def FitPlate(PlateZ,input_data):
     plt.colorbar(label='dr')
     plt.xlabel('x')
     plt.ylabel('y')
-    plt.title('Residual Heatmap') #WC End of addition code
+    plt.title('Residual Heatmap')
+    plt.savefig('Heatmap.png')    #WC End of addition code
 
     sns.heatmap(temp_data.pivot(index='y', columns='x', values='d_r'))
     plt.show()
