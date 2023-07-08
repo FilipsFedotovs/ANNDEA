@@ -67,7 +67,7 @@ MinHits=int(args.MinHits)
 output_file_location=initial_input_file_location[:-4]+'_Re-Aligned_'+str(MinHits)+'.csv'
 output_log_location=initial_input_file_location[:-4]+'_Alignment-log_'+str(MinHits)+'.csv'
 output_temp_location=initial_input_file_location[:-4]+'_Alignment-start_'+str(MinHits)+'.csv'
-
+residuals = []     #WC create list to store residual
 def FitPlate(PlateZ,input_data):
     change_df = pd.DataFrame([[PlateZ]], columns = ['Plate_ID'])
     temp_data=input_data[['FEDRA_Track_ID','x','y','z','Track_Hit_No','Plate_ID']]
@@ -77,6 +77,8 @@ def FitPlate(PlateZ,input_data):
     Tracks_Head.drop_duplicates(inplace=True)
     Tracks_List=temp_data.values.tolist() #I find it is much easier to deal with tracks in list format when it comes to fitting
     Tracks_Head=Tracks_Head.values.tolist()
+    for _, row in temp_data.iterrows(): #WC append residuals to list
+        residuals.append({"x": row["x"], "y": row["y"], "dr": row["d_r"]})
     #Bellow we build the track representatation that we can use to fit slopes
     for bth in Tracks_Head:
                    bth.append([])
@@ -131,6 +133,18 @@ def FitPlate(PlateZ,input_data):
     temp_data=temp_data.drop(['Plate_ID','d_x','d_y'],axis=1)
     import seaborn as sns
     import matplotlib.pyplot as plt
+    residuals_df = pd.DataFrame(residuals) #WC
+    num_bins = 50
+    residuals_df['x_bin'] = pd.cut(residuals_df['x'], bins=num_bins, labels=False)
+    residuals_df['y_bin'] = pd.cut(residuals_df['y'], bins=num_bins, labels=False)
+    heatmap_data = residuals_df.groupby(['x_bin', 'y_bin'])['dr'].mean().reset_index()
+    heatmap_data = heatmap_data.pivot('y_bin', 'x_bin', 'dr')
+    plt.figure(figsize=(10,10))
+    plt.imshow(heatmap_data, cmap='hot', origin='lower')
+    plt.colorbar(label='dr')
+    plt.xlabel('x')
+    plt.ylabel('y')
+    plt.title('Residual Heatmap') #WC End of addition code
 
     sns.heatmap(temp_data.pivot(index='y', columns='x', values='d_r'))
     plt.show()
