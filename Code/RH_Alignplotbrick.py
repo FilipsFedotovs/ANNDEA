@@ -77,8 +77,7 @@ def FitPlate(PlateZ,input_data):
     Tracks_Head.drop_duplicates(inplace=True)
     Tracks_List=temp_data.values.tolist() #I find it is much easier to deal with tracks in list format when it comes to fitting
     Tracks_Head=Tracks_Head.values.tolist()
-    for _, row in temp_data.iterrows(): #WC append residuals to list
-        residuals.append({"x": row["x"], "y": row["y"], "dr": row["d_r"]})
+    
     #Bellow we build the track representatation that we can use to fit slopes
     for bth in Tracks_Head:
                    bth.append([])
@@ -131,6 +130,8 @@ def FitPlate(PlateZ,input_data):
     temp_data['angle']=np.degrees(temp_data['angle'])
     temp_data = temp_data[temp_data.Plate_ID == PlateZ]
     temp_data=temp_data.drop(['Plate_ID','d_x','d_y'],axis=1)
+    for _, row in temp_data.iterrows(): #WC append residuals to list
+        residuals.append({"x": row["x"], "y": row["y"], "dr": row["d_r"]})
     import seaborn as sns
     import matplotlib.pyplot as plt
     residuals_df = pd.DataFrame(residuals) #WC
