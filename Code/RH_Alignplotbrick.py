@@ -59,7 +59,7 @@ parser = argparse.ArgumentParser(description='This script prepares training data
 
 parser.add_argument('--MinHits',help="What is the minimum number of hits per track?", default='2')
 parser.add_argument('--f',help="Please enter the full path to the file with track reconstruction", default='/afs/cern.ch/work/f/ffedship/public/SHIP/Source_Data/SHIP_Emulsion_Rec_Raw_UR.csv')
-
+parser.add_argument('--Bin',help="Binning size", default=50,type=int)
 ######################################## Parsing argument values  #############################################################
 args = parser.parse_args()
 initial_input_file_location=args.f
@@ -139,7 +139,7 @@ def FitPlate(PlateZ,input_data):
     
     residuals_df = pd.DataFrame(residuals)
     print(residuals_df)   #WC
-    num_bins = 50
+    num_bins = args.Bin
     residuals_df['x_bin'] = pd.cut(residuals_df['x'], bins=num_bins, labels=False)
     residuals_df['y_bin'] = pd.cut(residuals_df['y'], bins=num_bins, labels=False)
     heatmap_data = residuals_df.groupby(['x_bin', 'y_bin'])['dr'].mean().reset_index()
