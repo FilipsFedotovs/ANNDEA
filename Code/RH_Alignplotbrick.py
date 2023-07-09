@@ -130,18 +130,24 @@ def FitPlate(PlateZ,input_data):
     temp_data['angle']=np.degrees(temp_data['angle'])
     temp_data = temp_data[temp_data.Plate_ID == PlateZ]
     temp_data=temp_data.drop(['Plate_ID','d_x','d_y'],axis=1)
+    print(temp_data)
+    
     for _, row in temp_data.iterrows(): #WC append residuals to list
         residuals.append({"x": row["x"], "y": row["y"], "dr": row["d_r"]})
     #import seaborn as sns
     #import matplotlib.pyplot as plt
-    residuals_df = pd.DataFrame(residuals) #WC
+    
+    residuals_df = pd.DataFrame(residuals)
+    print(residuals_df)   #WC
     num_bins = 50
     residuals_df['x_bin'] = pd.cut(residuals_df['x'], bins=num_bins, labels=False)
     residuals_df['y_bin'] = pd.cut(residuals_df['y'], bins=num_bins, labels=False)
     heatmap_data = residuals_df.groupby(['x_bin', 'y_bin'])['dr'].mean().reset_index()
     heatmap_data = heatmap_data.pivot('y_bin', 'x_bin', 'dr')
+    print(heatmap_data)
     #WC End of addition code
     return heatmap_data
+
     
     
 ########################################     Phase 1 - Create compact source file    #########################################
