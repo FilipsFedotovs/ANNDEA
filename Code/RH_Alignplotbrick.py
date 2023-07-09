@@ -61,16 +61,19 @@ parser.add_argument('--MinHits',help="What is the minimum number of hits per tra
 parser.add_argument('--f',help="Please enter the full path to the file with track reconstruction", default='/afs/cern.ch/work/f/ffedship/public/SHIP/Source_Data/SHIP_Emulsion_Rec_Raw_UR.csv')
 parser.add_argument('--Bin',help="Binning size", default=50,type=int)
 parser.add_argument('--Plate',help="Plate ID", default=0,type=int)
+parser.add_argument('--PlotType',help="Plot", default='residual')
+
 
 ######################################## Parsing argument values  #############################################################
 args = parser.parse_args()
+PlotType = args.PlotType
 initial_input_file_location=args.f
 MinHits=int(args.MinHits)
 output_file_location=initial_input_file_location[:-4]+'_Re-Aligned_'+str(MinHits)+'.csv'
 output_log_location=initial_input_file_location[:-4]+'_Alignment-log_'+str(MinHits)+'.csv'
 output_temp_location=initial_input_file_location[:-4]+'_Alignment-start_'+str(MinHits)+'.csv'
 residuals = []     #WC create list to store residual
-def FitPlate(PlateZ,input_data):
+def FitPlate(PlateZ,input_data, PlotType):
     change_df = pd.DataFrame([[PlateZ]], columns = ['Plate_ID'])
     temp_data=input_data[['FEDRA_Track_ID','x','y','z','Track_Hit_No','Plate_ID']]
     temp_data=pd.merge(temp_data,change_df,on='Plate_ID',how='left')
@@ -132,21 +135,26 @@ def FitPlate(PlateZ,input_data):
     temp_data['angle']=np.degrees(temp_data['angle'])
     temp_data = temp_data[temp_data.Plate_ID == PlateZ]
     temp_data=temp_data.drop(['Plate_ID','d_x','d_y'],axis=1)
+    if PlotType == 'residuals':
+        temp_data['val']=temp_data['d_r']
+    else :
+        temp_data['val']=temp_data['angle']
+    
     print(temp_data)
     
     for _, row in temp_data.iterrows(): #WC append residuals to list
-        residuals.append({"x": row["x"], "y": row["y"], "dr": row["d_r"]})
+        residuals.append({"x": row["x"], "y": row["y"], "val": row["val"]})
     #import seaborn as sns
     #import matplotlib.pyplot as plt
     
     residuals_df = pd.DataFrame(residuals)
-    print(residuals_df)   #WC
+    #print(residuals_df)   #WC
     num_bins = args.Bin
     residuals_df['x_bin'] = pd.cut(residuals_df['x'], bins=num_bins, labels=False)
     residuals_df['y_bin'] = pd.cut(residuals_df['y'], bins=num_bins, labels=False)
-    heatmap_data = residuals_df.groupby(['x_bin', 'y_bin'])['dr'].mean().reset_index()
-    heatmap_data = heatmap_data.pivot('y_bin', 'x_bin', 'dr')
-    print(heatmap_data)
+    heatmap_data = residuals_df.groupby(['x_bin', 'y_bin'])['val'].mean().reset_index()
+    heatmap_data = heatmap_data.pivot('y_bin', 'x_bin', 'val')
+    #print(heatmap_data)
     #WC End of addition code
     return heatmap_data
 
@@ -186,7 +194,8 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 tot_jobs = len(plates)*2
 alignment_map=[]
-heatmap_data=FitPlate(plates[args.Plate][0],new_combined_data)
+heatmap_data=FitPlate(plates[args.Plate][0],new_combined_data, PlotType)
+
 
 sns.heatmap(heatmap_data)
 #plt.figure(figsize=(10,10))
