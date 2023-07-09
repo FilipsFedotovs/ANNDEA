@@ -141,20 +141,9 @@ def FitPlate(PlateZ,input_data):
     heatmap_data = residuals_df.groupby(['x_bin', 'y_bin'])['dr'].mean().reset_index()
     heatmap_data = heatmap_data.pivot('y_bin', 'x_bin', 'dr')
     #WC End of addition code
-
-    sns.heatmap(heatmap_data)
-    plt.figure(figsize=(10,10))
-
-    plt.colorbar(label='dr')
-    plt.xlabel('x')
-    plt.ylabel('y')
-    plt.title('Residual Heatmap')
-    plt.savefig('Heatmap.png')
-    plt.show()
-    print(temp_data)
+    return heatmap_data
     
-    exit()
-
+    
 ########################################     Phase 1 - Create compact source file    #########################################
 print(UF.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+initial_input_file_location+bcolors.ENDC)
 raw_data=pd.read_csv(initial_input_file_location,
@@ -188,7 +177,21 @@ iterator = 0
 
 tot_jobs = len(plates)*2
 alignment_map=[]
-print(FitPlate(plates[0][0],new_combined_data))
+heatmap_data=FitPlate(plates[0][0],new_combined_data)
+
+sns.heatmap(heatmap_data)
+#plt.figure(figsize=(10,10))
+
+#plt.colorbar(label='dr')
+#plt.xlabel('x')
+#plt.ylabel('y')
+#plt.title('Residual Heatmap')
+#plt.savefig('Heatmap.png')
+plt.show()
+
+exit()
+
+
 ##with alive_bar(tot_jobs,force_tty=True, title='Optimising the alignment configuration...') as bar:
     #for p in plates:
      #  am=[p[0]]
