@@ -132,8 +132,8 @@ def FitPlate(PlateZ,input_data):
     temp_data=temp_data.drop(['Plate_ID','d_x','d_y'],axis=1)
     for _, row in temp_data.iterrows(): #WC append residuals to list
         residuals.append({"x": row["x"], "y": row["y"], "dr": row["d_r"]})
-    import seaborn as sns
-    import matplotlib.pyplot as plt
+    #import seaborn as sns
+    #import matplotlib.pyplot as plt
     residuals_df = pd.DataFrame(residuals) #WC
     num_bins = 50
     residuals_df['x_bin'] = pd.cut(residuals_df['x'], bins=num_bins, labels=False)
@@ -174,7 +174,8 @@ print(UF.TimeStamp(),'There are ',len(plates),' plates')
 
 global_logdata = []
 iterator = 0
-
+import seaborn as sns
+import matplotlib.pyplot as plt
 tot_jobs = len(plates)*2
 alignment_map=[]
 heatmap_data=FitPlate(plates[0][0],new_combined_data)
