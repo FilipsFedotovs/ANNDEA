@@ -62,11 +62,12 @@ parser.add_argument('--f',help="Please enter the full path to the file with trac
 parser.add_argument('--Bin',help="Binning size", default=50,type=int)
 parser.add_argument('--Plate',help="Plate ID", default=0,type=int)
 parser.add_argument('--PlotType',help="Plot", default='residuals')
-
+parser.add_argument('--colour',help="colour", default='inferno')
 
 ######################################## Parsing argument values  #############################################################
 args = parser.parse_args()
 PlotType = args.PlotType
+colour = args.colour
 initial_input_file_location=args.f
 MinHits=int(args.MinHits)
 output_file_location=initial_input_file_location[:-4]+'_Re-Aligned_'+str(MinHits)+'.csv'
@@ -197,7 +198,7 @@ alignment_map=[]
 heatmap_data=FitPlate(plates[args.Plate][0],new_combined_data, PlotType)
 
 
-sns.heatmap(heatmap_data, cmap="red")
+sns.heatmap(heatmap_data, cmap=colour)
 
 
 #plt.figure(figsize=(10,10))
