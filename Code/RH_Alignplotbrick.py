@@ -131,6 +131,8 @@ def FitPlate(PlateZ,input_data, PlotType):
     temp_data['d_r']=temp_data['d_x']**2+temp_data['d_y']**2
     temp_data['d_r'] = temp_data['d_r'].astype(float)
     temp_data['d_r']=np.sqrt(temp_data['d_r']) #Absolute distance
+    temp_data['d_x']=temp_data['d_x']/temp_data['d_r']
+    temp_data['d_y']=temp_data['d_y']/temp_data['d_r']
     temp_data=temp_data[['x','y','Plate_ID','d_r', 'd_x', 'd_y']]
     temp_data['angle']=np.arctan2(temp_data['d_y'],temp_data['d_x'])
     temp_data['angle']=np.degrees(temp_data['angle'])
@@ -211,8 +213,8 @@ arrow_data=arrow_data.values.tolist()
 print(arrow_data)
 sns.heatmap(heatmap_data, cmap=colour)
 for a in arrow_data:
-    
     plt.arrow(a[0],a[1],a[2],a[3])
+    
     
 
     
