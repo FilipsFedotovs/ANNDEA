@@ -62,7 +62,7 @@ parser.add_argument('--f',help="Please enter the full path to the file with trac
 parser.add_argument('--Bin',help="Binning size", default=50,type=int)
 parser.add_argument('--Plate',help="Plate ID", default=0,type=int)
 parser.add_argument('--PlotType',help="Plot", default='residuals')
-parser.add_argument('--colour',help="colour", default='inferno')
+parser.add_argument('--colour',help="colour", default='Reds')
 
 ######################################## Parsing argument values  #############################################################
 args = parser.parse_args()
