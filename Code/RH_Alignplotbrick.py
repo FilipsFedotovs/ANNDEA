@@ -135,7 +135,7 @@ def FitPlate(PlateZ,input_data):
     import seaborn as sns
     import matplotlib.pyplot as plt
     residuals_df = pd.DataFrame(residuals) #WC
-    num_bins = 75
+    num_bins = 40
     residuals_df['x_bin'] = pd.cut(residuals_df['x'], bins=num_bins, labels=False)
     residuals_df['y_bin'] = pd.cut(residuals_df['y'], bins=num_bins, labels=False)
     heatmap_data = residuals_df.groupby(['x_bin', 'y_bin'])['dr'].mean().reset_index()
