@@ -158,7 +158,7 @@ def FitPlate(PlateZ,input_data, PlotType):
     num_bins = args.Bin
     arrows_df['x_bin'] = pd.cut(arrows_df['x'], bins=num_bins, labels=False)
     arrows_df['y_bin'] = pd.cut(arrows_df['y'], bins=num_bins, labels=False)
-    grouped = arrows_df.groupby(['x_bin', 'y_bin']).aggregate({'dx': 'mean', 'dy': 'mean'})
+    grouped = arrows_df.groupby(['x_bin', 'y_bin']).aggregate({'dx': 'mean', 'dy': 'mean'}).reset_index()
     residuals_df['x_bin'] = pd.cut(residuals_df['x'], bins=num_bins, labels=False)
     residuals_df['y_bin'] = pd.cut(residuals_df['y'], bins=num_bins, labels=False)
     heatmap_data = residuals_df.groupby(['x_bin', 'y_bin'])['val'].mean().reset_index()
@@ -207,6 +207,7 @@ tot_jobs = len(plates)*2
 alignment_map=[]
 heatmap_data=FitPlate(plates[args.Plate][0],new_combined_data, PlotType)[0]
 arrow_data=FitPlate(plates[args.Plate][0],new_combined_data, PlotType)[1]
+print(arrow_data)
 sns.heatmap(heatmap_data, cmap=colour)
 plt.arrow(arrow_data['x_bin'],arrow_data['y_bin'],arrow_data['dx'],arrow_data['dy'])
 
