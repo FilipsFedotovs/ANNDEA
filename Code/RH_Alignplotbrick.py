@@ -197,13 +197,20 @@ alignment_map=[]
 heatmap_data=FitPlate(plates[args.Plate][0],new_combined_data, PlotType)
 
 
-sns.heatmap(heatmap_data)
+sns.heatmap(heatmap_data, cmap="red")
+
+
 #plt.figure(figsize=(10,10))
 
 #plt.colorbar(label='dr')
-#plt.xlabel('x')
-#plt.ylabel('y')
-#plt.title('Residual Heatmap')
+plt.xlabel('x')
+plt.ylabel('y')
+
+if PlotType == 'residuals':
+        plt.title('Residual Heatmap')
+else :
+    plt.title('Residual angle Heatmap')
+    
 #plt.savefig('Heatmap.png')
 plt.show()
 
