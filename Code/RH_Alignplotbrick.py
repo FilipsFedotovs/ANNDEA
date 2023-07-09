@@ -158,7 +158,7 @@ def FitPlate(PlateZ,input_data, PlotType):
     num_bins = args.Bin
     arrows_df['x_bin'] = pd.cut(arrows_df['x'], bins=num_bins, labels=False)
     arrows_df['y_bin'] = pd.cut(arrows_df['y'], bins=num_bins, labels=False)
-    grouped = df.groupby(['x_bin', 'y_bin']).aggregate({'d_x': 'mean', 'd_y': 'mean'})
+    grouped = arrows_df.groupby(['x_bin', 'y_bin']).aggregate({'d_x': 'mean', 'd_y': 'mean'})
     residuals_df['x_bin'] = pd.cut(residuals_df['x'], bins=num_bins, labels=False)
     residuals_df['y_bin'] = pd.cut(residuals_df['y'], bins=num_bins, labels=False)
     heatmap_data = residuals_df.groupby(['x_bin', 'y_bin'])['val'].mean().reset_index()
