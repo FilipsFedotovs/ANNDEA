@@ -135,7 +135,7 @@ def FitPlate(PlateZ,input_data, PlotType):
     temp_data['angle']=np.arctan2(temp_data['d_y'],temp_data['d_x'])
     temp_data['angle']=np.degrees(temp_data['angle'])
     temp_data = temp_data[temp_data.Plate_ID == PlateZ]
-    temp_data=temp_data.drop(['Plate_ID','d_x','d_y'],axis=1)
+    temp_data=temp_data.drop(['Plate_ID'],axis=1)
     if PlotType == 'residuals':
         temp_data['val']=temp_data['d_r']
     else :
@@ -145,19 +145,29 @@ def FitPlate(PlateZ,input_data, PlotType):
     
     for _, row in temp_data.iterrows(): #WC append residuals to list
         residuals.append({"x": row["x"], "y": row["y"], "val": row["val"]})
+        
+    arrows=[]
+    for _, row in temp_data.iterrows(): #WC append residuals to list
+        arrows.append({"x": row["x"], "y": row["y"], "dx": row["d_x"],"dy": row["d_y"]})
+        
     #import seaborn as sns
     #import matplotlib.pyplot as plt
-    
+    arrows_df = pd.DataFrame(arrows)
     residuals_df = pd.DataFrame(residuals)
     #print(residuals_df)   #WC
     num_bins = args.Bin
+    arrows_df['x_bin'] = pd.cut(arrows_df['x'], bins=num_bins, labels=False)
+    arrows_df['y_bin'] = pd.cut(arrows_df['y'], bins=num_bins, labels=False)
+    grouped = df.groupby(['x_bin', 'y_bin']).aggregate({'d_x': 'mean', 'd_y': 'mean'})
     residuals_df['x_bin'] = pd.cut(residuals_df['x'], bins=num_bins, labels=False)
     residuals_df['y_bin'] = pd.cut(residuals_df['y'], bins=num_bins, labels=False)
     heatmap_data = residuals_df.groupby(['x_bin', 'y_bin'])['val'].mean().reset_index()
     heatmap_data = heatmap_data.pivot('y_bin', 'x_bin', 'val')
     #print(heatmap_data)
+    
     #WC End of addition code
-    return heatmap_data
+    return heatmap_data,grouped
+    
 
     
     
@@ -195,8 +205,11 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 tot_jobs = len(plates)*2
 alignment_map=[]
-heatmap_data=FitPlate(plates[args.Plate][0],new_combined_data, PlotType)
-
+heatmap_data=FitPlate(plates[args.Plate][0],new_combined_data, PlotType)[0]
+arrow_data=FitPlate(plates[args.Plate][0],new_combined_data, PlotType)[1]
+print(arrow_data)
+print(heatmap_data)
+exit()
 
 sns.heatmap(heatmap_data, cmap=colour)
 
