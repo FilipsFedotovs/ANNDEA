@@ -140,15 +140,16 @@ def FitPlate(PlateZ,input_data):
     residuals_df['y_bin'] = pd.cut(residuals_df['y'], bins=num_bins, labels=False)
     heatmap_data = residuals_df.groupby(['x_bin', 'y_bin'])['dr'].mean().reset_index()
     heatmap_data = heatmap_data.pivot('y_bin', 'x_bin', 'dr')
+    #WC End of addition code
+
+    sns.heatmap(heatmap_data)
     plt.figure(figsize=(10,10))
-    plt.imshow(heatmap_data, cmap='hot', origin='lower')
+
     plt.colorbar(label='dr')
     plt.xlabel('x')
     plt.ylabel('y')
     plt.title('Residual Heatmap')
-    plt.savefig('Heatmap.png')    #WC End of addition code
-
-    sns.heatmap(temp_data.pivot(index='y', columns='x', values='d_r'))
+    plt.savefig('Heatmap.png')
     plt.show()
     print(temp_data)
     
@@ -187,10 +188,11 @@ iterator = 0
 
 tot_jobs = len(plates)*2
 alignment_map=[]
-with alive_bar(tot_jobs,force_tty=True, title='Optimising the alignment configuration...') as bar:
-    for p in plates:
-       am=[p[0]]
-       print(FitPlate(p[0],new_combined_data))
+print(FitPlate(plates[0][0],new_combined_data))
+##with alive_bar(tot_jobs,force_tty=True, title='Optimising the alignment configuration...') as bar:
+    #for p in plates:
+     #  am=[p[0]]
+      # print(FitPlate(p[0],new_combined_data))
 
 
 
