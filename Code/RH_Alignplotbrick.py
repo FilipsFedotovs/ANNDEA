@@ -213,7 +213,8 @@ arrow_data=arrow_data.values.tolist()
 print(arrow_data)
 sns.heatmap(heatmap_data, cmap=colour)
 for a in arrow_data:
-    plt.arrow(a[0],a[1],a[2],a[3])
+    plt.arrow(a[0],a[1],a[2],a[3],clip_on=True)
+    
     
     
 
