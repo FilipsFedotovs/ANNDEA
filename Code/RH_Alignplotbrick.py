@@ -210,7 +210,7 @@ arrow_data=FitPlate(plates[args.Plate][0],new_combined_data, PlotType)[1]
 arrow_data=arrow_data.values.tolist()
 print(arrow_data)
 sns.heatmap(heatmap_data, cmap=colour)
-for a arrow_data:
+for a in arrow_data:
     
     plt.arrow(a[0],a[1],a[2],a[3])
     
