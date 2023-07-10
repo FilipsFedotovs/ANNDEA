@@ -220,7 +220,7 @@ fig = plt.figure(figsize=(n * 5, n * 5))
 for i, plate in enumerate(args.Plate, start=1):
     heatmap_data=FitPlate(plates[plate][0],new_combined_data, PlotType)[0]
     heatmap_data_log=np.log(heatmap_data)
-    arrow_data=FitPlate(plates[args.Plate][0],new_combined_data, PlotType)[1]
+    arrow_data=FitPlate(plates[plate][0],new_combined_data, PlotType)[1]
     arrow_data['x_bin']=arrow_data['x_bin']+0.5
     arrow_data['y_bin']=arrow_data['y_bin']+0.5
     arrow_data=arrow_data.values.tolist()
