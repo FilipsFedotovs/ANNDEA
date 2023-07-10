@@ -231,10 +231,10 @@ for a in arrow_data:
 plt.xlabel('x')
 plt.ylabel('y')
 
-#if PlotType == 'residuals':
- #       plt.title('Residual Heatmap')
-#else :
-  #  plt.title('Residual angle Heatmap')
+if PlotType == 'residuals':
+    plt.title('Residual Heatmap')
+else :
+    plt.title('Residual angle Heatmap')
     
 #plt.savefig('Heatmap.png')
 plt.show()
