@@ -213,7 +213,7 @@ print(UF.TimeStamp(),'There are ',len(plates),' plates')
 global_logdata = []
 iterator = 0
 import seaborn as sns
-import matplotlib
+from matplotlib.colors import LogNorm, Normalize
 import matplotlib.pyplot as plt
 tot_jobs = len(plates)*2
 #
