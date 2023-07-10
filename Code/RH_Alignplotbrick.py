@@ -221,7 +221,9 @@ alignment_map=[]
 n = int(np.ceil(np.sqrt(len(args.Plate))))
 fig = plt.figure(figsize=(n * 5, n * 5))
 
+print(f"args.Plate: {args.Plate}")
 for i, plate in enumerate(args.Plate, start=1):
+    print(f"plate: {plate}")
     heatmap_data=FitPlate(plates[plate][0],new_combined_data, PlotType)[0]
     heatmap_data_log=np.log(heatmap_data)
     arrow_data=FitPlate(plates[plate][0],new_combined_data, PlotType)[1]
