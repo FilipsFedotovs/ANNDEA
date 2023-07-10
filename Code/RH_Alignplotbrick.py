@@ -278,7 +278,7 @@ if PlotType == 'residuals':
 else :
     plt.title('Residual angle Heatmap')
     
-#plt.savefig('Heatmap.png')
+plt.savefig('Heatmap.png')
 plt.show()
 
 exit()
