@@ -208,13 +208,13 @@ import matplotlib.pyplot as plt
 tot_jobs = len(plates)*2
 alignment_map=[]
 heatmap_data=FitPlate(plates[args.Plate][0],new_combined_data, PlotType)[0]
-heatmap_data_log=np.log1p(heatmap_data)
+#heatmap_data_log=np.log1p(heatmap_data)
 arrow_data=FitPlate(plates[args.Plate][0],new_combined_data, PlotType)[1]
 arrow_data['x_bin']=arrow_data['x_bin']+0.5
 arrow_data['y_bin']=arrow_data['y_bin']+0.5
 arrow_data=arrow_data.values.tolist()
 print(arrow_data)
-sns.heatmap(heatmap_data_log, cmap=colour, cbar_kws={'label': 'Legend'})
+sns.heatmap(heatmap_data, cmap=colour, cbar_kws={'label': 'Legend'})
 #for a in arrow_data:
 #    plt.quiver(a[0],a[1],a[2],a[3],clip_on=True)
     
