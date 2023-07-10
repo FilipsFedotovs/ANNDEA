@@ -213,6 +213,7 @@ print(UF.TimeStamp(),'There are ',len(plates),' plates')
 global_logdata = []
 iterator = 0
 import seaborn as sns
+import matplotlib
 import matplotlib.pyplot as plt
 tot_jobs = len(plates)*2
 #
@@ -225,13 +226,13 @@ print(f"args.Plate: {args.Plate}")
 for i, plate in enumerate(args.Plate, start=1):
     print(f"plate: {plate}")
     heatmap_data=FitPlate(plates[plate][0],new_combined_data, PlotType)[0]
-    heatmap_data_log=np.log(heatmap_data)
+    #heatmap_data_log=np.log(heatmap_data)
     arrow_data=FitPlate(plates[plate][0],new_combined_data, PlotType)[1]
     arrow_data['x_bin']=arrow_data['x_bin']+0.5
     arrow_data['y_bin']=arrow_data['y_bin']+0.5
     #arrow_data=arrow_data.values.tolist()
     ax = fig.add_subplot(n,n,i)
-    sns.heatmap(heatmap_data_log, cmap=colour, ax=ax, cbar_kws={'label': 'Legend'})
+    sns.heatmap(heatmap_data, cmap=colour, ax=ax, cbar_kws={'label': 'Legend'}, norm=LogNorm)
     ax.quiver(arrow_data['x_bin'], arrow_data['y_bin'], arrow_data['dx'], arrow_data['dy'], angles='xy', scale_units='xy', scale=1)
     ax.set_title(f'Plate {plate}')
 
