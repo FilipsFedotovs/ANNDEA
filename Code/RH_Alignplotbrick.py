@@ -230,6 +230,7 @@ for i, plate in enumerate(args.Plate, start=1):
     ax.set_title(f'Plate {plate}')
 
 plt.tight_layout()
+plt.subplots_adjust(wspace=0.4, hspace=0.4)  # Adjust the width and height spacing between subplots
 plt.show()
             
 
