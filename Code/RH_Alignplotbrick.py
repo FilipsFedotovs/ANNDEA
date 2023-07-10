@@ -237,9 +237,6 @@ for i, plate in enumerate(args.Plate, start=1):
 
 plt.tight_layout()
 plt.subplots_adjust(wspace=0.4, hspace=0.4)  # Adjust the width and height spacing between subplots
-plt.show()
-            
-
 
 
 #heatmap_data=FitPlate(plates[args.Plate][0],new_combined_data, PlotType)[0]
@@ -259,15 +256,6 @@ arrow_data_df = pd.DataFrame(arrow_data, columns=["x_bin", "y_bin", "dx", "dy"])
 
 # You can directly pass in lists or arrays of coordinates and displacements to plt.quiver
 #plt.quiver(arrow_data_df["x_bin"], arrow_data_df["y_bin"], arrow_data_df["dx"], arrow_data_df["dy"], angles='xy', scale_units='xy', scale=1)
-
-    
-    
-    
-
-    
-
-
-
 
 #plt.figure(figsize=(10,10))
 
