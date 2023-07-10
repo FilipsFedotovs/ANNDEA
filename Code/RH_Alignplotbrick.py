@@ -223,7 +223,7 @@ for i, plate in enumerate(args.Plate, start=1):
     arrow_data=FitPlate(plates[plate][0],new_combined_data, PlotType)[1]
     arrow_data['x_bin']=arrow_data['x_bin']+0.5
     arrow_data['y_bin']=arrow_data['y_bin']+0.5
-    arrow_data=arrow_data.values.tolist()
+    #arrow_data=arrow_data.values.tolist()
     ax = fig.add_subplot(n,n,i)
     sns.heatmap(heatmap_data_log, cmap=colour, ax=ax, cbar_kws={'label': 'Legend'})
     ax.quiver(arrow_data['x_bin'], arrow_data['y_bin'], arrow_data['dx'], arrow_data['dy'], angles='xy', scale_units='xy', scale=1)
