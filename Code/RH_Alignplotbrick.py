@@ -67,8 +67,12 @@ parser.add_argument('--Plate', type=str, help='The list of plates to include in 
 
 ######################################## Parsing argument values  #############################################################
 args = parser.parse_args()
-start, end = map(int, args.Plate.split('-'))  #
-args.Plate = list(range(start, end+1))   #
+if '-' in args.Plate:
+    start, end = map(int, args.Plate.split('-'))  #
+    args.Plate = list(range(start, end+1))
+else:
+    args.Plate = [int(args.Plate)]
+    
 PlotType = args.PlotType
 colour = args.colour
 initial_input_file_location=args.f
