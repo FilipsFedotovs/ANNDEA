@@ -274,9 +274,9 @@ plt.xlabel('x')
 plt.ylabel('y')
 
 if PlotType == 'residuals':
-    plt.title('Residual Heatmap')
+    plt.suptitle('Residual Heatmap')
 else :
-    plt.title('Residual angle Heatmap')
+    plt.suptitle('Residual angle Heatmap')
     
 plt.savefig('Heatmap.png')
 plt.show()
