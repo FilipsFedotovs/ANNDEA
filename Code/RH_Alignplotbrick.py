@@ -214,8 +214,14 @@ arrow_data['y_bin']=arrow_data['y_bin']+0.5
 arrow_data=arrow_data.values.tolist()
 print(arrow_data)
 sns.heatmap(heatmap_data, cmap=colour)
-for a in arrow_data:
-    plt.arrow(a[0],a[1],a[2],a[3],clip_on=True)
+#for a in arrow_data:
+#    plt.quiver(a[0],a[1],a[2],a[3],clip_on=True)
+    
+arrow_data_df = pd.DataFrame(arrow_data, columns=["x_bin", "y_bin", "dx", "dy"])
+
+# You can directly pass in lists or arrays of coordinates and displacements to plt.quiver
+plt.quiver(arrow_data_df["x_bin"], arrow_data_df["y_bin"], arrow_data_df["dx"], arrow_data_df["dy"], angles='xy', scale_units='xy', scale=1)
+
     
     
     
