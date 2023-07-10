@@ -60,12 +60,15 @@ parser = argparse.ArgumentParser(description='This script prepares training data
 parser.add_argument('--MinHits',help="What is the minimum number of hits per track?", default='2')
 parser.add_argument('--f',help="Please enter the full path to the file with track reconstruction", default='/afs/cern.ch/work/f/ffedship/public/SHIP/Source_Data/SHIP_Emulsion_Rec_Raw_UR.csv')
 parser.add_argument('--Bin',help="Binning size", default=50,type=int)
-parser.add_argument('--Plate',help="Plate ID", default=0,type=int)
+#parser.add_argument('--Plate',help="Plate ID", default=0,type=int)
 parser.add_argument('--PlotType',help="Plot", default='residuals')
 parser.add_argument('--colour',help="colour", default='coolwarm')
+parser.add_argument('--Plate', type=str, help='The list of plates to include in the plot')
 
 ######################################## Parsing argument values  #############################################################
 args = parser.parse_args()
+start, end = map(int, args.Plate.split('-'))  #
+args.Plate = list(range(start, end+1))   #
 PlotType = args.PlotType
 colour = args.colour
 initial_input_file_location=args.f
@@ -73,7 +76,7 @@ MinHits=int(args.MinHits)
 output_file_location=initial_input_file_location[:-4]+'_Re-Aligned_'+str(MinHits)+'.csv'
 output_log_location=initial_input_file_location[:-4]+'_Alignment-log_'+str(MinHits)+'.csv'
 output_temp_location=initial_input_file_location[:-4]+'_Alignment-start_'+str(MinHits)+'.csv'
-residuals = []     #WC create list to store residual
+#residuals = []     #WC create list to store residual
 def FitPlate(PlateZ,input_data, PlotType):
     change_df = pd.DataFrame([[PlateZ]], columns = ['Plate_ID'])
     temp_data=input_data[['FEDRA_Track_ID','x','y','z','Track_Hit_No','Plate_ID']]
@@ -138,6 +141,8 @@ def FitPlate(PlateZ,input_data, PlotType):
     temp_data['angle']=np.degrees(temp_data['angle'])
     temp_data = temp_data[temp_data.Plate_ID == PlateZ]
     temp_data=temp_data.drop(['Plate_ID'],axis=1)
+    residuals = []
+    
     if PlotType == 'residuals':
         temp_data['val']=temp_data['d_r']
     else :
@@ -206,22 +211,47 @@ iterator = 0
 import seaborn as sns
 import matplotlib.pyplot as plt
 tot_jobs = len(plates)*2
+#
+
 alignment_map=[]
-heatmap_data=FitPlate(plates[args.Plate][0],new_combined_data, PlotType)[0]
-heatmap_data_log=np.log(heatmap_data)
-arrow_data=FitPlate(plates[args.Plate][0],new_combined_data, PlotType)[1]
-arrow_data['x_bin']=arrow_data['x_bin']+0.5
-arrow_data['y_bin']=arrow_data['y_bin']+0.5
-arrow_data=arrow_data.values.tolist()
-print(arrow_data)
-sns.heatmap(heatmap_data_log, cmap=colour, cbar_kws={'label': 'Legend'})
-#for a in arrow_data:
+n = int(np.ceil(np.sqrt(len(args.Plate))))
+fig = plt.figure(figsize=(n * 5, n * 5))
+
+for i, plate in enumerate(args.Plate, start=1):
+    heatmap_data=FitPlate(plates[plate][0],new_combined_data, PlotType)[0]
+    heatmap_data_log=np.log(heatmap_data)
+    arrow_data=FitPlate(plates[args.Plate][0],new_combined_data, PlotType)[1]
+    arrow_data['x_bin']=arrow_data['x_bin']+0.5
+    arrow_data['y_bin']=arrow_data['y_bin']+0.5
+    arrow_data=arrow_data.values.tolist()
+    ax = fig.add_subplot(n,n,i)
+    sns.heatmap(heatmap_data_log, cmap=colour, ax=ax, cbar_kws={'label': 'Legend'})
+    ax.quiver(arrow_data['x_bin'], arrow_data['y_bin'], arrow_data['dx'], arrow_data['dy'], angles='xy', scale_units='xy', scale=1)
+    ax.set_title(f'Plate {plate}')
+
+plt.tight_layout()
+plt.show()
+            
+
+
+
+#heatmap_data=FitPlate(plates[args.Plate][0],new_combined_data, PlotType)[0]
+#heatmap_data_log=np.log(heatmap_data)   ##log1p?
+#arrow_data=FitPlate(plates[args.Plate][0],new_combined_data, PlotType)[1]
+#arrow_data['x_bin']=arrow_data['x_bin']+0.5
+#arrow_data['y_bin']=arrow_data['y_bin']+0.5
+#arrow_data=arrow_data.values.tolist()
+#print(arrow_data)
+
+
+#sns.heatmap(heatmap_data_log, cmap=colour, cbar_kws={'label': 'Legend'})
+#for a in arrow_data:  ##loop not need quiver handle mutiple vectors
 #    plt.arrow(a[0],a[1],a[2],a[3],clip_on=True)
     
 arrow_data_df = pd.DataFrame(arrow_data, columns=["x_bin", "y_bin", "dx", "dy"])
 
 # You can directly pass in lists or arrays of coordinates and displacements to plt.quiver
-plt.quiver(arrow_data_df["x_bin"], arrow_data_df["y_bin"], arrow_data_df["dx"], arrow_data_df["dy"], angles='xy', scale_units='xy', scale=1)
+#plt.quiver(arrow_data_df["x_bin"], arrow_data_df["y_bin"], arrow_data_df["dx"], arrow_data_df["dy"], angles='xy', scale_units='xy', scale=1)
 
     
     
