@@ -823,7 +823,7 @@ while Status<len(Program):
               for v in range(0,len(VertexPool)):
                   VertexPool[v].AssignANNVxUID(v)
               if args.Log=='Y':
-                  try:
+                  #try:
                     csv_out=[]
                     for Vx in VertexPool:
                      for Tr in Vx.Header:
@@ -851,8 +851,8 @@ while Status<len(Program):
                     rec_no=(len(rec)-len(rec_eval))
                     UF.LogOperations(EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv', 'a', [[6,'Vertex Merging',rec_no,eval_no,eval_no/(rec_no+eval_no),eval_no/len(eval_data)]])
                     print(UF.TimeStamp(), bcolors.OKGREEN+"The log has been created successfully at "+bcolors.ENDC, bcolors.OKBLUE+EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv'+bcolors.ENDC)
-                  except:
-                    print(UF.TimeStamp(), bcolors.WARNING+'Log creation has failed'+bcolors.ENDC)
+                  #except:
+                  #  print(UF.TimeStamp(), bcolors.WARNING+'Log creation has failed'+bcolors.ENDC)
               initial_data=pd.read_csv(initial_input_file_location,header=0)
               print(initial_data)
               exit()
