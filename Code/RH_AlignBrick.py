@@ -196,9 +196,9 @@ with alive_bar(tot_jobs,force_tty=True, title='Optimising the alignment configur
     for p in plates:
        am=[p[0]]
        def FitPlateFixedX(x):
-           return FitPlate(p[0],x,0,new_combined_data,False)
+           return FitPlate(p[0],x,0,new_combined_data,True)
        def FitPlateFixedY(x):
-           return FitPlate(p[0],0,x,new_combined_data,False)
+           return FitPlate(p[0],0,x,new_combined_data,True)
        res = minimize_scalar(FitPlateFixedX, bounds=(-500, 500), method='bounded')
        new_combined_data=AlignPlate(p[0],res.x,0,new_combined_data)
        am.append(res.x)
