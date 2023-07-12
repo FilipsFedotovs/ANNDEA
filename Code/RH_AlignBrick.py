@@ -61,7 +61,6 @@ parser.add_argument('--MinHits',help="What is the minimum number of hits per tra
 parser.add_argument('--f',help="Please enter the full path to the file with track reconstruction", default='/afs/cern.ch/work/f/ffedship/public/SHIP/Source_Data/SHIP_Emulsion_Rec_Raw_UR.csv')
 parser.add_argument('--ValMinHits',help="What is the validation minimum number of hits per track?", default='40')
 parser.add_argument('--Cycle',help="Cycle", default='1')
-parser.add_argument('--Type',help="Type", default=False,type=bool)
 
 
 
@@ -70,7 +69,7 @@ args = parser.parse_args()
 initial_input_file_location=args.f
 MinHits=int(args.MinHits)
 ValMinHits=int(args.ValMinHits)
-Type=args.Type
+
 Cycle=int(args.Cycle)
 output_file_location=initial_input_file_location[:-4]+'_Re-Aligned_'+str(MinHits)+'.csv'
 output_log_location=initial_input_file_location[:-4]+'_Alignment-log_'+str(MinHits)+'.csv'
