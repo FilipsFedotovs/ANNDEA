@@ -57,20 +57,33 @@ print(bcolors.HEADER+"##########################################################
 #Setting the parser - this script is usually not run directly, but is used by a Master version Counterpart that passes the required arguments
 parser = argparse.ArgumentParser(description='This script prepares training data for training the tracking model')
 
-parser.add_argument('--MinHits',help="What is the minimum number of hits per track?", default='2')
+parser.add_argument('--MinHits',help="What is the minimum number of hits per track?", default='50')
 parser.add_argument('--f',help="Please enter the full path to the file with track reconstruction", default='/afs/cern.ch/work/f/ffedship/public/SHIP/Source_Data/SHIP_Emulsion_Rec_Raw_UR.csv')
+parser.add_argument('--ValMinHits',help="What is the validation minimum number of hits per track?", default='40')
+parser.add_argument('--Cycle',help="Cycle", default='1')
+
 
 ######################################## Parsing argument values  #############################################################
 args = parser.parse_args()
 initial_input_file_location=args.f
 MinHits=int(args.MinHits)
+ValMinHits=int(args.ValMinHits)
+Cycle=int(args.Cycle)
 output_file_location=initial_input_file_location[:-4]+'_Re-Aligned_'+str(MinHits)+'.csv'
 output_log_location=initial_input_file_location[:-4]+'_Alignment-log_'+str(MinHits)+'.csv'
 output_temp_location=initial_input_file_location[:-4]+'_Alignment-start_'+str(MinHits)+'.csv'
 
-def FitPlate(PlateZ,dx,dy,input_data):
+def FitPlate(PlateZ,dx,dy,input_data,Type):
     change_df = pd.DataFrame([[PlateZ,dx,dy]], columns = ['Plate_ID','dx','dy'])
     temp_data=input_data[['FEDRA_Track_ID','x','y','z','Track_Hit_No','Plate_ID']]
+    if Type:
+        temp_data = temp_data[temp_data.Track_Hit_No < MinHits]
+    else:
+        temp_data = temp_data[temp_data.Track_Hit_No >= MinHits]
+    print(temp_data)
+    exit()
+        
+        
     temp_data=pd.merge(temp_data,change_df,on='Plate_ID',how='left')
     temp_data['dx'] = temp_data['dx'].fillna(0.0)
     temp_data['dy'] = temp_data['dy'].fillna(0.0)
@@ -160,7 +173,7 @@ track_no_data=data.groupby(['FEDRA_Track_ID'],as_index=False).count()
 track_no_data=track_no_data.drop(['Hit_ID','y','z','tx','ty'],axis=1)
 track_no_data=track_no_data.rename(columns={'x': "Track_Hit_No"})
 new_combined_data=pd.merge(data, track_no_data, how="left", on=['FEDRA_Track_ID'])
-new_combined_data = new_combined_data[new_combined_data.Track_Hit_No >= MinHits]
+new_combined_data = new_combined_data[new_combined_data.Track_Hit_No >= ValMinHits]
 new_combined_data=new_combined_data.drop(['Hit_ID','tx','ty'],axis=1)
 new_combined_data=new_combined_data.sort_values(['FEDRA_Track_ID','z'],ascending=[1,1])
 new_combined_data['FEDRA_Track_ID']=new_combined_data['FEDRA_Track_ID'].astype(int)
