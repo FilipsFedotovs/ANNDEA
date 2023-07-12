@@ -61,6 +61,8 @@ parser.add_argument('--MinHits',help="What is the minimum number of hits per tra
 parser.add_argument('--f',help="Please enter the full path to the file with track reconstruction", default='/afs/cern.ch/work/f/ffedship/public/SHIP/Source_Data/SHIP_Emulsion_Rec_Raw_UR.csv')
 parser.add_argument('--ValMinHits',help="What is the validation minimum number of hits per track?", default='40')
 parser.add_argument('--Cycle',help="Cycle", default='1')
+parser.add_argument('--Type',help="Type", default=False,type=bool)
+
 
 
 ######################################## Parsing argument values  #############################################################
@@ -68,6 +70,7 @@ args = parser.parse_args()
 initial_input_file_location=args.f
 MinHits=int(args.MinHits)
 ValMinHits=int(args.ValMinHits)
+Type=args.Type
 Cycle=int(args.Cycle)
 output_file_location=initial_input_file_location[:-4]+'_Re-Aligned_'+str(MinHits)+'.csv'
 output_log_location=initial_input_file_location[:-4]+'_Alignment-log_'+str(MinHits)+'.csv'
@@ -194,13 +197,14 @@ with alive_bar(tot_jobs,force_tty=True, title='Optimising the alignment configur
     for p in plates:
        am=[p[0]]
        def FitPlateFixedX(x):
-           return FitPlate(p[0],x,0,new_combined_data)
+           return FitPlate(p[0],x,0,new_combined_data,False)
        def FitPlateFixedY(x):
-           return FitPlate(p[0],0,x,new_combined_data)
+           return FitPlate(p[0],0,x,new_combined_data,False)
        res = minimize_scalar(FitPlateFixedX, bounds=(-500, 500), method='bounded')
        new_combined_data=AlignPlate(p[0],res.x,0,new_combined_data)
        am.append(res.x)
        print('Overall fit value:',FitPlateFixedX(0))
+       exit()
        iterator += 1
        Angle_radian = np.arctan2(dy, dx)
        local_logdata = ["global vertical-horizontal plate alignment XY", iterator, p[0], FitPlateFixedX(0), MinHits, Angle_radian]
