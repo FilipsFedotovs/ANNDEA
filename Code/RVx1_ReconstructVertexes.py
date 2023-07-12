@@ -854,8 +854,15 @@ while Status<len(Program):
                   #except:
                   #  print(UF.TimeStamp(), bcolors.WARNING+'Log creation has failed'+bcolors.ENDC)
               initial_data=pd.read_csv(initial_input_file_location,header=0)
+              initial_data[BrickID] = initial_data[BrickID].astype(str)
+              initial_data[TrackID] = initial_data[TrackID].astype(str)
+
+              initial_data['Combined_ID'] = initial_data[TrackID] + '-' + initial_data[BrickID]
+
               print(initial_data)
-              csv_out=pd.DataFrame(csv_out,columns=['Track_ID','Vertext_ID'])
+              csv_out=pd.DataFrame(csv_out,columns=['Combined_ID','Vertex_ID'])
+              initial_data=pd.merge(initial_data,csv_out,how='inner',on=['Combined_ID'])
+              print(initial_data)
               print(csv_out)
               exit()
     
