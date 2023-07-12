@@ -60,6 +60,7 @@ parser = argparse.ArgumentParser(description='This script prepares training data
 parser.add_argument('--MinHits',help="What is the minimum number of hits per track?", default='50')
 parser.add_argument('--f',help="Please enter the full path to the file with track reconstruction", default='/afs/cern.ch/work/f/ffedship/public/SHIP/Source_Data/SHIP_Emulsion_Rec_Raw_UR.csv')
 parser.add_argument('--ValMinHits',help="What is the validation minimum number of hits per track?", default='40')
+parser.add_argument('--Name',help="Name of log", default=)
 parser.add_argument('--Cycle',help="Cycle", default='1')
 
 
@@ -71,9 +72,10 @@ MinHits=int(args.MinHits)
 ValMinHits=int(args.ValMinHits)
 
 Cycle=int(args.Cycle)
-output_file_location=initial_input_file_location[:-4]+'_Re-Aligned_'+str(MinHits)+'.csv'
-output_log_location=initial_input_file_location[:-4]+'_Alignment-log_'+str(MinHits)+'.csv'
-output_temp_location=initial_input_file_location[:-4]+'_Alignment-start_'+str(MinHits)+'.csv'
+name=args.Name
+output_file_location=initial_input_file_location[:-4]+'_'+name+'_'+str(MinHits)+'.csv'
+output_log_location=initial_input_file_location[:-4]+'_'+name+'-log_'+str(MinHits)+'.csv'
+#output_temp_location=initial_input_file_location[:-4]+'_Alignment-start_'+str(MinHits)+'.csv'
 
 def FitPlate(PlateZ,dx,dy,input_data,Type):
     change_df = pd.DataFrame([[PlateZ,dx,dy]], columns = ['Plate_ID','dx','dy'])
@@ -143,8 +145,7 @@ def FitPlate(PlateZ,dx,dy,input_data,Type):
     temp_data['d_r']=np.sqrt(temp_data['d_r']) #Absolute distance
     temp_data=temp_data[['FEDRA_Track_ID','Track_Hit_No','d_r']]
     temp_data=temp_data.groupby(['FEDRA_Track_ID','Track_Hit_No']).agg({'d_r':'sum'}).reset_index()
-    if Type == True:
-        print(temp_data)
+
     temp_data=temp_data.agg({'d_r':'sum','Track_Hit_No':'sum'})
     temp_data=temp_data.values.tolist()
     fit=temp_data[0]/temp_data[1]
@@ -170,7 +171,7 @@ print(UF.TimeStamp(),'Removing unreconstructed hits...')
 data=raw_data.dropna()
 final_rows=len(data)
 print(UF.TimeStamp(),'The cleaned data has ',final_rows,' hits')
-print(UF.TimeStamp(),'Removing tracks which have less than',MinHits,'hits...')
+print(UF.TimeStamp(),'Removing tracks which have less than',ValMinHits,'hits...')
 track_no_data=data.groupby(['FEDRA_Track_ID'],as_index=False).count()
 track_no_data=track_no_data.drop(['Hit_ID','y','z','tx','ty'],axis=1)
 track_no_data=track_no_data.rename(columns={'x': "Track_Hit_No"})
