@@ -78,7 +78,7 @@ output_temp_location=initial_input_file_location[:-4]+'_Alignment-start_'+str(Mi
 def FitPlate(PlateZ,dx,dy,input_data,Type):
     change_df = pd.DataFrame([[PlateZ,dx,dy]], columns = ['Plate_ID','dx','dy'])
     temp_data=input_data[['FEDRA_Track_ID','x','y','z','Track_Hit_No','Plate_ID']]
-    if Type:
+    if Type == False:
         temp_data = temp_data[temp_data.Track_Hit_No < MinHits]
     else:
         temp_data = temp_data[temp_data.Track_Hit_No >= MinHits]
