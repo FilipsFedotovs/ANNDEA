@@ -855,6 +855,7 @@ while Status<len(Program):
                   #  print(UF.TimeStamp(), bcolors.WARNING+'Log creation has failed'+bcolors.ENDC)
               initial_data=pd.read_csv(initial_input_file_location,header=0)
               print(initial_data)
+              csv_out=pd.DataFrame(csv_out,columns=['Track_ID','Vertext_ID'])
               print(csv_out)
               exit()
     
