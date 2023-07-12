@@ -60,7 +60,7 @@ parser = argparse.ArgumentParser(description='This script prepares training data
 parser.add_argument('--MinHits',help="What is the minimum number of hits per track?", default='50')
 parser.add_argument('--f',help="Please enter the full path to the file with track reconstruction", default='/afs/cern.ch/work/f/ffedship/public/SHIP/Source_Data/SHIP_Emulsion_Rec_Raw_UR.csv')
 parser.add_argument('--ValMinHits',help="What is the validation minimum number of hits per track?", default='40')
-parser.add_argument('--Name',help="Name of log", default=)
+parser.add_argument('--Name',help="Name of log", default='Realigned')
 parser.add_argument('--Cycle',help="Cycle", default='1')
 
 
