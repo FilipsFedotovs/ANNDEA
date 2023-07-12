@@ -821,13 +821,13 @@ while Status<len(Program):
                   SeedCounter+=1
               print(str(InitialDataLength), "vertices from different files were merged into", str(len(VertexPool)), 'vertices with higher multiplicity...')
               for v in range(0,len(VertexPool)):
-                  VertexPool[v].AssignANNVxUID(v)
+                    VertexPool[v].AssignANNVxUID(v)
+              csv_out=[]
+              for Vx in VertexPool:
+                    for Tr in Vx.Header:
+                        csv_out.append([Tr,Vx.UVxID])
               if args.Log=='Y':
                   #try:
-                    csv_out=[]
-                    for Vx in VertexPool:
-                     for Tr in Vx.Header:
-                         csv_out.append([Tr,Vx.UVxID])
                     print(UF.TimeStamp(),'Initiating the logging...')
                     eval_data_file=EOS_DIR+'/ANNDEA/Data/TEST_SET/EVx1b_'+RecBatchID+'_SEED_TRUTH_COMBINATIONS.csv'
                     eval_data=pd.read_csv(eval_data_file,header=0,usecols=['Segment_1','Segment_2'])
@@ -855,6 +855,7 @@ while Status<len(Program):
                   #  print(UF.TimeStamp(), bcolors.WARNING+'Log creation has failed'+bcolors.ENDC)
               initial_data=pd.read_csv(initial_input_file_location,header=0)
               print(initial_data)
+              print(csv_out)
               exit()
     
     else:
