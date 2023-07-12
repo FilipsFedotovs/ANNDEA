@@ -208,12 +208,14 @@ for c in range(0,Cycle):
        res = minimize_scalar(FitPlateFixedX, bounds=(-500, 500), method='bounded')
        new_combined_data=AlignPlate(p[0],res.x,0,new_combined_data)
        am.append(res.x)
-       print('Current fit value:',FitPlateFixedX(0))
-       print('Validation fit value:',FitPlateValX(0))
-       exit()
+       FitFix = FitPlateFixedX(0)
+       FitVal = FitPlateValX(0)
+       print('Current fit value:',FitFix)
+       print('Validation fit value:',FitVal)
+       
        iterator += 1
        Angle_radian = np.arctan2(dy, dx)
-       local_logdata = ["global vertical-horizontal plate alignment XY", iterator, p[0], FitPlateFixedX(0), MinHits, Angle_radian]
+       local_logdata = [c,"global vertical-horizontal plate alignment XY", iterator, p[0], FitFix,FitVal, MinHits, Angle_radian]
        global_logdata.append(local_logdata)
        bar()
        res = minimize_scalar(FitPlateFixedY, bounds=(-500, 500), method='bounded')
@@ -222,12 +224,14 @@ for c in range(0,Cycle):
        bar()
        iterator += 1
        Angle_radian = np.arctan2(dy, dx)
-       local_logdata = ["global vertical-horizontal plate alignment XY", iterator, p[0], FitPlateFixedY(0), MinHits, Angle_radian]
+       FitFix = FitPlateFixedY(0)
+       FitVal = FitPlateValY(0)
+       print('Current fit value:',FitFix)
+       print('Validation fit value:',FitVal)
+       local_logdata = [c,"global vertical-horizontal plate alignment XY", iterator, p[0], FitFix, FitVal, MinHits, Angle_radian]
        global_logdata.append(local_logdata)
-    
-       print('Overall fit value:',FitPlateFixedY(0))
        alignment_map.append(am)
-global_logdata = pd.DataFrame(global_logdata, columns = ['alignment type', 'iteration', 'plate location', 'Overall fit value', 'Min Hits', 'Angle_radian'])
+global_logdata = pd.DataFrame(global_logdata, columns = ['cycle','alignment type', 'iteration', 'plate location', 'Overall fit value','Validation fit value', 'Min Hits', 'Angle_radian'])
 global_logdata.to_csv(output_log_location,index=False)
 
 print(UF.TimeStamp(),'Aligning the brick...')
