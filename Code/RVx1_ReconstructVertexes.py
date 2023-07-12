@@ -483,6 +483,8 @@ if Mode=='CLEANUP':
     UpdateStatus(19)
     Status=19
 
+UpdateStatus(7)
+Status=7
 
 
 ###### Stage 2
