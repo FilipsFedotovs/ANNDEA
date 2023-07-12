@@ -82,8 +82,6 @@ def FitPlate(PlateZ,dx,dy,input_data,Type):
         temp_data = temp_data[temp_data.Track_Hit_No < MinHits]
     else:
         temp_data = temp_data[temp_data.Track_Hit_No >= MinHits]
-    print(temp_data)
-    exit()
         
         
     temp_data=pd.merge(temp_data,change_df,on='Plate_ID',how='left')
@@ -191,18 +189,27 @@ global_logdata = []
 iterator = 0
 
 tot_jobs = len(plates)*2
-alignment_map=[]
-with alive_bar(tot_jobs,force_tty=True, title='Optimising the alignment configuration...') as bar:
+for c in range(0,Cycle):
+    alignment_map=[]
+    print('Cycle',c)
+    
+    with alive_bar(tot_jobs,force_tty=True, title='Optimising the alignment configuration...') as bar:
+    
     for p in plates:
        am=[p[0]]
        def FitPlateFixedX(x):
-           return FitPlate(p[0],x,0,new_combined_data,True)
+           return FitPlate(p[0],x,0,new_combined_data,False)
        def FitPlateFixedY(x):
+           return FitPlate(p[0],0,x,new_combined_data,False)
+       def FitPlateValX(x):
+           return FitPlate(p[0],x,0,new_combined_data,True)
+       def FitPlateValY(x):
            return FitPlate(p[0],0,x,new_combined_data,True)
        res = minimize_scalar(FitPlateFixedX, bounds=(-500, 500), method='bounded')
        new_combined_data=AlignPlate(p[0],res.x,0,new_combined_data)
        am.append(res.x)
-       print('Overall fit value:',FitPlateFixedX(0))
+       print('Current fit value:',FitPlateFixedX(0))
+       print('Validation fit value:',FitPlateValX(0))
        exit()
        iterator += 1
        Angle_radian = np.arctan2(dy, dx)
