@@ -214,7 +214,7 @@ for c in range(0,Cycle):
        print('Validation fit value:',FitVal)
        
        iterator += 1
-       Angle_radian = np.arctan2(dy, dx)
+       #Angle_radian = np.arctan2(dy, dx)
        local_logdata = [c,"global vertical-horizontal plate alignment XY", iterator, p[0], FitFix,FitVal, MinHits, Angle_radian]
        global_logdata.append(local_logdata)
        bar()
