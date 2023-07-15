@@ -189,14 +189,13 @@ for RN in RecNames:
   raw_data_rec=raw_data_rec[['Track_ID',PM.Hit_ID]]
   raw_data_temp_rec=raw_data_rec[['Track_ID',PM.Hit_ID]].rename(columns={PM.Hit_ID: 'Track_ID_Size'})
   raw_data_temp_rec=raw_data_temp_rec.groupby(by=['Track_ID'])['Track_ID_Size'].nunique().reset_index()
-  print(raw_data_temp_rec)
   raw_data_temp_rec.drop(raw_data_temp_rec.index[(raw_data_temp_rec['Track_ID_Size'] < MinHitsTrack)],inplace=True)
-  print(raw_data_temp_rec)
-  exit()
 
-  rec_data_tot=raw_data_temp_rec[RN].nunique()
-  data_rec=pd.merge(raw_data_rec[[RN,PM.Hit_ID]],raw_data_temp_rec,how='inner', on =[RN])
+  rec_data_tot=raw_data_temp_rec['Track_ID'].nunique()
+  data_rec=pd.merge(raw_data_rec[['Track_ID',PM.Hit_ID]],raw_data_temp_rec,how='inner', on =['Track_ID'])
   data_rec=pd.merge(data_rec,data_mc,how='inner', on =[PM.Hit_ID])
+  print(data_rec)
+  exit()
   data_rec=data_rec.rename(columns={PM.Hit_ID: RN+'_Overlap'})
   data_rec=data_rec.groupby(by=[RN,RN+'_Size','MC_Mother_Track_ID'])[RN+'_Overlap'].nunique().reset_index()
   data_rec.drop(data_rec.index[(data_rec[RN+'_Overlap'] < 2)],inplace=True)
