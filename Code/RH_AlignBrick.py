@@ -335,7 +335,7 @@ global_logdata.to_csv(output_log_location,index=False)
 print(UF.TimeStamp(),'Aligning the brick...')
 alignment_map=pd.DataFrame(alignment_map, columns = ['Plate_ID','dx','dy'])
 raw_data['Plate_ID']=raw_data['z'].astype(int)
-raw_data=pd.merge(raw_data,alignment_map,on='Plate_ID',how='inner')
+raw_data=pd.merge(raw_data,alignment_map,on='Plate_ID',how='left')
 raw_data['dx'] = raw_data['dx'].fillna(0.0)
 raw_data['dy'] = raw_data['dy'].fillna(0.0)
 raw_data['x']=raw_data['x']+raw_data['dx']
