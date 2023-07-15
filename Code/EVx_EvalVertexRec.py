@@ -186,7 +186,7 @@ data_mc=pd.merge(raw_data[['MC_Mother_Vertex_ID','MC_Mother_Track_ID',PM.Hit_ID]
 for RN in RecNames:
   #raw_data_rec=raw_data.drop(raw_data.index[(raw_data[RN] == 'nan-nan')])
   raw_data_rec = raw_data[raw_data[RN].str.contains("nan") == False]
-  print(raw_data_rec)
+  print(raw_data[RN])
   exit()
   raw_data_rec=raw_data_rec[[RN,PM.Hit_ID]]
   raw_data_temp_rec=raw_data_rec[[RN,PM.Hit_ID]].rename(columns={PM.Hit_ID: RN+'_Size'})
