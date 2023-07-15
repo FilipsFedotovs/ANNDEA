@@ -259,6 +259,8 @@ delta_X=Max_X-Min_X
 delta_Y=Max_Y-Min_Y
 Step_X=math.ceil(delta_X/LocalSize)
 Step_Y=math.ceil(delta_Y/LocalSize)
+print(Step_X,Step_Y)
+x = input()
 
 
 print(UF.TimeStamp(),'The raw data has ',total_rows,' hits')
@@ -293,7 +295,7 @@ for c in range(0,Cycle):
     
     with alive_bar(tot_jobs,force_tty=True, title='Optimising the alignment configuration...') as bar:
     
-     for p in plates[:1]:
+     for p in plates:
        am=[p[0]]
        def FitPlateFixedX(x):
            return FitPlate(p[0],x,0,new_combined_data,False)
@@ -366,7 +368,7 @@ for c in range(0,Cycle):
     
     with alive_bar(tot_jobs,force_tty=True, title='Optimising the local alignment configuration...') as bar:
     
-     for p in plates[:1]:
+     for p in plates:
        for i in range(1,Step_X+1):
         for j in range(1,Step_Y+1):
             am=[p[0],i,j]
