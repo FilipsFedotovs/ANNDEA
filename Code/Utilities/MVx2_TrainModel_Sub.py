@@ -259,6 +259,8 @@ def main(self):
             scheduler.step()
             print(UF.TimeStamp(),'Epoch ',epoch, ' is completed')
             records.append([epoch,itr,train_loss.item(),0.5,val_loss,val_acc,test_loss,test_acc,train_set])
+            print(train_loss)
+            print(itr)
             torch.save({    'epoch': epoch,
                           'optimizer_state_dict': optimizer.state_dict(),
                           'scheduler': scheduler.state_dict(),    # HERE IS THE CHANGE
