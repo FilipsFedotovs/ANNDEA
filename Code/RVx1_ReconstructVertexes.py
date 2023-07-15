@@ -826,7 +826,7 @@ while Status<len(Program):
               csv_out=[['Old_Track_ID','Temp_Vertex_Domain','Temp_Vertex_ID']]
               for Vx in VertexPool:
                     for Tr in Vx.Header:
-                        csv_out.append([Tr,Vx.UVxID])
+                        csv_out.append([Tr,RecBatchID,Vx.UVxID])
               output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RVx1e_'+RecBatchID+'_Union_Vertexes.pkl'
               output_csv_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RVx1e_'+RecBatchID+'_Union_Vertexes.csv'
 
