@@ -121,8 +121,6 @@ for rn in range(len(RecNames)):
     raw_data[VertexID[rn][1]] = raw_data[VertexID[rn][1]].astype(str)
     raw_data[RecNames[rn]] = raw_data[VertexID[rn][0]] + '-' + raw_data[VertexID[rn][1]]
     raw_data.drop([VertexID[rn][0],VertexID[rn][1]],axis=1,inplace=True)
-    print(raw_data)
-    exit()
     if len(RemoveTracksZ)>0:
             print(UF.TimeStamp(),'Removing tracks based on start point')
             TracksZdf = pd.DataFrame(RemoveTracksZ, columns = ['Bad_z'], dtype=float)
@@ -175,7 +173,7 @@ if SkipRcmb:
 
 print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
 print(UF.TimeStamp(),bcolors.BOLD+'Stage 3:'+bcolors.ENDC+' Analyzing track reconstruction metrics...')
-
+print(raw_data)
 raw_data_mc=raw_data[['MC_Mother_Vertex_ID','MC_Mother_Track_ID',PM.Hit_ID]+MCCategories].groupby(by=['MC_Mother_Vertex_ID','MC_Mother_Track_ID']+MCCategories)[PM.Hit_ID].nunique().reset_index()
 raw_data_mc.drop(raw_data_mc.index[(raw_data_mc[PM.Hit_ID] < MinHitsTrack)],inplace=True)
 raw_data_mc=raw_data[['MC_Mother_Vertex_ID','MC_Mother_Track_ID']+MCCategories].groupby(by=['MC_Mother_Vertex_ID']+MCCategories)['MC_Mother_Track_ID'].nunique().reset_index()
