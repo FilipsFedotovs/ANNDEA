@@ -346,8 +346,7 @@ raw_data.drop(['dx','dy'],axis=1, inplace=True)
 print(UF.TimeStamp(),'The raw data has ',total_rows,' hits')
 print(UF.TimeStamp(),'Removing unreconstructed hits...')
 data=raw_data.dropna(subset=['FEDRA_Track_ID'])
-print(data)
-exit()
+
 final_rows=len(data)
 print(UF.TimeStamp(),'The cleaned data has ',final_rows,' hits')
 print(UF.TimeStamp(),'Removing tracks which have less than',ValMinHits,'hits...')
@@ -359,8 +358,7 @@ new_combined_data = new_combined_data[new_combined_data.Track_Hit_No >= ValMinHi
 new_combined_data=new_combined_data.drop(['Hit_ID','tx','ty'],axis=1)
 new_combined_data=new_combined_data.sort_values(['FEDRA_Track_ID','z'],ascending=[1,1])
 new_combined_data['FEDRA_Track_ID']=new_combined_data['FEDRA_Track_ID'].astype(int)
-print(new_combined_data)
-exit()
+
 
 tot_jobs = len(plates)*2
 for c in range(0,Cycle):
