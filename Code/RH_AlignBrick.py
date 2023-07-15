@@ -341,6 +341,8 @@ raw_data['dy'] = raw_data['dy'].fillna(0.0)
 raw_data['x']=raw_data['x']+raw_data['dx']
 raw_data['y']=raw_data['y']+raw_data['dy']
 print(raw_data)
+raw_data['X_bin']=(raw_data['x']-Min_X)/LocalSize
+print(raw_data)
 exit()
 raw_data = raw_data.drop(['Plate_ID','dx','dy'],axis=1)
 
