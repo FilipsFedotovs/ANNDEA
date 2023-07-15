@@ -186,13 +186,13 @@ data_mc=pd.merge(raw_data[['MC_Mother_Vertex_ID','MC_Mother_Track_ID',PM.Hit_ID]
 for RN in RecNames:
   #raw_data_rec=raw_data.drop(raw_data.index[(raw_data[RN] == 'nan-nan')])
   raw_data_rec = raw_data[raw_data[RN].str.contains("nan") == False]
-  raw_data_rec=raw_data_rec[['Track_ID',PM.Hit_ID]]
-  raw_data_temp_rec=raw_data_rec[['Track_ID',PM.Hit_ID]].rename(columns={PM.Hit_ID: 'Track_ID_Size'})
+  raw_data_rec=raw_data_rec[['Track_ID',PM.Hit_ID,RN]]
+  raw_data_temp_rec=raw_data_rec[['Track_ID',PM.Hit_ID,RN]].rename(columns={PM.Hit_ID: 'Track_ID_Size'})
   raw_data_temp_rec=raw_data_temp_rec.groupby(by=['Track_ID'])['Track_ID_Size'].nunique().reset_index()
   raw_data_temp_rec.drop(raw_data_temp_rec.index[(raw_data_temp_rec['Track_ID_Size'] < MinHitsTrack)],inplace=True)
 
   rec_data_tot=raw_data_temp_rec['Track_ID'].nunique()
-  data_rec=pd.merge(raw_data_rec[['Track_ID',PM.Hit_ID]],raw_data_temp_rec,how='inner', on =['Track_ID'])
+  data_rec=pd.merge(raw_data_rec[['Track_ID',PM.Hit_ID,RN]],raw_data_temp_rec,how='inner', on =['Track_ID'])
   data_rec=pd.merge(data_rec,data_mc,how='inner', on =[PM.Hit_ID])
   data_rec=data_rec.rename(columns={PM.Hit_ID: 'Track_ID_Overlap'})
   print(data_rec)
