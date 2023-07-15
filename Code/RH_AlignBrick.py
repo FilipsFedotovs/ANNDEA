@@ -153,7 +153,7 @@ def FitPlate(PlateZ,dx,dy,input_data,Type):
     return fit
 def LocalFitPlate(PlateZ,dx,dy,input_data,Type, X_bin, Y_bin):
     change_df = pd.DataFrame([[PlateZ,dx,dy, X_bin, Y_bin]], columns = ['Plate_ID','dx','dy','X_bin','Y_bin'])
-    temp_data=input_data[['FEDRA_Track_ID','x','y','z','Track_Hit_No','Plate_ID']]
+    temp_data=input_data[['FEDRA_Track_ID','x','y','z','Track_Hit_No','Plate_ID','X_bin','Y_bin']]
     if Type == True:
         temp_data = temp_data[temp_data.Track_Hit_No < MinHits]
     else:
