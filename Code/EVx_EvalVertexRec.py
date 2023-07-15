@@ -196,9 +196,9 @@ for RN in RecNames:
   data_rec=pd.merge(data_rec,data_mc,how='inner', on =[PM.Hit_ID])
   data_rec=data_rec.rename(columns={PM.Hit_ID: 'Track_ID_Overlap'})
   data_rec=data_rec.groupby(by=['Track_ID','Track_ID_Size','MC_Mother_Track_ID',RN])['Track_ID_Overlap'].nunique().reset_index()
-  print(data_rec)
   data_rec.drop(data_rec.index[(data_rec['Track_ID_Overlap'] < 2)],inplace=True)
-  
+  data_rec.sort_values(by=[RN,'Track_ID','Track_ID_Overlap'], ascending=[1,1,0],inplace=True)
+  print(data_rec)
   exit()
   data_temp_rec=data_rec[['Track_ID','MC_Mother_Track_ID']].rename(columns={'Track_ID': 'Track_ID_Segmentation'})
 
