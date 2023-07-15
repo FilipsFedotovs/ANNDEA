@@ -343,7 +343,22 @@ raw_data['y']=raw_data['y']+raw_data['dy']
 raw_data['X_bin']=np.ceil((raw_data['x']-Min_X)/LocalSize).astype(int)
 raw_data['Y_bin']=np.ceil((raw_data['y']-Min_Y)/LocalSize).astype(int)
 
-iterator = 0
+print(UF.TimeStamp(),'The raw data has ',total_rows,' hits')
+print(UF.TimeStamp(),'Removing unreconstructed hits...')
+data=raw_data.dropna()
+final_rows=len(data)
+print(UF.TimeStamp(),'The cleaned data has ',final_rows,' hits')
+print(UF.TimeStamp(),'Removing tracks which have less than',ValMinHits,'hits...')
+track_no_data=data.groupby(['FEDRA_Track_ID'],as_index=False).count()
+track_no_data=track_no_data.drop(['Hit_ID','y','z','tx','ty'],axis=1)
+track_no_data=track_no_data.rename(columns={'x': "Track_Hit_No"})
+new_combined_data=pd.merge(data, track_no_data, how="left", on=['FEDRA_Track_ID'])
+new_combined_data = new_combined_data[new_combined_data.Track_Hit_No >= ValMinHits]
+new_combined_data=new_combined_data.drop(['Hit_ID','tx','ty'],axis=1)
+new_combined_data=new_combined_data.sort_values(['FEDRA_Track_ID','z'],ascending=[1,1])
+new_combined_data['FEDRA_Track_ID']=new_combined_data['FEDRA_Track_ID'].astype(int)
+print(new_combined_data)
+exit()
 
 tot_jobs = len(plates)*2
 for c in range(0,Cycle):
