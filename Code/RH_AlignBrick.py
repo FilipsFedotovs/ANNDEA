@@ -350,7 +350,7 @@ final_rows=len(data)
 print(UF.TimeStamp(),'The cleaned data has ',final_rows,' hits')
 print(UF.TimeStamp(),'Removing tracks which have less than',ValMinHits,'hits...')
 track_no_data=data.groupby(['FEDRA_Track_ID'],as_index=False).count()
-track_no_data=track_no_data.drop(['Hit_ID','y','z','tx','ty'],axis=1)
+track_no_data=track_no_data.drop(['Hit_ID','y','z','tx','ty','X_bin','Y_bin','Plate_ID'],axis=1)
 track_no_data=track_no_data.rename(columns={'x': "Track_Hit_No"})
 new_combined_data=pd.merge(data, track_no_data, how="left", on=['FEDRA_Track_ID'])
 new_combined_data = new_combined_data[new_combined_data.Track_Hit_No >= ValMinHits]
