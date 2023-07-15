@@ -119,11 +119,10 @@ raw_data.drop([PM.MC_Event_ID,PM.MC_Track_ID,PM.MC_VX_ID,],axis=1,inplace=True)
 for rn in range(len(RecNames)):
     raw_data[VertexID[rn][0]] = raw_data[VertexID[rn][0]].astype(str)
     raw_data[VertexID[rn][1]] = raw_data[VertexID[rn][1]].astype(str)
-    raw_data[VertexID[rn][2]] = raw_data[VertexID[rn][2]].astype(str)
     raw_data[RecNames[rn]] = raw_data[VertexID[rn][0]] + '-' + raw_data[VertexID[rn][1]]
-    raw_data[RecNames[rn] + '-VX'] = raw_data[VertexID[rn][0]] + '-' + raw_data[VertexID[rn][2]]
-    raw_data.drop([VertexID[rn][0],VertexID[rn][1],VertexID[rn][2]],axis=1,inplace=True)
+    raw_data.drop([VertexID[rn][0],VertexID[rn][1]],axis=1,inplace=True)
     print(raw_data)
+    exit()
     if len(RemoveTracksZ)>0:
             print(UF.TimeStamp(),'Removing tracks based on start point')
             TracksZdf = pd.DataFrame(RemoveTracksZ, columns = ['Bad_z'], dtype=float)
