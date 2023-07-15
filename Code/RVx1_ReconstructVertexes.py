@@ -847,8 +847,8 @@ while Status<len(Program):
                     rec_no=0
                     eval_no=0
                     rec_list=[]
-                    rec_1 = pd.DataFrame(csv_out, columns = ['Track_1','Seed_ID'])
-                    rec_2 = pd.DataFrame(csv_out, columns = ['Track_2','Seed_ID'])
+                    rec_1 = pd.DataFrame(csv_out, columns = ['Track_1','Domain ID','Seed_ID'])
+                    rec_2 = pd.DataFrame(csv_out, columns = ['Track_2','Domain ID','Seed_ID'])
                     rec=pd.merge(rec_1, rec_2, how="inner", on=['Seed_ID'])
                     rec.drop(['Seed_ID'],axis=1,inplace=True)
                     rec.drop(rec.index[rec['Track_1'] == rec['Track_2']], inplace = True)
