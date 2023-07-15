@@ -115,8 +115,8 @@ raw_data['MC_Mother_Vertex_ID'] = raw_data[PM.MC_Event_ID] + '-' + raw_data[PM.M
 print(raw_data)
 print(TrackID[0])
 print(TrackID[1])
-print(raw_data.SND_Train_RUTr_GMM_FEDRA_Phase2a_Test_Brick_ID.dtype)
-print(raw_data.SND_Train_RUTr_GMM_FEDRA_Phase2a_Test_Track_ID.dtype)
+print(raw_data.SND_Train_RUTr_GMM_FEDRA_Phase2a_Test_Brick_ID.dtypes)
+print(raw_data.SND_Train_RUTr_GMM_FEDRA_Phase2a_Test_Track_ID.dtypes)
 raw_data['Track_ID'] = raw_data[TrackID[0]] + '-' + raw_data[TrackID[1]]
 print(raw_data)
 exit()
