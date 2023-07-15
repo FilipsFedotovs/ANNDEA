@@ -27,6 +27,7 @@ stepY=6000
 stepZ=12000
 cut_dt=0.2
 cut_dr=60
+MaxSeedsPerVxPool=20000
 testRatio=0.05
 MaxValSampleSize=50000
 num_node_features=5
@@ -47,29 +48,12 @@ MinHitsTrack=4
 VetoMotherTrack=[]
 VetoVertex=['-1', '-2']
 
-# MaxTracksPerJob=20000
-# MaxEvalTracksPerJob=20000
-# MaxSeedsPerJob=40000
-# MaxVxPerJob=10000
-# MaxSeedsPerVxPool=20000
-# ##Model parameters
-# pre_acceptance=0.5
-# post_acceptance=0.5
-# bg_acceptance = 1.0
-# #pre_vx_acceptance=0.662
-# resolution=50
-# MaxX=1000.0
-# MaxY=1000.0
-# MaxZ=3000.0
-# GNNMaxX=100.0
-# GNNMaxY=100.0
-# GNNMaxZ=1315
-# GNNMaxTX=0.01
-# GNNMaxTY=0.01
-# Pre_CNN_Model_Name='1T_50_SHIP_PREFIT_1_model'
-# Post_CNN_Model_Name='1T_50_SHIP_POSTFIT_1_model'
-# Classifier_Model_Name= 'SND_Reduced_3Class2'
-# Post_GNN_Model_Name = 'SND_Glue_Post_GMM3_FullCo_Angle2'
-# #ModelArchitecture=[[6, 4, 1, 2, 2, 2, 2], [], [],[], [], [1, 4, 2], [], [], [], [], [7, 1, 1, 4]]
-# ModelArchitecture=[[1, 4, 1, 8, 2, 2, 2], [], [],[], [], [1, 4, 2], [], [], [], [], [7, 1, 1, 4]]
-# ModelArchitecturePlus=[[1, 4, [2, 2, 2], [8, 8, 8], 2, 2, 2], [], [],[], [], [1, 4, 2], [], [], [], [], [7, 1, 1, 4]]
+
+def Seed_Bond_Fit_Acceptance(row):
+        if row['AntiLink_Strenth']>0:
+          return 1.16*(row['Link_Strength']+row['Seed_CNN_Fit'])/row['AntiLink_Strenth']
+        else:
+          return 100
+        
+pre_vx_acceptance=0.662
+link_acceptance=1.2

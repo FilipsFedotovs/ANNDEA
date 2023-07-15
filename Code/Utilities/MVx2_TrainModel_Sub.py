@@ -78,8 +78,8 @@ def GNNtrain(model, Sample,optimizer):
     model.train()
     for data in Sample:
         out = model(data.x, data.edge_index, data.edge_attr, data.batch)
-        print(out,data.y) 
         loss = criterion(out, data.y)
+        print(loss)
         loss.backward()  # Derive gradients.
         optimizer.step()  # Update parameters based on gradients.
         optimizer.zero_grad()
@@ -260,6 +260,8 @@ def main(self):
             scheduler.step()
             print(UF.TimeStamp(),'Epoch ',epoch, ' is completed')
             records.append([epoch,itr,train_loss.item(),0.5,val_loss,val_acc,test_loss,test_acc,train_set])
+            print(train_loss)
+            print(itr)
             torch.save({    'epoch': epoch,
                           'optimizer_state_dict': optimizer.state_dict(),
                           'scheduler': scheduler.state_dict(),    # HERE IS THE CHANGE
