@@ -151,10 +151,94 @@ def FitPlate(PlateZ,dx,dy,input_data,Type):
     temp_data=temp_data.values.tolist()
     fit=temp_data[0]/temp_data[1]
     return fit
+def LocalFitPlate(PlateZ,dx,dy,input_data,Type, X_bin, Y_bin):
+    change_df = pd.DataFrame([[PlateZ,dx,dy, X_bin, Y_bin]], columns = ['Plate_ID','dx','dy','X_bin','Y_bin'])
+    temp_data=input_data[['FEDRA_Track_ID','x','y','z','Track_Hit_No','Plate_ID']]
+    if Type == True:
+        temp_data = temp_data[temp_data.Track_Hit_No < MinHits]
+    else:
+        temp_data = temp_data[temp_data.Track_Hit_No >= MinHits]
+        
+        
+    temp_data=pd.merge(temp_data,change_df,on=['Plate_ID','X_bin','Y_bin'],how='left')
+    temp_data['dx'] = temp_data['dx'].fillna(0.0)
+    temp_data['dy'] = temp_data['dy'].fillna(0.0)
+    temp_data['x']=temp_data['x']+temp_data['dx']
+    temp_data['y']=temp_data['y']+temp_data['dy']
+    temp_data=temp_data[['FEDRA_Track_ID','x','y','z','Track_Hit_No']]
+    Tracks_Head=temp_data[['FEDRA_Track_ID']]
+    Tracks_Head.drop_duplicates(inplace=True)
+    Tracks_List=temp_data.values.tolist() #I find it is much easier to deal with tracks in list format when it comes to fitting
+    Tracks_Head=Tracks_Head.values.tolist()
+    #Bellow we build the track representatation that we can use to fit slopes
+    for bth in Tracks_Head:
+                   bth.append([])
+                   bt=0
+                   trigger=False
+                   while bt<(len(Tracks_List)):
+                       if bth[0]==Tracks_List[bt][0]:
+
+                           bth[1].append(Tracks_List[bt][1:4])
+                           del Tracks_List[bt]
+                           bt-=1
+                           trigger=True
+                       elif trigger:
+                            break
+                       else:
+                            continue
+                       bt+=1
+    for bth in Tracks_Head:
+           x,y,z=[],[],[]
+           for b in bth[1]:
+               x.append(b[0])
+               y.append(b[1])
+               z.append(b[2])
+           tx=np.polyfit(z,x,1)[0]
+           ax=np.polyfit(z,x,1)[1]
+           ty=np.polyfit(z,y,1)[0]
+           ay=np.polyfit(z,y,1)[1]
+           bth.append(ax) #Append x intercept
+           bth.append(tx) #Append x slope
+           bth.append(0) #Append a placeholder slope (for polynomial case)
+           bth.append(ay) #Append x intercept
+           bth.append(ty) #Append x slope
+           bth.append(0) #Append a placeholder slope (for polynomial case)
+           del(bth[1])
+    #Once we get coefficients for all tracks we convert them back to Pandas dataframe and join back to the data
+    Tracks_Head=pd.DataFrame(Tracks_Head, columns = ['FEDRA_Track_ID','ax','t1x','t2x','ay','t1y','t2y'])
+
+    temp_data=pd.merge(temp_data,Tracks_Head,how='inner',on = ['FEDRA_Track_ID'])
+    #Calculating x and y coordinates of the fitted line for all plates in the track
+    temp_data['new_x']=temp_data['ax']+(temp_data['z']*temp_data['t1x'])+((temp_data['z']**2)*temp_data['t2x'])
+    temp_data['new_y']=temp_data['ay']+(temp_data['z']*temp_data['t1y'])+((temp_data['z']**2)*temp_data['t2y'])
+    #Calculating how far hits deviate from the fit polynomial
+    temp_data['d_x']=temp_data['x']-temp_data['new_x']
+    temp_data['d_y']=temp_data['y']-temp_data['new_y']
+    temp_data['d_r']=temp_data['d_x']**2+temp_data['d_y']**2
+    temp_data['d_r'] = temp_data['d_r'].astype(float)
+    temp_data['d_r']=np.sqrt(temp_data['d_r']) #Absolute distance
+    temp_data=temp_data[['FEDRA_Track_ID','Track_Hit_No','d_r']]
+    temp_data=temp_data.groupby(['FEDRA_Track_ID','Track_Hit_No']).agg({'d_r':'sum'}).reset_index()
+
+    temp_data=temp_data.agg({'d_r':'sum','Track_Hit_No':'sum'})
+    temp_data=temp_data.values.tolist()
+    fit=temp_data[0]/temp_data[1]
+    return fit
 def AlignPlate(PlateZ,dx,dy,input_data):
     change_df = pd.DataFrame([[PlateZ,dx,dy]], columns = ['Plate_ID','dx','dy'])
     temp_data=input_data
     temp_data=pd.merge(temp_data,change_df,on='Plate_ID',how='left')
+    temp_data['dx'] = temp_data['dx'].fillna(0.0)
+    temp_data['dy'] = temp_data['dy'].fillna(0.0)
+    temp_data['x']=temp_data['x']+temp_data['dx']
+    temp_data['y']=temp_data['y']+temp_data['dy']
+    temp_data = temp_data.drop(['dx','dy'],axis=1)
+    return temp_data
+
+def LocalAlignPlate(PlateZ,dx,dy,input_data, X_bin, Y_bin):
+    change_df = pd.DataFrame([[PlateZ,dx,dy, X_bin, Y_bin]], columns = ['Plate_ID','dx','dy','X_bin','Y_bin'])
+    temp_data=input_data
+    temp_data=pd.merge(temp_data,change_df,on=['Plate_ID', 'X_bin','Y_bin'],how='left')
     temp_data['dx'] = temp_data['dx'].fillna(0.0)
     temp_data['dy'] = temp_data['dy'].fillna(0.0)
     temp_data['x']=temp_data['x']+temp_data['dx']
@@ -175,9 +259,7 @@ delta_X=Max_X-Min_X
 delta_Y=Max_Y-Min_Y
 Step_X=math.ceil(delta_X/LocalSize)
 Step_Y=math.ceil(delta_Y/LocalSize)
-print(Step_X)
-print(Step_Y)
-exit()
+
 
 print(UF.TimeStamp(),'The raw data has ',total_rows,' hits')
 print(UF.TimeStamp(),'Removing unreconstructed hits...')
@@ -258,6 +340,8 @@ raw_data['dx'] = raw_data['dx'].fillna(0.0)
 raw_data['dy'] = raw_data['dy'].fillna(0.0)
 raw_data['x']=raw_data['x']+raw_data['dx']
 raw_data['y']=raw_data['y']+raw_data['dy']
+print(raw_data)
+exit()
 raw_data = raw_data.drop(['Plate_ID','dx','dy'],axis=1)
 
 raw_data.to_csv(output_file_location,index=False)
