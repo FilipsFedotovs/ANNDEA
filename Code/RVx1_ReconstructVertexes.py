@@ -1067,7 +1067,6 @@ if Status<20:
         if p[:6]!='Custom' and (p in ModelName)==False:
            print(UF.TimeStamp(),UF.ManageTempFolders(p,'Delete'))
     for md in range(len(ModelName)):
-                print(md)
                 if md==0:
                     prog_entry=[]
                     job_sets=[]
