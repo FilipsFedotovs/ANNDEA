@@ -96,8 +96,6 @@ raw_data=raw_data.drop(raw_data.index[(raw_data['MC_Event_ID'] != '31-96')])
 #raw_data=raw_data.drop(raw_data.index[(raw_data['MotherPDG'] != 14)])
 total_rows=len(raw_data.axes[0])
 print(UF.TimeStamp(),'The raw data has ',total_rows,' hits')
-print(raw_data)
-exit()
 
 if SliceData:
            print(UF.TimeStamp(),'Slicing the data...')
@@ -112,7 +110,11 @@ raw_data[PM.MC_Track_ID] = raw_data[PM.MC_Track_ID].astype(str)
 raw_data[PM.Hit_ID] = raw_data[PM.Hit_ID].astype(str)
 raw_data['MC_Mother_Track_ID'] = raw_data[PM.MC_Event_ID] + '-' + raw_data[PM.MC_Track_ID]
 raw_data['MC_Mother_Vertex_ID'] = raw_data[PM.MC_Event_ID] + '-' + raw_data[PM.MC_VX_ID]
-raw_data['MC_Mother_Vertex_ID'] = raw_data[PM.MC_Event_ID] + '-' + raw_data[PM.MC_VX_ID]
+raw_data['Track_ID'] = raw_data[TrackID[0]] + '-' + raw_data[TrackID[1]]
+print(raw_data)
+exit()
+
+
 raw_data.drop([PM.MC_Event_ID,PM.MC_Track_ID,PM.MC_VX_ID],axis=1,inplace=True)
 for rn in range(len(RecNames)):
     raw_data[TrackID[rn][0]] = raw_data[TrackID[rn][0]].astype(str)
