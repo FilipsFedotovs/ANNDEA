@@ -130,8 +130,6 @@ for rn in range(len(RecNames)):
             raw_data=pd.merge(raw_data, TracksZdf, how="left", left_on=["PosBad_Z"], right_on=['Bad_z'])
             raw_data=raw_data[raw_data['Bad_z'].isnull()]
             raw_data=raw_data.drop(['Bad_z', 'PosBad_Z'],axis=1)
-print(raw_data)
-exit()
 if SkipRcmb:
     print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
     print(UF.TimeStamp(),bcolors.BOLD+'Stage 2:'+bcolors.ENDC+' Calculating recombination metrics...')
