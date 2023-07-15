@@ -46,7 +46,7 @@ import Parameters as PM #This is where we keep framework global parameters
 #Setting the parser
 parser = argparse.ArgumentParser(description='This script compares the ouput of the previous step with the output of ANNDEA reconstructed data to calculate reconstruction performance.')
 parser.add_argument('--f',help="Please enter the full path to the file with track reconstruction", default='/afs/cern.ch/work/f/ffedship/public/SHIP/Source_Data/SHIP_Emulsion_FEDRA_Raw_UR.csv')
-parser.add_argument('--TrackID',help="Name of the control track", default="[['Brick_ID','FEDRA_Track_ID']]")
+parser.add_argument('--TrackID',help="Name of the control track", default="['Brick_ID','FEDRA_Track_ID']")
 parser.add_argument('--SkipRcmb',help="Skip recombination calculations (to reduce CPU load)", default="Y")
 parser.add_argument('--MCCategories',help="What MC categories present in the MC data would you like to split by?", default="[]")
 parser.add_argument('--RecNames',help="What Names would you like to assign to the reconstruction methods that generated the tracks?", default="['FEDRA']")
@@ -56,6 +56,7 @@ parser.add_argument('--Ymin',help="This option restricts data to only those even
 parser.add_argument('--Ymax',help="This option restricts data to only those events that have tracks with hits y-coordinates that are below this value", default='0')
 parser.add_argument('--MinHitsTrack',help="What is the minimum number of hits per track?", default=PM.MinHitsTrack)
 parser.add_argument('--RemoveTracksZ',help="This option enables to remove particular tracks of starting Z-coordinate", default='[]')
+parser.add_argument('--VertexID',help="", default='[]')
 args = parser.parse_args()
 
 ######################################## Welcome message  #############################################################
@@ -69,6 +70,7 @@ print(bcolors.HEADER+"##########################################################
 print(UF.TimeStamp(),bcolors.BOLD+'Stage 1:'+bcolors.ENDC+' Preparing the input data...')
 ######################################## Set variables  #############################################################
 TrackID=ast.literal_eval(args.TrackID)
+VertexID=ast.literal_eval(args.VertexID)
 MCCategories=ast.literal_eval(args.MCCategories)
 RecNames=ast.literal_eval(args.RecNames)
 input_file_location=args.f
@@ -81,8 +83,8 @@ SliceData=max(Xmin,Xmax,Ymin,Ymax)>0 #We don't slice data if all values are set 
 ofn=(args.f[(args.f.rfind('/'))+1:-4])
 
 print(UF.TimeStamp(), 'Loading ',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
-columns_to_extract=[PM.x,PM.y,PM.z,PM.Hit_ID,PM.MC_Event_ID,PM.MC_Track_ID,PM.MC_VX_ID]
-for col in TrackID:
+columns_to_extract=[PM.x,PM.y,PM.z,PM.Hit_ID,PM.MC_Event_ID,PM.MC_Track_ID,PM.MC_VX_ID,TrackID[0],TrackID[1]]
+for col in VertexID:
     columns_to_extract+=col
 columns_to_extract+=MCCategories
 if os.path.isfile(input_file_location)!=True:
@@ -94,7 +96,8 @@ raw_data=raw_data.drop(raw_data.index[(raw_data['MC_Event_ID'] != '31-96')])
 #raw_data=raw_data.drop(raw_data.index[(raw_data['MotherPDG'] != 14)])
 total_rows=len(raw_data.axes[0])
 print(UF.TimeStamp(),'The raw data has ',total_rows,' hits')
-
+print(raw_data)
+exit()
 
 if SliceData:
            print(UF.TimeStamp(),'Slicing the data...')
@@ -108,6 +111,7 @@ raw_data[PM.MC_VX_ID] = raw_data[PM.MC_VX_ID].astype(str)
 raw_data[PM.MC_Track_ID] = raw_data[PM.MC_Track_ID].astype(str)
 raw_data[PM.Hit_ID] = raw_data[PM.Hit_ID].astype(str)
 raw_data['MC_Mother_Track_ID'] = raw_data[PM.MC_Event_ID] + '-' + raw_data[PM.MC_Track_ID]
+raw_data['MC_Mother_Vertex_ID'] = raw_data[PM.MC_Event_ID] + '-' + raw_data[PM.MC_VX_ID]
 raw_data['MC_Mother_Vertex_ID'] = raw_data[PM.MC_Event_ID] + '-' + raw_data[PM.MC_VX_ID]
 raw_data.drop([PM.MC_Event_ID,PM.MC_Track_ID,PM.MC_VX_ID],axis=1,inplace=True)
 for rn in range(len(RecNames)):
