@@ -342,7 +342,7 @@ raw_data['x']=raw_data['x']+raw_data['dx']
 raw_data['y']=raw_data['y']+raw_data['dy']
 raw_data['X_bin']=np.ceil((raw_data['x']-Min_X)/LocalSize).astype(int)
 raw_data['Y_bin']=np.ceil((raw_data['y']-Min_Y)/LocalSize).astype(int)
-
+raw_data.drop(['dx','dy'],axis=1, inplace=True)
 print(UF.TimeStamp(),'The raw data has ',total_rows,' hits')
 print(UF.TimeStamp(),'Removing unreconstructed hits...')
 data=raw_data.dropna()
