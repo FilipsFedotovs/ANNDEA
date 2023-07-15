@@ -62,7 +62,7 @@ parser.add_argument('--f',help="Please enter the full path to the file with trac
 parser.add_argument('--ValMinHits',help="What is the validation minimum number of hits per track?", default='40')
 parser.add_argument('--Name',help="Name of log", default='Realigned')
 parser.add_argument('--Cycle',help="Cycle", default='1')
-
+parser.add_argument('--LocalSize',help="Size", default='10000')
 
 
 ######################################## Parsing argument values  #############################################################
@@ -70,6 +70,7 @@ args = parser.parse_args()
 initial_input_file_location=args.f
 MinHits=int(args.MinHits)
 ValMinHits=int(args.ValMinHits)
+LocalSize=int(args.LocalSize)
 
 Cycle=int(args.Cycle)
 name=args.Name
@@ -166,6 +167,9 @@ raw_data=pd.read_csv(initial_input_file_location,
                 header=0)
 
 total_rows=len(raw_data)
+Min_X=raw_data.x.min()
+print(Min_X)
+exit()
 print(UF.TimeStamp(),'The raw data has ',total_rows,' hits')
 print(UF.TimeStamp(),'Removing unreconstructed hits...')
 data=raw_data.dropna()
