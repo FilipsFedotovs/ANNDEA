@@ -406,21 +406,20 @@ for c in range(0,Cycle):
             local_logdata = [c,"local vertical-horizontal plate alignment XY", iterator, p[0], FitFix, FitVal, MinHits,ValMinHits]
             global_logdata.append(local_logdata)
             alignment_map.append(am)
-            print(alignment_map)
-            exit()
+            
 global_logdata = pd.DataFrame(global_logdata, columns = ['cycle','alignment type', 'iteration', 'plate location', 'Overall fit value','Validation fit value', 'Min Hits', 'ValMinHits'])
 global_logdata.to_csv(output_log_location,index=False)
 
 print(UF.TimeStamp(),'Aligning the brick...')
-alignment_map=pd.DataFrame(alignment_map, columns = ['Plate_ID','dx','dy'])
-raw_data['Plate_ID']=raw_data['z'].astype(int)
-raw_data=pd.merge(raw_data,alignment_map,on='Plate_ID',how='inner')
+alignment_map=pd.DataFrame(alignment_map, columns = ['Plate_ID','X_bin','Y_bin','dx','dy'])
+#raw_data['Plate_ID']=raw_data['z'].astype(int)
+raw_data=pd.merge(raw_data,alignment_map,on=['Plate_ID','X_bin','Y_bin'],how='inner')
 raw_data['dx'] = raw_data['dx'].fillna(0.0)
 raw_data['dy'] = raw_data['dy'].fillna(0.0)
 raw_data['x']=raw_data['x']+raw_data['dx']
 raw_data['y']=raw_data['y']+raw_data['dy']
-exit()
-raw_data = raw_data.drop(['Plate_ID','dx','dy'],axis=1)
+
+raw_data = raw_data.drop(['Plate_ID','dx','dy','X_bin','Y_bin'],axis=1)
 
 raw_data.to_csv(output_file_location,index=False)
 print('Alignment has been completed...')
