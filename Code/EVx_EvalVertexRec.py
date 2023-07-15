@@ -88,7 +88,6 @@ for col in VertexID:
     columns_to_extract+=col
 columns_to_extract+=MCCategories
 columns_to_extract = list(dict.fromkeys(columns_to_extract))
-print(columns_to_extract)
 if os.path.isfile(input_file_location)!=True:
                      print(UF.TimeStamp(), bcolors.FAIL+"Critical fail: file",input_file_location,'is missing, please check that the name/path is correct...'+bcolors.ENDC)
                      exit()
@@ -114,24 +113,17 @@ raw_data[TrackID[1]] = raw_data[TrackID[1]].astype(str)
 raw_data[PM.Hit_ID] = raw_data[PM.Hit_ID].astype(str)
 raw_data['MC_Mother_Track_ID'] = raw_data[PM.MC_Event_ID] + '-' + raw_data[PM.MC_Track_ID]
 raw_data['MC_Mother_Vertex_ID'] = raw_data[PM.MC_Event_ID] + '-' + raw_data[PM.MC_VX_ID]
-print(raw_data)
-print(TrackID[0])
-print(TrackID[1])
-print(raw_data.SND_Train_RUTr_GMM_FEDRA_Phase2a_Test_Brick_ID.dtypes)
-print(raw_data.SND_Train_RUTr_GMM_FEDRA_Phase2a_Test_Track_ID.dtypes)
 raw_data['Track_ID'] = raw_data[TrackID[0]] + '-' + raw_data[TrackID[1]]
-print(raw_data)
-exit()
 
-
-raw_data.drop([PM.MC_Event_ID,PM.MC_Track_ID,PM.MC_VX_ID],axis=1,inplace=True)
+raw_data.drop([PM.MC_Event_ID,PM.MC_Track_ID,PM.MC_VX_ID,],axis=1,inplace=True)
 for rn in range(len(RecNames)):
-    raw_data[TrackID[rn][0]] = raw_data[TrackID[rn][0]].astype(str)
-    raw_data[TrackID[rn][1]] = raw_data[TrackID[rn][1]].astype(str)
-    raw_data[TrackID[rn][2]] = raw_data[TrackID[rn][2]].astype(str)
-    raw_data[RecNames[rn]] = raw_data[TrackID[rn][0]] + '-' + raw_data[TrackID[rn][1]]
-    raw_data[RecNames[rn] + '-VX'] = raw_data[TrackID[rn][0]] + '-' + raw_data[TrackID[rn][2]]
-    raw_data.drop([TrackID[rn][0],TrackID[rn][1],TrackID[rn][2]],axis=1,inplace=True)
+    raw_data[VertexID[rn][0]] = raw_data[VertexID[rn][0]].astype(str)
+    raw_data[VertexID[rn][1]] = raw_data[VertexID[rn][1]].astype(str)
+    raw_data[VertexID[rn][2]] = raw_data[VertexID[rn][2]].astype(str)
+    raw_data[RecNames[rn]] = raw_data[VertexID[rn][0]] + '-' + raw_data[VertexID[rn][1]]
+    raw_data[RecNames[rn] + '-VX'] = raw_data[VertexID[rn][0]] + '-' + raw_data[VertexID[rn][2]]
+    raw_data.drop([VertexID[rn][0],VertexID[rn][1],VertexID[rn][2]],axis=1,inplace=True)
+    print(raw_data)
     if len(RemoveTracksZ)>0:
             print(UF.TimeStamp(),'Removing tracks based on start point')
             TracksZdf = pd.DataFrame(RemoveTracksZ, columns = ['Bad_z'], dtype=float)
