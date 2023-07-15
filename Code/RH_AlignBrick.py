@@ -293,7 +293,7 @@ for c in range(0,Cycle):
     
     with alive_bar(tot_jobs,force_tty=True, title='Optimising the alignment configuration...') as bar:
     
-     for p in plates:
+     for p in plates[:1]:
        am=[p[0]]
        def FitPlateFixedX(x):
            return FitPlate(p[0],x,0,new_combined_data,False)
