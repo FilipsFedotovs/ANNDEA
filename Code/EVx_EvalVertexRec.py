@@ -113,7 +113,8 @@ raw_data[PM.Hit_ID] = raw_data[PM.Hit_ID].astype(str)
 raw_data['MC_Mother_Track_ID'] = raw_data[PM.MC_Event_ID] + '-' + raw_data[PM.MC_Track_ID]
 raw_data['MC_Mother_Vertex_ID'] = raw_data[PM.MC_Event_ID] + '-' + raw_data[PM.MC_VX_ID]
 print(raw_data)
-print(TrackID)
+print(TrackID.TrackID[0].dtype)
+print(TrackID.TrackID[1].dtype)
 raw_data['Track_ID'] = raw_data[TrackID[0]] + '-' + raw_data[TrackID[1]]
 print(raw_data)
 exit()
