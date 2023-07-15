@@ -340,9 +340,67 @@ raw_data['dx'] = raw_data['dx'].fillna(0.0)
 raw_data['dy'] = raw_data['dy'].fillna(0.0)
 raw_data['x']=raw_data['x']+raw_data['dx']
 raw_data['y']=raw_data['y']+raw_data['dy']
-print(raw_data)
-raw_data['X_bin']=np.ceil((raw_data['x']-Min_X)/LocalSize)
-print(raw_data)
+raw_data['X_bin']=np.ceil((raw_data['x']-Min_X)/LocalSize).astype(int)
+raw_data['Y_bin']=np.ceil((raw_data['y']-Min_Y)/LocalSize).astype(int)
+
+iterator = 0
+
+tot_jobs = len(plates)*2
+for c in range(0,Cycle):
+    alignment_map=[]
+    print('Cycle',c)
+    
+    with alive_bar(tot_jobs,force_tty=True, title='Optimising the local alignment configuration...') as bar:
+    
+     for p in plates[:1]:
+       for i in range(1,Step_X+1):
+        for j in range(1,Step_Y+1):
+            am=[p[0],i,j]
+            def LocalFitPlateFixedX(x):
+                return LocalFitPlate(p[0],x,0,new_combined_data,False,i,j)
+            def LocalFitPlateFixedY(x):
+                return LocalFitPlate(p[0],0,x,new_combined_data,False,i,j)
+            def LocalFitPlateValX(x):
+                return LocalFitPlate(p[0],x,0,new_combined_data,True,i,j)
+            def LocalFitPlateValY(x):
+                return LocalFitPlate(p[0],0,x,new_combined_data,True,i,j)
+            res = minimize_scalar(LocalFitPlateFixedX, bounds=(-500, 500), method='bounded')
+            new_combined_data=LocalAlignPlate(p[0],res.x,0,new_combined_data,i,j)
+            am.append(res.x)
+            FitFix = LocalFitPlateFixedX(0)
+            FitVal = LocalFitPlateValX(0)
+            print('Current fit value:',FitFix)
+            print('Validation fit value:',FitVal)
+            exit()
+            iterator += 1
+            #Angle_radian = np.arctan2(dy, dx)
+            local_logdata = [c,"global vertical-horizontal plate alignment XY", iterator, p[0], FitFix,FitVal, MinHits,ValMinHits]
+            global_logdata.append(local_logdata)
+            bar()
+            res = minimize_scalar(FitPlateFixedY, bounds=(-500, 500), method='bounded')
+            new_combined_data=AlignPlate(p[0],0,res.x,new_combined_data)
+            am.append(res.x)
+            bar()
+            iterator += 1
+            #Angle_radian = np.arctan2(dy, dx)
+            FitFix = FitPlateFixedY(0)
+            FitVal = FitPlateValY(0)
+            print('Current fit value:',FitFix)
+            print('Validation fit value:',FitVal)
+            local_logdata = [c,"global vertical-horizontal plate alignment XY", iterator, p[0], FitFix, FitVal, MinHits,ValMinHits]
+            global_logdata.append(local_logdata)
+            alignment_map.append(am)
+global_logdata = pd.DataFrame(global_logdata, columns = ['cycle','alignment type', 'iteration', 'plate location', 'Overall fit value','Validation fit value', 'Min Hits', 'ValMinHits'])
+global_logdata.to_csv(output_log_location,index=False)
+
+print(UF.TimeStamp(),'Aligning the brick...')
+alignment_map=pd.DataFrame(alignment_map, columns = ['Plate_ID','dx','dy'])
+raw_data['Plate_ID']=raw_data['z'].astype(int)
+raw_data=pd.merge(raw_data,alignment_map,on='Plate_ID',how='inner')
+raw_data['dx'] = raw_data['dx'].fillna(0.0)
+raw_data['dy'] = raw_data['dy'].fillna(0.0)
+raw_data['x']=raw_data['x']+raw_data['dx']
+raw_data['y']=raw_data['y']+raw_data['dy']
 exit()
 raw_data = raw_data.drop(['Plate_ID','dx','dy'],axis=1)
 
