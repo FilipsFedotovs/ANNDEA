@@ -379,8 +379,8 @@ for c in range(0,Cycle):
                 return LocalFitPlate(p[0],x,0,new_combined_data,True,i,j)
             def LocalFitPlateValY(x):
                 return LocalFitPlate(p[0],0,x,new_combined_data,True,i,j)
-            print(new_combined_data)
-            exit()
+            
+            
             res = minimize_scalar(LocalFitPlateFixedX, bounds=(-500, 500), method='bounded')
             new_combined_data=LocalAlignPlate(p[0],res.x,0,new_combined_data,i,j)
             am.append(res.x)
