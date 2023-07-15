@@ -837,7 +837,7 @@ while Status<len(Program):
               print(UF.PickleOperations(output_file_location,'w',base_data)[1])
  
               if args.Log=='Y':
-                  try:
+                  #try:
                     print(UF.TimeStamp(),'Initiating the logging...')
                     eval_data_file=EOS_DIR+'/ANNDEA/Data/TEST_SET/EVx1b_'+RecBatchID+'_SEED_TRUTH_COMBINATIONS.csv'
                     eval_data=pd.read_csv(eval_data_file,header=0,usecols=['Segment_1','Segment_2'])
@@ -861,8 +861,8 @@ while Status<len(Program):
                     rec_no=(len(rec)-len(rec_eval))
                     UF.LogOperations(EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv', 'a', [[6,'Vertex Merging',rec_no,eval_no,eval_no/(rec_no+eval_no),eval_no/len(eval_data)]])
                     print(UF.TimeStamp(), bcolors.OKGREEN+"The log has been created successfully at "+bcolors.ENDC, bcolors.OKBLUE+EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv'+bcolors.ENDC)
-                  except:
-                    print(UF.TimeStamp(), bcolors.WARNING+'Log creation has failed'+bcolors.ENDC)
+                  #except:
+                    #print(UF.TimeStamp(), bcolors.WARNING+'Log creation has failed'+bcolors.ENDC)
     elif Program[Status]=='Custom - VertexMapping':
                 raw_name=initial_input_file_location[:-4]
                 for l in range(len(raw_name)-1,0,-1):
