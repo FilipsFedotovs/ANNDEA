@@ -87,6 +87,7 @@ columns_to_extract=[PM.x,PM.y,PM.z,PM.Hit_ID,PM.MC_Event_ID,PM.MC_Track_ID,PM.MC
 for col in VertexID:
     columns_to_extract+=col
 columns_to_extract+=MCCategories
+columns_to_extract = list(dict.fromkeys(columns_to_extract))
 print(columns_to_extract)
 if os.path.isfile(input_file_location)!=True:
                      print(UF.TimeStamp(), bcolors.FAIL+"Critical fail: file",input_file_location,'is missing, please check that the name/path is correct...'+bcolors.ENDC)
