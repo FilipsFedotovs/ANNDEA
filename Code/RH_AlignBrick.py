@@ -168,8 +168,17 @@ raw_data=pd.read_csv(initial_input_file_location,
 
 total_rows=len(raw_data)
 Min_X=raw_data.x.min()
-print(Min_X)
+Min_Y=raw_data.y.min()
+Max_X=raw_data.x.max()
+Max_Y=raw_data.y.max()
+delta_X=Max_X-Min_X
+delta_Y=Max_Y-Min_Y
+Step_X=math.ceil(delta_X/LocalSize)
+Step_Y=math.ceil(delta_Y/LocalSize)
+print(Step_X)
+print(Step_Y)
 exit()
+
 print(UF.TimeStamp(),'The raw data has ',total_rows,' hits')
 print(UF.TimeStamp(),'Removing unreconstructed hits...')
 data=raw_data.dropna()
