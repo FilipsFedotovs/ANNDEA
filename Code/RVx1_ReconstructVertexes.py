@@ -883,11 +883,11 @@ while Status<len(Program):
                 initial_data[BrickID] = initial_data[BrickID].astype(str)
                 initial_data[TrackID] = initial_data[TrackID].astype(str)
 
-                initial_data['Combined_ID'] = initial_data[TrackID] + '-' + initial_data[BrickID]
+                initial_data['Old_Track_ID'] = initial_data[TrackID] + '-' + initial_data[BrickID]
 
                 print(initial_data)
                 print(map_data)
-                initial_data=pd.merge(initial_data,map_data,how='inner',on=['Combined_ID'])
+                initial_data=pd.merge(initial_data,map_data,how='inner',on=['Old_Track_ID'])
                 print(initial_data)
                 exit()
 
