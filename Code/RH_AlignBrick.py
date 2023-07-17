@@ -426,5 +426,5 @@ raw_data = raw_data.drop(['Plate_ID','dx','dy','X_bin','Y_bin'],axis=1)
 raw_data.to_csv(output_file_location,index=False)
 print('Alignment has been completed...')
 print('Alignment has been saved 2 log file', output_log_location)
-
+exit()
 
