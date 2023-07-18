@@ -148,13 +148,9 @@ def FitPlate(PlateZ,dx,dy,input_data):
     temp_data=temp_data.values.tolist()
     fit=temp_data[0]/temp_data[1]
     return fit
-def LocalFitPlate(PlateZ,dx,dy,input_data,Type, X_bin, Y_bin):
+def LocalFitPlate(PlateZ,dx,dy,input_data, X_bin, Y_bin):
     change_df = pd.DataFrame([[PlateZ,dx,dy, X_bin, Y_bin]], columns = ['Plate_ID','dx','dy','X_bin','Y_bin'])
     temp_data=input_data[['FEDRA_Track_ID','x','y','z','Track_Hit_No','Plate_ID','X_bin','Y_bin']]
-    if Type == True:
-        temp_data = temp_data[temp_data.Track_Hit_No < MinHits]
-    else:
-        temp_data = temp_data[temp_data.Track_Hit_No >= MinHits]
         
         
     temp_data=pd.merge(temp_data,change_df,on=['Plate_ID','X_bin','Y_bin'],how='left')
@@ -347,98 +343,117 @@ with alive_bar(tot_jobs,force_tty=True, title='Optimising the alignment configur
     train_data['y']=train_data['y']+train_data['dy']
     train_data.drop(['dx','dy'],axis=1, inplace=True)  ####
 
-# print(UF.TimeStamp(),'Aligning the brick...')
-# alignment_map=pd.DataFrame(alignment_map, columns = ['Plate_ID','dx','dy'])
-# raw_data['Plate_ID']=raw_data['z'].astype(int)
-# raw_data=pd.merge(raw_data,alignment_map,on='Plate_ID',how='left')
-# raw_data['dx'] = raw_data['dx'].fillna(0.0)
-# raw_data['dy'] = raw_data['dy'].fillna(0.0)
-# raw_data['x']=raw_data['x']+raw_data['dx']
-# raw_data['y']=raw_data['y']+raw_data['dy']
-# raw_data['X_bin']=np.ceil((raw_data['x']-Min_X)/LocalSize).astype(int)
-# raw_data['Y_bin']=np.ceil((raw_data['y']-Min_Y)/LocalSize).astype(int)
-# raw_data.drop(['dx','dy'],axis=1, inplace=True)
-# print(UF.TimeStamp(),'The raw data has ',total_rows,' hits')
-# print(UF.TimeStamp(),'Removing unreconstructed hits...')
-# data=raw_data.dropna(subset=['FEDRA_Track_ID'])
+print(UF.TimeStamp(),'Aligning the brick...')
+alignment_map=pd.DataFrame(alignment_map, columns = ['Plate_ID','dx','dy'])
+raw_data['Plate_ID']=raw_data['z'].astype(int)
+raw_data=pd.merge(raw_data,alignment_map,on='Plate_ID',how='left')
+raw_data['dx'] = raw_data['dx'].fillna(0.0)
+raw_data['dy'] = raw_data['dy'].fillna(0.0)
+raw_data['x']=raw_data['x']+raw_data['dx']
+raw_data['y']=raw_data['y']+raw_data['dy']
+raw_data['X_bin']=np.ceil((raw_data['x']-Min_X)/LocalSize).astype(int)
+raw_data['Y_bin']=np.ceil((raw_data['y']-Min_Y)/LocalSize).astype(int)
+raw_data.drop(['dx','dy'],axis=1, inplace=True)
+print(UF.TimeStamp(),'The raw data has ',total_rows,' hits')
+print(UF.TimeStamp(),'Removing unreconstructed hits...')
+data=raw_data.dropna(subset=['FEDRA_Track_ID'])
 
-# final_rows=len(data)
-# print(UF.TimeStamp(),'The cleaned data has ',final_rows,' hits')
-# print(UF.TimeStamp(),'Removing tracks which have less than',ValMinHits,'hits...')
-# track_no_data=data.groupby(['FEDRA_Track_ID'],as_index=False).count()
-# track_no_data=track_no_data.drop(['Hit_ID','y','z','tx','ty','X_bin','Y_bin','Plate_ID'],axis=1)
-# track_no_data=track_no_data.rename(columns={'x': "Track_Hit_No"})
-# new_combined_data=pd.merge(data, track_no_data, how="left", on=['FEDRA_Track_ID'])
+final_rows=len(data)
+print(UF.TimeStamp(),'The cleaned data has ',final_rows,' hits')
+print(UF.TimeStamp(),'Removing tracks which have less than',ValMinHits,'hits...')
+track_no_data=data.groupby(['FEDRA_Track_ID'],as_index=False).count()
+track_no_data=track_no_data.drop(['Hit_ID','y','z','tx','ty','X_bin','Y_bin','Plate_ID'],axis=1)
+track_no_data=track_no_data.rename(columns={'x': "Track_Hit_No"})
+new_combined_data=pd.merge(data, track_no_data, how="left", on=['FEDRA_Track_ID'])
 # new_combined_data = new_combined_data[new_combined_data.Track_Hit_No >= ValMinHits]
 # new_combined_data=new_combined_data.drop(['Hit_ID','tx','ty'],axis=1)
 # new_combined_data=new_combined_data.sort_values(['FEDRA_Track_ID','z'],ascending=[1,1])
 # new_combined_data['FEDRA_Track_ID']=new_combined_data['FEDRA_Track_ID'].astype(int)
+#333333
+train_data = new_combined_data[new_combined_data.Track_Hit_No >= MinHits]
+validation_data = new_combined_data[new_combined_data.Track_Hit_No >= ValMinHits]
+validation_data = validation_data[validation_data.Track_Hit_No < MinHits]
+train_data=train_data.drop(['Hit_ID','tx','ty'],axis=1)
+train_data=train_data.sort_values(['FEDRA_Track_ID','z'],ascending=[1,1])
+train_data['FEDRA_Track_ID']=train_data['FEDRA_Track_ID'].astype(int)
+validation_data=validation_data.drop(['Hit_ID','tx','ty'],axis=1)
+validation_data=validation_data.sort_values(['FEDRA_Track_ID','z'],ascending=[1,1])
+validation_data['FEDRA_Track_ID']=validation_data['FEDRA_Track_ID'].astype(int)
 
 
-# tot_jobs = len(plates)*2
-# for c in range(0,Cycle):
-#     alignment_map=[]
-#     print('Cycle',c)
+#3333
+
+
+
+for c1 in range(0,Cycle):
+    alignment_map=[]
+    print('Cycle',c1)
     
-#     with alive_bar(tot_jobs,force_tty=True, title='Optimising the local alignment configuration...') as bar:
-    
-#      for p in plates:
-#        for i in range(1,Step_X+1):
-#         for j in range(1,Step_Y+1):
-#             am=[p[0],i,j]
-#             def LocalFitPlateFixedX(x):
-#                 return LocalFitPlate(p[0],x,0,new_combined_data,False,i,j)
-#             def LocalFitPlateFixedY(x):
-#                 return LocalFitPlate(p[0],0,x,new_combined_data,False,i,j)
-#             def LocalFitPlateValX(x):
-#                 return LocalFitPlate(p[0],x,0,new_combined_data,True,i,j)
-#             def LocalFitPlateValY(x):
-#                 return LocalFitPlate(p[0],0,x,new_combined_data,True,i,j)
+    for p in plates:
+       for i in range(1,Step_X+1):
+        for j in range(1,Step_Y+1):
+            am=[p[0],i,j]
+            def LocalFitPlateFixedX(x):
+                return LocalFitPlate(p[0],x,0,train_data,i,j)
+            def LocalFitPlateFixedY(x):
+                return LocalFitPlate(p[0],0,x,train_data,i,j)
+            def LocalFitPlateValX(x):
+                return LocalFitPlate(p[0],x,0,validation_data,i,j)
+            def LocalFitPlateValY(x):
+                return LocalFitPlate(p[0],0,x,validation_data,i,j)
             
             
-#             res = minimize_scalar(LocalFitPlateFixedX, bounds=(-500, 500), method='bounded')
-#             new_combined_data=LocalAlignPlate(p[0],res.x,0,new_combined_data,i,j)
-#             am.append(res.x)
-#             FitFix = LocalFitPlateFixedX(0)
-#             FitVal = LocalFitPlateValX(0)
-#             print('Current fit value:',FitFix)
-#             print('Validation fit value:',FitVal)
+            res = minimize_scalar(LocalFitPlateFixedX, bounds=(-200, 200), method='bounded')
+            validation_data=LocalAlignPlate(p[0],res.x,0,validation_data,i,j)
+            am.append(res.x)
+            FitFix = LocalFitPlateFixedX(0)
+            FitVal = LocalFitPlateValX(0)
+            print('Current fit value:',FitFix)
+            print('Validation fit value:',FitVal)
             
-#             iterator += 1
+            iterator += 1
             
-#             local_logdata = [c,"local vertical-horizontal plate alignment XY", iterator, p[0], FitFix,FitVal, MinHits,ValMinHits]
-#             global_logdata.append(local_logdata)
-#             bar()
-#             res = minimize_scalar(LocalFitPlateFixedY, bounds=(-500, 500), method='bounded')
-#             new_combined_data=LocalAlignPlate(p[0],0,res.x,new_combined_data,i,j)
-#             am.append(res.x)
-#             bar()
-#             iterator += 1
+            local_logdata = [c1,"local vertical-horizontal plate alignment XY", iterator, p[0], FitFix,FitVal, MinHits,ValMinHits]
+            global_logdata.append(local_logdata)
+            bar()
+            res = minimize_scalar(LocalFitPlateFixedY, bounds=(-200, 200), method='bounded')
+            validation_data=LocalAlignPlate(p[0],0,res.x,validation_data,i,j)
+            am.append(res.x)
+            bar()
+            iterator += 1
             
-#             FitFix = LocalFitPlateFixedY(0)
-#             FitVal = LocalFitPlateValY(0)
-#             print('Current fit value:',FitFix)
-#             print('Validation fit value:',FitVal)
-#             local_logdata = [c,"local vertical-horizontal plate alignment XY", iterator, p[0], FitFix, FitVal, MinHits,ValMinHits]
-#             global_logdata.append(local_logdata)
-#             alignment_map.append(am)
-            
-# global_logdata = pd.DataFrame(global_logdata, columns = ['cycle','alignment type', 'iteration', 'plate location', 'Overall fit value','Validation fit value', 'Min Hits', 'ValMinHits'])
-# global_logdata.to_csv(output_log_location,index=False)
+            FitFix = LocalFitPlateFixedY(0)
+            FitVal = LocalFitPlateValY(0)
+            print('Current fit value:',FitFix)
+            print('Validation fit value:',FitVal)
+            local_logdata = [c1,"local vertical-horizontal plate alignment XY", iterator, p[0], FitFix, FitVal, MinHits,ValMinHits]
+            global_logdata.append(local_logdata)
+            alignment_map.append(am)
+    print(UF.TimeStamp(),'Aligning the train data...')
+    alignment_map=pd.DataFrame(alignment_map, columns = ['Plate_ID','dx','dy'])
+    train_data['Plate_ID']=train_data['z'].astype(int)
+    train_data=pd.merge(train_data,alignment_map,on='Plate_ID',how='left')
+    train_data['dx'] = train_data['dx'].fillna(0.0)
+    train_data['dy'] = train_data['dy'].fillna(0.0)
+    train_data['x']=train_data['x']+train_data['dx']
+    train_data['y']=train_data['y']+train_data['dy']
+    train_data.drop(['dx','dy'],axis=1, inplace=True)            
+global_logdata = pd.DataFrame(global_logdata, columns = ['cycle','alignment type', 'iteration', 'plate location', 'Overall fit value','Validation fit value', 'Min Hits', 'ValMinHits'])
+global_logdata.to_csv(output_log_location,index=False)
 
-# print(UF.TimeStamp(),'Aligning the brick...')
-# alignment_map=pd.DataFrame(alignment_map, columns = ['Plate_ID','X_bin','Y_bin','dx','dy'])
-# #raw_data['Plate_ID']=raw_data['z'].astype(int)
-# raw_data=pd.merge(raw_data,alignment_map,on=['Plate_ID','X_bin','Y_bin'],how='inner')
-# raw_data['dx'] = raw_data['dx'].fillna(0.0)
-# raw_data['dy'] = raw_data['dy'].fillna(0.0)
-# raw_data['x']=raw_data['x']+raw_data['dx']
-# raw_data['y']=raw_data['y']+raw_data['dy']
+print(UF.TimeStamp(),'Aligning the brick...')
+alignment_map=pd.DataFrame(alignment_map, columns = ['Plate_ID','X_bin','Y_bin','dx','dy'])
+#raw_data['Plate_ID']=raw_data['z'].astype(int)
+raw_data=pd.merge(raw_data,alignment_map,on=['Plate_ID','X_bin','Y_bin'],how='inner')
+raw_data['dx'] = raw_data['dx'].fillna(0.0)
+raw_data['dy'] = raw_data['dy'].fillna(0.0)
+raw_data['x']=raw_data['x']+raw_data['dx']
+raw_data['y']=raw_data['y']+raw_data['dy']
 
-# raw_data = raw_data.drop(['Plate_ID','dx','dy','X_bin','Y_bin'],axis=1)
+raw_data = raw_data.drop(['Plate_ID','dx','dy','X_bin','Y_bin'],axis=1)
 
-# raw_data.to_csv(output_file_location,index=False)
-# print('Alignment has been completed...')
-# print('Alignment has been saved 2 log file', output_log_location)
-# exit()
+raw_data.to_csv(output_file_location,index=False)
+print('Alignment has been completed...')
+print('Alignment has been saved 2 log file', output_log_location)
+exit()
 
