@@ -246,9 +246,7 @@ def LocalAlignPlate(PlateZ,dx,dy,input_data, X_bin, Y_bin):
 print(UF.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+initial_input_file_location+bcolors.ENDC)
 raw_data=pd.read_csv(initial_input_file_location,
                 header=0)
-##############delete
-raw_data = raw_data[raw_data.z >= -6000]
-##############delete
+
 total_rows=len(raw_data)
 Min_X=raw_data.x.min()
 Min_Y=raw_data.y.min()
