@@ -250,7 +250,7 @@ print(UF.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+initial_input_file_l
 raw_data=pd.read_csv(initial_input_file_location,
                 header=0)
 #####delete
-raw_data = raw_data[raw_data.z >= -4000]
+raw_data = raw_data[raw_data.z >= -6000]
 ######delete
 total_rows=len(raw_data)
 Min_X=raw_data.x.min()
@@ -275,7 +275,12 @@ track_no_data=data.groupby(['FEDRA_Track_ID'],as_index=False).count()
 track_no_data=track_no_data.drop(['Hit_ID','y','z','tx','ty'],axis=1)
 track_no_data=track_no_data.rename(columns={'x': "Track_Hit_No"})
 new_combined_data=pd.merge(data, track_no_data, how="left", on=['FEDRA_Track_ID'])
-new_combined_data = new_combined_data[new_combined_data.Track_Hit_No >= ValMinHits]
+train_data = new_combined_data[new_combined_data.Track_Hit_No >= MinHits]
+validation_data = new_combined_data[new_combined_data.Track_Hit_No >= ValMinHits]
+validation_data = validation_data[validation_data.Track_Hit_No < MinHits]
+print(train_data)
+print(validation_data)
+exit()
 new_combined_data=new_combined_data.drop(['Hit_ID','tx','ty'],axis=1)
 new_combined_data=new_combined_data.sort_values(['FEDRA_Track_ID','z'],ascending=[1,1])
 new_combined_data['FEDRA_Track_ID']=new_combined_data['FEDRA_Track_ID'].astype(int)
