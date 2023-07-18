@@ -246,7 +246,9 @@ def LocalAlignPlate(PlateZ,dx,dy,input_data, X_bin, Y_bin):
 print(UF.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+initial_input_file_location+bcolors.ENDC)
 raw_data=pd.read_csv(initial_input_file_location,
                 header=0)
-
+##############delete
+raw_data = raw_data[raw_data.z >= -6000]
+##############delete
 total_rows=len(raw_data)
 Min_X=raw_data.x.min()
 Min_Y=raw_data.y.min()
@@ -343,8 +345,7 @@ with alive_bar(tot_jobs,force_tty=True, title='Optimising the alignment configur
     train_data['dy'] = train_data['dy'].fillna(0.0)
     train_data['x']=train_data['x']+train_data['dx']
     train_data['y']=train_data['y']+train_data['dy']
-    
-print(alignment_map)
+    train_data.drop(['dx','dy'],axis=1, inplace=True)  ####
 
 # print(UF.TimeStamp(),'Aligning the brick...')
 # alignment_map=pd.DataFrame(alignment_map, columns = ['Plate_ID','dx','dy'])
