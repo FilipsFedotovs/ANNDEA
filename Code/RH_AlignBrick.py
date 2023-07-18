@@ -249,7 +249,9 @@ def LocalAlignPlate(PlateZ,dx,dy,input_data, X_bin, Y_bin):
 print(UF.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+initial_input_file_location+bcolors.ENDC)
 raw_data=pd.read_csv(initial_input_file_location,
                 header=0)
-
+#####delete
+raw_data = raw_data[raw_data.z >= -4000]
+######delete
 total_rows=len(raw_data)
 Min_X=raw_data.x.min()
 Min_Y=raw_data.y.min()
@@ -278,9 +280,7 @@ new_combined_data=new_combined_data.drop(['Hit_ID','tx','ty'],axis=1)
 new_combined_data=new_combined_data.sort_values(['FEDRA_Track_ID','z'],ascending=[1,1])
 new_combined_data['FEDRA_Track_ID']=new_combined_data['FEDRA_Track_ID'].astype(int)
 new_combined_data['Plate_ID']=new_combined_data['z'].astype(int)
-#####delete
-new_combined_data = new_combined_data[new_combined_data.Plate_ID >= -4000]
-######delete
+
 print(UF.TimeStamp(),'Working out the number of plates to align')
 plates=new_combined_data[['Plate_ID']].sort_values(['Plate_ID'],ascending=[1])
 plates.drop_duplicates(inplace=True)
