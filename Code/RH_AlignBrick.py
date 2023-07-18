@@ -337,6 +337,15 @@ with alive_bar(tot_jobs,force_tty=True, title='Optimising the alignment configur
         local_logdata = [c,"global vertical-horizontal plate alignment XY", iterator, p[0], FitFix, FitVal, MinHits,ValMinHits]
         global_logdata.append(local_logdata)
         alignment_map.append(am)
+    print(UF.TimeStamp(),'Aligning the train data...')
+    alignment_map=pd.DataFrame(alignment_map, columns = ['Plate_ID','dx','dy'])
+    train_data['Plate_ID']=train_data['z'].astype(int)
+    train_data=pd.merge(train_data,alignment_map,on='Plate_ID',how='left')
+    train_data['dx'] = train_data['dx'].fillna(0.0)
+    train_data['dy'] = train_data['dy'].fillna(0.0)
+    train_data['x']=train_data['x']+train_data['dx']
+    train_data['y']=train_data['y']+train_data['dy']
+    
 print(alignment_map)
 
 # print(UF.TimeStamp(),'Aligning the brick...')
