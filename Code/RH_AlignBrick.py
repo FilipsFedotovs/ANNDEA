@@ -288,49 +288,50 @@ print(UF.TimeStamp(),'There are ',len(plates),' plates')
 global_logdata = []
 iterator = 0
 
-tot_jobs = len(plates)*2
-for c in range(0,Cycle):
+tot_jobs = (len(plates)*2)+(len(plates)*2*Step_X*Step_Y)
+print(tot_jobs)
+exit()
+with alive_bar(tot_jobs,force_tty=True, title='Optimising the alignment configuration...') as bar:
+ for c in range(0,Cycle):
     alignment_map=[]
     print('Cycle',c)
     
-    with alive_bar(tot_jobs,force_tty=True, title='Optimising the alignment configuration...') as bar:
-    
-     for p in plates:
-       am=[p[0]]
-       def FitPlateFixedX(x):
-           return FitPlate(p[0],x,0,new_combined_data,False)
-       def FitPlateFixedY(x):
-           return FitPlate(p[0],0,x,new_combined_data,False)
-       def FitPlateValX(x):
-           return FitPlate(p[0],x,0,new_combined_data,True)
-       def FitPlateValY(x):
-           return FitPlate(p[0],0,x,new_combined_data,True)
-       res = minimize_scalar(FitPlateFixedX, bounds=(-500, 500), method='bounded')
-       new_combined_data=AlignPlate(p[0],res.x,0,new_combined_data)
-       am.append(res.x)
-       FitFix = FitPlateFixedX(0)
-       FitVal = FitPlateValX(0)
-       print('Current fit value:',FitFix)
-       print('Validation fit value:',FitVal)
-       
-       iterator += 1
-       #Angle_radian = np.arctan2(dy, dx)
-       local_logdata = [c,"global vertical-horizontal plate alignment XY", iterator, p[0], FitFix,FitVal, MinHits,ValMinHits]
-       global_logdata.append(local_logdata)
-       bar()
-       res = minimize_scalar(FitPlateFixedY, bounds=(-500, 500), method='bounded')
-       new_combined_data=AlignPlate(p[0],0,res.x,new_combined_data)
-       am.append(res.x)
-       bar()
-       iterator += 1
-       #Angle_radian = np.arctan2(dy, dx)
-       FitFix = FitPlateFixedY(0)
-       FitVal = FitPlateValY(0)
-       print('Current fit value:',FitFix)
-       print('Validation fit value:',FitVal)
-       local_logdata = [c,"global vertical-horizontal plate alignment XY", iterator, p[0], FitFix, FitVal, MinHits,ValMinHits]
-       global_logdata.append(local_logdata)
-       alignment_map.append(am)
+    for p in plates:
+        am=[p[0]]
+        def FitPlateFixedX(x):
+            return FitPlate(p[0],x,0,new_combined_data,False)
+        def FitPlateFixedY(x):
+            return FitPlate(p[0],0,x,new_combined_data,False)
+        def FitPlateValX(x):
+            return FitPlate(p[0],x,0,new_combined_data,True)
+        def FitPlateValY(x):
+            return FitPlate(p[0],0,x,new_combined_data,True)
+        res = minimize_scalar(FitPlateFixedX, bounds=(-500, 500), method='bounded')
+        new_combined_data=AlignPlate(p[0],res.x,0,new_combined_data)
+        am.append(res.x)
+        FitFix = FitPlateFixedX(0)
+        FitVal = FitPlateValX(0)
+        print('Current fit value:',FitFix)
+        print('Validation fit value:',FitVal)
+        
+        iterator += 1
+        #Angle_radian = np.arctan2(dy, dx)
+        local_logdata = [c,"global vertical-horizontal plate alignment XY", iterator, p[0], FitFix,FitVal, MinHits,ValMinHits]
+        global_logdata.append(local_logdata)
+        bar()
+        res = minimize_scalar(FitPlateFixedY, bounds=(-500, 500), method='bounded')
+        new_combined_data=AlignPlate(p[0],0,res.x,new_combined_data)
+        am.append(res.x)
+        bar()
+        iterator += 1
+        #Angle_radian = np.arctan2(dy, dx)
+        FitFix = FitPlateFixedY(0)
+        FitVal = FitPlateValY(0)
+        print('Current fit value:',FitFix)
+        print('Validation fit value:',FitVal)
+        local_logdata = [c,"global vertical-horizontal plate alignment XY", iterator, p[0], FitFix, FitVal, MinHits,ValMinHits]
+        global_logdata.append(local_logdata)
+        alignment_map.append(am)
 
 
 print(UF.TimeStamp(),'Aligning the brick...')
