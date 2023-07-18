@@ -249,9 +249,9 @@ def LocalAlignPlate(PlateZ,dx,dy,input_data, X_bin, Y_bin):
 print(UF.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+initial_input_file_location+bcolors.ENDC)
 raw_data=pd.read_csv(initial_input_file_location,
                 header=0)
-#####delete
+##############delete
 raw_data = raw_data[raw_data.z >= -6000]
-######delete
+##############delete
 total_rows=len(raw_data)
 Min_X=raw_data.x.min()
 Min_Y=raw_data.y.min()
@@ -278,18 +278,21 @@ new_combined_data=pd.merge(data, track_no_data, how="left", on=['FEDRA_Track_ID'
 train_data = new_combined_data[new_combined_data.Track_Hit_No >= MinHits]
 validation_data = new_combined_data[new_combined_data.Track_Hit_No >= ValMinHits]
 validation_data = validation_data[validation_data.Track_Hit_No < MinHits]
-print(train_data)
-print(validation_data)
-exit()
-new_combined_data=new_combined_data.drop(['Hit_ID','tx','ty'],axis=1)
-new_combined_data=new_combined_data.sort_values(['FEDRA_Track_ID','z'],ascending=[1,1])
-new_combined_data['FEDRA_Track_ID']=new_combined_data['FEDRA_Track_ID'].astype(int)
-new_combined_data['Plate_ID']=new_combined_data['z'].astype(int)
+train_data=train_data.drop(['Hit_ID','tx','ty','Track_Hit_No'],axis=1)
+train_data=train_data.sort_values(['FEDRA_Track_ID','z'],ascending=[1,1])
+train_data['FEDRA_Track_ID']=train_data['FEDRA_Track_ID'].astype(int)
+train_data['Plate_ID']=train_data['z'].astype(int)
+validation_data=validation_data.drop(['Hit_ID','tx','ty','Track_Hit_No'],axis=1)
+validation_data=validation_data.sort_values(['FEDRA_Track_ID','z'],ascending=[1,1])
+validation_data['FEDRA_Track_ID']=validation_data['FEDRA_Track_ID'].astype(int)
+validation_data['Plate_ID']=validation_data['z'].astype(int)
 
 print(UF.TimeStamp(),'Working out the number of plates to align')
-plates=new_combined_data[['Plate_ID']].sort_values(['Plate_ID'],ascending=[1])
+plates=train_data[['Plate_ID']].sort_values(['Plate_ID'],ascending=[1])
 plates.drop_duplicates(inplace=True)
 print(plates)
+print(validation_data)
+print(train_data)
 exit()
 plates=plates.values.tolist() #I find it is much easier to deal with tracks in list format when it comes to fitting
 print(UF.TimeStamp(),'There are ',len(plates),' plates')
