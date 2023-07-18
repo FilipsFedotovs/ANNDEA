@@ -294,7 +294,7 @@ print(UF.TimeStamp(),'There are ',len(plates),' plates')
 global_logdata = []
 iterator = 0
 
-tot_jobs = (len(plates)*2)+(len(plates)*2*Step_X*Step_Y)
+tot_jobs = ((len(plates)*2)+(len(plates)*2*Step_X*Step_Y))*Cycle
 
 with alive_bar(tot_jobs,force_tty=True, title='Optimising the alignment configuration...') as bar:
  for c in range(0,Cycle):
