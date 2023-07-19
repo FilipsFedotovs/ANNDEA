@@ -377,7 +377,8 @@ train_data['FEDRA_Track_ID']=train_data['FEDRA_Track_ID'].astype(int)
 validation_data=validation_data.drop(['Hit_ID','tx','ty'],axis=1)
 validation_data=validation_data.sort_values(['FEDRA_Track_ID','z'],ascending=[1,1])
 validation_data['FEDRA_Track_ID']=validation_data['FEDRA_Track_ID'].astype(int)
-
+print(alignment_map[:5])
+exit()
 
 #3333
 
