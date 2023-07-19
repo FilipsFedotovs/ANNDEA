@@ -333,8 +333,7 @@ with alive_bar(tot_jobs,force_tty=True, title='Optimising the alignment configur
         alignment_map.append(am)
     print(UF.TimeStamp(),'Aligning the train data...')
     alignment_map=pd.DataFrame(alignment_map, columns = ['Plate_ID','dx','dy'])
-    print(alignment_map[:5])
-    exit()
+    
     train_data['Plate_ID']=train_data['z'].astype(int)
     train_data=pd.merge(train_data,alignment_map,on='Plate_ID',how='left')
     train_data['dx'] = train_data['dx'].fillna(0.0)
@@ -442,7 +441,8 @@ global_logdata = pd.DataFrame(global_logdata, columns = ['cycle','alignment type
 global_logdata.to_csv(output_log_location,index=False)
 
 print(UF.TimeStamp(),'Aligning the brick...')
-alignment_map=pd.DataFrame(alignment_map, columns = ['Plate_ID','X_bin','Y_bin','dx','dy'])
+##################################################
+alignment_map=pd.DataFrame(alignment_map, columns = ['Plate_ID','dx','dy'])    #########['Plate_ID','X_bin','Y_bin','dx','dy']
 #raw_data['Plate_ID']=raw_data['z'].astype(int)
 raw_data=pd.merge(raw_data,alignment_map,on=['Plate_ID','X_bin','Y_bin'],how='inner')
 raw_data['dx'] = raw_data['dx'].fillna(0.0)
