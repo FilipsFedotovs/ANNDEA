@@ -333,6 +333,8 @@ with alive_bar(tot_jobs,force_tty=True, title='Optimising the alignment configur
         alignment_map.append(am)
     print(UF.TimeStamp(),'Aligning the train data...')
     alignment_map=pd.DataFrame(alignment_map, columns = ['Plate_ID','dx','dy'])
+    print(alignment_map[:5])
+    exit()
     train_data['Plate_ID']=train_data['z'].astype(int)
     train_data=pd.merge(train_data,alignment_map,on='Plate_ID',how='left')
     train_data['dx'] = train_data['dx'].fillna(0.0)
@@ -377,8 +379,7 @@ train_data['FEDRA_Track_ID']=train_data['FEDRA_Track_ID'].astype(int)
 validation_data=validation_data.drop(['Hit_ID','tx','ty'],axis=1)
 validation_data=validation_data.sort_values(['FEDRA_Track_ID','z'],ascending=[1,1])
 validation_data['FEDRA_Track_ID']=validation_data['FEDRA_Track_ID'].astype(int)
-print(alignment_map[:5])
-exit()
+
 
 #3333
 
