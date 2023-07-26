@@ -217,6 +217,7 @@ class HitCluster:
 
            #Combining data 1 and 2
            _Tot_Hits=pd.merge(_l_Tot_Hits, _r_Tot_Hits, how="inner", on=['join_key'])
+
            _Tot_Hits.l_MC_ID= _Tot_Hits.l_MC_ID.fillna(_Tot_Hits.l_HitID)
            _Tot_Hits.r_MC_ID= _Tot_Hits.r_MC_ID.fillna(_Tot_Hits.r_HitID)
            _Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['l_HitID'] == _Tot_Hits['r_HitID']], inplace = True)
@@ -242,7 +243,12 @@ class HitCluster:
            _Tot_Hits['r_x']=_Tot_Hits['r_x']/self.Step[2]
            _Tot_Hits['r_y']=_Tot_Hits['r_y']/self.Step[2]
            _Tot_Hits['r_z']=_Tot_Hits['r_z']/self.Step[2]
+
            _Tot_Hits['label']=(_Tot_Hits['l_MC_ID']==_Tot_Hits['r_MC_ID']).astype('int8')
+           _Tot_Hits_tr = _Tot_Hits[_Tot_Hits['r_MC_ID'].str.contains("--") & _Tot_Hits['l_MC_ID'].str.contains("--")]
+           _Tot_Hits_fr = _Tot_Hits[(_Tot_Hits['r_MC_ID'].str.contains("--")==False) | (_Tot_Hits['l_MC_ID'].str.contains("--")==False)]
+           _Tot_Hits_tr['label']=0
+           _Tot_Hits=pd.concat([_Tot_Hits_tr,_Tot_Hits_fr])
            _Tot_Hits['d_l'] = (np.sqrt(((_Tot_Hits['r_y']-_Tot_Hits['l_y'])**2) + ((_Tot_Hits['r_x']-_Tot_Hits['l_x'])**2) + ((_Tot_Hits['r_z']-_Tot_Hits['l_z'])**2)))
            _Tot_Hits['d_t'] = np.sqrt(((_Tot_Hits['r_y']-_Tot_Hits['l_y'])**2) + ((_Tot_Hits['r_x']-_Tot_Hits['l_x'])**2))
            _Tot_Hits['d_z'] = (_Tot_Hits['r_z']-_Tot_Hits['l_z']).abs()
