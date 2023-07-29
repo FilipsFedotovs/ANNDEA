@@ -155,6 +155,78 @@ with alive_bar(iterations,force_tty=True, title = 'Calculating densities.') as b
             for k in range(zmin,zmax):
                 bar()
 
+                ANN_test = ANN_test_j[ANN_test_j.z==k]                       
+                ANN_test = ANN_test.drop(['y','z'], axis=1)
+                
+                
+
+                if len(ANN_test) > 0:          
+                    ANN_test[args.TrackName] = pd.to_numeric(ANN_test[args.TrackName],errors='coerce').fillna(-2).astype('int')
+                    ANN_test['z_coord'] = ANN_test['z_coord'].astype('int')
+                    ANN_test = ANN_test.astype({col: 'int8' for col in ANN_test.select_dtypes('int64').columns})
+                    #print(ANN_test.dtypes)
+                    #exit()
+
+
+                ANN_test_right = ANN_test
+                ANN_test_right = ANN_test_right.rename(columns={'Hit_ID':'Hit_ID_right',args.TrackName:args.TrackName+'_right','MC_Track':'MC_Track_right','z_coord':'z_coord_right'})
+                ANN_test_all = pd.merge(ANN_test,ANN_test_right,how='inner',on=['x'])
+                #print(ANN_test_all)
+
+
+                ANN_test_all = ANN_test_all[ANN_test_all.Hit_ID!=ANN_test_all.Hit_ID_right]
+                #print(ANN_test_all)
+
+                ANN_test_all = ANN_test_all[ANN_test_all.z_coord>ANN_test_all.z_coord_right]
+                #print(ANN_test_all)
+
+                ANN_test_all['MC_true'] = (ANN_test_all['MC_Track']==ANN_test_all['MC_Track_right']).astype(int)
+                #print(ANN_test_all)
+
+                ANN_test_all['ANN_true'] = ((ANN_test_all[args.TrackName]==ANN_test_all[args.TrackName+'_right']) & (ANN_test_all[args.TrackName]!=-2))
+                ANN_test_all['ANN_true'] = ANN_test_all['ANN_true'].astype(int)
+                #print(ANN_test_all)
+
+                ANN_test_all['True'] = ANN_test_all['MC_true'] + ANN_test_all['ANN_true']
+                ANN_test_all['True'] = (ANN_test_all['True']>1).astype(int)
+                #print(ANN_test_all[[args.TrackName,args.TrackName+'_right','ANN_true']])
+
+                ANN_test_all['y'] = j
+                ANN_test_all['z'] = k
+
+                ANN_test_all = ANN_test_all[['MC_true','ANN_true','True','x','y','z']]
+                ANN_test_all = ANN_test_all.groupby(['x', 'y','z']).agg({'ANN_true':'sum','True':'sum','MC_true':'sum'}).reset_index()
+
+                ANN_test_all['ANN_recall'] = ANN_test_all['True']/ANN_test_all['MC_true']
+
+                ANN_test_all['ANN_precision'] = ANN_test_all['True']/ANN_test_all['ANN_true']
+                ANN_base = pd.concat([ANN_base,ANN_test_all])
+
+#create a table with all the wanted columns
+#print(ANN_base)
+ANN_analysis = pd.merge(densitydata,ANN_base, how='inner', on=['x','y','z'])
+output = args.TrackName+'_FinalData.csv'
+ANN_analysis.to_csv(output,index=False)
+print(output, 'was saved.')
+#print(ANN_analysis)
+#exit()
+
+#creating an histogram of recall and precision by hit density
+#plt.hist2d(ANN_analysis['Hit_Density']/100,ANN_analysis['ANN_recall'])
+#plt.xlabel('Density of Hits')
+#plt.ylabel('Recall Average')
+#plt.title('Recall for Hit density')
+#plt.show()
+#exit()
+
+
+#average of precision and recall
+ANN_analysis['ANN_recall'] = pd.to_numeric(ANN_analysis['ANN_recall'],errors='coerce').fillna(0).astype('int')
+ANN_analysis['ANN_precision'] = pd.to_numeric(ANN_analysis['ANN_precision'],errors='coerce').fillna(0).astype('int')
+TotalMCtrue = ANN_analysis['MC_true'].sum()
+TotalANNtrue = ANN_analysis['ANN_true'].sum()
+Totaltrue = ANN_analysis['True'].sum()
+
                 for mp in MotherGroup:
                     ANN_test = ANN_test_j[ANN_test_j.z==k]
                     ANN_test = ANN_test.drop(['y','z','x'], axis=1)
