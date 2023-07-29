@@ -15,8 +15,8 @@ class bcolors:
 parser = argparse.ArgumentParser(description='select cut parameters')
 parser.add_argument('--MaxDOCA',help="Maximum DOCA allowed", default='50')
 parser.add_argument('--MaxAngle',help="Maximum magnitude of angle allowed", default='1')
-parser.add_argument('--MaxSTG',help="Maximum Segment Transverse gap per SLG", default='50')
-parser.add_argument('--MaxSLG',help="Maximum Segment Longitudinal Gap", default='4000')
+parser.add_argument('--MaxDST',help="", default='50')
+parser.add_argument('--MaxVXT',help="", default='4000')
 parser.add_argument('--i',help="Set number", default='1')
 parser.add_argument('--j',help="Subset number", default='1')
 parser.add_argument('--k',help="Fraction number", default='1')
@@ -30,6 +30,7 @@ parser.add_argument('--ModelName',help="WHat ANN model would you like to use?", 
 parser.add_argument('--BatchID',help="Give this training sample batch an ID", default='SHIP_UR_v1')
 parser.add_argument('--FirstTime',help="First time refine?", default='True')
 parser.add_argument('--PY',help="Python libraries directory location", default='.')
+parser.add_argument('--FiducialVolumeCut',help="", default='')
 ########################################     Main body functions    #########################################
 args = parser.parse_args()
 i=int(args.i)    #This is just used to name the output file
@@ -42,6 +43,7 @@ pfx=args.pfx
 AFS_DIR=args.AFS
 EOS_DIR=args.EOS
 PY_DIR=args.PY
+
 
 BatchID=args.BatchID
 FirstTime=args.FirstTime
@@ -63,6 +65,7 @@ import pandas as pd #We use Panda for a routine data processing
 import gc  #Helps to clear memory
 import UtilityFunctions as UF
 from UtilityFunctions import EMO
+import ast
 
 
 ModelName=args.ModelName
@@ -90,12 +93,13 @@ if ModelName!='Blank':
 
 if FirstTime=='True':
     MaxDOCA=float(args.MaxDOCA)
-    MaxSTG=float(args.MaxSTG)
-    MaxSLG=float(args.MaxSLG)
+    MaxDST=float(args.MaxDST)
+    MaxVXT=float(args.MaxVXT)
     MaxAngle=float(args.MaxAngle)
-    input_segment_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1_'+BatchID+'_TRACK_SEGMENTS.csv'
-    input_track_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RUTr1a'+'_'+BatchID+'_'+str(i)+'/RUTr1a_'+BatchID+'_SelectedSeeds_'+str(i)+'_'+str(j)+'_'+str(k)+'.csv'
-    output_file_location=EOS_DIR+'/'+p+'/Temp_RUTr1'+ModelName+'_'+BatchID+'_'+str(i)+'/'+pfx+'_'+BatchID+'_'+o+'_'+str(i)+'_'+str(j)+'_'+str(k)+sfx
+    FiducialVolumeCut=ast.literal_eval(args.FiducialVolumeCut)
+    input_segment_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RVx1_'+BatchID+'_VERTEX_SEGMENTS.csv'
+    input_track_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RVx1a'+'_'+BatchID+'_'+str(i)+'/RVx1a_'+BatchID+'_SelectedSeeds_'+str(i)+'_'+str(j)+'_'+str(k)+'.csv'
+    output_file_location=EOS_DIR+'/'+p+'/Temp_RVx1'+ModelName+'_'+BatchID+'_'+str(i)+'/'+pfx+'_'+BatchID+'_'+o+'_'+str(i)+'_'+str(j)+'_'+str(k)+sfx
     print(UF.TimeStamp(),'Loading the data')
     tracks=pd.read_csv(input_track_file_location)
     tracks_1=tracks.drop(['Segment_2'],axis=1)
@@ -133,11 +137,11 @@ if FirstTime=='True':
          track=EMO(track[:2])
          track.Decorate(segments)
          try:
-           track.GetTrInfo()
+           track.GetVXInfo()
          except:
            continue
          keep_seed=True
-         if track.TrackQualityCheck(MaxDOCA,MaxSLG,MaxSTG, MaxAngle):
+         if track.VertexQualityCheck(MaxDOCA, MaxVXT, MaxAngle, FiducialVolumeCut):
                  if ModelName!='Blank':
                     if track.FitSeed(ModelMeta,model):
                        GoodTracks.append(track)
@@ -152,7 +156,7 @@ if FirstTime=='True':
     gc.collect()
     print(UF.PickleOperations(output_file_location,'w', GoodTracks)[1])
 else:
-    input_seed_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RUTr1'+FirstTime+'_'+BatchID+'_0/RUTr1'+str(ModelName)+'_'+BatchID+'_Input_Seeds_'+str(i)+'.pkl'
+    input_seed_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RVx1'+FirstTime+'_'+BatchID+'_0/RVx1'+str(ModelName)+'_'+BatchID+'_Input_Seeds_'+str(i)+'.pkl'
     output_file_location=EOS_DIR+'/'+p+'/Temp_'+pfx+'_'+BatchID+'_0/'+pfx+'_'+BatchID+'_'+o+'_'+str(i)+sfx
     print(UF.TimeStamp(),'Loading the data')
     seeds=UF.PickleOperations(input_seed_file_location,'r','N/A')[0]

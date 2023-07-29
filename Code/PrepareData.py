@@ -81,8 +81,6 @@ if os.path.isfile(req_file_location)==False: #This is the part where we create t
 
             new_data.drop(['MCEvent','MCTrack'],axis=1,inplace=True)
             data=pd.concat([data,new_data])
-            # print(data.memory_usage(index=True).sum()/(1024**2)) #Priniting the memory - I did it for debugging purposes
-            # print(round(process.memory_info().rss/(1024**2),0))
     del new_data
     gc.collect()
     data_agg=data.groupby(by=['MC_Track'])['Z'].min().reset_index()

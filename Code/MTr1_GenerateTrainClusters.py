@@ -31,7 +31,9 @@ import math #We use it for data manipulation
 import os
 import random
 import time
-
+import ast
+import UtilityFunctions as UF #This is where we keep routine utility functions
+import Parameters as PM #This is where we keep framework global parameters
 class bcolors:   #We use it for the interface
     HEADER = '\033[95m'
     OKBLUE = '\033[94m'
@@ -59,22 +61,46 @@ parser.add_argument('--Xmin',help="This option restricts data to only those even
 parser.add_argument('--Xmax',help="This option restricts data to only those events that have tracks with hits x-coordinates that are below this value", default='0')
 parser.add_argument('--Ymin',help="This option restricts data to only those events that have tracks with hits y-coordinates that are above this value", default='0')
 parser.add_argument('--Ymax',help="This option restricts data to only those events that have tracks with hits y-coordinates that are below this value", default='0')
+parser.add_argument('--ExcludeClassNames',help="What class headers to use?", default="['Flag','ProcID']")
+parser.add_argument('--ExcludeClassValues',help="What class values to use?", default="[['11','-11'],['8']]")
 #The bellow are not important for the training smaples but if you want to augment the training data set above 1
 parser.add_argument('--Z_overlap',help="Enter the level of overlap in integer number between reconstruction blocks along z-axis.", default='1')
 parser.add_argument('--Y_overlap',help="Enter the level of overlap in integer number between reconstruction blocks along y-axis.", default='1')
 parser.add_argument('--X_overlap',help="Enter the level of overlap in integer number between reconstruction blocks along x-axis.", default='1')
+parser.add_argument('--ReqMemory',help="How uch memory to request?", default='2 GB')
+parser.add_argument('--RequestExtCPU',help="Would you like to request extra CPUs?", default=1)
+parser.add_argument('--JobFlavour',help="Specifying the length of the HTCondor job walltime. Currently at 'workday' which is 8 hours.", default='workday')
 ######################################## Set variables  #############################################################
 args = parser.parse_args()
 Mode=args.Mode.upper()
 Sampling=float(args.Sampling)
 TrainSampleID=args.TrainSampleID
 Patience=int(args.Patience)
+ReqMemory=args.ReqMemory
+RequestExtCPU=int(args.RequestExtCPU)
+JobFlavour=args.JobFlavour
 input_file_location=args.f
 Xmin,Xmax,Ymin,Ymax=float(args.Xmin),float(args.Xmax),float(args.Ymin),float(args.Ymax)
 Z_overlap,Y_overlap,X_overlap=int(args.Z_overlap),int(args.Y_overlap),int(args.X_overlap)
 SliceData=max(Xmin,Xmax,Ymin,Ymax)>0
-import UtilityFunctions as UF #This is where we keep routine utility functions
-import Parameters as PM #This is where we keep framework global parameters
+
+
+ExcludeClassNames=ast.literal_eval(args.ExcludeClassNames)
+ExcludeClassValues=ast.literal_eval(args.ExcludeClassValues)
+ColumnsToImport=[PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty,PM.MC_Event_ID,PM.MC_Track_ID]
+ExtraColumns=[]
+BanDF=['-']
+BanDF=pd.DataFrame(BanDF, columns=['Exclude'])
+for i in range(len(ExcludeClassNames)):
+        df=pd.DataFrame(ExcludeClassValues[i], columns=[ExcludeClassNames[i]])
+        df['Exclude']='-'
+        BanDF=pd.merge(BanDF,df,how='inner',on=['Exclude'])
+
+        if (ExcludeClassNames[i] in ExtraColumns)==False:
+                ExtraColumns.append(ExcludeClassNames[i])
+
+
+
 stepX=PM.stepX #Size of the individual reconstruction volumes along the x-axis
 stepY=PM.stepY #Size of the individual reconstruction volumes along the y-axis
 stepZ=PM.stepZ #Size of the individual reconstruction volumes along the z-axis
@@ -161,7 +187,13 @@ if os.path.isfile(output_file_location)==False or Mode=='RESET':
     print(UF.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
     data=pd.read_csv(input_file_location,
                 header=0,
-                usecols=[PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty,PM.MC_Track_ID,PM.MC_Event_ID])[[PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty,PM.MC_Track_ID,PM.MC_Event_ID]]
+                usecols=ColumnsToImport+ExtraColumns)[ColumnsToImport+ExtraColumns]
+
+
+    for c in ExtraColumns:
+        data[c] = data[c].astype(str)
+    data=pd.merge(data,BanDF,how='left',on=ExtraColumns)
+    data=data.fillna('')
 
     total_rows=len(data.axes[0])
     print(UF.TimeStamp(),'The raw data has ',total_rows,' hits')
@@ -172,9 +204,12 @@ if os.path.isfile(output_file_location)==False or Mode=='RESET':
     data[PM.MC_Event_ID] = data[PM.MC_Event_ID].astype(str)
     data[PM.MC_Track_ID] = data[PM.MC_Track_ID].astype(str)
     data[PM.Hit_ID] = data[PM.Hit_ID].astype(str)
-    data['MC_Mother_Track_ID'] = data[PM.MC_Event_ID] + '-' + data[PM.MC_Track_ID] #Track IDs are not unique and repeat for each event: crea
+    data['MC_Mother_Track_ID'] = data[PM.MC_Event_ID] + '-'+ data['Exclude'] + data[PM.MC_Track_ID] #Track IDs are not unique and repeat for each event: crea
     data=data.drop([PM.MC_Event_ID],axis=1)
     data=data.drop([PM.MC_Track_ID],axis=1)
+    data=data.drop(['Exclude'],axis=1)
+    for c in ExtraColumns:
+        data=data.drop([c],axis=1)
     if SliceData:
          print(UF.TimeStamp(),'Slicing the data...')
          data=data.drop(data.index[(data[PM.x] > Xmax) | (data[PM.x] < Xmin) | (data[PM.y] > Ymax) | (data[PM.y] < Ymin)])
@@ -274,7 +309,7 @@ def AutoPilot(wait_min, interval_min, max_interval_tolerance):
               #The actual training sample generation is done by the script bellow
               ScriptName = AFS_DIR + '/Code/Utilities/MTr1_GenerateTrainClusters_Sub.py '
               if os.path.isfile(required_output_file_location)!=True: #Calculating the number of unfinished jobs
-                 bad_pop.append([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, 1, 'ANNDEA-MTr1-'+TrainSampleID, False,False])
+                 bad_pop.append([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, 1, 'ANNDEA-MTr1-'+TrainSampleID, False,RequestExtCPU,JobFlavour,ReqMemory])
         if len(bad_pop)>0:
               print(UF.TimeStamp(),bcolors.WARNING+'Autopilot status update: There are still', len(bad_pop), 'HTCondor jobs remaining'+bcolors.ENDC)
               if interval%max_interval_tolerance==0: #If jobs are not received after fixed number of check-ups we resubmit. Jobs sometimes fail on HTCondor for various reasons.
@@ -392,7 +427,7 @@ if (Zsteps*Xsteps)==len(bad_pop): #Scenario where all jobs are missing - doing a
                   SUBName = AFS_DIR + '/HTCondor/SUB/SUB_MTr1_'+ TrainSampleID+'_'+ str(k) + '.sub'
                   MSGName = AFS_DIR + '/HTCondor/MSG/MSG_MTr1_' + TrainSampleID+'_' + str(k)
                   ScriptName = AFS_DIR + '/Code/Utilities/MTr1_GenerateTrainClusters_Sub.py '
-                  UF.SubmitJobs2Condor([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, Xsteps, 'ANNDEA-MTr1-'+TrainSampleID, False,False])
+                  UF.SubmitJobs2Condor([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, Xsteps, 'ANNDEA-MTr1-'+TrainSampleID, False,RequestExtCPU,JobFlavour,ReqMemory])
                   print(UF.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
         Success(AutoPilot(120,10,Patience))
     else:

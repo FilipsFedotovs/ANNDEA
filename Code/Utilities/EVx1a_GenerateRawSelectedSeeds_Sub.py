@@ -23,7 +23,7 @@ parser.add_argument('--EOS',help="EOS directory location", default='.')
 parser.add_argument('--AFS',help="AFS directory location", default='.')
 parser.add_argument('--BatchID',help="Give this training sample batch an ID", default='SHIP_UR_v1')
 parser.add_argument('--MaxSegments',help="A maximum number of track combinations that will be used in a particular HTCondor job for this script", default='20000')
-parser.add_argument('--VetoMotherTrack',help="Skip Invalid Mother_IDs", default="[]")
+parser.add_argument('--VetoVertex',help="Skip Invalid Mother_IDs", default="[]")
 parser.add_argument('--PY',help="Python libraries directory location", default='.')
 args = parser.parse_args()
 
@@ -54,13 +54,13 @@ o=args.o
 sfx=args.sfx
 pfx=args.pfx
 BatchID=args.BatchID
-VetoMotherTrack=ast.literal_eval(args.VetoMotherTrack)
+VetoVertex=ast.literal_eval(args.VetoVertex)
 ########################################     Preset framework parameters    #########################################
 MaxRecords=10000000 #A set parameter that helps to manage memory load of this script (Please do not exceed 10000000)
 MaxSegments=int(args.MaxSegments)
 
 #Specifying the full path to input/output files
-input_file_location=EOS_DIR+'/ANNDEA/Data/TEST_SET/EUTr1_'+BatchID+'_TRACK_SEGMENTS.csv'
+input_file_location=EOS_DIR+'/ANNDEA/Data/TEST_SET/EVx1_'+BatchID+'_VERTEX_SEGMENTS.csv'
 
 output_result_location=EOS_DIR+p+'/Temp_'+pfx+'_'+BatchID+'_'+str(0)+'/'+pfx+'_'+BatchID+'_'+o+'_'+str(i)+sfx
 output_file_location=EOS_DIR+p+'/Temp_'+pfx+'_'+BatchID+'_'+str(0)+'/'+pfx+'_'+BatchID+'_RawSeeds_'+str(i)+sfx
@@ -68,7 +68,7 @@ output_file_location=EOS_DIR+p+'/Temp_'+pfx+'_'+BatchID+'_'+str(0)+'/'+pfx+'_'+B
 print(UF.TimeStamp(), "Modules Have been imported successfully...")
 print(UF.TimeStamp(),'Loading pre-selected data from ',input_file_location)
 data=pd.read_csv(input_file_location,header=0,
-                    usecols=['Rec_Seg_ID','MC_Mother_Track_ID'])
+                    usecols=['Rec_Seg_ID','MC_Vertex_ID'])
 
 data.drop_duplicates(subset="Rec_Seg_ID",keep='first',inplace=True)
 print(UF.TimeStamp(),'Creating segment combinations... ')
@@ -103,18 +103,18 @@ UF.LogOperations(output_file_location,'w',result_list)
 for i in range(0,Steps):
   r_temp_data=r_data.iloc[0:min(Cut,len(r_data.axes[0]))] #Taking a small slice of the data
   r_data.drop(r_data.index[0:min(Cut,len(r_data.axes[0]))],inplace=True) #Shrinking the right join dataframe
-  merged_data=pd.merge(data, r_temp_data, how="inner", on=['MC_Mother_Track_ID']) #Merging Tracks to check whether they could form a seed
+  merged_data=pd.merge(data, r_temp_data, how="inner", on=['MC_Vertex_ID']) #Merging Tracks to check whether they could form a seed
 
   if merged_data.empty==False:
     merged_data.drop(merged_data.index[merged_data['Segment_1'] == merged_data['Segment_2']], inplace = True) #Removing the cases where Seed tracks are the same
     merged_data['Seed_Type']=True
-    if len(VetoMotherTrack)>=1:
-      for n in VetoMotherTrack:
-        merged_data['Seed_Type']=((merged_data['MC_Mother_Track_ID'].str.contains(str('-'+n))==False) & (merged_data['Seed_Type']==True))
+    if len(VetoVertex)>=1:
+      for n in VetoVertex:
+        merged_data['Seed_Type']=((merged_data['MC_Vertex_ID'].str.contains(str('-'+n))==False) & (merged_data['Seed_Type']==True))
     else:
         merged_data['Seed_Type']=True
     merged_data.drop(merged_data.index[merged_data['Seed_Type'] == False], inplace = True)
-    merged_data.drop(['MC_Mother_Track_ID'],axis=1,inplace=True)
+    merged_data.drop(['MC_Vertex_ID'],axis=1,inplace=True)
     merged_data.drop(['Seed_Type'],axis=1,inplace=True)
     merged_list = merged_data.values.tolist() #Convirting the result to List data type
     result_list+=merged_list #Adding the result to the list

@@ -89,6 +89,7 @@ data['z']=data['z']-z_offset
 x_max=data['x'].max()
 y_max=data['y'].max()
 print(UF.TimeStamp(),'Creating clusters... ')
+
 data.drop(data.index[data['z'] >= ((Z_ID+1)*stepZ)], inplace = True)  #Keeping the relevant z slice
 data.drop(data.index[data['z'] < (Z_ID*stepZ)], inplace = True)  #Keeping the relevant z slice
 
@@ -117,7 +118,10 @@ MCdata.drop(MCdata.index[MCdata['z'] >= ((Z_ID+1)*stepZ)], inplace = True)  #Kee
 MCdata.drop(MCdata.index[MCdata['z'] < (Z_ID*stepZ)], inplace = True)  #Keeping the relevant z slice
 MCdata.drop(MCdata.index[MCdata['x'] >= ((X_ID+1)*stepX)], inplace = True)  #Keeping the relevant x slice
 MCdata.drop(MCdata.index[MCdata['x'] < (X_ID*stepX)], inplace = True)  #Keeping the relevant x slice
+
+
 MCdata_list=MCdata.values.tolist()
+
 LoadedClusters=[]
 for j in range(0,Ysteps): #Iterating over clusters indexes on y-axis
         progress=round((float(j)/float(Ysteps))*100,2)

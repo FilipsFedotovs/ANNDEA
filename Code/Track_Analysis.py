@@ -33,10 +33,6 @@ hitdata['tx'] = hitdata['tx'].round(decimals = 2)
 hitdata['ty'] = hitdata['ty'].round(decimals = 2)
 hitdata=hitdata.groupby(['tx','ty']).Hit_ID.nunique().reset_index()
 print('Creating plot')
-#sns.heatmap(hitdata, annot=True)
-#plt.hist2d(hitdata['tx'],hitdata['ty'],bins=100)
-#plt.show()
-#exit()
 
 if args.TrackName == 'MC_Track_ID':
   
@@ -52,8 +48,13 @@ if args.TrackName == 'MC_Track_ID':
   z_min = z_min.rename(columns={'z':'z_min'})
   z_max = z_max.rename(columns={'z':'z_max'})
   newdata = pd.merge(z_max,z_min,how='inner',on=['MC_Track'])
+
   newdata['Track_length'] = newdata['z_max'] - newdata['z_min']
-  
+  #newdata = pd.merge(newdata,mother,how='inner',on=['MC_Track'])
+  #newdata = newdata.loc[newdata['Track_length'] > 0]
+  print(newdata)
+
+  #I have simplified the code and it works:
   newdata = pd.merge(newdata, rowdata[['x','MC_Track','z']].rename(columns={'x':'x_min'}), how='inner', left_on=['MC_Track','z_min'], right_on=['MC_Track','z'])
   newdata.drop(['z'], axis=1, inplace=True)
 
@@ -66,11 +67,10 @@ if args.TrackName == 'MC_Track_ID':
   newdata = pd.merge(newdata, rowdata[['y','MC_Track','z']].rename(columns={'y':'y_max'}), how='inner', left_on=['MC_Track','z_max'], right_on=['MC_Track','z'])
   newdata.drop(['z'], axis=1, inplace=True)
 
-  mother = rowdata[['MotherPDG','MC_Track']]
-  newdata = pd.merge(newdata,mother,how='inner',on=['MC_Track'])
-  
+
   newdata = newdata.loc[newdata['Track_length'] > 0]
-  print(newdata)
+
+  
   
   newdata['delta_x'] = newdata['x_max'] - newdata['x_min']
   newdata['delta_y'] = newdata['y_max'] - newdata['y_min']
@@ -152,4 +152,5 @@ else:
   #insert.to_csv(output1,index=False)
   print(output, 'was saved.') 
   #print(output1, 'was saved.')
-# end of script #
+
+plt.hist2d(hitdata['tx'],hitdata['ty'],bins=100)

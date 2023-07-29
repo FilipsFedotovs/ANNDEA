@@ -41,6 +41,7 @@ parser.add_argument('--p',help="Path to the output file", default='')
 parser.add_argument('--o',help="Path to the output file name", default='')
 parser.add_argument('--pfx',help="Path to the output file name", default='')
 parser.add_argument('--sfx',help="Path to the output file name", default='')
+parser.add_argument('--PY',help="Python libraries directory location", default='.')
 ########################################     Initialising Variables    #########################################
 args = parser.parse_args()
 TrainParams=ast.literal_eval(args.TrainParams)
@@ -49,6 +50,7 @@ ModelName=args.BatchID
 ##################################   Loading Directory locations   ##################################################
 AFS_DIR=args.AFS
 EOS_DIR=args.EOS
+PY_DIR=args.PY
 import sys
 sys.path.insert(1, AFS_DIR+'/Code/Utilities/')
 import UtilityFunctions as UF
@@ -87,7 +89,6 @@ def GNNtrain(model, Sample,optimizer):
         loss.backward()  # Derive gradients.
         optimizer.step()  # Update parameters based on gradients.
         optimizer.zero_grad()
-
     return loss
 
 def GNNvalidate(model, Sample):
@@ -214,7 +215,7 @@ def main(self):
         from keras import backend as K
         try:
             model=tf.keras.models.load_model(Model_Path)
-            K.set_value(model.optimizer.learning_rate, TrainParams[1])
+            K.set_value(model.optimizer.learning_rate, TrainParams[0])
         except:
              print(UF.TimeStamp(), bcolors.WARNING+"Model/state data files are missing, skipping this step..." +bcolors.ENDC)
              model = UF.GenerateModel(ModelMeta,TrainParams)

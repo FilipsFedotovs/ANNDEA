@@ -3,13 +3,10 @@
 #Made by Filips Fedotovs
 #Current version 1.0
 
+
 ########################################    Import libraries    #############################################
 import argparse
-import pandas as pd #We use Panda for a routine data processing
-import gc  #Helps to clear memory
-import ast
-from UtilityFunctions import EMO
-
+import sys
 
 
 
@@ -27,7 +24,7 @@ parser.add_argument('--BatchID',help="Give this training sample batch an ID", de
 parser.add_argument('--MaxSegments',help="A maximum number of track combinations that will be used in a particular HTCondor job for this script", default='20000')
 parser.add_argument('--ClassNames',help="What class headers to use?", default="[['Flag','ProcID']]")
 parser.add_argument('--ClassValues',help="What class values to use?", default="[['13','-13'],['8']]")
-
+parser.add_argument('--PY',help="Python libraries directory location", default='.')
 
 ######################################## Set variables  #############################################################
 args = parser.parse_args()
@@ -37,6 +34,28 @@ o=args.o
 sfx=args.sfx
 pfx=args.pfx
 BatchID=args.BatchID
+
+
+
+########################################     Preset framework parameters    #########################################
+MaxSegments=int(args.MaxSegments)
+#Loading Directory locations
+EOS_DIR=args.EOS
+AFS_DIR=args.AFS
+PY_DIR=args.PY
+if PY_DIR!='': #Temp solution
+    sys.path=['',PY_DIR]
+    sys.path.append('/usr/lib64/python36.zip')
+    sys.path.append('/usr/lib64/python3.6')
+    sys.path.append('/usr/lib64/python3.6/lib-dynload')
+    sys.path.append('/usr/lib64/python3.6/site-packages')
+    sys.path.append('/usr/lib/python3.6/site-packages')
+sys.path.append(AFS_DIR+'/Code/Utilities')
+import UtilityFunctions as UF #This is where we keep routine utility functions
+import pandas as pd #We use Panda for a routine data processing
+import gc  #Helps to clear memory
+import ast
+from UtilityFunctions import EMO
 ClassNames=ast.literal_eval(args.ClassNames)
 ClassValues=ast.literal_eval(args.ClassValues)
 ExtraColumns=[]
@@ -44,18 +63,9 @@ for j in ClassNames:
     for k in j:
         if (k in ExtraColumns)==False:
             ExtraColumns.append(k)
-
-########################################     Preset framework parameters    #########################################
-MaxSegments=int(args.MaxSegments)
-#Loading Directory locations
-EOS_DIR=args.EOS
-AFS_DIR=args.AFS
-
-import UtilityFunctions as UF #This is where we keep routine utility functions
-
 #Specifying the full path to input/output files
 input_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MCTr1_'+BatchID+'_TRACKS.csv'
-output_file_location=EOS_DIR+p+'/'+pfx+'_'+BatchID+'_'+o+'_'+str(i)+sfx
+output_file_location=EOS_DIR+p+'/Temp_'+pfx+'_'+BatchID+'_0/'+pfx+'_'+BatchID+'_'+o+'_'+str(i)+sfx
 print(UF.TimeStamp(), "Modules Have been imported successfully...")
 print(UF.TimeStamp(),'Loading pre-selected data from ',input_file_location)
 data=pd.read_csv(input_file_location,header=0,
@@ -87,7 +97,8 @@ for s in range(0,limit):
         class_flag=False
         for j in range(len(ClassNames[i])):
             pos_counter=track_column_headers.index(ClassNames[i][j])
-            if (track[pos_counter] in ClassValues[i][j])==False:
+            if (str(track[pos_counter]) in ClassValues[i][j])==False:
+
                     class_flag=True
 
         if class_flag==False:

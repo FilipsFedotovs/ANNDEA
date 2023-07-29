@@ -38,6 +38,7 @@ parser.add_argument('--PY',help="Python libraries directory location", default='
 ########################################     Initialising Variables    #########################################
 args = parser.parse_args()
 TrainParams=ast.literal_eval(args.TrainParams)
+print(TrainParams[0])
 TrainSampleID=args.TrainSampleID
 ModelName=args.BatchID
 ##################################   Loading Directory locations   ##################################################
@@ -78,6 +79,7 @@ def GNNtrain(model, Sample,optimizer):
     for data in Sample:
         out = model(data.x, data.edge_index, data.edge_attr, data.batch)
         loss = criterion(out, data.y)
+        print(loss)
         loss.backward()  # Derive gradients.
         optimizer.step()  # Update parameters based on gradients.
         optimizer.zero_grad()
@@ -115,13 +117,13 @@ Meta=MetaInput[0]
 Model_Meta_Path=EOSsubModelDIR+'/'+ModelName+'_Meta'
 Model_Path=EOSsubModelDIR+'/'+ModelName
 ModelMeta=UF.PickleOperations(Model_Meta_Path, 'r', 'N/A')[0]
-ValSamples=UF.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_TRACK_SEEDS_OUTPUT.pkl','r', 'N/A')[0]
-print(UF.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_TRACK_SEEDS_OUTPUT.pkl','r', 'N/A')[1])
+ValSamples=UF.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_VERTEX_SEEDS_OUTPUT.pkl','r', 'N/A')[0]
+print(UF.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_VERTEX_SEEDS_OUTPUT.pkl','r', 'N/A')[1])
 train_set=1
 if ModelMeta.ModelType=='CNN':
    if len(ModelMeta.TrainSessionsData)==0:
-       TrainSamples=UF.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_TRACK_SEEDS_OUTPUT_1.pkl','r', 'N/A')[0]
-       print(UF.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_TRACK_SEEDS_OUTPUT_1.pkl','r', 'N/A')[1])
+       TrainSamples=UF.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_VERTEX_SEEDS_OUTPUT_1.pkl','r', 'N/A')[0]
+       print(UF.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_VERTEX_SEEDS_OUTPUT_1.pkl','r', 'N/A')[1])
        train_set=1
    else:
 
@@ -129,14 +131,14 @@ if ModelMeta.ModelType=='CNN':
         if ModelMeta.TrainSessionsDataID[el]==TrainSampleID:
            train_set=ModelMeta.TrainSessionsData[el][-1][8]+1
 
-           next_file=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_TRACK_SEEDS_OUTPUT_'+str(train_set)+'.pkl'
+           next_file=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_VERTEX_SEEDS_OUTPUT_'+str(train_set)+'.pkl'
            if os.path.isfile(next_file):
                TrainSamples=UF.PickleOperations(next_file,'r', 'N/A')[0]
                print(UF.PickleOperations(next_file,'r', 'N/A')[1])
            else:
                train_set=1
-               TrainSamples=UF.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_TRACK_SEEDS_OUTPUT_1.pkl','r', 'N/A')[0]
-               print(UF.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_TRACK_SEEDS_OUTPUT_1.pkl','r', 'N/A')[1])
+               TrainSamples=UF.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_VERTEX_SEEDS_OUTPUT_1.pkl','r', 'N/A')[0]
+               print(UF.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_VERTEX_SEEDS_OUTPUT_1.pkl','r', 'N/A')[1])
         break
    NTrainBatches=math.ceil(float(len(TrainSamples))/float(TrainParams[1]))
    NValBatches=math.ceil(float(len(ValSamples))/float(TrainParams[1]))
@@ -149,22 +151,22 @@ elif ModelMeta.ModelType=='GNN':
        import torch
        criterion = torch.nn.CrossEntropyLoss()
        if len(ModelMeta.TrainSessionsData)==0:
-           TrainSamples=UF.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_TRACK_SEEDS_OUTPUT_1.pkl','r', 'N/A')[0]
-           print(UF.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_TRACK_SEEDS_OUTPUT_1.pkl','r', 'N/A')[1])
+           TrainSamples=UF.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_VERTEX_SEEDS_OUTPUT_1.pkl','r', 'N/A')[0]
+           print(UF.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_VERTEX_SEEDS_OUTPUT_1.pkl','r', 'N/A')[1])
            train_set=1
 
        else:
            for el in range(max(len(ModelMeta.TrainSessionsDataID)-2,0),-1,-1):
             if ModelMeta.TrainSessionsDataID[el]==TrainSampleID:
                train_set=ModelMeta.TrainSessionsData[el][-1][8]+1
-               next_file=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_TRACK_SEEDS_OUTPUT_'+str(train_set)+'.pkl'
+               next_file=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_VERTEX_SEEDS_OUTPUT_'+str(train_set)+'.pkl'
                if os.path.isfile(next_file):
                    TrainSamples=UF.PickleOperations(next_file,'r', 'N/A')[0]
                    print(UF.PickleOperations(next_file,'r', 'N/A')[1])
                else:
                    train_set=1
-                   TrainSamples=UF.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_TRACK_SEEDS_OUTPUT_1.pkl','r', 'N/A')[0]
-                   print(UF.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_TRACK_SEEDS_OUTPUT_1.pkl','r', 'N/A')[1])
+                   TrainSamples=UF.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_VERTEX_SEEDS_OUTPUT_1.pkl','r', 'N/A')[0]
+                   print(UF.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_VERTEX_SEEDS_OUTPUT_1.pkl','r', 'N/A')[1])
             break
        NTrainBatches=math.ceil(float(len(TrainSamples))/float(TrainParams[1]))
        NValBatches=math.ceil(float(len(ValSamples))/float(TrainParams[1]))
@@ -258,6 +260,8 @@ def main(self):
             scheduler.step()
             print(UF.TimeStamp(),'Epoch ',epoch, ' is completed')
             records.append([epoch,itr,train_loss.item(),0.5,val_loss,val_acc,test_loss,test_acc,train_set])
+            print(train_loss)
+            print(itr)
             torch.save({    'epoch': epoch,
                           'optimizer_state_dict': optimizer.state_dict(),
                           'scheduler': scheduler.state_dict(),    # HERE IS THE CHANGE
