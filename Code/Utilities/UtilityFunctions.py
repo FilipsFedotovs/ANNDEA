@@ -1386,37 +1386,37 @@ class EMO:
                   raise Exception('Fit error')
                   exit()
           if len(self.Header)!=len(self.Hits):
-              print('Error',self.Header,self.Hits)
-              print('ErrorFit',self.FIT,OtherSeed.FIT)
-              print('IniTrace',_IniTrace)
-              print('PostTrace',_PostTrace)
-              print('Overlap',_ovl)
-              print('New Seed Header',_new_sd_hd)
-              print('New Seed Hits',_new_seed_hits)
-              print('New seed fits',_new_seed_fits)
-              print('Remain_s',_new_remain_s)
-              print('Remain_o',_new_remain_o)
-              print('_other_seed_header2',_other_seed_header2)
-              print('_self_seed_header3',_self_seed_header3)
-              print('_self_seed_hits3',_self_seed_hits3)
-              print('_other_seed_header3',_other_seed_header3)
-              print('_other_seed_hits3',_other_seed_hits3)
-              print('Remain2_s',_new_remain2_s)
-              print('Remain2_o',_new_remain2_o)
-              print('_self_m2',_self_m2)
-              print('_other_m2',_other_m2)
-              print('New Seed Header2',_new_sd_hd2)
-              print('New Seed Hits2',_new_seed_hits2)
-              print('_last_remaining_sheaders2',_last_remaining_sheaders2)
-              print('_last_remaining_oheaders2',_last_remaining_oheaders2)
-              print('_last_remaining_shits2',_last_remaining_shits2)
-              print('_last_remaining_ohits2',_last_remaining_ohits2)
-              print('_last_remaining_matr2',_last_remaining_matr2)
-              print('weak',_weak)
-              print('weak2',EMO.ReplaceWeakerTracksTest(last_remain_matr,last_other_hits,last_self_hits,last_other_fits,last_self_fits))
-              print('weakhdr',EMO.ReplaceWeakerTracks(last_remain_matr,last_other_headers,last_self_headers,last_other_fits,last_self_fits))
-              print('Matrx',EMO.ProjectVectorElements(_smatr,_PostTrace[0]))
-              print('matrix',_smatr)
+              # print('Error',self.Header,self.Hits)
+              # print('ErrorFit',self.FIT,OtherSeed.FIT)
+              # print('IniTrace',_IniTrace)
+              # print('PostTrace',_PostTrace)
+              # print('Overlap',_ovl)
+              # print('New Seed Header',_new_sd_hd)
+              # print('New Seed Hits',_new_seed_hits)
+              # print('New seed fits',_new_seed_fits)
+              # print('Remain_s',_new_remain_s)
+              # print('Remain_o',_new_remain_o)
+              # print('_other_seed_header2',_other_seed_header2)
+              # print('_self_seed_header3',_self_seed_header3)
+              # print('_self_seed_hits3',_self_seed_hits3)
+              # print('_other_seed_header3',_other_seed_header3)
+              # print('_other_seed_hits3',_other_seed_hits3)
+              # print('Remain2_s',_new_remain2_s)
+              # print('Remain2_o',_new_remain2_o)
+              # print('_self_m2',_self_m2)
+              # print('_other_m2',_other_m2)
+              # print('New Seed Header2',_new_sd_hd2)
+              # print('New Seed Hits2',_new_seed_hits2)
+              # print('_last_remaining_sheaders2',_last_remaining_sheaders2)
+              # print('_last_remaining_oheaders2',_last_remaining_oheaders2)
+              # print('_last_remaining_shits2',_last_remaining_shits2)
+              # print('_last_remaining_ohits2',_last_remaining_ohits2)
+              # print('_last_remaining_matr2',_last_remaining_matr2)
+              # print('weak',_weak)
+              # print('weak2',EMO.ReplaceWeakerTracksTest(last_remain_matr,last_other_hits,last_self_hits,last_other_fits,last_self_fits))
+              # print('weakhdr',EMO.ReplaceWeakerTracks(last_remain_matr,last_other_headers,last_self_headers,last_other_fits,last_self_fits))
+              # print('Matrx',EMO.ProjectVectorElements(_smatr,_PostTrace[0]))
+              # print('matrix',_smatr)
               exit()
           return True
       @staticmethod
@@ -1646,7 +1646,6 @@ class EMO:
                       for j in range(len(m)):
                           accumulative_fit_f=0
                           accumulative_fit_m=m_fit[j]
-                          print(accumulative_fit_m)
                           del_temp_vec=[]
                           counter=0
                           for i in range(len(matx[j])):
@@ -1654,14 +1653,12 @@ class EMO:
                                       accumulative_fit_f+=f_fit[i]
                                       del_temp_vec.append(f[i])
                                       counter+=1
-                          print(accumulative_fit_m,accumulative_fit_f,counter)
-
                           if (accumulative_fit_m>accumulative_fit_f/counter):
                               res_vector.append(m[j])
                               delete_vec+=del_temp_vec
                           else:
                               res_vector+=del_temp_vec
-                      print('resdel',res_vector,delete_vec)
+
                       final_vector=[]
                       for mel in m:
                           if (mel in res_vector) and (mel in final_vector)==False:
