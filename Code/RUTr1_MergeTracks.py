@@ -126,9 +126,16 @@ if Log and (os.path.isfile(required_eval_file_location)==False or Mode=='RESET')
            Meta=MetaInput[0]
            MinHitsTrack=Meta.MinHitsTrack
     print(UF.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+initial_input_file_location+bcolors.ENDC)
+    if BrickID=='':
+        ColUse=[TrackID,PM.x,PM.y,PM.z,PM.tx,PM.ty,PM.MC_Track_ID,PM.MC_Event_ID]
+    else:
+        ColUse=[TrackID,BrickID,PM.x,PM.y,PM.z,PM.tx,PM.ty,PM.MC_Track_ID,PM.MC_Event_ID]
+    
     data=pd.read_csv(initial_input_file_location,
                 header=0,
-                usecols=[TrackID,BrickID,PM.x,PM.y,PM.z,PM.tx,PM.ty,PM.MC_Track_ID,PM.MC_Event_ID])
+                usecols=ColUse)
+    if BrickID=='':
+        data[BrickID]='D'
     total_rows=len(data)
     print(UF.TimeStamp(),'The raw data has ',total_rows,' hits')
     print(UF.TimeStamp(),'Removing unreconstructed hits...')
@@ -137,6 +144,7 @@ if Log and (os.path.isfile(required_eval_file_location)==False or Mode=='RESET')
     print(UF.TimeStamp(),'The cleaned data has ',final_rows,' hits')
     data[PM.MC_Event_ID] = data[PM.MC_Event_ID].astype(str)
     data[PM.MC_Track_ID] = data[PM.MC_Track_ID].astype(str)
+    
     data[BrickID] = data[BrickID].astype(str)
     data[TrackID] = data[TrackID].astype(str)
     data['Rec_Seg_ID'] = data[TrackID] + '-' + data[BrickID]
@@ -198,9 +206,15 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
            VetoMotherTrack=PM.VetoMotherTrack
            MinHitsTrack=Meta.MinHitsTrack
         print(UF.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+initial_input_file_location+bcolors.ENDC)
+        if BrickID=='':
+            ColUse=[TrackID,PM.x,PM.y,PM.z,PM.tx,PM.ty]
+        else:
+            ColUse=[TrackID,BrickID,PM.x,PM.y,PM.z,PM.tx,PM.ty]
         data=pd.read_csv(initial_input_file_location,
                     header=0,
-                    usecols=[TrackID,BrickID,PM.x,PM.y,PM.z,PM.tx,PM.ty])
+                    usecols=ColUse)
+        if BrickID=='':
+            data[BrickID]='D'
         total_rows=len(data.axes[0])
         print(UF.TimeStamp(),'The raw data has ',total_rows,' hits')
         print(UF.TimeStamp(),'Removing unreconstructed hits...')
