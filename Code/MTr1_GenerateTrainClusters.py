@@ -142,7 +142,7 @@ if os.path.isfile(destination_output_file_location) and Mode!='RESET': #If we ha
     output_val_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_SAMPLES'+'.pkl'
     print(UF.PickleOperations(output_val_file_location,'w', ValSamples)[1])
     output_test_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TEST_SAMPLES'+'.pkl'
-    print(UF.PickleOperations(output_test_file_location,'w', ValSamples)[1])
+    print(UF.PickleOperations(output_test_file_location,'w', TestSamples)[1])
     print(UF.TimeStamp(), bcolors.OKGREEN+"Train data has been re-generated successfully..."+bcolors.ENDC)
     exit()
 
