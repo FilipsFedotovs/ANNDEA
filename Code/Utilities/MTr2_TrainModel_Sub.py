@@ -162,33 +162,6 @@ def test(model, device, sample, thld):
             losses.append(loss.item())
     return np.nanmean(losses), np.nanmean(accs)
 
-#Keep bellow just in case,but if not needed will be scrapped
-# TrainSampleInputMeta=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_info.pkl'
-# print(UF.TimeStamp(),'Loading the data file ',bcolors.OKBLUE+TrainSampleInputMeta+bcolors.ENDC)
-# MetaInput=UF.PickleOperations(TrainSampleInputMeta,'r', 'N/A')
-# print(MetaInput[1])
-# Meta=MetaInput[0]
-# TrainSamples=[]
-# ValSamples=[]
-# TestSamples=[]
-# for i in range(1,Meta.no_sets+1):
-#         flocation=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TTr_OUTPUT_'+str(i)+'.pkl'
-#         print(UF.TimeStamp(),'Loading data from ',bcolors.OKBLUE+flocation+bcolors.ENDC)
-#         TrainClusters=UF.PickleOperations(flocation,'r', 'N/A')
-#         TrainClusters=TrainClusters[0]
-#         TrainFraction=int(math.floor(len(TrainClusters)*(1.0-(Meta.testRatio+Meta.valRatio))))
-#         ValFraction=int(math.ceil(len(TrainClusters)*Meta.valRatio))
-#         for smpl in range(0,TrainFraction):
-#            if TrainClusters[smpl].ClusterGraph.num_edges>0:
-#              TrainSamples.append(TrainClusters[smpl].ClusterGraph)
-#         for smpl in range(TrainFraction,TrainFraction+ValFraction):
-#             if TrainClusters[smpl].ClusterGraph.num_edges>0:
-#              ValSamples.append(TrainClusters[smpl].ClusterGraph)
-#         for smpl in range(TrainFraction+ValFraction,len(TrainClusters)):
-#             if TrainClusters[smpl].ClusterGraph.num_edges>0:
-#              TestSamples.append(TrainClusters[smpl].ClusterGraph)
-# print(UF.TimeStamp(), bcolors.OKGREEN+"Train data has loaded and analysed successfully..."+bcolors.ENDC)
-
 
 output_train_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_SAMPLES'+'.pkl'
 TrainSamples=UF.PickleOperations(output_train_file_location,'r', 'N/A')[0]
