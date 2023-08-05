@@ -67,6 +67,18 @@ class TrainingSampleMeta:
           self.MaxSeeds=MaxSeeds
           self.VetoMotherTrack=VetoMotherTrack
           self.MinHitsTrack=MinHitsTrack
+      def IniVertexSeedMetaData(self,MaxDST,MaxVXT,MaxDOCA,MaxAngle,JobSets,MaxSegments,VetoVertex,MaxSeeds,MinHitsTrack,FiducialVolumeCut
+                               ):
+          self.MaxDST=MaxDST 
+          self.MaxVXT=MaxVXT
+          self.MaxDOCA=MaxDOCA
+          self.MaxAngle=MaxAngle
+          self.JobSets=JobSets
+          self.MaxSegments=MaxSegments
+          self.MaxSeeds=MaxSeeds
+          self.VetoVertex=VetoVertex
+          self.MinHitsTrack=MinHitsTrack
+          self.FiducialVolumeCut = FiducialVolumeCut
       def UpdateHitClusterMetaData(self,NoS,NoNF,NoEF,NoSets):
           self.num_node_features=NoNF
           self.num_edge_features=NoEF
@@ -119,6 +131,10 @@ class ModelMeta:
                   self.MaxSLG=DataMeta.MaxSLG
               if hasattr(DataMeta,'MaxSTG'):
                   self.MaxSTG=DataMeta.MaxSTG
+              if hasattr(DataMeta,'MaxDST'):
+                  self.MaxDST=DataMeta.MaxDST
+              if hasattr(DataMeta,'MaxVXT'):
+                  self.MaxVXT=DataMeta.MaxVXT
               if hasattr(DataMeta,'MaxDOCA'):
                   self.MaxDOCA=DataMeta.MaxDOCA
               if hasattr(DataMeta,'MaxAngle'):
@@ -201,6 +217,7 @@ class HitCluster:
 
            #Combining data 1 and 2
            _Tot_Hits=pd.merge(_l_Tot_Hits, _r_Tot_Hits, how="inner", on=['join_key'])
+
            _Tot_Hits.l_MC_ID= _Tot_Hits.l_MC_ID.fillna(_Tot_Hits.l_HitID)
            _Tot_Hits.r_MC_ID= _Tot_Hits.r_MC_ID.fillna(_Tot_Hits.r_HitID)
            _Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['l_HitID'] == _Tot_Hits['r_HitID']], inplace = True)
@@ -226,7 +243,12 @@ class HitCluster:
            _Tot_Hits['r_x']=_Tot_Hits['r_x']/self.Step[2]
            _Tot_Hits['r_y']=_Tot_Hits['r_y']/self.Step[2]
            _Tot_Hits['r_z']=_Tot_Hits['r_z']/self.Step[2]
+
            _Tot_Hits['label']=(_Tot_Hits['l_MC_ID']==_Tot_Hits['r_MC_ID']).astype('int8')
+           _Tot_Hits_tr = _Tot_Hits[_Tot_Hits['r_MC_ID'].str.contains("--") & _Tot_Hits['l_MC_ID'].str.contains("--")]
+           _Tot_Hits_fr = _Tot_Hits[(_Tot_Hits['r_MC_ID'].str.contains("--")==False) | (_Tot_Hits['l_MC_ID'].str.contains("--")==False)]
+           _Tot_Hits_tr['label']=0
+           _Tot_Hits=pd.concat([_Tot_Hits_tr,_Tot_Hits_fr])
            _Tot_Hits['d_l'] = (np.sqrt(((_Tot_Hits['r_y']-_Tot_Hits['l_y'])**2) + ((_Tot_Hits['r_x']-_Tot_Hits['l_x'])**2) + ((_Tot_Hits['r_z']-_Tot_Hits['l_z'])**2)))
            _Tot_Hits['d_t'] = np.sqrt(((_Tot_Hits['r_y']-_Tot_Hits['l_y'])**2) + ((_Tot_Hits['r_x']-_Tot_Hits['l_x'])**2))
            _Tot_Hits['d_z'] = (_Tot_Hits['r_z']-_Tot_Hits['l_z']).abs()
@@ -398,6 +420,68 @@ class EMO:
                  raise ValueError("Method 'DecorateTrackGeoInfo' currently works for seeds with partition of 2 only")
           else:
                 raise ValueError("Method 'DecorateTrackGeoInfo' works only if 'Decorate' method has been acted upon the seed before")
+      def GetVXInfo(self):
+          if hasattr(self,'Hits'):
+             if self.Partition==2:
+                __XZ1=EMO.GetEquationOfTrack(self.Hits[0])[0]
+                __XZ2=EMO.GetEquationOfTrack(self.Hits[1])[0]
+                __YZ1=EMO.GetEquationOfTrack(self.Hits[0])[1]
+                __YZ2=EMO.GetEquationOfTrack(self.Hits[1])[1]
+                __X1S=EMO.GetEquationOfTrack(self.Hits[0])[3]
+                __X2S=EMO.GetEquationOfTrack(self.Hits[1])[3]
+                __Y1S=EMO.GetEquationOfTrack(self.Hits[0])[4]
+                __Y2S=EMO.GetEquationOfTrack(self.Hits[1])[4]
+                __Z1S=EMO.GetEquationOfTrack(self.Hits[0])[5]
+                __Z2S=EMO.GetEquationOfTrack(self.Hits[1])[5]
+                __vector_1_st = np.array([np.polyval(__XZ1,self.Hits[0][0][2]),np.polyval(__YZ1,self.Hits[0][0][2]),self.Hits[0][0][2]])
+                __vector_1_end = np.array([np.polyval(__XZ1,self.Hits[0][len(self.Hits[0])-1][2]),np.polyval(__YZ1,self.Hits[0][len(self.Hits[0])-1][2]),self.Hits[0][len(self.Hits[0])-1][2]])
+                __vector_2_st = np.array([np.polyval(__XZ2,self.Hits[0][0][2]),np.polyval(__YZ2,self.Hits[0][0][2]),self.Hits[0][0][2]])
+                __vector_2_end = np.array([np.polyval(__XZ2,self.Hits[0][len(self.Hits[0])-1][2]),np.polyval(__YZ2,self.Hits[0][len(self.Hits[0])-1][2]),self.Hits[0][len(self.Hits[0])-1][2]])
+                __result=EMO.closestDistanceBetweenLines(__vector_1_st,__vector_1_end,__vector_2_st,__vector_2_end,clampAll=False,clampA0=False,clampA1=False,clampB0=False,clampB1=False)
+                __midpoint=(__result[0]+__result[1])/2
+                __D1M=math.sqrt(((__midpoint[0]-__X1S)**2) + ((__midpoint[1]-__Y1S)**2) + ((__midpoint[2]-__Z1S)**2))
+                __D2M=math.sqrt(((__midpoint[0]-__X2S)**2) + ((__midpoint[1]-__Y2S)**2) + ((__midpoint[2]-__Z2S)**2))
+                __v1=np.subtract(__vector_1_end,__midpoint)
+                __v2=np.subtract(__vector_2_end,__midpoint)
+                self.angle=EMO.angle_between(__v1, __v2)
+                self.Vx=__midpoint[0]
+                self.Vy=__midpoint[1]
+                self.Vz=__midpoint[2]
+                self.DOCA=__result[2]
+                self.V_Tr=[__D1M,__D2M]
+                self.Tr_Tr=math.sqrt(((float(self.Hits[0][0][0])-float(self.Hits[1][0][0]))**2)+((float(self.Hits[0][0][1])-float(self.Hits[1][0][1]))**2)+((float(self.Hits[0][0][2])-float(self.Hits[1][0][2]))**2))
+             else:
+                 raise ValueError("Method 'DecorateSeedGeoInfo' currently works for seeds with track multiplicity of 2 only")
+          else:
+                raise ValueError("Method 'DecorateSeedGeoInfo' works only if 'DecorateTracks' method has been acted upon the seed before")
+        #         __XZ1=EMO.GetEquationOfTrack(self.Hits[0])[0]
+        #         __XZ2=EMO.GetEquationOfTrack(self.Hits[1])[0]
+        #         __YZ1=EMO.GetEquationOfTrack(self.Hits[0])[1]
+        #         __YZ2=EMO.GetEquationOfTrack(self.Hits[1])[1]
+        #         __vector_1_st = np.array([np.polyval(__XZ1,self.Hits[0][0][2]),np.polyval(__YZ1,self.Hits[0][0][2]),self.Hits[0][0][2]])
+        #         __vector_1_end = np.array([np.polyval(__XZ1,self.Hits[0][len(self.Hits[0])-1][2]),np.polyval(__YZ1,self.Hits[0][len(self.Hits[0])-1][2]),self.Hits[0][len(self.Hits[0])-1][2]])
+        #         __vector_2_st = np.array([np.polyval(__XZ2,self.Hits[0][0][2]),np.polyval(__YZ2,self.Hits[0][0][2]),self.Hits[0][0][2]])
+        #         __vector_2_end = np.array([np.polyval(__XZ2,self.Hits[0][len(self.Hits[0])-1][2]),np.polyval(__YZ2,self.Hits[0][len(self.Hits[0])-1][2]),self.Hits[0][len(self.Hits[0])-1][2]])
+        #         __result=EMO.closestDistanceBetweenLines(__vector_1_st,__vector_1_end,__vector_2_st,__vector_2_end,clampAll=False,clampA0=False,clampA1=False,clampB0=False,clampB1=False)
+        #         __midpoint=(__result[0]+__result[1])/2
+        #         __v1=np.subtract(__vector_1_end,__midpoint)
+        #         __v2=np.subtract(__vector_2_end,__midpoint)
+        #         if self.Hits[0][len(self.Hits)-1][2]>self.Hits[1][len(self.Hits)-1][2]: #Workout which track is leading (has highest z-coordinate)
+        #             __leading_seg=0
+        #             __subleading_seg=1
+        #         else:
+        #             __leading_seg=1
+        #             __subleading_seg=0
+        #         self.Opening_Angle=EMO.angle_between(__v1, __v2)
+        #         self.DOCA=__result[2]
+        #         __x2=float(self.Hits[__leading_seg][0][0])
+        #         __x1=self.Hits[__subleading_seg][len(self.Hits[__subleading_seg])-1][0]
+        #         __y2=float(self.Hits[__leading_seg][0][1])
+        #         __y1=self.Hits[__subleading_seg][len(self.Hits[__subleading_seg])-1][1]
+        #      else:
+        #          raise ValueError("Method 'DecorateTrackGeoInfo' currently works for seeds with partition of 2 only")
+        #   else:
+        #         raise ValueError("Method 'DecorateTrackGeoInfo' works only if 'Decorate' method has been acted upon the seed before")  
       def TrackQualityCheck(self,MaxDoca,MaxSLG, MaxSTG,MaxAngle):
                     if self.DOCA>MaxDoca: #Check whether the seed passes the DOCA cut
                         return False
@@ -421,7 +505,18 @@ class EMO:
                                         return False
                                    else:
                                         return self.STG <= MaxSTG #Still apply the STG cut
-
+                                   ######
+      def VertexQualityCheck(self,MaxDoca, MaxVXT, MaxAngle, FiducialVolumeCut):
+          if len(FiducialVolumeCut) >= 6:
+                MinX = FiducialVolumeCut[0] 
+                MaxX = FiducialVolumeCut[1]
+                MinY = FiducialVolumeCut[2]
+                MaxY = FiducialVolumeCut[3]
+                MinZ = FiducialVolumeCut[4] 
+                MaxZ = FiducialVolumeCut[5]
+                return (self.DOCA<=MaxDoca and min(self.V_Tr)<=MaxVXT and self.Vx>=MinX and self.Vx<=MaxX and self.Vy>=MinY and self.Vy<=MaxY and self.Vz>=MinZ and self.Vz<=MaxZ and abs(self.angle)<=MaxAngle)
+          return (self.DOCA<=MaxDoca and min(self.V_Tr)<=MaxVXT and abs(self.angle)<=MaxAngle)
+    
       def PrepareSeedPrint(self,MM):
           __TempTrack=copy.deepcopy(self.Hits)
 
@@ -551,13 +646,13 @@ class EMO:
                    try:
                     __vector_1 = [__deltaZ,0]
                     __vector_2 = [__deltaZ, __deltaX]
-                    __ThetaAngle=EMO.Opening_Angle(__vector_1, __vector_2)
+                    __ThetaAngle=EMO.angle_between(__vector_1, __vector_2)
                    except:
                      __ThetaAngle=0.0
                    try:
                      __vector_1 = [__deltaZ,0]
                      __vector_2 = [__deltaZ, __deltaY]
-                     __PhiAngle=EMO.Opening_Angle(__vector_1, __vector_2)
+                     __PhiAngle=EMO.angle_between(__vector_1, __vector_2)
                    except:
                      __PhiAngle=0.0
                    __TotalDistance=math.sqrt((__deltaX**2)+(__deltaY**2)+(__deltaZ**2))
@@ -601,6 +696,8 @@ class EMO:
           del __TempTrack
       def AssignANNTrUID(self,ID):
           self.UTrID=ID
+      def AssignANNVxUID(self,ID):
+          self.UVxID=ID
       def PrepareSeedGraph(self,MM):
           if MM.ModelArchitecture[-5:]=='4N-IC':
                       __TempTrack=copy.deepcopy(self.Hits)
@@ -1037,6 +1134,98 @@ class EMO:
              #self.Fit=M(graph.x, graph.edge_index, graph.edge_attr,graph.batch)[0][1].item()
              self.Class=M(graph.x, graph.edge_index, graph.edge_attr,graph.batch).tolist()[0]
              self.ClassHeaders=Mmeta.ClassHeaders+['Other']
+      def InjectSeed(self,OtherSeed):
+          __overlap=False
+          for t1 in self.Header:
+              for t2 in OtherSeed.Header:
+                  if t1==t2:
+                      __overlap=True
+                      break
+          if __overlap:
+              overlap_matrix=[]
+              for t1 in range(len(self.Header)):
+                 for t2 in range(len(OtherSeed.Header)):
+                    if self.Header[t1]==OtherSeed.Header[t2]:
+                       overlap_matrix.append(t2)
+
+              for t2 in range(len(OtherSeed.Header)):
+                if (t2 in overlap_matrix)==False:
+                  self.Header.append(OtherSeed.Header[t2])
+                  if hasattr(self,'Hits') and hasattr(OtherSeed,'Hits'):
+                          self.Hits.append(OtherSeed.Hits[t2])
+              if hasattr(self,'Label') and hasattr(OtherSeed,'Label'):
+                         self.Label=(self.Label and OtherSeed.Label)
+              if hasattr(self,'FIT') and hasattr(OtherSeed,'FIT'):
+                        self.FIT+=OtherSeed.FIT
+              elif hasattr(self,'FIT'):
+                       self.FIT.append(OtherSeed.Fit)
+              elif hasattr(OtherSeed,'FIT'):
+                       self.FIT=[self.Fit]
+                       self.FIT+=OtherSeed.FIT
+              else:
+                      self.FIT=[]
+                      self.FIT.append(self.Fit)
+                      self.FIT.append(OtherSeed.Fit)
+              if hasattr(self,'VX_x') and hasattr(OtherSeed,'VX_x'):
+                      self.VX_x+=OtherSeed.VX_x
+              elif hasattr(self,'VX_x'):
+                       self.VX_x.append(OtherSeed.Vx)
+              elif hasattr(OtherSeed,'VX_x'):
+                       self.VX_x=[self.Vx]
+                       self.VX_x+=OtherSeed.VX_x
+              else:
+                      self.VX_x=[]
+                      self.VX_x.append(self.Vx)
+                      self.VX_x.append(OtherSeed.Vx)
+                          
+              if hasattr(self,'VX_y') and hasattr(OtherSeed,'VX_y'):
+                      self.VX_y+=OtherSeed.VX_y
+              elif hasattr(self,'VX_y'):
+                       self.VX_y.append(OtherSeed.Vy)
+              elif hasattr(OtherSeed,'VX_y'):
+                       self.VX_y=[self.Vy]
+                       self.VX_y+=OtherSeed.VX_y
+              else:
+                      self.VX_y=[]
+                      self.VX_y.append(self.Vy)
+                      self.VX_y.append(OtherSeed.Vy)
+                  
+              if hasattr(self,'VX_z') and hasattr(OtherSeed,'VX_z'):
+                      self.VX_z+=OtherSeed.VX_z
+              elif hasattr(self,'VX_z'):
+                       self.VX_z.append(OtherSeed.Vz)
+              elif hasattr(OtherSeed,'VX_z'):
+                       self.VX_z=[self.Vz]
+                       self.VX_z+=OtherSeed.VX_z
+              else:
+                      self.VX_z=[]
+                      self.VX_z.append(self.Vz)
+                      self.VX_z.append(OtherSeed.Vz)
+              self.VX_z=list(set(self.VX_z))
+              self.VX_x=list(set(self.VX_x))
+              self.VX_y=list(set(self.VX_y))
+              self.FIT=list(set(self.FIT))
+              self.Partition=len(self.Header)
+              self.Fit=sum(self.FIT)/len(self.FIT)
+              self.Vx=sum(self.VX_x)/len(self.VX_x)
+              self.Vy=sum(self.VX_y)/len(self.VX_y)
+              self.Vz=sum(self.VX_z)/len(self.VX_z)
+              if hasattr(self,'angle'):
+                  delattr(self,'angle')
+              if hasattr(self,'DOCA'):
+                  delattr(self,'DOCA')
+              if hasattr(self,'V_Tr'):
+                  delattr(self,'V_Tr')
+              if hasattr(self,'Tr_Tr'):
+                  delattr(self,'Tr_Tr')
+
+
+
+              return True
+
+          else:
+              return __overlap
+
       def InjectTrackSeed(self,OtherSeed):
           Overlap=list(set(self.Header) & set(OtherSeed.Header)) #Basic check - does the other seed have at least one track segment in common?
 
@@ -1197,37 +1386,37 @@ class EMO:
                   raise Exception('Fit error')
                   exit()
           if len(self.Header)!=len(self.Hits):
-              print('Error',self.Header,self.Hits)
-              print('ErrorFit',self.FIT,OtherSeed.FIT)
-              print('IniTrace',_IniTrace)
-              print('PostTrace',_PostTrace)
-              print('Overlap',_ovl)
-              print('New Seed Header',_new_sd_hd)
-              print('New Seed Hits',_new_seed_hits)
-              print('New seed fits',_new_seed_fits)
-              print('Remain_s',_new_remain_s)
-              print('Remain_o',_new_remain_o)
-              print('_other_seed_header2',_other_seed_header2)
-              print('_self_seed_header3',_self_seed_header3)
-              print('_self_seed_hits3',_self_seed_hits3)
-              print('_other_seed_header3',_other_seed_header3)
-              print('_other_seed_hits3',_other_seed_hits3)
-              print('Remain2_s',_new_remain2_s)
-              print('Remain2_o',_new_remain2_o)
-              print('_self_m2',_self_m2)
-              print('_other_m2',_other_m2)
-              print('New Seed Header2',_new_sd_hd2)
-              print('New Seed Hits2',_new_seed_hits2)
-              print('_last_remaining_sheaders2',_last_remaining_sheaders2)
-              print('_last_remaining_oheaders2',_last_remaining_oheaders2)
-              print('_last_remaining_shits2',_last_remaining_shits2)
-              print('_last_remaining_ohits2',_last_remaining_ohits2)
-              print('_last_remaining_matr2',_last_remaining_matr2)
-              print('weak',_weak)
-              print('weak2',EMO.ReplaceWeakerTracksTest(last_remain_matr,last_other_hits,last_self_hits,last_other_fits,last_self_fits))
-              print('weakhdr',EMO.ReplaceWeakerTracks(last_remain_matr,last_other_headers,last_self_headers,last_other_fits,last_self_fits))
-              print('Matrx',EMO.ProjectVectorElements(_smatr,_PostTrace[0]))
-              print('matrix',_smatr)
+              # print('Error',self.Header,self.Hits)
+              # print('ErrorFit',self.FIT,OtherSeed.FIT)
+              # print('IniTrace',_IniTrace)
+              # print('PostTrace',_PostTrace)
+              # print('Overlap',_ovl)
+              # print('New Seed Header',_new_sd_hd)
+              # print('New Seed Hits',_new_seed_hits)
+              # print('New seed fits',_new_seed_fits)
+              # print('Remain_s',_new_remain_s)
+              # print('Remain_o',_new_remain_o)
+              # print('_other_seed_header2',_other_seed_header2)
+              # print('_self_seed_header3',_self_seed_header3)
+              # print('_self_seed_hits3',_self_seed_hits3)
+              # print('_other_seed_header3',_other_seed_header3)
+              # print('_other_seed_hits3',_other_seed_hits3)
+              # print('Remain2_s',_new_remain2_s)
+              # print('Remain2_o',_new_remain2_o)
+              # print('_self_m2',_self_m2)
+              # print('_other_m2',_other_m2)
+              # print('New Seed Header2',_new_sd_hd2)
+              # print('New Seed Hits2',_new_seed_hits2)
+              # print('_last_remaining_sheaders2',_last_remaining_sheaders2)
+              # print('_last_remaining_oheaders2',_last_remaining_oheaders2)
+              # print('_last_remaining_shits2',_last_remaining_shits2)
+              # print('_last_remaining_ohits2',_last_remaining_ohits2)
+              # print('_last_remaining_matr2',_last_remaining_matr2)
+              # print('weak',_weak)
+              # print('weak2',EMO.ReplaceWeakerTracksTest(last_remain_matr,last_other_hits,last_self_hits,last_other_fits,last_self_fits))
+              # print('weakhdr',EMO.ReplaceWeakerTracks(last_remain_matr,last_other_headers,last_self_headers,last_other_fits,last_self_fits))
+              # print('Matrx',EMO.ProjectVectorElements(_smatr,_PostTrace[0]))
+              # print('matrix',_smatr)
               exit()
           return True
       @staticmethod
@@ -1457,7 +1646,6 @@ class EMO:
                       for j in range(len(m)):
                           accumulative_fit_f=0
                           accumulative_fit_m=m_fit[j]
-                          print(accumulative_fit_m)
                           del_temp_vec=[]
                           counter=0
                           for i in range(len(matx[j])):
@@ -1465,14 +1653,12 @@ class EMO:
                                       accumulative_fit_f+=f_fit[i]
                                       del_temp_vec.append(f[i])
                                       counter+=1
-                          print(accumulative_fit_m,accumulative_fit_f,counter)
-
                           if (accumulative_fit_m>accumulative_fit_f/counter):
                               res_vector.append(m[j])
                               delete_vec+=del_temp_vec
                           else:
                               res_vector+=del_temp_vec
-                      print('resdel',res_vector,delete_vec)
+
                       final_vector=[]
                       for mel in m:
                           if (mel in res_vector) and (mel in final_vector)==False:
@@ -2267,6 +2453,9 @@ def GenerateModel(ModelMeta,TrainParams=None):
                         self.conv2 = GMMConv(HiddenLayer[0][0],HiddenLayer[1][0],dim=4,kernel_size=HiddenLayer[1][1])
                         self.conv3 = GMMConv(HiddenLayer[1][0],HiddenLayer[2][0],dim=4,kernel_size=HiddenLayer[2][1])
                         self.lin = Linear(HiddenLayer[2][0],OutputLayer[1])
+                    elif len(HiddenLayer)==1:
+                        self.conv1 = GMMConv(6 , HiddenLayer[0][0],dim=4,kernel_size=HiddenLayer[0][1])
+                        self.lin = Linear(HiddenLayer[0][0],OutputLayer[1])
                     elif len(HiddenLayer)==4:
                         self.conv1 = GMMConv(6 , HiddenLayer[0][0],dim=4,kernel_size=HiddenLayer[0][1])
                         self.conv2 = GMMConv(HiddenLayer[0][0],HiddenLayer[1][0],dim=4,kernel_size=HiddenLayer[1][1])
@@ -2283,6 +2472,9 @@ def GenerateModel(ModelMeta,TrainParams=None):
                         x = self.conv2(x, edge_index,edge_attr)
                         x = x.relu()
                         x = self.conv3(x, edge_index,edge_attr)
+                    elif len(HiddenLayer)==1:
+                        x = self.conv1(x, edge_index,edge_attr)
+                        x = x.relu()
                     elif len(HiddenLayer)==4:
                         x = self.conv1(x, edge_index,edge_attr)
                         x = x.relu()

@@ -6,11 +6,16 @@ import sys
 import copy
 from statistics import mean
 import os
+
+
 #Setting the parser - this script is usually not run directly, but is used by a Master version Counterpart that passes the required arguments
 parser = argparse.ArgumentParser(description='select cut parameters')
 parser.add_argument('--i',help="Set number", default='1')
 parser.add_argument('--j',help="Subset number", default='1')
 parser.add_argument('--Z_ID_Max',help="SubSubset number", default='1')
+parser.add_argument('--TrackFitCutRes',help="Track Fit cut Residual", default=1000,type=int)
+parser.add_argument('--TrackFitCutSTD',help="Track Fit cut", default=10,type=int)
+parser.add_argument('--TrackFitCutMRes',help="Track Fit cut", default=200,type=int)
 parser.add_argument('--Z_overlap',help="Enter Z id", default='1')
 parser.add_argument('--Y_overlap',help="Enter Y id", default='1')
 parser.add_argument('--X_overlap',help="Enter X id", default='1')
@@ -49,6 +54,7 @@ if PY_DIR!='': #Temp solution
     sys.path.append('/usr/lib/python3.6/site-packages')
 sys.path.append(AFS_DIR+'/Code/Utilities')
 import pandas as pd #We use Panda for a routine data processing
+import numpy as np
 ######################################## Set variables  #############################################################
 Z_overlap=int(args.Z_overlap)
 Y_overlap=int(args.Y_overlap)
@@ -69,6 +75,9 @@ cut_dr=float(args.cut_dr)
 ModelName=args.ModelName
 CheckPoint=args.CheckPoint.upper()=='Y'
 RecBatchID=args.BatchID
+TrackFitCutRes=args.TrackFitCutRes
+TrackFitCutSTD=args.TrackFitCutSTD
+TrackFitCutMRes=args.TrackFitCutMRes
 p=args.p
 o=args.o
 sfx=args.sfx
@@ -198,7 +207,8 @@ for k in range(0,Z_ID_Max):
                             _Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['link_strength'] <= Acceptance], inplace = True) #Remove all hit pairs that fail GNN classification
                         else:
                             _Tot_Hits=HC.HitPairs
-                        _Tot_Hits['link_strength']=1.0
+                            _Tot_Hits['link_strength']=1.0
+
                         print(UF.TimeStamp(),'Number of all  hit combinations passing GNN selection:',len(_Tot_Hits))
                         _Tot_Hits=_Tot_Hits[['r_HitID','l_HitID','r_z','l_z','link_strength']]
                         print(UF.TimeStamp(),'Preparing the weighted hits for tracking...')
@@ -249,10 +259,12 @@ for k in range(0,Z_ID_Max):
                         _Tot_Hits=_Temp_Tot_Hits
                         _Rec_Hits_Pool=[]
                         _intital_size=len(_Tot_Hits)
-                        while len(_Tot_Hits)>0:
+                        KeepTracking=True
+                        while len(_Tot_Hits)>0 and KeepTracking:
                                         _Tot_Hits_PCopy=copy.deepcopy(_Tot_Hits)
                                         _Tot_Hits_Predator=[]
                                         #Bellow we build all possible hit combinations that can occur in the data
+                                        print(UF.TimeStamp(),'Building all possible track combinations...')
                                         for prd in range(len(_Tot_Hits_PCopy)):
                                             print(UF.TimeStamp(),'Progress is ',round(100*prd/len(_Tot_Hits_PCopy),2), '%',end="\r", flush=True)
                                             Predator=_Tot_Hits_PCopy[prd]
@@ -275,15 +287,55 @@ for k in range(0,Z_ID_Max):
 
                                         column_no=len(_Tot_Hits_Predator[0])-1
                                         columns=[]
+                                        print(UF.TimeStamp(),'Applying physical assumptions...')
+                                        #Here we making sure that the tracks satisfy minimum fit requirements
+                                        q_itr=0
+                                        for thp in _Tot_Hits_Predator:
+                                            print(UF.TimeStamp(),'Progress is ',round(100*q_itr/len(_Tot_Hits_Predator),2), '%',end="\r", flush=True)
+                                            q_itr+=1
+                                            fit_data_x=[]
+                                            fit_data_y=[]
+                                            fit_data_z=[]
+                                            for cc in range(column_no):
+                                                for td in temp_data_list:
+                                                    if td[0][0]=='H':
+                                                        break
+                                                    elif td[0]==thp[cc]:
+                                                        fit_data_x.append(td[1])
+                                                        fit_data_y.append(td[2])
+                                                        fit_data_z.append(td[3])
+                                                        break
+
+                                            line_x=np.polyfit(fit_data_z,fit_data_x,1)
+                                            line_y=np.polyfit(fit_data_z,fit_data_y,1)
+                                            x_residual=[x * line_x[0] for x in fit_data_z]
+                                            x_residual=[x + line_x[1] for x in x_residual]
+                                            x_residual=(np.array(x_residual)-np.array(fit_data_x))
+                                            x_residual=[x ** 2 for x in x_residual]
+
+                                            y_residual=[y * line_y[0] for y in fit_data_z]
+                                            y_residual=[y + line_y[1] for y in y_residual]
+                                            y_residual=(np.array(y_residual)-np.array(fit_data_y))
+                                            y_residual=[y ** 2 for y in y_residual]
+                                            residual=np.array(y_residual)+np.array(x_residual)
+                                            residual=np.sqrt(residual)
+                                            RES=sum(residual)/len(fit_data_x)
+                                            STD=np.std(residual)
+                                            MRES=max(residual)
+                                            _Tot_Hits_Predator[_Tot_Hits_Predator.index(thp)]+=[RES,STD,MRES]
+
+
                                         #converting the list objects into Pandas dataframe
                                         for c in range(column_no):
                                             columns.append(str(c))
-                                        columns.append('average_link_strength')
+                                        columns+=['average_link_strength','RES','STD','MRES']
                                         _Tot_Hits_Predator=pd.DataFrame(_Tot_Hits_Predator, columns = columns)
+                                        _Tot_Hits_Predator=_Tot_Hits_Predator.drop(_Tot_Hits_Predator.index[(_Tot_Hits_Predator['RES'] > TrackFitCutRes) | (_Tot_Hits_Predator['STD'] > TrackFitCutSTD) | (_Tot_Hits_Predator['MRES'] > TrackFitCutMRes)]) #Remove tracks with a bad fit
+                                        KeepTracking=len(_Tot_Hits_Predator)>0
                                         _Tot_Hits_Predator.sort_values(by = ['average_link_strength'], ascending=[False],inplace=True) #Keep all the best hit combinations at the top
+                                        _Tot_Hits_Predator=_Tot_Hits_Predator.drop(['average_link_strength','RES','STD','MRES'],axis=1) #We don't need the segment fit anymore
                                         for c in range(column_no):
                                             _Tot_Hits_Predator.drop_duplicates(subset=[str(c)], keep='first', inplace=True) #Iterating over hits, make sure that their belong to the best fit track
-                                        _Tot_Hits_Predator=_Tot_Hits_Predator.drop(['average_link_strength'],axis=1) #We don't need the segment fit anymore
                                         _Tot_Hits_Predator=_Tot_Hits_Predator.values.tolist()
                                         for seg in range(len(_Tot_Hits_Predator)):
                                             _Tot_Hits_Predator[seg]=[s for s in _Tot_Hits_Predator[seg] if ('H' in s)==False] #Remove holes from the track representation

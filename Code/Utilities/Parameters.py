@@ -11,11 +11,12 @@ tx='tx' #Column name x-coordinate of the track hit
 ty='ty' #Column name for y-coordinate of the track hit
 z='z' #Column name for z-coordinate of the track hit
 
-Rec_Track_ID='ANN_Track_ID' #Column nameActual track id for FEDRA (or other reconstruction software)
-Rec_Track_Domain='ANN_Brick_ID' #Quarter of the ECC where the track is reconstructed If not present in the data please put the Track ID (the same as above)
+Rec_Track_ID='SND_Train_RUTr_GMM_FEDRA_Phase2a_Test_Track_ID' #Column nameActual track id for FEDRA (or other reconstruction software)
+Rec_Track_Domain='SND_Train_RUTr_GMM_FEDRA_Phase2a_Test_Brick_ID' #Quarter of the ECC where the track is reconstructed If not present in the data please put the Track ID (the same as above)
 
 MC_Track_ID='MC_Track_ID'  #Column name for Track ID for MC Truth reconstruction data
 MC_Event_ID='MC_Event_ID' #Column name for Event id for MC truth reconstruction data (If absent please enter the MCTrack as for above)
+MC_VX_ID='MC_Mother_ID' 
 MinHitsTrack=2
 TST=0.0001
 valRatio=0.1
@@ -26,6 +27,7 @@ stepY=6000
 stepZ=12000
 cut_dt=0.2
 cut_dr=60
+MaxSeedsPerVxPool=20000
 testRatio=0.05
 MaxValSampleSize=50000
 num_node_features=5
@@ -44,30 +46,14 @@ MaxSeeds=50000
 ######List of geometrical constain parameters
 MinHitsTrack=4
 VetoMotherTrack=[]
+VetoVertex=['-1', '-2']
 
-# MaxTracksPerJob=20000
-# MaxEvalTracksPerJob=20000
-# MaxSeedsPerJob=40000
-# MaxVxPerJob=10000
-# MaxSeedsPerVxPool=20000
-# ##Model parameters
-# pre_acceptance=0.5
-# post_acceptance=0.5
-# bg_acceptance = 1.0
-# #pre_vx_acceptance=0.662
-# resolution=50
-# MaxX=1000.0
-# MaxY=1000.0
-# MaxZ=3000.0
-# GNNMaxX=100.0
-# GNNMaxY=100.0
-# GNNMaxZ=1315
-# GNNMaxTX=0.01
-# GNNMaxTY=0.01
-# Pre_CNN_Model_Name='1T_50_SHIP_PREFIT_1_model'
-# Post_CNN_Model_Name='1T_50_SHIP_POSTFIT_1_model'
-# Classifier_Model_Name= 'SND_Reduced_3Class2'
-# Post_GNN_Model_Name = 'SND_Glue_Post_GMM3_FullCo_Angle2'
-# #ModelArchitecture=[[6, 4, 1, 2, 2, 2, 2], [], [],[], [], [1, 4, 2], [], [], [], [], [7, 1, 1, 4]]
-# ModelArchitecture=[[1, 4, 1, 8, 2, 2, 2], [], [],[], [], [1, 4, 2], [], [], [], [], [7, 1, 1, 4]]
-# ModelArchitecturePlus=[[1, 4, [2, 2, 2], [8, 8, 8], 2, 2, 2], [], [],[], [], [1, 4, 2], [], [], [], [], [7, 1, 1, 4]]
+
+def Seed_Bond_Fit_Acceptance(row):
+        if row['AntiLink_Strenth']>0:
+          return 1.16*(row['Link_Strength']+row['Seed_CNN_Fit'])/row['AntiLink_Strenth']
+        else:
+          return 100
+        
+pre_vx_acceptance=0.662
+link_acceptance=1.2
