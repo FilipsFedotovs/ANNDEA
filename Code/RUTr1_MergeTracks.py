@@ -854,7 +854,11 @@ while Status<len(Program):
                 print(UF.TimeStamp(),'Mapping data...')
                 data=pd.read_csv(args.f,header=0)
                 new_combined_data=pd.merge(data, Good_Tracks, how="left", on=[PM.Hit_ID])
-                new_combined_data['Temp_Track_Quarter'] = new_combined_data['Temp_Track_Quarter'].fillna(new_combined_data[BrickID])
+                if BrickID!='':
+            
+                    new_combined_data['Temp_Track_Quarter'] = new_combined_data['Temp_Track_Quarter'].fillna(new_combined_data[BrickID])
+                else:
+                    new_combined_data['Temp_Track_Quarter'] = new_combined_data['Temp_Track_Quarter'].fillna('D')
                 new_combined_data['Temp_Track_ID'] = new_combined_data['Temp_Track_ID'].fillna(new_combined_data[TrackID])
 
                 new_combined_data=new_combined_data.rename(columns={'Temp_Track_Quarter': RecBatchID+'_Brick_ID','Temp_Track_ID': RecBatchID+'_Track_ID'})
