@@ -195,6 +195,26 @@ else:
        Models_Status=Model_Meta.ModelTrainStatus(PM.TST)
        if Models_Status==1:
               print(UF.TimeStamp(),bcolors.WARNING+'Warning, the model seems to be over saturated'+bcolors.ENDC)
+              Model_Meta_Path=EOSsubModelDIR+'/'+args.ModelName+'_Meta'
+              print(UF.TimeStamp(),'Loading the data file ',bcolors.OKBLUE+Model_Meta_Path+bcolors.ENDC)
+              if os.path.isfile(Model_Meta_Path):
+                   Model_Meta_Raw=UF.PickleOperations(Model_Meta_Path, 'r', 'N/A')
+                   print(Model_Meta_Raw[1])
+                   Model_Meta=Model_Meta_Raw[0]
+                   Header=Model_Meta.TrainSessionsData[0][0]+['Model Parameters','Train Sample ID','LR','Batch Size','Normalised Epochs']
+                   New_Data=[Header]
+                   Print_New_Data=[] 
+                   counter=0
+                   print(UF.TimeStamp(),bcolors.OKGREEN+'The model training profile is printed bellow: '+bcolors.ENDC)
+                   for TSD in range(len(Model_Meta.TrainSessionsData)):
+                       for Record in Model_Meta.TrainSessionsData[TSD][1:]:
+                           counter+=1
+                           New_Data.append(Record+[Model_Meta.ModelParameters,Model_Meta.TrainSessionsDataID[TSD],Model_Meta.TrainSessionsParameters[TSD][0],Model_Meta.TrainSessionsParameters[TSD][1],counter])
+                           Print_New_Data.append(Record)
+                   print(pd.DataFrame(Print_New_Data, columns=Model_Meta.TrainSessionsData[0][0]))
+                   Model_Meta_csv=EOSsubModelDIR+'/'+args.ModelName+'_Out.csv'
+                   UF.LogOperations(Model_Meta_csv,'w', New_Data)
+                   print(UF.TimeStamp(),bcolors.OKGREEN+'Csv output has been saved as '+bcolors.ENDC+bcolors.OKBLUE+Model_Meta_csv+bcolors.ENDC) 
               print(bcolors.BOLD+'If you would like to stop training and exit please enter E'+bcolors.ENDC)
               print(bcolors.BOLD+'If you would like to resubmit your script and exit enter R'+bcolors.ENDC)
               print(bcolors.BOLD+'If you would like to continue training on autopilot please type waiting time in minutes'+bcolors.ENDC)
@@ -226,6 +246,26 @@ else:
                  AutoPilot(int(UserAnswer),Wait)
        elif Models_Status==2:
                  print(UF.TimeStamp(),bcolors.OKGREEN+'The training session has been completed'+bcolors.ENDC)
+                 Model_Meta_Path=EOSsubModelDIR+'/'+args.ModelName+'_Meta'
+                 print(UF.TimeStamp(),'Loading the data file ',bcolors.OKBLUE+Model_Meta_Path+bcolors.ENDC)
+                 if os.path.isfile(Model_Meta_Path):
+                   Model_Meta_Raw=UF.PickleOperations(Model_Meta_Path, 'r', 'N/A')
+                   print(Model_Meta_Raw[1])
+                   Model_Meta=Model_Meta_Raw[0]
+                   Header=Model_Meta.TrainSessionsData[0][0]+['Model Parameters','Train Sample ID','LR','Batch Size','Normalised Epochs']
+                   New_Data=[Header]
+                   Print_New_Data=[] 
+                   counter=0
+                   print(UF.TimeStamp(),bcolors.OKGREEN+'The model training profile is printed bellow: '+bcolors.ENDC)
+                   for TSD in range(len(Model_Meta.TrainSessionsData)):
+                       for Record in Model_Meta.TrainSessionsData[TSD][1:]:
+                           counter+=1
+                           New_Data.append(Record+[Model_Meta.ModelParameters,Model_Meta.TrainSessionsDataID[TSD],Model_Meta.TrainSessionsParameters[TSD][0],Model_Meta.TrainSessionsParameters[TSD][1],counter])
+                           Print_New_Data.append(Record)
+                   print(pd.DataFrame(Print_New_Data, columns=Model_Meta.TrainSessionsData[0][0]))
+                   Model_Meta_csv=EOSsubModelDIR+'/'+args.ModelName+'_Out.csv'
+                   UF.LogOperations(Model_Meta_csv,'w', New_Data)
+                   print(UF.TimeStamp(),bcolors.OKGREEN+'Csv output has been saved as '+bcolors.ENDC+bcolors.OKBLUE+Model_Meta_csv+bcolors.ENDC) 
                  print(bcolors.BOLD+'If you would like to stop training and exit please enter E'+bcolors.ENDC)
                  print(bcolors.BOLD+'If you would like to submit another one and exit enter S'+bcolors.ENDC)
                  print(bcolors.BOLD+'If you would like to continue training on autopilot please type waiting time in minutes'+bcolors.ENDC)
