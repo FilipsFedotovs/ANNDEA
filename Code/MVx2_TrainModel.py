@@ -289,13 +289,15 @@ else:
                    Model_Meta=Model_Meta_Raw[0]
                    Header=Model_Meta.TrainSessionsData[0][0]+['Model Parameters','Train Sample ID','LR','Batch Size','Normalised Epochs']
                    New_Data=[Header]
+                   Print_New_Data=[] 
                    counter=0
                    print(UF.TimeStamp(),bcolors.OKGREEN+'The model training profile is printed bellow: '+bcolors.ENDC)
                    for TSD in range(len(Model_Meta.TrainSessionsData)):
                        for Record in Model_Meta.TrainSessionsData[TSD][1:]:
                            counter+=1
                            New_Data.append(Record+[Model_Meta.ModelParameters,Model_Meta.TrainSessionsDataID[TSD],Model_Meta.TrainSessionsParameters[TSD][0],Model_Meta.TrainSessionsParameters[TSD][1],counter])
-                           print(Record+[Model_Meta.ModelParameters,Model_Meta.TrainSessionsDataID[TSD],Model_Meta.TrainSessionsParameters[TSD][0],Model_Meta.TrainSessionsParameters[TSD][1],counter])
+                           Print_New_Data.append(Record)
+                   print(pd.DataFrame(Print_New_Data, columns=Model_Meta.TrainSessionsData[0][0]))
                    Model_Meta_csv=EOSsubModelDIR+'/'+args.ModelName+'_Out.csv'
                    UF.LogOperations(Model_Meta_csv,'w', New_Data)
                    print(UF.TimeStamp(),bcolors.OKGREEN+'Csv output has been saved as '+bcolors.ENDC+bcolors.OKBLUE+Model_Meta_csv+bcolors.ENDC)
