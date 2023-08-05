@@ -4,6 +4,7 @@
 
 ########################################    Import libraries    #############################################
 import csv
+import ast
 csv_reader=open('../config',"r")
 config = list(csv.reader(csv_reader))
 for c in config:
@@ -51,12 +52,13 @@ print(bcolors.HEADER+"##########################################################
 #Setting the parser - this script is usually not run directly, but is used by a Master version Counterpart that passes the required arguments
 parser = argparse.ArgumentParser(description='This script prepares training data for training the tracking model')
 parser.add_argument('--Mode', help='Script will continue from the last checkpoint, unless you want to start from the scratch, then type "Reset"',default='')
-parser.add_argument('--ModelName',help="WHat GNN model would you like to use?", default='MH_GNN_5FTR_5_80_5_80')
+parser.add_argument('--ModelName',help="WHat GNN model would you like to use?", default='MH_SND_Tracking_5_80_5_80')
 parser.add_argument('--Patience',help="How many checks to do before resubmitting the job?", default='30')
 parser.add_argument('--SubPause',help="How long to wait in minutes after submitting 10000 jobs?", default='60')
 parser.add_argument('--SubGap',help="How long to wait in minutes after submitting 10000 jobs?", default='10000')
 parser.add_argument('--RecBatchID',help="Give this reconstruction batch an ID", default='Test_Batch')
 parser.add_argument('--LocalSub',help="Local submission?", default='N')
+parser.add_argument('--TrackFitCut',help="Track Fit cut Residual", default="['1000','10','200']")
 parser.add_argument('--ForceStatus',help="Would you like the program run from specific status number? (Only for advance users)", default='0')
 parser.add_argument('--RequestExtCPU',help="Would you like to request extra CPUs?", default=1)
 parser.add_argument('--JobFlavour',help="Specifying the length of the HTCondor job walltime. Currently at 'workday' which is 8 hours.", default='workday')
@@ -78,6 +80,7 @@ ModelName=args.ModelName
 RecBatchID=args.RecBatchID
 Patience=int(args.Patience)
 SubPause=int(args.SubPause)*60
+TrackFitCut=ast.literal_eval(args.TrackFitCut)
 SubGap=int(args.SubGap)
 LocalSub=(args.LocalSub=='Y')
 if LocalSub:
@@ -373,8 +376,8 @@ for i in range(0,Xsteps):
                 job_sets.append(Ysteps)
 prog_entry.append(' Sending hit cluster to the HTCondor, so the model assigns weights between hits')
 prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','hit_cluster_rec_set','RTr1a','.csv',RecBatchID,job_sets,'RTr1a_ReconstructTracks_Sub.py'])
-prog_entry.append([' --stepZ ', ' --stepY ', ' --stepX ', " --zOffset ", " --yOffset ", " --xOffset ", ' --cut_dt ', ' --cut_dr ', ' --ModelName ',' --Z_overlap ',' --Y_overlap ',' --X_overlap ', ' --Z_ID_Max ', ' --CheckPoint '])
-prog_entry.append([stepZ,stepY,stepX,z_offset, y_offset, x_offset, cut_dt,cut_dr, ModelName,Z_overlap,Y_overlap,X_overlap, Zsteps, args.CheckPoint])
+prog_entry.append([' --stepZ ', ' --stepY ', ' --stepX ', " --zOffset ", " --yOffset ", " --xOffset ", ' --cut_dt ', ' --cut_dr ', ' --ModelName ',' --Z_overlap ',' --Y_overlap ',' --X_overlap ', ' --Z_ID_Max ', ' --CheckPoint ', ' --TrackFitCutRes ',' --TrackFitCutSTD ',' --TrackFitCutMRes '])
+prog_entry.append([stepZ,stepY,stepX,z_offset, y_offset, x_offset, cut_dt,cut_dr, ModelName,Z_overlap,Y_overlap,X_overlap, Zsteps, args.CheckPoint]+TrackFitCut)
 prog_entry.append(Xsteps*Ysteps)
 prog_entry.append(LocalSub)
 Program.append(prog_entry)
@@ -436,10 +439,10 @@ while Status<len(Program):
             break
 
     elif Status==3:
-       #Non standard processes (that don't follow the general pattern) have been coded here
-       print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
-       print(UF.TimeStamp(),bcolors.BOLD+'Stage 3:'+bcolors.ENDC+' Using the results from previous steps to map merged trackIDs to the original reconstruction file')
-       try:
+      #Non standard processes (that don't follow the general pattern) have been coded here
+      print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
+      print(UF.TimeStamp(),bcolors.BOLD+'Stage 3:'+bcolors.ENDC+' Using the results from previous steps to map merged trackIDs to the original reconstruction file')
+      try:
             #Read the output with hit- ANN Track map
             FirstFile=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RTr1c_'+RecBatchID+'_0'+'/RTr1c_'+RecBatchID+'_hit_cluster_rec_x_set_0.csv'
             print(UF.TimeStamp(),'Loading the file ',bcolors.OKBLUE+FirstFile+bcolors.ENDC)
@@ -494,8 +497,12 @@ while Status<len(Program):
 
             #Id the problematic plates
             Bad_Tracks_Stats=Bad_Tracks[[RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID',PM.z,PM.Hit_ID]]
-            Bad_Tracks_Stats=Bad_Tracks_Stats.groupby([RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID',PM.z]).agg({PM.Hit_ID: pd.Series.nunique}).reset_index() #Which plates have double hits?
+            Bad_Tracks_Stats=Bad_Tracks_Stats.groupby([RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID',PM.z])[PM.Hit_ID].nunique().reset_index() #Which plates have double hits?
             Bad_Tracks_Stats=Bad_Tracks_Stats.rename(columns={PM.Hit_ID: "Problem"}) #Renaming the columns so they don't interfere once we join it back to the hit map
+            Bad_Tracks_Stats[RecBatchID+'_Brick_ID'] = Bad_Tracks_Stats[RecBatchID+'_Brick_ID'].astype(str)
+            Bad_Tracks_Stats[RecBatchID+'_Track_ID'] = Bad_Tracks_Stats[RecBatchID+'_Track_ID'].astype(str)
+            Bad_Tracks[RecBatchID+'_Brick_ID'] = Bad_Tracks[RecBatchID+'_Brick_ID'].astype(str)
+            Bad_Tracks[RecBatchID+'_Track_ID'] = Bad_Tracks[RecBatchID+'_Track_ID'].astype(str)
             Bad_Tracks=pd.merge(Bad_Tracks,Bad_Tracks_Stats,how='inner',on = [RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID',PM.z])
 
 
@@ -600,7 +607,7 @@ while Status<len(Program):
                 print(UF.TimeStamp(),'Saving the checkpoint file ',bcolors.OKBLUE+Bad_Tracks_CP_File+bcolors.ENDC)
                 Bad_Tracks_Head.to_csv(Bad_Tracks_CP_File,index=False)
             else:
-               print(UF.TimeStamp(),'Loadingthe checkpoint file ',bcolors.OKBLUE+Bad_Tracks_CP_File+bcolors.ENDC)
+               print(UF.TimeStamp(),'Loading the checkpoint file ',bcolors.OKBLUE+Bad_Tracks_CP_File+bcolors.ENDC)
                Bad_Tracks_Head=pd.read_csv(Bad_Tracks_CP_File,header=0)
                Bad_Tracks_Head=Bad_Tracks_Head[Bad_Tracks_Head.ax != '[]']
                Bad_Tracks_Head['ax'] = Bad_Tracks_Head['ax'].astype(float)
@@ -638,9 +645,7 @@ while Status<len(Program):
             Bad_Tracks.drop_duplicates(subset=[RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID',PM.z],keep='first',inplace=True)
             Bad_Tracks=Bad_Tracks[[RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID',PM.Hit_ID]]
             Good_Tracks=pd.concat([Good_Tracks,Bad_Tracks]) #Combine all ANNDEA tracks together
-
             Data=pd.merge(Data,Good_Tracks,how='left', on=[PM.Hit_ID]) #Re-map corrected ANNDEA Tracks back to the main data
-
             output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_RTr_OUTPUT_CLEANED.csv' #Final output. We can use this file for further operations
             Data.to_csv(output_file_location,index=False)
             print(UF.TimeStamp(), bcolors.OKGREEN+"The tracked data has been written to"+bcolors.ENDC, bcolors.OKBLUE+output_file_location+bcolors.ENDC)

@@ -58,7 +58,7 @@ parser.add_argument('--SubPause',help="How long to wait in minutes after submitt
 parser.add_argument('--SubGap',help="How long to wait in minutes after submitting 10000 jobs?", default='10000')
 parser.add_argument('--LocalSub',help="Local submission?", default='N')
 parser.add_argument('--RequestExtCPU',help="Would you like to request extra CPUs? How Many?", default=1)
-parser.add_argument('--JobFlavour',help="Specifying the length of the HTCondor job walltime. Currently at 'workday' which is 8 hours.", default='workday')
+parser.add_argument('--JobFlavour',help="Specifying the length of the HTCondor job wall time. Currently at 'workday' which is 8 hours.", default='workday')
 parser.add_argument('--TrackID',help="What track name is used?", default='ANN_Track_ID')
 parser.add_argument('--BrickID',help="What brick ID name is used?", default='ANN_Brick_ID')
 parser.add_argument('--Mode', help='Script will continue from the last checkpoint, unless you want to start from the scratch, then type "Reset"',default='')
@@ -126,9 +126,16 @@ if Log and (os.path.isfile(required_eval_file_location)==False or Mode=='RESET')
            Meta=MetaInput[0]
            MinHitsTrack=Meta.MinHitsTrack
     print(UF.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+initial_input_file_location+bcolors.ENDC)
+    if BrickID=='':
+        ColUse=[TrackID,PM.x,PM.y,PM.z,PM.tx,PM.ty,PM.MC_Track_ID,PM.MC_Event_ID]
+    else:
+        ColUse=[TrackID,BrickID,PM.x,PM.y,PM.z,PM.tx,PM.ty,PM.MC_Track_ID,PM.MC_Event_ID]
+    
     data=pd.read_csv(initial_input_file_location,
                 header=0,
-                usecols=[TrackID,BrickID,PM.x,PM.y,PM.z,PM.tx,PM.ty,PM.MC_Track_ID,PM.MC_Event_ID])
+                usecols=ColUse)
+    if BrickID=='':
+        data[BrickID]='D'
     total_rows=len(data)
     print(UF.TimeStamp(),'The raw data has ',total_rows,' hits')
     print(UF.TimeStamp(),'Removing unreconstructed hits...')
@@ -137,6 +144,7 @@ if Log and (os.path.isfile(required_eval_file_location)==False or Mode=='RESET')
     print(UF.TimeStamp(),'The cleaned data has ',final_rows,' hits')
     data[PM.MC_Event_ID] = data[PM.MC_Event_ID].astype(str)
     data[PM.MC_Track_ID] = data[PM.MC_Track_ID].astype(str)
+    
     data[BrickID] = data[BrickID].astype(str)
     data[TrackID] = data[TrackID].astype(str)
     data['Rec_Seg_ID'] = data[TrackID] + '-' + data[BrickID]
@@ -198,9 +206,15 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
            VetoMotherTrack=PM.VetoMotherTrack
            MinHitsTrack=Meta.MinHitsTrack
         print(UF.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+initial_input_file_location+bcolors.ENDC)
+        if BrickID=='':
+            ColUse=[TrackID,PM.x,PM.y,PM.z,PM.tx,PM.ty]
+        else:
+            ColUse=[TrackID,BrickID,PM.x,PM.y,PM.z,PM.tx,PM.ty]
         data=pd.read_csv(initial_input_file_location,
                     header=0,
-                    usecols=[TrackID,BrickID,PM.x,PM.y,PM.z,PM.tx,PM.ty])
+                    usecols=ColUse)
+        if BrickID=='':
+            data[BrickID]='D'
         total_rows=len(data.axes[0])
         print(UF.TimeStamp(),'The raw data has ',total_rows,' hits')
         print(UF.TimeStamp(),'Removing unreconstructed hits...')

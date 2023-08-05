@@ -217,6 +217,7 @@ class HitCluster:
 
            #Combining data 1 and 2
            _Tot_Hits=pd.merge(_l_Tot_Hits, _r_Tot_Hits, how="inner", on=['join_key'])
+
            _Tot_Hits.l_MC_ID= _Tot_Hits.l_MC_ID.fillna(_Tot_Hits.l_HitID)
            _Tot_Hits.r_MC_ID= _Tot_Hits.r_MC_ID.fillna(_Tot_Hits.r_HitID)
            _Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['l_HitID'] == _Tot_Hits['r_HitID']], inplace = True)
@@ -242,7 +243,12 @@ class HitCluster:
            _Tot_Hits['r_x']=_Tot_Hits['r_x']/self.Step[2]
            _Tot_Hits['r_y']=_Tot_Hits['r_y']/self.Step[2]
            _Tot_Hits['r_z']=_Tot_Hits['r_z']/self.Step[2]
+
            _Tot_Hits['label']=(_Tot_Hits['l_MC_ID']==_Tot_Hits['r_MC_ID']).astype('int8')
+           _Tot_Hits_tr = _Tot_Hits[_Tot_Hits['r_MC_ID'].str.contains("--") & _Tot_Hits['l_MC_ID'].str.contains("--")]
+           _Tot_Hits_fr = _Tot_Hits[(_Tot_Hits['r_MC_ID'].str.contains("--")==False) | (_Tot_Hits['l_MC_ID'].str.contains("--")==False)]
+           _Tot_Hits_tr['label']=0
+           _Tot_Hits=pd.concat([_Tot_Hits_tr,_Tot_Hits_fr])
            _Tot_Hits['d_l'] = (np.sqrt(((_Tot_Hits['r_y']-_Tot_Hits['l_y'])**2) + ((_Tot_Hits['r_x']-_Tot_Hits['l_x'])**2) + ((_Tot_Hits['r_z']-_Tot_Hits['l_z'])**2)))
            _Tot_Hits['d_t'] = np.sqrt(((_Tot_Hits['r_y']-_Tot_Hits['l_y'])**2) + ((_Tot_Hits['r_x']-_Tot_Hits['l_x'])**2))
            _Tot_Hits['d_z'] = (_Tot_Hits['r_z']-_Tot_Hits['l_z']).abs()
@@ -1380,37 +1386,37 @@ class EMO:
                   raise Exception('Fit error')
                   exit()
           if len(self.Header)!=len(self.Hits):
-              print('Error',self.Header,self.Hits)
-              print('ErrorFit',self.FIT,OtherSeed.FIT)
-              print('IniTrace',_IniTrace)
-              print('PostTrace',_PostTrace)
-              print('Overlap',_ovl)
-              print('New Seed Header',_new_sd_hd)
-              print('New Seed Hits',_new_seed_hits)
-              print('New seed fits',_new_seed_fits)
-              print('Remain_s',_new_remain_s)
-              print('Remain_o',_new_remain_o)
-              print('_other_seed_header2',_other_seed_header2)
-              print('_self_seed_header3',_self_seed_header3)
-              print('_self_seed_hits3',_self_seed_hits3)
-              print('_other_seed_header3',_other_seed_header3)
-              print('_other_seed_hits3',_other_seed_hits3)
-              print('Remain2_s',_new_remain2_s)
-              print('Remain2_o',_new_remain2_o)
-              print('_self_m2',_self_m2)
-              print('_other_m2',_other_m2)
-              print('New Seed Header2',_new_sd_hd2)
-              print('New Seed Hits2',_new_seed_hits2)
-              print('_last_remaining_sheaders2',_last_remaining_sheaders2)
-              print('_last_remaining_oheaders2',_last_remaining_oheaders2)
-              print('_last_remaining_shits2',_last_remaining_shits2)
-              print('_last_remaining_ohits2',_last_remaining_ohits2)
-              print('_last_remaining_matr2',_last_remaining_matr2)
-              print('weak',_weak)
-              print('weak2',EMO.ReplaceWeakerTracksTest(last_remain_matr,last_other_hits,last_self_hits,last_other_fits,last_self_fits))
-              print('weakhdr',EMO.ReplaceWeakerTracks(last_remain_matr,last_other_headers,last_self_headers,last_other_fits,last_self_fits))
-              print('Matrx',EMO.ProjectVectorElements(_smatr,_PostTrace[0]))
-              print('matrix',_smatr)
+              # print('Error',self.Header,self.Hits)
+              # print('ErrorFit',self.FIT,OtherSeed.FIT)
+              # print('IniTrace',_IniTrace)
+              # print('PostTrace',_PostTrace)
+              # print('Overlap',_ovl)
+              # print('New Seed Header',_new_sd_hd)
+              # print('New Seed Hits',_new_seed_hits)
+              # print('New seed fits',_new_seed_fits)
+              # print('Remain_s',_new_remain_s)
+              # print('Remain_o',_new_remain_o)
+              # print('_other_seed_header2',_other_seed_header2)
+              # print('_self_seed_header3',_self_seed_header3)
+              # print('_self_seed_hits3',_self_seed_hits3)
+              # print('_other_seed_header3',_other_seed_header3)
+              # print('_other_seed_hits3',_other_seed_hits3)
+              # print('Remain2_s',_new_remain2_s)
+              # print('Remain2_o',_new_remain2_o)
+              # print('_self_m2',_self_m2)
+              # print('_other_m2',_other_m2)
+              # print('New Seed Header2',_new_sd_hd2)
+              # print('New Seed Hits2',_new_seed_hits2)
+              # print('_last_remaining_sheaders2',_last_remaining_sheaders2)
+              # print('_last_remaining_oheaders2',_last_remaining_oheaders2)
+              # print('_last_remaining_shits2',_last_remaining_shits2)
+              # print('_last_remaining_ohits2',_last_remaining_ohits2)
+              # print('_last_remaining_matr2',_last_remaining_matr2)
+              # print('weak',_weak)
+              # print('weak2',EMO.ReplaceWeakerTracksTest(last_remain_matr,last_other_hits,last_self_hits,last_other_fits,last_self_fits))
+              # print('weakhdr',EMO.ReplaceWeakerTracks(last_remain_matr,last_other_headers,last_self_headers,last_other_fits,last_self_fits))
+              # print('Matrx',EMO.ProjectVectorElements(_smatr,_PostTrace[0]))
+              # print('matrix',_smatr)
               exit()
           return True
       @staticmethod
@@ -1640,7 +1646,6 @@ class EMO:
                       for j in range(len(m)):
                           accumulative_fit_f=0
                           accumulative_fit_m=m_fit[j]
-                          print(accumulative_fit_m)
                           del_temp_vec=[]
                           counter=0
                           for i in range(len(matx[j])):
@@ -1648,14 +1653,12 @@ class EMO:
                                       accumulative_fit_f+=f_fit[i]
                                       del_temp_vec.append(f[i])
                                       counter+=1
-                          print(accumulative_fit_m,accumulative_fit_f,counter)
-
                           if (accumulative_fit_m>accumulative_fit_f/counter):
                               res_vector.append(m[j])
                               delete_vec+=del_temp_vec
                           else:
                               res_vector+=del_temp_vec
-                      print('resdel',res_vector,delete_vec)
+
                       final_vector=[]
                       for mel in m:
                           if (mel in res_vector) and (mel in final_vector)==False:
@@ -2971,7 +2974,7 @@ def ManageTempFolders(spi,op_type):
                   continue
        return 'Temporary folders have been created'
     if op_type=='Delete':
-       if type(spi[1][8]) is int:
+       if (type(spi[1][8]) is int):
            shutil.rmtree(spi[1][1]+spi[1][3]+'Temp_'+spi[1][5]+'_'+spi[1][7]+'_'+str(0),True)
            shutil.rmtree(spi[1][0]+'/HTCondor/SUB/Temp_'+spi[1][5]+'_'+spi[1][7]+'_'+str(0),True)
            shutil.rmtree(spi[1][0]+'/HTCondor/SH/Temp_'+spi[1][5]+'_'+spi[1][7]+'_'+str(0),True)

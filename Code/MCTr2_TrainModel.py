@@ -40,17 +40,17 @@ class bcolors:
 
 #Set the parsing module
 parser = argparse.ArgumentParser(description='Enter training job parameters')
-parser.add_argument('--ModelName',help="Which model would you like to use as a base for training (please enter N if you want to train a new model from scratch)", default='Default')
-parser.add_argument('--ModelType',help="What Neural Network type would you like to use: CNN/GNN?", default='CNN')
-parser.add_argument('--ModelArchitecture',help="What Type of Image/Graph: CNN, CNN-E", default='CNN')
-parser.add_argument('--ModelParams',help="Please enter the model params: '[<Number of MLP layers>, <'MLP hidden size'>, <Number of IN layers>, <'IN hidden size'>]'", default='[3,80,3,80]')
+parser.add_argument('--ModelName',help="Which model would you like to use as a base for training (please enter N if you want to train a new model from scratch)", default='1T_GMM_IC_6_150_4_Test_Job_ID_model')
+parser.add_argument('--ModelType',help="What Neural Network type would you like to use: CNN/GNN?", default='GNN')
+parser.add_argument('--ModelArchitecture',help="What Type of Image/Graph: CNN, CNN-E", default='GMM-6N-IC')
+parser.add_argument('--ModelParams',help="Please enter the model params", default="[[150,3],[150,3],[150,3],[150,3],[],[],[],[],[],[],[7,2],[3000,3000,20000,50]]")
 parser.add_argument('--TrainParams',help="Please enter the train params: '[<Learning Rate>, <Batch size>, <Epochs>]'", default='[0.0001, 4, 10]')
-parser.add_argument('--TrainSampleID',help="Give name to this train sample", default='SHIP_TrainSample_v1')
+parser.add_argument('--TrainSampleID',help="Give name to this train sample", default='Test_Job')
 parser.add_argument('--Mode',help="Please enter 'Reset' if you want to overwrite the existing model", default='')
-parser.add_argument('--JobFlavour',help="Specifying the length of the HTCondor job walltime. Currently at 'workday' which is 8 hours.", default='workday')
-parser.add_argument('--ReqMemory',help="How much memory to request?", default='2 GB')
+parser.add_argument('--JobFlavour',help="Specifying the length of the HTCondor job wall-time. Currently at 'workday' which is 8 hours.", default='workday')
+parser.add_argument('--ReqMemory',help="How much memory to request?", default='4 GB')
 parser.add_argument('--Wait',help="How many minutes to wait for a job", default='30')
-parser.add_argument('--RequestExtCPU',help="Would you like to request extra CPUs? How Many?", default=1)
+parser.add_argument('--RequestExtCPU',help="Would you like to request extra CPUs? How Many?", default=2)
 args = parser.parse_args()
 
 #setting main learning parameters

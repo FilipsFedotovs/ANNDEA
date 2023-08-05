@@ -118,8 +118,11 @@ for i in ClassNames:
 
 ########################################     Phase 1 - Create compact source file    #########################################
 print(UF.TimeStamp(),bcolors.BOLD+'Stage 0:'+bcolors.ENDC+' Preparing the source data...')
-
-if os.path.isfile(required_file_location)==False or Mode=='RESET':
+if Mode.upper() == 'CLEANUP':
+   Status=4
+   MetaInput=UF.PickleOperations(TrainSampleOutputMeta,'r', 'N/A')
+   Meta=MetaInput[0]
+elif os.path.isfile(required_file_location)==False or Mode=='RESET':
         print(UF.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
         data=pd.read_csv(input_file_location,
                     header=0,
@@ -139,8 +142,8 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         data[PM.MC_Event_ID] = data[PM.MC_Event_ID].astype(str)
         data['Rec_Seg_ID'] = data[BrickID] + '-' + data[TrackID]
         data['MC_Mother_Track_ID'] = data[PM.MC_Event_ID] + '-' + data[PM.MC_Track_ID]
-        data=data.drop([PM.Rec_Track_ID],axis=1)
-        data=data.drop([PM.Rec_Track_Domain],axis=1)
+        data=data.drop([TrackID],axis=1)
+        data=data.drop([BrickID],axis=1)
         data=data.drop([PM.MC_Event_ID],axis=1)
         data=data.drop([PM.MC_Track_ID],axis=1)
         if len(RemoveTracksZ)>0:
@@ -207,6 +210,7 @@ elif os.path.isfile(TrainSampleOutputMeta)==True:
     print(UF.TimeStamp(),'Loading previously saved data from ',bcolors.OKBLUE+TrainSampleOutputMeta+bcolors.ENDC)
     MetaInput=UF.PickleOperations(TrainSampleOutputMeta,'r', 'N/A')
     Meta=MetaInput[0]
+
 ClassHeaders=Meta.ClassHeaders
 ClassNames=Meta.ClassNames
 ClassValues=Meta.ClassValues
@@ -473,8 +477,9 @@ while Status<len(Program):
       Status=Meta.Status[-1]
 if Status==3:
         for p in Program:
-              print(UF.TimeStamp(),UF.ManageTempFolders(p,'Delete'))
+            if p!='Custom':
               print(UF.TimeStamp(),'Performing the cleanup... ',bcolors.ENDC)
+              print(UF.TimeStamp(),UF.ManageTempFolders(p,'Delete'))
               HTCondorTag="SoftUsed == \"ANNDEA-MCTr1a-"+TrainSampleID+"\""
               UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MCTr1a_'+TrainSampleID, ['MCTr1a', 'MCTr1_'+TrainSampleID], HTCondorTag)
         print(UF.TimeStamp(), bcolors.OKGREEN+"Train sample generation has been completed"+bcolors.ENDC)

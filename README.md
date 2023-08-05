@@ -1,6 +1,7 @@
-# ANNDEA hello
+# ANNDEA Readme
 Artificial Neural Network Driven Emulsion Analysis.
 This README just serves as a very short user guide, a more complete documentation can be found in the project wiki.
+#this is test
 
 ## 0. Hints and Tips
 1) It is recommended to run those processes on lxplus in the tmux shell as some scripts can take up to several hours to execute.
@@ -26,9 +27,9 @@ The tracking module takes hits as an input and assigns the common ID - hence it 
 All modules 
 ### Requirements
 Install PyTorch: 
-1) pip3 install torch==1.9.0+cpu torchvision==0.10.0+cpu -f https://download.pytorch.org/whl/torch_stable.html --target **/eos/user/x/xyyyyy/libs**
-2) pip3 install torch-scatter -f https://data.pyg.org/whl/torch-1.9.0+cpu.html --target **/eos/user/x/xyyyy/libs**
-3) pip3 install torch-sparse -f https://data.pyg.org/whl/torch-1.9.0+cpu.html --target **/eos/user/x/xyyyyy/libs**
+1) pip3 install torch==1.10.2+cpu torchvision==0.11.3+cpu -f https://download.pytorch.org/whl/torch_stable.html --target **/eos/user/x/xyyyyy/libs**
+2) pip3 install torch-scatter -f https://data.pyg.org/whl/torch-1.10.2+cpu.html --target **/eos/user/x/xyyyy/libs**
+3) pip3 install torch-sparse -f https://data.pyg.org/whl/torch-1.10.2+cpu.html --target **/eos/user/x/xyyyyy/libs**
 4) pip3 install torch-geometric --target **/eos/user/x/xyyyyy/libs**
 
 Please replace **x** and **xyyyyy** with first letter of your username and your username respectively.
