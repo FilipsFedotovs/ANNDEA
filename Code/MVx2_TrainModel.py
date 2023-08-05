@@ -174,8 +174,24 @@ if Mode=='RESET':
  ModelMeta=UF.ModelMeta(ModelName)
  if ModelType=='CNN':
     ModelMeta.IniModelMeta(ModelParams, 'Tensorflow', Meta, ModelArchitecture, 'CNN')
+    model = UF.GenerateModel(ModelMeta,[0,0,0,0])
+    model.summary()
+    print(bcolors.BOLD+'IF you are happy with the model please enter Y'+bcolors.ENDC)
+    UserAnswer=input(bcolors.BOLD+"Please, enter your option\n"+bcolors.ENDC)
+    if UserAnswer!='y' and UserAnswer!='Y':
+                        print(UF.TimeStamp(),'OK, exiting now then')
+                        exit() 
  elif ModelType=='GNN':
                     ModelMeta.IniModelMeta(ModelParams, 'PyTorch', Meta, ModelArchitecture, 'GNN')
+                    import torch
+                    device = torch.device('cpu')
+                    model = UF.GenerateModel(ModelMeta).to(device)
+                    print(model)
+                    print(bcolors.BOLD+'IF you are happy with the model please enter Y'+bcolors.ENDC)
+                    UserAnswer=input(bcolors.BOLD+"Please, enter your option\n"+bcolors.ENDC)
+                    if UserAnswer!='y' and UserAnswer!='Y':
+                        print(UF.TimeStamp(),'OK, exiting now then')
+                        exit()
  ModelMeta.IniTrainingSession(TrainSampleID, datetime.datetime.now(), TrainParams)
  print(UF.PickleOperations(Model_Meta_Path, 'w', ModelMeta)[1])
  UF.SubmitJobs2Condor(Job,False,RequestExtCPU,JobFlavour,ReqMemory)
@@ -341,8 +357,24 @@ else:
                  ModelMeta=UF.ModelMeta(ModelName)
                  if ModelType=='CNN':
                     ModelMeta.IniModelMeta(ModelParams, 'Tensorflow', Meta, ModelArchitecture, 'CNN')
+                    model = UF.GenerateModel(ModelMeta,[0,0,0,0])
+                    model.summary()
+                    print(bcolors.BOLD+'IF you are happy with the model please enter Y'+bcolors.ENDC)
+                    UserAnswer=input(bcolors.BOLD+"Please, enter your option\n"+bcolors.ENDC)
+                    if UserAnswer!='y' and UserAnswer!='Y':
+                        print(UF.TimeStamp(),'OK, exiting now then')
+                        exit()
                  elif ModelType=='GNN':
                     ModelMeta.IniModelMeta(ModelParams, 'PyTorch', Meta, ModelArchitecture, 'GNN')
+                    import torch
+                    device = torch.device('cpu')
+                    model = UF.GenerateModel(ModelMeta).to(device)
+                    print(model)
+                    print(bcolors.BOLD+'IF you are happy with the model please enter Y'+bcolors.ENDC)
+                    UserAnswer=input(bcolors.BOLD+"Please, enter your option\n"+bcolors.ENDC)
+                    if UserAnswer!='y' and UserAnswer!='Y':
+                        print(UF.TimeStamp(),'OK, exiting now then')
+                        exit()
                  ModelMeta.IniTrainingSession(TrainSampleID, datetime.datetime.now(), TrainParams)
                  print(UF.PickleOperations(Model_Meta_Path, 'w', ModelMeta)[1])
                  UF.SubmitJobs2Condor(Job,False,RequestExtCPU,JobFlavour,ReqMemory)
