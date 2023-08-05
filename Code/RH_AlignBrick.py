@@ -24,17 +24,11 @@ if PY_DIR!='': #Temp solution - the decision was made to move all libraries to E
     sys.path.append('/usr/lib/python3.6/site-packages')
 sys.path.append(AFS_DIR+'/Code/Utilities')
 import UtilityFunctions as UF #This is where we keep routine utility functions
-import Parameters as PM #This is where we keep framework global parameters
 import pandas as pd #We use Panda for a routine data processing
 pd.options.mode.chained_assignment = None #Silence annoying warnings
-import math #We use it for data manipulation
 import numpy as np
-import os
-import time
 from alive_progress import alive_bar
 import argparse
-import ast
-import scipy
 from scipy.optimize import minimize_scalar
 class bcolors:   #We use it for the interface
     HEADER = '\033[95m'
@@ -217,6 +211,68 @@ def LocalFitPlate(PlateZ,dx,dy,input_data, X_bin, Y_bin):
     temp_data=temp_data.values.tolist()
     fit=temp_data[0]/temp_data[1]
     return fit
+
+def FitPlateAngle(PlateZ,dtx,dty,input_data):
+    change_df = pd.DataFrame([[PlateZ,dtx,dty]], columns = ['Plate_ID','dtx','dty'])
+    temp_data=input_data[['FEDRA_Track_ID','x','y','z','tx','ty','Track_Hit_No','Plate_ID']]
+    temp_data=pd.merge(temp_data,change_df,on='Plate_ID',how='left')
+    temp_data['dtx'] = temp_data['dtx'].fillna(0.0)
+    temp_data['dty'] = temp_data['dty'].fillna(0.0)
+    temp_data['tx']=temp_data['tx']+temp_data['dtx']
+    temp_data['ty']=temp_data['ty']+temp_data['dty']
+    temp_data=temp_data[['FEDRA_Track_ID','x','y','z','tx','ty','Track_Hit_No']]
+    Tracks_Head=temp_data[['FEDRA_Track_ID']]
+    Tracks_Head.drop_duplicates(inplace=True)
+    Tracks_List=temp_data.values.tolist() #I find it is much easier to deal with tracks in list format when it comes to fitting
+    Tracks_Head=Tracks_Head.values.tolist()
+    #Bellow we build the track representatation that we can use to fit slopes
+    for bth in Tracks_Head:
+                   bth.append([])
+                   bt=0
+                   trigger=False
+                   while bt<(len(Tracks_List)):
+                       if bth[0]==Tracks_List[bt][0]:
+
+                           bth[1].append(Tracks_List[bt][1:4])
+                           del Tracks_List[bt]
+                           bt-=1
+                           trigger=True
+                       elif trigger:
+                            break
+                       else:
+                            continue
+                       bt+=1
+    for bth in Tracks_Head:
+           x,y,z=[],[],[]
+           for b in bth[1]:
+               x.append(b[0])
+               y.append(b[1])
+               z.append(b[2])
+           tx=np.polyfit(z,x,1)[0]
+           ty=np.polyfit(z,y,1)[0]
+           bth.append(tx) #Append x slope
+           bth.append(ty) #Append x slope
+           del(bth[1])
+    #Once we get coefficients for all tracks we convert them back to Pandas dataframe and join back to the data
+    Tracks_Head=pd.DataFrame(Tracks_Head, columns = ['FEDRA_Track_ID','ntx','nty'])
+
+    temp_data=pd.merge(temp_data,Tracks_Head,how='inner',on = ['FEDRA_Track_ID'])
+
+    #Calculating x and y coordinates of the fitted line for all plates in the track
+    #Calculating how far hits deviate from the fit polynomial
+    temp_data['d_tx']=temp_data['tx']-temp_data['ntx']
+    temp_data['d_ty']=temp_data['ty']-temp_data['nty']
+
+    temp_data['d_tr']=temp_data['d_tx']**2+temp_data['d_ty']**2
+    temp_data['d_tr'] = temp_data['d_tr'].astype(float)
+    temp_data['d_tr']=np.sqrt(temp_data['d_tr']) #Absolute distance
+
+    temp_data=temp_data[['FEDRA_Track_ID','Track_Hit_No','d_tr']]
+    temp_data=temp_data.groupby(['FEDRA_Track_ID','Track_Hit_No']).agg({'d_tr':'sum'}).reset_index()
+    temp_data=temp_data.agg({'d_tr':'sum','Track_Hit_No':'sum'})
+    temp_data=temp_data.values.tolist()
+    fit=temp_data[0]/temp_data[1]
+    return fit
 def AlignPlate(PlateZ,dx,dy,input_data):
     change_df = pd.DataFrame([[PlateZ,dx,dy]], columns = ['Plate_ID','dx','dy'])
     temp_data=input_data
@@ -237,6 +293,7 @@ def LocalAlignPlate(PlateZ,dx,dy,input_data, X_bin, Y_bin):
     temp_data['x']=temp_data['x']+temp_data['dx']
     temp_data['y']=temp_data['y']+temp_data['dy']
     temp_data = temp_data.drop(['dx','dy'],axis=1)
+
     return temp_data
 ########################################     Phase 1 - Create compact source file    #########################################
 print(UF.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+initial_input_file_location+bcolors.ENDC)
@@ -263,9 +320,10 @@ final_rows=len(data)
 print(UF.TimeStamp(),'The cleaned data has ',final_rows,' hits')
 print(UF.TimeStamp(),'Removing tracks which have less than',ValMinHits,'hits...')
 track_no_data=data.groupby(['FEDRA_Track_ID'],as_index=False).count()
-track_no_data=track_no_data.drop(['Hit_ID','y','z','tx','ty'],axis=1)
+track_no_data=track_no_data.drop(['Hit_ID','y','z'],axis=1)
 track_no_data=track_no_data.rename(columns={'x': "Track_Hit_No"})
 new_combined_data=pd.merge(data, track_no_data, how="left", on=['FEDRA_Track_ID'])
+
 train_data = new_combined_data[new_combined_data.Track_Hit_No >= MinHits]
 validation_data = new_combined_data[new_combined_data.Track_Hit_No >= ValMinHits]
 validation_data = validation_data[validation_data.Track_Hit_No < MinHits]
@@ -343,6 +401,7 @@ with alive_bar(tot_jobs,force_tty=True, title='Optimising the alignment configur
     train_data.drop(['dx','dy'],axis=1, inplace=True)  ####
 
 print(UF.TimeStamp(),'Aligning the brick...')
+
 alignment_map=pd.DataFrame(alignment_map, columns = ['Plate_ID','dx','dy'])
 raw_data['Plate_ID']=raw_data['z'].astype(int)
 raw_data=pd.merge(raw_data,alignment_map,on='Plate_ID',how='left')
@@ -350,6 +409,7 @@ raw_data['dx'] = raw_data['dx'].fillna(0.0)
 raw_data['dy'] = raw_data['dy'].fillna(0.0)
 raw_data['x']=raw_data['x']+raw_data['dx']
 raw_data['y']=raw_data['y']+raw_data['dy']
+
 raw_data['X_bin']=np.ceil((raw_data['x']-Min_X)/LocalSize).astype(int)
 raw_data['Y_bin']=np.ceil((raw_data['y']-Min_Y)/LocalSize).astype(int)
 raw_data.drop(['dx','dy'],axis=1, inplace=True)
@@ -364,11 +424,7 @@ track_no_data=data.groupby(['FEDRA_Track_ID'],as_index=False).count()
 track_no_data=track_no_data.drop(['Hit_ID','y','z','tx','ty','X_bin','Y_bin','Plate_ID'],axis=1)
 track_no_data=track_no_data.rename(columns={'x': "Track_Hit_No"})
 new_combined_data=pd.merge(data, track_no_data, how="left", on=['FEDRA_Track_ID'])
-# new_combined_data = new_combined_data[new_combined_data.Track_Hit_No >= ValMinHits]
-# new_combined_data=new_combined_data.drop(['Hit_ID','tx','ty'],axis=1)
-# new_combined_data=new_combined_data.sort_values(['FEDRA_Track_ID','z'],ascending=[1,1])
-# new_combined_data['FEDRA_Track_ID']=new_combined_data['FEDRA_Track_ID'].astype(int)
-#333333
+
 train_data = new_combined_data[new_combined_data.Track_Hit_No >= MinHits]
 validation_data = new_combined_data[new_combined_data.Track_Hit_No >= ValMinHits]
 validation_data = validation_data[validation_data.Track_Hit_No < MinHits]
@@ -456,4 +512,5 @@ raw_data.to_csv(output_file_location,index=False)
 print('Alignment has been completed...')
 print('Alignment has been saved 2 log file', output_log_location)
 exit()
+
 
