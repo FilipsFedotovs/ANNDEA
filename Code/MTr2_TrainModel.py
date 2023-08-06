@@ -22,6 +22,7 @@ if PY_DIR!='': #Temp solution - the decision was made to move all libraries to E
 sys.path.append(AFS_DIR+'/Code/Utilities')
 #import libraries
 import argparse
+import pandas as pd
 import ast
 import os
 import time
