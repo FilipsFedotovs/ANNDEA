@@ -199,7 +199,7 @@ if Log and (os.path.isfile(required_eval_file_location)==False or Mode=='RESET')
             u_x=input('Type "N" if you want to restart with different parameters')
             if u_x=='N':
                exit()
-        print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 0 has successfully completed'+bcolors.ENDC
+        print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 0 has successfully completed'+bcolors.ENDC)
     new_combined_data.to_csv(required_eval_file_location,index=False)
     print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
     print(UF.TimeStamp(), bcolors.OKGREEN+"The track segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+required_eval_file_location+bcolors.ENDC)
