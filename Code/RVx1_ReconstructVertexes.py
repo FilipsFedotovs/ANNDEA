@@ -269,6 +269,12 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
              new_combined_data=pd.merge(new_combined_data, TracksZdf, how="left", left_on=["PosBad_Z"], right_on=['Bad_z'])
              new_combined_data=new_combined_data[new_combined_data['Bad_z'].isnull()]
              new_combined_data=new_combined_data.drop(['Bad_z', 'PosBad_Z'],axis=1)
+             print(UF.TimeStamp(),'After removing starting tracks ',len(new_combined_data),' hits are left')
+             if grand_final_rows==len(new_combined_data):
+                print(bcolors.WARNING+"Seems like removing starting tracks did not have any effect..."+bcolors.ENDC)
+                u_x=input('Type "N" if you want to restart with different parameters')
+                if u_x=='N':
+                   exit()
         new_combined_data.to_csv(required_file_location,index=False)
         data=new_combined_data[['Rec_Seg_ID','z']]
         print(UF.TimeStamp(),'Analysing the data sample in order to understand how many jobs to submit to HTCondor... ',bcolors.ENDC)
