@@ -24,7 +24,7 @@ This README just serves as a very short user guide, a more complete documentatio
 
 ## 1. Tracking Module
 The tracking module takes hits as input and assigns the common ID - hence it clusters them into tracks.
-All modules 
+
 ### Requirements
 Install PyTorch: 
 1) pip3 install torch==1.10.2+cpu torchvision==0.11.3+cpu -f https://download.pytorch.org/whl/torch_stable.html --user
