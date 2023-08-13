@@ -571,10 +571,10 @@ while Status<len(Program):
         print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
         print(UF.TimeStamp(),bcolors.BOLD+'Stage '+str(Status)+':'+bcolors.ENDC+' Collecting and de-duplicating the results from stage 2')
         min_i=0
-        for i in range(0,len(JobSets)): #//Temporarily measure to save space
-                   test_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RUTr1a'+'_'+RecBatchID+'_'+str(i)+'/RUTr1a_'+RecBatchID+'_SelectedSeeds_'+str(i)+'_'+str(0)+'_'+str(0)+'.csv'
-                   if os.path.isfile(test_file_location):
-                        min_i=max(0,i-1)
+        #for i in range(0,len(JobSets)): #//Temporarily measure to save space || Update 13/08/23 - I have commented it out as it creates more problems than solves it
+        #           test_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RUTr1a'+'_'+RecBatchID+'_'+str(i)+'/RUTr1a_'+RecBatchID+'_SelectedSeeds_'+str(i)+'_'+str(0)+'_'+str(0)+'.csv'
+        #           if os.path.isfile(test_file_location):
+        #                min_i=max(0,i-1)
         print(UF.TimeStamp(),'Analysing the data sample in order to understand how many jobs to submit to HTCondor... ',bcolors.ENDC)
         data=pd.read_csv(required_file_location,header=0,
                     usecols=['z','Rec_Seg_ID'])
@@ -603,7 +603,7 @@ while Status<len(Program):
 
                    if os.path.isfile(output_file_location)==False:
                       Meta.JobSets[j].append(0)
-                      continue #Skipping because not all jobs necesseraly produce the required file (if statistics are too low)
+                      continue #Skipping because not all jobs necessarily produce the required file (if statistics are too low)
                    else:
                     result=pd.read_csv(output_file_location,names = ['Segment_1','Segment_2'])
                     Records=len(result)
