@@ -56,13 +56,17 @@ for s in Sets:
     input_file_location=input_location+'/'+s+'.pkl'
     ObjectSet=UF.PickleOperations(input_file_location,'r', 'N/A')[0]
     CombinedObject+=ObjectSet
-
+random.shuffle(CombinedObject)
 if Type=='VAL':
     MetaFile=UF.PickleOperations(input_location+'/'+TrainSampleID+'_info.pkl','r', 'N/A')[0]
     output_file_location=input_location+'/'+NewSampleID+'_info.pkl'
     print(UF.PickleOperations(output_file_location,'w', MetaFile)[1])
-random.shuffle(CombinedObject)
-output_file_location=input_location+'/'+NewSampleID+'_'+Type+'_'+args.ObjectType+'_SEEDS_OUTPUT.pkl'
+    output_file_location=input_location+'/'+NewSampleID+'_'+Type+'_'+args.ObjectType+'_SEEDS_OUTPUT.pkl'
+
+else:
+    output_file_location=input_location+'/'+NewSampleID+'_'+Type+'_'+args.ObjectType+'_SEEDS_OUTPUT_1.pkl'
+
+
 print(UF.PickleOperations(output_file_location,'w', CombinedObject)[1])
 
 
