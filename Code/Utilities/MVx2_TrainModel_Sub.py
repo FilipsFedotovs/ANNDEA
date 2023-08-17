@@ -120,36 +120,35 @@ ModelMeta=UF.PickleOperations(Model_Meta_Path, 'r', 'N/A')[0]
 ValSamples=UF.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_VERTEX_SEEDS_OUTPUT.pkl','r', 'N/A')[0]
 print(UF.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_VERTEX_SEEDS_OUTPUT.pkl','r', 'N/A')[1])
 train_set=1
+
+if len(ModelMeta.TrainSessionsData)==0:
+   TrainSamples=UF.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_VERTEX_SEEDS_OUTPUT_1.pkl','r', 'N/A')[0]
+   print(UF.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_VERTEX_SEEDS_OUTPUT_1.pkl','r', 'N/A')[1])
+   train_set=1
+else:
+  if len(ModelMeta.TrainSessionsDataID)>=2:
+     if ModelMeta.TrainSessionsDataID[-1]==ModelMeta.TrainSessionsDataID[-2]:
+       for el in range(max(len(ModelMeta.TrainSessionsDataID)-2,0),-1,-1):
+        if ModelMeta.TrainSessionsDataID[el]==TrainSampleID:
+           train_set=ModelMeta.TrainSessionsData[el][-1][8]+1
+
+           next_file=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_VERTEX_SEEDS_OUTPUT_'+str(train_set)+'.pkl'
+           if os.path.isfile(next_file):
+               TrainSamples=UF.PickleOperations(next_file,'r', 'N/A')[0]
+               print(UF.PickleOperations(next_file,'r', 'N/A')[1])
+           else:
+               train_set=1
+               TrainSamples=UF.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_VERTEX_SEEDS_OUTPUT_1.pkl','r', 'N/A')[0]
+               print(UF.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_VERTEX_SEEDS_OUTPUT_1.pkl','r', 'N/A')[1])
+        break
+     else:
+        print(ModelMeta.TrainSessionsDataID[-1],ModelMeta.TrainSessionsDataID[-2])
+        train_set=1
+        TrainSamples=UF.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_VERTEX_SEEDS_OUTPUT_1.pkl','r', 'N/A')[0]
+        print(UF.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_VERTEX_SEEDS_OUTPUT_1.pkl','r', 'N/A')[1])
+NTrainBatches=math.ceil(float(len(TrainSamples))/float(TrainParams[1]))
+NValBatches=math.ceil(float(len(ValSamples))/float(TrainParams[1]))
 if ModelMeta.ModelType=='CNN':
-   if len(ModelMeta.TrainSessionsData)==0:
-       TrainSamples=UF.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_VERTEX_SEEDS_OUTPUT_1.pkl','r', 'N/A')[0]
-       print(UF.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_VERTEX_SEEDS_OUTPUT_1.pkl','r', 'N/A')[1])
-       train_set=1
-   else:
-      if len(ModelMeta.TrainSessionsDataID)>=2:
-         if ModelMeta.TrainSessionsDataID[-1]==ModelMeta.TrainSessionsDataID[-2]:
-           for el in range(max(len(ModelMeta.TrainSessionsDataID)-2,0),-1,-1):
-            if ModelMeta.TrainSessionsDataID[el]==TrainSampleID:
-               train_set=ModelMeta.TrainSessionsData[el][-1][8]+1
-    
-               next_file=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_VERTEX_SEEDS_OUTPUT_'+str(train_set)+'.pkl'
-               if os.path.isfile(next_file):
-                   TrainSamples=UF.PickleOperations(next_file,'r', 'N/A')[0]
-                   print(UF.PickleOperations(next_file,'r', 'N/A')[1])
-               else:
-                   train_set=1
-                   TrainSamples=UF.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_VERTEX_SEEDS_OUTPUT_1.pkl','r', 'N/A')[0]
-                   print(UF.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_VERTEX_SEEDS_OUTPUT_1.pkl','r', 'N/A')[1])
-            break
-         else:
-            print(ModelMeta.TrainSessionsDataID[-1],ModelMeta.TrainSessionsDataID[-2])
-            train_set=1
-            TrainSamples=UF.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_VERTEX_SEEDS_OUTPUT_1.pkl','r', 'N/A')[0]
-            print(UF.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_VERTEX_SEEDS_OUTPUT_1.pkl','r', 'N/A')[1])
-   TrainSamples=TrainSamples[:8]
-   ValSamples=ValSamples[:10] 
-   NTrainBatches=math.ceil(float(len(TrainSamples))/float(TrainParams[1]))
-   NValBatches=math.ceil(float(len(ValSamples))/float(TrainParams[1]))
    for ts in TrainSamples:
        ts.PrepareSeedPrint(ModelMeta)
    for vs in ValSamples:
@@ -158,26 +157,6 @@ if ModelMeta.ModelType=='CNN':
 elif ModelMeta.ModelType=='GNN':
        import torch
        criterion = torch.nn.CrossEntropyLoss()
-       if len(ModelMeta.TrainSessionsData)==0:
-           TrainSamples=UF.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_VERTEX_SEEDS_OUTPUT_1.pkl','r', 'N/A')[0]
-           print(UF.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_VERTEX_SEEDS_OUTPUT_1.pkl','r', 'N/A')[1])
-           train_set=1
-
-       else:
-           for el in range(max(len(ModelMeta.TrainSessionsDataID)-2,0),-1,-1):
-            if ModelMeta.TrainSessionsDataID[el]==TrainSampleID:
-               train_set=ModelMeta.TrainSessionsData[el][-1][8]+1
-               next_file=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_VERTEX_SEEDS_OUTPUT_'+str(train_set)+'.pkl'
-               if os.path.isfile(next_file):
-                   TrainSamples=UF.PickleOperations(next_file,'r', 'N/A')[0]
-                   print(UF.PickleOperations(next_file,'r', 'N/A')[1])
-               else:
-                   train_set=1
-                   TrainSamples=UF.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_VERTEX_SEEDS_OUTPUT_1.pkl','r', 'N/A')[0]
-                   print(UF.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_VERTEX_SEEDS_OUTPUT_1.pkl','r', 'N/A')[1])
-            break
-       NTrainBatches=math.ceil(float(len(TrainSamples))/float(TrainParams[1]))
-       NValBatches=math.ceil(float(len(ValSamples))/float(TrainParams[1]))
        for ts in TrainSamples:
            ts.PrepareSeedGraph(ModelMeta)
        train_dataset = []
