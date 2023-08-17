@@ -3,11 +3,8 @@
 ########################################    Import libraries    #############################################
 import csv
 import argparse
-import math
 import ast
-import numpy as np
-import logging
-import pickle
+import random
 
 class bcolors:
     HEADER = '\033[95m'
@@ -30,8 +27,6 @@ csv_reader.close()
 import sys
 sys.path.insert(1, AFS_DIR+'/Code/Utilities/')
 import UtilityFunctions as UF
-from UtilityFunctions import EMO
-import Parameters as PM
 
 parser = argparse.ArgumentParser(description='This script helps to visualise the seeds by projecting their hit coordinates to the 2-d screen.')
 parser.add_argument('--TrainSampleID',help="What training sample to visualise?", default='SHIP_UR_v1')
@@ -60,7 +55,11 @@ for s in Sets:
     input_file_location=input_location+'/'+s+'.pkl'
     ObjectSet=UF.PickleOperations(input_file_location,'r', 'N/A')[0]
     CombinedObject+=ObjectSet
-print(len(CombinedObject))
+
+
+print(CombinedObject)
+random.shuffle(CombinedObject)
+print(CombinedObject)
 exit()
 # if args.Type=='VAL':
 #  input_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_TRACK_OUTPUT_'+args.Type+'.pkl'
