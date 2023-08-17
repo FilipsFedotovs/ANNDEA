@@ -55,8 +55,11 @@ CombinedObject=[]
 for s in Sets:
     input_file_location=input_location+'/'+s+'.pkl'
     ObjectSet=UF.PickleOperations(input_file_location,'r', 'N/A')[0]
+
     CombinedObject+=ObjectSet
+    print('Combined set size is ',len(CombinedObject))
 random.shuffle(CombinedObject)
+
 if Type=='VAL':
     MetaFile=UF.PickleOperations(input_location+'/'+TrainSampleID+'_info.pkl','r', 'N/A')[0]
     output_file_location=input_location+'/'+NewSampleID+'_info.pkl'
