@@ -33,7 +33,7 @@ parser.add_argument('--TrainSampleID',help="What training sample to visualise?",
 parser.add_argument('--NewTrainSampleID',help="What training sample to visualise?", default='SHIP_UR_v1')
 parser.add_argument('--f',help="Where are the sets located?", default='/eos/user/')
 parser.add_argument('--Sets',help="Name of the training sets?", default='[]')
-parser.add_argument('--Type',help="Please enter the sample type: VAL or TRAIN", default='1')
+parser.add_argument('--Type',help="Please enter the sample type: VAL or TRAIN", default='VAL')
 parser.add_argument('--ObjectType',help="Please enter the sample type: VAL or TRAIN", default='VERTEX')
 ########################################     Main body functions    #########################################
 args = parser.parse_args()
@@ -57,12 +57,14 @@ for s in Sets:
     ObjectSet=UF.PickleOperations(input_file_location,'r', 'N/A')[0]
     CombinedObject+=ObjectSet
 
-MetaFile=UF.PickleOperations(input_location+'/'+TrainSampleID+'_info.pkl','r', 'N/A')[0]
+if Type=='VAL':
+    MetaFile=UF.PickleOperations(input_location+'/'+TrainSampleID+'_info.pkl','r', 'N/A')[0]
+    output_file_location=input_location+'/'+NewSampleID+'_info.pkl'
+    print(UF.PickleOperations(output_file_location,'w', MetaFile)[1])
 random.shuffle(CombinedObject)
 output_file_location=input_location+'/'+NewSampleID+'_'+Type+'_'+args.ObjectType+'_SEEDS_OUTPUT.pkl'
 print(UF.PickleOperations(output_file_location,'w', CombinedObject)[1])
-output_file_location=input_location+'/'+NewSampleID+'_info.pkl'
-print(UF.PickleOperations(output_file_location,'w', MetaFile)[1])
+
 
 
 
