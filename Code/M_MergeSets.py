@@ -60,9 +60,9 @@ for s in Sets:
 MetaFile=UF.PickleOperations(input_location+'/'+TrainSampleID+'_info.pkl','r', 'N/A')[0]
 random.shuffle(CombinedObject)
 output_file_location=input_location+'/'+NewSampleID+'_'+Type+'_'+args.ObjectType+'_SEEDS_OUTPUT.pkl'
-print(UF.PickleOperations(output_file_location,'w', CombinedObject)[0])
+print(UF.PickleOperations(output_file_location,'w', CombinedObject)[1])
 output_file_location=input_location+'/'+NewSampleID+'_info.pkl'
-print(UF.PickleOperations(output_file_location,'w', MetaFile)[0])
+print(UF.PickleOperations(output_file_location,'w', MetaFile)[1])
 
 
 
