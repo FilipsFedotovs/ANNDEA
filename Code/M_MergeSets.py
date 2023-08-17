@@ -56,7 +56,7 @@ for s in Sets:
     ObjectSet=UF.PickleOperations(input_file_location,'r', 'N/A')[0]
     CombinedObject+=ObjectSet
 
-MetaFile=UF.PickleOperations(input_location+'/'+TrainSampleID+'.pkl','r', 'N/A')[0]
+MetaFile=UF.PickleOperations(input_location+'/'+TrainSampleID+'_info.pkl','r', 'N/A')[0]
 random.shuffle(CombinedObject)
 print(MetaFile)
 
