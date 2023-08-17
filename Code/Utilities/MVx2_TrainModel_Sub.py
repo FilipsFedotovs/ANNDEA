@@ -145,9 +145,9 @@ if ModelMeta.ModelType=='CNN':
             print(ModelMeta.TrainSessionsDataID[-1],ModelMeta.TrainSessionsDataID[-2])
             train_set=1
             TrainSamples=UF.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_VERTEX_SEEDS_OUTPUT_1.pkl','r', 'N/A')[0]
-            print(UF.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_VERTEX_SEEDS_OUTPUT_1.pkl','r', 'N/A')[1]
+            print(UF.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_VERTEX_SEEDS_OUTPUT_1.pkl','r', 'N/A')[1])
    TrainSamples=TrainSamples[:8]
-   TrainSamples=TrainSamples[:10] 
+   ValSamples=ValSamples[:10] 
    NTrainBatches=math.ceil(float(len(TrainSamples))/float(TrainParams[1]))
    NValBatches=math.ceil(float(len(ValSamples))/float(TrainParams[1]))
    for ts in TrainSamples:
