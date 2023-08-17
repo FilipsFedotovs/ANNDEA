@@ -35,12 +35,14 @@ import Parameters as PM
 
 parser = argparse.ArgumentParser(description='This script helps to visualise the seeds by projecting their hit coordinates to the 2-d screen.')
 parser.add_argument('--TrainSampleID',help="What training sample to visualise?", default='SHIP_UR_v1')
+parser.add_argument('--NewTrainSampleID',help="What training sample to visualise?", default='SHIP_UR_v1')
 parser.add_argument('--f',help="Where are the sets located??", default='/eos/user/')
 parser.add_argument('--Sets',help="Name of the training sets?", default='[]')
 parser.add_argument('--Type',help="Please enter the sample type: VAL or TRAIN", default='1')
 ########################################     Main body functions    #########################################
 args = parser.parse_args()
 TrainSampleID=args.TrainSampleID
+NewSampleID=args.NewTrainSampleID
 Sets=ast.literal_eval(args.Sets)
 input_location=args.f
 Type=args.Type
