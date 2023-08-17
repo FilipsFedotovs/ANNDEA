@@ -55,7 +55,7 @@ print(bcolors.HEADER+"##########################################################
 print(UF.TimeStamp(), bcolors.OKGREEN+"Modules Have been imported successfully..."+bcolors.ENDC)
 CombinedObject=[]
 for s in Sets:
-    input_file_location=input_location+'/'+TrainSampleID+'_'+Type+'_'+s+'.pkl'
+    input_file_location=input_location+'/'+s+'.pkl'
     ObjectSet=UF.PickleOperations(input_file_location,'r', 'N/A')[0]
     CombinedObject+=ObjectSet
 print(len(CombinedObject))
