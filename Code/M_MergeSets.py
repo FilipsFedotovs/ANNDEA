@@ -34,6 +34,7 @@ parser.add_argument('--NewTrainSampleID',help="What training sample to visualise
 parser.add_argument('--f',help="Where are the sets located?", default='/eos/user/')
 parser.add_argument('--Sets',help="Name of the training sets?", default='[]')
 parser.add_argument('--Type',help="Please enter the sample type: VAL or TRAIN", default='1')
+parser.add_argument('--ObjectType',help="Please enter the sample type: VAL or TRAIN", default='VERTEX')
 ########################################     Main body functions    #########################################
 args = parser.parse_args()
 TrainSampleID=args.TrainSampleID
@@ -58,8 +59,10 @@ for s in Sets:
 
 MetaFile=UF.PickleOperations(input_location+'/'+TrainSampleID+'_info.pkl','r', 'N/A')[0]
 random.shuffle(CombinedObject)
-print(MetaFile)
-
+output_file_location=input_location+'/'+NewSampleID+'_'+Type+'_'+args.ObjectType+'_SEEDS_OUTPUT.pkl'
+print(UF.PickleOperations(output_file_location,'w', CombinedObject)[0])
+output_file_location=input_location+'/'+NewSampleID+'_info.pkl'
+print(UF.PickleOperations(output_file_location,'w', MetaFile)[0])
 
 
 
