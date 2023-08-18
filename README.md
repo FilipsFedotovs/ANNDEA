@@ -42,7 +42,7 @@ Install Other libraries:
 2) pip3 install tabulate --target **/eos/user/x/xyyyyy/libs**
 3) pip3 install alive_progress --target **/eos/user/x/xyyyyy/libs**
 
-### 1.1 Installation steps
+### 0.3 Installation steps
 1) go to your home directory in AFS where you would like to install the package
 2) **git clone https://github.com/FilipsFedotovs/ANNDEA/**
 3) **cd ANNDEA/**
