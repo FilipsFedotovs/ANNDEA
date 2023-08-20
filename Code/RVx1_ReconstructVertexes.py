@@ -149,7 +149,7 @@ if Log and (os.path.isfile(required_eval_file_location)==False or Mode=='RESET')
     print(UF.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+initial_input_file_location+bcolors.ENDC)
     data=pd.read_csv(initial_input_file_location,
                 header=0,
-                usecols=[TrackID,BrickID,PM.x,PM.y,PM.z,PM.tx,PM.ty,PM.MC_Track_ID,PM.MC_Event_ID,PM.MC_VX_ID])
+                usecols=ColumnsToImport+ExtraColumns)
     total_rows=len(data)
     print(UF.TimeStamp(),'The raw data has ',total_rows,' hits')
     print(UF.TimeStamp(),'Removing unreconstructed hits...')
@@ -157,40 +157,35 @@ if Log and (os.path.isfile(required_eval_file_location)==False or Mode=='RESET')
     final_rows=len(data)
     print(UF.TimeStamp(),'The cleaned data has ',final_rows,' hits')
     data[PM.MC_Event_ID] = data[PM.MC_Event_ID].astype(str)
-    data[PM.MC_Track_ID] = data[PM.MC_Track_ID].astype(str)
     data[PM.MC_VX_ID] = data[PM.MC_VX_ID].astype(str)
     data[BrickID] = data[BrickID].astype(str)
     data[TrackID] = data[TrackID].astype(str)
     data['Rec_Seg_ID'] = data[TrackID] + '-' + data[BrickID]
-    data['MC_Mother_Track_ID'] = data[PM.MC_Event_ID] + '-' + data[PM.MC_Track_ID]
-    data['MC_Vertex_ID'] = data[PM.MC_Event_ID] + '-' + data[PM.MC_VX_ID]
+    data['MC_Vertex_ID'] = data[PM.MC_Event_ID] + '-'+ data['Exclude'] + data[PM.MC_VX_ID]
     data=data.drop([TrackID],axis=1)
     data=data.drop([BrickID],axis=1)
     data=data.drop([PM.MC_Event_ID],axis=1)
-    data=data.drop([PM.MC_Track_ID],axis=1)
     data=data.drop([PM.MC_VX_ID],axis=1)
     compress_data=data.drop([PM.x,PM.y,PM.z,PM.tx,PM.ty],axis=1)
-    compress_data['MC_Mother_Track_No']= compress_data['MC_Mother_Track_ID']
-    compress_data=compress_data.groupby(by=['Rec_Seg_ID','MC_Mother_Track_ID', 'MC_Vertex_ID'])['MC_Mother_Track_No'].count().reset_index()
-    compress_data=compress_data.sort_values(['Rec_Seg_ID','MC_Mother_Track_No'],ascending=[1,0])
+    compress_data['MC_Mother_No']= compress_data['MC_Vertex_ID']
+    compress_data=compress_data.groupby(by=['Rec_Seg_ID','MC_Vertex_ID'])['MC_Vertex_ID'].count().reset_index()
+    compress_data=compress_data.sort_values(['Rec_Seg_ID','MC_Mother_No'],ascending=[1,0])
     compress_data.drop_duplicates(subset='Rec_Seg_ID',keep='first',inplace=True)
-    data=data.drop(['MC_Mother_Track_ID'],axis=1)
-    data=data.drop(['MC_Vertex_ID'],axis=1)
-    compress_data=compress_data.drop(['MC_Mother_Track_No'],axis=1)
+    compress_data=compress_data.drop(['MC_Mother_No'],axis=1)
     data=pd.merge(data, compress_data, how="left", on=['Rec_Seg_ID'])
     if SliceData:
          print(UF.TimeStamp(),'Slicing the data...')
          ValidEvents=data.drop(data.index[(data[PM.x] > Xmax) | (data[PM.x] < Xmin) | (data[PM.y] > Ymax) | (data[PM.y] < Ymin)])
-         ValidEvents.drop([PM.x,PM.y,PM.z,PM.tx,PM.ty,'MC_Mother_Track_ID'],axis=1,inplace=True)
+         ValidEvents.drop([PM.x,PM.y,PM.z,PM.tx,PM.ty,'MC_Vertex_ID']+ExtraColumns,axis=1,inplace=True)
          ValidEvents.drop_duplicates(subset='Rec_Seg_ID',keep='first',inplace=True)
          data=pd.merge(data, ValidEvents, how="inner", on=['Rec_Seg_ID'])
          final_rows=len(data.axes[0])
          print(UF.TimeStamp(),'The sliced data has ',final_rows,' hits')
     print(UF.TimeStamp(),'Removing tracks which have less than',MinHitsTrack,'hits...')
-    track_no_data=data.groupby(['MC_Mother_Track_ID','Rec_Seg_ID','MC_Vertex_ID'],as_index=False).count()
+    track_no_data=data.groupby(['Rec_Seg_ID','MC_Vertex_ID'],as_index=False).count()
     track_no_data=track_no_data.drop([PM.y,PM.z,PM.tx,PM.ty],axis=1)
     track_no_data=track_no_data.rename(columns={PM.x: "Rec_Seg_No"})
-    new_combined_data=pd.merge(data, track_no_data, how="left", on=['Rec_Seg_ID','MC_Mother_Track_ID','MC_Vertex_ID'])
+    new_combined_data=pd.merge(data, track_no_data, how="left", on=['Rec_Seg_ID','MC_Vertex_ID'])
     new_combined_data = new_combined_data[new_combined_data.Rec_Seg_No >= MinHitsTrack]
     new_combined_data = new_combined_data.drop(["Rec_Seg_No"],axis=1)
     new_combined_data=new_combined_data.sort_values(['Rec_Seg_ID',PM.x],ascending=[1,1])
@@ -236,7 +231,6 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
            MaxAngle=Meta.MaxAngle
            MaxSegments=PM.MaxSegments
            MaxSeeds=PM.MaxSeeds
-           VetoTrack=PM.VetoVertex
            MinHitsTrack=Meta.MinHitsTrack
         print(UF.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+initial_input_file_location+bcolors.ENDC)
         data=pd.read_csv(initial_input_file_location,
@@ -321,7 +315,6 @@ MaxAngle=Meta.MaxAngle
 JobSets=Meta.JobSets
 MaxSegments=Meta.MaxSegments
 MaxSeeds=Meta.MaxSeeds
-VetoVertex=Meta.VetoVertex
 MinHitsTrack=Meta.MinHitsTrack
 
 #The function bellow helps to monitor the HTCondor jobs and keep the submission flow
@@ -492,8 +485,8 @@ if Log:
     Records=len(data.axes[0])
     Sets=int(np.ceil(Records/MaxSegments))
     prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TEST_SET/','RawSeedsRes','EVx1a','.csv',RecBatchID,Sets,'EVx1a_GenerateRawSelectedSeeds_Sub.py'])
-    prog_entry.append([" --MaxSegments ", " --VetoVertex "])
-    prog_entry.append([MaxSegments, '"'+str(VetoVertex)+'"'])
+    prog_entry.append([" --MaxSegments "])
+    prog_entry.append([MaxSegments])
     prog_entry.append(Sets)
     prog_entry.append(LocalSub)
     prog_entry.append(['',''])
