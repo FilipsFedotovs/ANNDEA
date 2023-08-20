@@ -250,6 +250,7 @@ MaxDOCA=Meta.MaxDOCA
 MaxAngle=Meta.MaxAngle
 JobSets=Meta.JobSets
 MaxSegments=Meta.MaxSegments
+MaxSeeds=Meta.MaxSeeds
 MinHitsTrack=Meta.MinHitsTrack
 FiducialVolumeCut=Meta.FiducialVolumeCut
 ExcludeClassNames=Meta.ClassNames
