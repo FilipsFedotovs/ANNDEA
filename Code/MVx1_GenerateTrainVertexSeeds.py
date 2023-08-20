@@ -89,8 +89,8 @@ parser.add_argument('--MaxAngle',help="Maximum magnitude of angle allowed", defa
 parser.add_argument('--ReqMemory',help="How much memory to request?", default='2 GB')
 parser.add_argument('--FiducialVolumeCut',help="Limits on the vx, y, z coordinates of the vertex origin", default='[]')
 parser.add_argument('--RemoveTracksZ',help="This option enables to remove particular tracks of starting Z-coordinate", default='[]')
-parser.add_argument('--ExcludeClassNames',help="What class headers to use?", default="['MotherPDG']")
-parser.add_argument('--ExcludeClassValues',help="What class values to use?", default="[['13','22']]")
+parser.add_argument('--ExcludeClassNames',help="What class headers to use?", default="[]")
+parser.add_argument('--ExcludeClassValues',help="What class values to use?", default="[]")
 ######################################## Parsing argument values  #############################################################
 args = parser.parse_args()
 Mode=args.Mode.upper()
