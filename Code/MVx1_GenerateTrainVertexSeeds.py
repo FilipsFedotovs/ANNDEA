@@ -174,8 +174,6 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         data=data.drop(['Exclude'],axis=1)
         for c in ExtraColumns:
             data=data.drop([c],axis=1)
-        print(data)
-        exit()
         compress_data=data.drop([PM.x,PM.y,PM.z,PM.tx,PM.ty],axis=1)
         compress_data['MC_Mother_No']= compress_data['MC_VX_ID']
         compress_data=compress_data.groupby(by=['Rec_Seg_ID','MC_VX_ID'])['MC_Mother_No'].count().reset_index()
@@ -234,7 +232,7 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         data = data.values.tolist()
         print(UF.TimeStamp(), bcolors.OKGREEN+"The track segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+output_file_location+bcolors.ENDC)
         Meta=UF.TrainingSampleMeta(TrainSampleID)
-        Meta.IniVertexSeedMetaData(MaxDST,MaxVXT,MaxDOCA,MaxAngle,data,PM.MaxSegments,PM.VetoVertex,PM.MaxSeeds,MinHitsTrack,FiducialVolumeCut)
+        Meta.IniVertexSeedMetaData(MaxDST,MaxVXT,MaxDOCA,MaxAngle,data,PM.MaxSegments,PM.MaxSeeds,MinHitsTrack,FiducialVolumeCut,ExcludeClassNames,ExcludeClassValues)
         Meta.UpdateStatus(0)
         print(UF.PickleOperations(TrainSampleOutputMeta,'w', Meta)[1])
         print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
@@ -249,10 +247,10 @@ MaxDOCA=Meta.MaxDOCA
 MaxAngle=Meta.MaxAngle
 JobSets=Meta.JobSets
 MaxSegments=Meta.MaxSegments
-MaxSeeds=Meta.MaxSeeds
-VetoVertex=Meta.VetoVertex
 MinHitsTrack=Meta.MinHitsTrack
 FiducialVolumeCut=Meta.FiducialVolumeCut
+ExcludeClassNames=Meta.ExcludeClassNames
+ExcludeClassValues=Meta.ExcludeClassValues
 TotJobs=0
 for j in range(0,len(JobSets)):
           for sj in range(0,int(JobSets[j][2])):
@@ -439,8 +437,8 @@ elif type(job_sets[0][0]) is int:
 
 prog_entry.append(' Sending hit cluster to the HTCondor, so tack segment combination pairs can be formed...')
 prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/','RawSeedsRes','MVx1a','.csv',TrainSampleID,job_sets,'MVx1a_GenerateRawSelectedSeeds_Sub.py'])
-prog_entry.append([ " --MaxSegments ", " --MaxDST "," --VetoVertex "])
-prog_entry.append([MaxSegments, MaxDST,'"'+str(VetoVertex)+'"'])
+prog_entry.append([ " --MaxSegments ", " --MaxDST ""])
+prog_entry.append([MaxSegments, MaxDST])
 prog_entry.append(TotJobs)
 prog_entry.append(LocalSub)
 prog_entry.append([" --PlateZ ",JobSets])
