@@ -129,6 +129,23 @@ if Log and (os.path.isfile(required_eval_file_location)==False or Mode=='RESET')
            MetaInput=UF.PickleOperations(EOSsubModelMetaDIR,'r', 'N/A')
            Meta=MetaInput[0]
            MinHitsTrack=Meta.MinHitsTrack
+           if Meta.hasattr('ClassNames') and Meta.hasattr('ClassValues'):
+               ExcludeClassNames='ClassNames'
+               ExcludeClassValues='ClassValues'
+           else:
+               ExcludeClassNames=[]
+               ExcludeClassValues=[[]]
+           ColumnsToImport=[TrackID,BrickID,PM.x,PM.y,PM.z,PM.tx,PM.ty,PM.MC_Event_ID,PM.MC_VX_ID]
+           ExtraColumns=[]
+           BanDF=['-']
+           BanDF=pd.DataFrame(BanDF, columns=['Exclude'])
+           for i in range(len(ExcludeClassNames)):
+                    df=pd.DataFrame(ExcludeClassValues[i], columns=[ExcludeClassNames[i]])
+                    df['Exclude']='-'
+                    BanDF=pd.merge(BanDF,df,how='inner',on=['Exclude'])
+            
+                    if (ExcludeClassNames[i] in ExtraColumns)==False:
+                            ExtraColumns.append(ExcludeClassNames[i]) 
     print(UF.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+initial_input_file_location+bcolors.ENDC)
     data=pd.read_csv(initial_input_file_location,
                 header=0,
