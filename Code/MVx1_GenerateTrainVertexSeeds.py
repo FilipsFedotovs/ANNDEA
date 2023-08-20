@@ -437,7 +437,7 @@ elif type(job_sets[0][0]) is int:
 
 prog_entry.append(' Sending hit cluster to the HTCondor, so tack segment combination pairs can be formed...')
 prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/','RawSeedsRes','MVx1a','.csv',TrainSampleID,job_sets,'MVx1a_GenerateRawSelectedSeeds_Sub.py'])
-prog_entry.append([ " --MaxSegments ", " --MaxDST ""])
+prog_entry.append([ " --MaxSegments ", " --MaxDST "])
 prog_entry.append([MaxSegments, MaxDST])
 prog_entry.append(TotJobs)
 prog_entry.append(LocalSub)
