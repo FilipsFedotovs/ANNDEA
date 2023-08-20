@@ -189,7 +189,7 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         if SliceData:
              print(UF.TimeStamp(),'Slicing the data...')
              ValidEvents=data.drop(data.index[(data[PM.x] > Xmax) | (data[PM.x] < Xmin) | (data[PM.y] > Ymax) | (data[PM.y] < Ymin)])
-             ValidEvents.drop([PM.x,PM.y,PM.z,PM.tx,PM.ty,'MC_VX_ID'],axis=1,inplace=True)
+             ValidEvents.drop([PM.x,PM.y,PM.z,PM.tx,PM.ty,'MC_VX_ID']+ExtraColumns,axis=1,inplace=True)
              ValidEvents.drop_duplicates(subset='Rec_Seg_ID',keep='first',inplace=True)
              data=pd.merge(data, ValidEvents, how="inner", on=['Rec_Seg_ID'])
              final_rows=len(data.axes[0])
