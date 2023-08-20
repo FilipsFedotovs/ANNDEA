@@ -26,7 +26,6 @@ parser.add_argument('--EOS',help="EOS directory location", default='.')
 parser.add_argument('--AFS',help="AFS directory location", default='.')
 parser.add_argument('--BatchID',help="Give this training sample batch an ID", default='SHIP_UR_v1')
 parser.add_argument('--MaxSegments',help="A maximum number of track combinations that will be used in a particular HTCondor job for this script", default='20000')
-parser.add_argument('--VetoVertex',help="Skip Invalid Mother_IDs", default="[]")
 parser.add_argument('--PY',help="Python libraries directory location", default='.')
 
 ######################################## Set variables  #############################################################
@@ -63,7 +62,6 @@ import math #We use it for data manipulation
 import gc  #Helps to clear memory
 import numpy as np
 import ast
-VetoVertex=ast.literal_eval(args.VetoVertex)
 #Specifying the full path to input/output files
 input_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MVx1_'+BatchID+'_TRACK_SEGMENTS.csv'
 output_file_location=EOS_DIR+'/'+p+'/Temp_'+pfx+'_'+BatchID+'_'+str(i)+'/'+pfx+'_'+BatchID+'_RawSeeds_'+str(i)+'_'+str(j)+sfx
