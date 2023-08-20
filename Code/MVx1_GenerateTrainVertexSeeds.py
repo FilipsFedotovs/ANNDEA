@@ -125,8 +125,7 @@ for i in range(len(ExcludeClassNames)):
 
         if (ExcludeClassNames[i] in ExtraColumns)==False:
                 ExtraColumns.append(ExcludeClassNames[i])
-print(BanDF)
-exit()
+
 RemoveTracksZ=ast.literal_eval(args.RemoveTracksZ)
 Xmin,Xmax,Ymin,Ymax=float(args.Xmin),float(args.Xmax),float(args.Ymin),float(args.Ymax)
 SliceData=max(Xmin,Xmax,Ymin,Ymax)>0 #We don't slice data if all values are set to zero simultaneousy (which is the default setting)
@@ -155,6 +154,10 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         total_rows=len(data)
         print(UF.TimeStamp(),'The raw data has ',total_rows,' hits')
         print(UF.TimeStamp(),'Removing unreconstructed hits...')
+        for c in ExtraColumns:
+            data[c] = data[c].astype(str)
+        data=pd.merge(data,BanDF,how='left',on=ExtraColumns)
+        data=data.fillna('')
         print(data)
         exit()
         data=data.dropna()
