@@ -128,7 +128,7 @@ for i in range(len(ExcludeClassNames)):
 
 RemoveTracksZ=ast.literal_eval(args.RemoveTracksZ)
 Xmin,Xmax,Ymin,Ymax=float(args.Xmin),float(args.Xmax),float(args.Ymin),float(args.Ymax)
-SliceData=max(Xmin,Xmax,Ymin,Ymax)>0 #We don't slice data if all values are set to zero simultaneousy (which is the default setting)
+SliceData=max(Xmin,Xmax,Ymin,Ymax)>0 #We don't slice data if all values are set to zero simultaneously (which is the default setting)
 LocalSub=(args.LocalSub=='Y')
 if LocalSub:
    time_int=0
@@ -252,8 +252,8 @@ JobSets=Meta.JobSets
 MaxSegments=Meta.MaxSegments
 MinHitsTrack=Meta.MinHitsTrack
 FiducialVolumeCut=Meta.FiducialVolumeCut
-ExcludeClassNames=Meta.ExcludeClassNames
-ExcludeClassValues=Meta.ExcludeClassValues
+ExcludeClassNames=Meta.ClassNames
+ExcludeClassValues=Meta.ClassValues
 TotJobs=0
 for j in range(0,len(JobSets)):
           for sj in range(0,int(JobSets[j][2])):
