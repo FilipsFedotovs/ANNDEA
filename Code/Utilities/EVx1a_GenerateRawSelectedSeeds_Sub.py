@@ -23,7 +23,6 @@ parser.add_argument('--EOS',help="EOS directory location", default='.')
 parser.add_argument('--AFS',help="AFS directory location", default='.')
 parser.add_argument('--BatchID',help="Give this training sample batch an ID", default='SHIP_UR_v1')
 parser.add_argument('--MaxSegments',help="A maximum number of track combinations that will be used in a particular HTCondor job for this script", default='20000')
-parser.add_argument('--VetoVertex',help="Skip Invalid Mother_IDs", default="[]")
 parser.add_argument('--PY',help="Python libraries directory location", default='.')
 args = parser.parse_args()
 
@@ -54,7 +53,6 @@ o=args.o
 sfx=args.sfx
 pfx=args.pfx
 BatchID=args.BatchID
-VetoVertex=ast.literal_eval(args.VetoVertex)
 ########################################     Preset framework parameters    #########################################
 MaxRecords=10000000 #A set parameter that helps to manage memory load of this script (Please do not exceed 10000000)
 MaxSegments=int(args.MaxSegments)
@@ -76,7 +74,7 @@ print(UF.TimeStamp(),'Creating segment combinations... ')
 #Doing a plate region cut for the Main Data
 Records=len(data)
 print(UF.TimeStamp(),'There are total of ', Records, 'tracks in the data set')
-Cut=math.ceil(MaxRecords/Records) #Even if use only a max of 20000 track on the right join we cannot perform the full outer join due to the memory limitations, we do it in a small 'cuts'
+Cut=math.ceil(MaxRecords/Records) #Even if use only a max of 20000 track on the right join we cannot perform the full outer join due to memory limitations, we do it in a small 'cuts'
 Steps=math.ceil(MaxSegments/Cut)  #Calculating number of cuts
 StartDataCut=i*MaxSegments
 EndDataCut=(i+1)*MaxSegments
