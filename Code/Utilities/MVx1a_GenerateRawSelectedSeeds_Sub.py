@@ -142,7 +142,7 @@ for i in range(0,Steps):
   if merged_data.empty==False:
     merged_data.drop(merged_data.index[merged_data['Track_1'] == merged_data['Track_2']], inplace = True) #Removing the cases where Seed tracks are the same
 
-    merged_data['Seed_Type']=((merged_data['Mother_1']==merged_data['Mother_2']) & (merged_data['Mother_1'].str.contains("--")==False) & (merged_data['Seed_Type']==True))
+    merged_data['Seed_Type']=((merged_data['Mother_1']==merged_data['Mother_2']) & (merged_data['Mother_1'].str.contains("--")==False))
     print(merged_data)
     exit()
     merged_data.drop(['Mother_1'],axis=1,inplace=True)
