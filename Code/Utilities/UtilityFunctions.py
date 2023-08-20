@@ -67,7 +67,7 @@ class TrainingSampleMeta:
           self.MaxSeeds=MaxSeeds
           self.VetoMotherTrack=VetoMotherTrack
           self.MinHitsTrack=MinHitsTrack
-      def IniVertexSeedMetaData(self,MaxDST,MaxVXT,MaxDOCA,MaxAngle,JobSets,MaxSegments,VetoVertex,MaxSeeds,MinHitsTrack,FiducialVolumeCut
+      def IniVertexSeedMetaData(self,MaxDST,MaxVXT,MaxDOCA,MaxAngle,JobSets,MaxSegments,MaxSeeds,MinHitsTrack,FiducialVolumeCut,ExcludeClassNames,ExcludeClassValues
                                ):
           self.MaxDST=MaxDST 
           self.MaxVXT=MaxVXT
@@ -76,7 +76,8 @@ class TrainingSampleMeta:
           self.JobSets=JobSets
           self.MaxSegments=MaxSegments
           self.MaxSeeds=MaxSeeds
-          self.VetoVertex=VetoVertex
+          self.ExcludeClassNames=ExcludeClassNames
+          self.ExcludeClassValues=ExcludeClassValues
           self.MinHitsTrack=MinHitsTrack
           self.FiducialVolumeCut = FiducialVolumeCut
       def UpdateHitClusterMetaData(self,NoS,NoNF,NoEF,NoSets):
