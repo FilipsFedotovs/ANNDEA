@@ -76,8 +76,8 @@ class TrainingSampleMeta:
           self.JobSets=JobSets
           self.MaxSegments=MaxSegments
           self.MaxSeeds=MaxSeeds
-          self.ExcludeClassNames=ExcludeClassNames
-          self.ExcludeClassValues=ExcludeClassValues
+          self.ClassNames=ExcludeClassNames
+          self.ClassValues=ExcludeClassValues
           self.MinHitsTrack=MinHitsTrack
           self.FiducialVolumeCut = FiducialVolumeCut
       def UpdateHitClusterMetaData(self,NoS,NoNF,NoEF,NoSets):
