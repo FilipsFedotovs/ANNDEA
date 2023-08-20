@@ -189,12 +189,13 @@ if os.path.isfile(output_file_location)==False or Mode=='RESET':
                 header=0,
                 usecols=ColumnsToImport+ExtraColumns)[ColumnsToImport+ExtraColumns]
 
-
-    for c in ExtraColumns:
-        data[c] = data[c].astype(str)
-    data=pd.merge(data,BanDF,how='left',on=ExtraColumns)
-    data=data.fillna('')
-
+    if len(ExtraColumns)>0:
+            for c in ExtraColumns:
+                data[c] = data[c].astype(str)
+            data=pd.merge(data,BanDF,how='left',on=ExtraColumns)
+            data=data.fillna('')
+    else:
+            data['Exclude']=''
     total_rows=len(data.axes[0])
     print(UF.TimeStamp(),'The raw data has ',total_rows,' hits')
     print(UF.TimeStamp(),'Removing unreconstructed hits...')
