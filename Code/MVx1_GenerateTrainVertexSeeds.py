@@ -158,8 +158,6 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
             data[c] = data[c].astype(str)
         data=pd.merge(data,BanDF,how='left',on=ExtraColumns)
         data=data.fillna('')
-        print(data)
-        exit()
         data=data.dropna()
         final_rows=len(data)
         print(UF.TimeStamp(),'The cleaned data has ',final_rows,' hits')
@@ -168,7 +166,9 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         data[TrackID] = data[TrackID].astype(str)
         data[BrickID] = data[BrickID].astype(str)
         data['Rec_Seg_ID'] = data[TrackID] + '-' + data[BrickID]
-        data['MC_VX_ID'] = data[PM.MC_Event_ID] + '-' + data[PM.MC_VX_ID]
+        data['MC_VX_ID'] = data[PM.MC_Event_ID] + '-' + data['Exclude'] + data[PM.MC_VX_ID]
+        print(data)
+        exit()
         data=data.drop([TrackID],axis=1)
         data=data.drop([BrickID],axis=1)
         data=data.drop([PM.MC_Event_ID],axis=1)
