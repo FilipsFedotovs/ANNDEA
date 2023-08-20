@@ -154,10 +154,13 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         total_rows=len(data)
         print(UF.TimeStamp(),'The raw data has ',total_rows,' hits')
         print(UF.TimeStamp(),'Removing unreconstructed hits...')
-        for c in ExtraColumns:
-            data[c] = data[c].astype(str)
-        data=pd.merge(data,BanDF,how='left',on=ExtraColumns)
-        data=data.fillna('')
+        if len(ExtraColumns)>0:
+            for c in ExtraColumns:
+                data[c] = data[c].astype(str)
+            data=pd.merge(data,BanDF,how='left',on=ExtraColumns)
+            data=data.fillna('')
+        else:
+            data['Exclude']=''
         data=data.dropna()
         final_rows=len(data)
         print(UF.TimeStamp(),'The cleaned data has ',final_rows,' hits')
