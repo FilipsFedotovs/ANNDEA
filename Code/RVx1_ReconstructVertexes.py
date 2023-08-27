@@ -151,6 +151,13 @@ if Log and (os.path.isfile(required_eval_file_location)==False or Mode=='RESET')
                 header=0,
                 usecols=ColumnsToImport+ExtraColumns)
     total_rows=len(data)
+    if len(ExtraColumns)>0:
+            for c in ExtraColumns:
+                data[c] = data[c].astype(str)
+            data=pd.merge(data,BanDF,how='left',on=ExtraColumns)
+            data=data.fillna('')
+    else:
+            data['Exclude']=''
     print(UF.TimeStamp(),'The raw data has ',total_rows,' hits')
     print(UF.TimeStamp(),'Removing unreconstructed hits...')
     data=data.dropna()
