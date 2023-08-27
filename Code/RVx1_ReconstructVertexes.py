@@ -756,7 +756,7 @@ while Status<len(Program):
         base_data.drop(base_data.index[base_data['Seed_CNN_Fit'] < PM.pre_vx_acceptance],inplace=True)  # Dropping the seeds that don't pass the link fit threshold
         Records_After_Compression=len(base_data)
         if args.Log=='Y':
-          try:
+          #try:
              print(UF.TimeStamp(),'Initiating the logging...')
              eval_data_file=EOS_DIR+'/ANNDEA/Data/TEST_SET/EVx1b_'+RecBatchID+'_SEED_TRUTH_COMBINATIONS.csv'
              eval_data=pd.read_csv(eval_data_file,header=0,usecols=['Segment_1','Segment_2'])
@@ -776,8 +776,8 @@ while Status<len(Program):
              rec_no=(len(rec)-len(rec_eval))
              UF.LogOperations(EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv', 'a', [[5,'Link Analysis',rec_no,eval_no,eval_no/(rec_no+eval_no),eval_no/len(eval_data)]])
              print(UF.TimeStamp(), bcolors.OKGREEN+"The log has been created successfully at "+bcolors.ENDC, bcolors.OKBLUE+EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv'+bcolors.ENDC)
-          except:
-               print(UF.TimeStamp(), bcolors.WARNING+'Log creation has failed'+bcolors.ENDC)
+          #except:
+           #    print(UF.TimeStamp(), bcolors.WARNING+'Log creation has failed'+bcolors.ENDC)
         print(UF.TimeStamp(), 'Decorating seed objects in ' + bcolors.ENDC,bcolors.OKBLUE + input_file_location + bcolors.ENDC)
         base_data=base_data.values.tolist()
         new_data=[]
