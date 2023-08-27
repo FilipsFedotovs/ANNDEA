@@ -129,7 +129,7 @@ if Log and (os.path.isfile(required_eval_file_location)==False or Mode=='RESET')
            MetaInput=UF.PickleOperations(EOSsubModelMetaDIR,'r', 'N/A')
            Meta=MetaInput[0]
            MinHitsTrack=Meta.MinHitsTrack
-           if Meta.hasattr('ClassNames') and Meta.hasattr('ClassValues'):
+           if hasattr(Meta,'ClassNames') and hasattr(Meta,'ClassValues'):
                ExcludeClassNames='ClassNames'
                ExcludeClassValues='ClassValues'
            else:
