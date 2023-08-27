@@ -169,6 +169,8 @@ if Log and (os.path.isfile(required_eval_file_location)==False or Mode=='RESET')
     data[TrackID] = data[TrackID].astype(str)
     data['Rec_Seg_ID'] = data[TrackID] + '-' + data[BrickID]
     data['MC_Vertex_ID'] = data[PM.MC_Event_ID] + '-'+ data['Exclude'] + data[PM.MC_VX_ID]
+    print(data)
+    exit()
     data=data.drop([TrackID],axis=1)
     data=data.drop([BrickID],axis=1)
     data=data.drop([PM.MC_Event_ID],axis=1)
