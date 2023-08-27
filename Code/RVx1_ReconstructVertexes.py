@@ -180,6 +180,8 @@ if Log and (os.path.isfile(required_eval_file_location)==False or Mode=='RESET')
     compress_data=compress_data.groupby(by=['Rec_Seg_ID','MC_Vertex_ID'])['MC_Mother_No'].count().reset_index()
     compress_data=compress_data.sort_values(['Rec_Seg_ID','MC_Mother_No'],ascending=[1,0])
     compress_data.drop_duplicates(subset='Rec_Seg_ID',keep='first',inplace=True)
+    print(compress_data)
+    exit()
     compress_data=compress_data.drop(['MC_Mother_No'],axis=1)
     data=pd.merge(data, compress_data, how="left", on=['Rec_Seg_ID'])
     if SliceData:
