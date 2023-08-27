@@ -244,7 +244,7 @@ def LocalAlignPlate(PlateZ,dx,dy,input_data, X_bin, Y_bin):
 ########################################     Phase 1 - Create compact source file    #########################################
 print(UF.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+initial_input_file_location+bcolors.ENDC)
 raw_data=pd.read_csv(initial_input_file_location,
-                header=0)
+                header=0,usecols=[Track_ID,'Hit_ID','x','y','z','tx','ty'])
 
 total_rows=len(raw_data)
 Min_X=raw_data.x.min()
