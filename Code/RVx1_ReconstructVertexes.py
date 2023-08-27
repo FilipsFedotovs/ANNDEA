@@ -169,13 +169,15 @@ if Log and (os.path.isfile(required_eval_file_location)==False or Mode=='RESET')
     data[TrackID] = data[TrackID].astype(str)
     data['Rec_Seg_ID'] = data[TrackID] + '-' + data[BrickID]
     data['MC_Vertex_ID'] = data[PM.MC_Event_ID] + '-'+ data['Exclude'] + data[PM.MC_VX_ID]
-    print(data)
-    exit()
+    
     data=data.drop([TrackID],axis=1)
     data=data.drop([BrickID],axis=1)
     data=data.drop([PM.MC_Event_ID],axis=1)
     data=data.drop([PM.MC_VX_ID],axis=1)
     compress_data=data.drop([PM.x,PM.y,PM.z,PM.tx,PM.ty],axis=1)
+    print(data)
+    print(compress_data)
+    exit()
     compress_data['MC_Mother_No']= compress_data['MC_Vertex_ID']
     compress_data=compress_data.groupby(by=['Rec_Seg_ID','MC_Vertex_ID'])['MC_Vertex_ID'].count().reset_index()
     compress_data=compress_data.sort_values(['Rec_Seg_ID','MC_Mother_No'],ascending=[1,0])
