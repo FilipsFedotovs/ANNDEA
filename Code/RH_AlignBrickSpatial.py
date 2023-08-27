@@ -64,6 +64,7 @@ parser.add_argument('--Name',help="Name of log", default='Realigned')
 parser.add_argument('--Cycle',help="Cycle", default='1')
 parser.add_argument('--LocalSize',help="Size", default='10000')
 parser.add_argument('--OptBound',help="Size", default=200,type=int)
+parser.add_argument('--TrackID',help="What track name is used?", default='ANN_Track_ID')
 
 
 ######################################## Parsing argument values  #############################################################
@@ -75,13 +76,14 @@ LocalSize=int(args.LocalSize)
 OptBound=args.OptBound
 Cycle=int(args.Cycle)
 name=args.Name
+TrackID=args.TrackID
 output_file_location=initial_input_file_location[:-4]+'_'+name+'_'+str(MinHits)+'.csv'
 output_log_location=initial_input_file_location[:-4]+'_'+name+'-log_'+str(MinHits)+'.csv'
 #output_temp_location=initial_input_file_location[:-4]+'_Alignment-start_'+str(MinHits)+'.csv'
 
 def FitPlate(PlateZ,dx,dy,input_data):
     change_df = pd.DataFrame([[PlateZ,dx,dy]], columns = ['Plate_ID','dx','dy'])
-    temp_data=input_data[['FEDRA_Track_ID','x','y','z','Track_Hit_No','Plate_ID']]
+    temp_data=input_data[[Track_ID,'x','y','z','Track_Hit_No','Plate_ID']]
     
         
         
@@ -90,8 +92,8 @@ def FitPlate(PlateZ,dx,dy,input_data):
     temp_data['dy'] = temp_data['dy'].fillna(0.0)
     temp_data['x']=temp_data['x']+temp_data['dx']
     temp_data['y']=temp_data['y']+temp_data['dy']
-    temp_data=temp_data[['FEDRA_Track_ID','x','y','z','Track_Hit_No']]
-    Tracks_Head=temp_data[['FEDRA_Track_ID']]
+    temp_data=temp_data[[Track_ID,'x','y','z','Track_Hit_No']]
+    Tracks_Head=temp_data[[Track_ID]]
     Tracks_Head.drop_duplicates(inplace=True)
     Tracks_List=temp_data.values.tolist() #I find it is much easier to deal with tracks in list format when it comes to fitting
     Tracks_Head=Tracks_Head.values.tolist()
@@ -130,9 +132,9 @@ def FitPlate(PlateZ,dx,dy,input_data):
            bth.append(0) #Append a placeholder slope (for polynomial case)
            del(bth[1])
     #Once we get coefficients for all tracks we convert them back to Pandas dataframe and join back to the data
-    Tracks_Head=pd.DataFrame(Tracks_Head, columns = ['FEDRA_Track_ID','ax','t1x','t2x','ay','t1y','t2y'])
+    Tracks_Head=pd.DataFrame(Tracks_Head, columns = [Track_ID,'ax','t1x','t2x','ay','t1y','t2y'])
 
-    temp_data=pd.merge(temp_data,Tracks_Head,how='inner',on = ['FEDRA_Track_ID'])
+    temp_data=pd.merge(temp_data,Tracks_Head,how='inner',on = [Track_ID])
     #Calculating x and y coordinates of the fitted line for all plates in the track
     temp_data['new_x']=temp_data['ax']+(temp_data['z']*temp_data['t1x'])+((temp_data['z']**2)*temp_data['t2x'])
     temp_data['new_y']=temp_data['ay']+(temp_data['z']*temp_data['t1y'])+((temp_data['z']**2)*temp_data['t2y'])
@@ -142,8 +144,8 @@ def FitPlate(PlateZ,dx,dy,input_data):
     temp_data['d_r']=temp_data['d_x']**2+temp_data['d_y']**2
     temp_data['d_r'] = temp_data['d_r'].astype(float)
     temp_data['d_r']=np.sqrt(temp_data['d_r']) #Absolute distance
-    temp_data=temp_data[['FEDRA_Track_ID','Track_Hit_No','d_r']]
-    temp_data=temp_data.groupby(['FEDRA_Track_ID','Track_Hit_No']).agg({'d_r':'sum'}).reset_index()
+    temp_data=temp_data[[Track_ID,'Track_Hit_No','d_r']]
+    temp_data=temp_data.groupby([Track_ID,'Track_Hit_No']).agg({'d_r':'sum'}).reset_index()
 
     temp_data=temp_data.agg({'d_r':'sum','Track_Hit_No':'sum'})
     temp_data=temp_data.values.tolist()
@@ -151,7 +153,7 @@ def FitPlate(PlateZ,dx,dy,input_data):
     return fit
 def LocalFitPlate(PlateZ,dx,dy,input_data, X_bin, Y_bin):
     change_df = pd.DataFrame([[PlateZ,dx,dy, X_bin, Y_bin]], columns = ['Plate_ID','dx','dy','X_bin','Y_bin'])
-    temp_data=input_data[['FEDRA_Track_ID','x','y','z','Track_Hit_No','Plate_ID','X_bin','Y_bin']]
+    temp_data=input_data[[Track_ID,'x','y','z','Track_Hit_No','Plate_ID','X_bin','Y_bin']]
         
         
     temp_data=pd.merge(temp_data,change_df,on=['Plate_ID','X_bin','Y_bin'],how='left')
@@ -159,8 +161,8 @@ def LocalFitPlate(PlateZ,dx,dy,input_data, X_bin, Y_bin):
     temp_data['dy'] = temp_data['dy'].fillna(0.0)
     temp_data['x']=temp_data['x']+temp_data['dx']
     temp_data['y']=temp_data['y']+temp_data['dy']
-    temp_data=temp_data[['FEDRA_Track_ID','x','y','z','Track_Hit_No']]
-    Tracks_Head=temp_data[['FEDRA_Track_ID']]
+    temp_data=temp_data[[Track_ID,'x','y','z','Track_Hit_No']]
+    Tracks_Head=temp_data[[Track_ID]]
     Tracks_Head.drop_duplicates(inplace=True)
     Tracks_List=temp_data.values.tolist() #I find it is much easier to deal with tracks in list format when it comes to fitting
     Tracks_Head=Tracks_Head.values.tolist()
@@ -199,9 +201,9 @@ def LocalFitPlate(PlateZ,dx,dy,input_data, X_bin, Y_bin):
            bth.append(0) #Append a placeholder slope (for polynomial case)
            del(bth[1])
     #Once we get coefficients for all tracks we convert them back to Pandas dataframe and join back to the data
-    Tracks_Head=pd.DataFrame(Tracks_Head, columns = ['FEDRA_Track_ID','ax','t1x','t2x','ay','t1y','t2y'])
+    Tracks_Head=pd.DataFrame(Tracks_Head, columns = [Track_ID,'ax','t1x','t2x','ay','t1y','t2y'])
 
-    temp_data=pd.merge(temp_data,Tracks_Head,how='inner',on = ['FEDRA_Track_ID'])
+    temp_data=pd.merge(temp_data,Tracks_Head,how='inner',on = [Track_ID])
     #Calculating x and y coordinates of the fitted line for all plates in the track
     temp_data['new_x']=temp_data['ax']+(temp_data['z']*temp_data['t1x'])+((temp_data['z']**2)*temp_data['t2x'])
     temp_data['new_y']=temp_data['ay']+(temp_data['z']*temp_data['t1y'])+((temp_data['z']**2)*temp_data['t2y'])
@@ -211,8 +213,8 @@ def LocalFitPlate(PlateZ,dx,dy,input_data, X_bin, Y_bin):
     temp_data['d_r']=temp_data['d_x']**2+temp_data['d_y']**2
     temp_data['d_r'] = temp_data['d_r'].astype(float)
     temp_data['d_r']=np.sqrt(temp_data['d_r']) #Absolute distance
-    temp_data=temp_data[['FEDRA_Track_ID','Track_Hit_No','d_r']]
-    temp_data=temp_data.groupby(['FEDRA_Track_ID','Track_Hit_No']).agg({'d_r':'sum'}).reset_index()
+    temp_data=temp_data[[Track_ID,'Track_Hit_No','d_r']]
+    temp_data=temp_data.groupby([Track_ID,'Track_Hit_No']).agg({'d_r':'sum'}).reset_index()
 
     temp_data=temp_data.agg({'d_r':'sum','Track_Hit_No':'sum'})
     temp_data=temp_data.values.tolist()
@@ -267,13 +269,13 @@ data=raw_data.dropna()
 final_rows=len(data)
 print(UF.TimeStamp(),'The cleaned data has',final_rows,'hits')
 print(UF.TimeStamp(),'Removing tracks which have less than',ValMinHits,'hits...')
-track_no_data=data.groupby(['FEDRA_Track_ID'],as_index=False).count()
+track_no_data=data.groupby([Track_ID],as_index=False).count()
 track_no_data=track_no_data.drop(['Hit_ID','y','z','tx','ty'],axis=1)
 track_no_data=track_no_data.rename(columns={'x': "Track_Hit_No"})
-new_combined_data=pd.merge(data, track_no_data, how="left", on=['FEDRA_Track_ID'])
+new_combined_data=pd.merge(data, track_no_data, how="left", on=[Track_ID])
 new_combined_data=new_combined_data.drop(['Hit_ID','tx','ty'],axis=1)
-new_combined_data=new_combined_data.sort_values(['FEDRA_Track_ID','z'],ascending=[1,1])
-new_combined_data['FEDRA_Track_ID']=new_combined_data['FEDRA_Track_ID'].astype(int)
+new_combined_data=new_combined_data.sort_values([Track_ID,'z'],ascending=[1,1])
+new_combined_data[Track_ID]=new_combined_data[Track_ID].astype(int)
 new_combined_data['Plate_ID']=new_combined_data['z'].astype(int)
 train_data = new_combined_data[new_combined_data.Track_Hit_No >= MinHits]
 validation_data = new_combined_data[new_combined_data.Track_Hit_No >= ValMinHits]
@@ -356,17 +358,17 @@ with alive_bar(tot_jobs,force_tty=True, title='Progress') as bar:
     raw_data['X_bin']=np.ceil((raw_data['x']-Min_X)/LocalSize).astype(int)
     raw_data['Y_bin']=np.ceil((raw_data['y']-Min_Y)/LocalSize).astype(int)
     raw_data.drop(['dx','dy'],axis=1, inplace=True)
-    data=raw_data.dropna(subset=['FEDRA_Track_ID'])
+    data=raw_data.dropna(subset=[Track_ID])
 
 
 
-    track_no_data=data.groupby(['FEDRA_Track_ID'],as_index=False).count()
+    track_no_data=data.groupby([Track_ID],as_index=False).count()
     track_no_data=track_no_data.drop(['Hit_ID','y','z','tx','ty','X_bin','Y_bin','Plate_ID'],axis=1)
     track_no_data=track_no_data.rename(columns={'x': "Track_Hit_No"})
-    new_combined_data=pd.merge(data, track_no_data, how="left", on=['FEDRA_Track_ID'])
+    new_combined_data=pd.merge(data, track_no_data, how="left", on=[Track_ID])
     new_combined_data=new_combined_data.drop(['Hit_ID','tx','ty'],axis=1)
-    new_combined_data=new_combined_data.sort_values(['FEDRA_Track_ID','z'],ascending=[1,1])
-    new_combined_data['FEDRA_Track_ID']=new_combined_data['FEDRA_Track_ID'].astype(int)
+    new_combined_data=new_combined_data.sort_values([Track_ID,'z'],ascending=[1,1])
+    new_combined_data[Track_ID]=new_combined_data[Track_ID].astype(int)
     new_combined_data['Plate_ID']=new_combined_data['z'].astype(int)
     train_data = new_combined_data[new_combined_data.Track_Hit_No >= MinHits]
     validation_data = new_combined_data[new_combined_data.Track_Hit_No >= ValMinHits]
@@ -445,16 +447,16 @@ raw_data['dy'] = raw_data['dy'].fillna(0.0)
 raw_data['x']=raw_data['x']+raw_data['dx']
 raw_data['y']=raw_data['y']+raw_data['dy']
 
-data=raw_data.dropna(subset=['FEDRA_Track_ID'])
+data=raw_data.dropna(subset=[Track_ID])
 
-track_no_data=data.groupby(['FEDRA_Track_ID'],as_index=False).count()
+track_no_data=data.groupby([Track_ID],as_index=False).count()
 track_no_data=track_no_data.drop(['Hit_ID','y','z','tx','ty','dx','dy','X_bin','Y_bin','Plate_ID'],axis=1)
 track_no_data=track_no_data.rename(columns={'x': "Track_Hit_No"})
-new_combined_data=pd.merge(data, track_no_data, how="left", on=['FEDRA_Track_ID'])
+new_combined_data=pd.merge(data, track_no_data, how="left", on=[Track_ID])
 
 new_combined_data=new_combined_data.drop(['Hit_ID','tx','ty','dx','dy','X_bin','Y_bin'],axis=1)
-new_combined_data=new_combined_data.sort_values(['FEDRA_Track_ID','z'],ascending=[1,1])
-new_combined_data['FEDRA_Track_ID']=new_combined_data['FEDRA_Track_ID'].astype(int)
+new_combined_data=new_combined_data.sort_values([Track_ID,'z'],ascending=[1,1])
+new_combined_data[Track_ID]=new_combined_data[Track_ID].astype(int)
 new_combined_data['Plate_ID']=new_combined_data['z'].astype(int)
 print(UF.TimeStamp(),'Final overall fit value is',bcolors.BOLD+str(round(FitPlate(plates[0][0],0,0,new_combined_data),2))+bcolors.ENDC, ' microns')
 
