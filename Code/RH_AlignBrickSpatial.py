@@ -76,7 +76,7 @@ LocalSize=int(args.LocalSize)
 OptBound=args.OptBound
 Cycle=int(args.Cycle)
 name=args.Name
-TrackID=args.TrackID
+Track_ID=args.TrackID
 output_file_location=initial_input_file_location[:-4]+'_'+name+'_'+str(MinHits)+'.csv'
 output_log_location=initial_input_file_location[:-4]+'_'+name+'-log_'+str(MinHits)+'.csv'
 #output_temp_location=initial_input_file_location[:-4]+'_Alignment-start_'+str(MinHits)+'.csv'
@@ -269,8 +269,6 @@ data=raw_data.dropna()
 final_rows=len(data)
 print(UF.TimeStamp(),'The cleaned data has',final_rows,'hits')
 print(UF.TimeStamp(),'Removing tracks which have less than',ValMinHits,'hits...')
-print(data)
-exit()
 track_no_data=data.groupby([Track_ID],as_index=False).count()
 track_no_data=track_no_data.drop(['Hit_ID','y','z','tx','ty'],axis=1)
 track_no_data=track_no_data.rename(columns={'x': "Track_Hit_No"})
