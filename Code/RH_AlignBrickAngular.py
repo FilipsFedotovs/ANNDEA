@@ -83,14 +83,14 @@ output_log_location=initial_input_file_location[:-4]+'_'+name+'-log_'+str(MinHit
 
 def FitPlateAngle(PlateZ,dtx,dty,input_data):
     change_df = pd.DataFrame([[PlateZ,dtx,dty]], columns = ['Plate_ID','dtx','dty'])
-    temp_data=input_data[['Track_ID','x','y','z','tx','ty','Track_Hit_No','Plate_ID']]
+    temp_data=input_data[[Track_ID,'x','y','z','tx','ty','Track_Hit_No','Plate_ID']]
     temp_data=pd.merge(temp_data,change_df,on='Plate_ID',how='left')
     temp_data['dtx'] = temp_data['dtx'].fillna(0.0)
     temp_data['dty'] = temp_data['dty'].fillna(0.0)
     temp_data['tx']=temp_data['tx']+temp_data['dtx']
     temp_data['ty']=temp_data['ty']+temp_data['dty']
-    temp_data=temp_data[['Track_ID','x','y','z','tx','ty','Track_Hit_No']]
-    Tracks_Head=temp_data[['Track_ID']]
+    temp_data=temp_data[[Track_ID,'x','y','z','tx','ty','Track_Hit_No']]
+    Tracks_Head=temp_data[[Track_ID]]
     Tracks_Head.drop_duplicates(inplace=True)
     Tracks_List=temp_data.values.tolist() #I find it is much easier to deal with tracks in list format when it comes to fitting
     Tracks_Head=Tracks_Head.values.tolist()
@@ -123,9 +123,9 @@ def FitPlateAngle(PlateZ,dtx,dty,input_data):
            bth.append(ty) #Append x slope
            del(bth[1])
     #Once we get coefficients for all tracks we convert them back to Pandas dataframe and join back to the data
-    Tracks_Head=pd.DataFrame(Tracks_Head, columns = ['Track_ID','ntx','nty'])
+    Tracks_Head=pd.DataFrame(Tracks_Head, columns = [Track_ID,'ntx','nty'])
 
-    temp_data=pd.merge(temp_data,Tracks_Head,how='inner',on = ['Track_ID'])
+    temp_data=pd.merge(temp_data,Tracks_Head,how='inner',on = [Track_ID])
 
     #Calculating x and y coordinates of the fitted line for all plates in the track
     #Calculating how far hits deviate from the fit polynomial
@@ -136,8 +136,8 @@ def FitPlateAngle(PlateZ,dtx,dty,input_data):
     temp_data['d_tr'] = temp_data['d_tr'].astype(float)
     temp_data['d_tr']=np.sqrt(temp_data['d_tr']) #Absolute distance
 
-    temp_data=temp_data[['Track_ID','Track_Hit_No','d_tr']]
-    temp_data=temp_data.groupby(['Track_ID','Track_Hit_No']).agg({'d_tr':'sum'}).reset_index()
+    temp_data=temp_data[[Track_ID,'Track_Hit_No','d_tr']]
+    temp_data=temp_data.groupby([Track_ID,'Track_Hit_No']).agg({'d_tr':'sum'}).reset_index()
     temp_data=temp_data.agg({'d_tr':'sum','Track_Hit_No':'sum'})
     temp_data=temp_data.values.tolist()
     fit=temp_data[0]/temp_data[1]
@@ -145,14 +145,14 @@ def FitPlateAngle(PlateZ,dtx,dty,input_data):
 
 def LocalFitPlateAngle(PlateZ,dtx,dty,input_data, X_bin, Y_bin):
     change_df = pd.DataFrame([[PlateZ,dtx,dty, X_bin, Y_bin]], columns = ['Plate_ID','dtx','dty','X_bin','Y_bin'])
-    temp_data=input_data[['Track_ID','x','y','z','tx','ty','Track_Hit_No','Plate_ID','X_bin','Y_bin']]
+    temp_data=input_data[[Track_ID,'x','y','z','tx','ty','Track_Hit_No','Plate_ID','X_bin','Y_bin']]
     temp_data=pd.merge(temp_data,change_df,on=['Plate_ID','X_bin','Y_bin'],how='left')
     temp_data['dtx'] = temp_data['dtx'].fillna(0.0)
     temp_data['dty'] = temp_data['dty'].fillna(0.0)
     temp_data['tx']=temp_data['tx']+temp_data['dtx']
     temp_data['ty']=temp_data['ty']+temp_data['dty']
-    temp_data=temp_data[['Track_ID','x','y','z','tx','ty','Track_Hit_No']]
-    Tracks_Head=temp_data[['Track_ID']]
+    temp_data=temp_data[[Track_ID,'x','y','z','tx','ty','Track_Hit_No']]
+    Tracks_Head=temp_data[[Track_ID]]
     Tracks_Head.drop_duplicates(inplace=True)
     Tracks_List=temp_data.values.tolist() #I find it is much easier to deal with tracks in list format when it comes to fitting
     Tracks_Head=Tracks_Head.values.tolist()
@@ -185,9 +185,9 @@ def LocalFitPlateAngle(PlateZ,dtx,dty,input_data, X_bin, Y_bin):
            bth.append(ty) #Append x slope
            del(bth[1])
     #Once we get coefficients for all tracks we convert them back to Pandas dataframe and join back to the data
-    Tracks_Head=pd.DataFrame(Tracks_Head, columns = ['Track_ID','ntx','nty'])
+    Tracks_Head=pd.DataFrame(Tracks_Head, columns = [Track_ID,'ntx','nty'])
 
-    temp_data=pd.merge(temp_data,Tracks_Head,how='inner',on = ['Track_ID'])
+    temp_data=pd.merge(temp_data,Tracks_Head,how='inner',on = [Track_ID])
 
     #Calculating x and y coordinates of the fitted line for all plates in the track
     #Calculating how far hits deviate from the fit polynomial
@@ -198,8 +198,8 @@ def LocalFitPlateAngle(PlateZ,dtx,dty,input_data, X_bin, Y_bin):
     temp_data['d_tr'] = temp_data['d_tr'].astype(float)
     temp_data['d_tr']=np.sqrt(temp_data['d_tr']) #Absolute distance
 
-    temp_data=temp_data[['Track_ID','Track_Hit_No','d_tr']]
-    temp_data=temp_data.groupby(['Track_ID','Track_Hit_No']).agg({'d_tr':'sum'}).reset_index()
+    temp_data=temp_data[[Track_ID,'Track_Hit_No','d_tr']]
+    temp_data=temp_data.groupby([Track_ID,'Track_Hit_No']).agg({'d_tr':'sum'}).reset_index()
     temp_data=temp_data.agg({'d_tr':'sum','Track_Hit_No':'sum'})
     temp_data=temp_data.values.tolist()
     fit=temp_data[0]/temp_data[1]
@@ -229,7 +229,7 @@ def LocalAlignPlateAngle(PlateZ,dx,dy,input_data, X_bin, Y_bin):
 ########################################     Phase 1 - Create compact source file    #########################################
 print(UF.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+initial_input_file_location+bcolors.ENDC)
 raw_data=pd.read_csv(initial_input_file_location,
-                header=0)
+                header=0,usecols=[Track_ID,'Hit_ID','x','y','z','tx','ty'])
 
 total_rows=len(raw_data)
 Min_X=raw_data.x.min()
@@ -254,13 +254,13 @@ data=raw_data.dropna()
 final_rows=len(data)
 print(UF.TimeStamp(),'The cleaned data has',final_rows,'hits')
 print(UF.TimeStamp(),'Removing tracks which have less than',ValMinHits,'hits...')
-track_no_data=data.groupby(['Track_ID'],as_index=False).count()
+track_no_data=data.groupby([Track_ID],as_index=False).count()
 track_no_data=track_no_data.drop(['Hit_ID','y','z','tx','ty'],axis=1)
 track_no_data=track_no_data.rename(columns={'x': "Track_Hit_No"})
-new_combined_data=pd.merge(data, track_no_data, how="left", on=['Track_ID'])
+new_combined_data=pd.merge(data, track_no_data, how="left", on=[Track_ID])
 new_combined_data=new_combined_data.drop(['Hit_ID'],axis=1)
-new_combined_data=new_combined_data.sort_values(['Track_ID','z'],ascending=[1,1])
-new_combined_data['Track_ID']=new_combined_data['Track_ID'].astype(int)
+new_combined_data=new_combined_data.sort_values([Track_ID,'z'],ascending=[1,1])
+new_combined_data[Track_ID]=new_combined_data[Track_ID].astype(int)
 new_combined_data['Plate_ID']=new_combined_data['z'].astype(int)
 train_data = new_combined_data[new_combined_data.Track_Hit_No >= MinHits]
 validation_data = new_combined_data[new_combined_data.Track_Hit_No >= ValMinHits]
@@ -342,17 +342,17 @@ with alive_bar(tot_jobs,force_tty=True, title='Progress') as bar:
     raw_data['X_bin']=np.ceil((raw_data['x']-Min_X)/LocalSize).astype(int)
     raw_data['Y_bin']=np.ceil((raw_data['y']-Min_Y)/LocalSize).astype(int)
     raw_data.drop(['dtx','dty'],axis=1, inplace=True)
-    data=raw_data.dropna(subset=['Track_ID'])
+    data=raw_data.dropna(subset=[Track_ID])
 
 
 
-    track_no_data=data.groupby(['Track_ID'],as_index=False).count()
+    track_no_data=data.groupby([Track_ID],as_index=False).count()
     track_no_data=track_no_data.drop(['Hit_ID','y','z','tx','ty','X_bin','Y_bin','Plate_ID'],axis=1)
     track_no_data=track_no_data.rename(columns={'x': "Track_Hit_No"})
-    new_combined_data=pd.merge(data, track_no_data, how="left", on=['Track_ID'])
+    new_combined_data=pd.merge(data, track_no_data, how="left", on=[Track_ID])
     new_combined_data=new_combined_data.drop(['Hit_ID'],axis=1)
-    new_combined_data=new_combined_data.sort_values(['Track_ID','z'],ascending=[1,1])
-    new_combined_data['Track_ID']=new_combined_data['Track_ID'].astype(int)
+    new_combined_data=new_combined_data.sort_values([Track_ID,'z'],ascending=[1,1])
+    new_combined_data[Track_ID]=new_combined_data[Track_ID].astype(int)
     new_combined_data['Plate_ID']=new_combined_data['z'].astype(int)
     train_data = new_combined_data[new_combined_data.Track_Hit_No >= MinHits]
     validation_data = new_combined_data[new_combined_data.Track_Hit_No >= ValMinHits]
@@ -431,16 +431,16 @@ raw_data['dty'] = raw_data['dty'].fillna(0.0)
 raw_data['tx']=raw_data['tx']+raw_data['dtx']
 raw_data['ty']=raw_data['ty']+raw_data['dty']
 
-data=raw_data.dropna(subset=['Track_ID'])
+data=raw_data.dropna(subset=[Track_ID])
 
-track_no_data=data.groupby(['Track_ID'],as_index=False).count()
+track_no_data=data.groupby([Track_ID],as_index=False).count()
 track_no_data=track_no_data.drop(['Hit_ID','y','z','tx','ty','dtx','dty','X_bin','Y_bin','Plate_ID'],axis=1)
 track_no_data=track_no_data.rename(columns={'x': "Track_Hit_No"})
-new_combined_data=pd.merge(data, track_no_data, how="left", on=['Track_ID'])
+new_combined_data=pd.merge(data, track_no_data, how="left", on=[Track_ID])
 
 new_combined_data=new_combined_data.drop(['Hit_ID','dtx','dty','X_bin','Y_bin'],axis=1)
-new_combined_data=new_combined_data.sort_values(['Track_ID','z'],ascending=[1,1])
-new_combined_data['Track_ID']=new_combined_data['Track_ID'].astype(int)
+new_combined_data=new_combined_data.sort_values([Track_ID,'z'],ascending=[1,1])
+new_combined_data[Track_ID]=new_combined_data[Track_ID].astype(int)
 new_combined_data['Plate_ID']=new_combined_data['z'].astype(int)
 print(UF.TimeStamp(),'Final overall fit value is',bcolors.BOLD+str(round(FitPlateAngle(plates[0][0],0,0,new_combined_data)*1000,1))+bcolors.ENDC, ' milliradians')
 
