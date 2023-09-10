@@ -139,8 +139,6 @@ print(UF.TimeStamp(),'Loading pre-selected data from ',input_file_location)
 
 #Load the file with Hit detailed information
 data=pd.read_csv(input_file_location,header=0,usecols=["Hit_ID","x","y","z","tx","ty"])[["Hit_ID","x","y","z","tx","ty"]]
-print(data)
-exit()
 tdata=pd.read_csv(input_tfile_location,header=0,usecols=["Hit_ID","x","y","z","tx","ty"])[["Hit_ID","x","y","z","tx","ty"]]
 data["x"] = pd.to_numeric(data["x"],downcast='float')
 data["y"] = pd.to_numeric(data["y"],downcast='float')
@@ -149,7 +147,8 @@ data['x']=data['x']-x_offset
 data['y']=data['y']-y_offset
 data["Hit_ID"] = data["Hit_ID"].astype(str)
 data['z']=data['z']-z_offset
-
+print(data)
+exit()
 print(UF.TimeStamp(),'Preparing data... ')
 #Keeping only sections of the Hit data relevant to the volume being reconstructed to use less memory
 
