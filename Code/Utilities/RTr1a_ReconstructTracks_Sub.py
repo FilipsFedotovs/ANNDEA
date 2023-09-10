@@ -151,8 +151,9 @@ for k in range(0,Z_ID_Max):
             ClusterData=pd.read_csv(CheckPointFile)
             LC_Label=ClusterData['HitID'].values[-1]
             LC_Value=ClusterData['z'].values[-1]
-            print(EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(X_ID_n)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(X_ID_n)+'_'+str(Y_ID_n) +'_' +str(k)+'_CP'+sfx)
+            
             if LC_Label=='Control' and len(ClusterData)-1==LC_Value:
+                print(UF.TimeStamp(),'Checkpoint file ',EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(X_ID_n)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(X_ID_n)+'_'+str(Y_ID_n) +'_' +str(k)+'_CP'+sfx, 'already exists, skipping this step....')
                 continue
     Z_ID=int(k)/Z_overlap
     temp_data=data.drop(data.index[data['z'] >= ((Z_ID+1)*stepZ)])  #Keeping the relevant z slice
@@ -401,7 +402,7 @@ if CheckPoint:
 #Once we track all clusters we need to merge them along z-axis
 if len(z_clusters_results)>0:
     print(UF.TimeStamp(),'Merging all clusters along z-axis...')
-    ZContractedTable=z_clusters_results[0].rename(columns={"Segment_ID": "Master_Segment_ID","z": "Master_z" }) #First cluster is like a Pacman: it absorbes proceeding clusters and gets bigger
+    ZContractedTable=z_clusters_results[0].rename(columns={"Segment_ID": "Master_Segment_ID","z": "Master_z" }) #First cluster is like a Pacman: it absorbs proceeding clusters and gets bigger
     for i in range(1,len(z_clusters_results)):
         SecondFileTable=z_clusters_results[i]
         FileClean=pd.merge(ZContractedTable,SecondFileTable,how='inner', on=['HitID']) #Join segments based on the common hits
