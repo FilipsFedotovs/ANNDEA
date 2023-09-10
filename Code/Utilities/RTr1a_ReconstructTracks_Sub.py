@@ -395,12 +395,24 @@ print('Final Time lapse', datetime.datetime.now()-Before)
 
 if CheckPoint:
     print(UF.TimeStamp(),'Loading all saved check points...')
+    print(z_clusters_results)
+    z_clusters_results=[]
     for k in range(0,Z_ID_Max):
         CheckPointFile=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(X_ID_n)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(X_ID_n)+'_'+str(Y_ID_n) +'_' +str(k)+'_CP'+sfx
         if os.path.isfile(CheckPointFile):
             ClusterData=pd.read_csv(CheckPointFile)
+            LC_Label=ClusterData['HitID'].values[-1]
+            LC_Value=ClusterData['z'].values[-1]
+            if LC_Label=='Control' and len(ClusterData)-1==LC_Value:
+                z_clusters_results.append(ClusterData)
+            else:
+                print(UF.TimeStamp(),'Critical fail ',CheckPointFile, 'is corrupted and needs reprocessing...')
+                exit()
+        else:
+            print(UF.TimeStamp(),'Critical fail ',CheckPointFile, 'is missing and needs reprocessing...')
+            exit()
 
-            z_clusters_results.append(ClusterData)
+            
 
 #Once we track all clusters we need to merge them along z-axis
 if len(z_clusters_results)>0:
