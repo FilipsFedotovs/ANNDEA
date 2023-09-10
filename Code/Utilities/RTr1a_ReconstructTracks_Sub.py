@@ -145,8 +145,7 @@ data['x']=data['x']-x_offset
 data['y']=data['y']-y_offset
 data["Hit_ID"] = data["Hit_ID"].astype(str)
 data['z']=data['z']-z_offset
-print(data)
-exit()
+
 print(UF.TimeStamp(),'Preparing data... ')
 #Keeping only sections of the Hit data relevant to the volume being reconstructed to use less memory
 
@@ -359,6 +358,8 @@ for k in range(0,Z_ID_Max):
                         _Rec_Hits_Pool=pd.DataFrame(_track_list, columns = ['Segment_ID','HitID'])
                         _Rec_Hits_Pool=pd.merge(_z_map, _Rec_Hits_Pool, how="right", on=['HitID'])
                         print(UF.TimeStamp(),_no_tracks, 'track segments have been reconstructed in this cluster set ...')
+                        print(len(_Rec_Hits_Pool))
+                        exit()
                         if CheckPoint:
                             _Rec_Hits_Pool.to_csv(CheckPointFile,index=False)
                         else:
