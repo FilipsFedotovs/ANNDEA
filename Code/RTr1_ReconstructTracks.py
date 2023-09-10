@@ -210,7 +210,7 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
                  data.drop(data.index[data['y'] >= ((Y_ID+1)*stepY)], inplace = True)  #Keeping the relevant z slice
                  data.drop(data.index[data['y'] < (Y_ID*stepY)], inplace = True)  #Keeping the relevant z slice
                  print(data)
-                 exit()
+                 x=input()
          data.to_csv(required_file_location,index=False)
          print(UF.TimeStamp(), bcolors.OKGREEN+"The segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+required_file_location+bcolors.ENDC)
 
