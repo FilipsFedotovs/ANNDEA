@@ -163,6 +163,9 @@ for k in range(0,Z_ID_Max):
     if CheckPoint:
         CheckPointFile=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(X_ID_n)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(X_ID_n)+'_'+str(Y_ID_n) +'_' +str(k)+'_CP'+sfx
         if os.path.isfile(CheckPointFile):
+            ClusterData=pd.read_csv(CheckPointFile)
+            print(ClusterData)
+            exit()
             continue
     Z_ID=int(k)/Z_overlap
     temp_data=data.drop(data.index[data['z'] >= ((Z_ID+1)*stepZ)])  #Keeping the relevant z slice
@@ -362,9 +365,6 @@ for k in range(0,Z_ID_Max):
                         Control=[['Control',len(_Rec_Hits_Pool),'Control']]
                         Control=pd.DataFrame(Control, columns = ['HitID','z','Segment_ID'])
                         _Rec_Hits_Pool=pd.concat([_Rec_Hits_Pool,Control])
-                        print(len(_Rec_Hits_Pool))
-                        print(_Rec_Hits_Pool)
-                        exit()
                         if CheckPoint:
                             _Rec_Hits_Pool.to_csv(CheckPointFile,index=False)
                         else:
@@ -382,6 +382,7 @@ if CheckPoint:
         CheckPointFile=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(X_ID_n)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(X_ID_n)+'_'+str(Y_ID_n) +'_' +str(k)+'_CP'+sfx
         if os.path.isfile(CheckPointFile):
             ClusterData=pd.read_csv(CheckPointFile)
+
             z_clusters_results.append(ClusterData)
 
 #Once we track all clusters we need to merge them along z-axis
