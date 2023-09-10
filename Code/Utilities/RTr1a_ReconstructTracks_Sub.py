@@ -360,7 +360,7 @@ for k in range(0,Z_ID_Max):
                         print(UF.TimeStamp(),_no_tracks, 'track segments have been reconstructed in this cluster set ...')
                         
                         Control=[['Control',len(_Rec_Hits_Pool),'Control']]
-                        Control=pd.DataFrame(Control, columns = ['Hit_ID','z','Segment_ID'])
+                        Control=pd.DataFrame(Control, columns = ['HitID','z','Segment_ID'])
                         _Rec_Hits_Pool=pd.concat([_Rec_Hits_Pool,Control])
                         print(len(_Rec_Hits_Pool))
                         print(_Rec_Hits_Pool)
