@@ -130,8 +130,8 @@ if Log and (os.path.isfile(required_eval_file_location)==False or Mode=='RESET')
            Meta=MetaInput[0]
            MinHitsTrack=Meta.MinHitsTrack
            if hasattr(Meta,'ClassNames') and hasattr(Meta,'ClassValues'):
-               ExcludeClassNames='ClassNames'
-               ExcludeClassValues='ClassValues'
+               ExcludeClassNames=Meta.ClassNames
+               ExcludeClassValues=NEta.ClassValues
            else:
                ExcludeClassNames=[]
                ExcludeClassValues=[[]]
