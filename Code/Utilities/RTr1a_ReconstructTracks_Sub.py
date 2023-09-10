@@ -358,6 +358,10 @@ for k in range(0,Z_ID_Max):
                         _Rec_Hits_Pool=pd.DataFrame(_track_list, columns = ['Segment_ID','HitID'])
                         _Rec_Hits_Pool=pd.merge(_z_map, _Rec_Hits_Pool, how="right", on=['HitID'])
                         print(UF.TimeStamp(),_no_tracks, 'track segments have been reconstructed in this cluster set ...')
+                        
+                        Control=[['Control',len(_Rec_Hits_Pool),'Control']]
+                        Control=pd.DataFrame(Control, columns = ['Hit_ID','z','Segment_ID'])
+                        _Rec_Hits_Pool=pd.concat([_Rec_Hits_Pool,Control])
                         print(len(_Rec_Hits_Pool))
                         print(_Rec_Hits_Pool)
                         exit()
