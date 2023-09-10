@@ -155,7 +155,6 @@ data.drop(data.index[data['y'] >= ((Y_ID+1)*stepY)], inplace = True)  #Keeping t
 data.drop(data.index[data['y'] < (Y_ID*stepY)], inplace = True)  #Keeping the relevant z slice
 print(data)
 x=input()
-exit()
 torch_import=True
 cluster_output=[]
 import datetime
