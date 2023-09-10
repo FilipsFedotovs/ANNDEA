@@ -375,17 +375,17 @@ for k in range(0,Z_ID_Max):
                         continue
             else:
               if CheckPoint:
-                  Control=[['Control',len(_Rec_Hits_Pool),'Control']]
+                  Control=[['Control',0,'Control']]
                   Control=pd.DataFrame(Control, columns = ['HitID','z','Segment_ID'])
                   Control.to_csv(CheckPointFile,index=False)  
         else:
              if CheckPoint:
-                  Control=[['Control',len(_Rec_Hits_Pool),'Control']]
+                  Control=[['Control',0,'Control']]
                   Control=pd.DataFrame(Control, columns = ['HitID','z','Segment_ID'])
                   Control.to_csv(CheckPointFile,index=False)
     else:
         if CheckPoint:
-                  Control=[['Control',len(_Rec_Hits_Pool),'Control']]
+                  Control=[['Control',0,'Control']]
                   Control=pd.DataFrame(Control, columns = ['HitID','z','Segment_ID'])
                   Control.to_csv(CheckPointFile,index=False)
 import gc
