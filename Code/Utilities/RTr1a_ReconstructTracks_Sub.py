@@ -167,10 +167,8 @@ for k in range(0,Z_ID_Max):
             LC_Label=ClusterData['HitID'].values[-1]
             LC_Value=ClusterData['z'].values[-1]
             print(EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(X_ID_n)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(X_ID_n)+'_'+str(Y_ID_n) +'_' +str(k)+'_CP'+sfx)
-            print(LC_Label,LC_Value)
-            print(len(ClusterData)-1==LC_Value)
-            exit()
-            continue
+            if LC_Label=='Control' and len(ClusterData)-1==LC_Value:
+                continue
     Z_ID=int(k)/Z_overlap
     temp_data=data.drop(data.index[data['z'] >= ((Z_ID+1)*stepZ)])  #Keeping the relevant z slice
     temp_data=temp_data.drop(temp_data.index[temp_data['z'] < (Z_ID*stepZ)])  #Keeping the relevant z slice
@@ -201,7 +199,7 @@ for k in range(0,Z_ID_Max):
                                 #Meta file contatins training session stats. They also record the optimal acceptance.
                                 Acceptance=ModelMeta.TrainSessionsData[-1][-1][3]
                                 device = torch.device('cpu')
-                                #In PyTorch we don't save the actual model like in Tensorflow. We just save the weights, hence we have to regenerate the model again. The recepy is in the Model Meta file
+                                #In PyTorch we don't save the actual model like in Tensorflow. We just save the weights, so we must regenerate the model again. The recipe is in the Model Meta file
                                 model = UF.GenerateModel(ModelMeta).to(device)
                                 model.load_state_dict(torch.load(Model_Path))
                                 model.eval() #In Pytorch this function sets the model into the evaluation mode.
@@ -343,7 +341,7 @@ for k in range(0,Z_ID_Max):
                                         _Tot_Hits_Predator.sort_values(by = ['average_link_strength'], ascending=[False],inplace=True) #Keep all the best hit combinations at the top
                                         _Tot_Hits_Predator=_Tot_Hits_Predator.drop(['average_link_strength','RES','STD','MRES'],axis=1) #We don't need the segment fit anymore
                                         for c in range(column_no):
-                                            _Tot_Hits_Predator.drop_duplicates(subset=[str(c)], keep='first', inplace=True) #Iterating over hits, make sure that their belong to the best fit track
+                                            _Tot_Hits_Predator.drop_duplicates(subset=[str(c)], keep='first', inplace=True) #Iterating over hits, make sure that they belong to the best-fit track
                                         _Tot_Hits_Predator=_Tot_Hits_Predator.values.tolist()
                                         for seg in range(len(_Tot_Hits_Predator)):
                                             _Tot_Hits_Predator[seg]=[s for s in _Tot_Hits_Predator[seg] if ('H' in s)==False] #Remove holes from the track representation
@@ -351,7 +349,7 @@ for k in range(0,Z_ID_Max):
                                         for seg in _Tot_Hits_Predator:
                                             _itr=0
                                             while _itr<len(_Tot_Hits):
-                                                if InjectHit(seg,_Tot_Hits[_itr],True): #We remove all the hitsthat become part of successful segments from the initial pool so we can rerun the process again with left over hits
+                                                if InjectHit(seg,_Tot_Hits[_itr],True): #We remove all the hits that become part of successful segments from the initial pool so we can rerun the process again with leftover hits
                                                     del _Tot_Hits[_itr]
                                                 else:
                                                     _itr+=1
@@ -375,6 +373,21 @@ for k in range(0,Z_ID_Max):
                             z_clusters_results.append(_Rec_Hits_Pool) #Save all the reconstructed segments.
                         del HC
                         continue
+            else:
+              if CheckPoint:
+                  Control=[['Control',len(_Rec_Hits_Pool),'Control']]
+                  Control=pd.DataFrame(Control, columns = ['HitID','z','Segment_ID'])
+                  Control.to_csv(CheckPointFile,index=False)  
+        else:
+             if CheckPoint:
+                  Control=[['Control',len(_Rec_Hits_Pool),'Control']]
+                  Control=pd.DataFrame(Control, columns = ['HitID','z','Segment_ID'])
+                  Control.to_csv(CheckPointFile,index=False)
+    else:
+        if CheckPoint:
+                  Control=[['Control',len(_Rec_Hits_Pool),'Control']]
+                  Control=pd.DataFrame(Control, columns = ['HitID','z','Segment_ID'])
+                  Control.to_csv(CheckPointFile,index=False)
 import gc
 gc.collect #Clean memory
 print('Final Time lapse', datetime.datetime.now()-Before)
