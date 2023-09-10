@@ -175,6 +175,8 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
          data=data.rename(columns={PM.tx: "tx"})
          data=data.rename(columns={PM.ty: "ty"})
          data=data.rename(columns={PM.Hit_ID: "Hit_ID"})
+         print(data)
+         exit()
          data.to_csv(required_file_location,index=False)
          print(UF.TimeStamp(), bcolors.OKGREEN+"The segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+required_file_location+bcolors.ENDC)
 
