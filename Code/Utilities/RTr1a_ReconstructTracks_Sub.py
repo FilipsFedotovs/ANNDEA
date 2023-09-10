@@ -395,7 +395,6 @@ print('Final Time lapse', datetime.datetime.now()-Before)
 
 if CheckPoint:
     print(UF.TimeStamp(),'Loading all saved check points...')
-    print(z_clusters_results)
     z_clusters_results=[]
     for k in range(0,Z_ID_Max):
         CheckPointFile=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(X_ID_n)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(X_ID_n)+'_'+str(Y_ID_n) +'_' +str(k)+'_CP'+sfx
