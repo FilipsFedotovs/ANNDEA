@@ -131,6 +131,7 @@ def InjectHit(Predator,Prey, Soft):
 
 #Specifying the full path to input/output files
 input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RTr1_'+RecBatchID+'_hits.csv'
+input_tfile_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RTr1_'+RecBatchID+'_'+args.i+'_'+args.j+'_hits.csv'
 output_file_location=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(X_ID_n)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(X_ID_n)+'_'+str(Y_ID_n)+sfx
 
 print(UF.TimeStamp(), "Modules Have been imported successfully...")
@@ -138,6 +139,7 @@ print(UF.TimeStamp(),'Loading pre-selected data from ',input_file_location)
 
 #Load the file with Hit detailed information
 data=pd.read_csv(input_file_location,header=0,usecols=["Hit_ID","x","y","z","tx","ty"])[["Hit_ID","x","y","z","tx","ty"]]
+tdata=pd.read_csv(input_tfile_location,header=0,usecols=["Hit_ID","x","y","z","tx","ty"])[["Hit_ID","x","y","z","tx","ty"]]
 data["x"] = pd.to_numeric(data["x"],downcast='float')
 data["y"] = pd.to_numeric(data["y"],downcast='float')
 data["z"] = pd.to_numeric(data["z"],downcast='float')
@@ -154,7 +156,8 @@ data.drop(data.index[data['x'] < (X_ID*stepX)], inplace = True)  #Keeping the re
 data.drop(data.index[data['y'] >= ((Y_ID+1)*stepY)], inplace = True)  #Keeping the relevant z slice
 data.drop(data.index[data['y'] < (Y_ID*stepY)], inplace = True)  #Keeping the relevant z slice
 print(data)
-x=input()
+print(tdata)
+exit()
 torch_import=True
 cluster_output=[]
 import datetime
