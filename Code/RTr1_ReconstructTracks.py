@@ -200,7 +200,7 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
             Ysteps=math.ceil((y_max)/stepY)
          else:
             Ysteps=(math.ceil((y_max)/stepY)*(Y_overlap))-1
-         
+         print(UF.TimeStamp(),'Distributing input files...')
          for i in range(Xsteps):
              for j in range(Ysteps):
                  Y_ID=int(j)/Y_overlap
@@ -209,8 +209,9 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
                  tdata.drop(tdata.index[tdata['x'] < (X_ID*stepX)], inplace = True)  #Keeping the relevant z slice
                  tdata.drop(tdata.index[tdata['y'] >= ((Y_ID+1)*stepY)], inplace = True)  #Keeping the relevant z slice
                  tdata.drop(tdata.index[tdata['y'] < (Y_ID*stepY)], inplace = True)  #Keeping the relevant z slice
-                 print(tdata)
-                 x=input()
+                 required_tfile_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RTr1_'+RecBatchID+'_'+str(i)+'_'+str(j)+'_hits.csv'
+                 tdata.to_csv(required_tfile_location,index=False)
+                 print(UF.TimeStamp(), bcolors.OKGREEN+"The segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+required_tfile_location+bcolors.ENDC)
          data.to_csv(required_file_location,index=False)
          print(UF.TimeStamp(), bcolors.OKGREEN+"The segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+required_file_location+bcolors.ENDC)
 
