@@ -359,6 +359,7 @@ for k in range(0,Z_ID_Max):
                         _Rec_Hits_Pool=pd.merge(_z_map, _Rec_Hits_Pool, how="right", on=['HitID'])
                         print(UF.TimeStamp(),_no_tracks, 'track segments have been reconstructed in this cluster set ...')
                         print(len(_Rec_Hits_Pool))
+                        print(_Rec_Hits_Pool)
                         exit()
                         if CheckPoint:
                             _Rec_Hits_Pool.to_csv(CheckPointFile,index=False)
