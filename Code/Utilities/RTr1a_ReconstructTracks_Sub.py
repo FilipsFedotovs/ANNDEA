@@ -164,8 +164,8 @@ for k in range(0,Z_ID_Max):
         CheckPointFile=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(X_ID_n)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(X_ID_n)+'_'+str(Y_ID_n) +'_' +str(k)+'_CP'+sfx
         if os.path.isfile(CheckPointFile):
             ClusterData=pd.read_csv(CheckPointFile)
-            LC_Label=ClusterData['HitID'].iloc[:-1]
-            LC_Value=ClusterData['z'].iloc[:-1]
+            LC_Label=ClusterData['HitID'].values[-1]
+            LC_Value=ClusterData['z'].values[-1]
             print(EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(X_ID_n)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(X_ID_n)+'_'+str(Y_ID_n) +'_' +str(k)+'_CP'+sfx)
             print(LC_Label,LC_Value)
             print(len(ClusterData))
