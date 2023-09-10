@@ -175,8 +175,42 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
          data=data.rename(columns={PM.tx: "tx"})
          data=data.rename(columns={PM.ty: "ty"})
          data=data.rename(columns={PM.Hit_ID: "Hit_ID"})
-         print(data)
-         exit()
+         print(UF.TimeStamp(),'Analysing data... ',bcolors.ENDC)
+         z_offset=data['z'].min()
+         data['z']=data['z']-z_offset
+         z_max=data['z'].max()
+         if Z_overlap==1:
+            Zsteps=math.ceil((z_max)/stepZ)
+         else:
+            Zsteps=(math.ceil((z_max)/stepZ)*(Z_overlap))-1
+         y_offset=data['y'].min()
+         x_offset=data['x'].min()
+         data['x']=data['x']-x_offset
+         data['y']=data['y']-y_offset
+         x_max=data['x'].max()
+         y_max=data['y'].max()
+    
+        #Calculating the number of volumes that will be sent to HTCondor for reconstruction. Account for overlap if specified.
+         if X_overlap==1:
+            Xsteps=math.ceil((x_max)/stepX)
+         else:
+            Xsteps=(math.ceil((x_max)/stepX)*(X_overlap))-1
+        
+         if Y_overlap==1:
+            Ysteps=math.ceil((y_max)/stepY)
+         else:
+            Ysteps=(math.ceil((y_max)/stepY)*(Y_overlap))-1
+         
+         for i in range(Xsteps):
+             for j in range(Ysteps):
+                 Y_ID=int(j)/Y_overlap
+                 X_ID=int(i)/X_overlap
+                 data.drop(data.index[data['x'] >= ((X_ID+1)*stepX)], inplace = True)  #Keeping the relevant z slice
+                 data.drop(data.index[data['x'] < (X_ID*stepX)], inplace = True)  #Keeping the relevant z slice
+                 data.drop(data.index[data['y'] >= ((Y_ID+1)*stepY)], inplace = True)  #Keeping the relevant z slice
+                 data.drop(data.index[data['y'] < (Y_ID*stepY)], inplace = True)  #Keeping the relevant z slice
+                 print(data)
+                 exit()
          data.to_csv(required_file_location,index=False)
          print(UF.TimeStamp(), bcolors.OKGREEN+"The segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+required_file_location+bcolors.ENDC)
 
