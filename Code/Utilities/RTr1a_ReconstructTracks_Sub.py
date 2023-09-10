@@ -145,6 +145,8 @@ data['x']=data['x']-x_offset
 data['y']=data['y']-y_offset
 data["Hit_ID"] = data["Hit_ID"].astype(str)
 data['z']=data['z']-z_offset
+print(data)
+exit()
 print(UF.TimeStamp(),'Preparing data... ')
 #Keeping only sections of the Hit data relevant to the volume being reconstructed to use less memory
 
