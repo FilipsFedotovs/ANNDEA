@@ -139,6 +139,8 @@ print(UF.TimeStamp(),'Loading pre-selected data from ',input_file_location)
 
 #Load the file with Hit detailed information
 data=pd.read_csv(input_file_location,header=0,usecols=["Hit_ID","x","y","z","tx","ty"])[["Hit_ID","x","y","z","tx","ty"]]
+print(data)
+exit()
 tdata=pd.read_csv(input_tfile_location,header=0,usecols=["Hit_ID","x","y","z","tx","ty"])[["Hit_ID","x","y","z","tx","ty"]]
 data["x"] = pd.to_numeric(data["x"],downcast='float')
 data["y"] = pd.to_numeric(data["y"],downcast='float')
