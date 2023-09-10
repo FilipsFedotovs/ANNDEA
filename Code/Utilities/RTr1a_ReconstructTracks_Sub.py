@@ -164,7 +164,11 @@ for k in range(0,Z_ID_Max):
         CheckPointFile=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(X_ID_n)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(X_ID_n)+'_'+str(Y_ID_n) +'_' +str(k)+'_CP'+sfx
         if os.path.isfile(CheckPointFile):
             ClusterData=pd.read_csv(CheckPointFile)
-            print(ClusterData)
+            LC_Label=df['HitID'].iloc[:-1]
+            LC_Value=df['z'].iloc[:-1]
+            print(EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(X_ID_n)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(X_ID_n)+'_'+str(Y_ID_n) +'_' +str(k)+'_CP'+sfx)
+            print(LC_Label,LC_Value)
+            print(len(ClusterData))
             exit()
             continue
     Z_ID=int(k)/Z_overlap
