@@ -154,6 +154,7 @@ data.drop(data.index[data['x'] < (X_ID*stepX)], inplace = True)  #Keeping the re
 data.drop(data.index[data['y'] >= ((Y_ID+1)*stepY)], inplace = True)  #Keeping the relevant z slice
 data.drop(data.index[data['y'] < (Y_ID*stepY)], inplace = True)  #Keeping the relevant z slice
 print(data)
+x=input()
 exit()
 torch_import=True
 cluster_output=[]
