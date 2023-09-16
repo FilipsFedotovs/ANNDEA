@@ -134,22 +134,13 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         data['Rec_Seg_ID'] = data[TrackID] + '-' + data[BrickID]
         data=data.drop([TrackID],axis=1)
         data=data.drop([BrickID],axis=1)
-        print(data)
-        exit()
-        # if SliceData:
-        #      print(UF.TimeStamp(),'Slicing the data...')
-        #      ValidEvents=data.drop(data.index[(data[PM.x] > Xmax) | (data[PM.x] < Xmin) | (data[PM.y] > Ymax) | (data[PM.y] < Ymin)])
-        #      ValidEvents.drop([PM.x,PM.y,PM.z,PM.tx,PM.ty],axis=1,inplace=True)
-        #      ValidEvents.drop_duplicates(subset="Rec_Seg_ID",keep='first',inplace=True)
-        #      data=pd.merge(data, ValidEvents, how="inner", on=['Rec_Seg_ID'])
-        #      final_rows=len(data.axes[0])
-        #      print(UF.TimeStamp(),'The sliced data has ',final_rows,' hits')
-        print(UF.TimeStamp(),'Removing tracks which have less than',MinHitsTrack,'hits...')
+
+        print(UF.TimeStamp(),'Removing tracks which have less than',ValMinHits,'hits...')
         track_no_data=data.groupby(['Rec_Seg_ID'],as_index=False).count()
         track_no_data=track_no_data.drop([PM.y,PM.z,PM.tx,PM.ty],axis=1)
         track_no_data=track_no_data.rename(columns={PM.x: "Track_No"})
         new_combined_data=pd.merge(data, track_no_data, how="left", on=["Rec_Seg_ID"])
-        new_combined_data = new_combined_data[new_combined_data.Track_No >= MinHitsTrack]
+        new_combined_data = new_combined_data[new_combined_data.Track_No >= MinHits]
         new_combined_data = new_combined_data.drop(['Track_No'],axis=1)
         new_combined_data=new_combined_data.sort_values(['Rec_Seg_ID',PM.x],ascending=[1,1])
         grand_final_rows=len(new_combined_data.axes[0])
@@ -159,6 +150,8 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         new_combined_data=new_combined_data.rename(columns={PM.z: "z"})
         new_combined_data=new_combined_data.rename(columns={PM.tx: "tx"})
         new_combined_data=new_combined_data.rename(columns={PM.ty: "ty"})
+        print(data)
+        exit()
         new_combined_data.to_csv(required_file_location,index=False)
         data=new_combined_data[['Rec_Seg_ID','z']]
         print(UF.TimeStamp(),'Analysing the data sample in order to understand how many jobs to submit to HTCondor... ',bcolors.ENDC)
