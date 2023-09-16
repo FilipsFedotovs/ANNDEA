@@ -70,7 +70,6 @@ parser.add_argument('--ReqMemory',help="Specifying the length of the HTCondor jo
 parser.add_argument('--MinHits',help="What is the minimum number of hits per track?", default=50,type=int)
 parser.add_argument('--ValMinHits',help="What is the validation minimum number of hits per track?", default=45,type=int)
 parser.add_argument('--Cycle',help="Number of cycles", default='1')
-parser.add_argument('--LocalSize',help="Size", default='10000')
 parser.add_argument('--SpatialOptBound',help="Size", default='200')
 parser.add_argument('--AngularOptBound',help="Size", default='2')
 
@@ -151,6 +150,8 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         new_combined_data=new_combined_data.rename(columns={PM.tx: "tx"})
         new_combined_data=new_combined_data.rename(columns={PM.ty: "ty"})
         new_combined_data.to_csv(required_file_location,index=False)
+        print(UF.TimeStamp(), bcolors.OKGREEN+"The track segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+required_file_location+bcolors.ENDC)
+        print(UF.TimeStamp(),'Analysing the data sample in order to understand how many jobs to submit to HTCondor... ',bcolors.ENDC)
         Sets=new_combined_data.z.unique().size
         Min_x=new_combined_data.x.min()
         Max_x=new_combined_data.x.max()
@@ -164,21 +165,8 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
             JobSets.append([])
             for j in range(x_no):
                 JobSets[i].append(y_no)
-        print(JobSets)
-        exit()
-        data=new_combined_data[['Rec_Seg_ID','z']]
-        print(UF.TimeStamp(),'Analysing the data sample in order to understand how many jobs to submit to HTCondor... ',bcolors.ENDC)
-        data = data.groupby('Rec_Seg_ID')['z'].min()  #Keeping only starting hits for the each track record (we do not require the full information about track in this script)
-        data=data.reset_index()
-        data = data.groupby('z')['Rec_Seg_ID'].count()  #Keeping only starting hits for the each track record (we do not require the full information about track in this script)
-        data=data.reset_index()
-        data=data.sort_values(['z'],ascending=True)
-        data['Sub_Sets']=np.ceil(data['Rec_Seg_ID']/PM.MaxSegments)
-        data['Sub_Sets'] = data['Sub_Sets'].astype(int)
-        data = data.values.tolist()
-        print(UF.TimeStamp(), bcolors.OKGREEN+"The track segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+required_file_location+bcolors.ENDC)
         Meta=UF.TrainingSampleMeta(RecBatchID)
-        Meta.IniTrackSeedMetaData(MaxSLG,MaxSTG,MaxDOCA,MaxAngle,data,MaxSegments,VetoMotherTrack,MaxSeeds,MinHitsTrack)
+        Meta.IniBrickAlignMetaData(Size,ValMinHits,MinHits,SpatialOptBound,AngularOptBound,JobSets,Cycle)
         Meta.UpdateStatus(0)
         print(UF.PickleOperations(RecOutputMeta,'w', Meta)[1])
         print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
@@ -187,16 +175,15 @@ elif os.path.isfile(RecOutputMeta)==True:
     print(UF.TimeStamp(),'Loading previously saved data from ',bcolors.OKBLUE+RecOutputMeta+bcolors.ENDC)
     MetaInput=UF.PickleOperations(RecOutputMeta,'r', 'N/A')
     Meta=MetaInput[0]
-MaxSLG=Meta.MaxSLG
-MaxSTG=Meta.MaxSTG
-MaxDOCA=Meta.MaxDOCA
-MaxAngle=Meta.MaxAngle
+Size=Meta.Size
+ValMinHits=Meta.ValMinHits
+MinHits=Meta.MinHits
+SpatialOptBound=Meta.SpatialOptBound
 JobSets=Meta.JobSets
-MaxSegments=Meta.MaxSegments
-MaxSeeds=Meta.MaxSeeds
-VetoMotherTrack=Meta.VetoMotherTrack
-MinHitsTrack=Meta.MinHitsTrack
-
+AngularOptBound=Meta.AngularOptBound
+Cycle=Meta.Cycles
+print(Meta.Size)
+exit()
 #The function bellow helps to monitor the HTCondor jobs and keep the submission flow
 def AutoPilot(wait_min, interval_min, max_interval_tolerance,program):
      print(UF.TimeStamp(),'Going on an autopilot mode for ',wait_min, 'minutes while checking HTCondor every',interval_min,'min',bcolors.ENDC)
