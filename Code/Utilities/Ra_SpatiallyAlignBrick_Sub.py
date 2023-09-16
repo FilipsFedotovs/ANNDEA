@@ -68,7 +68,7 @@ output_file_location=EOS_DIR+p+'/Temp_'+pfx+'_'+BatchID+'_'+str(i)+'/'+pfx+'_'+B
 print(UF.TimeStamp(), "Modules Have been imported successfully...")
 print(UF.TimeStamp(),'Loading pre-selected data from ',input_file_location)
 data=pd.read_csv(input_file_location,header=0,
-                    usecols=['x','y','z','Rec_Seg_ID','Hit_ID'])[['Rec_Seg_ID','Hit_ID','x','y','z','tx','ty']]
+                    usecols=['x','y','z','Rec_Seg_ID','Hit_ID'])[['Rec_Seg_ID','Hit_ID','x','y','z']]
 final_rows=len(data)
 print(UF.TimeStamp(),'The cleaned data has',final_rows,'hits')
 print(UF.TimeStamp(),'Removing tracks which have less than',ValMinHits,'hits...')
