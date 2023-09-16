@@ -106,6 +106,75 @@ EOSsubDIR=EOS_DIR+'/'+'ANNDEA'
 EOSsubModelDIR=EOSsubDIR+'/'+'Models'
 RecOutputMeta=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_info.pkl'
 required_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/R_'+RecBatchID+'_HITS.csv'
+
+#Defining some functions
+def FitPlate(PlateZ,dx,dy,input_data,Track_ID):
+    change_df = pd.DataFrame([[PlateZ,dx,dy]], columns = ['Plate_ID','dx','dy'])
+    temp_data=input_data[[Track_ID,'x','y','z','Track_Hit_No','Plate_ID']]
+    temp_data=pd.merge(temp_data,change_df,on='Plate_ID',how='left')
+    temp_data['dx'] = temp_data['dx'].fillna(0.0)
+    temp_data['dy'] = temp_data['dy'].fillna(0.0)
+    temp_data['x']=temp_data['x']+temp_data['dx']
+    temp_data['y']=temp_data['y']+temp_data['dy']
+    temp_data=temp_data[[Track_ID,'x','y','z','Track_Hit_No']]
+    Tracks_Head=temp_data[[Track_ID]]
+    Tracks_Head.drop_duplicates(inplace=True)
+    Tracks_List=temp_data.values.tolist() #I find it is much easier to deal with tracks in list format when it comes to fitting
+    Tracks_Head=Tracks_Head.values.tolist()
+    #Bellow we build the track representatation that we can use to fit slopes
+    for bth in Tracks_Head:
+                   bth.append([])
+                   bt=0
+                   trigger=False
+                   while bt<(len(Tracks_List)):
+                       if bth[0]==Tracks_List[bt][0]:
+
+                           bth[1].append(Tracks_List[bt][1:4])
+                           del Tracks_List[bt]
+                           bt-=1
+                           trigger=True
+                       elif trigger:
+                            break
+                       else:
+                            continue
+                       bt+=1
+    for bth in Tracks_Head:
+           x,y,z=[],[],[]
+           for b in bth[1]:
+               x.append(b[0])
+               y.append(b[1])
+               z.append(b[2])
+           tx=np.polyfit(z,x,1)[0]
+           ax=np.polyfit(z,x,1)[1]
+           ty=np.polyfit(z,y,1)[0]
+           ay=np.polyfit(z,y,1)[1]
+           bth.append(ax) #Append x intercept
+           bth.append(tx) #Append x slope
+           bth.append(0) #Append a placeholder slope (for polynomial case)
+           bth.append(ay) #Append x intercept
+           bth.append(ty) #Append x slope
+           bth.append(0) #Append a placeholder slope (for polynomial case)
+           del(bth[1])
+    #Once we get coefficients for all tracks we convert them back to Pandas dataframe and join back to the data
+    Tracks_Head=pd.DataFrame(Tracks_Head, columns = [Track_ID,'ax','t1x','t2x','ay','t1y','t2y'])
+
+    temp_data=pd.merge(temp_data,Tracks_Head,how='inner',on = [Track_ID])
+    #Calculating x and y coordinates of the fitted line for all plates in the track
+    temp_data['new_x']=temp_data['ax']+(temp_data['z']*temp_data['t1x'])+((temp_data['z']**2)*temp_data['t2x'])
+    temp_data['new_y']=temp_data['ay']+(temp_data['z']*temp_data['t1y'])+((temp_data['z']**2)*temp_data['t2y'])
+    #Calculating how far hits deviate from the fit polynomial
+    temp_data['d_x']=temp_data['x']-temp_data['new_x']
+    temp_data['d_y']=temp_data['y']-temp_data['new_y']
+    temp_data['d_r']=temp_data['d_x']**2+temp_data['d_y']**2
+    temp_data['d_r'] = temp_data['d_r'].astype(float)
+    temp_data['d_r']=np.sqrt(temp_data['d_r']) #Absolute distance
+    temp_data=temp_data[[Track_ID,'Track_Hit_No','d_r']]
+    temp_data=temp_data.groupby([Track_ID,'Track_Hit_No']).agg({'d_r':'sum'}).reset_index()
+
+    temp_data=temp_data.agg({'d_r':'sum','Track_Hit_No':'sum'})
+    temp_data=temp_data.values.tolist()
+    fit=temp_data[0]/temp_data[1]
+    return fit
 ########################################     Phase 1 - Create compact source file    #########################################
 print(UF.TimeStamp(),bcolors.BOLD+'Stage 0:'+bcolors.ENDC+' Preparing the source data...')
 
@@ -139,7 +208,11 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         track_no_data=track_no_data.drop([PM.y,PM.z,PM.tx,PM.ty,PM.Hit_ID],axis=1)
         track_no_data=track_no_data.rename(columns={PM.x: "Track_No"})
         new_combined_data=pd.merge(data, track_no_data, how="left", on=["Rec_Seg_ID"])
-        new_combined_data = new_combined_data[new_combined_data.Track_No >= MinHits]
+        new_combined_data = new_combined_data[new_combined_data.Track_No >= ValMinHits]
+        new_combined_data['Plate_ID']=new_combined_data['z'].astype(int)
+        train_data = new_combined_data[new_combined_data.Track_Hit_No >= MinHits]
+        validation_data = new_combined_data[new_combined_data.Track_Hit_No >= ValMinHits]
+        validation_data = validation_data[validation_data.Track_Hit_No < MinHits]
         new_combined_data = new_combined_data.drop(['Track_No'],axis=1)
         new_combined_data=new_combined_data.sort_values(['Rec_Seg_ID',PM.x],ascending=[1,1])
         grand_final_rows=len(new_combined_data.axes[0])
@@ -157,7 +230,12 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         Max_x=new_combined_data.x.max()
         x_no=int(math.ceil((Max_x-Min_x)/Size))
 
-
+        print(UF.TimeStamp(),'Working out the number of plates to align')
+        plates=train_data[['Plate_ID']].sort_values(['Plate_ID'],ascending=[1])
+        plates.drop_duplicates(inplace=True)
+        plates=plates.values.tolist() #I find it is much easier to deal with tracks in list format when it comes to fitting
+        print(UF.TimeStamp(),'There are',len(plates),'plates')
+        print(UF.TimeStamp(),'Initial overall residual value is',bcolors.BOLD+str(round(FitPlate(plates[0][0],0,0,new_combined_data),2))+bcolors.ENDC, 'microns')
         Min_y=new_combined_data.y.min()
         Max_y=new_combined_data.y.max()
         y_no=int(math.ceil((Max_y-Min_y)/Size))
@@ -177,6 +255,7 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         JobSets=[]
         new_combined_data.to_csv(required_file_location,index=False)
         print(UF.TimeStamp(), bcolors.OKGREEN+"The hit data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+required_file_location+bcolors.ENDC)
+        new_combined_data['Plate_ID']=new_combined_data['z'].astype(int)
         for i in range(Sets):
             JobSets.append([])
             for j in range(x_no):
