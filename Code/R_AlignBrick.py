@@ -182,8 +182,6 @@ SpatialOptBound=Meta.SpatialOptBound
 JobSets=Meta.JobSets
 AngularOptBound=Meta.AngularOptBound
 Cycle=Meta.Cycles
-print(Meta.Size)
-exit()
 #The function bellow helps to monitor the HTCondor jobs and keep the submission flow
 def AutoPilot(wait_min, interval_min, max_interval_tolerance,program):
      print(UF.TimeStamp(),'Going on an autopilot mode for ',wait_min, 'minutes while checking HTCondor every',interval_min,'min',bcolors.ENDC)
