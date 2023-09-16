@@ -297,7 +297,7 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         plates=plates.values.tolist() #I find it is much easier to deal with tracks in list format when it comes to fitting
         print(UF.TimeStamp(),'There are',len(plates),'plates')
         print(UF.TimeStamp(),'Initial overall spatial residual value is',bcolors.BOLD+str(round(FitPlate(plates[0][0],0,0,new_combined_data,'Rec_Seg_ID'),2))+bcolors.ENDC, 'microns')
-        print(UF.TimeStamp(),'Initial overall angular residual value is',bcolors.BOLD+str(round(FitPlateAngle(plates[0][0],0,0,new_combined_data,'Rec_Seg_ID'),2))+bcolors.ENDC, 'radians')
+        print(UF.TimeStamp(),'Initial overall residual value is',bcolors.BOLD+str(round(FitPlateAngle(plates[0][0],0,0,new_combined_data,'Rec_Seg_ID')*1000,1))+bcolors.ENDC, 'milliradians')
         Min_y=new_combined_data.y.min()
         Max_y=new_combined_data.y.max()
         y_no=int(math.ceil((Max_y-Min_y)/Size))
