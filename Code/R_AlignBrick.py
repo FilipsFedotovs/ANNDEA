@@ -176,6 +176,8 @@ def FitPlate(PlateZ,dx,dy,input_data,Track_ID):
     fit=temp_data[0]/temp_data[1]
     return fit
 
+
+
 def FitPlateAngle(PlateZ,dtx,dty,input_data,Track_ID):
     change_df = pd.DataFrame([[PlateZ,dtx,dty]], columns = ['Plate_ID','dtx','dty'])
     temp_data=input_data[[Track_ID,'x','y','z','tx','ty','Track_No','Plate_ID']]
@@ -317,13 +319,13 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         JobSets=[]
         new_combined_data.to_csv(required_file_location,index=False)
         print(UF.TimeStamp(), bcolors.OKGREEN+"The hit data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+required_file_location+bcolors.ENDC)
-        new_combined_data['Plate_ID']=new_combined_data['z'].astype(int)
+
         for i in range(Sets):
             JobSets.append([])
             for j in range(x_no):
                 JobSets[i].append(y_no)
         Meta=UF.TrainingSampleMeta(RecBatchID)
-        Meta.IniBrickAlignMetaData(Size,ValMinHits,MinHits,SpatialOptBound,AngularOptBound,JobSets,Cycle)
+        Meta.IniBrickAlignMetaData(Size,ValMinHits,MinHits,SpatialOptBound,AngularOptBound,JobSets,Cycle,plates)
         Meta.UpdateStatus(0)
         print(UF.PickleOperations(RecOutputMeta,'w', Meta)[1])
         print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
@@ -339,6 +341,8 @@ SpatialOptBound=Meta.SpatialOptBound
 JobSets=Meta.JobSets
 AngularOptBound=Meta.AngularOptBound
 Cycle=Meta.Cycles
+plates=Meta.plates
+print(plates)
 #The function bellow helps to monitor the HTCondor jobs and keep the submission flow
 def AutoPilot(wait_min, interval_min, max_interval_tolerance,program):
      print(UF.TimeStamp(),'Going on an autopilot mode for ',wait_min, 'minutes while checking HTCondor every',interval_min,'min',bcolors.ENDC)
