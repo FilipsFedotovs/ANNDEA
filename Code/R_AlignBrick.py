@@ -155,7 +155,16 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         Min_x=new_combined_data.x.min()
         Max_x=new_combined_data.x.max()
         x_no=int(math.ceil((Max_x-Min_x)/Size))
-        print(Min_x, Max_x, x_no)
+
+        Min_y=new_combined_data.y.min()
+        Max_y=new_combined_data.y.max()
+        y_no=int(math.ceil((Max_y-Min_y)/Size))
+        JobSets=[]
+        for i in range(Sets):
+            JobSets.append([])
+            for j in range(x_no):
+                JobSets[i].append(y_no)
+        print(JobSets)
         exit()
         data=new_combined_data[['Rec_Seg_ID','z']]
         print(UF.TimeStamp(),'Analysing the data sample in order to understand how many jobs to submit to HTCondor... ',bcolors.ENDC)
