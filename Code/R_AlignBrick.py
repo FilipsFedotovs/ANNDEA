@@ -339,8 +339,8 @@ def UpdateStatus(status):
 
 if Mode=='RESET':
     print(UF.TimeStamp(),'Performing the cleanup... ',bcolors.ENDC)
-    HTCondorTag="SoftUsed == \"ANNDEA-R-"+RecBatchID+"\""
-    UF.RecCleanUp(AFS_DIR, EOS_DIR, 'R_'+RecBatchID, ['R_'+RecBatchID], HTCondorTag)
+    #HTCondorTag="SoftUsed == \"ANNDEA-R-"+RecBatchID+"\""
+    #UF.RecCleanUp(AFS_DIR, EOS_DIR, 'R_'+RecBatchID, ['R_'+RecBatchID], HTCondorTag)
     FreshStart=False
     UpdateStatus(0)
     Status=0
