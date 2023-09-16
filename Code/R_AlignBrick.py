@@ -174,7 +174,7 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
                 temp_data=temp_data[temp_data.y >= y_min_cut]
                 temp_data=temp_data[temp_data.y < y_max_cut]
                 temp_data.to_csv(required_temp_file_location,index=False)
-                print(UF.TimeStamp(), bcolors.OKGREEN+"The granular hit data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+required_file_location+bcolors.ENDC)
+                print(UF.TimeStamp(), bcolors.OKGREEN+"The granular hit data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+required_temp_file_location+bcolors.ENDC)
         exit()
         JobSets=[]
         new_combined_data.to_csv(required_file_location,index=False)
