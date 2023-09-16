@@ -78,7 +78,6 @@ track_no_data=track_no_data.rename(columns={'x': "Track_No"})
 new_combined_data=pd.merge(data, track_no_data, how="left", on=['Rec_Seg_ID'])
 new_combined_data=new_combined_data.drop(['Hit_ID'],axis=1)
 new_combined_data=new_combined_data.sort_values(['Rec_Seg_ID','z'],ascending=[1,1])
-new_combined_data['Rec_Seg_ID']=new_combined_data['Rec_Seg_ID'].astype(int)
 new_combined_data['Plate_ID']=new_combined_data['z'].astype(int)
 train_data = new_combined_data[new_combined_data.Track_Hit_No >= MinHits]
 validation_data = new_combined_data[new_combined_data.Track_Hit_No >= ValMinHits]
