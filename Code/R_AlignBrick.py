@@ -175,6 +175,68 @@ def FitPlate(PlateZ,dx,dy,input_data,Track_ID):
     temp_data=temp_data.values.tolist()
     fit=temp_data[0]/temp_data[1]
     return fit
+
+def FitPlateAngle(PlateZ,dtx,dty,input_data,Track_ID):
+    change_df = pd.DataFrame([[PlateZ,dtx,dty]], columns = ['Plate_ID','dtx','dty'])
+    temp_data=input_data[[Track_ID,'x','y','z','tx','ty','Track_No','Plate_ID']]
+    temp_data=pd.merge(temp_data,change_df,on='Plate_ID',how='left')
+    temp_data['dtx'] = temp_data['dtx'].fillna(0.0)
+    temp_data['dty'] = temp_data['dty'].fillna(0.0)
+    temp_data['tx']=temp_data['tx']+temp_data['dtx']
+    temp_data['ty']=temp_data['ty']+temp_data['dty']
+    temp_data=temp_data[[Track_ID,'x','y','z','tx','ty','Track_No']]
+    Tracks_Head=temp_data[[Track_ID]]
+    Tracks_Head.drop_duplicates(inplace=True)
+    Tracks_List=temp_data.values.tolist() #I find it is much easier to deal with tracks in list format when it comes to fitting
+    Tracks_Head=Tracks_Head.values.tolist()
+    #Bellow we build the track representatation that we can use to fit slopes
+    for bth in Tracks_Head:
+                   bth.append([])
+                   bt=0
+                   trigger=False
+                   while bt<(len(Tracks_List)):
+                       if bth[0]==Tracks_List[bt][0]:
+
+                           bth[1].append(Tracks_List[bt][1:4])
+                           del Tracks_List[bt]
+                           bt-=1
+                           trigger=True
+                       elif trigger:
+                            break
+                       else:
+                            continue
+                       bt+=1
+    for bth in Tracks_Head:
+           x,y,z=[],[],[]
+           for b in bth[1]:
+               x.append(b[0])
+               y.append(b[1])
+               z.append(b[2])
+           tx=np.polyfit(z,x,1)[0]
+           ty=np.polyfit(z,y,1)[0]
+           bth.append(tx) #Append x slope
+           bth.append(ty) #Append x slope
+           del(bth[1])
+    #Once we get coefficients for all tracks we convert them back to Pandas dataframe and join back to the data
+    Tracks_Head=pd.DataFrame(Tracks_Head, columns = [Track_ID,'ntx','nty'])
+
+    temp_data=pd.merge(temp_data,Tracks_Head,how='inner',on = [Track_ID])
+
+    #Calculating x and y coordinates of the fitted line for all plates in the track
+    #Calculating how far hits deviate from the fit polynomial
+    temp_data['d_tx']=temp_data['tx']-temp_data['ntx']
+    temp_data['d_ty']=temp_data['ty']-temp_data['nty']
+
+    temp_data['d_tr']=temp_data['d_tx']**2+temp_data['d_ty']**2
+    temp_data['d_tr'] = temp_data['d_tr'].astype(float)
+    temp_data['d_tr']=np.sqrt(temp_data['d_tr']) #Absolute distance
+
+    temp_data=temp_data[[Track_ID,'Track_Hit_No','d_tr']]
+    temp_data=temp_data.groupby([Track_ID,'Track_No']).agg({'d_tr':'sum'}).reset_index()
+    temp_data=temp_data.agg({'d_tr':'sum','Track_No':'sum'})
+    temp_data=temp_data.values.tolist()
+    fit=temp_data[0]/temp_data[1]
+    return fit
 ########################################     Phase 1 - Create compact source file    #########################################
 print(UF.TimeStamp(),bcolors.BOLD+'Stage 0:'+bcolors.ENDC+' Preparing the source data...')
 
@@ -234,7 +296,8 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         plates.drop_duplicates(inplace=True)
         plates=plates.values.tolist() #I find it is much easier to deal with tracks in list format when it comes to fitting
         print(UF.TimeStamp(),'There are',len(plates),'plates')
-        print(UF.TimeStamp(),'Initial overall residual value is',bcolors.BOLD+str(round(FitPlate(plates[0][0],0,0,new_combined_data,'Rec_Seg_ID'),2))+bcolors.ENDC, 'microns')
+        print(UF.TimeStamp(),'Initial overall spatial residual value is',bcolors.BOLD+str(round(FitPlate(plates[0][0],0,0,new_combined_data,'Rec_Seg_ID'),2))+bcolors.ENDC, 'microns')
+        print(UF.TimeStamp(),'Initial overall angular residual value is',bcolors.BOLD+str(round(FitPlateAngle(plates[0][0],0,0,new_combined_data,'Rec_Seg_ID'),2))+bcolors.ENDC, 'radians')
         Min_y=new_combined_data.y.min()
         Max_y=new_combined_data.y.max()
         y_no=int(math.ceil((Max_y-Min_y)/Size))
