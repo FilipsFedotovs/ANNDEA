@@ -68,7 +68,6 @@ parser.add_argument('--f',help="Please enter the full path to the file with trac
 parser.add_argument('--Size',help="Split the cross section of the brick in the squares with the size being a length of such a square.", default='0')
 parser.add_argument('--ReqMemory',help="Specifying the length of the HTCondor job walltime. Currently at 'workday' which is 8 hours.", default='2 GB')
 parser.add_argument('--MinHits',help="What is the minimum number of hits per track?", default=50,type=int)
-parser.add_argument('--f',help="Please enter the full path to the file with track reconstruction", default='/afs/cern.ch/work/f/ffedship/public/SHIP/Source_Data/SHIP_Emulsion_Rec_Raw_UR.csv')
 parser.add_argument('--ValMinHits',help="What is the validation minimum number of hits per track?", default=45,type=int)
 parser.add_argument('--Cycle',help="Number of cycles", default='1')
 parser.add_argument('--LocalSize',help="Size", default='10000')
