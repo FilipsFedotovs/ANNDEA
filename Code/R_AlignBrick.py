@@ -157,9 +157,20 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         Max_x=new_combined_data.x.max()
         x_no=int(math.ceil((Max_x-Min_x)/Size))
 
+
         Min_y=new_combined_data.y.min()
         Max_y=new_combined_data.y.max()
         y_no=int(math.ceil((Max_y-Min_y)/Size))
+        for j in range(x_no):
+            for k in range(y_no):
+                x_min_cut=Min_x+(Size*(j+1))
+                x_max_cut=Min_x+(Size*(j+2))
+                y_min_cut=Min_y+(Size*(k+1))
+                y_max_cut=Min_y+(Size*(k+2))
+                print(x_min_cut,x_max_cut,y_min_cut,y_max_cut)
+                x=input()
+        exit()
+                temp_data=new_combined_data[new_combined_data.x >= MinHits]
         JobSets=[]
         for i in range(Sets):
             JobSets.append([])
