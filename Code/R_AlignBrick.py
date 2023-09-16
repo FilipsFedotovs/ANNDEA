@@ -210,9 +210,9 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         new_combined_data=pd.merge(data, track_no_data, how="left", on=["Rec_Seg_ID"])
         new_combined_data = new_combined_data[new_combined_data.Track_No >= ValMinHits]
         new_combined_data['Plate_ID']=new_combined_data['z'].astype(int)
-        train_data = new_combined_data[new_combined_data.Track_Hit_No >= MinHits]
-        validation_data = new_combined_data[new_combined_data.Track_Hit_No >= ValMinHits]
-        validation_data = validation_data[validation_data.Track_Hit_No < MinHits]
+        train_data = new_combined_data[new_combined_data.Track_No >= MinHits]
+        validation_data = new_combined_data[new_combined_data.Track_No >= ValMinHits]
+        validation_data = validation_data[validation_data.Track_No < MinHits]
         new_combined_data = new_combined_data.drop(['Track_No'],axis=1)
         new_combined_data=new_combined_data.sort_values(['Rec_Seg_ID',PM.x],ascending=[1,1])
         grand_final_rows=len(new_combined_data.axes[0])
