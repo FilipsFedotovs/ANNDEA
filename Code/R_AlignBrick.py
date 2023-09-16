@@ -89,7 +89,6 @@ ReqMemory=args.ReqMemory
 Patience=int(args.Patience)
 initial_input_file_location=args.f
 Log=args.Log=='Y'
-SliceData=max(Xmin,Xmax,Ymin,Ymax)>0 #We don't slice data if all values are set to zero simultaneousy (which is the default setting)
 FreshStart=True
 #Establishing paths
 EOSsubDIR=EOS_DIR+'/'+'ANNDEA'
