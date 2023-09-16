@@ -152,7 +152,9 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         new_combined_data=new_combined_data.rename(columns={PM.ty: "ty"})
         new_combined_data.to_csv(required_file_location,index=False)
         Sets=new_combined_data.z.unique().size
-        print(Sets)
+        Min_x=new_combined_data.x.min()
+        Max_x=new_combined_data.x.max()
+        print(Min_x, Max_x)
         exit()
         data=new_combined_data[['Rec_Seg_ID','z']]
         print(UF.TimeStamp(),'Analysing the data sample in order to understand how many jobs to submit to HTCondor... ',bcolors.ENDC)
