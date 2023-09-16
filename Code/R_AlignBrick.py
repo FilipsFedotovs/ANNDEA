@@ -110,13 +110,13 @@ required_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/R_'+RecBatchID+'_HITS.csv'
 #Defining some functions
 def FitPlate(PlateZ,dx,dy,input_data,Track_ID):
     change_df = pd.DataFrame([[PlateZ,dx,dy]], columns = ['Plate_ID','dx','dy'])
-    temp_data=input_data[[Track_ID,'x','y','z','Track_Hit_No','Plate_ID']]
+    temp_data=input_data[[Track_ID,'x','y','z','Track_No','Plate_ID']]
     temp_data=pd.merge(temp_data,change_df,on='Plate_ID',how='left')
     temp_data['dx'] = temp_data['dx'].fillna(0.0)
     temp_data['dy'] = temp_data['dy'].fillna(0.0)
     temp_data['x']=temp_data['x']+temp_data['dx']
     temp_data['y']=temp_data['y']+temp_data['dy']
-    temp_data=temp_data[[Track_ID,'x','y','z','Track_Hit_No']]
+    temp_data=temp_data[[Track_ID,'x','y','z','Track_No']]
     Tracks_Head=temp_data[[Track_ID]]
     Tracks_Head.drop_duplicates(inplace=True)
     Tracks_List=temp_data.values.tolist() #I find it is much easier to deal with tracks in list format when it comes to fitting
@@ -168,10 +168,10 @@ def FitPlate(PlateZ,dx,dy,input_data,Track_ID):
     temp_data['d_r']=temp_data['d_x']**2+temp_data['d_y']**2
     temp_data['d_r'] = temp_data['d_r'].astype(float)
     temp_data['d_r']=np.sqrt(temp_data['d_r']) #Absolute distance
-    temp_data=temp_data[[Track_ID,'Track_Hit_No','d_r']]
-    temp_data=temp_data.groupby([Track_ID,'Track_Hit_No']).agg({'d_r':'sum'}).reset_index()
+    temp_data=temp_data[[Track_ID,'Track_No','d_r']]
+    temp_data=temp_data.groupby([Track_ID,'Track_No']).agg({'d_r':'sum'}).reset_index()
 
-    temp_data=temp_data.agg({'d_r':'sum','Track_Hit_No':'sum'})
+    temp_data=temp_data.agg({'d_r':'sum','Track_No':'sum'})
     temp_data=temp_data.values.tolist()
     fit=temp_data[0]/temp_data[1]
     return fit
@@ -213,7 +213,6 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         train_data = new_combined_data[new_combined_data.Track_No >= MinHits]
         validation_data = new_combined_data[new_combined_data.Track_No >= ValMinHits]
         validation_data = validation_data[validation_data.Track_No < MinHits]
-        new_combined_data = new_combined_data.drop(['Track_No'],axis=1)
         new_combined_data=new_combined_data.sort_values(['Rec_Seg_ID',PM.x],ascending=[1,1])
         grand_final_rows=len(new_combined_data.axes[0])
         print(UF.TimeStamp(),'The cleaned data has ',grand_final_rows,' hits')
