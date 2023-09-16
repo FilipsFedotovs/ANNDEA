@@ -168,14 +168,12 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
                 x_max_cut=Min_x+(Size*(j+2))
                 y_min_cut=Min_y+(Size*(k+1))
                 y_max_cut=Min_y+(Size*(k+2))
-                print(x_min_cut,x_max_cut,y_min_cut,y_max_cut)
                 temp_data=new_combined_data[new_combined_data.x >= x_min_cut]
                 temp_data=temp_data[temp_data.x < x_max_cut]
                 temp_data=temp_data[temp_data.y >= y_min_cut]
                 temp_data=temp_data[temp_data.y < y_max_cut]
                 temp_data.to_csv(required_temp_file_location,index=False)
                 print(UF.TimeStamp(), bcolors.OKGREEN+"The granular hit data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+required_temp_file_location+bcolors.ENDC)
-        exit()
         JobSets=[]
         new_combined_data.to_csv(required_file_location,index=False)
         print(UF.TimeStamp(), bcolors.OKGREEN+"The hit data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+required_file_location+bcolors.ENDC)
