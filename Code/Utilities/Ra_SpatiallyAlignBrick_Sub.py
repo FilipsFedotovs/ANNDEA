@@ -42,6 +42,8 @@ pfx=args.pfx
 Size=float(args.Size)
 OptBound=float(args.OptBound)
 BatchID=args.BatchID
+MinHits=args.MinHits
+ValMinHits=args.ValMinHits
 ########################################     Preset framework parameters    #########################################
 #Loading Directory locations
 EOS_DIR=args.EOS
@@ -66,9 +68,24 @@ output_file_location=EOS_DIR+p+'/Temp_'+pfx+'_'+BatchID+'_'+str(i)+'/'+pfx+'_'+B
 print(UF.TimeStamp(), "Modules Have been imported successfully...")
 print(UF.TimeStamp(),'Loading pre-selected data from ',input_file_location)
 data=pd.read_csv(input_file_location,header=0,
-                    usecols=['x','y','z','Rec_Seg_ID'])[['x','y','z','Rec_Seg_ID']]
+                    usecols=['x','y','z','Rec_Seg_ID','Hit_ID'])[['Rec_Seg_ID','Hit_ID','x','y','z','tx','ty']]
+final_rows=len(data)
+print(UF.TimeStamp(),'The cleaned data has',final_rows,'hits')
+print(UF.TimeStamp(),'Removing tracks which have less than',ValMinHits,'hits...')
+track_no_data=data.groupby(['Rec_Seg_ID'],as_index=False).count()
+track_no_data=track_no_data.drop(['Hit_ID','y','z','tx','ty'],axis=1)
+track_no_data=track_no_data.rename(columns={'x': "Track_No"})
+new_combined_data=pd.merge(data, track_no_data, how="left", on=['Rec_Seg_ID'])
+new_combined_data=new_combined_data.drop(['Hit_ID','tx','ty'],axis=1)
+new_combined_data=new_combined_data.sort_values(['Rec_Seg_ID','z'],ascending=[1,1])
+new_combined_data['Rec_Seg_ID']=new_combined_data['Rec_Seg_ID'].astype(int)
+new_combined_data['Plate_ID']=new_combined_data['z'].astype(int)
+train_data = new_combined_data[new_combined_data.Track_Hit_No >= MinHits]
+validation_data = new_combined_data[new_combined_data.Track_Hit_No >= ValMinHits]
+validation_data = validation_data[validation_data.Track_Hit_No < MinHits]
+print(train_data)
+print(validation_data)
 
-print(data)
 #
 # UF.LogOperations(output_file_location,'a',result_list) #Writing the remaining data into the csv
 # UF.LogOperations(output_result_location,'w',[])
