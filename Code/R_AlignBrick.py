@@ -151,7 +151,7 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         new_combined_data=new_combined_data.rename(columns={PM.tx: "tx"})
         new_combined_data=new_combined_data.rename(columns={PM.ty: "ty"})
         new_combined_data.to_csv(required_file_location,index=False)
-        Sets=new_combined_data.unique().size
+        Sets=new_combined_data.z.unique().size
         print(Sets)
         exit()
         data=new_combined_data[['Rec_Seg_ID','z']]
