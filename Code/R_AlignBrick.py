@@ -170,7 +170,7 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
                 print(x_min_cut,x_max_cut,y_min_cut,y_max_cut)
                 x=input()
         exit()
-                temp_data=new_combined_data[new_combined_data.x >= MinHits]
+                #temp_data=new_combined_data[new_combined_data.x >= MinHits]
         JobSets=[]
         for i in range(Sets):
             JobSets.append([])
