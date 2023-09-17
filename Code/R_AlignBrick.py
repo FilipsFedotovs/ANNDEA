@@ -564,6 +564,9 @@ while Status<len(Program):
         data['k']=(data['y']-data.y.min())/Size
         data['j']=data['j'].apply(np.floor)
         data['k']=data['k'].apply(np.floor)
+        print(data.dtypes)
+        print(result.dtypes)
+        exit()
         data=pd.merge(data,result,on=['Plate_ID','j','k'],how='left')
         print(data)
         exit()
