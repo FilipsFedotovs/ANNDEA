@@ -160,6 +160,7 @@ track_no_data=track_no_data.rename(columns={'x': "Track_No"})
 new_combined_data=pd.merge(data, track_no_data, how="left", on=['Rec_Seg_ID'])
 new_combined_data=new_combined_data.drop(['Hit_ID'],axis=1)
 new_combined_data=new_combined_data.sort_values(['Rec_Seg_ID','z'],ascending=[1,1])
+new_combined_data['Plate_ID']=new_combined_data['z'].astype(int)
 train_data = new_combined_data[new_combined_data.Track_No >= MinHits]
 validation_data = new_combined_data[new_combined_data.Track_No >= ValMinHits]
 validation_data = validation_data[validation_data.Track_No < MinHits]
@@ -169,13 +170,13 @@ print(validation_data)
 
 am=[i,j,k]
 def FitPlateFixedX(x):
-    return FitPlate(p[i],x,0,train_data,'Rec_Seg_ID')
+    return FitPlate(Plate[i],x,0,train_data,'Rec_Seg_ID')
 def FitPlateFixedY(x):
-    return FitPlate(p[i],0,x,train_data,'Rec_Seg_ID')
+    return FitPlate(Plate[i],0,x,train_data,'Rec_Seg_ID')
 def FitPlateValX(x):
-    return FitPlate(p[i],x,0,validation_data,'Rec_Seg_ID')
+    return FitPlate(Plate[i],x,0,validation_data,'Rec_Seg_ID')
 def FitPlateValY(x):
-    return FitPlate(p[i],0,x,validation_data,'Rec_Seg_ID')
+    return FitPlate(Plate[i],0,x,validation_data,'Rec_Seg_ID')
 res = minimize_scalar(FitPlateFixedX, bounds=(-OptBound, OptBound), method='bounded')
 print(res)
 exit()
