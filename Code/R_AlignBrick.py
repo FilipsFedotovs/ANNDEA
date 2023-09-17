@@ -544,7 +544,8 @@ while Status<len(Program):
         else:
              Status=20
              break
-    # elif Program[Status]=='Custom - PickR':
+    elif Program[Status][:21]=='Custom: Spatial Cycle':
+        print('we are here')
     #     print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
     #     print(UF.TimeStamp(),bcolors.BOLD+'Stage '+str(Status)+':'+bcolors.ENDC+' Collecting and de-duplicating the results from stage 2')
     #     min_i=0
