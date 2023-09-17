@@ -496,8 +496,8 @@ print(UF.TimeStamp(),'Current status is ',Status,bcolors.ENDC)
 ################ Set the execution sequence for the script
 Program=[]
 
-UpdateStatus(0)
-Status=0
+# UpdateStatus(0)
+# Status=0
 
 if Mode=='CLEANUP':
     UpdateStatus(19)
