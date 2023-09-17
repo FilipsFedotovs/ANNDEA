@@ -69,8 +69,6 @@ Plate=ast.literal_eval(args.Plate)
 def FitPlate(PlateZ,dx,dy,input_data,Track_ID):
     change_df = pd.DataFrame([[PlateZ,dx,dy]], columns = ['Plate_ID','dx','dy'])
     temp_data=input_data[[Track_ID,'x','y','z','Track_No','Plate_ID']]
-    print(change_df)
-    print(temp_data)
     temp_data=pd.merge(temp_data,change_df,on='Plate_ID',how='left')
     temp_data['dx'] = temp_data['dx'].fillna(0.0)
     temp_data['dy'] = temp_data['dy'].fillna(0.0)
