@@ -573,6 +573,7 @@ while Status<len(Program):
         data['j'] = data['j'].astype(int)
         data['k'] = data['k'].astype(int)
         data=pd.merge(data,result,on=['Plate_ID','j','k'],how='left')
+        print(data)
         data['dx'] = data['dx'].fillna(0.0)
         data['dy'] = data['dy'].fillna(0.0)
         data['x']=data['x']+data['dx']
