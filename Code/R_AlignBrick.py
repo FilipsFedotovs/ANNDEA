@@ -560,6 +560,7 @@ while Status<len(Program):
         result=result[['Plate_ID','j','k','dx','dy']]
         required_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/R_'+RecBatchID+'_HITS.csv'
         data=pd.read_csv(required_file_location,header=0)
+        print(data)
         data['j']=(data['x']-data.x.min())/Size
         data['k']=(data['y']-data.y.min())/Size
         data['j']=data['j'].apply(np.floor)
