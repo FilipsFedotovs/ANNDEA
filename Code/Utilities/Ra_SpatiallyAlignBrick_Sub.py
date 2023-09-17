@@ -65,6 +65,8 @@ import numpy as np
 from scipy.optimize import minimize_scalar
 import ast
 Plates=ast.literal_eval(args.Plates)
+print(Plates)
+exit()
 #Define some functions
 def FitPlate(PlateZ,dx,dy,input_data,Track_ID):
     change_df = pd.DataFrame([[PlateZ,dx,dy]], columns = ['Plate_ID','dx','dy'])
