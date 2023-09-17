@@ -167,7 +167,7 @@ validation_data = validation_data[validation_data.Track_No < MinHits]
 
 
 
-am=[i,j,k]
+am=[Plate[i][0],j,k]
 
 def FitPlateFixedX(x):
     return FitPlate(Plate[i][0],x,0,train_data,'Rec_Seg_ID')
