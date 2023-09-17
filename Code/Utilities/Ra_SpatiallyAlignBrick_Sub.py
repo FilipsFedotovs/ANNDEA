@@ -65,8 +65,6 @@ import numpy as np
 from scipy.optimize import minimize_scalar
 import ast
 Plate=ast.literal_eval(args.Plate)
-print(Plate)
-exit()
 #Define some functions
 def FitPlate(PlateZ,dx,dy,input_data,Track_ID):
     change_df = pd.DataFrame([[PlateZ,dx,dy]], columns = ['Plate_ID','dx','dy'])
@@ -168,18 +166,20 @@ validation_data = new_combined_data[new_combined_data.Track_No >= ValMinHits]
 validation_data = validation_data[validation_data.Track_No < MinHits]
 print(train_data)
 print(validation_data)
-exit()
+
 
 am=[i,j,k]
 def FitPlateFixedX(x):
-    return FitPlate(p[0],x,0,train_data)
+    return FitPlate(p[i],x,0,train_data)
 def FitPlateFixedY(x):
-    return FitPlate(p[0],0,x,train_data)
+    return FitPlate(p[i],0,x,train_data)
 def FitPlateValX(x):
-    return FitPlate(p[0],x,0,validation_data)
+    return FitPlate(p[i],x,0,validation_data)
 def FitPlateValY(x):
-    return FitPlate(p[0],0,x,validation_data)
+    return FitPlate(p[i],0,x,validation_data)
 res = minimize_scalar(FitPlateFixedX, bounds=(-OptBound, OptBound), method='bounded')
+print(res)
+exit()
 validation_data=AlignPlate(p[0],res.x,0,validation_data)
 am.append(res.x)
 FitFix = FitPlateFixedX(res.x)
