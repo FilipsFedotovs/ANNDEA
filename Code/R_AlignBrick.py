@@ -567,17 +567,17 @@ while Status<len(Program):
         data=pd.merge(data,result,on=['Plate_ID','j','k'],how='left')
         print(data)
         exit()
-        raw_data['dx'] = raw_data['dx'].fillna(0.0)
-        raw_data['dy'] = raw_data['dy'].fillna(0.0)
-        raw_data['x']=raw_data['x']+raw_data['dx']
-        raw_data['y']=raw_data['y']+raw_data['dy']
-        raw_data['X_bin']=np.ceil((raw_data['x']-Min_X)/LocalSize).astype(int)
-        raw_data['Y_bin']=np.ceil((raw_data['y']-Min_Y)/LocalSize).astype(int)
-        raw_data.drop(['dx','dy'],axis=1, inplace=True)
-    data=raw_data.dropna(subset=[Track_ID])
-        print(data)
-        exit()
-        print(UF.TimeStamp(),'Analysing the data sample in order to understand how many jobs to submit to HTCondor... ',bcolors.ENDC)
+        # raw_data['dx'] = raw_data['dx'].fillna(0.0)
+        # raw_data['dy'] = raw_data['dy'].fillna(0.0)
+        # raw_data['x']=raw_data['x']+raw_data['dx']
+        # raw_data['y']=raw_data['y']+raw_data['dy']
+        # raw_data['X_bin']=np.ceil((raw_data['x']-Min_X)/LocalSize).astype(int)
+        # raw_data['Y_bin']=np.ceil((raw_data['y']-Min_Y)/LocalSize).astype(int)
+        # raw_data.drop(['dx','dy'],axis=1, inplace=True)
+        # data=raw_data.dropna(subset=[Track_ID])
+        # print(data)
+        # exit()
+        # print(UF.TimeStamp(),'Analysing the data sample in order to understand how many jobs to submit to HTCondor... ',bcolors.ENDC)
     #     data=pd.read_csv(required_file_location,header=0,
     #                 usecols=['z','Rec_Seg_ID'])
     #     data = data.groupby('Rec_Seg_ID')['z'].min()  #Keeping only starting hits for the each track record (we do not require the full information about track in this script)
