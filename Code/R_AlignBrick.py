@@ -303,7 +303,6 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         Min_y=new_combined_data.y.min()
         Max_y=new_combined_data.y.max()
         y_no=int(math.ceil((Max_y-Min_y)/Size))
-        print(new_combined_data)
         for j in range(x_no):
             for k in range(y_no):
                 required_temp_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/R_'+RecBatchID+'_HITS_'+str(j)+'_'+str(k)+'.csv'
@@ -311,7 +310,6 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
                 x_max_cut=Min_x+(Size*(j+1))
                 y_min_cut=Min_y+(Size*k)
                 y_max_cut=Min_y+(Size*(k+1))
-                print(x_min_cut,x_max_cut,y_min_cut,y_max_cut)
                 temp_data=new_combined_data[new_combined_data.x >= x_min_cut]
                 temp_data=temp_data[temp_data.x < x_max_cut]
                 temp_data=temp_data[temp_data.y >= y_min_cut]
@@ -517,7 +515,6 @@ elif type(JobSets[0]) is int:
 elif type(JobSets[0][0]) is int:
             for lp in JobSets:
                 TotJobs+=np.sum(lp)
-print(JobSets)
 for c in range(Cycle):
     prog_entry.append(' Sending tracks to the HTCondor, so track segment combinations can be formed...')
     prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','SpatialAlignmentResult_'+str(c),'Ra','.csv',RecBatchID,JobSets,'Ra_SpatiallyAlignBrick_Sub.py'])
@@ -546,15 +543,16 @@ while Status<len(Program):
              Status=20
              break
     elif Program[Status][:21]=='Custom: Spatial Cycle':
-        print(Program[Status][21:])
-        exit()
         print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
-        print(UF.TimeStamp(),bcolors.BOLD+'Stage '+str(Status)+':'+bcolors.ENDC+' Collecting results from the')
-        min_i=0
-        #for i in range(0,len(JobSets)): #//Temporarily measure to save space || Update 13/08/23 - I have commented it out as it creates more problems than solves it
-        #           test_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RUTr1a'+'_'+RecBatchID+'_'+str(i)+'/RUTr1a_'+RecBatchID+'_SelectedSeeds_'+str(i)+'_'+str(0)+'_'+str(0)+'.csv'
-        #           if os.path.isfile(test_file_location):
-        #                min_i=max(0,i-1)
+        print(UF.TimeStamp(),bcolors.BOLD+'Stage '+str(Status)+':'+bcolors.ENDC+' Collecting results from the previous step')
+        result=[]
+        for i in range(0,len(JobSets)): #//Temporarily measure to save space || Update 13/08/23 - I have commented it out as it creates more problems than solves it
+            for j in range(len(JobSets[i])):
+                for k in range(JobSets[i][j]):
+                  result_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_Ra'+'_'+RecBatchID+'_'+str(i)+'/Ra_'+RecBatchID+'_SpatialAlignmentResult_'+str(c)+'_'+str(i)+'_'+str(j)+'_'+str(k)+'.csv'
+                  result.append(UF.LogOperations(result_file_location,'r','N/A'))
+        print(result)
+        exit()
         print(UF.TimeStamp(),'Analysing the data sample in order to understand how many jobs to submit to HTCondor... ',bcolors.ENDC)
     #     data=pd.read_csv(required_file_location,header=0,
     #                 usecols=['z','Rec_Seg_ID'])
