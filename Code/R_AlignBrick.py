@@ -303,6 +303,7 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         Min_y=new_combined_data.y.min()
         Max_y=new_combined_data.y.max()
         y_no=int(math.ceil((Max_y-Min_y)/Size))
+        print(new_combined_data)
         for j in range(x_no):
             for k in range(y_no):
                 required_temp_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/R_'+RecBatchID+'_HITS_'+str(j)+'_'+str(k)+'.csv'
@@ -310,6 +311,8 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
                 x_max_cut=Min_x+(Size*(j+2))
                 y_min_cut=Min_y+(Size*(k+1))
                 y_max_cut=Min_y+(Size*(k+2))
+                print(x_min_cut,x_max_cut,y_min_cut,y_max_cut)
+                exit()
                 temp_data=new_combined_data[new_combined_data.x >= x_min_cut]
                 temp_data=temp_data[temp_data.x < x_max_cut]
                 temp_data=temp_data[temp_data.y >= y_min_cut]
