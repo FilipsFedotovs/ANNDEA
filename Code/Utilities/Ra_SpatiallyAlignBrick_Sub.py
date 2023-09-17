@@ -64,8 +64,8 @@ import pandas as pd #We use Panda for a routine data processing
 import numpy as np
 from scipy.optimize import minimize_scalar
 import ast
-Plates=ast.literal_eval(args.Plates)
-print(Plates)
+Plate=ast.literal_eval(args.Plate)
+print(Plate)
 exit()
 #Define some functions
 def FitPlate(PlateZ,dx,dy,input_data,Track_ID):
