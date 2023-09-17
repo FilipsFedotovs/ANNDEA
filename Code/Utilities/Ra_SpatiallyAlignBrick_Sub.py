@@ -172,13 +172,13 @@ print(validation_data)
 
 am=[i,j,k]
 def FitPlateFixedX(x):
-    return FitPlate(Plate[i],x,0,train_data,'Rec_Seg_ID')
+    return FitPlate(Plate[i][0],x,0,train_data,'Rec_Seg_ID')
 def FitPlateFixedY(x):
-    return FitPlate(Plate[i],0,x,train_data,'Rec_Seg_ID')
+    return FitPlate(Plate[i][0],0,x,train_data,'Rec_Seg_ID')
 def FitPlateValX(x):
-    return FitPlate(Plate[i],x,0,validation_data,'Rec_Seg_ID')
+    return FitPlate(Plate[i][0],x,0,validation_data,'Rec_Seg_ID')
 def FitPlateValY(x):
-    return FitPlate(Plate[i],0,x,validation_data,'Rec_Seg_ID')
+    return FitPlate(Plate[i][0],0,x,validation_data,'Rec_Seg_ID')
 res = minimize_scalar(FitPlateFixedX, bounds=(-OptBound, OptBound), method='bounded')
 print(res)
 exit()
