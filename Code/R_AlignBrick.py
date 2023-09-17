@@ -546,15 +546,16 @@ while Status<len(Program):
              Status=20
              break
     elif Program[Status][:21]=='Custom: Spatial Cycle':
-        print('we are here')
-    #     print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
-    #     print(UF.TimeStamp(),bcolors.BOLD+'Stage '+str(Status)+':'+bcolors.ENDC+' Collecting and de-duplicating the results from stage 2')
-    #     min_i=0
-    #     #for i in range(0,len(JobSets)): #//Temporarily measure to save space || Update 13/08/23 - I have commented it out as it creates more problems than solves it
-    #     #           test_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RUTr1a'+'_'+RecBatchID+'_'+str(i)+'/RUTr1a_'+RecBatchID+'_SelectedSeeds_'+str(i)+'_'+str(0)+'_'+str(0)+'.csv'
-    #     #           if os.path.isfile(test_file_location):
-    #     #                min_i=max(0,i-1)
-    #     print(UF.TimeStamp(),'Analysing the data sample in order to understand how many jobs to submit to HTCondor... ',bcolors.ENDC)
+        print(Program[Status][21:])
+        exit()
+        print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
+        print(UF.TimeStamp(),bcolors.BOLD+'Stage '+str(Status)+':'+bcolors.ENDC+' Collecting results from the')
+        min_i=0
+        #for i in range(0,len(JobSets)): #//Temporarily measure to save space || Update 13/08/23 - I have commented it out as it creates more problems than solves it
+        #           test_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RUTr1a'+'_'+RecBatchID+'_'+str(i)+'/RUTr1a_'+RecBatchID+'_SelectedSeeds_'+str(i)+'_'+str(0)+'_'+str(0)+'.csv'
+        #           if os.path.isfile(test_file_location):
+        #                min_i=max(0,i-1)
+        print(UF.TimeStamp(),'Analysing the data sample in order to understand how many jobs to submit to HTCondor... ',bcolors.ENDC)
     #     data=pd.read_csv(required_file_location,header=0,
     #                 usecols=['z','Rec_Seg_ID'])
     #     data = data.groupby('Rec_Seg_ID')['z'].min()  #Keeping only starting hits for the each track record (we do not require the full information about track in this script)
