@@ -308,7 +308,7 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
             for k in range(y_no):
                 required_temp_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/R_'+RecBatchID+'_HITS_'+str(j)+'_'+str(k)+'.csv'
                 x_min_cut=Min_x+(Size*j)
-                x_max_cut=Min_x+(Size*j+1)
+                x_max_cut=Min_x+(Size*(j+1))
                 y_min_cut=Min_y+(Size*k)
                 y_max_cut=Min_y+(Size*(k+1))
                 print(x_min_cut,x_max_cut,y_min_cut,y_max_cut)
