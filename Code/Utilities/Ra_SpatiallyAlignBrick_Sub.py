@@ -163,7 +163,7 @@ validation_data = new_combined_data[new_combined_data.Track_No >= ValMinHits]
 validation_data = validation_data[validation_data.Track_No < MinHits]
 print(train_data)
 print(validation_data)
-
+exit()
 
 am=[i,j,k]
 def FitPlateFixedX(x):
