@@ -324,7 +324,6 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
             JobSets.append([])
             for j in range(x_no):
                 JobSets[i].append(y_no)
-        print(JobSets)
         Meta=UF.TrainingSampleMeta(RecBatchID)
         Meta.IniBrickAlignMetaData(Size,ValMinHits,MinHits,SpatialOptBound,AngularOptBound,JobSets,Cycle,plates)
         Meta.UpdateStatus(0)
@@ -552,12 +551,12 @@ while Status<len(Program):
                   result_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_Ra'+'_'+RecBatchID+'_'+str(i)+'/Ra_'+RecBatchID+'_SpatialAlignmentResult_'+Program[Status][22:]+'_'+str(i)+'_'+str(j)+'_'+str(k)+'.csv'
                   result.append(UF.LogOperations(result_file_location,'r','N/A')[0])
         result=pd.DataFrame(result,columns=['Plate_ID','j','k','dx','FitX','ValFitX','dy','FitY','ValFitY'])
-        log_result=result[['Plate_ID','j','k']]
+        log_result=result
         log_result['Cycle']=Program[Status][22:]
         if Program[Status][22:]=='0':
-            log_result.to_csv(EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv',mode="w")
+            log_result.to_csv(EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv',mode="w",index=False)
         else:
-            log_result.to_csv(EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv',mode="a")
+            log_result.to_csv(EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv',mode="a",index=False)
         result=result[['Plate_ID','j','k','dx','dy']]
         required_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/R_'+RecBatchID+'_HITS.csv'
         data=pd.read_csv(required_file_location,header=0)
@@ -565,6 +564,17 @@ while Status<len(Program):
         data['k']=(data['y']-data.y.min())/Size
         data['j']=data['j'].apply(np.floor)
         data['k']=data['k'].apply(np.floor)
+        data=pd.merge(data,result,on=['Plate_ID','j','k'],how='left')
+        print(data)
+        exit()
+        raw_data['dx'] = raw_data['dx'].fillna(0.0)
+        raw_data['dy'] = raw_data['dy'].fillna(0.0)
+        raw_data['x']=raw_data['x']+raw_data['dx']
+        raw_data['y']=raw_data['y']+raw_data['dy']
+        raw_data['X_bin']=np.ceil((raw_data['x']-Min_X)/LocalSize).astype(int)
+        raw_data['Y_bin']=np.ceil((raw_data['y']-Min_Y)/LocalSize).astype(int)
+        raw_data.drop(['dx','dy'],axis=1, inplace=True)
+    data=raw_data.dropna(subset=[Track_ID])
         print(data)
         exit()
         print(UF.TimeStamp(),'Analysing the data sample in order to understand how many jobs to submit to HTCondor... ',bcolors.ENDC)
