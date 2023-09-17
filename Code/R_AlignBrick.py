@@ -326,6 +326,7 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
             JobSets.append([])
             for j in range(x_no):
                 JobSets[i].append(y_no)
+        print(JobSets)
         Meta=UF.TrainingSampleMeta(RecBatchID)
         Meta.IniBrickAlignMetaData(Size,ValMinHits,MinHits,SpatialOptBound,AngularOptBound,JobSets,Cycle,plates)
         Meta.UpdateStatus(0)
@@ -516,7 +517,7 @@ elif type(JobSets[0]) is int:
 elif type(JobSets[0][0]) is int:
             for lp in JobSets:
                 TotJobs+=np.sum(lp)
-
+print(JobSets)
 for c in range(Cycle):
     prog_entry.append(' Sending tracks to the HTCondor, so track segment combinations can be formed...')
     prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','SpatialAlignmentResult_'+str(c),'Ra','.csv',RecBatchID,JobSets,'Ra_SpatiallyAlignBrick_Sub.py'])
