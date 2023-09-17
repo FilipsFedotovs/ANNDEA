@@ -561,8 +561,10 @@ while Status<len(Program):
         result=result[['Plate_ID','j','k','dx','dy']]
         required_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/R_'+RecBatchID+'_HITS.csv'
         data=pd.read_csv(required_file_location,header=0)
-        data['j']=data['x']-data.x.min()
-        data['k']=data['y']-data.y.min()
+        data['j']=(data['x']-data.x.min())/Size
+        data['k']=(data['y']-data.y.min())/Size
+        data['j'].apply(np.ceil)
+        data['k'].apply(np.ceil)
         print(data)
         exit()
         print(UF.TimeStamp(),'Analysing the data sample in order to understand how many jobs to submit to HTCondor... ',bcolors.ENDC)
