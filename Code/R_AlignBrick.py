@@ -560,7 +560,7 @@ while Status<len(Program):
         result=result[['Plate_ID','j','k','dx','dy']]
         required_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/R_'+RecBatchID+'_HITS.csv'
         data=pd.read_csv(required_file_location,header=0)
-        print(data)
+
         data['j']=(data['x']-data.x.min())/Size
         data['k']=(data['y']-data.y.min())/Size
         data['j']=data['j'].apply(np.floor)
@@ -573,15 +573,39 @@ while Status<len(Program):
         data['j'] = data['j'].astype(int)
         data['k'] = data['k'].astype(int)
         data=pd.merge(data,result,on=['Plate_ID','j','k'],how='left')
-        print(data)
+
         data['dx'] = data['dx'].fillna(0.0)
         data['dy'] = data['dy'].fillna(0.0)
         data['x']=data['x']+data['dx']
         data['y']=data['y']+data['dy']
         data.drop(['dx','dy','k','j'],axis=1, inplace=True)
-
-        print(data)
+        print(UF.TimeStamp(),'Initial overall spatial residual value is',bcolors.BOLD+str(round(FitPlate(plates[0][0],0,0,data,'Rec_Seg_ID'),2))+bcolors.ENDC, 'microns')
+        print(UF.TimeStamp(),'Initial overall residual value is',bcolors.BOLD+str(round(FitPlateAngle(plates[0][0],0,0,data,'Rec_Seg_ID')*1000,1))+bcolors.ENDC, 'milliradians')
+        Min_y=data.y.min()
+        Max_y=data.y.max()
+        y_no=int(math.ceil((Max_y-Min_y)/Size))
+        for j in range(x_no):
+            for k in range(y_no):
+                required_temp_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/R_'+RecBatchID+'_HITS_'+str(j)+'_'+str(k)+'.csv'
+                x_min_cut=Min_x+(Size*j)
+                x_max_cut=Min_x+(Size*(j+1))
+                y_min_cut=Min_y+(Size*k)
+                y_max_cut=Min_y+(Size*(k+1))
+                temp_data=data[data.x >= x_min_cut]
+                temp_data=temp_data[temp_data.x < x_max_cut]
+                temp_data=temp_data[temp_data.y >= y_min_cut]
+                temp_data=temp_data[temp_data.y < y_max_cut]
+                #temp_data.to_csv(required_temp_file_location,index=False)
+                print(UF.TimeStamp(), bcolors.OKGREEN+"The granular hit data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+required_temp_file_location+bcolors.ENDC)
+        #data.to_csv(required_file_location,index=False)
+        print(UF.TimeStamp(), bcolors.OKGREEN+"The hit data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+required_file_location+bcolors.ENDC)
+        print(Status)
         exit()
+        #Meta.UpdateStatus(Status+1)
+
+
+
+
         # print(UF.TimeStamp(),'Analysing the data sample in order to understand how many jobs to submit to HTCondor... ',bcolors.ENDC)
     #     data=pd.read_csv(required_file_location,header=0,
     #                 usecols=['z','Rec_Seg_ID'])
