@@ -504,7 +504,7 @@ if Mode=='CLEANUP':
     Status=19
 
 # ###### Stage 2
-prog_entry=[]
+
 TotJobs=0
 
 if type(JobSets) is int:
@@ -515,6 +515,7 @@ elif type(JobSets[0][0]) is int:
             for lp in JobSets:
                 TotJobs+=np.sum(lp)
 for c in range(Cycle):
+    prog_entry=[]
     prog_entry.append(' Sending tracks to the HTCondor, so track segment combinations can be formed...')
     prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','SpatialAlignmentResult_'+str(c),'Ra','.csv',RecBatchID,JobSets,'Ra_SpatiallyAlignBrick_Sub.py'])
     prog_entry.append([ " --MinHits ", " --ValMinHits "," --Size ", " --OptBound ", " --Plate "])
