@@ -23,6 +23,7 @@ parser.add_argument('--pfx',help="Path to the output file name", default='')
 parser.add_argument('--sfx',help="Path to the output file name", default='')
 parser.add_argument('--ValMinHits',help="Maximum allowed longitudinal gap value between segments", default='8000',type=int)
 parser.add_argument('--MinHits',help="Maximum allowed transverse gap value between segments per SLG length", default='1000',type=int)
+parser.add_argument('--Plates',help="Maximum allowed transverse gap value between segments per SLG length", default='[]')
 parser.add_argument('--EOS',help="EOS directory location", default='.')
 parser.add_argument('--AFS',help="AFS directory location", default='.')
 parser.add_argument('--BatchID',help="Give this training sample batch an ID", default='SHIP_UR_v1')
@@ -44,6 +45,7 @@ OptBound=float(args.OptBound)
 BatchID=args.BatchID
 MinHits=args.MinHits
 ValMinHits=args.ValMinHits
+
 ########################################     Preset framework parameters    #########################################
 #Loading Directory locations
 EOS_DIR=args.EOS
@@ -61,7 +63,8 @@ import UtilityFunctions as UF #This is where we keep routine utility functions
 import pandas as pd #We use Panda for a routine data processing
 import numpy as np
 from scipy.optimize import minimize_scalar
-
+import ast
+Plates=ast.literal_eval(args.Plates)
 #Define some functions
 def FitPlate(PlateZ,dx,dy,input_data,Track_ID):
     change_df = pd.DataFrame([[PlateZ,dx,dy]], columns = ['Plate_ID','dx','dy'])
