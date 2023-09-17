@@ -551,6 +551,7 @@ while Status<len(Program):
                 for k in range(JobSets[i][j]):
                   result_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_Ra'+'_'+RecBatchID+'_'+str(i)+'/Ra_'+RecBatchID+'_SpatialAlignmentResult_'+str(c)+'_'+str(i)+'_'+str(j)+'_'+str(k)+'.csv'
                   result.append(UF.LogOperations(result_file_location,'r','N/A'))
+        result=pd.DataFrame(result,columns=['Plate_ID','j','k','dx','FitX','ValFitX','dy','FitY','ValFitY'])
         print(result)
         exit()
         print(UF.TimeStamp(),'Analysing the data sample in order to understand how many jobs to submit to HTCondor... ',bcolors.ENDC)
