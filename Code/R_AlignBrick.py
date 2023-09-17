@@ -528,7 +528,7 @@ for c in range(Cycle):
     print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Create'))
     Program.append(prog_entry)
     Program.append('Custom: Spatial Cycle '+str(c))
-
+Program.append('Custom: Final')
 
 # Program.append('Custom - TrackMapping')
 while Status<len(Program):
@@ -553,6 +553,8 @@ while Status<len(Program):
         result=pd.DataFrame(result,columns=['Plate_ID','j','k','dx','FitX','ValFitX','dy','FitY','ValFitY'])
         log_result=result
         log_result['Cycle']=Program[Status][22:]
+        log_result['dtx']=0
+        log_result['dty']=0
         if Program[Status][22:]=='0':
             log_result.to_csv(EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv',mode="w",index=False)
         else:
@@ -598,18 +600,20 @@ while Status<len(Program):
                 temp_data=temp_data[temp_data.x < x_max_cut]
                 temp_data=temp_data[temp_data.y >= y_min_cut]
                 temp_data=temp_data[temp_data.y < y_max_cut]
-                #temp_data.to_csv(required_temp_file_location,index=False)
+                temp_data.to_csv(required_temp_file_location,index=False)
                 print(UF.TimeStamp(), bcolors.OKGREEN+"The granular hit data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+required_temp_file_location+bcolors.ENDC)
-        #data.to_csv(required_file_location,index=False)
+        data.to_csv(required_file_location,index=False)
         print(UF.TimeStamp(), bcolors.OKGREEN+"The hit data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+required_file_location+bcolors.ENDC)
-        print(Status)
-        exit()
-        #Meta.UpdateStatus(Status+1)
+        Meta.UpdateStatus(Status+1)
 
 
 
 
         # print(UF.TimeStamp(),'Analysing the data sample in order to understand how many jobs to submit to HTCondor... ',bcolors.ENDC)
+    elif Program[Status]=='Custom: Final':
+        print('here')
+        exit()
+
     #     data=pd.read_csv(required_file_location,header=0,
     #                 usecols=['z','Rec_Seg_ID'])
     #     data = data.groupby('Rec_Seg_ID')['z'].min()  #Keeping only starting hits for the each track record (we do not require the full information about track in this script)
