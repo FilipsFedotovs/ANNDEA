@@ -166,11 +166,11 @@ new_combined_data['Plate_ID']=new_combined_data['z'].astype(int)
 train_data = new_combined_data[new_combined_data.Track_No >= MinHits]
 validation_data = new_combined_data[new_combined_data.Track_No >= ValMinHits]
 validation_data = validation_data[validation_data.Track_No < MinHits]
-print(train_data)
-print(validation_data)
+
 
 
 am=[i,j,k]
+
 def FitPlateFixedX(x):
     return FitPlate(Plate[i][0],x,0,train_data,'Rec_Seg_ID')
 def FitPlateFixedY(x):
@@ -179,33 +179,38 @@ def FitPlateValX(x):
     return FitPlate(Plate[i][0],x,0,validation_data,'Rec_Seg_ID')
 def FitPlateValY(x):
     return FitPlate(Plate[i][0],0,x,validation_data,'Rec_Seg_ID')
-res = minimize_scalar(FitPlateFixedX, bounds=(-OptBound, OptBound), method='bounded')
-print(res)
-exit()
-validation_data=AlignPlate(p[0],res.x,0,validation_data)
-am.append(res.x)
-FitFix = FitPlateFixedX(res.x)
-FitVal = FitPlateValX(0)
-
-res = minimize_scalar(FitPlateFixedY, bounds=(-OptBound, OptBound), method='bounded')
-validation_data=AlignPlate(p[0],0,res.x,validation_data)
-am.append(res.x)
-
-FitFix = FitPlateFixedY(res.x)
-FitVal = FitPlateValY(0)
-
-bar.text('| Validation fit value changed from '+ini_val+' to '+str(round(FitVal,2)))
-bar()
-local_logdata = [c+1,"global vertical-horizontal plate alignment XY", iterator, p[0], FitFix, FitVal, MinHits,ValMinHits]
-global_logdata.append(local_logdata)
-alignment_map.append(am)
-alignment_map_global.append(am)
-
-#
-# UF.LogOperations(output_file_location,'a',result_list) #Writing the remaining data into the csv
-# UF.LogOperations(output_result_location,'w',[])
-# print(UF.TimeStamp(), "Reconstruction seed generation is finished...")
-# #End of the script
+if len(train_data)>0:
+    res = minimize_scalar(FitPlateFixedX, bounds=(-OptBound, OptBound), method='bounded')
+    validation_data=AlignPlate(Plate[i][0],res.x,0,validation_data)
+    am.append(res.x)
+    FitFix = FitPlateFixedX(res.x)
+    FitVal = FitPlateValX(res.x)
+    am.append(FitFix)
+    am.append(FitVal)
+    res = minimize_scalar(FitPlateFixedY, bounds=(-OptBound, OptBound), method='bounded')
+    validation_data=AlignPlate(Plate[i][0],0,res.x,validation_data)
+    am.append(res.x)
+    FitFix = FitPlateFixedY(res.x)
+    FitVal = FitPlateValY(0)
+    am.append(FitFix)
+    am.append(FitVal)
+else:
+    validation_data=AlignPlate(Plate[i][0],0,0,validation_data)
+    am.append(0)
+    FitFix = FitPlateFixedX(0)
+    FitVal = FitPlateValX(0)
+    am.append(FitFix)
+    am.append(FitVal)
+    validation_data=AlignPlate(Plate[i][0],0,0,validation_data)
+    am.append(0)
+    FitFix = FitPlateFixedY(0)
+    FitVal = FitPlateValY(0)
+    am.append(FitFix)
+    am.append(FitVal)
+print(am)
+UF.LogOperations(output_file_location,'w',am) #Writing the remaining data into the csv
+print(UF.TimeStamp(), "Optimisation is finished...")
+#End of the script
 
 
 
