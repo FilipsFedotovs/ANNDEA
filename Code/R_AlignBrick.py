@@ -579,10 +579,10 @@ while Status<len(Program):
         data['x']=data['x']+data['dx']
         data['y']=data['y']+data['dy']
         data.drop(['dx','dy','k','j'],axis=1, inplace=True)
-        print(UF.TimeStamp(),'Initial overall spatial residual value is',bcolors.BOLD+str(round(FitPlate(plates[0][0],0,0,data,'Rec_Seg_ID'),2))+bcolors.ENDC, 'microns')
-        print(UF.TimeStamp(),'Initial overall residual value is',bcolors.BOLD+str(round(FitPlateAngle(plates[0][0],0,0,data,'Rec_Seg_ID')*1000,1))+bcolors.ENDC, 'milliradians')
-        Min_x=new_combined_data.x.min()
-        Max_x=new_combined_data.x.max()
+        print(UF.TimeStamp(),'Cycle '+Program[Status][22:]+' overall spatial residual value is',bcolors.BOLD+str(round(FitPlate(plates[0][0],0,0,data,'Rec_Seg_ID'),2))+bcolors.ENDC, 'microns')
+        print(UF.TimeStamp(),'Cycle '+Program[Status][22:]+' overall angular residual value is',bcolors.BOLD+str(round(FitPlateAngle(plates[0][0],0,0,data,'Rec_Seg_ID')*1000,1))+bcolors.ENDC, 'milliradians')
+        Min_x=data.x.min()
+        Max_x=data.x.max()
         x_no=int(math.ceil((Max_x-Min_x)/Size))
         Min_y=data.y.min()
         Max_y=data.y.max()
