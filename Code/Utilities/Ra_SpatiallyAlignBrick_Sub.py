@@ -206,7 +206,7 @@ else:
     am.append(FitFix)
     am.append(FitVal)
 print(am)
-UF.LogOperations(output_file_location,'w',am) #Writing the remaining data into the csv
+UF.LogOperations(output_file_location,'w',[am]) #Writing the remaining data into the csv
 print(UF.TimeStamp(), "Optimisation is finished...")
 #End of the script
 
