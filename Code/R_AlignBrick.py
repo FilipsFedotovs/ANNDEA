@@ -558,7 +558,10 @@ while Status<len(Program):
             log_result.to_csv(EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv',mode="w")
         else:
             log_result.to_csv(EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv',mode="a")
-        print(log_result)
+        result=result[['Plate_ID','j','k','dx','dy']]
+        required_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/R_'+RecBatchID+'_HITS.csv'
+        data=pd.read_csv(required_file_location,header=0)
+        print(data)
         exit()
         print(UF.TimeStamp(),'Analysing the data sample in order to understand how many jobs to submit to HTCondor... ',bcolors.ENDC)
     #     data=pd.read_csv(required_file_location,header=0,
