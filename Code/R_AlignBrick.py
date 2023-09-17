@@ -563,8 +563,8 @@ while Status<len(Program):
         data=pd.read_csv(required_file_location,header=0)
         data['j']=(data['x']-data.x.min())/Size
         data['k']=(data['y']-data.y.min())/Size
-        data['j']=data['j'].apply(np.ceil)
-        data['k']=data['k'].apply(np.ceil)
+        data['j']=data['j'].apply(np.floor)
+        data['k']=data['k'].apply(np.floor)
         print(data)
         exit()
         print(UF.TimeStamp(),'Analysing the data sample in order to understand how many jobs to submit to HTCondor... ',bcolors.ENDC)
