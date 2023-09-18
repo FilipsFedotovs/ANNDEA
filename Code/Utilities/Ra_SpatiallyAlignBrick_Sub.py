@@ -198,8 +198,6 @@ else:
     am.append(0)
     am.append(0)
     am.append(0)
-print(am)
-print(output_file_location)
 UF.LogOperations(output_file_location,'w',[am]) #Writing the remaining data into the csv
 print(UF.TimeStamp(), "Optimisation is finished...")
 #End of the script
