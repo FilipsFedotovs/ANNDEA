@@ -399,8 +399,7 @@ def StandardProcess(program,status,freshstart):
                                     program[status][3],
                                     program[status][1][9],
                                     False,
-                                    program[status][6],
-                                    True)
+                                    program[status][6])
 
 
         if len(bad_pop)==0:
@@ -424,8 +423,7 @@ def StandardProcess(program,status,freshstart):
                                     program[status][3],
                                     program[status][1][9],
                                     batch_sub,
-                                    program[status][6],
-                                    True)
+                                    program[status][6])
                  print(UF.TimeStamp(),'Submitting jobs to HTCondor... ',bcolors.ENDC)
                  _cnt=0
                  for bp in bad_pop:
