@@ -251,6 +251,10 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         data=pd.read_csv(initial_input_file_location,
                     header=0,
                     usecols=ColUse)
+        Min_x=data[PM.x].min()
+        Max_x=data[PM.x].max()
+        Min_y=data[PM.y].min()
+        Max_y=data[PM.y].max()
         if BrickID=='':
             data[BrickID]='D'
         total_rows=len(data.axes[0])
@@ -289,8 +293,7 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
 
         print(UF.TimeStamp(),'Analysing the data sample in order to understand how many jobs to submit to HTCondor... ',bcolors.ENDC)
         Sets=new_combined_data.z.unique().size
-        Min_x=new_combined_data.x.min()
-        Max_x=new_combined_data.x.max()
+
         x_no=int(math.ceil((Max_x-Min_x)/Size))
 
         print(UF.TimeStamp(),'Working out the number of plates to align')
@@ -300,8 +303,7 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         print(UF.TimeStamp(),'There are',len(plates),'plates')
         print(UF.TimeStamp(),'Initial overall spatial residual value is',bcolors.BOLD+str(round(FitPlate(plates[0][0],0,0,new_combined_data,'Rec_Seg_ID'),2))+bcolors.ENDC, 'microns')
         print(UF.TimeStamp(),'Initial overall residual value is',bcolors.BOLD+str(round(FitPlateAngle(plates[0][0],0,0,new_combined_data,'Rec_Seg_ID')*1000,1))+bcolors.ENDC, 'milliradians')
-        Min_y=new_combined_data.y.min()
-        Max_y=new_combined_data.y.max()
+
         y_no=int(math.ceil((Max_y-Min_y)/Size))
         for j in range(x_no):
             for k in range(y_no):
@@ -325,7 +327,7 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
             for j in range(x_no):
                 JobSets[i].append(y_no)
         Meta=UF.TrainingSampleMeta(RecBatchID)
-        Meta.IniBrickAlignMetaData(Size,ValMinHits,MinHits,SpatialOptBound,AngularOptBound,JobSets,Cycle,plates)
+        Meta.IniBrickAlignMetaData(Size,ValMinHits,MinHits,SpatialOptBound,AngularOptBound,JobSets,Cycle,plates,[Min_x,Max_x,Min_y,Max_y])
         Meta.UpdateStatus(0)
         print(UF.PickleOperations(RecOutputMeta,'w', Meta)[1])
         print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
@@ -342,6 +344,10 @@ JobSets=Meta.JobSets
 AngularOptBound=Meta.AngularOptBound
 Cycle=Meta.Cycles
 plates=Meta.plates
+Min_x=Meta.FiducialVolume[0]
+Max_x=Meta.FiducialVolume[1]
+Min_y=Meta.FiducialVolume[2]
+Max_y=Meta.FiducialVolume[3]
 #The function bellow helps to monitor the HTCondor jobs and keep the submission flow
 def AutoPilot(wait_min, interval_min, max_interval_tolerance,program):
      print(UF.TimeStamp(),'Going on an autopilot mode for ',wait_min, 'minutes while checking HTCondor every',interval_min,'min',bcolors.ENDC)
@@ -576,8 +582,8 @@ while Status<len(Program):
         required_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/R_'+RecBatchID+'_HITS.csv'
         data=pd.read_csv(required_file_location,header=0)
 
-        data['j']=(data['x']-data.x.min())/Size
-        data['k']=(data['y']-data.y.min())/Size
+        data['j']=(data['x']-Min_x)/Size
+        data['k']=(data['y']-Min_y)/Size
         data['j']=data['j'].apply(np.floor)
         data['k']=data['k'].apply(np.floor)
         result['Plate_ID'] = result['Plate_ID'].astype(int)
@@ -596,11 +602,7 @@ while Status<len(Program):
         data.drop(['Type','dx','dy','k','j'],axis=1, inplace=True)
         print(UF.TimeStamp(),'Cycle '+Program[Status][22:]+' overall spatial residual value is',bcolors.BOLD+str(round(FitPlate(plates[0][0],0,0,data,'Rec_Seg_ID'),2))+bcolors.ENDC, 'microns')
         print(UF.TimeStamp(),'Cycle '+Program[Status][22:]+' overall angular residual value is',bcolors.BOLD+str(round(FitPlateAngle(plates[0][0],0,0,data,'Rec_Seg_ID')*1000,1))+bcolors.ENDC, 'milliradians')
-        Min_x=data.x.min()
-        Max_x=data.x.max()
         x_no=int(math.ceil((Max_x-Min_x)/Size))
-        Min_y=data.y.min()
-        Max_y=data.y.max()
         y_no=int(math.ceil((Max_y-Min_y)/Size))
         for j in range(x_no):
             for k in range(y_no):
@@ -641,8 +643,8 @@ while Status<len(Program):
         required_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/R_'+RecBatchID+'_HITS.csv'
         data=pd.read_csv(required_file_location,header=0)
 
-        data['j']=(data['x']-data.x.min())/Size
-        data['k']=(data['y']-data.y.min())/Size
+        data['j']=(data['x']-Min_x)/Size
+        data['k']=(data['y']-Min_y)/Size
         data['j']=data['j'].apply(np.floor)
         data['k']=data['k'].apply(np.floor)
         result['Plate_ID'] = result['Plate_ID'].astype(int)
@@ -661,11 +663,7 @@ while Status<len(Program):
         data.drop(['Type','dx','dy','k','j'],axis=1, inplace=True)
         print(UF.TimeStamp(),'Cycle '+Program[Status][22:]+' overall spatial residual value is',bcolors.BOLD+str(round(FitPlate(plates[0][0],0,0,data,'Rec_Seg_ID'),2))+bcolors.ENDC, 'microns')
         print(UF.TimeStamp(),'Cycle '+Program[Status][22:]+' overall angular residual value is',bcolors.BOLD+str(round(FitPlateAngle(plates[0][0],0,0,data,'Rec_Seg_ID')*1000,1))+bcolors.ENDC, 'milliradians')
-        Min_x=data.x.min()
-        Max_x=data.x.max()
         x_no=int(math.ceil((Max_x-Min_x)/Size))
-        Min_y=data.y.min()
-        Max_y=data.y.max()
         y_no=int(math.ceil((Max_y-Min_y)/Size))
         for j in range(x_no):
             for k in range(y_no):
@@ -700,7 +698,12 @@ while Status<len(Program):
         angular_alignment_map=alignment_data[alignment_data.Type=='Angular'].drop(['Type'],axis=1)
         print(spatial_alignment_map)
         print(angular_alignment_map)
-        exit()
+
+
+        print(UF.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+initial_input_file_location+bcolors.ENDC)
+        data=pd.read_csv(initial_input_file_location,
+                    header=0)
+        data['Plate_ID']=data['z'].astype(int)
         # if BrickID=='':
         #     data[BrickID]='D'
         # total_rows=len(data.axes[0])
