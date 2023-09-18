@@ -382,6 +382,8 @@ def AutoPilot(wait_min, interval_min, max_interval_tolerance,program):
      return False,False
 #The function bellow helps to automate the submission process
 def StandardProcess(program,status,freshstart):
+        print(program)
+        exit()
         print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
         print(UF.TimeStamp(),bcolors.BOLD+'Stage '+str(status)+':'+bcolors.ENDC+str(program[status][0]))
         batch_sub=program[status][4]>1
