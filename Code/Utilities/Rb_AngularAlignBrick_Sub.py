@@ -66,15 +66,15 @@ from scipy.optimize import minimize_scalar
 import ast
 Plate=ast.literal_eval(args.Plate)
 #Define some functions
-def FitPlate(PlateZ,dx,dy,input_data,Track_ID):
-    change_df = pd.DataFrame([[PlateZ,dx,dy]], columns = ['Plate_ID','dx','dy'])
-    temp_data=input_data[[Track_ID,'x','y','z','Track_No','Plate_ID']]
+def FitPlateAngle(PlateZ,dtx,dty,input_data,Track_ID):
+    change_df = pd.DataFrame([[PlateZ,dtx,dty]], columns = ['Plate_ID','dtx','dty'])
+    temp_data=input_data[[Track_ID,'x','y','z','tx','ty','Track_No','Plate_ID']]
     temp_data=pd.merge(temp_data,change_df,on='Plate_ID',how='left')
-    temp_data['dx'] = temp_data['dx'].fillna(0.0)
-    temp_data['dy'] = temp_data['dy'].fillna(0.0)
-    temp_data['x']=temp_data['x']+temp_data['dx']
-    temp_data['y']=temp_data['y']+temp_data['dy']
-    temp_data=temp_data[[Track_ID,'x','y','z','Track_No']]
+    temp_data['dtx'] = temp_data['dtx'].fillna(0.0)
+    temp_data['dty'] = temp_data['dty'].fillna(0.0)
+    temp_data['tx']=temp_data['tx']+temp_data['dtx']
+    temp_data['ty']=temp_data['ty']+temp_data['dty']
+    temp_data=temp_data[[Track_ID,'x','y','z','tx','ty','Track_No']]
     Tracks_Head=temp_data[[Track_ID]]
     Tracks_Head.drop_duplicates(inplace=True)
     Tracks_List=temp_data.values.tolist() #I find it is much easier to deal with tracks in list format when it comes to fitting
@@ -103,45 +103,40 @@ def FitPlate(PlateZ,dx,dy,input_data,Track_ID):
                y.append(b[1])
                z.append(b[2])
            tx=np.polyfit(z,x,1)[0]
-           ax=np.polyfit(z,x,1)[1]
            ty=np.polyfit(z,y,1)[0]
-           ay=np.polyfit(z,y,1)[1]
-           bth.append(ax) #Append x intercept
            bth.append(tx) #Append x slope
-           bth.append(0) #Append a placeholder slope (for polynomial case)
-           bth.append(ay) #Append x intercept
            bth.append(ty) #Append x slope
-           bth.append(0) #Append a placeholder slope (for polynomial case)
            del(bth[1])
     #Once we get coefficients for all tracks we convert them back to Pandas dataframe and join back to the data
-    Tracks_Head=pd.DataFrame(Tracks_Head, columns = [Track_ID,'ax','t1x','t2x','ay','t1y','t2y'])
+    Tracks_Head=pd.DataFrame(Tracks_Head, columns = [Track_ID,'ntx','nty'])
 
     temp_data=pd.merge(temp_data,Tracks_Head,how='inner',on = [Track_ID])
-    #Calculating x and y coordinates of the fitted line for all plates in the track
-    temp_data['new_x']=temp_data['ax']+(temp_data['z']*temp_data['t1x'])+((temp_data['z']**2)*temp_data['t2x'])
-    temp_data['new_y']=temp_data['ay']+(temp_data['z']*temp_data['t1y'])+((temp_data['z']**2)*temp_data['t2y'])
-    #Calculating how far hits deviate from the fit polynomial
-    temp_data['d_x']=temp_data['x']-temp_data['new_x']
-    temp_data['d_y']=temp_data['y']-temp_data['new_y']
-    temp_data['d_r']=temp_data['d_x']**2+temp_data['d_y']**2
-    temp_data['d_r'] = temp_data['d_r'].astype(float)
-    temp_data['d_r']=np.sqrt(temp_data['d_r']) #Absolute distance
-    temp_data=temp_data[[Track_ID,'Track_No','d_r']]
-    temp_data=temp_data.groupby([Track_ID,'Track_No']).agg({'d_r':'sum'}).reset_index()
 
-    temp_data=temp_data.agg({'d_r':'sum','Track_No':'sum'})
+    #Calculating x and y coordinates of the fitted line for all plates in the track
+    #Calculating how far hits deviate from the fit polynomial
+    temp_data['d_tx']=temp_data['tx']-temp_data['ntx']
+    temp_data['d_ty']=temp_data['ty']-temp_data['nty']
+
+    temp_data['d_tr']=temp_data['d_tx']**2+temp_data['d_ty']**2
+    temp_data['d_tr'] = temp_data['d_tr'].astype(float)
+    temp_data['d_tr']=np.sqrt(temp_data['d_tr']) #Absolute distance
+
+    temp_data=temp_data[[Track_ID,'Track_No','d_tr']]
+    temp_data=temp_data.groupby([Track_ID,'Track_No']).agg({'d_tr':'sum'}).reset_index()
+    temp_data=temp_data.agg({'d_tr':'sum','Track_No':'sum'})
     temp_data=temp_data.values.tolist()
     fit=temp_data[0]/temp_data[1]
     return fit
-def AlignPlate(PlateZ,dx,dy,input_data):
-    change_df = pd.DataFrame([[PlateZ,dx,dy]], columns = ['Plate_ID','dx','dy'])
+
+def AlignPlateAngle(PlateZ,dtx,dty,input_data):
+    change_df = pd.DataFrame([[PlateZ,dtx,dty]], columns = ['Plate_ID','dtx','dty'])
     temp_data=input_data
     temp_data=pd.merge(temp_data,change_df,on='Plate_ID',how='left')
-    temp_data['dx'] = temp_data['dx'].fillna(0.0)
-    temp_data['dy'] = temp_data['dy'].fillna(0.0)
-    temp_data['x']=temp_data['x']+temp_data['dx']
-    temp_data['y']=temp_data['y']+temp_data['dy']
-    temp_data = temp_data.drop(['dx','dy'],axis=1)
+    temp_data['dtx'] = temp_data['dtx'].fillna(0.0)
+    temp_data['dty'] = temp_data['dty'].fillna(0.0)
+    temp_data['tx']=temp_data['tx']+temp_data['dtx']
+    temp_data['ty']=temp_data['ty']+temp_data['dty']
+    temp_data = temp_data.drop(['dtx','dty'],axis=1)
     return temp_data
 
 #Specifying the full path to input/output files
@@ -150,7 +145,7 @@ output_file_location=EOS_DIR+p+'/Temp_'+pfx+'_'+BatchID+'_'+str(i)+'/'+pfx+'_'+B
 print(UF.TimeStamp(), "Modules Have been imported successfully...")
 print(UF.TimeStamp(),'Loading pre-selected data from ',input_file_location)
 data=pd.read_csv(input_file_location,header=0,
-                    usecols=['x','y','z','Rec_Seg_ID'])[['Rec_Seg_ID','x','y','z']]
+                    usecols=['x','y','z','tx','ty','Rec_Seg_ID'])[['Rec_Seg_ID','x','y','z','tx','ty']]
 final_rows=len(data)
 print(UF.TimeStamp(),'The cleaned data has',final_rows,'hits')
 print(UF.TimeStamp(),'Removing tracks which have less than',ValMinHits,'hits...')
@@ -166,26 +161,26 @@ validation_data = validation_data[validation_data.Track_No < MinHits]
 
 
 
-am=['Spatial',Plate[i][0],j,k]
+am=['Angular',Plate[i][0],j,k]
 
 def FitPlateFixedX(x):
-    return FitPlate(Plate[i][0],x,0,train_data,'Rec_Seg_ID')
+    return FitPlateAngle(Plate[i][0],x,0,train_data,'Rec_Seg_ID')
 def FitPlateFixedY(x):
-    return FitPlate(Plate[i][0],0,x,train_data,'Rec_Seg_ID')
+    return FitPlateAngle(Plate[i][0],0,x,train_data,'Rec_Seg_ID')
 def FitPlateValX(x):
-    return FitPlate(Plate[i][0],x,0,validation_data,'Rec_Seg_ID')
+    return FitPlateAngle(Plate[i][0],x,0,validation_data,'Rec_Seg_ID')
 def FitPlateValY(x):
-    return FitPlate(Plate[i][0],0,x,validation_data,'Rec_Seg_ID')
+    return FitPlateAngle(Plate[i][0],0,x,validation_data,'Rec_Seg_ID')
 if len(train_data)>0:
     res = minimize_scalar(FitPlateFixedX, bounds=(-OptBound, OptBound), method='bounded')
-    validation_data=AlignPlate(Plate[i][0],res.x,0,validation_data)
+    validation_data=AlignPlateAngle(Plate[i][0],res.x,0,validation_data)
     am.append(res.x)
     FitFix = FitPlateFixedX(res.x)
     FitVal = FitPlateValX(res.x)
     am.append(FitFix)
     am.append(FitVal)
     res = minimize_scalar(FitPlateFixedY, bounds=(-OptBound, OptBound), method='bounded')
-    validation_data=AlignPlate(Plate[i][0],0,res.x,validation_data)
+    validation_data=AlignPlateAngle(Plate[i][0],0,res.x,validation_data)
     am.append(res.x)
     FitFix = FitPlateFixedY(res.x)
     FitVal = FitPlateValY(0)
@@ -198,7 +193,6 @@ else:
     am.append(0)
     am.append(0)
     am.append(0)
-print(am)
 print(output_file_location)
 UF.LogOperations(output_file_location,'w',[am]) #Writing the remaining data into the csv
 print(UF.TimeStamp(), "Optimisation is finished...")
