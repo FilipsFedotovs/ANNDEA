@@ -688,7 +688,7 @@ while Status<len(Program):
         alignment_data_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv'
         print(UF.TimeStamp(),'Loading alignment data from',bcolors.OKBLUE+alignment_data_location+bcolors.ENDC)
         ColUse=['Type','Plate_ID','j','k','dx','dy']
-        alignment_data=pd.read_csv(initial_input_file_location,
+        alignment_data=pd.read_csv(alignment_data_location,
                     header=0,
                     usecols=ColUse)
         print(alignment_data)
