@@ -687,10 +687,12 @@ while Status<len(Program):
         print(UF.TimeStamp(),'Mapping the alignment transportation map to input data',bcolors.OKBLUE+initial_input_file_location+bcolors.ENDC)
         alignment_data_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv'
         print(UF.TimeStamp(),'Loading alignment data from',bcolors.OKBLUE+alignment_data_location+bcolors.ENDC)
-        ColUse=['Type','Plate_ID','j','k','dx','dy']
+        ColUse=['Type','Plate_ID','j','k','dx','dy','Cycle']
         alignment_data=pd.read_csv(alignment_data_location,
                     header=0,
                     usecols=ColUse)
+        print(alignment_data)
+        alignment_data.drop_duplicates(subset=['Type','Plate_ID','j','k','Cycle'],keep='first',inplace=True)
         print(alignment_data)
         exit()
         # if BrickID=='':
