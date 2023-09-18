@@ -696,7 +696,10 @@ while Status<len(Program):
         print(alignment_data)
         alignment_data.drop(['Cycle'],axis=1, inplace=True)
         alignment_data=alignment_data.groupby(['Type','Plate_ID','j','k']).agg({'dx': 'sum', 'dy': 'sum'}).reset_index()
-        print(alignment_data)
+        spatial_alignment_map=alignment_data[alignment_data.Type=='Spatial'].drop(['Type'],axis=1)
+        angular_alignment_map=alignment_data[alignment_data.Type=='Angular'].drop(['Type'],axis=1)
+        print(spatial_alignment_map)
+        print(angular_alignment_map)
         exit()
         # if BrickID=='':
         #     data[BrickID]='D'
