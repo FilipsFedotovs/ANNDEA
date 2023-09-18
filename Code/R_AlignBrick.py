@@ -684,6 +684,20 @@ while Status<len(Program):
         print(UF.TimeStamp(), bcolors.OKGREEN+"The hit data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+required_file_location+bcolors.ENDC)
         UpdateStatus(Status+1)
     elif Program[Status]=='Custom: Final':
+        print(UF.TimeStamp(),'Mapping the alignment transportation map to input data',bcolors.OKBLUE+initial_input_file_location+bcolors.ENDC)
+        alignment_data_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv'
+        print(UF.TimeStamp(),'Loading alignment data from',bcolors.OKBLUE+alignment_data_location+bcolors.ENDC)
+        ColUse=['Type','Plate_ID','j','k','dx','dy']
+        alignment_data=pd.read_csv(initial_input_file_location,
+                    header=0,
+                    usecols=ColUse)
+        print(alignment_data)
+        exit()
+        # if BrickID=='':
+        #     data[BrickID]='D'
+        # total_rows=len(data.axes[0])
+        # print(UF.TimeStamp(),'The raw data has ',total_rows,' hits')
+        # print(UF.TimeStamp(),'Removing unreconstructed hits...')
         print('here')
         exit()
 
