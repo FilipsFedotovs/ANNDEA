@@ -150,11 +150,12 @@ final_rows=len(data)
 print(UF.TimeStamp(),'The cleaned data has',final_rows,'hits')
 print(UF.TimeStamp(),'Removing tracks which have less than',ValMinHits,'hits...')
 track_no_data=data.groupby(['Rec_Seg_ID'],as_index=False).count()
-track_no_data=track_no_data.drop(['y','z'],axis=1)
+track_no_data=track_no_data.drop(['y','z','tx','ty'],axis=1)
 track_no_data=track_no_data.rename(columns={'x': "Track_No"})
 new_combined_data=pd.merge(data, track_no_data, how="left", on=['Rec_Seg_ID'])
 new_combined_data=new_combined_data.sort_values(['Rec_Seg_ID','z'],ascending=[1,1])
 new_combined_data['Plate_ID']=new_combined_data['z'].astype(int)
+print(new_combined_data)
 train_data = new_combined_data[new_combined_data.Track_No >= MinHits]
 validation_data = new_combined_data[new_combined_data.Track_No >= ValMinHits]
 validation_data = validation_data[validation_data.Track_No < MinHits]
@@ -193,7 +194,6 @@ else:
     am.append(0)
     am.append(0)
     am.append(0)
-print(output_file_location)
 UF.LogOperations(output_file_location,'w',[am]) #Writing the remaining data into the csv
 print(UF.TimeStamp(), "Optimisation is finished...")
 #End of the script
