@@ -67,7 +67,7 @@ class TrainingSampleMeta:
           self.MaxSeeds=MaxSeeds
           self.VetoMotherTrack=VetoMotherTrack
           self.MinHitsTrack=MinHitsTrack
-      def IniBrickAlignMetaData(self,Size,ValMinHits,MinHits,SpatialOptBound,AngularOptBound,JobSets,Cycles,plates
+      def IniBrickAlignMetaData(self,Size,ValMinHits,MinHits,SpatialOptBound,AngularOptBound,JobSets,Cycles,plates,FiducialVolume
                                ):
           self.Size=Size
           self.MinHits=MinHits
@@ -77,6 +77,7 @@ class TrainingSampleMeta:
           self.Cycles=Cycles
           self.JobSets=JobSets
           self.plates=plates
+          self.FiducialVolume=FiducialVolume
       def IniVertexSeedMetaData(self,MaxDST,MaxVXT,MaxDOCA,MaxAngle,JobSets,MaxSegments,MaxSeeds,MinHitsTrack,FiducialVolumeCut,ExcludeClassNames,ExcludeClassValues
                                ):
           self.MaxDST=MaxDST 
