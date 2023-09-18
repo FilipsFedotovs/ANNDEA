@@ -694,6 +694,9 @@ while Status<len(Program):
         print(alignment_data)
         alignment_data.drop_duplicates(subset=['Type','Plate_ID','j','k','Cycle'],keep='first',inplace=True)
         print(alignment_data)
+        alignment_data.drop(['Cycle'],axis=1, inplace=True)
+        alignment_data=alignment_data.groupby(['Type','Plate_ID','j','k']).agg({'dx': 'sum', 'dy': 'sum'}).reset_index()
+        print(alignment_data)
         exit()
         # if BrickID=='':
         #     data[BrickID]='D'
