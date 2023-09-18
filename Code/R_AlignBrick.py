@@ -529,6 +529,21 @@ for c in range(Cycle):
     print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Create'))
     Program.append(prog_entry)
     Program.append('Custom: Spatial Cycle '+str(c))
+for c in range(Cycle):
+    prog_entry=[]
+    prog_entry.append(' Sending tracks to the HTCondor, so track segment combinations can be formed...')
+    prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','AngularAlignmentResult_'+str(c),'Rb','.csv',RecBatchID,JobSets,'Rb_AngularAlignBrick_Sub.py'])
+    prog_entry.append([ " --MinHits ", " --ValMinHits "," --Size ", " --OptBound ", " --Plate "])
+    prog_entry.append([MinHits, ValMinHits, Size, AngularOptBound, '"'+str(plates)+'"'])
+    prog_entry.append(TotJobs)
+    prog_entry.append(LocalSub)
+    prog_entry.append(["",""])
+    if Mode=='RESET' and c==0:
+            print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Delete'))
+        #Setting up folders for the output. The reconstruction of just one brick can easily generate >100k of files. Keeping all that blob in one directory can cause problems on lxplus.
+    print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Create'))
+    Program.append(prog_entry)
+    Program.append('Custom: Angular Cycle '+str(c))
 Program.append('Custom: Final')
 
 # Program.append('Custom - TrackMapping')
@@ -551,16 +566,14 @@ while Status<len(Program):
                 for k in range(JobSets[i][j]):
                   result_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_Ra'+'_'+RecBatchID+'_'+str(i)+'/Ra_'+RecBatchID+'_SpatialAlignmentResult_'+Program[Status][22:]+'_'+str(i)+'_'+str(j)+'_'+str(k)+'.csv'
                   result.append(UF.LogOperations(result_file_location,'r','N/A')[0])
-        result=pd.DataFrame(result,columns=['Plate_ID','j','k','dx','FitX','ValFitX','dy','FitY','ValFitY'])
+        result=pd.DataFrame(result,columns=['Type','Plate_ID','j','k','dx','FitX','ValFitX','dy','FitY','ValFitY'])
         log_result=result
         log_result['Cycle']=Program[Status][22:]
-        log_result['dtx']=0
-        log_result['dty']=0
         if Program[Status][22:]=='0':
             log_result.to_csv(EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv',mode="w",index=False)
         else:
-            log_result.to_csv(EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv',mode="a",index=False)
-        result=result[['Plate_ID','j','k','dx','dy']]
+            log_result.to_csv(EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv',mode="a",index=False,header=False)
+        result=result[['Type','Plate_ID','j','k','dx','dy']]
         required_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/R_'+RecBatchID+'_HITS.csv'
         data=pd.read_csv(required_file_location,header=0)
 
@@ -581,7 +594,7 @@ while Status<len(Program):
         data['dy'] = data['dy'].fillna(0.0)
         data['x']=data['x']+data['dx']
         data['y']=data['y']+data['dy']
-        data.drop(['dx','dy','k','j'],axis=1, inplace=True)
+        data.drop(['Type','dx','dy','k','j'],axis=1, inplace=True)
         print(UF.TimeStamp(),'Cycle '+Program[Status][22:]+' overall spatial residual value is',bcolors.BOLD+str(round(FitPlate(plates[0][0],0,0,data,'Rec_Seg_ID'),2))+bcolors.ENDC, 'microns')
         print(UF.TimeStamp(),'Cycle '+Program[Status][22:]+' overall angular residual value is',bcolors.BOLD+str(round(FitPlateAngle(plates[0][0],0,0,data,'Rec_Seg_ID')*1000,1))+bcolors.ENDC, 'milliradians')
         Min_x=data.x.min()
@@ -611,6 +624,69 @@ while Status<len(Program):
 
 
         # print(UF.TimeStamp(),'Analysing the data sample in order to understand how many jobs to submit to HTCondor... ',bcolors.ENDC)
+
+    elif Program[Status][:21]=='Custom: Angular Cycle':
+        print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
+        print(UF.TimeStamp(),bcolors.BOLD+'Stage '+str(Status)+':'+bcolors.ENDC+' Collecting results from the previous step')
+        result=[]
+        for i in range(0,len(JobSets)): #//Temporarily measure to save space || Update 13/08/23 - I have commented it out as it creates more problems than solves it
+            for j in range(len(JobSets[i])):
+                for k in range(JobSets[i][j]):
+                  result_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_Rb'+'_'+RecBatchID+'_'+str(i)+'/Rb_'+RecBatchID+'_AngularAlignmentResult_'+Program[Status][22:]+'_'+str(i)+'_'+str(j)+'_'+str(k)+'.csv'
+                  result.append(UF.LogOperations(result_file_location,'r','N/A')[0])
+        result=pd.DataFrame(result,columns=['Type','Plate_ID','j','k','dx','FitX','ValFitX','dy','FitY','ValFitY'])
+        log_result=result
+        log_result['Cycle']=Program[Status][22:]
+        if Program[Status][22:]=='0':
+            log_result.to_csv(EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv',mode="w",index=False)
+        else:
+            log_result.to_csv(EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv',mode="a",index=False,header=False)
+        result=result[['Type','Plate_ID','j','k','dx','dy']]
+        required_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/R_'+RecBatchID+'_HITS.csv'
+        data=pd.read_csv(required_file_location,header=0)
+
+        data['j']=(data['x']-data.x.min())/Size
+        data['k']=(data['y']-data.y.min())/Size
+        data['j']=data['j'].apply(np.floor)
+        data['k']=data['k'].apply(np.floor)
+        result['Plate_ID'] = result['Plate_ID'].astype(int)
+        result['dx'] = result['dx'].astype(float)
+        result['dy'] = result['dy'].astype(float)
+        result['j'] = result['j'].astype(int)
+        result['k'] = result['k'].astype(int)
+        data['j'] = data['j'].astype(int)
+        data['k'] = data['k'].astype(int)
+        data=pd.merge(data,result,on=['Plate_ID','j','k'],how='left')
+
+        data['dx'] = data['dx'].fillna(0.0)
+        data['dy'] = data['dy'].fillna(0.0)
+        data['tx']=data['tx']+data['dx']
+        data['ty']=data['ty']+data['dy']
+        data.drop(['Type','dx','dy','k','j'],axis=1, inplace=True)
+        print(UF.TimeStamp(),'Cycle '+Program[Status][22:]+' overall spatial residual value is',bcolors.BOLD+str(round(FitPlate(plates[0][0],0,0,data,'Rec_Seg_ID'),2))+bcolors.ENDC, 'microns')
+        print(UF.TimeStamp(),'Cycle '+Program[Status][22:]+' overall angular residual value is',bcolors.BOLD+str(round(FitPlateAngle(plates[0][0],0,0,data,'Rec_Seg_ID')*1000,1))+bcolors.ENDC, 'milliradians')
+        Min_x=data.x.min()
+        Max_x=data.x.max()
+        x_no=int(math.ceil((Max_x-Min_x)/Size))
+        Min_y=data.y.min()
+        Max_y=data.y.max()
+        y_no=int(math.ceil((Max_y-Min_y)/Size))
+        for j in range(x_no):
+            for k in range(y_no):
+                required_temp_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/R_'+RecBatchID+'_HITS_'+str(j)+'_'+str(k)+'.csv'
+                x_min_cut=Min_x+(Size*j)
+                x_max_cut=Min_x+(Size*(j+1))
+                y_min_cut=Min_y+(Size*k)
+                y_max_cut=Min_y+(Size*(k+1))
+                temp_data=data[data.x >= x_min_cut]
+                temp_data=temp_data[temp_data.x < x_max_cut]
+                temp_data=temp_data[temp_data.y >= y_min_cut]
+                temp_data=temp_data[temp_data.y < y_max_cut]
+                temp_data.to_csv(required_temp_file_location,index=False)
+                print(UF.TimeStamp(), bcolors.OKGREEN+"The granular hit data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+required_temp_file_location+bcolors.ENDC)
+        data.to_csv(required_file_location,index=False)
+        print(UF.TimeStamp(), bcolors.OKGREEN+"The hit data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+required_file_location+bcolors.ENDC)
+        UpdateStatus(Status+1)
     elif Program[Status]=='Custom: Final':
         print('here')
         exit()
