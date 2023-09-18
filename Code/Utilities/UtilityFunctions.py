@@ -2865,6 +2865,7 @@ def SubmitJobs2Condor(job,local=False,ExtCPU=1,JobFlavour='workday', ExtMemory='
         f = open(SUBName, "w")
         f.write("executable = " + SHName)
         f.write("\n")
+        print(job[8])
         if job[8]:
             f.write("output ="+MSGName+".out")
             f.write("\n")
