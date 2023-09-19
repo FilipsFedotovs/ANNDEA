@@ -701,33 +701,85 @@ while Status<len(Program):
         angular_alignment_map=alignment_data[alignment_data.Type=='Angular'].drop(['Type'],axis=1)
 
         print(UF.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+initial_input_file_location+bcolors.ENDC)
-        data=pd.read_csv(initial_input_file_location,
+        ini_data=pd.read_csv(initial_input_file_location,
                     header=0)
-        data['Plate_ID']=data['z'].astype(int)
-        print(UF.TimeStamp(),'Preparing initial data for the join...')
-        data['j']=(data['x']-Min_x)/Size
-        data['k']=(data['y']-Min_y)/Size
-        data['j']=data['j'].apply(np.floor)
-        data['k']=data['k'].apply(np.floor)
+        ini_data['Plate_ID']=ini_data['z'].astype(int)
+
+        ######    Measuring initial-alignment    ########
+        data=ini_data
+        if BrickID=='':
+            ColUse=[TrackID,PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty]
+        else:
+            ColUse=[TrackID,BrickID,PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty]
+        if BrickID=='':
+            data[BrickID]='D'
+        data=data[ColUse]
+        total_rows=len(data.axes[0])
+        print(UF.TimeStamp(),'The raw data has ',total_rows,' hits')
+        print(UF.TimeStamp(),'Removing unreconstructed hits...')
+        data=data.dropna()
+
+
+        final_rows=len(data.axes[0])
+        print(UF.TimeStamp(),'The cleaned data has ',final_rows,' hits')
+        data[BrickID] = data[BrickID].astype(str)
+        data[TrackID] = data[TrackID].astype(str)
+
+        data['Rec_Seg_ID'] = data[TrackID] + '-' + data[BrickID]
+        data=data.drop([TrackID],axis=1)
+        data=data.drop([BrickID],axis=1)
+
+        print(UF.TimeStamp(),'Removing tracks which have less than',ValMinHits,'hits...')
+        track_no_data=data.groupby(['Rec_Seg_ID'],as_index=False).count()
+        track_no_data=track_no_data.drop([PM.y,PM.z,PM.tx,PM.ty,PM.Hit_ID],axis=1)
+        track_no_data=track_no_data.rename(columns={PM.x: "Track_No"})
+        new_combined_data=pd.merge(data, track_no_data, how="left", on=["Rec_Seg_ID"])
+        new_combined_data = new_combined_data[new_combined_data.Track_No >= ValMinHits]
+        new_combined_data['Plate_ID']=new_combined_data['z'].astype(int)
+        new_combined_data=new_combined_data.sort_values(['Rec_Seg_ID',PM.x],ascending=[1,1])
+        grand_final_rows=len(new_combined_data.axes[0])
+        print(UF.TimeStamp(),'The cleaned data has ',grand_final_rows,' hits')
+        new_combined_data=new_combined_data.rename(columns={PM.x: "x"})
+        new_combined_data=new_combined_data.rename(columns={PM.y: "y"})
+        new_combined_data=new_combined_data.rename(columns={PM.z: "z"})
+        new_combined_data=new_combined_data.rename(columns={PM.tx: "tx"})
+        new_combined_data=new_combined_data.rename(columns={PM.ty: "ty"})
+        new_combined_data=new_combined_data.rename(columns={PM.Hit_ID: "Hit_ID"})
+        validation_data = new_combined_data[new_combined_data.Track_No >= ValMinHits]
+        validation_data = validation_data[validation_data.Track_No < MinHits]
+        print(UF.TimeStamp(),'There are',len(plates),'plates')
+        print(UF.TimeStamp(),'Final validation spatial residual value is',bcolors.BOLD+str(round(FitPlate(plates[0][0],0,0,validation_data,'Rec_Seg_ID'),2))+bcolors.ENDC, 'microns')
+        print(UF.TimeStamp(),'Final validation residual value is',bcolors.BOLD+str(round(FitPlateAngle(plates[0][0],0,0,validation_data,'Rec_Seg_ID')*1000,1))+bcolors.ENDC, 'milliradians')
+
+
+        #### Saving the aligned file
+        print(UF.TimeStamp(),'Preparing initial ini_data for the join...')
+        ini_data['j']=(ini_data['x']-Min_x)/Size
+        ini_data['k']=(ini_data['y']-Min_y)/Size
+        ini_data['j']=ini_data['j'].apply(np.floor)
+        ini_data['k']=ini_data['k'].apply(np.floor)
         print(UF.TimeStamp(),'Aligning spatial coordinates...')
-        data=pd.merge(data,spatial_alignment_map,on=['Plate_ID','j','k'],how='left')
-        data['dx'] = data['dx'].fillna(0.0)
-        data['dy'] = data['dy'].fillna(0.0)
-        data[PM.x]=data[PM.x]+data['dx']
-        data[PM.y]=data[PM.y]+data['dy']
-        data.drop(['dx','dy'],axis=1, inplace=True)
+        ini_data=pd.merge(ini_data,spatial_alignment_map,on=['Plate_ID','j','k'],how='left')
+        ini_data['dx'] = ini_data['dx'].fillna(0.0)
+        ini_data['dy'] = ini_data['dy'].fillna(0.0)
+        ini_data[PM.x]=ini_data[PM.x]+ini_data['dx']
+        ini_data[PM.y]=ini_data[PM.y]+ini_data['dy']
+        ini_data.drop(['dx','dy'],axis=1, inplace=True)
         print(UF.TimeStamp(),'Aligning angular coordinates...')
-        data=pd.merge(data,angular_alignment_map,on=['Plate_ID','j','k'],how='left')
-        data['dx'] = data['dx'].fillna(0.0)
-        data['dy'] = data['dy'].fillna(0.0)
-        data[PM.tx]=data[PM.tx]+data['dx']
-        data[PM.ty]=data[PM.ty]+data['dy']
-        data.drop(['Plate_ID','dx','dy','k','j'],axis=1, inplace=True)
+        ini_data=pd.merge(ini_data,angular_alignment_map,on=['Plate_ID','j','k'],how='left')
+        ini_data['dx'] = ini_data['dx'].fillna(0.0)
+        ini_data['dy'] = ini_data['dy'].fillna(0.0)
+        ini_data[PM.tx]=ini_data[PM.tx]+ini_data['dx']
+        ini_data[PM.ty]=ini_data[PM.ty]+ini_data['dy']
+        ini_data.drop(['Plate_ID','dx','dy','k','j'],axis=1, inplace=True)
         output_file_location=initial_input_file_location[:-4]+'_'+RecBatchID+'.csv'
-        data.to_csv(output_file_location,index=False)
+        ini_data.to_csv(output_file_location,index=False)
         print(UF.TimeStamp(),'Data has been realigned and saved in ',bcolors.OKBLUE+output_file_location+bcolors.ENDC)
+
+        ######    Measuring post-realignment    ########
         print(UF.TimeStamp(),'Measuring the validation alignment...')
 
+        data=ini_data
         if BrickID=='':
             ColUse=[TrackID,PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty]
         else:
@@ -770,7 +822,7 @@ while Status<len(Program):
         print(UF.TimeStamp(),'There are',len(plates),'plates')
         print(UF.TimeStamp(),'Final validation spatial residual value is',bcolors.BOLD+str(round(FitPlate(plates[0][0],0,0,validation_data,'Rec_Seg_ID'),2))+bcolors.ENDC, 'microns')
         print(UF.TimeStamp(),'Final validation residual value is',bcolors.BOLD+str(round(FitPlateAngle(plates[0][0],0,0,validation_data,'Rec_Seg_ID')*1000,1))+bcolors.ENDC, 'milliradians')
-
+        exit()
 
 
     #             # print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(Status)+' has successfully completed'+bcolors.ENDC)
