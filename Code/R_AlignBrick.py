@@ -382,7 +382,6 @@ def AutoPilot(wait_min, interval_min, max_interval_tolerance,program):
      return False,False
 #The function bellow helps to automate the submission process
 def StandardProcess(program,status,freshstart):
-
         print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
         print(UF.TimeStamp(),bcolors.BOLD+'Stage '+str(status)+':'+bcolors.ENDC+str(program[status][0]))
         batch_sub=program[status][4]>1
@@ -490,8 +489,6 @@ def UpdateStatus(status):
 
 if Mode=='RESET':
     print(UF.TimeStamp(),'Performing the cleanup... ',bcolors.ENDC)
-    #HTCondorTag="SoftUsed == \"ANNDEA-R-"+RecBatchID+"\""
-    #UF.RecCleanUp(AFS_DIR, EOS_DIR, 'R_'+RecBatchID, ['R_'+RecBatchID], HTCondorTag)
     FreshStart=False
     UpdateStatus(0)
     Status=0
@@ -553,7 +550,6 @@ for c in range(Cycle):
     Program.append('Custom: Angular Cycle '+str(c))
 Program.append('Custom: Final')
 
-# Program.append('Custom - TrackMapping')
 while Status<len(Program):
     if Program[Status][:6]!='Custom':
         #Standard process here
@@ -624,10 +620,6 @@ while Status<len(Program):
         print(UF.TimeStamp(), bcolors.OKGREEN+"The hit data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+required_file_location+bcolors.ENDC)
         UpdateStatus(Status+1)
 
-
-
-
-        # print(UF.TimeStamp(),'Analysing the data sample in order to understand how many jobs to submit to HTCondor... ',bcolors.ENDC)
 
     elif Program[Status][:21]=='Custom: Angular Cycle':
         print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
