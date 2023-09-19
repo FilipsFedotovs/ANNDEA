@@ -748,8 +748,8 @@ while Status<len(Program):
         validation_data = new_combined_data[new_combined_data.Track_No >= ValMinHits]
         validation_data = validation_data[validation_data.Track_No < MinHits]
         print(UF.TimeStamp(),'There are',len(plates),'plates')
-        print(UF.TimeStamp(),'Final validation spatial residual value is',bcolors.BOLD+str(round(FitPlate(plates[0][0],0,0,validation_data,'Rec_Seg_ID'),2))+bcolors.ENDC, 'microns')
-        print(UF.TimeStamp(),'Final validation residual value is',bcolors.BOLD+str(round(FitPlateAngle(plates[0][0],0,0,validation_data,'Rec_Seg_ID')*1000,1))+bcolors.ENDC, 'milliradians')
+        print(UF.TimeStamp(),'Initial validation spatial residual value is',bcolors.BOLD+str(round(FitPlate(plates[0][0],0,0,validation_data,'Rec_Seg_ID'),2))+bcolors.ENDC, 'microns')
+        print(UF.TimeStamp(),'Initial validation residual value is',bcolors.BOLD+str(round(FitPlateAngle(plates[0][0],0,0,validation_data,'Rec_Seg_ID')*1000,1))+bcolors.ENDC, 'milliradians')
 
 
         #### Saving the aligned file
@@ -822,11 +822,9 @@ while Status<len(Program):
         print(UF.TimeStamp(),'There are',len(plates),'plates')
         print(UF.TimeStamp(),'Final validation spatial residual value is',bcolors.BOLD+str(round(FitPlate(plates[0][0],0,0,validation_data,'Rec_Seg_ID'),2))+bcolors.ENDC, 'microns')
         print(UF.TimeStamp(),'Final validation residual value is',bcolors.BOLD+str(round(FitPlateAngle(plates[0][0],0,0,validation_data,'Rec_Seg_ID')*1000,1))+bcolors.ENDC, 'milliradians')
-        exit()
 
-
-    #             # print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(Status)+' has successfully completed'+bcolors.ENDC)
-    #             # UpdateStatus(Status+1)
+        print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(Status)+' has successfully completed'+bcolors.ENDC)
+        UpdateStatus(Status+1)
     print(UF.TimeStamp(),'Loading previously saved data from ',bcolors.OKBLUE+RecOutputMeta+bcolors.ENDC)
     MetaInput=UF.PickleOperations(RecOutputMeta,'r', 'N/A')
     Meta=MetaInput[0]
@@ -844,7 +842,7 @@ if Status<20:
     for p in Program:
         if p[:6]!='Custom':
            print(UF.TimeStamp(),UF.ManageTempFolders(p,'Delete'))
-    print(UF.TimeStamp(), bcolors.OKGREEN+"Segment merging has been completed"+bcolors.ENDC)
+    print(UF.TimeStamp(), bcolors.OKGREEN+"Data alignment procedure has been completed"+bcolors.ENDC)
 else:
     print(UF.TimeStamp(), bcolors.FAIL+"Segment merging has not been completed as one of the processes has timed out. Please run the script again (without Reset Mode)."+bcolors.ENDC)
     exit()
