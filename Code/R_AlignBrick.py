@@ -705,10 +705,12 @@ while Status<len(Program):
         data=pd.read_csv(initial_input_file_location,
                     header=0)
         data['Plate_ID']=data['z'].astype(int)
-        # if BrickID=='':
-        #     data[BrickID]='D'
-        # total_rows=len(data.axes[0])
-        # print(UF.TimeStamp(),'The raw data has ',total_rows,' hits')
+        print(UF.TimeStamp(),'Preparing initial data for the join...')
+        data['j']=(data['x']-Min_x)/Size
+        data['k']=(data['y']-Min_y)/Size
+        data['j']=data['j'].apply(np.floor)
+        data['k']=data['k'].apply(np.floor)
+        print(data)
         # print(UF.TimeStamp(),'Removing unreconstructed hits...')
         print('here')
         exit()
