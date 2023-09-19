@@ -716,6 +716,14 @@ while Status<len(Program):
         data['dy'] = data['dy'].fillna(0.0)
         data[PM.x]=data[PM.x]+data['dx']
         data[PM.y]=data[PM.y]+data['dy']
+        data.drop(['dx','dy'],axis=1, inplace=True)
+        print(UF.TimeStamp(),'Aligning angular coordinates...')
+        data=pd.merge(data,angular_alignment_map,on=['Plate_ID','j','k'],how='left')
+        data['dx'] = data['dx'].fillna(0.0)
+        data['dy'] = data['dy'].fillna(0.0)
+        data[PM.tx]=data[PM.tx]+data['dx']
+        data[PM.ty]=data[PM.ty]+data['dy']
+        data.drop(['Plate_ID','dx','dy','k','j'],axis=1, inplace=True)
         print(data)
         # print(UF.TimeStamp(),'Removing unreconstructed hits...')
         print('here')
