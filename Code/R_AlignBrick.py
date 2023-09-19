@@ -710,6 +710,7 @@ while Status<len(Program):
         data['k']=(data['y']-Min_y)/Size
         data['j']=data['j'].apply(np.floor)
         data['k']=data['k'].apply(np.floor)
+        print(data)
         print(UF.TimeStamp(),'Aligning spatial coordinates...')
         data=pd.merge(data,spatial_alignment_map,on=['Plate_ID','j','k'],how='left')
         data['dx'] = data['dx'].fillna(0.0)
