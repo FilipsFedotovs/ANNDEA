@@ -122,10 +122,12 @@ def FitPlate(PlateZ,dx,dy,input_data,Track_ID):
     Tracks_List=temp_data.values.tolist() #I find it is much easier to deal with tracks in list format when it comes to fitting
     Tracks_Head=Tracks_Head.values.tolist()
     #Bellow we build the track representatation that we can use to fit slopes
-    for bth in Tracks_Head:
+    with alive_bar(len(Tracks_Head)*2,force_tty=True, title='Spatially fitting data...') as bar:
+        for bth in Tracks_Head:
                    bth.append([])
                    bt=0
                    trigger=False
+                   bar()
                    while bt<(len(Tracks_List)):
                        if bth[0]==Tracks_List[bt][0]:
 
@@ -138,7 +140,7 @@ def FitPlate(PlateZ,dx,dy,input_data,Track_ID):
                        else:
                             continue
                        bt+=1
-    for bth in Tracks_Head:
+        for bth in Tracks_Head:
            x,y,z=[],[],[]
            for b in bth[1]:
                x.append(b[0])
@@ -155,6 +157,7 @@ def FitPlate(PlateZ,dx,dy,input_data,Track_ID):
            bth.append(ty) #Append x slope
            bth.append(0) #Append a placeholder slope (for polynomial case)
            del(bth[1])
+           bar()
     #Once we get coefficients for all tracks we convert them back to Pandas dataframe and join back to the data
     Tracks_Head=pd.DataFrame(Tracks_Head, columns = [Track_ID,'ax','t1x','t2x','ay','t1y','t2y'])
 
