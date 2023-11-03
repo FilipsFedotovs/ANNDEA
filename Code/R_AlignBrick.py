@@ -282,7 +282,7 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         track_no_data=track_no_data.drop([PM.y,PM.z,PM.tx,PM.ty,PM.Hit_ID],axis=1)
         track_no_data=track_no_data.rename(columns={PM.x: "Track_No"})
         
-        track_no_data['random']=np.random.random(size=len())
+        track_no_data['random']=np.random.random(size=len(track_no_data))
         print(track_no_data)
         exit()
         new_combined_data=pd.merge(data, track_no_data, how="left", on=["Rec_Seg_ID"])
