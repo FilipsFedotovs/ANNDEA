@@ -284,7 +284,7 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         track_no_data=track_no_data.rename(columns={PM.x: "Track_No"})
         track_no_data['Random_Factor']=np.random.random(size=len(track_no_data))
         new_combined_data=pd.merge(data, track_no_data, how="left", on=["Rec_Seg_ID"])
-        new_combined_data = new_combined_data[new_combined_data.Random_Factor >= SampleSize]
+        new_combined_data = new_combined_data[new_combined_data.Random_Factor <= SampleSize]
         grand_final_rows=len(new_combined_data.axes[0])
         print(UF.TimeStamp(),'The resampled data has ',grand_final_rows,' hits')
         print(new_combined_data)
