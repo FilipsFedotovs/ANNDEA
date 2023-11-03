@@ -287,8 +287,7 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         new_combined_data = new_combined_data[new_combined_data.Random_Factor <= SampleSize]
         grand_final_rows=len(new_combined_data.axes[0])
         print(UF.TimeStamp(),'The resampled data has ',grand_final_rows,' hits')
-        print(new_combined_data)
-        exit()
+        new_combined_data=new_combined_data.drop(['Random_Factor'],axis=1)
         new_combined_data = new_combined_data[new_combined_data.Track_No >= ValMinHits]
         new_combined_data['Plate_ID']=new_combined_data['z'].astype(int)
 
@@ -738,7 +737,13 @@ while Status<len(Program):
         track_no_data=data.groupby(['Rec_Seg_ID'],as_index=False).count()
         track_no_data=track_no_data.drop([PM.y,PM.z,PM.tx,PM.ty,PM.Hit_ID],axis=1)
         track_no_data=track_no_data.rename(columns={PM.x: "Track_No"})
+        track_no_data['Random_Factor']=np.random.random(size=len(track_no_data))
+        
         new_combined_data=pd.merge(data, track_no_data, how="left", on=["Rec_Seg_ID"])
+        new_combined_data = new_combined_data[new_combined_data.Random_Factor <= SampleSize]
+        grand_final_rows=len(new_combined_data.axes[0])
+        print(UF.TimeStamp(),'The resampled data has ',grand_final_rows,' hits')
+        new_combined_data=new_combined_data.drop(['Random_Factor'],axis=1)       
         new_combined_data = new_combined_data[new_combined_data.Track_No >= ValMinHits]
         new_combined_data['Plate_ID']=new_combined_data['z'].astype(int)
         new_combined_data=new_combined_data.sort_values(['Rec_Seg_ID',PM.x],ascending=[1,1])
