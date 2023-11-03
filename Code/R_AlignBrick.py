@@ -69,6 +69,7 @@ parser.add_argument('--Size',help="Split the cross section of the brick in the s
 parser.add_argument('--ReqMemory',help="Specifying the length of the HTCondor job walltime. Currently at 'workday' which is 8 hours.", default='2 GB')
 parser.add_argument('--MinHits',help="What is the minimum number of hits per track?", default=50,type=int)
 parser.add_argument('--ValMinHits',help="What is the validation minimum number of hits per track?", default=45,type=int)
+parser.add_argument('--SampleSize',help="Would you like to sample for big datasets? By how much?", default=1.0,type=float)
 parser.add_argument('--Cycle',help="Number of cycles", default='1')
 parser.add_argument('--SpatialOptBound',help="Size", default='200')
 parser.add_argument('--AngularOptBound',help="Size", default='2')
@@ -80,7 +81,7 @@ RecBatchID=args.RecBatchID
 Patience=int(args.Patience)
 TrackID=args.TrackID
 BrickID=args.BrickID
-
+SampleSize=arg.SampleSize
 MinHits=int(args.MinHits)
 ValMinHits=int(args.ValMinHits)
 Size=int(args.Size)
@@ -283,6 +284,9 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         track_no_data=track_no_data.rename(columns={PM.x: "Track_No"})
         track_no_data['Random_Factor']=np.random.random(size=len(track_no_data))
         new_combined_data=pd.merge(data, track_no_data, how="left", on=["Rec_Seg_ID"])
+        new_combined_data = new_combined_data[new_combined_data.Random_Factor >= SampleSize]
+        grand_final_rows=len(new_combined_data.axes[0])
+        print(UF.TimeStamp(),'The resampled data has ',grand_final_rows,' hits')
         print(new_combined_data)
         exit()
         new_combined_data = new_combined_data[new_combined_data.Track_No >= ValMinHits]
