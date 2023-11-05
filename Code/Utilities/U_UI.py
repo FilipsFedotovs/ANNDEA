@@ -31,7 +31,7 @@ def WelcomeMsg(Title, Help):
     Line=''
     for l in ANNDEA_logo:
         Line+=l
-        print(Line, flush=True)
+        print(Line, end="\r",flush=True)
     exit()
 
 
