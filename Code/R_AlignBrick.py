@@ -232,7 +232,6 @@ def FitPlateAngle(PlateZ,dtx,dty,input_data,Track_ID):
     return fit
 ########################################     Phase 1 - Create compact source file    #########################################
 UI.Msg('status','Stage 0:',' Preparing the source data...')
-exit()
 if os.path.isfile(required_file_location)==False or Mode=='RESET':
         UI.Msg('location','Loading raw data from',initial_input_file_location)
         if BrickID=='':
@@ -249,7 +248,8 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         if BrickID=='':
             data[BrickID]='D'
         total_rows=len(data.axes[0])
-        print(UF.TimeStamp(),'The raw data has ',total_rows,' hits')
+        UI.Msg('result','The raw data has ',total_rows,' hits')
+        exit()
         print(UF.TimeStamp(),'Removing unreconstructed hits...')
         data=data.dropna()
 
