@@ -32,6 +32,9 @@ def WelcomeMsg(Title, Help):
     line=''
     title=''
     separator='-------------------'
+    print('                                                                                                                                    ')
+    print('                                                                                                                                    ')
+    print(bc.HEADER+"########################################################################################################"+bc.ENDC)
     for l in range(len(ANNDEA_logo)):
         line+=ANNDEA_logo[l]
         if l<len(ANNDEA_logo)-1:
