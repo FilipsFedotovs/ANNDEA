@@ -44,7 +44,7 @@ class bcolors:   #We use it for the interface
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
 
-UI('Hello','Hello')
+UI.WelcomeMsg('Hello','Hello')
 exit()
 print('                                                                                                                                    ')
 print('                                                                                                                                    ')
