@@ -26,31 +26,31 @@ class bc:
 def TimeStamp():
  return "["+datetime.datetime.now().strftime("%D")+' '+datetime.datetime.now().strftime("%H:%M:%S")+"]"
 
+def PrintLine(Content):
+    line=''
+    for l in range(len(Content)):
+        line+=Content[l]
+        if l<len(Content)-1:
+            print(bc.HEADER+line+bc.ENDC, end="\r",flush=True)
+        else:
+            print(bc.HEADER+line+bc.ENDC)
+        time.sleep(0.1)
+    print('                                                                                                                                    ')
+
 #This utility provides automates welcome messages
-def WelcomeMsg(Title, Help):
+def WelcomeMsg(Title, Author, Contact):
     ANNDEA_logo='Welcome to ANNDEA'
     print('                                                                                                                                    ')
     print('                                                                                                                                    ')
     print(bc.HEADER+"########################################################################################################"+bc.ENDC)
-
-    line=''
-    for l in range(len(ANNDEA_logo)):
-        line+=ANNDEA_logo[l]
-        if l<len(ANNDEA_logo)-1:
-            print(bc.HEADER+line+bc.ENDC, end="\r",flush=True)
-        else:
-            print(bc.HEADER+line+bc.ENDC)
-        time.sleep(0.1)
+    PrintLine(ANNDEA_logo)
+    PrintLine(Title)
+    PrintLine(Author)
+    PrintLine(Contact)
+    print(bc.HEADER+"########################################################################################################"+bc.ENDC)
+    print('                                                                                                                                    ')
     print('                                                                                                                                    ')
 
-    line=''
-    for l in range(len(Title)):
-        line+=Title[l]
-        if l<len(Title)-1:
-            print(bc.HEADER+line+bc.ENDC, end="\r",flush=True)
-        else:
-            print(bc.HEADER+line+bc.ENDC)
-        time.sleep(0.1)
 
 
 
