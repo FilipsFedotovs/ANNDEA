@@ -23,6 +23,7 @@ if PY_DIR!='': #Temp solution - the decision was made to move all libraries to E
     sys.path.append('/usr/lib64/python3.6/site-packages')
     sys.path.append('/usr/lib/python3.6/site-packages')
 sys.path.append(AFS_DIR+'/Code/Utilities')
+import U_UI as UI
 import UtilityFunctions as UF #This is where we keep routine utility functions
 import Parameters as PM #This is where we keep framework global parameters
 import pandas as pd #We use Panda for a routine data processing
@@ -33,7 +34,6 @@ import os
 import time
 from alive_progress import alive_bar
 import argparse
-import ast
 class bcolors:   #We use it for the interface
     HEADER = '\033[95m'
     OKBLUE = '\033[94m'
@@ -44,6 +44,8 @@ class bcolors:   #We use it for the interface
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
 
+UI('Hello','Hello')
+exit()
 print('                                                                                                                                    ')
 print('                                                                                                                                    ')
 print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
