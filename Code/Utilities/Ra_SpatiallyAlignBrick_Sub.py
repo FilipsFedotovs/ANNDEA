@@ -7,9 +7,6 @@
 import argparse
 import sys
 
-
-
-
 ######################################## Set variables  #############################################################
 #Setting the parser - this script is usually not run directly, but is used by a Master version Counterpart that passes the required arguments
 parser = argparse.ArgumentParser(description='select cut parameters')

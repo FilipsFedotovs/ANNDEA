@@ -8,7 +8,8 @@ import datetime
 import numpy as np
 import shutil
 import time
-
+import math
+from alive_progress import alive_bar
 #Graphic section
 
 #Use to give colour to the messages
@@ -66,104 +67,10 @@ def Msg(type,content,content2='',content3=''):
           print(TimeStamp(),content)
       if type=='comleted':
          print(TimeStamp(),bc.OKGREEN+content+bc.ENDC)
-def CleanFolder(folder,key):
-    if key=='':
-      for the_file in os.listdir(folder):
-                file_path=os.path.join(folder, the_file)
-                try:
-                    if os.path.isfile(file_path):
-                        os.unlink(file_path)
-                except Exception as e:
-                    print(e)
-    else:
-      for the_file in os.listdir(folder):
-                file_path=os.path.join(folder, the_file)
-                try:
-                    if os.path.isfile(file_path) and (key in the_file):
-                        os.unlink(file_path)
-                except Exception as e:
-                    print(e)
-#This function automates csv read/write operations
 
-def LogOperations(flocation,mode, message):
-    if mode=='a':
-        csv_writer_log=open(flocation,"a")
-        log_writer = csv.writer(csv_writer_log)
-        if len(message)>0:
-         for m in message:
-          log_writer.writerow(m)
-        csv_writer_log.close()
-    if mode=='w':
-        csv_writer_log=open(flocation,"w")
-        log_writer = csv.writer(csv_writer_log)
-        if len(message)>0:
-         for m in message:
-           log_writer.writerow(m)
-        csv_writer_log.close()
-    if mode=='r':
-        csv_reader_log=open(flocation,"r")
-        log_reader = csv.reader(csv_reader_log)
-        return list(log_reader)
-
-def PickleOperations(flocation,mode, message):
-    import pickle
-    if mode=='w':
-        pickle_writer_log=open(flocation,"wb")
-        pickle.dump(message, pickle_writer_log)
-        pickle_writer_log.close()
-        return ('',"UF.PickleOperations Message: Data has been written successfully into "+flocation)
-    if mode=='r':
-        pickle_writer_log=open(flocation,'rb')
-        result=pickle.load(pickle_writer_log)
-        pickle_writer_log.close()
-        return (result,"UF.PickleOperations Message: Data has been loaded successfully from "+flocation)
-
-def RecCleanUp(AFS_DIR, EOS_DIR, Process, FileNames, ProcessId):
-      subprocess.call(['condor_rm', '-constraint', ProcessId])
-      EOSsubDIR=EOS_DIR+'/'+'ANNDEA'
-      EOSsubModelDIR=EOSsubDIR+'/'+'Data/REC_SET'
-      folder =  EOSsubModelDIR
-      for f in FileNames:
-          CleanFolder(folder,f)
-      folder =  AFS_DIR+'/HTCondor/SH'
-      CleanFolder(folder,'SH_'+Process+'_')
-      folder =  AFS_DIR+'/HTCondor/SUB'
-      CleanFolder(folder,'SUB_'+Process+'_')
-      folder =  AFS_DIR+'/HTCondor/MSG'
-      CleanFolder(folder,'MSG_'+Process+'_')
-
-def EvalCleanUp(AFS_DIR, EOS_DIR, Process, FileNames, ProcessId):
-      subprocess.call(['condor_rm', '-constraint', ProcessId])
-      EOSsubDIR=EOS_DIR+'/'+'ANNDEA'
-      EOSsubModelDIR=EOSsubDIR+'/'+'Data/TEST_SET'
-      folder =  EOSsubModelDIR
-      for f in FileNames:
-          CleanFolder(folder,f)
-      folder =  AFS_DIR+'/HTCondor/SH'
-      CleanFolder(folder,'SH_'+Process+'_')
-      folder =  AFS_DIR+'/HTCondor/SUB'
-      CleanFolder(folder,'SUB_'+Process+'_')
-      folder =  AFS_DIR+'/HTCondor/MSG'
-      CleanFolder(folder,'MSG_'+Process+'_')
-
-def TrainCleanUp(AFS_DIR, EOS_DIR, Process, FileNames, ProcessId):
-      subprocess.call(['condor_rm', '-constraint', ProcessId])
-      EOSsubDIR=EOS_DIR+'/'+'ANNDEA'
-      EOSsubModelDIR=EOSsubDIR+'/'+'Data/TRAIN_SET'
-      folder =  EOSsubModelDIR
-      for f in FileNames:
-          CleanFolder(folder,f)
-      EOSsubModelDIR=EOSsubDIR+'/'+'Models'
-      folder =  EOSsubModelDIR
-      for f in FileNames:
-          CleanFolder(folder,f)
-      folder =  AFS_DIR+'/HTCondor/SH'
-      CleanFolder(folder,'SH_'+Process+'_')
-      folder =  AFS_DIR+'/HTCondor/SUB'
-      CleanFolder(folder,'SUB_'+Process+'_')
-      folder =  AFS_DIR+'/HTCondor/MSG'
-      CleanFolder(folder,'MSG_'+Process+'_')
-
+def UpdateStatus(status,meta,output):
+    meta.UpdateStatus(status)
+    print(PickleOperations(output,'w', meta)[1])
 def CreateCondorJobs(AFS,EOS,PY,path,o,pfx,sfx,ID,loop_params,OptionHeader,OptionLine,Sub_File,batch_sub=False,Exception=['',''], Log=False, GPU=False):
    if Exception[0]==" --PlateZ ":
     if batch_sub==False:
@@ -356,7 +263,6 @@ def CreateCondorJobs(AFS,EOS,PY,path,o,pfx,sfx,ID,loop_params,OptionHeader,Optio
                                bad_pop.append([OH+[' --i ', ' --p ', ' --o ',' --pfx ', ' --sfx '], OL+['$1', path,o, pfx, sfx], SHName, SUBName, MSGName, ScriptName, loop_params, 'ANNDEA-'+pfx+'-'+ID, Log,GPU])
         return(bad_pop)
    return []
-
 def SubmitJobs2Condor(job,local=False,ExtCPU=1,JobFlavour='workday', ExtMemory='2 GB'):
     if local:
        OptionLine = job[0][0]+str(job[1][0])
@@ -368,7 +274,7 @@ def SubmitJobs2Condor(job,local=False,ExtCPU=1,JobFlavour='workday', ExtMemory='
        for j in range(0,job[6]):
          act_submission_line=submission_line.replace('$1',str(j))
          subprocess.call([act_submission_line],shell=True)
-         print(bcolors.OKGREEN+act_submission_line+" has been successfully executed"+bcolors.ENDC)
+         print(bc.OKGREEN+act_submission_line+" has been successfully executed"+bc.ENDC)
     else:
         SHName = job[2]
         SUBName = job[3]
@@ -420,6 +326,241 @@ def SubmitJobs2Condor(job,local=False,ExtCPU=1,JobFlavour='workday', ExtMemory='
         f.close()
         subprocess.call(['condor_submit', SUBName])
         print(TotalLine, " has been successfully submitted")
+def AutoPilot(wait_min, interval_min, max_interval_tolerance,program,RequestExtCPU,JobFlavour,ReqMemory):
+     print(TimeStamp(),'Going on an autopilot mode for ',wait_min, 'minutes while checking HTCondor every',interval_min,'min',bc.ENDC)
+     wait_sec=wait_min*60
+     interval_sec=interval_min*60
+     intervals=int(math.ceil(wait_sec/interval_sec))
+     for interval in range(1,intervals+1):
+         time.sleep(interval_sec)
+         print(TimeStamp(),"Scheduled job checkup...") #Progress display
+         bad_pop=CreateCondorJobs(program[1][0],
+                                    program[1][1],
+                                    program[1][2],
+                                    program[1][3],
+                                    program[1][4],
+                                    program[1][5],
+                                    program[1][6],
+                                    program[1][7],
+                                    program[1][8],
+                                    program[2],
+                                    program[3],
+                                    program[1][9],
+                                    False,
+                                    program[6])
+         if len(bad_pop)>0:
+               print(TimeStamp(),bc.WARNING+'Autopilot status update: There are still', len(bad_pop), 'HTCondor jobs remaining'+bc.ENDC)
+               if interval%max_interval_tolerance==0:
+                  for bp in bad_pop:
+                      SubmitJobs2Condor(bp,program[5],RequestExtCPU,JobFlavour,ReqMemory)
+                  print(TimeStamp(), bc.OKGREEN+"All jobs have been resubmitted"+bc.ENDC)
+         else:
+              return True,False
+     return False,False
+
+def StandardProcess(program,status,freshstart):
+        print(bc.HEADER+"#############################################################################################"+bc.ENDC)
+        print(TimeStamp(),bc.BOLD+'Stage '+str(status)+':'+bc.ENDC+str(program[status][0]))
+        batch_sub=program[status][4]>1
+        bad_pop=CreateCondorJobs(program[status][1][0],
+                                    program[status][1][1],
+                                    program[status][1][2],
+                                    program[status][1][3],
+                                    program[status][1][4],
+                                    program[status][1][5],
+                                    program[status][1][6],
+                                    program[status][1][7],
+                                    program[status][1][8],
+                                    program[status][2],
+                                    program[status][3],
+                                    program[status][1][9],
+                                    False,
+                                    program[status][6])
+
+
+        if len(bad_pop)==0:
+             print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
+             UpdateStatus(status+1)
+             return True,False
+
+
+
+        elif (program[status][4])==len(bad_pop):
+                 bad_pop=UF.CreateCondorJobs(program[status][1][0],
+                                    program[status][1][1],
+                                    program[status][1][2],
+                                    program[status][1][3],
+                                    program[status][1][4],
+                                    program[status][1][5],
+                                    program[status][1][6],
+                                    program[status][1][7],
+                                    program[status][1][8],
+                                    program[status][2],
+                                    program[status][3],
+                                    program[status][1][9],
+                                    batch_sub,
+                                    program[status][6])
+                 print(UF.TimeStamp(),'Submitting jobs to HTCondor... ',bcolors.ENDC)
+                 _cnt=0
+                 for bp in bad_pop:
+                          if _cnt>SubGap:
+                              print(UF.TimeStamp(),'Pausing submissions for  ',str(int(SubPause/60)), 'minutes to relieve congestion...',bcolors.ENDC)
+                              time.sleep(SubPause)
+                              _cnt=0
+                          UF.SubmitJobs2Condor(bp,program[status][5],RequestExtCPU,JobFlavour,ReqMemory)
+                          _cnt+=bp[6]
+                 if program[status][5]:
+                    print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
+                    return True,False
+                 elif AutoPilot(600,time_int,Patience,program[status]):
+                        print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
+                        return True,False
+                 else:
+                        print(UF.TimeStamp(),bcolors.FAIL+'Stage '+str(status)+' is uncompleted...'+bcolors.ENDC)
+                        return False,False
+
+
+        elif len(bad_pop)>0:
+            # if freshstart:
+                   print(UF.TimeStamp(),bcolors.WARNING+'Warning, there are still', len(bad_pop), 'HTCondor jobs remaining'+bcolors.ENDC)
+                   print(bcolors.BOLD+'If you would like to wait and exit please enter E'+bcolors.ENDC)
+                   print(bcolors.BOLD+'If you would like to wait please enter enter the maximum wait time in minutes'+bcolors.ENDC)
+                   print(bcolors.BOLD+'If you would like to resubmit please enter R'+bcolors.ENDC)
+                   UserAnswer=input(bcolors.BOLD+"Please, enter your option\n"+bcolors.ENDC)
+                   if UserAnswer=='E':
+                       print(UF.TimeStamp(),'OK, exiting now then')
+                       exit()
+                   if UserAnswer=='R':
+                      _cnt=0
+                      for bp in bad_pop:
+                           if _cnt>SubGap:
+                              print(UF.TimeStamp(),'Pausing submissions for  ',str(int(SubPause/60)), 'minutes to relieve congestion...',bcolors.ENDC)
+                              time.sleep(SubPause)
+                              _cnt=0
+                           UF.SubmitJobs2Condor(bp,program[status][5],RequestExtCPU,JobFlavour,ReqMemory)
+                           _cnt+=bp[6]
+                      print(UF.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
+                      if program[status][5]:
+                          print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
+                          return True,False
+                      elif AutoPilot(600,time_int,Patience,program[status]):
+                          print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+ 'has successfully completed'+bcolors.ENDC)
+                          return True,False
+                      else:
+                          print(UF.TimeStamp(),bcolors.FAIL+'Stage '+str(status)+' is uncompleted...'+bcolors.ENDC)
+                          return False,False
+                   else:
+                      if program[status][5]:
+                          print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
+                          return True,False
+                      elif AutoPilot(int(UserAnswer),time_int,Patience,program[status]):
+                          print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+ 'has successfully completed'+bcolors.ENDC)
+                          return True,False
+                      else:
+                          print(UF.TimeStamp(),bcolors.FAIL+'Stage '+str(status)+' is uncompleted...'+bcolors.ENDC)
+                          return False,False
+#The function bellow helps to automate the submission process
+def CleanFolder(folder,key):
+    if key=='':
+      for the_file in os.listdir(folder):
+                file_path=os.path.join(folder, the_file)
+                try:
+                    if os.path.isfile(file_path):
+                        os.unlink(file_path)
+                except Exception as e:
+                    print(e)
+    else:
+      for the_file in os.listdir(folder):
+                file_path=os.path.join(folder, the_file)
+                try:
+                    if os.path.isfile(file_path) and (key in the_file):
+                        os.unlink(file_path)
+                except Exception as e:
+                    print(e)
+#This function automates csv read/write operations
+
+def LogOperations(flocation,mode, message):
+    if mode=='a':
+        csv_writer_log=open(flocation,"a")
+        log_writer = csv.writer(csv_writer_log)
+        if len(message)>0:
+         for m in message:
+          log_writer.writerow(m)
+        csv_writer_log.close()
+    if mode=='w':
+        csv_writer_log=open(flocation,"w")
+        log_writer = csv.writer(csv_writer_log)
+        if len(message)>0:
+         for m in message:
+           log_writer.writerow(m)
+        csv_writer_log.close()
+    if mode=='r':
+        csv_reader_log=open(flocation,"r")
+        log_reader = csv.reader(csv_reader_log)
+        return list(log_reader)
+
+def PickleOperations(flocation,mode, message):
+    import pickle
+    if mode=='w':
+        pickle_writer_log=open(flocation,"wb")
+        pickle.dump(message, pickle_writer_log)
+        pickle_writer_log.close()
+        return ('',"UF.PickleOperations Message: Data has been written successfully into "+flocation)
+    if mode=='r':
+        pickle_writer_log=open(flocation,'rb')
+        result=pickle.load(pickle_writer_log)
+        pickle_writer_log.close()
+        return (result,"UF.PickleOperations Message: Data has been loaded successfully from "+flocation)
+
+def RecCleanUp(AFS_DIR, EOS_DIR, Process, FileNames, ProcessId):
+      subprocess.call(['condor_rm', '-constraint', ProcessId])
+      EOSsubDIR=EOS_DIR+'/'+'ANNDEA'
+      EOSsubModelDIR=EOSsubDIR+'/'+'Data/REC_SET'
+      folder =  EOSsubModelDIR
+      for f in FileNames:
+          CleanFolder(folder,f)
+      folder =  AFS_DIR+'/HTCondor/SH'
+      CleanFolder(folder,'SH_'+Process+'_')
+      folder =  AFS_DIR+'/HTCondor/SUB'
+      CleanFolder(folder,'SUB_'+Process+'_')
+      folder =  AFS_DIR+'/HTCondor/MSG'
+      CleanFolder(folder,'MSG_'+Process+'_')
+
+def EvalCleanUp(AFS_DIR, EOS_DIR, Process, FileNames, ProcessId):
+      subprocess.call(['condor_rm', '-constraint', ProcessId])
+      EOSsubDIR=EOS_DIR+'/'+'ANNDEA'
+      EOSsubModelDIR=EOSsubDIR+'/'+'Data/TEST_SET'
+      folder =  EOSsubModelDIR
+      for f in FileNames:
+          CleanFolder(folder,f)
+      folder =  AFS_DIR+'/HTCondor/SH'
+      CleanFolder(folder,'SH_'+Process+'_')
+      folder =  AFS_DIR+'/HTCondor/SUB'
+      CleanFolder(folder,'SUB_'+Process+'_')
+      folder =  AFS_DIR+'/HTCondor/MSG'
+      CleanFolder(folder,'MSG_'+Process+'_')
+
+def TrainCleanUp(AFS_DIR, EOS_DIR, Process, FileNames, ProcessId):
+      subprocess.call(['condor_rm', '-constraint', ProcessId])
+      EOSsubDIR=EOS_DIR+'/'+'ANNDEA'
+      EOSsubModelDIR=EOSsubDIR+'/'+'Data/TRAIN_SET'
+      folder =  EOSsubModelDIR
+      for f in FileNames:
+          CleanFolder(folder,f)
+      EOSsubModelDIR=EOSsubDIR+'/'+'Models'
+      folder =  EOSsubModelDIR
+      for f in FileNames:
+          CleanFolder(folder,f)
+      folder =  AFS_DIR+'/HTCondor/SH'
+      CleanFolder(folder,'SH_'+Process+'_')
+      folder =  AFS_DIR+'/HTCondor/SUB'
+      CleanFolder(folder,'SUB_'+Process+'_')
+      folder =  AFS_DIR+'/HTCondor/MSG'
+      CleanFolder(folder,'MSG_'+Process+'_')
+
+
+
+
 
 def ManageTempFolders(spi,op_type):
     if type(spi[1][8]) is int:
