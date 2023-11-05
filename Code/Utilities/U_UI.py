@@ -64,8 +64,8 @@ def Msg(type,content,content2='',content3=''):
           print(TimeStamp(),content,bc.BOLD+str(content2)+bc.ENDC,content3)
       if type=='vanilla':
           print(TimeStamp(),content)
-      if type=='bar':
-         print(bc.HEADER+"########################################################################################################"+bc.ENDC)
+      if type=='comleted':
+         print(TimeStamp(),bc.OKGREEN+content+bc.ENDC)
 def CleanFolder(folder,key):
     if key=='':
       for the_file in os.listdir(folder):

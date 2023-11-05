@@ -292,7 +292,6 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         UI.Msg('result','There are ',len(plates),' plates')
         UI.Msg('result','Initial validation spatial residual value is',round(FitPlate(plates[0][0],0,0,validation_data,'Rec_Seg_ID'),2),'microns')
         UI.Msg('result','Initial validation angular residual value is',round(FitPlateAngle(plates[0][0],0,0,validation_data,'Rec_Seg_ID')*1000,1),'milliradians')
-        exit()
 
         y_no=int(math.ceil((Max_y-Min_y)/Size))
         for j in range(x_no):
@@ -310,7 +309,7 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
                 UI.Msg("The granular hit data has been created successfully and written to",'location',required_temp_file_location)
         JobSets=[]
         new_combined_data.to_csv(required_file_location,index=False)
-        UI.Msg("The hit data has been created successfully and written to",'location',required_file_location)
+        UI.Msg('location',"The hit data has been created successfully and written to",required_file_location)
         for i in range(Sets):
             JobSets.append([])
             for j in range(x_no):
@@ -318,12 +317,11 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         Meta=UF.TrainingSampleMeta(RecBatchID)
         Meta.IniBrickAlignMetaData(Size,ValMinHits,MinHits,SpatialOptBound,AngularOptBound,JobSets,Cycle,plates,[Min_x,Max_x,Min_y,Max_y])
         Meta.UpdateStatus(0)
-        print(UF.PickleOperations(RecOutputMeta,'w', Meta)[1])
-        print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
-        print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 0 has successfully completed'+bcolors.ENDC)
+        print(UI.PickleOperations(RecOutputMeta,'w', Meta)[1])
+        UI.Msg('completed','Stage 0 has successfully completed')
 elif os.path.isfile(RecOutputMeta)==True:
-    print(UF.TimeStamp(),'Loading previously saved data from ',bcolors.OKBLUE+RecOutputMeta+bcolors.ENDC)
-    MetaInput=UF.PickleOperations(RecOutputMeta,'r', 'N/A')
+    UI.Msg('location','Loading previously saved data from ',RecOutputMeta)
+    MetaInput=UI.PickleOperations(RecOutputMeta,'r', 'N/A')
     Meta=MetaInput[0]
 Size=Meta.Size
 ValMinHits=Meta.ValMinHits
@@ -338,6 +336,7 @@ Max_x=Meta.FiducialVolume[1]
 Min_y=Meta.FiducialVolume[2]
 Max_y=Meta.FiducialVolume[3]
 #The function bellow helps to monitor the HTCondor jobs and keep the submission flow
+exit()
 def AutoPilot(wait_min, interval_min, max_interval_tolerance,program):
      print(UF.TimeStamp(),'Going on an autopilot mode for ',wait_min, 'minutes while checking HTCondor every',interval_min,'min',bcolors.ENDC)
      wait_sec=wait_min*60
