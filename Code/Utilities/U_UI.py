@@ -27,7 +27,7 @@ def TimeStamp():
  return "["+datetime.datetime.now().strftime("%D")+' '+datetime.datetime.now().strftime("%H:%M:%S")+"]"
 
 def PrintLine(Content):
-    line=''
+    line='   '
     for l in range(len(Content)):
         line+=Content[l]
         if l<len(Content)-1:
@@ -53,10 +53,15 @@ def WelcomeMsg(Title, Author, Contact):
     print('                                                                                                                                    ')
     print('                                                                                                                                    ')
 
-def Msg(content,type,content2):
+def Msg(type,content,content2='',content3=''):
       if type=='status':
           print(TimeStamp(),bc.BOLD+content+bc.ENDC+content2)
-
+      if type=='location':
+          print(TimeStamp(),content,bc.OKBLUE+content2+bc.ENDC)
+      if type=='success':
+          print(TimeStamp(),content,bc.OKBLUE+content2+bc.ENDC)
+      if type=='bar':
+         print(bc.HEADER+"########################################################################################################"+bc.ENDC)
 def CleanFolder(folder,key):
     if key=='':
       for the_file in os.listdir(folder):

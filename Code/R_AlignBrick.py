@@ -231,10 +231,10 @@ def FitPlateAngle(PlateZ,dtx,dty,input_data,Track_ID):
     fit=temp_data[0]/temp_data[1]
     return fit
 ########################################     Phase 1 - Create compact source file    #########################################
-UI.Msg('Stage 0:','status',' Preparing the source data...')
+UI.Msg('status','Stage 0:',' Preparing the source data...')
 exit()
 if os.path.isfile(required_file_location)==False or Mode=='RESET':
-        print(UF.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+initial_input_file_location+bcolors.ENDC)
+        UI.Msg('location','Loading raw data from',initial_input_file_location)
         if BrickID=='':
             ColUse=[TrackID,PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty]
         else:
@@ -313,11 +313,10 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
                 temp_data=temp_data[temp_data.y >= y_min_cut]
                 temp_data=temp_data[temp_data.y < y_max_cut]
                 temp_data.to_csv(required_temp_file_location,index=False)
-                print(UF.TimeStamp(), bcolors.OKGREEN+"The granular hit data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+required_temp_file_location+bcolors.ENDC)
+                UI.Msg("The granular hit data has been created successfully and written to",'location',required_temp_file_location)
         JobSets=[]
         new_combined_data.to_csv(required_file_location,index=False)
-        print(UF.TimeStamp(), bcolors.OKGREEN+"The hit data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+required_file_location+bcolors.ENDC)
-
+        UI.Msg("The hit data has been created successfully and written to",'location',required_file_location)
         for i in range(Sets):
             JobSets.append([])
             for j in range(x_no):
