@@ -62,6 +62,8 @@ def Msg(type,content,content2='',content3=''):
           print(TimeStamp(),content,bc.OKBLUE+content2+bc.ENDC)
       if type=='result':
           print(TimeStamp(),content,bc.BOLD+str(content2)+bc.ENDC,content3)
+      if type=='vanilla':
+          print(TimeStamp(),content)
       if type=='bar':
          print(bc.HEADER+"########################################################################################################"+bc.ENDC)
 def CleanFolder(folder,key):

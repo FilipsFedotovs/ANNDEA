@@ -249,20 +249,16 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
             data[BrickID]='D'
         total_rows=len(data.axes[0])
         UI.Msg('result','The raw data has ',total_rows,' hits')
-        exit()
-        print(UF.TimeStamp(),'Removing unreconstructed hits...')
+        UI.Msg('vanilla','Removing unreconstructed hits...')
         data=data.dropna()
-
         final_rows=len(data.axes[0])
-        print(UF.TimeStamp(),'The cleaned data has ',final_rows,' hits')
+        UI.Msg('result','The cleaned data has ',final_rows,' hits')
         data[BrickID] = data[BrickID].astype(str)
         data[TrackID] = data[TrackID].astype(str)
-
         data['Rec_Seg_ID'] = data[TrackID] + '-' + data[BrickID]
         data=data.drop([TrackID],axis=1)
         data=data.drop([BrickID],axis=1)
-
-        print(UF.TimeStamp(),'Removing tracks which have less than',ValMinHits,'hits...')
+        UI.Msg('result','Removing tracks which have less than',ValMinHits,' hits')
         track_no_data=data.groupby(['Rec_Seg_ID'],as_index=False).count()
         track_no_data=track_no_data.drop([PM.y,PM.z,PM.tx,PM.ty,PM.Hit_ID],axis=1)
         track_no_data=track_no_data.rename(columns={PM.x: "Track_No"})
@@ -270,14 +266,13 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         new_combined_data=pd.merge(data, track_no_data, how="left", on=["Rec_Seg_ID"])
         new_combined_data = new_combined_data[new_combined_data.Random_Factor <= SampleSize]
         grand_final_rows=len(new_combined_data.axes[0])
-        print(UF.TimeStamp(),'The resampled data has ',grand_final_rows,' hits')
+        UI.Msg('result','The resampled data has ',grand_final_rows,' hits')
         new_combined_data=new_combined_data.drop(['Random_Factor'],axis=1)
         new_combined_data = new_combined_data[new_combined_data.Track_No >= ValMinHits]
         new_combined_data['Plate_ID']=new_combined_data['z'].astype(int)
-
         new_combined_data=new_combined_data.sort_values(['Rec_Seg_ID',PM.x],ascending=[1,1])
         grand_final_rows=len(new_combined_data.axes[0])
-        print(UF.TimeStamp(),'The cleaned data has ',grand_final_rows,' hits')
+        UI.Msg('result','The cleaned data has ',grand_final_rows,' hits')
         new_combined_data=new_combined_data.rename(columns={PM.x: "x"})
         new_combined_data=new_combined_data.rename(columns={PM.y: "y"})
         new_combined_data=new_combined_data.rename(columns={PM.z: "z"})
@@ -287,18 +282,17 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         train_data = new_combined_data[new_combined_data.Track_No >= MinHits]
         validation_data = new_combined_data[new_combined_data.Track_No >= ValMinHits]
         validation_data = validation_data[validation_data.Track_No < MinHits]
-        print(UF.TimeStamp(),'Analysing the data sample in order to understand how many jobs to submit to HTCondor... ',bcolors.ENDC)
+        UI.Msg('vanilla','Analysing the data sample in order to understand how many jobs to submit to HTCondor... ')
         Sets=new_combined_data.z.unique().size
-
         x_no=int(math.ceil((Max_x-Min_x)/Size))
-
-        print(UF.TimeStamp(),'Working out the number of plates to align')
+        UI.Msg('vanilla','Working out the number of plates to align')
         plates=train_data[['Plate_ID']].sort_values(['Plate_ID'],ascending=[1])
         plates.drop_duplicates(inplace=True)
         plates=plates.values.tolist() #I find it is much easier to deal with tracks in list format when it comes to fitting
-        print(UF.TimeStamp(),'There are',len(plates),'plates')
-        print(UF.TimeStamp(),'Initial validation spatial residual value is',bcolors.BOLD+str(round(FitPlate(plates[0][0],0,0,validation_data,'Rec_Seg_ID'),2))+bcolors.ENDC, 'microns')
-        print(UF.TimeStamp(),'Initial validatio residual value is',bcolors.BOLD+str(round(FitPlateAngle(plates[0][0],0,0,validation_data,'Rec_Seg_ID')*1000,1))+bcolors.ENDC, 'milliradians')
+        UI.Msg('result','There are ',len(plates),' plates')
+        UI.Msg('result','Initial validation spatial residual value is',round(FitPlate(plates[0][0],0,0,validation_data,'Rec_Seg_ID'),2),' microns')
+        UI.Msg('result','Initial validation angular residual value is',round(FitPlateAngle(plates[0][0],0,0,validation_data,'Rec_Seg_ID')*1000,1),' milliradians')
+        exit()
 
         y_no=int(math.ceil((Max_y-Min_y)/Size))
         for j in range(x_no):
