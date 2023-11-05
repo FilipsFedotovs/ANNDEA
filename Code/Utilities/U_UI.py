@@ -29,9 +29,6 @@ def TimeStamp():
 #This utility provides automates welcome messages
 def WelcomeMsg(Title, Help):
     ANNDEA_logo='Welcome to ANNDEA'
-    line=''
-    title=''
-    separator='-------------------'
     print('                                                                                                                                    ')
     print('                                                                                                                                    ')
     print(bc.HEADER+"########################################################################################################"+bc.ENDC)
@@ -42,10 +39,16 @@ def WelcomeMsg(Title, Help):
         else:
             print(bc.HEADER+line+bc.ENDC)
         time.sleep(0.1)
-    # for t in Title:
-    #     title+=t
-    #     print(bc.HEADER+title+bc.ENDC, end="\r",flush=True)
-    #     time.sleep(0.1)
+    print('                                                                                                                                    ')
+
+    line=''
+    for l in range(len(Title)):
+        line+=Title[l]
+        if l<len(ANNDEA_logo)-1:
+            print(bc.HEADER+line+bc.ENDC, end="\r",flush=True)
+        else:
+            print(bc.HEADER+line+bc.ENDC)
+        time.sleep(0.1)
 
 
 
