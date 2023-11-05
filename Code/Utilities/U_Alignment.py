@@ -6,7 +6,7 @@ import os
 import subprocess
 import datetime
 import numpy as np
-import pd
+import pandas as pd
 import shutil
 import time
 import math
