@@ -44,7 +44,7 @@ def WelcomeMsg(Title, Help):
     line=''
     for l in range(len(Title)):
         line+=Title[l]
-        if l<len(ANNDEA_logo)-1:
+        if l<len(Title)-1:
             print(bc.HEADER+line+bc.ENDC, end="\r",flush=True)
         else:
             print(bc.HEADER+line+bc.ENDC)
