@@ -34,7 +34,7 @@ def PrintLine(Content):
             print(bc.HEADER+line+bc.ENDC, end="\r",flush=True)
         else:
             print(bc.HEADER+line+bc.ENDC)
-        time.sleep(0.1)
+        time.sleep(0.05)
     print('                                                                                                                                    ')
 
 #This utility provides automates welcome messages
@@ -44,9 +44,10 @@ def WelcomeMsg(Title, Author, Contact):
     print('                                                                                                                                    ')
     print(bc.HEADER+"########################################################################################################"+bc.ENDC)
     PrintLine(ANNDEA_logo)
-    PrintLine(Title)
     PrintLine(Author)
     PrintLine(Contact)
+    PrintLine(Title)
+    print('                                                                                                                                    ')
     print(bc.HEADER+"########################################################################################################"+bc.ENDC)
     print('                                                                                                                                    ')
     print('                                                                                                                                    ')
