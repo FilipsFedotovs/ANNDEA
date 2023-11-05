@@ -32,15 +32,17 @@ def WelcomeMsg(Title, Help):
     line=''
     title=''
     separator='-------------------'
-    for l in ANNDEA_logo:
-        line+=l
-        print(bc.HEADER+line+bc.ENDC, end="\r",flush=True)
-        print(bc.HEADER+separator+bc.ENDC, end="\r",flush=True)
+    for l in range(len(ANNDEA_logo)):
+        line+=ANNDEA_logo[l]
+        if l<len(ANNDEA_logo)-1:
+            print(bc.HEADER+line+bc.ENDC, end="\r",flush=True)
+        else:
+            print(bc.HEADER+line+bc.ENDC)
         time.sleep(0.1)
-    for t in Title:
-        title+=t
-        print(bc.HEADER+title+bc.ENDC, end="\r",flush=True)
-        time.sleep(0.1)
+    # for t in Title:
+    #     title+=t
+    #     print(bc.HEADER+title+bc.ENDC, end="\r",flush=True)
+    #     time.sleep(0.1)
 
 
 
