@@ -12,7 +12,7 @@ import time
 #Graphic section
 
 #Use to give colour to the messages
-class bcolors:
+class bc:
     HEADER = '\033[95m'
     OKBLUE = '\033[94m'
     OKGREEN = '\033[92m'
@@ -32,8 +32,8 @@ def WelcomeMsg(Title, Help):
     Line=''
     for l in ANNDEA_logo:
         Line+=l
-        print(Line, end="\r",flush=True)
-        time.sleep(1)
+        print(bc.HEADER+Line+bc.ENDC, end="\r",flush=True)
+        time.sleep(0.1)
     exit()
 
 
