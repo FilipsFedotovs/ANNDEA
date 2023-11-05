@@ -43,6 +43,7 @@ def WelcomeMsg(Title, Author, Contact):
     print('                                                                                                                                    ')
     print('                                                                                                                                    ')
     print(bc.HEADER+"########################################################################################################"+bc.ENDC)
+    print('                                                                                                                                    ')
     PrintLine(ANNDEA_logo)
     PrintLine(Author)
     PrintLine(Contact)
@@ -52,8 +53,9 @@ def WelcomeMsg(Title, Author, Contact):
     print('                                                                                                                                    ')
     print('                                                                                                                                    ')
 
-
-
+def Msg(content,type,content2):
+      if type=='status':
+          print(TimeStamp(),bc.BOLD+content+bc.ENDC+content2)
 
 def CleanFolder(folder,key):
     if key=='':

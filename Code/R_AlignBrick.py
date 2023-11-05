@@ -34,18 +34,9 @@ import os
 import time
 from alive_progress import alive_bar
 import argparse
-class bcolors:   #We use it for the interface
-    HEADER = '\033[95m'
-    OKBLUE = '\033[94m'
-    OKGREEN = '\033[92m'
-    WARNING = '\033[93m'
-    FAIL = '\033[91m'
-    ENDC = '\033[0m'
-    BOLD = '\033[1m'
-    UNDERLINE = '\033[4m'
 
 UI.WelcomeMsg('Initialising ECC alignment module...','Filips Fedotovs (PhD student at UCL)', 'Please reach out to filips.fedotovs@cern.ch for any queries')
-exit()
+
 #Setting the parser - this script is usually not run directly, but is used by a Master version Counterpart that passes the required arguments
 parser = argparse.ArgumentParser(description='This script prepares training data for training the tracking model')
 parser.add_argument('--SubPause',help="How long to wait in minutes after submitting 10000 jobs?", default='60')
@@ -82,7 +73,6 @@ Size=int(args.Size)
 SpatialOptBound=args.SpatialOptBound
 AngularOptBound=args.AngularOptBound
 Cycle=int(args.Cycle)
-
 SubPause=int(args.SubPause)*60
 SubGap=int(args.SubGap)
 LocalSub=(args.LocalSub=='Y')
@@ -241,8 +231,8 @@ def FitPlateAngle(PlateZ,dtx,dty,input_data,Track_ID):
     fit=temp_data[0]/temp_data[1]
     return fit
 ########################################     Phase 1 - Create compact source file    #########################################
-print(UF.TimeStamp(),bcolors.BOLD+'Stage 0:'+bcolors.ENDC+' Preparing the source data...')
-
+UI.Msg('Stage 0:','status',' Preparing the source data...')
+exit()
 if os.path.isfile(required_file_location)==False or Mode=='RESET':
         print(UF.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+initial_input_file_location+bcolors.ENDC)
         if BrickID=='':
