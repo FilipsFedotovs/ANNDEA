@@ -7,6 +7,7 @@ import subprocess
 import datetime
 import numpy as np
 import shutil
+import time
 
 #Graphic section
 
@@ -32,7 +33,7 @@ def WelcomeMsg(Title, Help):
     for l in ANNDEA_logo:
         Line+=l
         print(Line, end="\r",flush=True)
-        os.wait(1)
+        time.sleep(1)
     exit()
 
 
