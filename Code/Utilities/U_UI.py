@@ -34,7 +34,7 @@ def PrintLine(Content):
             print(bc.HEADER+line+bc.ENDC, end="\r",flush=True)
         else:
             print(bc.HEADER+line+bc.ENDC)
-        time.sleep(0.05)
+        time.sleep(0.02)
     print('                                                                                                                                    ')
 
 #This utility provides automates welcome messages
@@ -61,7 +61,7 @@ def Msg(type,content,content2='',content3=''):
       if type=='success':
           print(TimeStamp(),content,bc.OKBLUE+content2+bc.ENDC)
       if type=='result':
-          print(TimeStamp(),content,bc.BOLD+content2+bc.ENDC,content3)
+          print(TimeStamp(),content,bc.BOLD+str(content2)+bc.ENDC,content3)
       if type=='bar':
          print(bc.HEADER+"########################################################################################################"+bc.ENDC)
 def CleanFolder(folder,key):
