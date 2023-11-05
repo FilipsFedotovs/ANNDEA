@@ -44,7 +44,7 @@ class bcolors:   #We use it for the interface
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
 
-UI.WelcomeMsg('Initialising ECC alignment module...','Hello')
+UI.WelcomeMsg('Initialising ECC alignment module...','Filips Fedotovs (PhD student at UCL)', 'Please reach out to filips.fedotovs@cern.ch for any queries')
 exit()
 print('                                                                                                                                    ')
 print('                                                                                                                                    ')
