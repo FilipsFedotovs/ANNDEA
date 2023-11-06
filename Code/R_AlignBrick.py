@@ -203,7 +203,7 @@ Max_y=Meta.FiducialVolume[3]
 if Mode=='RESET':
     UI.Msg('vanilla','Performing the cleanup... ')
     FreshStart=False
-    UI.UpdateStatus(0)
+    UI.UpdateStatus(0,Meta,RecOutputMeta)
     Status=0
 else:
     UI.Msg('vanilla','Analysing the current script status...')
