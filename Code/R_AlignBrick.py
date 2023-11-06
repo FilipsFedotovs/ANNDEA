@@ -153,8 +153,8 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         plates.drop_duplicates(inplace=True)
         plates=plates.values.tolist() #I find it is much easier to deal with tracks in list format when it comes to fitting
         UI.Msg('result','There are ',len(plates),' plates')
-        UI.Msg('result','Initial validation spatial residual value is',round(UA.FitPlate(plates[0][0],0,0,validation_data,'Rec_Seg_ID'),2),'microns')
-        UI.Msg('result','Initial validation angular residual value is',round(UA.FitPlateAngle(plates[0][0],0,0,validation_data,'Rec_Seg_ID')*1000,1),'milliradians')
+        UI.Msg('result','Initial validation spatial residual value is',round(UA.FitPlate(plates[0][0],0,0,validation_data,'Rec_Seg_ID',True),2),'microns')
+        UI.Msg('result','Initial validation angular residual value is',round(UA.FitPlateAngle(plates[0][0],0,0,validation_data,'Rec_Seg_ID',True)*1000,1),'milliradians')
 
         y_no=int(math.ceil((Max_y-Min_y)/Size))
         for j in range(x_no):
@@ -316,8 +316,8 @@ while Status<len(Program):
         data.drop(['Type','dx','dy','k','j'],axis=1, inplace=True)
         validation_data = data[data.Track_No >= ValMinHits]
         validation_data = validation_data[validation_data.Track_No < MinHits]
-        UI.Msg('result','Cycle '+Program[Status][22:]+' validation spatial residual value after spatial alignment is',round(UA.FitPlate(plates[0][0],0,0,validation_data,'Rec_Seg_ID'),2),'microns')
-        UI.Msg('result','Cycle '+Program[Status][22:]+' validation angular residual value after spatial alignment is',round(UA.FitPlateAngle(plates[0][0],0,0,validation_data,'Rec_Seg_ID')*1000,1),'milliradians')
+        UI.Msg('result','Cycle '+Program[Status][22:]+' validation spatial residual value after spatial alignment is',round(UA.FitPlate(plates[0][0],0,0,validation_data,'Rec_Seg_ID',True),2),'microns')
+        UI.Msg('result','Cycle '+Program[Status][22:]+' validation angular residual value after spatial alignment is',round(UA.FitPlateAngle(plates[0][0],0,0,validation_data,'Rec_Seg_ID',True)*1000,1),'milliradians')
         x_no=int(math.ceil((Max_x-Min_x)/Size))
         y_no=int(math.ceil((Max_y-Min_y)/Size))
         for j in range(x_no):
@@ -374,8 +374,8 @@ while Status<len(Program):
         data.drop(['Type','dx','dy','k','j'],axis=1, inplace=True)
         validation_data = data[data.Track_No >= ValMinHits]
         validation_data = validation_data[validation_data.Track_No < MinHits]
-        UI.Msg('result','Cycle '+Program[Status][22:]+' validation spatial residual value after spatial alignment is',round(UA.FitPlate(plates[0][0],0,0,validation_data,'Rec_Seg_ID'),2),'microns')
-        UI.Msg('result','Cycle '+Program[Status][22:]+' validation angular residual value after spatial alignment is',round(UA.FitPlateAngle(plates[0][0],0,0,validation_data,'Rec_Seg_ID')*1000,1),'milliradians')
+        UI.Msg('result','Cycle '+Program[Status][22:]+' validation spatial residual value after spatial alignment is',round(UA.FitPlate(plates[0][0],0,0,validation_data,'Rec_Seg_ID',True),2),'microns')
+        UI.Msg('result','Cycle '+Program[Status][22:]+' validation angular residual value after spatial alignment is',round(UA.FitPlateAngle(plates[0][0],0,0,validation_data,'Rec_Seg_ID',True)*1000,1),'milliradians')
         x_no=int(math.ceil((Max_x-Min_x)/Size))
         y_no=int(math.ceil((Max_y-Min_y)/Size))
         for j in range(x_no):
@@ -463,8 +463,8 @@ while Status<len(Program):
         validation_data = new_combined_data[new_combined_data.Track_No >= ValMinHits]
         validation_data = validation_data[validation_data.Track_No < MinHits]
         UI.Msg('result','There are ',len(plates),' plates')
-        UI.Msg('result','Initial validation spatial residual value is',round(UA.FitPlate(plates[0][0],0,0,validation_data,'Rec_Seg_ID'),2),'microns')
-        UI.Msg('result','Initial validation angular residual value is',round(UA.FitPlateAngle(plates[0][0],0,0,validation_data,'Rec_Seg_ID')*1000,1),'milliradians')
+        UI.Msg('result','Initial validation spatial residual value is',round(UA.FitPlate(plates[0][0],0,0,validation_data,'Rec_Seg_ID',True),2),'microns')
+        UI.Msg('result','Initial validation angular residual value is',round(UA.FitPlateAngle(plates[0][0],0,0,validation_data,'Rec_Seg_ID',True)*1000,1),'milliradians')
 
 
         #### Saving the aligned file
@@ -543,8 +543,8 @@ while Status<len(Program):
         validation_data = new_combined_data[new_combined_data.Track_No >= ValMinHits]
         validation_data = validation_data[validation_data.Track_No < MinHits]
         UI.Msg('result','There are ',len(plates),' plates')
-        UI.Msg('result','Final validation spatial residual value is',round(UA.FitPlate(plates[0][0],0,0,validation_data,'Rec_Seg_ID'),2),'microns')
-        UI.Msg('result','Final validation angular residual value is',round(UA.FitPlateAngle(plates[0][0],0,0,validation_data,'Rec_Seg_ID')*1000,1),'milliradians')
+        UI.Msg('result','Final validation spatial residual value is',round(UA.FitPlate(plates[0][0],0,0,validation_data,'Rec_Seg_ID',True),2),'microns')
+        UI.Msg('result','Final validation angular residual value is',round(UA.FitPlateAngle(plates[0][0],0,0,validation_data,'Rec_Seg_ID',True)*1000,1),'milliradians')
         UI.Msg('completed','Stage '+str(Status)+' has successfully completed')
         UI.UpdateStatus(Status+1,Meta,RecOutputMeta)
     UI.Msg('location','Loading previously saved data from',RecOutputMeta)
