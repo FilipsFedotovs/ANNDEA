@@ -414,7 +414,7 @@ def StandardProcess(program,status,SubGap,SubPause,RequestExtCPU,JobFlavour,ReqM
                  if program[status][5]:
                     print(TimeStamp(),bc.OKGREEN+'Stage '+str(status)+' has successfully completed'+bc.ENDC)
                     return True,False
-                 elif AutoPilot(600,time_int,Patience,program[status]):
+                 elif AutoPilot(600,time_int,Patience,program[status],RequestExtCPU, JobFlavour,ReqMemory):
                         print(TimeStamp(),bc.OKGREEN+'Stage '+str(status)+' has successfully completed'+bc.ENDC)
                         return True,False
                  else:
@@ -445,7 +445,7 @@ def StandardProcess(program,status,SubGap,SubPause,RequestExtCPU,JobFlavour,ReqM
                       if program[status][5]:
                           print(TimeStamp(),bc.OKGREEN+'Stage '+str(status)+' has successfully completed'+bc.ENDC)
                           return True,False
-                      elif AutoPilot(600,time_int,Patience,program[status]):
+                      elif AutoPilot(600,time_int,Patience,program[status],RequestExtCPU, JobFlavour,ReqMemory):
                           print(TimeStamp(),bc.OKGREEN+'Stage '+str(status)+ 'has successfully completed'+bc.ENDC)
                           return True,False
                       else:
@@ -455,7 +455,7 @@ def StandardProcess(program,status,SubGap,SubPause,RequestExtCPU,JobFlavour,ReqM
                       if program[status][5]:
                           print(TimeStamp(),bc.OKGREEN+'Stage '+str(status)+' has successfully completed'+bc.ENDC)
                           return True,False
-                      elif AutoPilot(int(UserAnswer),time_int,Patience,program[status]):
+                      elif AutoPilot(int(UserAnswer),time_int,Patience,program[status],RequestExtCPU, JobFlavour,ReqMemory):
                           print(TimeStamp(),bc.OKGREEN+'Stage '+str(status)+ 'has successfully completed'+bc.ENDC)
                           return True,False
                       else:
