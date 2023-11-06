@@ -67,6 +67,8 @@ def Msg(type,content,content2='',content3=''):
           print(TimeStamp(),content)
       if type=='comleted':
          print(TimeStamp(),bc.OKGREEN+content+bc.ENDC)
+      if type=='failed':
+         print(TimeStamp(),bc.FAIL+content+bc.ENDC)
 
 def UpdateStatus(status,meta,output):
     meta.UpdateStatus(status)
@@ -358,7 +360,7 @@ def AutoPilot(wait_min, interval_min, max_interval_tolerance,program,RequestExtC
               return True,False
      return False,False
 
-def StandardProcess(program,status,freshstart):
+def StandardProcess(program,status,SubGap,SubPause,RequestExtCPU,JobFlavour,ReqMemory,time_int,Patience):
         print(bc.HEADER+"#############################################################################################"+bc.ENDC)
         print(TimeStamp(),bc.BOLD+'Stage '+str(status)+':'+bc.ENDC+str(program[status][0]))
         batch_sub=program[status][4]>1
@@ -379,14 +381,14 @@ def StandardProcess(program,status,freshstart):
 
 
         if len(bad_pop)==0:
-             print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
+             print(TimeStamp(),bc.OKGREEN+'Stage '+str(status)+' has successfully completed'+bc.ENDC)
              UpdateStatus(status+1)
              return True,False
 
 
 
         elif (program[status][4])==len(bad_pop):
-                 bad_pop=UF.CreateCondorJobs(program[status][1][0],
+                 bad_pop=CreateCondorJobs(program[status][1][0],
                                     program[status][1][1],
                                     program[status][1][2],
                                     program[status][1][3],
@@ -400,64 +402,64 @@ def StandardProcess(program,status,freshstart):
                                     program[status][1][9],
                                     batch_sub,
                                     program[status][6])
-                 print(UF.TimeStamp(),'Submitting jobs to HTCondor... ',bcolors.ENDC)
+                 print(TimeStamp(),'Submitting jobs to HTCondor... ',bc.ENDC)
                  _cnt=0
                  for bp in bad_pop:
                           if _cnt>SubGap:
-                              print(UF.TimeStamp(),'Pausing submissions for  ',str(int(SubPause/60)), 'minutes to relieve congestion...',bcolors.ENDC)
+                              print(TimeStamp(),'Pausing submissions for  ',str(int(SubPause/60)), 'minutes to relieve congestion...',bc.ENDC)
                               time.sleep(SubPause)
                               _cnt=0
-                          UF.SubmitJobs2Condor(bp,program[status][5],RequestExtCPU,JobFlavour,ReqMemory)
+                          SubmitJobs2Condor(bp,program[status][5],RequestExtCPU,JobFlavour,ReqMemory)
                           _cnt+=bp[6]
                  if program[status][5]:
-                    print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
+                    print(TimeStamp(),bc.OKGREEN+'Stage '+str(status)+' has successfully completed'+bc.ENDC)
                     return True,False
                  elif AutoPilot(600,time_int,Patience,program[status]):
-                        print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
+                        print(TimeStamp(),bc.OKGREEN+'Stage '+str(status)+' has successfully completed'+bc.ENDC)
                         return True,False
                  else:
-                        print(UF.TimeStamp(),bcolors.FAIL+'Stage '+str(status)+' is uncompleted...'+bcolors.ENDC)
+                        print(TimeStamp(),bc.FAIL+'Stage '+str(status)+' is uncompleted...'+bc.ENDC)
                         return False,False
 
 
         elif len(bad_pop)>0:
             # if freshstart:
-                   print(UF.TimeStamp(),bcolors.WARNING+'Warning, there are still', len(bad_pop), 'HTCondor jobs remaining'+bcolors.ENDC)
-                   print(bcolors.BOLD+'If you would like to wait and exit please enter E'+bcolors.ENDC)
-                   print(bcolors.BOLD+'If you would like to wait please enter enter the maximum wait time in minutes'+bcolors.ENDC)
-                   print(bcolors.BOLD+'If you would like to resubmit please enter R'+bcolors.ENDC)
-                   UserAnswer=input(bcolors.BOLD+"Please, enter your option\n"+bcolors.ENDC)
+                   print(TimeStamp(),bc.WARNING+'Warning, there are still', len(bad_pop), 'HTCondor jobs remaining'+bc.ENDC)
+                   print(bc.BOLD+'If you would like to wait and exit please enter E'+bc.ENDC)
+                   print(bc.BOLD+'If you would like to wait please enter enter the maximum wait time in minutes'+bc.ENDC)
+                   print(bc.BOLD+'If you would like to resubmit please enter R'+bc.ENDC)
+                   UserAnswer=input(bc.BOLD+"Please, enter your option\n"+bc.ENDC)
                    if UserAnswer=='E':
-                       print(UF.TimeStamp(),'OK, exiting now then')
+                       print(TimeStamp(),'OK, exiting now then')
                        exit()
                    if UserAnswer=='R':
                       _cnt=0
                       for bp in bad_pop:
                            if _cnt>SubGap:
-                              print(UF.TimeStamp(),'Pausing submissions for  ',str(int(SubPause/60)), 'minutes to relieve congestion...',bcolors.ENDC)
+                              print(TimeStamp(),'Pausing submissions for  ',str(int(SubPause/60)), 'minutes to relieve congestion...',bc.ENDC)
                               time.sleep(SubPause)
                               _cnt=0
-                           UF.SubmitJobs2Condor(bp,program[status][5],RequestExtCPU,JobFlavour,ReqMemory)
+                           SubmitJobs2Condor(bp,program[status][5],RequestExtCPU,JobFlavour,ReqMemory)
                            _cnt+=bp[6]
-                      print(UF.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
+                      print(TimeStamp(), bc.OKGREEN+"All jobs have been resubmitted"+bc.ENDC)
                       if program[status][5]:
-                          print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
+                          print(TimeStamp(),bc.OKGREEN+'Stage '+str(status)+' has successfully completed'+bc.ENDC)
                           return True,False
                       elif AutoPilot(600,time_int,Patience,program[status]):
-                          print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+ 'has successfully completed'+bcolors.ENDC)
+                          print(TimeStamp(),bc.OKGREEN+'Stage '+str(status)+ 'has successfully completed'+bc.ENDC)
                           return True,False
                       else:
-                          print(UF.TimeStamp(),bcolors.FAIL+'Stage '+str(status)+' is uncompleted...'+bcolors.ENDC)
+                          print(TimeStamp(),bc.FAIL+'Stage '+str(status)+' is uncompleted...'+bc.ENDC)
                           return False,False
                    else:
                       if program[status][5]:
-                          print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
+                          print(TimeStamp(),bc.OKGREEN+'Stage '+str(status)+' has successfully completed'+bc.ENDC)
                           return True,False
                       elif AutoPilot(int(UserAnswer),time_int,Patience,program[status]):
-                          print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+ 'has successfully completed'+bcolors.ENDC)
+                          print(TimeStamp(),bc.OKGREEN+'Stage '+str(status)+ 'has successfully completed'+bc.ENDC)
                           return True,False
                       else:
-                          print(UF.TimeStamp(),bcolors.FAIL+'Stage '+str(status)+' is uncompleted...'+bcolors.ENDC)
+                          print(TimeStamp(),bc.FAIL+'Stage '+str(status)+' is uncompleted...'+bc.ENDC)
                           return False,False
 #The function bellow helps to automate the submission process
 def CleanFolder(folder,key):
@@ -505,12 +507,12 @@ def PickleOperations(flocation,mode, message):
         pickle_writer_log=open(flocation,"wb")
         pickle.dump(message, pickle_writer_log)
         pickle_writer_log.close()
-        return ('',"UF.PickleOperations Message: Data has been written successfully into "+flocation)
+        return ('',"PickleOperations Message: Data has been written successfully into "+flocation)
     if mode=='r':
         pickle_writer_log=open(flocation,'rb')
         result=pickle.load(pickle_writer_log)
         pickle_writer_log.close()
-        return (result,"UF.PickleOperations Message: Data has been loaded successfully from "+flocation)
+        return (result,"PickleOperations Message: Data has been loaded successfully from "+flocation)
 
 def RecCleanUp(AFS_DIR, EOS_DIR, Process, FileNames, ProcessId):
       subprocess.call(['condor_rm', '-constraint', ProcessId])
@@ -572,20 +574,20 @@ def ManageTempFolders(spi,op_type):
            try:
               os.mkdir(spi[1][1]+spi[1][3]+'Temp_'+spi[1][5]+'_'+spi[1][7]+'_'+str(0))
            except OSError as error:
-               print(bcolors.WARNING+spi[1][1]+spi[1][3]+'Temp_'+spi[1][5]+'_'+spi[1][7]+'_'+str(0)+" already exists"+bcolors.ENDC)
+               print(bc.WARNING+spi[1][1]+spi[1][3]+'Temp_'+spi[1][5]+'_'+spi[1][7]+'_'+str(0)+" already exists"+bc.ENDC)
            try:
               os.mkdir(spi[1][0]+'/HTCondor/SUB/Temp_'+spi[1][5]+'_'+spi[1][7]+'_'+str(0))
            except OSError as error:
-               print(bcolors.WARNING+spi[1][0]+'/HTCondor/SUB/Temp_'+spi[1][5]+'_'+spi[1][7]+'_'+str(0)+" already exists"+bcolors.ENDC)
+               print(bc.WARNING+spi[1][0]+'/HTCondor/SUB/Temp_'+spi[1][5]+'_'+spi[1][7]+'_'+str(0)+" already exists"+bc.ENDC)
            try:
               os.mkdir(spi[1][0]+'/HTCondor/SH/Temp_'+spi[1][5]+'_'+spi[1][7]+'_'+str(0))
            except OSError as error:
-               print(bcolors.WARNING+spi[1][0]+'/HTCondor/SH/Temp_'+spi[1][5]+'_'+spi[1][7]+'_'+str(0)+" already exists"+bcolors.ENDC)
+               print(bc.WARNING+spi[1][0]+'/HTCondor/SH/Temp_'+spi[1][5]+'_'+spi[1][7]+'_'+str(0)+" already exists"+bc.ENDC)
            try:
               os.mkdir(spi[1][0]+'/HTCondor/MSG/Temp_'+spi[1][5]+'_'+spi[1][7]+'_'+str(0))
 
            except OSError as error:
-               print(bcolors.WARNING+spi[1][0]+'/HTCondor/MSG/Temp_'+spi[1][5]+'_'+spi[1][7]+'_'+str(0)+" already exists"+bcolors.ENDC)
+               print(bc.WARNING+spi[1][0]+'/HTCondor/MSG/Temp_'+spi[1][5]+'_'+spi[1][7]+'_'+str(0)+" already exists"+bc.ENDC)
        else:
 
            for i in range(_tot):

@@ -199,20 +199,17 @@ Max_x=Meta.FiducialVolume[1]
 Min_y=Meta.FiducialVolume[2]
 Max_y=Meta.FiducialVolume[3]
 #The function bellow helps to monitor the HTCondor jobs and keep the submission flow
-exit()
-
-
 
 if Mode=='RESET':
-    print(UF.TimeStamp(),'Performing the cleanup... ',bcolors.ENDC)
+    UI.Msg('vanilla','Performing the cleanup... ')
     FreshStart=False
     UI.UpdateStatus(0)
     Status=0
 else:
-    print(UF.TimeStamp(),'Analysing the current script status...',bcolors.ENDC)
+    UI.Msg('vanilla','Analysing the current script status...')
     Status=Meta.Status[-1]
 
-print(UF.TimeStamp(),'Current status is ',Status,bcolors.ENDC)
+UI.Msg('status','Current status is',Status)
 ################ Set the execution sequence for the script
 Program=[]
 
@@ -220,7 +217,7 @@ Program=[]
 # Status=0
 
 if Mode=='CLEANUP':
-    UpdateStatus(19)
+    UI.UpdateStatus(19,Meta,RecOutputMeta)
     Status=19
 
 # ###### Stage 2
@@ -244,9 +241,9 @@ for c in range(Cycle):
     prog_entry.append(LocalSub)
     prog_entry.append(["",""])
     if Mode=='RESET' and c==0:
-            print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Delete'))
+            print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry,'Delete'))
         #Setting up folders for the output. The reconstruction of just one brick can easily generate >100k of files. Keeping all that blob in one directory can cause problems on lxplus.
-    print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Create'))
+    print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry,'Create'))
     Program.append(prog_entry)
     Program.append('Custom: Spatial Cycle '+str(c))
 for c in range(Cycle):
@@ -259,9 +256,9 @@ for c in range(Cycle):
     prog_entry.append(LocalSub)
     prog_entry.append(["",""])
     if Mode=='RESET' and c==0:
-            print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Delete'))
+            print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry,'Delete'))
         #Setting up folders for the output. The reconstruction of just one brick can easily generate >100k of files. Keeping all that blob in one directory can cause problems on lxplus.
-    print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Create'))
+    print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry,'Create'))
     Program.append(prog_entry)
     Program.append('Custom: Angular Cycle '+str(c))
 Program.append('Custom: Final')
@@ -269,21 +266,20 @@ Program.append('Custom: Final')
 while Status<len(Program):
     if Program[Status][:6]!='Custom':
         #Standard process here
-        Result=StandardProcess(Program,Status,FreshStart)
+        Result=UI.StandardProcess(Program,Status,SubGap,SubPause,RequestExtCPU,JobFlavour,ReqMemory,time_int,Patience)
         if Result[0]:
              FreshStart=Result[1]
         else:
              Status=20
              break
     elif Program[Status][:21]=='Custom: Spatial Cycle':
-        print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
-        print(UF.TimeStamp(),bcolors.BOLD+'Stage '+str(Status)+':'+bcolors.ENDC+' Collecting results from the previous step')
+        UI.Msg('result','Stage',Status,':Collecting results from the previous step')
         result=[]
         for i in range(0,len(JobSets)): #//Temporarily measure to save space || Update 13/08/23 - I have commented it out as it creates more problems than solves it
             for j in range(len(JobSets[i])):
                 for k in range(JobSets[i][j]):
                   result_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_Ra'+'_'+RecBatchID+'_'+str(i)+'/Ra_'+RecBatchID+'_SpatialAlignmentResult_'+Program[Status][22:]+'_'+str(i)+'_'+str(j)+'_'+str(k)+'.csv'
-                  result.append(UF.LogOperations(result_file_location,'r','N/A')[0])
+                  result.append(UI.LogOperations(result_file_location,'r','N/A')[0])
         result=pd.DataFrame(result,columns=['Type','Plate_ID','j','k','dx','FitX','ValFitX','dy','FitY','ValFitY'])
         log_result=result
         log_result['Cycle']=Program[Status][22:]
@@ -315,8 +311,8 @@ while Status<len(Program):
         data.drop(['Type','dx','dy','k','j'],axis=1, inplace=True)
         validation_data = data[data.Track_No >= ValMinHits]
         validation_data = validation_data[validation_data.Track_No < MinHits]
-        print(UF.TimeStamp(),'Cycle '+Program[Status][22:]+' validation spatial residual value after spatial alignment is',bcolors.BOLD+str(round(FitPlate(plates[0][0],0,0,validation_data,'Rec_Seg_ID'),2))+bcolors.ENDC, 'microns')
-        print(UF.TimeStamp(),'Cycle '+Program[Status][22:]+' validation angular residual value after spatial alignment is',bcolors.BOLD+str(round(FitPlateAngle(plates[0][0],0,0,validation_data,'Rec_Seg_ID')*1000,1))+bcolors.ENDC, 'milliradians')
+        UI.Msg('result','Cycle '+Program[Status][22:]+' validation spatial residual value after spatial alignment is',round(UA.FitPlate(plates[0][0],0,0,validation_data,'Rec_Seg_ID'),2),'microns')
+        UI.Msg('result','Cycle '+Program[Status][22:]+' validation angular residual value after spatial alignment is',round(UA.FitPlateAngle(plates[0][0],0,0,validation_data,'Rec_Seg_ID')*1000,1),'milliradians')
         x_no=int(math.ceil((Max_x-Min_x)/Size))
         y_no=int(math.ceil((Max_y-Min_y)/Size))
         for j in range(x_no):
@@ -331,21 +327,20 @@ while Status<len(Program):
                 temp_data=temp_data[temp_data.y >= y_min_cut]
                 temp_data=temp_data[temp_data.y < y_max_cut]
                 temp_data.to_csv(required_temp_file_location,index=False)
-                print(UF.TimeStamp(), bcolors.OKGREEN+"The granular hit data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+required_temp_file_location+bcolors.ENDC)
+                UI.Msg('location',"The granular hit data has been created successfully and written to",required_temp_file_location)
         data.to_csv(required_file_location,index=False)
-        print(UF.TimeStamp(), bcolors.OKGREEN+"The hit data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+required_file_location+bcolors.ENDC)
-        UpdateStatus(Status+1)
+        UI.Msg('location',"The hit data has been created successfully and written to",required_file_location)
+        UI.UpdateStatus(Status+1,Meta,RecOutputMeta)
 
 
     elif Program[Status][:21]=='Custom: Angular Cycle':
-        print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
-        print(UF.TimeStamp(),bcolors.BOLD+'Stage '+str(Status)+':'+bcolors.ENDC+' Collecting results from the previous step')
+        UI.Msg('result','Stage',Status,':Collecting results from the previous step')
         result=[]
         for i in range(0,len(JobSets)): #//Temporarily measure to save space || Update 13/08/23 - I have commented it out as it creates more problems than solves it
             for j in range(len(JobSets[i])):
                 for k in range(JobSets[i][j]):
                   result_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_Rb'+'_'+RecBatchID+'_'+str(i)+'/Rb_'+RecBatchID+'_AngularAlignmentResult_'+Program[Status][22:]+'_'+str(i)+'_'+str(j)+'_'+str(k)+'.csv'
-                  result.append(UF.LogOperations(result_file_location,'r','N/A')[0])
+                  result.append(UI.LogOperations(result_file_location,'r','N/A')[0])
         result=pd.DataFrame(result,columns=['Type','Plate_ID','j','k','dx','FitX','ValFitX','dy','FitY','ValFitY'])
         log_result=result
         log_result['Cycle']=Program[Status][22:]
@@ -374,8 +369,8 @@ while Status<len(Program):
         data.drop(['Type','dx','dy','k','j'],axis=1, inplace=True)
         validation_data = data[data.Track_No >= ValMinHits]
         validation_data = validation_data[validation_data.Track_No < MinHits]
-        print(UF.TimeStamp(),'Cycle '+Program[Status][22:]+' validation spatial residual value after angular alignment is',bcolors.BOLD+str(round(FitPlate(plates[0][0],0,0,validation_data,'Rec_Seg_ID'),2))+bcolors.ENDC, 'microns')
-        print(UF.TimeStamp(),'Cycle '+Program[Status][22:]+' validation angular residual value after angular alignment is',bcolors.BOLD+str(round(FitPlateAngle(plates[0][0],0,0,validation_data,'Rec_Seg_ID')*1000,1))+bcolors.ENDC, 'milliradians')
+        UI.Msg('result','Cycle '+Program[Status][22:]+' validation spatial residual value after spatial alignment is',round(UA.FitPlate(plates[0][0],0,0,validation_data,'Rec_Seg_ID'),2),'microns')
+        UI.Msg('result','Cycle '+Program[Status][22:]+' validation angular residual value after spatial alignment is',round(UA.FitPlateAngle(plates[0][0],0,0,validation_data,'Rec_Seg_ID')*1000,1),'milliradians')
         x_no=int(math.ceil((Max_x-Min_x)/Size))
         y_no=int(math.ceil((Max_y-Min_y)/Size))
         for j in range(x_no):
@@ -390,14 +385,16 @@ while Status<len(Program):
                 temp_data=temp_data[temp_data.y >= y_min_cut]
                 temp_data=temp_data[temp_data.y < y_max_cut]
                 temp_data.to_csv(required_temp_file_location,index=False)
-                print(UF.TimeStamp(), bcolors.OKGREEN+"The granular hit data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+required_temp_file_location+bcolors.ENDC)
+                UI.Msg('location',"The granular hit data has been created successfully and written to",required_temp_file_location)
         data.to_csv(required_file_location,index=False)
-        print(UF.TimeStamp(), bcolors.OKGREEN+"The hit data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+required_file_location+bcolors.ENDC)
-        UpdateStatus(Status+1)
+        UI.Msg('location',"The hit data has been created successfully and written to",required_file_location)
+        UI.UpdateStatus(Status+1,Meta,RecOutputMeta)
+
     elif Program[Status]=='Custom: Final':
-        print(UF.TimeStamp(),'Mapping the alignment transportation map to input data',bcolors.OKBLUE+initial_input_file_location+bcolors.ENDC)
+        UI.Msg('location','Mapping the alignment transportation map to input data',initial_input_file_location)
         alignment_data_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv'
-        print(UF.TimeStamp(),'Loading alignment data from',bcolors.OKBLUE+alignment_data_location+bcolors.ENDC)
+        UI.Msg('location','Loading alignment data from',alignment_data_location)
+
         ColUse=['Type','Plate_ID','j','k','dx','dy','Cycle']
         alignment_data=pd.read_csv(alignment_data_location,
                     header=0,
@@ -407,8 +404,7 @@ while Status<len(Program):
         alignment_data=alignment_data.groupby(['Type','Plate_ID','j','k']).agg({'dx': 'sum', 'dy': 'sum'}).reset_index()
         spatial_alignment_map=alignment_data[alignment_data.Type=='Spatial'].drop(['Type'],axis=1)
         angular_alignment_map=alignment_data[alignment_data.Type=='Angular'].drop(['Type'],axis=1)
-
-        print(UF.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+initial_input_file_location+bcolors.ENDC)
+        UI.Msg('location','Loading raw data from',initial_input_file_location)
         ini_data=pd.read_csv(initial_input_file_location,
                     header=0)
         ini_data['Plate_ID']=ini_data['z'].astype(int)
@@ -423,13 +419,13 @@ while Status<len(Program):
             data[BrickID]='D'
         data=data[ColUse]
         total_rows=len(data.axes[0])
-        print(UF.TimeStamp(),'The raw data has ',total_rows,' hits')
-        print(UF.TimeStamp(),'Removing unreconstructed hits...')
+        print(UI.TimeStamp(),'The raw data has ',total_rows,' hits')
+        print(UI.TimeStamp(),'Removing unreconstructed hits...')
         data=data.dropna()
 
 
         final_rows=len(data.axes[0])
-        print(UF.TimeStamp(),'The cleaned data has ',final_rows,' hits')
+        print(UI.TimeStamp(),'The cleaned data has ',final_rows,' hits')
         data[BrickID] = data[BrickID].astype(str)
         data[TrackID] = data[TrackID].astype(str)
 
@@ -437,7 +433,7 @@ while Status<len(Program):
         data=data.drop([TrackID],axis=1)
         data=data.drop([BrickID],axis=1)
 
-        print(UF.TimeStamp(),'Removing tracks which have less than',ValMinHits,'hits...')
+        print(UI.TimeStamp(),'Removing tracks which have less than',ValMinHits,'hits...')
         track_no_data=data.groupby(['Rec_Seg_ID'],as_index=False).count()
         track_no_data=track_no_data.drop([PM.y,PM.z,PM.tx,PM.ty,PM.Hit_ID],axis=1)
         track_no_data=track_no_data.rename(columns={PM.x: "Track_No"})
@@ -446,13 +442,13 @@ while Status<len(Program):
         new_combined_data=pd.merge(data, track_no_data, how="left", on=["Rec_Seg_ID"])
         new_combined_data = new_combined_data[new_combined_data.Random_Factor <= SampleSize]
         grand_final_rows=len(new_combined_data.axes[0])
-        print(UF.TimeStamp(),'The resampled data has ',grand_final_rows,' hits')
+        print(UI.TimeStamp(),'The resampled data has ',grand_final_rows,' hits')
         new_combined_data=new_combined_data.drop(['Random_Factor'],axis=1)       
         new_combined_data = new_combined_data[new_combined_data.Track_No >= ValMinHits]
         new_combined_data['Plate_ID']=new_combined_data['z'].astype(int)
         new_combined_data=new_combined_data.sort_values(['Rec_Seg_ID',PM.x],ascending=[1,1])
         grand_final_rows=len(new_combined_data.axes[0])
-        print(UF.TimeStamp(),'The cleaned data has ',grand_final_rows,' hits')
+        print(UI.TimeStamp(),'The cleaned data has ',grand_final_rows,' hits')
         new_combined_data=new_combined_data.rename(columns={PM.x: "x"})
         new_combined_data=new_combined_data.rename(columns={PM.y: "y"})
         new_combined_data=new_combined_data.rename(columns={PM.z: "z"})
@@ -461,25 +457,25 @@ while Status<len(Program):
         new_combined_data=new_combined_data.rename(columns={PM.Hit_ID: "Hit_ID"})
         validation_data = new_combined_data[new_combined_data.Track_No >= ValMinHits]
         validation_data = validation_data[validation_data.Track_No < MinHits]
-        print(UF.TimeStamp(),'There are',len(plates),'plates')
-        print(UF.TimeStamp(),'Initial validation spatial residual value is',bcolors.BOLD+str(round(FitPlate(plates[0][0],0,0,validation_data,'Rec_Seg_ID'),2))+bcolors.ENDC, 'microns')
-        print(UF.TimeStamp(),'Initial validation residual value is',bcolors.BOLD+str(round(FitPlateAngle(plates[0][0],0,0,validation_data,'Rec_Seg_ID')*1000,1))+bcolors.ENDC, 'milliradians')
+        UI.Msg('result','There are ',len(plates),' plates')
+        UI.Msg('result','Initial validation spatial residual value is',round(UA.FitPlate(plates[0][0],0,0,validation_data,'Rec_Seg_ID'),2),'microns')
+        UI.Msg('result','Initial validation angular residual value is',round(UA.FitPlateAngle(plates[0][0],0,0,validation_data,'Rec_Seg_ID')*1000,1),'milliradians')
 
 
         #### Saving the aligned file
-        print(UF.TimeStamp(),'Preparing initial ini_data for the join...')
+        print(UI.TimeStamp(),'Preparing initial ini_data for the join...')
         ini_data['j']=(ini_data['x']-Min_x)/Size
         ini_data['k']=(ini_data['y']-Min_y)/Size
         ini_data['j']=ini_data['j'].apply(np.floor)
         ini_data['k']=ini_data['k'].apply(np.floor)
-        print(UF.TimeStamp(),'Aligning spatial coordinates...')
+        print(UI.TimeStamp(),'Aligning spatial coordinates...')
         ini_data=pd.merge(ini_data,spatial_alignment_map,on=['Plate_ID','j','k'],how='left')
         ini_data['dx'] = ini_data['dx'].fillna(0.0)
         ini_data['dy'] = ini_data['dy'].fillna(0.0)
         ini_data[PM.x]=ini_data[PM.x]+ini_data['dx']
         ini_data[PM.y]=ini_data[PM.y]+ini_data['dy']
         ini_data.drop(['dx','dy'],axis=1, inplace=True)
-        print(UF.TimeStamp(),'Aligning angular coordinates...')
+        print(UI.TimeStamp(),'Aligning angular coordinates...')
         ini_data=pd.merge(ini_data,angular_alignment_map,on=['Plate_ID','j','k'],how='left')
         ini_data['dx'] = ini_data['dx'].fillna(0.0)
         ini_data['dy'] = ini_data['dy'].fillna(0.0)
@@ -488,10 +484,11 @@ while Status<len(Program):
         ini_data.drop(['Plate_ID','dx','dy','k','j'],axis=1, inplace=True)
         output_file_location=initial_input_file_location[:-4]+'_'+RecBatchID+'.csv'
         ini_data.to_csv(output_file_location,index=False)
-        print(UF.TimeStamp(),'Data has been realigned and saved in ',bcolors.OKBLUE+output_file_location+bcolors.ENDC)
+        UI.Msg('location','Data has been realigned and saved in ',output_file_location)
+
 
         ######    Measuring post-realignment    ########
-        print(UF.TimeStamp(),'Measuring the validation alignment...')
+        print(UI.TimeStamp(),'Measuring the validation alignment...')
 
         data=ini_data
         if BrickID=='':
@@ -502,12 +499,12 @@ while Status<len(Program):
             data[BrickID]='D'
         data=data[ColUse]
         total_rows=len(data.axes[0])
-        print(UF.TimeStamp(),'The raw data has ',total_rows,' hits')
-        print(UF.TimeStamp(),'Removing unreconstructed hits...')
+        print(UI.TimeStamp(),'The raw data has ',total_rows,' hits')
+        print(UI.TimeStamp(),'Removing unreconstructed hits...')
         data=data.dropna()
 
         final_rows=len(data.axes[0])
-        print(UF.TimeStamp(),'The cleaned data has ',final_rows,' hits')
+        print(UI.TimeStamp(),'The cleaned data has ',final_rows,' hits')
         data[BrickID] = data[BrickID].astype(str)
         data[TrackID] = data[TrackID].astype(str)
 
@@ -515,16 +512,23 @@ while Status<len(Program):
         data=data.drop([TrackID],axis=1)
         data=data.drop([BrickID],axis=1)
 
-        print(UF.TimeStamp(),'Removing tracks which have less than',ValMinHits,'hits...')
+        print(UI.TimeStamp(),'Removing tracks which have less than',ValMinHits,'hits...')
         track_no_data=data.groupby(['Rec_Seg_ID'],as_index=False).count()
         track_no_data=track_no_data.drop([PM.y,PM.z,PM.tx,PM.ty,PM.Hit_ID],axis=1)
         track_no_data=track_no_data.rename(columns={PM.x: "Track_No"})
+
+        track_no_data['Random_Factor']=np.random.random(size=len(track_no_data))
         new_combined_data=pd.merge(data, track_no_data, how="left", on=["Rec_Seg_ID"])
+        new_combined_data = new_combined_data[new_combined_data.Random_Factor <= SampleSize]
+        grand_final_rows=len(new_combined_data.axes[0])
+        UI.Msg('result','The resampled data has',grand_final_rows,'hits')
+        new_combined_data=new_combined_data.drop(['Random_Factor'],axis=1)
+
         new_combined_data = new_combined_data[new_combined_data.Track_No >= ValMinHits]
         new_combined_data['Plate_ID']=new_combined_data['z'].astype(int)
         new_combined_data=new_combined_data.sort_values(['Rec_Seg_ID',PM.x],ascending=[1,1])
         grand_final_rows=len(new_combined_data.axes[0])
-        print(UF.TimeStamp(),'The cleaned data has ',grand_final_rows,' hits')
+        print(UI.TimeStamp(),'The cleaned data has ',grand_final_rows,' hits')
         new_combined_data=new_combined_data.rename(columns={PM.x: "x"})
         new_combined_data=new_combined_data.rename(columns={PM.y: "y"})
         new_combined_data=new_combined_data.rename(columns={PM.z: "z"})
@@ -533,32 +537,31 @@ while Status<len(Program):
         new_combined_data=new_combined_data.rename(columns={PM.Hit_ID: "Hit_ID"})
         validation_data = new_combined_data[new_combined_data.Track_No >= ValMinHits]
         validation_data = validation_data[validation_data.Track_No < MinHits]
-        print(UF.TimeStamp(),'There are',len(plates),'plates')
-        print(UF.TimeStamp(),'Final validation spatial residual value is',bcolors.BOLD+str(round(FitPlate(plates[0][0],0,0,validation_data,'Rec_Seg_ID'),2))+bcolors.ENDC, 'microns')
-        print(UF.TimeStamp(),'Final validation residual value is',bcolors.BOLD+str(round(FitPlateAngle(plates[0][0],0,0,validation_data,'Rec_Seg_ID')*1000,1))+bcolors.ENDC, 'milliradians')
-
-        print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(Status)+' has successfully completed'+bcolors.ENDC)
-        UpdateStatus(Status+1)
-    print(UF.TimeStamp(),'Loading previously saved data from ',bcolors.OKBLUE+RecOutputMeta+bcolors.ENDC)
-    MetaInput=UF.PickleOperations(RecOutputMeta,'r', 'N/A')
+        UI.Msg('result','There are ',len(plates),' plates')
+        UI.Msg('result','Final validation spatial residual value is',round(UA.FitPlate(plates[0][0],0,0,validation_data,'Rec_Seg_ID'),2),'microns')
+        UI.Msg('result','Final validation angular residual value is',round(UA.FitPlateAngle(plates[0][0],0,0,validation_data,'Rec_Seg_ID')*1000,1),'milliradians')
+        UI.Msg('completed','Stage '+str(Status)+' has successfully completed')
+        UI.UpdateStatus(Status+1,Meta,RecOutputMeta)
+    UI.Msg('location','Loading previously saved data from',RecOutputMeta)
+    MetaInput=UI.PickleOperations(RecOutputMeta,'r', 'N/A')
     Meta=MetaInput[0]
     Status=Meta.Status[-1]
 
 if Status<20:
     #Removing the temp files that were generated by the process
-    print(UF.TimeStamp(),'Performing the cleanup... ',bcolors.ENDC)
+    UI.Msg('vanilla','Performing the cleanup...')
     HTCondorTag="SoftUsed == \"ANNDEA-R1-"+RecBatchID+"\""
-    UF.RecCleanUp(AFS_DIR, EOS_DIR, 'R1_'+RecBatchID, ['R1'], HTCondorTag)
+    UI.RecCleanUp(AFS_DIR, EOS_DIR, 'R1_'+RecBatchID, ['R1'], HTCondorTag)
     HTCondorTag="SoftUsed == \"ANNDEA-R1a-"+RecBatchID+"\""
-    UF.RecCleanUp(AFS_DIR, EOS_DIR, 'R1a_'+RecBatchID, [], HTCondorTag)
+    UI.RecCleanUp(AFS_DIR, EOS_DIR, 'R1a_'+RecBatchID, [], HTCondorTag)
     HTCondorTag="SoftUsed == \"ANNDEA-R1b-"+RecBatchID+"\""
-    UF.RecCleanUp(AFS_DIR, EOS_DIR, 'R1b_'+RecBatchID, [], HTCondorTag)
+    UI.RecCleanUp(AFS_DIR, EOS_DIR, 'R1b_'+RecBatchID, [], HTCondorTag)
     for p in Program:
         if p[:6]!='Custom':
-           print(UF.TimeStamp(),UF.ManageTempFolders(p,'Delete'))
-    print(UF.TimeStamp(), bcolors.OKGREEN+"Data alignment procedure has been completed"+bcolors.ENDC)
+           print(UI.TimeStamp(),UI.ManageTempFolders(p,'Delete'))
+    UI.Msg('completed',"Data alignment procedure has been completed")
 else:
-    print(UF.TimeStamp(), bcolors.FAIL+"Segment merging has not been completed as one of the processes has timed out. Please run the script again (without Reset Mode)."+bcolors.ENDC)
+    UI.Msg('failed',"Segment merging has not been completed as one of the processes has timed out. Please run the script again (without Reset Mode).")
     exit()
 
 
