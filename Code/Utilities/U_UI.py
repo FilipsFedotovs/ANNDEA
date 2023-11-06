@@ -56,7 +56,7 @@ def WelcomeMsg(Title, Author, Contact):
 
 def Msg(type,content,content2='',content3=''):
       if type=='status':
-          print(TimeStamp(),bc.BOLD+content+bc.ENDC+content2)
+          print(TimeStamp(),bc.BOLD+content+bc.ENDC+str(content2))
       if type=='location':
           print(TimeStamp(),content,bc.OKBLUE+content2+bc.ENDC)
       if type=='success':
