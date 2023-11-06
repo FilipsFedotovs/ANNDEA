@@ -349,7 +349,9 @@ def AutoPilot(wait_min, interval_min, max_interval_tolerance,program,RequestExtC
                                     program[3],
                                     program[1][9],
                                     False,
-                                    program[6])
+                                    program[6],
+                                    program[7],
+                                    program[8])
          if len(bad_pop)>0:
                print(TimeStamp(),bc.WARNING+'Autopilot status update: There are still', len(bad_pop), 'HTCondor jobs remaining'+bc.ENDC)
                if interval%max_interval_tolerance==0:
@@ -377,7 +379,9 @@ def StandardProcess(program,status,SubGap,SubPause,RequestExtCPU,JobFlavour,ReqM
                                     program[status][3],
                                     program[status][1][9],
                                     False,
-                                    program[status][6])
+                                    program[status][6],
+                                    program[status][7],
+                                    program[status][8])
 
 
         if len(bad_pop)==0:
@@ -401,7 +405,9 @@ def StandardProcess(program,status,SubGap,SubPause,RequestExtCPU,JobFlavour,ReqM
                                     program[status][3],
                                     program[status][1][9],
                                     batch_sub,
-                                    program[status][6])
+                                    program[status][6],
+                                    program[status][7],
+                                    program[status][8])
                  print(TimeStamp(),'Submitting jobs to HTCondor... ',bc.ENDC)
                  _cnt=0
                  for bp in bad_pop:
