@@ -100,13 +100,13 @@ validation_data = validation_data[validation_data.Track_No < MinHits]
 am=['Spatial',Plate[i][0],j,k]
 
 def FitPlateFixedX(x):
-    return UA.FitPlate(Plate[i][0],x,0,train_data,'Rec_Seg_ID')
+    return UA.FitPlate(Plate[i][0],x,0,train_data,'Rec_Seg_ID',False)
 def FitPlateFixedY(x):
-    return UA.FitPlate(Plate[i][0],0,x,train_data,'Rec_Seg_ID')
+    return UA.FitPlate(Plate[i][0],0,x,train_data,'Rec_Seg_ID',False)
 def FitPlateValX(x):
-    return UA.FitPlate(Plate[i][0],x,0,validation_data,'Rec_Seg_ID')
+    return UA.FitPlate(Plate[i][0],x,0,validation_data,'Rec_Seg_ID',False)
 def FitPlateValY(x):
-    return UA.FitPlate(Plate[i][0],0,x,validation_data,'Rec_Seg_ID')
+    return UA.FitPlate(Plate[i][0],0,x,validation_data,'Rec_Seg_ID',False)
 if len(train_data)>0:
     res = minimize_scalar(FitPlateFixedX, bounds=(-OptBound, OptBound), method='bounded')
     validation_data=AlignPlate(Plate[i][0],res.x,0,validation_data)
