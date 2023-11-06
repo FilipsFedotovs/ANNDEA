@@ -271,7 +271,7 @@ Program.append('Custom: Final')
 while Status<len(Program):
     if Program[Status][:6]!='Custom':
         #Standard process here
-        Result=UI.StandardProcess(Program,Status,SubGap,SubPause,RequestExtCPU,JobFlavour,ReqMemory,time_int,Patience)
+        Result=UI.StandardProcess(Program,Status,SubGap,SubPause,RequestExtCPU,JobFlavour,ReqMemory,time_int,Patience,Meta,RecOutputMeta)
         if Result[0]:
              FreshStart=Result[1]
         else:

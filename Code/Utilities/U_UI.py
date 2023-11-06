@@ -362,7 +362,7 @@ def AutoPilot(wait_min, interval_min, max_interval_tolerance,program,RequestExtC
               return True,False
      return False,False
 
-def StandardProcess(program,status,SubGap,SubPause,RequestExtCPU,JobFlavour,ReqMemory,time_int,Patience):
+def StandardProcess(program,status,SubGap,SubPause,RequestExtCPU,JobFlavour,ReqMemory,time_int,Patience,Meta,RecOutputMeta):
         print(bc.HEADER+"#############################################################################################"+bc.ENDC)
         print(TimeStamp(),bc.BOLD+'Stage '+str(status)+':'+bc.ENDC+str(program[status][0]))
         batch_sub=program[status][4]>1
@@ -386,7 +386,7 @@ def StandardProcess(program,status,SubGap,SubPause,RequestExtCPU,JobFlavour,ReqM
 
         if len(bad_pop)==0:
              print(TimeStamp(),bc.OKGREEN+'Stage '+str(status)+' has successfully completed'+bc.ENDC)
-             UpdateStatus(status+1)
+             UpdateStatus(status+1,Meta,RecOutputMeta)
              return True,False
 
 
