@@ -284,8 +284,9 @@ while Status<len(Program):
             for j in range(len(JobSets[i])):
                 for k in range(JobSets[i][j]):
                   result_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_Ra'+'_'+RecBatchID+'_'+str(i)+'/Ra_'+RecBatchID+'_SpatialAlignmentResult_'+Program[Status][22:]+'_'+str(i)+'_'+str(j)+'_'+str(k)+'.csv'
-                  print(UI.LogOperations(result_file_location,'r','N/A'))
-                  result.append(UI.LogOperations(result_file_location,'r','N/A')[0])
+                  res=UI.LogOperations(result_file_location,'r','N/A')
+                  if len(res)>0:
+                    result.append(res[0])
         result=pd.DataFrame(result,columns=['Type','Plate_ID','j','k','dx','FitX','ValFitX','dy','FitY','ValFitY'])
         log_result=result
         log_result['Cycle']=Program[Status][22:]
@@ -346,7 +347,9 @@ while Status<len(Program):
             for j in range(len(JobSets[i])):
                 for k in range(JobSets[i][j]):
                   result_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_Rb'+'_'+RecBatchID+'_'+str(i)+'/Rb_'+RecBatchID+'_AngularAlignmentResult_'+Program[Status][22:]+'_'+str(i)+'_'+str(j)+'_'+str(k)+'.csv'
-                  result.append(UI.LogOperations(result_file_location,'r','N/A')[0])
+                  res=UI.LogOperations(result_file_location,'r','N/A')
+                  if len(res)>0:
+                    result.append(res[0])
         result=pd.DataFrame(result,columns=['Type','Plate_ID','j','k','dx','FitX','ValFitX','dy','FitY','ValFitY'])
         log_result=result
         log_result['Cycle']=Program[Status][22:]
