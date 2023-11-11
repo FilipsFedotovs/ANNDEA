@@ -240,7 +240,7 @@ for c in range(Cycle):
     prog_entry.append(TotJobs)
     prog_entry.append(LocalSub)
     prog_entry.append(["",""])
-    prog_entry.append(True)
+    prog_entry.append(False)
     prog_entry.append(False)
 
     if Mode=='RESET' and c==0:
@@ -258,7 +258,7 @@ for c in range(Cycle):
     prog_entry.append(TotJobs)
     prog_entry.append(LocalSub)
     prog_entry.append(["",""])
-    prog_entry.append(True)
+    prog_entry.append(False)
     prog_entry.append(False)
     if Mode=='RESET' and c==0:
             print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry,'Delete'))
