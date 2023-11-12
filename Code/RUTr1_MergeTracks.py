@@ -343,6 +343,8 @@ prog_entry.append([MaxSegments, MaxSLG, MaxSTG])
 prog_entry.append(np.sum(JobSet))
 prog_entry.append(LocalSub)
 prog_entry.append([" --PlateZ ",JobSets])
+prog_entry.append(False)
+prog_entry.append(False)
 if Mode=='RESET':
         print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry,'Delete'))
     #Setting up folders for the output. The reconstruction of just one brick can easily generate >100k of files. Keeping all that blob in one directory can cause problems on lxplus.
@@ -360,6 +362,7 @@ Program.append('Custom - RemoveOverlap')
 Program.append('Custom - PerformMerging')
 
 Program.append('Custom - TrackMapping')
+
 while Status<len(Program):
     if Program[Status][:6]!='Custom' and (Program[Status] in ModelName)==False:
         #Standard process here
