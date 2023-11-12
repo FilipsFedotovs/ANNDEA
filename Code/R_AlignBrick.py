@@ -61,6 +61,7 @@ parser.add_argument('--SpatialOptBound',help="Size", default='200')
 parser.add_argument('--AngularOptBound',help="Size", default='2')
 
 ######################################## Parsing argument values  #############################################################
+exit()
 args = parser.parse_args()
 Mode=args.Mode.upper()
 RecBatchID=args.RecBatchID
