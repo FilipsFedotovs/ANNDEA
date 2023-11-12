@@ -46,7 +46,7 @@ def WelcomeMsg(Title, Author, Contact):
     print(bc.HEADER+"########################################################################################################"+bc.ENDC)
     print('                                                                                                                                    ')
     PrintLine(ANNDEA_logo)
-    PrintLine(Author)
+    PrintLine('Developed by: '+Author)
     PrintLine(Contact)
     PrintLine(Title)
     print('                                                                                                                                    ')
