@@ -61,7 +61,6 @@ parser.add_argument('--SpatialOptBound',help="Size", default='200')
 parser.add_argument('--AngularOptBound',help="Size", default='2')
 
 ######################################## Parsing argument values  #############################################################
-exit()
 args = parser.parse_args()
 Mode=args.Mode.upper()
 RecBatchID=args.RecBatchID
@@ -180,7 +179,7 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
                 JobSets[i].append(y_no)
         Meta=UF.TrainingSampleMeta(RecBatchID)
         Meta.IniBrickAlignMetaData(Size,ValMinHits,MinHits,SpatialOptBound,AngularOptBound,JobSets,Cycle,plates,[Min_x,Max_x,Min_y,Max_y])
-        Meta.UpdateStatus(0)
+        Meta.UpdateStatus(0,Meta,RecOutputMeta)
         print(UI.PickleOperations(RecOutputMeta,'w', Meta)[1])
         UI.Msg('completed','Stage 0 has successfully completed')
 elif os.path.isfile(RecOutputMeta)==True:

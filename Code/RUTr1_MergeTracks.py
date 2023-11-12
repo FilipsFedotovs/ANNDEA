@@ -252,7 +252,7 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         UI.Msg('location',"The track segment data has been created successfully and written to",required_file_location)
         Meta=UI.TrainingSampleMeta(RecBatchID)
         Meta.IniTrackSeedMetaData(MaxSLG,MaxSTG,MaxDOCA,MaxAngle,data,MaxSegments,VetoMotherTrack,MaxSeeds,MinHitsTrack)
-        Meta.UpdateStatus(0)
+        Meta.UpdateStatus(0,Meta,RecOutputMeta)
         print(UI.PickleOperations(RecOutputMeta,'w', Meta)[1])
         UI.Msg('completed','Stage 0 has successfully completed')
 elif os.path.isfile(RecOutputMeta)==True:
@@ -279,7 +279,7 @@ if Mode=='RESET':
     HTCondorTag="SoftUsed == \"ANNDEA-RUTr1a-"+RecBatchID+"\""
     UI.RecCleanUp(AFS_DIR, EOS_DIR, 'RUTr1a_'+RecBatchID, ['RUTr1a',RecBatchID+'_REC_LOG.csv'], HTCondorTag)
     FreshStart=False
-    UI.UpdateStatus(0)
+    UI.UpdateStatus(0,Meta,RecOutputMeta)
     Status=0
 else:
     UI.Msg('vanilla','Analysing the current script status...')
@@ -314,11 +314,11 @@ if Log:
     Program.append('Custom - PickE')
 
 else:
-    UI.UpdateStatus(0)
+    UI.UpdateStatus(0,Meta,RecOutputMeta)
     Status=0
 
 if Mode=='CLEANUP':
-    UI.UpdateStatus(19)
+    UI.UpdateStatus(19,Meta,RecOutputMeta)
     Status=19
 
 # ###### Stage 2
@@ -413,10 +413,9 @@ while Status<len(Program):
         rec_no=(rec_no**2)-rec_no-eval_no
         UI.LogOperations(EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv', 'w', [['Step_No','Step_Desc','Fake_Seeds','Truth_Seeds','Precision','Recall'],[1,'Initial Sampling',rec_no,eval_no,eval_no/(rec_no+eval_no),1.0]])
         UI.Msg('location',"The process log has been created successfully and written to ",EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv')
-
         FreshStart=False
         UI.Msg('completed','Stage '+str(Status)+' has successfully completed')
-        UI.UpdateStatus(Status+1)
+        UI.UpdateStatus(Status+1,Meta,RecOutputMeta)
     elif Program[Status]=='Custom - PickR':
         UI.Msg('result','Stage',Status,': Collecting and de-duplicating the results from stage 2')
         min_i=0
@@ -509,7 +508,7 @@ while Status<len(Program):
              UI.Msg('failed','Log creation has failed')
         FreshStart=False
         UI.Msg('completed','Stage '+str(Status)+' has successfully completed')
-        UI.UpdateStatus(Status+1)
+        UI.UpdateStatus(Status+1,Meta,RecOutputMeta)
     elif Program[Status]=='Custom - RemoveOverlap':
         input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1c_'+RecBatchID+'_Fit_Seeds.pkl'
         UI.Msg('location',"Loading the fit track seeds from the file ",input_file_location)
@@ -526,7 +525,7 @@ while Status<len(Program):
         output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1c_'+RecBatchID+'_Fit_Filtered_Seeds.pkl'
         print(UI.PickleOperations(output_file_location,'w',base_data)[0])
         #no_iter=int(math.ceil(float(len(base_data)/float(MaxSegments))))
-        UI.UpdateStatus(Status+1)
+        UI.UpdateStatus(Status+1,Meta,RecOutputMeta)
     elif Program[Status]=='Custom - TrackMapping':
                 raw_name=initial_input_file_location[:-4]
                 for l in range(len(raw_name)-1,0,-1):
