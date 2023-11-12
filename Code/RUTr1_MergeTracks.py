@@ -103,7 +103,7 @@ required_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1_'+RecBatchID+'_TRACK_
 required_eval_file_location=EOS_DIR+'/ANNDEA/Data/TEST_SET/EUTr1_'+RecBatchID+'_TRACK_SEGMENTS.csv'
 ########################################     Phase 1 - Create compact source file    #########################################
 UI.Msg('status','Stage 0:',' Preparing the source data...')
-exit()
+
 
 if Log and (os.path.isfile(required_eval_file_location)==False or Mode=='RESET'):
     if os.path.isfile(EOSsubModelMetaDIR)==False:
