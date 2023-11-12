@@ -73,7 +73,6 @@ BrickID=args.BrickID
 SubPause=int(args.SubPause)*60
 SubGap=int(args.SubGap)
 LocalSub=(args.LocalSub=='Y')
-exit()
 if LocalSub:
    time_int=0
 else:
@@ -103,7 +102,8 @@ RecOutputMeta=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_info.pkl'
 required_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1_'+RecBatchID+'_TRACK_SEGMENTS.csv'
 required_eval_file_location=EOS_DIR+'/ANNDEA/Data/TEST_SET/EUTr1_'+RecBatchID+'_TRACK_SEGMENTS.csv'
 ########################################     Phase 1 - Create compact source file    #########################################
-print(UF.TimeStamp(),bcolors.BOLD+'Stage 0:'+bcolors.ENDC+' Preparing the source data...')
+UI.Msg('status','Stage 0:',' Preparing the source data...')
+exit()
 
 if Log and (os.path.isfile(required_eval_file_location)==False or Mode=='RESET'):
     if os.path.isfile(EOSsubModelMetaDIR)==False:
