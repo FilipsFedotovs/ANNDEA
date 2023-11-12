@@ -24,7 +24,7 @@ if PY_DIR!='': #Temp solution - the decision was made to move all libraries to E
     sys.path.append('/usr/lib/python3.6/site-packages')
 sys.path.append(AFS_DIR+'/Code/Utilities')
 import U_UI as UI
-import UtilityFunctions as UF #This is where we keep routine utility functions
+#import UtilityFunctions as UF #This is where we keep routine utility functions
 import Parameters as PM #This is where we keep framework global parameters
 import pandas as pd #We use Panda for a routine data processing
 pd.options.mode.chained_assignment = None #Silence annoying warnings
@@ -110,11 +110,11 @@ if Log and (os.path.isfile(required_eval_file_location)==False or Mode=='RESET')
               UI.Msg('failed',"Fail to proceed further as the model file "+EOSsubModelMetaDIR+ " has not been found...")
               exit()
     else:
-           print(UF.TimeStamp(),'Loading previously saved data from ',bcolors.OKBLUE+EOSsubModelMetaDIR+bcolors.ENDC)
-           MetaInput=UF.PickleOperations(EOSsubModelMetaDIR,'r', 'N/A')
+           UI.Msg('location','Loading previously saved data from ',EOSsubModelMetaDIR)
+           MetaInput=UI.PickleOperations(EOSsubModelMetaDIR,'r', 'N/A')
            Meta=MetaInput[0]
            MinHitsTrack=Meta.MinHitsTrack
-    print(UF.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+initial_input_file_location+bcolors.ENDC)
+    UI.Msg('location','Loading raw data from',initial_input_file_location)
     if BrickID=='':
         ColUse=[TrackID,PM.x,PM.y,PM.z,PM.tx,PM.ty,PM.MC_Track_ID,PM.MC_Event_ID]
     else:
@@ -183,8 +183,8 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
               UI.Msg('failed',"Fail to proceed further as the model file "+EOSsubModelMetaDIR+ " has not been found...")
               exit()
         else:
-           print(UF.TimeStamp(),'Loading previously saved data from ',bcolors.OKBLUE+EOSsubModelMetaDIR+bcolors.ENDC)
-           MetaInput=UF.PickleOperations(EOSsubModelMetaDIR,'r', 'N/A')
+           UI.Msg('location','Loading previously saved data from ',EOSsubModelMetaDIR)
+           MetaInput=UI.PickleOperations(EOSsubModelMetaDIR,'r', 'N/A')
            Meta=MetaInput[0]
            MaxSLG=Meta.MaxSLG
            MaxSTG=Meta.MaxSTG
@@ -194,7 +194,7 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
            MaxSeeds=PM.MaxSeeds
            VetoMotherTrack=PM.VetoMotherTrack
            MinHitsTrack=Meta.MinHitsTrack
-        print(UF.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+initial_input_file_location+bcolors.ENDC)
+        UI.Msg('location','Loading raw data from',initial_input_file_location)
         if BrickID=='':
             ColUse=[TrackID,PM.x,PM.y,PM.z,PM.tx,PM.ty]
         else:
@@ -205,6 +205,7 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         if BrickID=='':
             data[BrickID]='D'
         total_rows=len(data.axes[0])
+        exit()
         print(UF.TimeStamp(),'The raw data has ',total_rows,' hits')
         print(UF.TimeStamp(),'Removing unreconstructed hits...')
         data=data.dropna()
