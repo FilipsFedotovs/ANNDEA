@@ -205,12 +205,12 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         if BrickID=='':
             data[BrickID]='D'
         total_rows=len(data.axes[0])
-        exit()
-        print(UF.TimeStamp(),'The raw data has ',total_rows,' hits')
-        print(UF.TimeStamp(),'Removing unreconstructed hits...')
+        UI.Msg('result','The raw data has',total_rows,'hits')
+        UI.Msg('vanilla','Removing unreconstructed hits...')
         data=data.dropna()
         final_rows=len(data.axes[0])
-        print(UF.TimeStamp(),'The cleaned data has ',final_rows,' hits')
+        UI.Msg('result','The cleaned data has',final_rows,'hits')
+        exit()
         data[BrickID] = data[BrickID].astype(str)
         data[TrackID] = data[TrackID].astype(str)
 
