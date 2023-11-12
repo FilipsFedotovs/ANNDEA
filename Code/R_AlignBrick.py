@@ -170,7 +170,7 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
                 temp_data=temp_data[temp_data.y >= y_min_cut]
                 temp_data=temp_data[temp_data.y < y_max_cut]
                 temp_data.to_csv(required_temp_file_location,index=False)
-                UI.Msg("The granular hit data has been created successfully and written to",'location',required_temp_file_location)
+                UI.Msg('location',"The granular hit data has been created successfully and written to",required_temp_file_location)
         JobSets=[]
         new_combined_data.to_csv(required_file_location,index=False)
         UI.Msg('location',"The hit data has been created successfully and written to",required_file_location)
