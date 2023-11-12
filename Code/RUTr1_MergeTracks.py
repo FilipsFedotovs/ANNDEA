@@ -209,7 +209,6 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         data=data.dropna()
         final_rows=len(data.axes[0])
         UI.Msg('result','The cleaned data has',final_rows,'hits')
-        exit()
         data[BrickID] = data[BrickID].astype(str)
         data[TrackID] = data[TrackID].astype(str)
 
