@@ -863,7 +863,7 @@ while Status<len(Program):
                         print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry,'Delete'))
                     #Setting up folders for the output. The reconstruction of just one brick can easily generate >100k of files. Keeping all that blob in one directory can cause problems on lxplus.
                     print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry,'Create'))
-                    Result=UI.StandardProcess(Program_Dummy,SubGap,Status,SubPause,RequestExtCPU,JobFlavour,ReqMemory,time_int,Patience,Meta,RecOutputMeta)
+                    Result=UI.StandardProcess(Program_Dummy,Status,SubGap,SubPause,RequestExtCPU,JobFlavour,ReqMemory,time_int,Patience,Meta,RecOutputMeta)
                     if Result:
                         print(UF.TimeStamp(),bcolors.BOLD+'Stage '+str(Status)+':'+bcolors.ENDC+' Analysing the fitted seeds')
                         JobSet=[]
