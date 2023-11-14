@@ -373,7 +373,7 @@ while Status<len(Program):
              Status=20
              break
     elif Program[Status]=='Custom - PickE':
-        UI.Msg('result','Stage',Status,': Collecting and de-duplicating the results from previous stage')
+        UI.Msg('status','Stage',Status,': Collecting and de-duplicating the results from previous stage')
         UI.Msg('location','Loading preselected data from ',initial_input_file_location)
         data=pd.read_csv(required_eval_file_location,header=0,usecols=['Rec_Seg_ID'])
         UI.Msg('vanilla','Analysing data... ')
@@ -474,7 +474,6 @@ while Status<len(Program):
         if Log:
          try:
              UI.Msg('vanilla','Initiating the logging...')
-
              eval_data_file=EOS_DIR+'/ANNDEA/Data/TEST_SET/EUTr1b_'+RecBatchID+'_SEED_TRUTH_COMBINATIONS.csv'
              eval_data=pd.read_csv(eval_data_file,header=0,usecols=['Segment_1','Segment_2'])
              eval_data["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(eval_data['Segment_1'], eval_data['Segment_2'])]
@@ -837,7 +836,7 @@ while Status<len(Program):
                     JobSet=[]
                     TotJobs=0
                     Program_Dummy=[]
-                    Meta=UF.PickleOperations(RecOutputMeta,'r', 'N/A')[0]
+                    Meta=UI.PickleOperations(RecOutputMeta,'r', 'N/A')[0]
                     JobSets=Meta.JobSets
                     for i in range(len(JobSets)):
                         JobSet.append([])
@@ -861,12 +860,11 @@ while Status<len(Program):
                         Program_Dummy.append('DUM')
                     Program_Dummy.append(prog_entry)
                     if Mode=='RESET':
-                        print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Delete'))
+                        print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry,'Delete'))
                     #Setting up folders for the output. The reconstruction of just one brick can easily generate >100k of files. Keeping all that blob in one directory can cause problems on lxplus.
-                    print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Create'))
-                    Result=StandardProcess(Program_Dummy,Status,FreshStart)
+                    print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry,'Create'))
+                    Result=UI.StandardProcess(Program_Dummy,Status,FreshStart)
                     if Result:
-                        print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
                         print(UF.TimeStamp(),bcolors.BOLD+'Stage '+str(Status)+':'+bcolors.ENDC+' Analysing the fitted seeds')
                         JobSet=[]
                         for i in range(len(JobSets)):
@@ -880,14 +878,14 @@ while Status<len(Program):
                                 for j in range(len(JobSet[i])):
                                          for k in range(JobSet[i][j]):
                                               required_output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RUTr1'+ModelName[md]+'_'+RecBatchID+'_'+str(i)+'/RUTr1'+ModelName[md]+'_'+RecBatchID+'_RefinedSeeds_'+str(i)+'_'+str(j)+'_'+str(k)+'.pkl'
-                                              new_data=UF.PickleOperations(required_output_file_location,'r','N/A')[0]
-                                              print(UF.TimeStamp(),'Set',str(i)+'_'+str(j)+'_'+str(k), 'contains', len(new_data), 'seeds',bcolors.ENDC)
+                                              new_data=UI.PickleOperations(required_output_file_location,'r','N/A')[0]
+                                              print(UI.TimeStamp(),'Set',str(i)+'_'+str(j)+'_'+str(k), 'contains', len(new_data), 'seeds')
                                               if base_data == None:
                                                     base_data = new_data
                                               else:
                                                     base_data+=new_data
                         Records=len(base_data)
-                        print(UF.TimeStamp(),'The output contains', Records, 'raw images',bcolors.ENDC)
+                        print(UI.TimeStamp(),'The output contains', Records, 'raw images')
 
                         base_data=list(set(base_data))
                         Records_After_Compression=len(base_data)
@@ -895,7 +893,7 @@ while Status<len(Program):
                                               Compression_Ratio=int((Records_After_Compression/Records)*100)
                         else:
                                               CompressionRatio=0
-                        print(UF.TimeStamp(),'The output compression ratio is ', Compression_Ratio, ' %',bcolors.ENDC)
+                        print(UI.TimeStamp(),'The output compression ratio is ', Compression_Ratio, ' %',)
                 else:
                     prog_entry=[]
                     TotJobs=0
@@ -920,12 +918,11 @@ while Status<len(Program):
                         Program_Dummy.append('DUM')
                     Program_Dummy.append(prog_entry)
                     if Mode=='RESET':
-                        print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Delete'))
+                        print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry,'Delete'))
                     #Setting up folders for the output. The reconstruction of just one brick can easily generate >100k of files. Keeping all that blob in one directory can cause problems on lxplus.
-                    print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Create'))
-                    Result=StandardProcess(Program_Dummy,Status,FreshStart)
+                    print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry,'Create'))
+                    Result=UI.StandardProcess(Program_Dummy,Status,FreshStart)
                     if Result:
-                        print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
                         print(UF.TimeStamp(),bcolors.BOLD+'Stage '+str(Status)+':'+bcolors.ENDC+' Analysing the fitted seeds')
                         base_data = None
                         with alive_bar(len(JobSets),force_tty=True, title='Checking the results from HTCondor') as bar:
@@ -958,7 +955,7 @@ while Status<len(Program):
                             output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RUTr1'+ModelName[md]+'_'+RecBatchID+'_0/RUTr1'+str(ModelName[md+1])+'_'+RecBatchID+'_Input_Seeds_'+str(os_itr)+'.pkl'
                             print(UI.PickleOperations(output_file_location,'w',base_data[os_itr*PM.MaxSegments:(os_itr+1)*PM.MaxSegments])[1])
                 if Log:
-                             print(UF.TimeStamp(),'Initiating the logging...')
+                             UI.Msg('vanilla','Initiating the logging...')
                              eval_data_file=EOS_DIR+'/ANNDEA/Data/TEST_SET/EUTr1b_'+RecBatchID+'_SEED_TRUTH_COMBINATIONS.csv'
                              eval_data=pd.read_csv(eval_data_file,header=0,usecols=['Segment_1','Segment_2'])
                              eval_data["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(eval_data['Segment_1'], eval_data['Segment_2'])]
@@ -977,12 +974,13 @@ while Status<len(Program):
                              rec_eval=pd.merge(eval_data, rec, how="inner", on=['Seed_ID'])
                              eval_no=len(rec_eval)
                              rec_no=(len(rec)-len(rec_eval))
-                             UF.LogOperations(EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv', 'a', [[3+md,ModelName[md],rec_no,eval_no,eval_no/(rec_no+eval_no),eval_no/len(eval_data)]])
+                             UI.LogOperations(EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv', 'a', [[3+md,ModelName[md],rec_no,eval_no,eval_no/(rec_no+eval_no),eval_no/len(eval_data)]])
                              print(UF.TimeStamp(), bcolors.OKGREEN+"The log data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv'+bcolors.ENDC)
+
                 del new_data
-                print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(Status)+' has successfully completed'+bcolors.ENDC)
+                UI.Msg('completed','Stage '+str(Status)+' has successfully completed')
                 UI.UpdateStatus(Status+1)
-    print(UF.TimeStamp(),'Loading previously saved data from ',bcolors.OKBLUE+RecOutputMeta+bcolors.ENDC)
+    UI.Msg('location','Loading previously saved data from ',RecOutputMeta)
     MetaInput=UI.PickleOperations(RecOutputMeta,'r', 'N/A')
     Meta=MetaInput[0]
     Status=Meta.Status[-1]
