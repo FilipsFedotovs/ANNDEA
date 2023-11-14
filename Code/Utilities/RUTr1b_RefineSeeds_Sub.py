@@ -61,8 +61,8 @@ if PY_DIR!='': #Temp solution
 sys.path.append(AFS_DIR+'/Code/Utilities')
 import pandas as pd #We use Panda for a routine data processing
 import gc  #Helps to clear memory
-import UtilityFunctions as UF
-from UtilityFunctions import EMO
+import U_UI as UI
+from U_EMO import EMO
 
 
 ModelName=args.ModelName
@@ -73,7 +73,7 @@ if ModelName!='Blank':
     Model_Meta_Path=EOSsubModelDIR+'/'+ModelName+'_Meta'
     Model_Path=EOSsubModelDIR+'/'+ModelName
     print(Model_Path)
-    ModelMeta=UF.PickleOperations(Model_Meta_Path, 'r', 'N/A')[0]
+    ModelMeta=UI.PickleOperations(Model_Meta_Path, 'r', 'N/A')[0]
     if ModelMeta.ModelFramework=='Tensorflow':
         import tensorflow as tf
         from tensorflow import keras
@@ -83,9 +83,9 @@ if ModelName!='Blank':
         from torch import optim
         Model_Meta_Path=EOSsubModelDIR+'/'+ModelName+'_Meta'
         Model_Path=EOSsubModelDIR+'/'+ModelName
-        ModelMeta=UF.PickleOperations(Model_Meta_Path, 'r', 'N/A')[0]
+        ModelMeta=UI.PickleOperations(Model_Meta_Path, 'r', 'N/A')[0]
         device = torch.device('cpu')
-        model = UF.GenerateModel(ModelMeta).to(device)
+        model = UI.GenerateModel(ModelMeta).to(device)
         model.load_state_dict(torch.load(Model_Path))
 
 if FirstTime=='True':
@@ -96,7 +96,7 @@ if FirstTime=='True':
     input_segment_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1_'+BatchID+'_TRACK_SEGMENTS.csv'
     input_track_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RUTr1a'+'_'+BatchID+'_'+str(i)+'/RUTr1a_'+BatchID+'_SelectedSeeds_'+str(i)+'_'+str(j)+'_'+str(k)+'.csv'
     output_file_location=EOS_DIR+'/'+p+'/Temp_RUTr1'+ModelName+'_'+BatchID+'_'+str(i)+'/'+pfx+'_'+BatchID+'_'+o+'_'+str(i)+'_'+str(j)+'_'+str(k)+sfx
-    print(UF.TimeStamp(),'Loading the data')
+    print(UI.TimeStamp(),'Loading the data')
     tracks=pd.read_csv(input_track_file_location)
     tracks_1=tracks.drop(['Segment_2'],axis=1)
     tracks_1=tracks_1.rename(columns={"Segment_1": "Rec_Seg_ID"})
@@ -106,7 +106,7 @@ if FirstTime=='True':
     track_list=track_list.sort_values(['Rec_Seg_ID'])
     track_list.drop_duplicates(subset="Rec_Seg_ID",keep='first',inplace=True)
     segments=pd.read_csv(input_segment_file_location)
-    print(UF.TimeStamp(),'Analysing the data')
+    print(UI.TimeStamp(),'Analysing the data')
     segments=pd.merge(segments, track_list, how="inner", on=["Rec_Seg_ID"]) #Shrinking the Track data so just a star hit for each segment is present.
     segments["x"] = pd.to_numeric(segments["x"],downcast='float')
     segments["y"] = pd.to_numeric(segments["y"],downcast='float')
@@ -124,10 +124,10 @@ if FirstTime=='True':
     gc.collect()
     limit=len(tracks)
     track_counter=0
-    print(UF.TimeStamp(),bcolors.OKGREEN+'Data has been successfully loaded and prepared..'+bcolors.ENDC)
+    print(UI.TimeStamp(),bcolors.OKGREEN+'Data has been successfully loaded and prepared..'+bcolors.ENDC)
     #create seeds
     GoodTracks=[]
-    print(UF.TimeStamp(),'Beginning the sample generation part...')
+    print(UI.TimeStamp(),'Beginning the sample generation part...')
     for s in range(0,limit):
          track=tracks.pop(0)
          track=EMO(track[:2])
@@ -146,24 +146,24 @@ if FirstTime=='True':
          else:
              del track
              continue
-    print(UF.TimeStamp(),bcolors.OKGREEN+'The sample generation has been completed..'+bcolors.ENDC)
+    print(UI.TimeStamp(),bcolors.OKGREEN+'The sample generation has been completed..'+bcolors.ENDC)
     del tracks
     del segments
     gc.collect()
-    print(UF.PickleOperations(output_file_location,'w', GoodTracks)[1])
+    print(UI.PickleOperations(output_file_location,'w', GoodTracks)[1])
 else:
     input_seed_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RUTr1'+FirstTime+'_'+BatchID+'_0/RUTr1'+str(ModelName)+'_'+BatchID+'_Input_Seeds_'+str(i)+'.pkl'
     output_file_location=EOS_DIR+'/'+p+'/Temp_'+pfx+'_'+BatchID+'_0/'+pfx+'_'+BatchID+'_'+o+'_'+str(i)+sfx
-    print(UF.TimeStamp(),'Loading the data')
-    seeds=UF.PickleOperations(input_seed_file_location,'r','N/A')[0]
-    print(UF.TimeStamp(),bcolors.OKGREEN+'Data has been successfully loaded and prepared..'+bcolors.ENDC)
+    print(UI.TimeStamp(),'Loading the data')
+    seeds=UI.PickleOperations(input_seed_file_location,'r','N/A')[0]
+    print(UI.TimeStamp(),bcolors.OKGREEN+'Data has been successfully loaded and prepared..'+bcolors.ENDC)
     #create seeds
     GoodSeeds=[]
-    print(UF.TimeStamp(),'Beginning the sample generation part...')
+    print(UI.TimeStamp(),'Beginning the sample generation part...')
     for s in seeds:
                 if s.FitSeed(ModelMeta,model):
                        GoodSeeds.append(s)
-    print(UF.TimeStamp(),bcolors.OKGREEN+'The sample generation has been completed..'+bcolors.ENDC)
-    print(UF.PickleOperations(output_file_location,'w', GoodSeeds)[1])
+    print(UI.TimeStamp(),bcolors.OKGREEN+'The sample generation has been completed..'+bcolors.ENDC)
+    print(UI.PickleOperations(output_file_location,'w', GoodSeeds)[1])
 
 
