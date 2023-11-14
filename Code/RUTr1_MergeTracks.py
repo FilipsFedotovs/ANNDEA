@@ -856,6 +856,8 @@ while Status<len(Program):
                     prog_entry.append(TotJobs)
                     prog_entry.append(LocalSub)
                     prog_entry.append(['',''])
+                    prog_entry.append(False)
+                    prog_entry.append(False)
                     for dum in range(0,Status):
                         Program_Dummy.append('DUM')
                     Program_Dummy.append(prog_entry)
