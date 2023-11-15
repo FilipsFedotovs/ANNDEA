@@ -40,7 +40,7 @@ if PY_DIR!='': #Temp solution
     sys.path.append('/usr/lib64/python3.6/site-packages')
     sys.path.append('/usr/lib/python3.6/site-packages')
 sys.path.append(AFS_DIR+'/Code/Utilities')
-import UtilityFunctions as UF #This is where we keep routine utility functions
+import U_UI as UI #This is where we keep routine utility functions
 import pandas as pd #We use Panda for a routine data processing
 import math #We use it for data manipulation
 import gc  #Helps to clear memory
@@ -65,17 +65,17 @@ input_file_location=EOS_DIR+'/ANNDEA/Data/TEST_SET/EUTr1_'+BatchID+'_TRACK_SEGME
 output_result_location=EOS_DIR+p+'/Temp_'+pfx+'_'+BatchID+'_'+str(0)+'/'+pfx+'_'+BatchID+'_'+o+'_'+str(i)+sfx
 output_file_location=EOS_DIR+p+'/Temp_'+pfx+'_'+BatchID+'_'+str(0)+'/'+pfx+'_'+BatchID+'_RawSeeds_'+str(i)+sfx
 
-print(UF.TimeStamp(), "Modules Have been imported successfully...")
-print(UF.TimeStamp(),'Loading pre-selected data from ',input_file_location)
+print(UI.TimeStamp(), "Modules Have been imported successfully...")
+print(UI.TimeStamp(),'Loading pre-selected data from ',input_file_location)
 data=pd.read_csv(input_file_location,header=0,
                     usecols=['Rec_Seg_ID','MC_Mother_Track_ID'])
 
 data.drop_duplicates(subset="Rec_Seg_ID",keep='first',inplace=True)
-print(UF.TimeStamp(),'Creating segment combinations... ')
+print(UI.TimeStamp(),'Creating segment combinations... ')
 
 #Doing a plate region cut for the Main Data
 Records=len(data)
-print(UF.TimeStamp(),'There are total of ', Records, 'tracks in the data set')
+print(UI.TimeStamp(),'There are total of ', Records, 'tracks in the data set')
 Cut=math.ceil(MaxRecords/Records) #Even if use only a max of 20000 track on the right join we cannot perform the full outer join due to the memory limitations, we do it in a small 'cuts'
 Steps=math.ceil(MaxSegments/Cut)  #Calculating number of cuts
 StartDataCut=i*MaxSegments
@@ -90,14 +90,14 @@ EndDataCut=(i+1)*MaxSegments
 r_data=data.rename(columns={"Rec_Seg_ID": "Segment_2"})
 r_data=r_data.iloc[StartDataCut:min(EndDataCut,Records)]
 Records=len(r_data)
-print(UF.TimeStamp(),'However we will only attempt  ', Records, 'track segments in the starting plate')
+print(UI.TimeStamp(),'However we will only attempt  ', Records, 'track segments in the starting plate')
 data=data.rename(columns={"Rec_Seg_ID": "Segment_1"})
 
 result_list=[]  #We will keep the result in list rather then Panda Dataframe to save memory
 #Downcasting Panda Data frame data types in order to save memory
 
 #Creating csv file for the results
-UF.LogOperations(output_file_location,'w',result_list)
+UI.LogOperations(output_file_location,'w',result_list)
 #This is where we start
 
 for i in range(0,Steps):
@@ -119,15 +119,15 @@ for i in range(0,Steps):
     merged_list = merged_data.values.tolist() #Convirting the result to List data type
     result_list+=merged_list #Adding the result to the list
   if len(result_list)>=2000000: #Once the list gets too big we dump the results into csv to save memory
-      UF.LogOperations(output_file_location,'a',result_list) #Write to the csv
+      UI.LogOperations(output_file_location,'a',result_list) #Write to the csv
       #Clearing the memory
       del result_list
       result_list=[]
       gc.collect()
 
-UF.LogOperations(output_file_location,'a',result_list) #Writing the remaining data into the csv
-UF.LogOperations(output_result_location,'w',[])
-print(UF.TimeStamp(), "Eval seed generation is finished...")
+UI.LogOperations(output_file_location,'a',result_list) #Writing the remaining data into the csv
+UI.LogOperations(output_result_location,'w',[])
+print(UI.TimeStamp(), "Eval seed generation is finished...")
 #End of the script
 
 
