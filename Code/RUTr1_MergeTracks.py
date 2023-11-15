@@ -314,9 +314,6 @@ if Log:
     # ###### Stage 1
     Program.append('Custom - PickE')
 
-UI.UpdateStatus(2,Meta,RecOutputMeta)
-Status=2
-
 if Mode=='CLEANUP':
     UI.UpdateStatus(19,Meta,RecOutputMeta)
     Status=19
