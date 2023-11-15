@@ -314,8 +314,8 @@ if Log:
     Program.append('Custom - PickE')
 
 else:
-    UI.UpdateStatus(0,Meta,RecOutputMeta)
-    Status=0
+    UI.UpdateStatus(Status,Meta,RecOutputMeta)
+    Status=Status
 
 if Mode=='CLEANUP':
     UI.UpdateStatus(19,Meta,RecOutputMeta)
