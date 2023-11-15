@@ -74,7 +74,6 @@ ModelName=args.ModelName
 if ModelName!='Blank':
     Model_Meta_Path=EOSsubModelDIR+'/'+ModelName+'_Meta'
     Model_Path=EOSsubModelDIR+'/'+ModelName
-    print(Model_Path)
     ModelMeta=UI.PickleOperations(Model_Meta_Path, 'r', 'N/A')[0]
     if ModelMeta.ModelFramework=='Tensorflow':
         import tensorflow as tf

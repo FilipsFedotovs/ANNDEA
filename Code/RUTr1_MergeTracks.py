@@ -31,7 +31,6 @@ pd.options.mode.chained_assignment = None #Silence annoying warnings
 import math #We use it for data manipulation
 import numpy as np
 import os
-import time
 from alive_progress import alive_bar
 import argparse
 import ast
@@ -252,7 +251,7 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         UI.Msg('location',"The track segment data has been created successfully and written to",required_file_location)
         Meta=UI.TrainingSampleMeta(RecBatchID)
         Meta.IniTrackSeedMetaData(MaxSLG,MaxSTG,MaxDOCA,MaxAngle,data,MaxSegments,VetoMotherTrack,MaxSeeds,MinHitsTrack)
-        Meta.UpdateStatus(0,Meta,RecOutputMeta)
+        Meta.UpdateStatus(0)
         print(UI.PickleOperations(RecOutputMeta,'w', Meta)[1])
         UI.Msg('completed','Stage 0 has successfully completed')
 elif os.path.isfile(RecOutputMeta)==True:
@@ -1054,11 +1053,10 @@ if Status<20:
                     prog_entry.append(TotJobs)
                     prog_entry.append(LocalSub)
                     prog_entry.append(['',''])
-                    print(UI.TimeStamp(),UF.ManageTempFolders(prog_entry,'Delete')) #Deleting a specific set of created folders
+                    print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry,'Delete')) #Deleting a specific set of created folders
     UI.Msg('success',"Segment merging has been completed")
 else:
-    print(UF.TimeStamp(), bcolors.FAIL+"Segment merging has not been completed as one of the processes has timed out. Please run the script again (without Reset Mode)."+bcolors.ENDC)
-    UI.Msg('success',"Segment merging has been completed")
+    UI.Msg('failed',"Segment merging has not been completed as one of the processes has timed out. Please run the script again (without Reset Mode).")
     exit()
 
 
