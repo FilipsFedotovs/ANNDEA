@@ -420,7 +420,7 @@ while Status<len(Program):
         UI.Msg('completed','Stage '+str(Status)+' has successfully completed')
         UI.UpdateStatus(Status+1,Meta,RecOutputMeta)
     elif Program[Status]=='Custom - PickR':
-        UI.Msg('status','Stage',Status +': Collecting and de-duplicating the results from previous stage')
+        UI.Msg('status','Stage',str(Status) +': Collecting and de-duplicating the results from previous stage')
         min_i=0
         UI.Msg('vanilla','Analysing the data sample in order to understand how many jobs to submit to HTCondor... ')
         data=pd.read_csv(required_file_location,header=0,
