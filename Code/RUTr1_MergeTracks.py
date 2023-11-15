@@ -285,7 +285,7 @@ else:
     UI.Msg('vanilla','Analysing the current script status...')
     Status=Meta.Status[-1]
 
-UI.Msg('status','Current status is',Status)
+UI.Msg('status',Status,'Current status is')
 ################ Set the execution sequence for the script
 Program=[]
 if Log:
@@ -420,7 +420,7 @@ while Status<len(Program):
         UI.Msg('completed','Stage '+str(Status)+' has successfully completed')
         UI.UpdateStatus(Status+1,Meta,RecOutputMeta)
     elif Program[Status]=='Custom - PickR':
-        UI.Msg('result','Stage',Status,': Collecting and de-duplicating the results from stage 2')
+        UI.Msg('result','Stage',Status,': Collecting and de-duplicating the results from stage',Status-1)
         min_i=0
         UI.Msg('vanilla','Analysing the data sample in order to understand how many jobs to submit to HTCondor... ')
         data=pd.read_csv(required_file_location,header=0,
@@ -867,7 +867,7 @@ while Status<len(Program):
                     print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry,'Create'))
                     Result=UI.StandardProcess(Program_Dummy,Status,SubGap,SubPause,RequestExtCPU,JobFlavour,ReqMemory,time_int,Patience,Meta,RecOutputMeta)
                     if Result:
-                        print(UF.TimeStamp(),bcolors.BOLD+'Stage '+str(Status)+':'+bcolors.ENDC+' Analysing the fitted seeds')
+                        UI.Msg('status','Stage',Status,': Analysing the fitted seeds')
                         JobSet=[]
                         for i in range(len(JobSets)):
                              JobSet.append([])
