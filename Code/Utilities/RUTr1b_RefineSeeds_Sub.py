@@ -3,6 +3,7 @@
 
 import argparse
 import sys
+
 class bcolors:
     HEADER = '\033[95m'
     OKBLUE = '\033[94m'
@@ -63,6 +64,7 @@ import pandas as pd #We use Panda for a routine data processing
 import gc  #Helps to clear memory
 import U_UI as UI
 from U_EMO import EMO
+from U_ML import ML
 
 
 ModelName=args.ModelName
@@ -85,7 +87,7 @@ if ModelName!='Blank':
         Model_Path=EOSsubModelDIR+'/'+ModelName
         ModelMeta=UI.PickleOperations(Model_Meta_Path, 'r', 'N/A')[0]
         device = torch.device('cpu')
-        model = UI.GenerateModel(ModelMeta).to(device)
+        model = ML.GenerateModel(ModelMeta).to(device)
         model.load_state_dict(torch.load(Model_Path))
 
 if FirstTime=='True':
