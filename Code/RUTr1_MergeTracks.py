@@ -707,7 +707,7 @@ while Status<len(Program):
                 new_combined_data=new_combined_data.rename(columns={'Temp_Track_Quarter': RecBatchID+'_Brick_ID','Temp_Track_ID': RecBatchID+'_Track_ID'})
                 new_combined_data.to_csv(final_output_file_location,index=False)
                 UI.Msg('location',"The merged track data has been created successfully and written to",final_output_file_location)
-                UI.UpdateStatus(Status+1)
+                UI.UpdateStatus(Status+1,Meta,RecOutputMeta)
     elif Program[Status]=='Custom - PerformMerging':
          UI.Msg('status','Stage '+str(Status),': Merging the segment seeds')
          print(UI.TimeStamp(), "Starting the script from the scratch")
