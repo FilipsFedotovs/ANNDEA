@@ -560,16 +560,16 @@ while Status<len(Program):
                 data[BrickID] = data[BrickID].astype(str)
                 if os.path.isfile(EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1e_'+RecBatchID+'_Mapped_Tracks_Temp.csv')==False:
                     data['Rec_Seg_ID'] = data[TrackID] + '-' + data[BrickID]
-                    print(UF.TimeStamp(),'Resolving duplicated hits...')
+                    print(UI.TimeStamp(),'Resolving duplicated hits...')
                     selected_combined_data=pd.merge(data, map_data, how="left", left_on=["Rec_Seg_ID"], right_on=['Old_Track_ID'])
                     Hit_Map_Stats=selected_combined_data[['Temp_Track_Quarter','Temp_Track_ID',PM.z,PM.Hit_ID]] #Calculating the stats
                     Hit_Map_Stats=Hit_Map_Stats.groupby(['Temp_Track_Quarter','Temp_Track_ID']).agg({PM.z:pd.Series.nunique,PM.Hit_ID: pd.Series.nunique}).reset_index() #Calculate the number fo unique plates and hits
                     Ini_No_Tracks=len(Hit_Map_Stats)
-                    print(UF.TimeStamp(),bcolors.WARNING+'The initial number of tracks is '+ str(Ini_No_Tracks)+bcolors.ENDC)
+                    UI.Msg('result','The initial number of tracks is ',str(Ini_No_Tracks))
                     Hit_Map_Stats=Hit_Map_Stats.rename(columns={PM.z: "No_Plates",PM.Hit_ID:"No_Hits"}) #Renaming the columns so they don't interfere once we join it back to the hit map
                     Hit_Map_Stats=Hit_Map_Stats[Hit_Map_Stats.No_Plates >= PM.MinHitsTrack]
                     Prop_No_Tracks=len(Hit_Map_Stats)
-                    print(UF.TimeStamp(),bcolors.WARNING+'After dropping single hit tracks, left '+ str(Prop_No_Tracks)+' tracks...'+bcolors.ENDC)
+                    UI.Msg('result','After dropping single hit tracks, left ',str(Prop_No_Tracks),' tracks...')
                     selected_combined_data=pd.merge(selected_combined_data,Hit_Map_Stats,how='inner',on = ['Temp_Track_Quarter','Temp_Track_ID']) #Join back to the hit map
                     Good_Tracks=selected_combined_data[selected_combined_data.No_Plates == selected_combined_data.No_Hits] #For all good tracks the number of hits matches the number of plates, we won't touch them
                     Good_Tracks=Good_Tracks[['Temp_Track_Quarter','Temp_Track_ID',PM.Hit_ID]] #Just strip off the information that we don't need anymore
@@ -667,14 +667,14 @@ while Status<len(Program):
 
                     #Once we get coefficients for all tracks we convert them back to Pandas dataframe and join back to the data
                     Bad_Tracks_Head=pd.DataFrame(Bad_Tracks_Head, columns = ['Temp_Track_Quarter','Temp_Track_ID','ax','t1x','t2x','ay','t1y','t2y'])
-                    print(UF.TimeStamp(),'Removing problematic hits...')
+                    print(UI.TimeStamp(),'Removing problematic hits...')
                     Bad_Tracks=pd.merge(Bad_Tracks,Bad_Tracks_Head,how='inner',on = ['Temp_Track_Quarter','Temp_Track_ID'])
-                    print(UF.TimeStamp(),'Calculating x and y coordinates of the fitted line for all plates in the track...')
+                    print(UI.TimeStamp(),'Calculating x and y coordinates of the fitted line for all plates in the track...')
                     #Calculating x and y coordinates of the fitted line for all plates in the track
                     Bad_Tracks['new_x']=Bad_Tracks['ax']+(Bad_Tracks[PM.z]*Bad_Tracks['t1x'])+((Bad_Tracks[PM.z]**2)*Bad_Tracks['t2x'])
                     Bad_Tracks['new_y']=Bad_Tracks['ay']+(Bad_Tracks[PM.z]*Bad_Tracks['t1y'])+((Bad_Tracks[PM.z]**2)*Bad_Tracks['t2y'])
                     #Calculating how far hits deviate from the fit polynomial
-                    print(UF.TimeStamp(),'Calculating how far hits deviate from the fit polynomial...')
+                    print(UI.TimeStamp(),'Calculating how far hits deviate from the fit polynomial...')
                     Bad_Tracks['d_x']=Bad_Tracks[PM.x]-Bad_Tracks['new_x']
                     Bad_Tracks['d_y']=Bad_Tracks[PM.y]-Bad_Tracks['new_y']
                     Bad_Tracks['d_r']=Bad_Tracks['d_x']**2+Bad_Tracks['d_y']**2
@@ -682,33 +682,31 @@ while Status<len(Program):
                     Bad_Tracks['d_r']=np.sqrt(Bad_Tracks['d_r']) #Absolute distance
                     Bad_Tracks=Bad_Tracks[['Temp_Track_Quarter','Temp_Track_ID',PM.z,PM.Hit_ID,'d_r']]
                     #Sort the tracks and their hits by Track ID, Plate and distance to the perfect line
-                    print(UF.TimeStamp(),'Sorting the tracks and their hits by Track ID, Plate and distance to the perfect line...')
+                    print(UI.TimeStamp(),'Sorting the tracks and their hits by Track ID, Plate and distance to the perfect line...')
                     Bad_Tracks.sort_values(['Temp_Track_Quarter','Temp_Track_ID',PM.z,'d_r'],ascending=[0,0,1,1],inplace=True)
                     before=len(Bad_Tracks)
-                    print(UF.TimeStamp(),'Before de-duplicattion we had ',before,' hits involving problematic tracks.')
+                    print(UI.TimeStamp(),'Before de-duplicattion we had ',before,' hits involving problematic tracks.')
                     #If there are two hits per plate we will keep the one which is closer to the line
                     Bad_Tracks.drop_duplicates(subset=['Temp_Track_Quarter','Temp_Track_ID',PM.z],keep='first',inplace=True)
                     after=len(Bad_Tracks)
-                    print(UF.TimeStamp(),'Now their number was dropped to ',after,' hits.')
+                    print(UI.TimeStamp(),'Now their number was dropped to ',after,' hits.')
                     Bad_Tracks=Bad_Tracks[['Temp_Track_Quarter','Temp_Track_ID',PM.Hit_ID]]
                     Good_Tracks=pd.concat([Good_Tracks,Bad_Tracks]) #Combine all ANNDEA tracks together
                     Good_Tracks.to_csv(EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1e_'+RecBatchID+'_Mapped_Tracks_Temp.csv',index=False)
                     data.drop(["Rec_Seg_ID"],axis=1,inplace=True)
                 else:
                     Good_Tracks=pd.read_csv(EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1e_'+RecBatchID+'_Mapped_Tracks_Temp.csv')
-                print(UF.TimeStamp(),'Mapping data...')
+                print(UI.TimeStamp(),'Mapping data...')
                 data=pd.read_csv(args.f,header=0)
                 new_combined_data=pd.merge(data, Good_Tracks, how="left", on=[PM.Hit_ID])
                 if BrickID!='':
-            
                     new_combined_data['Temp_Track_Quarter'] = new_combined_data['Temp_Track_Quarter'].fillna(new_combined_data[BrickID])
                 else:
                     new_combined_data['Temp_Track_Quarter'] = new_combined_data['Temp_Track_Quarter'].fillna('D')
                 new_combined_data['Temp_Track_ID'] = new_combined_data['Temp_Track_ID'].fillna(new_combined_data[TrackID])
-
                 new_combined_data=new_combined_data.rename(columns={'Temp_Track_Quarter': RecBatchID+'_Brick_ID','Temp_Track_ID': RecBatchID+'_Track_ID'})
                 new_combined_data.to_csv(final_output_file_location,index=False)
-                print(UF.TimeStamp(), bcolors.OKGREEN+"The merged track data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+final_output_file_location+bcolors.ENDC)
+                UI.Msg('location',"The merged track data has been created successfully and written to",final_output_file_location)
                 UI.UpdateStatus(Status+1)
     elif Program[Status]=='Custom - PerformMerging':
          UI.Msg('status','Stage '+str(Status),': Merging the segment seeds')
