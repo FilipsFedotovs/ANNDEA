@@ -373,7 +373,7 @@ while Status<len(Program):
              Status=20
              break
     elif Program[Status]=='Custom - PickE':
-        UI.Msg('status','Stage',Status +': Collecting and de-duplicating the results from previous stage')
+        UI.Msg('status','Stage '+str(Status),': Collecting and de-duplicating the results from previous stage'+str(Status-1))
         UI.Msg('location','Loading preselected data from ',initial_input_file_location)
         data=pd.read_csv(required_eval_file_location,header=0,usecols=['Rec_Seg_ID'])
         UI.Msg('vanilla','Analysing data... ')
@@ -420,7 +420,7 @@ while Status<len(Program):
         UI.Msg('completed','Stage '+str(Status)+' has successfully completed')
         UI.UpdateStatus(Status+1,Meta,RecOutputMeta)
     elif Program[Status]=='Custom - PickR':
-        UI.Msg('status',str(Status) +': Collecting and de-duplicating the results from previous stage','Stage')
+        UI.Msg('status','Stage '+str(Status),': Collecting and de-duplicating the results from previous stage'+str(Status-1))
         min_i=0
         UI.Msg('vanilla','Analysing the data sample in order to understand how many jobs to submit to HTCondor... ')
         data=pd.read_csv(required_file_location,header=0,
