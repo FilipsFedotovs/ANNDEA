@@ -420,7 +420,7 @@ while Status<len(Program):
         UI.Msg('completed','Stage '+str(Status)+' has successfully completed')
         UI.UpdateStatus(Status+1,Meta,RecOutputMeta)
     elif Program[Status]=='Custom - PickR':
-        UI.Msg('status','Stage '+str(Status),': Collecting and de-duplicating the results from previous stage'+str(Status-1))
+        UI.Msg('status','Stage '+str(Status),': Collecting and de-duplicating the results from previous stage '+str(Status-1)+'...')
         min_i=0
         UI.Msg('vanilla','Analysing the data sample in order to understand how many jobs to submit to HTCondor... ')
         data=pd.read_csv(required_file_location,header=0,
@@ -867,7 +867,7 @@ while Status<len(Program):
                     print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry,'Create'))
                     Result=UI.StandardProcess(Program_Dummy,Status,SubGap,SubPause,RequestExtCPU,JobFlavour,ReqMemory,time_int,Patience,Meta,RecOutputMeta)
                     if Result:
-                        UI.Msg('status','Stage',Status,': Analysing the fitted seeds')
+                        UI.Msg('status','Stage '+str(Status),': Analysing the fitted seeds')
                         JobSet=[]
                         for i in range(len(JobSets)):
                              JobSet.append([])
@@ -916,6 +916,8 @@ while Status<len(Program):
                     prog_entry.append(TotJobs)
                     prog_entry.append(LocalSub)
                     prog_entry.append(['',''])
+                    prog_entry.append(False)
+                    prog_entry.append(False)
                     for dum in range(0,Status):
                         Program_Dummy.append('DUM')
                     Program_Dummy.append(prog_entry)
