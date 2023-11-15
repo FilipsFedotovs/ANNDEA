@@ -825,7 +825,7 @@ while Status<len(Program):
             rec_no=(len(rec)-len(rec_eval))
             UI.LogOperations(EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv', 'a', [[4+len(ModelName),'Track Seed Merging',rec_no,eval_no,eval_no/(rec_no+eval_no),eval_no/len(eval_data)]])
             print(UF.TimeStamp(), bcolors.OKGREEN+"The log data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv'+bcolors.ENDC)
-         UI.UpdateStatus(Status+1)
+         UI.UpdateStatus(Status+1,Meta,RecOutputMeta)
     else:
         for md in range(len(ModelName)):
             if Program[Status]==ModelName[md]:
