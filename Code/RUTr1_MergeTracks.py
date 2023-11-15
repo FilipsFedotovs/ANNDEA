@@ -304,6 +304,8 @@ if Log:
     prog_entry.append(Sets)
     prog_entry.append(LocalSub)
     prog_entry.append(['',''])
+    prog_entry.append(False)
+    prog_entry.append(False)
     if Mode=='RESET':
         print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry,'Delete'))
     #Setting up folders for the output. The reconstruction of just one brick can easily generate >100k of files. Keeping all that blob in one directory can cause problems on lxplus.
