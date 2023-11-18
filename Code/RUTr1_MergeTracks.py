@@ -973,7 +973,7 @@ while Status<len(Program):
                 else:
                     prog_entry=[]
                     TotJobs=[]
-                    NTotJobs
+                    NTotJobs=0
                     Program_Dummy=[]
                     for i in range(60):
                         keep_testing=True
