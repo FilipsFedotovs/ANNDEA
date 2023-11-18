@@ -936,9 +936,6 @@ while Status<len(Program):
                                         Records_After_Compression=len(base_data)
                                     if Records>0:
                                           Compression_Ratio=int((Records_After_Compression/Records)*100)
-                                    else:
-                                          CompressionRatio=0
-                                          print(UI.TimeStamp(),'The output '+str(i)+'  compression ratio is ', Compression_Ratio, ' %',)
                                           output_split=int(np.ceil(Records_After_Compression/PM.MaxSegments))
                                           for os_itr in range(output_split):
                                                 output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RUTr1'+ModelName[md]+'_'+RecBatchID+'_0/RUTr1'+str(ModelName[md+1])+'_'+RecBatchID+'_Input_Seeds_'+str(i)+'_'+str(os_itr)+'.pkl'
@@ -964,6 +961,10 @@ while Status<len(Program):
                                                  eval_no=len(rec_eval)
                                                  rec_no=(len(rec)-len(rec_eval))
                                                  log_rec_no+=rec_no
+                                    else:
+                                          CompressionRatio=0
+                                          print(UI.TimeStamp(),'The output '+str(i)+'  compression ratio is ', Compression_Ratio, ' %, shipping this step')
+
 
                             if Log:
                                          UI.Msg('vanilla','Initiating the logging...')
