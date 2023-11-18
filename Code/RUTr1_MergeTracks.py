@@ -935,35 +935,36 @@ while Status<len(Program):
                                         base_data=list(set(base_data))
                                         Records_After_Compression=len(base_data)
                                     if Records>0:
-                                                                  Compression_Ratio=int((Records_After_Compression/Records)*100)
+                                          Compression_Ratio=int((Records_After_Compression/Records)*100)
                                     else:
-                                                                  CompressionRatio=0
-                                    print(UI.TimeStamp(),'The output '+str(i)+'  compression ratio is ', Compression_Ratio, ' %',)
-                                    output_split=int(np.ceil(Records_After_Compression/PM.MaxSegments))
-                                    for os_itr in range(output_split):
-                                        output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RUTr1'+ModelName[md]+'_'+RecBatchID+'_0/RUTr1'+str(ModelName[md+1])+'_'+RecBatchID+'_Input_Seeds_'+str(i)+'_'+str(os_itr)+'.pkl'
-                                        print(UI.PickleOperations(output_file_location,'w',base_data[os_itr*PM.MaxSegments:(os_itr+1)*PM.MaxSegments])[1])
-                                    if Log:
-                                         UI.Msg('vanilla','Initiating the logging for set '+str(i)+' ...')
-                                         eval_data_file=EOS_DIR+'/ANNDEA/Data/TEST_SET/EUTr1b_'+RecBatchID+'_SEED_TRUTH_COMBINATIONS.csv'
-                                         eval_data=pd.read_csv(eval_data_file,header=0,usecols=['Segment_1','Segment_2'])
-                                         eval_data["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(eval_data['Segment_1'], eval_data['Segment_2'])]
-                                         eval_data.drop(['Segment_1'],axis=1,inplace=True)
-                                         eval_data.drop(['Segment_2'],axis=1,inplace=True)
-                                         rec_no=0
-                                         eval_no=0
-                                         rec_list=[]
-                                         for rd in base_data:
-                                             rec_list.append([rd.Header[0],rd.Header[1]])
-                                         del base_data
-                                         rec = pd.DataFrame(rec_list, columns = ['Segment_1','Segment_2'])
-                                         rec["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(rec['Segment_1'], rec['Segment_2'])]
-                                         rec.drop(['Segment_1'],axis=1,inplace=True)
-                                         rec.drop(['Segment_2'],axis=1,inplace=True)
-                                         rec_eval=pd.merge(eval_data, rec, how="inner", on=['Seed_ID'])
-                                         eval_no=len(rec_eval)
-                                         rec_no=(len(rec)-len(rec_eval))
-                                         log_rec_no+=rec_no
+                                          CompressionRatio=0
+                                          print(UI.TimeStamp(),'The output '+str(i)+'  compression ratio is ', Compression_Ratio, ' %',)
+                                          output_split=int(np.ceil(Records_After_Compression/PM.MaxSegments))
+                                          for os_itr in range(output_split):
+                                                output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RUTr1'+ModelName[md]+'_'+RecBatchID+'_0/RUTr1'+str(ModelName[md+1])+'_'+RecBatchID+'_Input_Seeds_'+str(i)+'_'+str(os_itr)+'.pkl'
+                                                print(UI.PickleOperations(output_file_location,'w',base_data[os_itr*PM.MaxSegments:(os_itr+1)*PM.MaxSegments])[1])
+                                          if Log:
+                                                 UI.Msg('vanilla','Initiating the logging for set '+str(i)+' ...')
+                                                 eval_data_file=EOS_DIR+'/ANNDEA/Data/TEST_SET/EUTr1b_'+RecBatchID+'_SEED_TRUTH_COMBINATIONS.csv'
+                                                 eval_data=pd.read_csv(eval_data_file,header=0,usecols=['Segment_1','Segment_2'])
+                                                 eval_data["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(eval_data['Segment_1'], eval_data['Segment_2'])]
+                                                 eval_data.drop(['Segment_1'],axis=1,inplace=True)
+                                                 eval_data.drop(['Segment_2'],axis=1,inplace=True)
+                                                 rec_no=0
+                                                 eval_no=0
+                                                 rec_list=[]
+                                                 for rd in base_data:
+                                                     rec_list.append([rd.Header[0],rd.Header[1]])
+                                                 del base_data
+                                                 rec = pd.DataFrame(rec_list, columns = ['Segment_1','Segment_2'])
+                                                 rec["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(rec['Segment_1'], rec['Segment_2'])]
+                                                 rec.drop(['Segment_1'],axis=1,inplace=True)
+                                                 rec.drop(['Segment_2'],axis=1,inplace=True)
+                                                 rec_eval=pd.merge(eval_data, rec, how="inner", on=['Seed_ID'])
+                                                 eval_no=len(rec_eval)
+                                                 rec_no=(len(rec)-len(rec_eval))
+                                                 log_rec_no+=rec_no
+
                             if Log:
                                          UI.Msg('vanilla','Initiating the logging...')
                                          UI.LogOperations(EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv', 'a', [[3+md,ModelName[md],log_rec_no,eval_no,eval_no/(log_rec_no+eval_no),eval_no/len(eval_data)]])
