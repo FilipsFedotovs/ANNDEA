@@ -984,8 +984,6 @@ while Status<len(Program):
                             else:
                                 keep_testing=False
                         TotJobs.append(NJobs)
-                    print(TotJobs)
-                    exit()
                     prog_entry.append(' Sending tracks to the HTCondor, so track segment combination pairs can be formed...')
                     prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','OutputSeeds','RUTr1'+ModelName[md],'.pkl',RecBatchID,TotJobs,'RUTr1b_RefineSeeds_Sub.py'])
 
