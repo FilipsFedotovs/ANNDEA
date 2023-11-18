@@ -927,7 +927,10 @@ while Status<len(Program):
                                                         base_data = new_data
                                                   else:
                                                         base_data+=new_data
-                                    Records=len(base_data)
+                                    if base_data==None:
+                                        Records=0
+                                    else:
+                                        Records=len(base_data)
                                     print(UI.TimeStamp(),'The output '+str(i)+' contains', Records, 'raw images')
                                     base_data=list(set(base_data))
                                     Records_After_Compression=len(base_data)
@@ -1030,10 +1033,6 @@ while Status<len(Program):
                                     output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RUTr1'+ModelName[md]+'_'+RecBatchID+'_0/RUTr1'+str(ModelName[md+1])+'_'+RecBatchID+'_Input_Seeds_'+str(os_itr)+'.pkl'
                                     print(UI.PickleOperations(output_file_location,'w',base_data[os_itr*PM.MaxSegments:(os_itr+1)*PM.MaxSegments])[1])
 
-
-                del new_data
-                UI.Msg('completed','Stage '+str(Status)+' has successfully completed')
-                UI.UpdateStatus(Status+1,Meta,RecOutputMeta)
     UI.Msg('location','Loading previously saved data from ',RecOutputMeta)
     MetaInput=UI.PickleOperations(RecOutputMeta,'r', 'N/A')
     Meta=MetaInput[0]
