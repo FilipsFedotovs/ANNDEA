@@ -929,11 +929,12 @@ while Status<len(Program):
                                                         base_data+=new_data
                                     if base_data==None:
                                         Records=0
+                                        Records=len(base_data)
                                     else:
                                         Records=len(base_data)
-                                    print(UI.TimeStamp(),'The output '+str(i)+' contains', Records, 'raw images')
-                                    base_data=list(set(base_data))
-                                    Records_After_Compression=len(base_data)
+                                        print(UI.TimeStamp(),'The output '+str(i)+' contains', Records, 'raw images')
+                                        base_data=list(set(base_data))
+                                        Records_After_Compression=len(base_data)
                                     if Records>0:
                                                                   Compression_Ratio=int((Records_After_Compression/Records)*100)
                                     else:
