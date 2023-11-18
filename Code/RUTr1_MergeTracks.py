@@ -973,6 +973,7 @@ while Status<len(Program):
                 else:
                     prog_entry=[]
                     TotJobs=[]
+                    NTotJobs
                     Program_Dummy=[]
                     for i in range(60):
                         keep_testing=True
@@ -981,6 +982,7 @@ while Status<len(Program):
                             test_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RUTr1'+ModelName[md-1]+'_'+RecBatchID+'_0/RUTr1'+str(ModelName[md])+'_'+RecBatchID+'_Input_Seeds_'+str(i)+'_'+str(NJobs)+'.pkl'
                             if os.path.isfile(test_file_location):
                                 NJobs+=1
+                                NTotJobs+=1
                             else:
                                 keep_testing=False
                         TotJobs.append(NJobs)
@@ -989,7 +991,7 @@ while Status<len(Program):
 
                     prog_entry.append([" --MaxSTG ", " --MaxSLG ", " --MaxDOCA ", " --MaxAngle "," --ModelName "," --FirstTime "])
                     prog_entry.append([MaxSTG, MaxSLG, MaxDOCA, MaxAngle,'"'+ModelName[md]+'"', ModelName[md-1]])
-                    prog_entry.append(TotJobs)
+                    prog_entry.append(NTotJobs)
                     prog_entry.append(LocalSub)
                     prog_entry.append(['',''])
                     prog_entry.append(False)

@@ -26,7 +26,6 @@ class bc:
 #This utility provides Timestamps for print messages
 def TimeStamp():
  return "["+datetime.datetime.now().strftime("%D")+' '+datetime.datetime.now().strftime("%H:%M:%S")+"]"
-
 def PrintLine(Content):
     line='   '
     for l in range(len(Content)):
@@ -37,7 +36,6 @@ def PrintLine(Content):
             print(bc.HEADER+line+bc.ENDC)
         time.sleep(0.02)
     print('                                                                                                                                    ')
-
 #This utility provides automates welcome messages
 def WelcomeMsg(Title, Author, Contact):
     ANNDEA_logo='Welcome to ANNDEA'
@@ -53,7 +51,6 @@ def WelcomeMsg(Title, Author, Contact):
     print(bc.HEADER+"########################################################################################################"+bc.ENDC)
     print('                                                                                                                                    ')
     print('                                                                                                                                    ')
-
 class TrainingSampleMeta:
       def __init__(self,TrainDataID):
           self.TrainDataID=TrainDataID
@@ -144,7 +141,6 @@ def Msg(type,content,content2='',content3=''):
          print(TimeStamp(),bc.OKGREEN+content+bc.ENDC)
       if type=='failed':
          print(TimeStamp(),bc.FAIL+content+bc.ENDC)
-
 def UpdateStatus(status,meta,output):
     meta.UpdateStatus(status)
     print(PickleOperations(output,'w', meta)[1])
@@ -436,7 +432,6 @@ def AutoPilot(wait_min, interval_min, max_interval_tolerance,program,RequestExtC
          else:
               return True,False
      return False,False
-
 def StandardProcess(program,status,SubGap,SubPause,RequestExtCPU,JobFlavour,ReqMemory,time_int,Patience,Meta,RecOutputMeta):
         print(bc.HEADER+"#############################################################################################"+bc.ENDC)
         print(TimeStamp(),bc.BOLD+'Stage '+str(status)+':'+bc.ENDC+str(program[status][0]))
@@ -457,15 +452,10 @@ def StandardProcess(program,status,SubGap,SubPause,RequestExtCPU,JobFlavour,ReqM
                                     program[status][6],
                                     program[status][7],
                                     program[status][8])
-
-
         if len(bad_pop)==0:
              print(TimeStamp(),bc.OKGREEN+'Stage '+str(status)+' has successfully completed'+bc.ENDC)
              UpdateStatus(status+1,Meta,RecOutputMeta)
              return True,False
-
-
-
         elif (program[status][4])==len(bad_pop):
                  bad_pop=CreateCondorJobs(program[status][1][0],
                                     program[status][1][1],
@@ -501,8 +491,6 @@ def StandardProcess(program,status,SubGap,SubPause,RequestExtCPU,JobFlavour,ReqM
                  else:
                         print(TimeStamp(),bc.FAIL+'Stage '+str(status)+' is uncompleted...'+bc.ENDC)
                         return False,False
-
-
         elif len(bad_pop)>0:
             # if freshstart:
                    print(TimeStamp(),bc.WARNING+'Warning, there are still', len(bad_pop), 'HTCondor jobs remaining'+bc.ENDC)
@@ -561,7 +549,6 @@ def CleanFolder(folder,key):
                 except Exception as e:
                     print(e)
 #This function automates csv read/write operations
-
 def LogOperations(flocation,mode, message):
     if mode=='a':
         csv_writer_log=open(flocation,"a")
@@ -581,7 +568,6 @@ def LogOperations(flocation,mode, message):
         csv_reader_log=open(flocation,"r")
         log_reader = csv.reader(csv_reader_log)
         return list(log_reader)
-
 def PickleOperations(flocation,mode, message):
     import pickle
     if mode=='w':
@@ -594,7 +580,6 @@ def PickleOperations(flocation,mode, message):
         result=pickle.load(pickle_writer_log)
         pickle_writer_log.close()
         return (result,"PickleOperations Message: Data has been loaded successfully from "+flocation)
-
 def RecCleanUp(AFS_DIR, EOS_DIR, Process, FileNames, ProcessId):
       subprocess.call(['condor_rm', '-constraint', ProcessId])
       EOSsubDIR=EOS_DIR+'/'+'ANNDEA'
@@ -608,7 +593,6 @@ def RecCleanUp(AFS_DIR, EOS_DIR, Process, FileNames, ProcessId):
       CleanFolder(folder,'SUB_'+Process+'_')
       folder =  AFS_DIR+'/HTCondor/MSG'
       CleanFolder(folder,'MSG_'+Process+'_')
-
 def EvalCleanUp(AFS_DIR, EOS_DIR, Process, FileNames, ProcessId):
       subprocess.call(['condor_rm', '-constraint', ProcessId])
       EOSsubDIR=EOS_DIR+'/'+'ANNDEA'
@@ -622,7 +606,6 @@ def EvalCleanUp(AFS_DIR, EOS_DIR, Process, FileNames, ProcessId):
       CleanFolder(folder,'SUB_'+Process+'_')
       folder =  AFS_DIR+'/HTCondor/MSG'
       CleanFolder(folder,'MSG_'+Process+'_')
-
 def TrainCleanUp(AFS_DIR, EOS_DIR, Process, FileNames, ProcessId):
       subprocess.call(['condor_rm', '-constraint', ProcessId])
       EOSsubDIR=EOS_DIR+'/'+'ANNDEA'
@@ -640,11 +623,6 @@ def TrainCleanUp(AFS_DIR, EOS_DIR, Process, FileNames, ProcessId):
       CleanFolder(folder,'SUB_'+Process+'_')
       folder =  AFS_DIR+'/HTCondor/MSG'
       CleanFolder(folder,'MSG_'+Process+'_')
-
-
-
-
-
 def ManageTempFolders(spi,op_type):
     if type(spi[1][8]) is int:
        _tot=spi[1][8]
