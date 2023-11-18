@@ -963,7 +963,7 @@ while Status<len(Program):
                                                  log_rec_no+=rec_no
                                     else:
                                           CompressionRatio=0
-                                          print(UI.TimeStamp(),'The output '+str(i)+'  compression ratio is ', Compression_Ratio, ' %, shipping this step')
+                                          print(UI.TimeStamp(),'The output '+str(i)+'  compression ratio is ', Compression_Ratio, ' %, skipping this step')
 
 
                             if Log:
@@ -971,19 +971,21 @@ while Status<len(Program):
                                          UI.LogOperations(EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv', 'a', [[3+md,ModelName[md],log_rec_no,eval_no,eval_no/(log_rec_no+eval_no),eval_no/len(eval_data)]])
                                          UI.Msg('location',"The log data has been created successfully and written to",EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv')
                 else:
-                    print('md1')
-                    exit()
                     prog_entry=[]
-                    TotJobs=0
+                    TotJobs=[]
                     Program_Dummy=[]
-                    keep_testing=True
-                    TotJobs=0
-                    while keep_testing:
-                        test_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RUTr1'+ModelName[md-1]+'_'+RecBatchID+'_0/RUTr1'+str(ModelName[md])+'_'+RecBatchID+'_Input_Seeds_'+str(TotJobs)+'.pkl'
-                        if os.path.isfile(test_file_location):
-                            TotJobs+=1
-                        else:
-                            keep_testing=False
+                    for i in range(60):
+                        keep_testing=True
+                        NJobs=0
+                        while keep_testing:
+                            test_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RUTr1'+ModelName[md-1]+'_'+RecBatchID+'_0/RUTr1'+str(ModelName[md])+'_'+RecBatchID+'_Input_Seeds_'+str(i)+'_'+str(TotJobs)+'.pkl'
+                            if os.path.isfile(test_file_location):
+                                NJobs+=1
+                            else:
+                                keep_testing=False
+                        TotJobs.append(NJobs)
+                    print(TotJobs)
+                    exit()
                     prog_entry.append(' Sending tracks to the HTCondor, so track segment combination pairs can be formed...')
                     prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','OutputSeeds','RUTr1'+ModelName[md],'.pkl',RecBatchID,TotJobs,'RUTr1b_RefineSeeds_Sub.py'])
 
