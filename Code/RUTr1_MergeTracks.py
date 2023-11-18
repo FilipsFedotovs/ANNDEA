@@ -978,7 +978,7 @@ while Status<len(Program):
                         keep_testing=True
                         NJobs=0
                         while keep_testing:
-                            test_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RUTr1'+ModelName[md-1]+'_'+RecBatchID+'_0/RUTr1'+str(ModelName[md])+'_'+RecBatchID+'_Input_Seeds_'+str(i)+'_'+str(TotJobs)+'.pkl'
+                            test_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RUTr1'+ModelName[md-1]+'_'+RecBatchID+'_0/RUTr1'+str(ModelName[md])+'_'+RecBatchID+'_Input_Seeds_'+str(i)+'_'+str(NJobs)+'.pkl'
                             if os.path.isfile(test_file_location):
                                 NJobs+=1
                             else:
