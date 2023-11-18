@@ -929,7 +929,6 @@ while Status<len(Program):
                                                         base_data+=new_data
                                     if base_data==None:
                                         Records=0
-                                        Records=len(base_data)
                                     else:
                                         Records=len(base_data)
                                         print(UI.TimeStamp(),'The output '+str(i)+' contains', Records, 'raw images')
