@@ -233,8 +233,7 @@ def CreateCondorJobs(AFS,EOS,PY,path,o,pfx,sfx,ID,loop_params,OptionHeader,Optio
         return(bad_pop)
    else:
     if batch_sub==False:
-        print('Here')
-        x=input()
+
         from alive_progress import alive_bar
         bad_pop=[]
         TotJobs=0
@@ -251,6 +250,9 @@ def CreateCondorJobs(AFS,EOS,PY,path,o,pfx,sfx,ID,loop_params,OptionHeader,Optio
         OH=OptionHeader+[' --EOS '," --AFS ", " --PY ", " --BatchID "]
         OL=OptionLine+[EOS, AFS, PY, ID]
         TotJobs=int(TotJobs)
+        print('Here')
+        print(nest_lvl)
+        x=input()
         with alive_bar(TotJobs,force_tty=True, title='Checking the results from HTCondor') as bar:
              if nest_lvl==1:
                  for i in range(loop_params):
