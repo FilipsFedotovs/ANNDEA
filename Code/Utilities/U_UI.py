@@ -250,9 +250,7 @@ def CreateCondorJobs(AFS,EOS,PY,path,o,pfx,sfx,ID,loop_params,OptionHeader,Optio
         OH=OptionHeader+[' --EOS '," --AFS ", " --PY ", " --BatchID "]
         OL=OptionLine+[EOS, AFS, PY, ID]
         TotJobs=int(TotJobs)
-        print('Here')
-        print(nest_lvl)
-        x=input()
+        
         with alive_bar(TotJobs,force_tty=True, title='Checking the results from HTCondor') as bar:
              if nest_lvl==1:
                  for i in range(loop_params):
@@ -270,6 +268,7 @@ def CreateCondorJobs(AFS,EOS,PY,path,o,pfx,sfx,ID,loop_params,OptionHeader,Optio
                  for i in range(len(loop_params)):
                      for j in range(loop_params[i]):
                                required_output_file_location=EOS+'/'+path+'/Temp_'+pfx+'_'+ID+'_'+str(i)+'/'+pfx+'_'+ID+'_'+o+'_'+str(i)+'_'+str(j)+sfx
+                               
                                bar.text = f'-> Checking whether the file : {required_output_file_location}, exists...'
                                bar()
                                SHName = AFS + '/HTCondor/SH/Temp_'+pfx+'_'+ID+'_'+str(i)+'/SH_'+pfx+'_'+ ID+'_' + str(i) + '_' + str(j) + '.sh'
@@ -277,6 +276,8 @@ def CreateCondorJobs(AFS,EOS,PY,path,o,pfx,sfx,ID,loop_params,OptionHeader,Optio
                                MSGName = AFS + '/HTCondor/MSG/Temp_'+pfx+'_'+ID+'_'+str(i)+'/MSG_'+pfx+'_'+ ID+'_' + str(i) + '_' + str(j)
                                ScriptName = AFS + '/Code/Utilities/'+Sub_File
                                if os.path.isfile(required_output_file_location)!=True:
+                                  print(required_output_file_location)
+                                  x=input()
                                   bad_pop.append([OH+[' --i ', ' --j ', ' --p ', ' --o ',' --pfx ', ' --sfx '], OL+[i, j, path,o, pfx, sfx], SHName, SUBName, MSGName, ScriptName, 1, 'ANNDEA-'+pfx+'-'+ID, Log,GPU])
 
              if nest_lvl==3:
