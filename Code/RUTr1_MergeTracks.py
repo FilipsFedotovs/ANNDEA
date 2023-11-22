@@ -715,39 +715,40 @@ while Status<len(Program):
          KeepMerging=True
          itr=0
          while KeepMerging:
-            input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1c_'+RecBatchID+'_Fit_Filtered_Seeds_'+str(itr)+'.pkl'
-            if os.path.isfile(input_file_location)==False:
-                KeepMerging=False
-                continue
-            output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1c_'+RecBatchID+'_Pre_Merged_Seeds_'+str(itr)+'.pkl'
-            if os.path.isfile(output_file_location):
-                continue
-         UI.Msg('location',"Loading fit track seeds from the file",input_file_location)
-         base_data=UI.PickleOperations(input_file_location,'r','N/A')[0]
-         print(UI.TimeStamp(), 'Ok starting the pre merging of the remaining tracks')
-         InitialDataLength=len(base_data)
-         SeedCounter=0
-         SeedCounterContinue=True
-         with alive_bar(len(base_data),force_tty=True, title='Merging the track segments...') as bar:
-             while SeedCounterContinue:
-                 if SeedCounter==len(base_data):
-                                   SeedCounterContinue=False
-                                   break
-                 SubjectSeed=base_data[SeedCounter]
+                 input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1c_'+RecBatchID+'_Fit_Filtered_Seeds_'+str(itr)+'.pkl'
+                 if os.path.isfile(input_file_location)==False:
+                    KeepMerging=False
+                    continue
+                 output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1c_'+RecBatchID+'_Pre_Merged_Seeds_'+str(itr)+'.pkl'
+                 if os.path.isfile(output_file_location):
+                    continue
+                 UI.Msg('location',"Loading fit track seeds from the file",input_file_location)
+                 base_data=UI.PickleOperations(input_file_location,'r','N/A')[0]
+                 print(UI.TimeStamp(), 'Ok starting the pre merging of the remaining tracks')
+                 InitialDataLength=len(base_data)
+                 SeedCounter=0
+                 SeedCounterContinue=True
+                 with alive_bar(len(base_data),force_tty=True, title='Merging the track segments...') as bar:
+                     while SeedCounterContinue:
+                         if SeedCounter==len(base_data):
+                                           SeedCounterContinue=False
+                                           break
+                         SubjectSeed=base_data[SeedCounter]
 
 
-                 for ObjectSeed in base_data[SeedCounter+1:]:
-                          if MaxSLG>=0:
-                            if SubjectSeed.InjectDistantTrackSeed(ObjectSeed):
-                                base_data.pop(base_data.index(ObjectSeed))
-                          else:
-                            if SubjectSeed.InjectTrackSeed(ObjectSeed):
-                                base_data.pop(base_data.index(ObjectSeed))
-                 SeedCounter+=1
-                 bar()
-         print(str(InitialDataLength), "segment pairs from different files were merged into", str(len(base_data)), 'tracks...')
-         UI.Msg('location',"Saving the results into the file",output_file_location)
-         print(UI.PickleOperations(output_file_location,'w',base_data)[1])
+                         for ObjectSeed in base_data[SeedCounter+1:]:
+                                  if MaxSLG>=0:
+                                    if SubjectSeed.InjectDistantTrackSeed(ObjectSeed):
+                                        base_data.pop(base_data.index(ObjectSeed))
+                                  else:
+                                    if SubjectSeed.InjectTrackSeed(ObjectSeed):
+                                        base_data.pop(base_data.index(ObjectSeed))
+                         SeedCounter+=1
+                         bar()
+                 print(str(InitialDataLength), "segment pairs from different files were merged into", str(len(base_data)), 'tracks...')
+                 UI.Msg('location',"Saving the results into the file",output_file_location)
+                 print(UI.PickleOperations(output_file_location,'w',base_data)[1])
+                 itr+=1
          UI.UpdateStatus(Status+1,Meta,RecOutputMeta)
     elif Program[Status]=='Custom - PerformMerging':
          UI.Msg('status','Stage '+str(Status),': Merging the segment seeds')
