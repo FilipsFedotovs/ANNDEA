@@ -528,10 +528,10 @@ while Status<len(Program):
         No_Pre_Samples=math.ceil(len(base_data)/MaxMergeSize)
         for i in range(No_Pre_Samples):
             output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1c_'+RecBatchID+'_Fit_Filtered_Seeds_'+str(i)+'.pkl'
-            print(UI.PickleOperations(output_file_location,'w',base_data[i*No_Pre_Samples:(i+1)*No_Pre_Samples])[0])
+            print(UI.PickleOperations(output_file_location,'w',base_data[i*MaxMergeSize:(i+1)*MaxMergeSize])[0])
             print(i*No_Pre_Samples)
             print((i+1)*No_Pre_Samples)
-            print(len(base_data[i*No_Pre_Samples:(i+1)*No_Pre_Samples]))
+            print(len(base_data[i*MaxMergeSize:(i+1)*MaxMergeSize]))
         #no_iter=int(math.ceil(float(len(base_data)/float(MaxSegments))))
         UI.UpdateStatus(Status+1,Meta,RecOutputMeta)
     elif Program[Status]=='Custom - TrackMapping':
