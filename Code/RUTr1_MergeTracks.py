@@ -61,7 +61,7 @@ parser.add_argument('--Log',help="Would you like to log the performance of this 
 parser.add_argument('--Acceptance',help="What is the ANN fit acceptance?", default='0.5')
 parser.add_argument('--CalibrateAcceptance',help="Would you like to recalibrate the acceptance?", default='N')
 parser.add_argument('--ReqMemory',help="Specifying the length of the HTCondor job walltime. Currently at 'workday' which is 8 hours.", default='2 GB')
-parser.add_argument('--MaxMergeSize',help="Maximum size of the batches at premerging stage?", default='0')
+parser.add_argument('--MaxMergeSize',help="Maximum size of the batches at premerging stage?", default='100000')
 
 ######################################## Parsing argument values  #############################################################
 args = parser.parse_args()
