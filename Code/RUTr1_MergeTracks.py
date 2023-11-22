@@ -283,7 +283,7 @@ if Mode=='RESET':
 else:
     UI.Msg('vanilla','Analysing the current script status...')
     Status=Meta.Status[-1]
-Status=3
+Status=4
 UI.Msg('vanilla','Current stage is '+str(Status)+'...')
 ################ Set the execution sequence for the script
 Program=[]
