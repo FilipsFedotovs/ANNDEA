@@ -1009,8 +1009,9 @@ while Status<len(Program):
                         base_data = None
                         with alive_bar(len(TotJobs),force_tty=True, title='Checking the results from HTCondor') as bar:
                          for i in range(len(TotJobs)):
+                             bar()
                              for j in range(TotJobs[i]):
-                                              bar()
+
                                               required_output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RUTr1'+ModelName[md]+'_'+RecBatchID+'_'+str(i)+'/RUTr1'+ModelName[md]+'_'+RecBatchID+'_OutputSeeds_'+str(i)+'_'+str(j)+'.pkl'
                                               new_data=UI.PickleOperations(required_output_file_location,'r','N/A')[0]
                                               print(UI.TimeStamp(),'Set',str(i),'and subset',str(j),'contains', len(new_data), 'seeds')
