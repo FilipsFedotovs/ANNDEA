@@ -61,6 +61,7 @@ parser.add_argument('--Log',help="Would you like to log the performance of this 
 parser.add_argument('--Acceptance',help="What is the ANN fit acceptance?", default='0.5')
 parser.add_argument('--CalibrateAcceptance',help="Would you like to recalibrate the acceptance?", default='N')
 parser.add_argument('--ReqMemory',help="Specifying the length of the HTCondor job walltime. Currently at 'workday' which is 8 hours.", default='2 GB')
+parser.add_argument('--MaxMergeSize',help="Maximum size of the batches at premerging stage?", default='0')
 
 ######################################## Parsing argument values  #############################################################
 args = parser.parse_args()
@@ -72,6 +73,7 @@ BrickID=args.BrickID
 SubPause=int(args.SubPause)*60
 SubGap=int(args.SubGap)
 LocalSub=(args.LocalSub=='Y')
+MaxMergeSize=int(args.MaxMergeSize)
 if LocalSub:
    time_int=0
 else:
@@ -356,6 +358,8 @@ for md in ModelName:
 
 Program.append('Custom - RemoveOverlap')
 
+Program.append('Custom - PerformPreMerging')
+
 Program.append('Custom - PerformMerging')
 
 Program.append('Custom - TrackMapping')
@@ -513,7 +517,7 @@ while Status<len(Program):
         UI.Msg('location',"Loading the fit track seeds from the file ",input_file_location)
         base_data=UI.PickleOperations(input_file_location,'r','N/A')[0]
         UI.Msg('success',"Loading is successful, there are "+str(len(base_data))+" fit seeds...")
-        with alive_bar(len(base_data),force_tty=True, title="Stripping non-z information from seeds...") as bar:
+        with alive_bar(len(base_data),force_tty=True, title="Stripping seeds with low ML acceptance...") as bar:
             for tr in range(len(base_data)):
                 bar()
                 for t in range(len(base_data[tr].Hits)):
@@ -521,6 +525,9 @@ while Status<len(Program):
                         base_data[tr].Hits[t][h]=base_data[tr].Hits[t][h][2] #Remove scaling factors
         base_data=[tr for tr in base_data if tr.Fit >= Acceptance]
         UI.Msg('success',"The refining was successful, "+str(len(base_data))+" track seeds remain...")
+        No_Pre_Samples=math.ceil(len(base_data)/MaxMergeSize)
+        print(No_Pre_Samples)
+        exit()
         output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1c_'+RecBatchID+'_Fit_Filtered_Seeds.pkl'
         print(UI.PickleOperations(output_file_location,'w',base_data)[0])
         #no_iter=int(math.ceil(float(len(base_data)/float(MaxSegments))))
