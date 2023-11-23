@@ -54,26 +54,30 @@ output_file_location=EOS_DIR+'/'+p+'/'+pfx+'_'+BatchID+'_'+o+'_'+str(i)+sfx
 print(UI.TimeStamp(), bcolors.OKGREEN+"Modules Have been imported successfully..."+bcolors.ENDC)
 print(UI.TimeStamp(), "Loading fit track seeds from the file",bcolors.OKBLUE+input_file_location+bcolors.ENDC)
 
-base_data=UF.PickleOperations(input_file_location,'r', 'N/A')[0]
+base_data=UI.PickleOperations(input_file_location,'r', 'N/A')[0]
 
-print(UF.TimeStamp(), bcolors.OKGREEN+"Loading is successful, there are total of "+str(len(base_data))+" glued tracks..."+bcolors.ENDC)
+print(UI.TimeStamp(), bcolors.OKGREEN+"Loading is successful, there are total of "+str(len(base_data))+" glued tracks..."+bcolors.ENDC)
 base_data=base_data[(i*MaxMergeSize):min(((i+1)*MaxMergeSize),len(base_data))]
-print(UF.TimeStamp(), bcolors.OKGREEN+"Out of these only "+str(len(base_data))+" fit seeds will be considered here..."+bcolors.ENDC)
-print(UF.TimeStamp(), "Initiating the  track merging...")
+print(UI.TimeStamp(), bcolors.OKGREEN+"Out of these only "+str(len(base_data))+" fit seeds will be considered here..."+bcolors.ENDC)
+print(UI.TimeStamp(), "Initiating the  track merging...")
 InitialDataLength=len(base_data)
-TrackCounter=0
-TrackCounterContinue=True
-while TrackCounterContinue:
-    if TrackCounter>=len(base_data):
-       TrackCounterContinue=False
-       break
-    progress=round(float(TrackCounter)/float(len(base_data))*100,0)
-    print(UF.TimeStamp(),'progress is ',progress,' %', end="\r", flush=True) #Progress display
-    SubjectTrack=base_data[TrackCounter]
-    for ObjectTrack in base_data[TrackCounter+1:]:
-        if SubjectTrack.InjectTrackSeed(ObjectTrack):
-           base_data.pop(base_data.index(ObjectTrack))
-    TrackCounter+=1
-print(str(InitialDataLength), "2-segments track seeds were merged into ", str(len(base_data)), 'tracks...')
-print(UF.PickleOperations(output_file_location,'w', base_data)[1])
+SeedCounter=0
+SeedCounterContinue=True
+while SeedCounterContinue:
+         if SeedCounter==len(base_data):
+                           SeedCounterContinue=False
+                           break
+         SubjectSeed=base_data[SeedCounter]
+
+
+         for ObjectSeed in base_data[SeedCounter+1:]:
+                  if MaxSLG>=0:
+                    if SubjectSeed.InjectDistantTrackSeed(ObjectSeed):
+                        base_data.pop(base_data.index(ObjectSeed))
+                  else:
+                    if SubjectSeed.InjectTrackSeed(ObjectSeed):
+                        base_data.pop(base_data.index(ObjectSeed))
+         SeedCounter+=1
+ print(str(InitialDataLength), "segment pairs from different files were merged into", str(len(base_data)), 'tracks...')
+print(UI.PickleOperations(output_file_location,'w', base_data)[1])
 

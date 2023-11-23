@@ -532,8 +532,8 @@ while Status<len(Program):
             print(UI.PickleOperations(output_file_location,'w',base_data[(i*MaxMergeSize):min(((i+1)*MaxMergeSize),len(base_data))])[1])
         prog_entry.append(' Sending selected fit seeds to HTCondor for the pre-merging...')
         prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','Fit_Pre_Merged_Seeds','RUTr1d','.pkl',RecBatchID,No_Pre_Samples,'RUTr1d_MergeSeeds_Sub.py'])
-        prog_entry.append([" --MaxMergeSize "])
-        prog_entry.append([MaxMergeSize])
+        prog_entry.append([" --MaxMergeSize "," --MaxSLG "])
+        prog_entry.append([MaxMergeSize,MaxSLG])
         prog_entry.append(No_Pre_Samples)
         prog_entry.append(LocalSub)
         prog_entry.append(['',''])
@@ -737,8 +737,6 @@ while Status<len(Program):
          input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1c_'+RecBatchID+'_Fit_Filtered_Seeds.pkl'
          UI.Msg('location',"Loading fit track seeds from the file",input_file_location)
          base_data=UI.PickleOperations(input_file_location,'r','N/A')[0]
-         print(UI.TimeStamp(), "Stripping off the seeds with low acceptance...")
-         base_data=[tr for tr in base_data if tr.Fit >= Acceptance]
          print(UI.TimeStamp(), 'Ok starting the final merging of the remaining tracks')
          InitialDataLength=len(base_data)
          if CalibrateAcceptance:
