@@ -49,7 +49,7 @@ import U_UI as UI
 
 input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1c_'+BatchID+'_Fit_Filtered_Seeds_'+str(i)+'.pkl'
 
-output_file_location=EOS_DIR+'/'+p+'/'+pfx+'_'+BatchID+'_'+o+'_'+str(i)+sfx
+output_file_location=EOS_DIR+'/'+p+'/Temp_RUTr1d'+'_'+BatchID+'_0'+'/'+pfx+'_'+BatchID+'_'+o+'_'+str(i)+sfx
 
 print(UI.TimeStamp(), bcolors.OKGREEN+"Modules Have been imported successfully..."+bcolors.ENDC)
 print(UI.TimeStamp(), "Loading fit track seeds from the file",bcolors.OKBLUE+input_file_location+bcolors.ENDC)
