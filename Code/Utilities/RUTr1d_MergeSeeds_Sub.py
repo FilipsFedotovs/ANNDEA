@@ -20,6 +20,7 @@ parser.add_argument('--pfx',help="Path to the output file name", default='')
 parser.add_argument('--sfx',help="Path to the output file name", default='')
 parser.add_argument('--EOS',help="EOS location", default='')
 parser.add_argument('--AFS',help="AFS location", default='')
+parser.add_argument('--PY',help="Py lib location", default='')
 parser.add_argument('--BatchID',help="Give this training sample batch an ID", default='SHIP_UR_v1')
 parser.add_argument('--MaxMergeSize',help="A maximum number of track combinations that will be used in a particular HTCondor job for this script", default='20000')
 ########################################     Main body functions    #########################################
