@@ -51,10 +51,8 @@ input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1c_'+BatchID+'_Fit_Filtere
 
 output_file_location=EOS_DIR+'/'+p+'/'+pfx+'_'+BatchID+'_'+o+'_'+str(i)+sfx
 
-print(output_file_location)
-exit()
-print(UF.TimeStamp(), bcolors.OKGREEN+"Modules Have been imported successfully..."+bcolors.ENDC)
-print(UF.TimeStamp(), "Loading fit track seeds from the file",bcolors.OKBLUE+input_file_location+bcolors.ENDC)
+print(UI.TimeStamp(), bcolors.OKGREEN+"Modules Have been imported successfully..."+bcolors.ENDC)
+print(UI.TimeStamp(), "Loading fit track seeds from the file",bcolors.OKBLUE+input_file_location+bcolors.ENDC)
 
 base_data=UF.PickleOperations(input_file_location,'r', 'N/A')[0]
 
