@@ -21,6 +21,7 @@ parser.add_argument('--sfx',help="Path to the output file name", default='')
 parser.add_argument('--EOS',help="EOS location", default='')
 parser.add_argument('--AFS',help="AFS location", default='')
 parser.add_argument('--PY',help="Py lib location", default='')
+parser.add_argument('--MaxSLG',help="Maximum allowed longitudinal gap value between segments", default='8000')
 parser.add_argument('--BatchID',help="Give this training sample batch an ID", default='SHIP_UR_v1')
 parser.add_argument('--MaxMergeSize',help="A maximum number of track combinations that will be used in a particular HTCondor job for this script", default='20000')
 ########################################     Main body functions    #########################################
@@ -35,7 +36,7 @@ EOS_DIR=args.EOS
 PY_DIR=args.PY
 MaxMergeSize=int(args.MaxMergeSize)
 BatchID=args.BatchID
-
+MaxSLG=float(args.MaxSLG)
 if PY_DIR!='': #Temp solution
     sys.path=['',PY_DIR]
     sys.path.append('/usr/lib64/python36.zip')
@@ -45,7 +46,6 @@ if PY_DIR!='': #Temp solution
     sys.path.append('/usr/lib/python3.6/site-packages')
 sys.path.append(AFS_DIR+'/Code/Utilities')
 import U_UI as UI
-from U_EMO import EMO
 
 input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1c_'+BatchID+'_Fit_Filtered_Seeds_'+str(i)+'.pkl'
 
@@ -78,6 +78,6 @@ while SeedCounterContinue:
                     if SubjectSeed.InjectTrackSeed(ObjectSeed):
                         base_data.pop(base_data.index(ObjectSeed))
          SeedCounter+=1
- print(str(InitialDataLength), "segment pairs from different files were merged into", str(len(base_data)), 'tracks...')
+print(str(InitialDataLength), "segment pairs from different files were merged into", str(len(base_data)), 'tracks...')
 print(UI.PickleOperations(output_file_location,'w', base_data)[1])
 
