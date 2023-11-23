@@ -57,8 +57,6 @@ print(UI.TimeStamp(), "Loading fit track seeds from the file",bcolors.OKBLUE+inp
 base_data=UI.PickleOperations(input_file_location,'r', 'N/A')[0]
 
 print(UI.TimeStamp(), bcolors.OKGREEN+"Loading is successful, there are total of "+str(len(base_data))+" glued tracks..."+bcolors.ENDC)
-base_data=base_data[:1000]
-print(UI.TimeStamp(), bcolors.OKGREEN+"Out of these only "+str(len(base_data))+" fit seeds will be considered here..."+bcolors.ENDC)
 print(UI.TimeStamp(), "Initiating the  track merging...")
 InitialDataLength=len(base_data)
 SeedCounter=0
