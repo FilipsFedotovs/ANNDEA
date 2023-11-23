@@ -285,7 +285,7 @@ if Mode=='RESET':
 else:
     UI.Msg('vanilla','Analysing the current script status...')
     Status=Meta.Status[-1]
-Status=5
+Status=3
 UI.Msg('vanilla','Current stage is '+str(Status)+'...')
 ################ Set the execution sequence for the script
 Program=[]
@@ -356,9 +356,7 @@ Program.append('Custom - PickR')
 for md in ModelName:
     Program.append(md)
 
-Program.append('Custom - RemoveOverlap')
-
-Program.append('Custom - PerformPreMerging')
+Program.append('Custom - PreMerging')
 
 Program.append('Custom - PerformMerging')
 
@@ -512,7 +510,7 @@ while Status<len(Program):
         FreshStart=False
         UI.Msg('completed','Stage '+str(Status)+' has successfully completed')
         UI.UpdateStatus(Status+1,Meta,RecOutputMeta)
-    elif Program[Status]=='Custom - RemoveOverlap':
+    elif Program[Status]=='Custom - PreMerging':
         input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1c_'+RecBatchID+'_Fit_Seeds.pkl'
         UI.Msg('location',"Loading the fit track seeds from the file ",input_file_location)
         base_data=UI.PickleOperations(input_file_location,'r','N/A')[0]
@@ -528,9 +526,29 @@ while Status<len(Program):
         No_Pre_Samples=math.ceil(len(base_data)/MaxMergeSize)
         for i in range(No_Pre_Samples):
             output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1c_'+RecBatchID+'_Fit_Filtered_Seeds_'+str(i)+'.pkl'
-            print(UI.PickleOperations(output_file_location,'w',base_data[i*MaxMergeSize:(i+1)*MaxMergeSize])[0])
+            print(UI.PickleOperations(output_file_location,'w',base_data[(i*MaxMergeSize):min(((i+1)*MaxMergeSize),len(base_data))])[1])
+        prog_entry.append(' Sending selected fit seeds to HTCondor for the pre-merging...')
+        prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','Fit_Pre_Merged_Seeds','RUTr1d','.pkl',RecBatchID,No_Pre_Samples,'RUTr1d_MergeSeeds_Sub.py'])
+        prog_entry.append([" --MaxMergeSize "])
+        prog_entry.append([MaxMergeSize])
+        prog_entry.append(No_Pre_Samples)
+        prog_entry.append(LocalSub)
+        prog_entry.append(['',''])
+        prog_entry.append(False)
+        prog_entry.append(False)
+        for dum in range(0,Status):
+            Program_Dummy.append('DUM')
+        Program_Dummy.append(prog_entry)
+        if Mode=='RESET':
+            print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry,'Delete'))
+        #Setting up folders for the output. The reconstruction of just one brick can easily generate >100k of files. Keeping all that blob in one directory can cause problems on lxplus.
+        print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry,'Create'))
+        Result=UI.StandardProcess(Program_Dummy,Status,SubGap,SubPause,RequestExtCPU,JobFlavour,ReqMemory,time_int,Patience,Meta,RecOutputMeta)
+        if Result:
+            print('here')
+            exit()
         #no_iter=int(math.ceil(float(len(base_data)/float(MaxSegments))))
-        UI.UpdateStatus(Status+1,Meta,RecOutputMeta)
+        #UI.UpdateStatus(Status+1,Meta,RecOutputMeta)
     elif Program[Status]=='Custom - TrackMapping':
                 raw_name=initial_input_file_location[:-4]
                 for l in range(len(raw_name)-1,0,-1):
@@ -710,46 +728,6 @@ while Status<len(Program):
                 new_combined_data.to_csv(final_output_file_location,index=False)
                 UI.Msg('location',"The merged track data has been created successfully and written to",final_output_file_location)
                 UI.UpdateStatus(Status+1,Meta,RecOutputMeta)
-    elif Program[Status]=='Custom - PerformPreMerging':
-         UI.Msg('status','Stage '+str(Status),': Pre merging the segment seeds')
-         KeepMerging=True
-         itr=0
-         while KeepMerging:
-                 input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1c_'+RecBatchID+'_Fit_Filtered_Seeds_'+str(itr)+'.pkl'
-                 if os.path.isfile(input_file_location)==False:
-                    KeepMerging=False
-                    continue
-                 output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1c_'+RecBatchID+'_Pre_Merged_Seeds_'+str(itr)+'.pkl'
-                 if os.path.isfile(output_file_location):
-                    continue
-                 UI.Msg('location',"Loading fit track seeds from the file",input_file_location)
-                 base_data=UI.PickleOperations(input_file_location,'r','N/A')[0]
-                 print(UI.TimeStamp(), 'Ok starting the pre merging of the remaining tracks')
-                 InitialDataLength=len(base_data)
-                 SeedCounter=0
-                 SeedCounterContinue=True
-                 with alive_bar(len(base_data),force_tty=True, title='Merging the track segments...') as bar:
-                     while SeedCounterContinue:
-                         if SeedCounter==len(base_data):
-                                           SeedCounterContinue=False
-                                           break
-                         SubjectSeed=base_data[SeedCounter]
-
-
-                         for ObjectSeed in base_data[SeedCounter+1:]:
-                                  if MaxSLG>=0:
-                                    if SubjectSeed.InjectDistantTrackSeed(ObjectSeed):
-                                        base_data.pop(base_data.index(ObjectSeed))
-                                  else:
-                                    if SubjectSeed.InjectTrackSeed(ObjectSeed):
-                                        base_data.pop(base_data.index(ObjectSeed))
-                         SeedCounter+=1
-                         bar()
-                 print(str(InitialDataLength), "segment pairs from different files were merged into", str(len(base_data)), 'tracks...')
-                 UI.Msg('location',"Saving the results into the file",output_file_location)
-                 print(UI.PickleOperations(output_file_location,'w',base_data)[1])
-                 itr+=1
-         UI.UpdateStatus(Status+1,Meta,RecOutputMeta)
     elif Program[Status]=='Custom - PerformMerging':
          UI.Msg('status','Stage '+str(Status),': Merging the segment seeds')
          print(UI.TimeStamp(), "Starting the script from the scratch")
