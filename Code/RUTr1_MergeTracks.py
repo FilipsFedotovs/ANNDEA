@@ -524,6 +524,7 @@ while Status<len(Program):
         base_data=[tr for tr in base_data if tr.Fit >= Acceptance]
         UI.Msg('success',"The refining was successful, "+str(len(base_data))+" track seeds remain...")
         No_Pre_Samples=math.ceil(len(base_data)/MaxMergeSize)
+        Program_Dummy=[]
         for i in range(No_Pre_Samples):
             output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1c_'+RecBatchID+'_Fit_Filtered_Seeds_'+str(i)+'.pkl'
             print(UI.PickleOperations(output_file_location,'w',base_data[(i*MaxMergeSize):min(((i+1)*MaxMergeSize),len(base_data))])[1])
