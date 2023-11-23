@@ -511,6 +511,7 @@ while Status<len(Program):
         UI.Msg('completed','Stage '+str(Status)+' has successfully completed')
         UI.UpdateStatus(Status+1,Meta,RecOutputMeta)
     elif Program[Status]=='Custom - PreMerging':
+
         input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1c_'+RecBatchID+'_Fit_Seeds.pkl'
         UI.Msg('location',"Loading the fit track seeds from the file ",input_file_location)
         base_data=UI.PickleOperations(input_file_location,'r','N/A')[0]
@@ -525,6 +526,7 @@ while Status<len(Program):
         UI.Msg('success',"The refining was successful, "+str(len(base_data))+" track seeds remain...")
         No_Pre_Samples=math.ceil(len(base_data)/MaxMergeSize)
         Program_Dummy=[]
+        prog_entry=[]
         for i in range(No_Pre_Samples):
             output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1c_'+RecBatchID+'_Fit_Filtered_Seeds_'+str(i)+'.pkl'
             print(UI.PickleOperations(output_file_location,'w',base_data[(i*MaxMergeSize):min(((i+1)*MaxMergeSize),len(base_data))])[1])
