@@ -1,9 +1,7 @@
 
 #This simple script prepares data for CNN
 ########################################    Import libraries    #############################################
-import UtilityFunctions as UF
-from UtilityFunctions import EMO
-
+import sys
 import argparse
 class bcolors:
     HEADER = '\033[95m'
@@ -33,8 +31,20 @@ sfx=args.sfx
 pfx=args.pfx
 AFS_DIR=args.AFS
 EOS_DIR=args.EOS
+PY_DIR=args.PY
 MaxMergeSize=int(args.MaxMergeSize)
 BatchID=args.BatchID
+
+if PY_DIR!='': #Temp solution
+    sys.path=['',PY_DIR]
+    sys.path.append('/usr/lib64/python36.zip')
+    sys.path.append('/usr/lib64/python3.6')
+    sys.path.append('/usr/lib64/python3.6/lib-dynload')
+    sys.path.append('/usr/lib64/python3.6/site-packages')
+    sys.path.append('/usr/lib/python3.6/site-packages')
+sys.path.append(AFS_DIR+'/Code/Utilities')
+import U_UI as UI
+from U_EMO import EMO
 
 input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1c_'+BatchID+'_Fit_Filtered_Seeds_'+str(i)+'.pkl'
 
