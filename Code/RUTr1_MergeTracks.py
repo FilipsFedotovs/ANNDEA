@@ -548,10 +548,33 @@ while Status<len(Program):
         print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry,'Create'))
         Result=UI.StandardProcess(Program_Dummy,Status,SubGap,SubPause,RequestExtCPU,JobFlavour,ReqMemory,time_int,Patience,Meta,RecOutputMeta)
         if Result:
-            print('here')
-            exit()
-        #no_iter=int(math.ceil(float(len(base_data)/float(MaxSegments))))
-        #UI.UpdateStatus(Status+1,Meta,RecOutputMeta)
+            UI.Msg('status','Stage '+str(Status),': Collating the pre-merged seeds')
+            with alive_bar(len(JobSets),force_tty=True, title='Checking the results from HTCondor') as bar:
+                for i in range(No_Pre_Samples):
+                  base_data = None
+                  required_output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RUTr1d_'+RecBatchID+'_0/'+'RUTr1d'+'_'+RecBatchID+'_Fit_Pre_Merged_Seeds_'+str(i)+'.pkl'
+                  new_data=UI.PickleOperations(required_output_file_location,'r','N/A')[0]
+                  print(UI.TimeStamp(),'Set',str(i)+'_'+str(j)+'_'+str(k), 'contains', len(new_data), 'seeds')
+                  if base_data == None:
+                        base_data = new_data
+                  else:
+                        base_data+=new_data
+                        bar()
+                        for j in range(len(JobSet[i])):
+                                 for k in range(JobSet[i][j]):
+                                      required_output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RUTr1'+ModelName[md]+'_'+RecBatchID+'_'+str(i)+'/RUTr1'+ModelName[md]+'_'+RecBatchID+'_RefinedSeeds_'+str(i)+'_'+str(j)+'_'+str(k)+'.pkl'
+                                      new_data=UI.PickleOperations(required_output_file_location,'r','N/A')[0]
+                                      print(UI.TimeStamp(),'Set',str(i)+'_'+str(j)+'_'+str(k), 'contains', len(new_data), 'seeds')
+                                      if base_data == None:
+                                            base_data = new_data
+                                      else:
+                                            base_data+=new_data
+                Records=len(base_data)
+                print(UI.TimeStamp(),'The output '+str(i)+' contains', Records, 'raw images')
+                output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1c_'+RecBatchID+'_Pre_Merged_Seeds.pkl'
+                print(UI.PickleOperations(output_file_location,'w',base_data)[1])
+            UI.UpdateStatus(Status+1,Meta,RecOutputMeta)
+
     elif Program[Status]=='Custom - TrackMapping':
                 raw_name=initial_input_file_location[:-4]
                 for l in range(len(raw_name)-1,0,-1):
@@ -732,6 +755,8 @@ while Status<len(Program):
                 UI.Msg('location',"The merged track data has been created successfully and written to",final_output_file_location)
                 UI.UpdateStatus(Status+1,Meta,RecOutputMeta)
     elif Program[Status]=='Custom - PerformMerging':
+         print('here')
+         exit()
          UI.Msg('status','Stage '+str(Status),': Merging the segment seeds')
          print(UI.TimeStamp(), "Starting the script from the scratch")
          input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1c_'+RecBatchID+'_Fit_Filtered_Seeds.pkl'
