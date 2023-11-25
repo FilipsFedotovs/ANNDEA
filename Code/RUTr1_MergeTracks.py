@@ -595,17 +595,8 @@ while Status<len(Program):
                   else:
                         base_data+=new_data
                         bar()
-                        for j in range(len(JobSet[i])):
-                                 for k in range(JobSet[i][j]):
-                                      required_output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RUTr1'+ModelName[md]+'_'+RecBatchID+'_'+str(i)+'/RUTr1'+ModelName[md]+'_'+RecBatchID+'_RefinedSeeds_'+str(i)+'_'+str(j)+'_'+str(k)+'.pkl'
-                                      new_data=UI.PickleOperations(required_output_file_location,'r','N/A')[0]
-                                      print(UI.TimeStamp(),'Set',str(i)+'_'+str(j)+'_'+str(k), 'contains', len(new_data), 'seeds')
-                                      if base_data == None:
-                                            base_data = new_data
-                                      else:
-                                            base_data+=new_data
                 Records=len(base_data)
-                print(UI.TimeStamp(),'The output '+str(i)+' contains', Records, 'raw images')
+                print(UI.TimeStamp(),'The output contains', Records, 'raw images')
                 output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1e_'+RecBatchID+'_Pre_Merged_Seeds.pkl'
                 print(UI.PickleOperations(output_file_location,'w',base_data)[1])
             UI.UpdateStatus(Status+1,Meta,RecOutputMeta)
@@ -801,7 +792,7 @@ while Status<len(Program):
         prog_entry.append(1)
         prog_entry.append(LocalSub)
         prog_entry.append(['',''])
-        prog_entry.append(False)
+        prog_entry.append(True)
         prog_entry.append(False)
         for dum in range(0,Status):
             Program_Dummy.append('DUM')
