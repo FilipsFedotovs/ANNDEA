@@ -310,7 +310,7 @@ print(UI.TimeStamp(),'Current stage has a code',Status,bcolors.ENDC)
 while Status<len(Program):
     if Program[Status]!='Custom':
         #Standard process here
-        Result=UI.StandardProcess(Program,Status,FreshStart)
+        Result=UI.StandardProcess(Program,Status,SubGap,SubPause,RequestExtCPU,JobFlavour,ReqMemory,time_int,Patience,Meta,TrainSampleOutputMeta)
         if Result[0]:
             FreshStart=Result[1]
             Status+=1
@@ -332,7 +332,7 @@ while Status<len(Program):
             for i in range(min_i,len(JobSets)): #//Temporarily measure to save space
                 bar.text = f'-> Analysing set : {i}...'
                 bar()
-                Meta=UF.PickleOperations(TrainSampleOutputMeta,'r', 'N/A')[0]
+                Meta=UI.PickleOperations(TrainSampleOutputMeta,'r', 'N/A')[0]
                 MaxSLG=Meta.MaxSLG
                 JobSets=Meta.JobSets
                 if len(Meta.JobSets[i])>3:
@@ -350,7 +350,7 @@ while Status<len(Program):
                    else:
                     result=pd.read_csv(output_file_location,names = ['Segment_1','Segment_2', 'Seed_Type'])
                     Records=len(result)
-                    print(UF.TimeStamp(),'Set',str(i),'and subset', str(j), 'contains', Records, 'seeds',bcolors.ENDC)
+                    print(UI.TimeStamp(),'Set',str(i),'and subset', str(j), 'contains', Records, 'seeds',bcolors.ENDC)
                     result["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(result['Segment_1'], result['Segment_2'])]
                     result.drop_duplicates(subset="Seed_ID",keep='first',inplace=True)
                     result.drop(result.index[result['Segment_1'] == result['Segment_2']], inplace = True)
@@ -360,13 +360,13 @@ while Status<len(Program):
                       Compression_Ratio=int((Records_After_Compression/Records)*100)
                     else:
                       Compression_Ratio=0
-                    print(UF.TimeStamp(),'Set',str(i),'and subset', str(j), 'compression ratio is ', Compression_Ratio, ' %',bcolors.ENDC)
+                    print(UI.TimeStamp(),'Set',str(i),'and subset', str(j), 'compression ratio is ', Compression_Ratio, ' %',bcolors.ENDC)
                     fractions=int(math.ceil(Records_After_Compression/MaxSeeds))
                     Meta.JobSets[i][3].append(fractions)
                     for k in range(0,fractions):
                      new_output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/Temp_MUTr1a_'+TrainSampleID+'_'+str(i)+'/MUTr1a_'+TrainSampleID+'_SelectedSeeds_'+str(i)+'_'+str(j)+'_'+str(k)+'.csv'
                      result[(k*MaxSeeds):min(Records_After_Compression,((k+1)*MaxSeeds))].to_csv(new_output_file_location,index=False)
-                print(UF.PickleOperations(TrainSampleOutputMeta,'w', Meta)[1])
+                print(UI.PickleOperations(TrainSampleOutputMeta,'w', Meta)[1])
 
         #Part of the program needs to be rewritten
         job_sets=[]
