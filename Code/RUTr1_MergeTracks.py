@@ -630,7 +630,7 @@ while Status<len(Program):
                 if BrickID=='':
                     data[BrickID]='D'
                 UI.Msg('location','Loading mapped data from',EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1f_'+RecBatchID+'_Union_Tracks.csv')
-                map_data=pd.read_csv(EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1e_'+RecBatchID+'_Union_Tracks.csv',header=0)
+                map_data=pd.read_csv(EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1f_'+RecBatchID+'_Union_Tracks.csv',header=0)
                 total_rows=len(data.axes[0])
                 print(UI.TimeStamp(),'The raw data has ',total_rows,' hits')
                 print(UI.TimeStamp(),'Removing unreconstructed hits...')
