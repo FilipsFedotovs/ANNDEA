@@ -813,7 +813,7 @@ while Status<len(Program):
         Result=UI.StandardProcess(Program_Dummy,Status,SubGap,SubPause,'4','nextweek','4 GB',time_int,Patience,Meta,RecOutputMeta)
 
         if Result:
-             input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RUTr1e_'+RecBatchID+'_0/RUTr1e_'+RecBatchID+'_Fit_Merged_Seeds_'+str(i)+'.pkl'
+             input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RUTr1e_'+RecBatchID+'_0/RUTr1e_'+RecBatchID+'_Fit_Merged_Seeds_0.pkl'
              base_data=UI.PickleOperations(input_file_location,'r','N/A')[0]
              for v in range(0,len(base_data)):
                  base_data[v].AssignANNTrUID(v)
