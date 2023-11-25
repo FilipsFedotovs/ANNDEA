@@ -253,6 +253,8 @@ prog_entry.append([MaxSegments, MaxSLG, MaxSTG,'"'+str(VetoMotherTrack)+'"'])
 prog_entry.append(TotJobs)
 prog_entry.append(LocalSub)
 prog_entry.append([" --PlateZ ",JobSets])
+prog_entry.append(False)
+prog_entry.append(False)
 Program.append(prog_entry)
 if Mode=='RESET':
    print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry,'Delete'))
@@ -290,6 +292,8 @@ prog_entry.append([MaxSTG, MaxSLG, MaxDOCA, MaxAngle,'"'+str(ModelName)+'"'])
 prog_entry.append(TotJobs)
 prog_entry.append(LocalSub)
 prog_entry.append(['',''])
+prog_entry.append(False)
+prog_entry.append(False)
 Program.append(prog_entry)
 if Mode=='RESET':
    print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry,'Delete'))
@@ -392,6 +396,8 @@ while Status<len(Program):
         prog_entry.append(TotJobs)
         prog_entry.append(LocalSub)
         prog_entry.append(['',''])
+        prog_entry.append(False)
+        prog_entry.append(False)
         Program[2]=prog_entry
         #############################
         FreshStart=False
