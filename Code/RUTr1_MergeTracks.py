@@ -527,6 +527,43 @@ while Status<len(Program):
                         base_data[tr].Hits[t][h]=base_data[tr].Hits[t][h][2] #Remove scaling factors
         base_data=[tr for tr in base_data if tr.Fit >= Acceptance]
         UI.Msg('success',"The refining was successful, "+str(len(base_data))+" track seeds remain...")
+        if CalibrateAcceptance:
+            print(UI.TimeStamp(),'Calibrating the acceptance...')
+            eval_data_file=EOS_DIR+'/ANNDEA/Data/TEST_SET/EUTr1b_'+RecBatchID+'_SEED_TRUTH_COMBINATIONS.csv'
+            eval_data=pd.read_csv(eval_data_file,header=0,usecols=['Segment_1','Segment_2'])
+            eval_data["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(eval_data['Segment_1'], eval_data['Segment_2'])]
+            eval_data.drop(['Segment_1'],axis=1,inplace=True)
+            eval_data.drop(['Segment_2'],axis=1,inplace=True)
+            eval_data['True']=1
+            csv_out=[]
+            for Tr in base_data:
+                  csv_out.append([Tr.Header[0],Tr.Header[1],Tr.Fit])
+            rec_data = pd.DataFrame(csv_out, columns = ['Segment_1','Segment_2','Fit'])
+            rec_data["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(rec_data['Segment_1'], rec_data['Segment_2'])]
+            rec_data.drop(['Segment_1'],axis=1,inplace=True)
+            rec_data.drop(['Segment_2'],axis=1,inplace=True)
+            combined_data=pd.merge(rec_data,eval_data,how='left',on='Seed_ID')
+            combined_data=combined_data.fillna(0)
+            combined_data.drop(['Seed_ID'],axis=1,inplace=True)
+            print(combined_data)
+            TP = combined_data['True'].sum()
+            P = combined_data['True'].count()
+            Min_Acceptance=round(combined_data['Fit'].min(),2)
+            FP=P-TP
+            Ini_Precision=TP/P
+            F1=(2*(Ini_Precision))/(Ini_Precision+1.0)
+            iterations=int((1.0-Min_Acceptance)/0.01)
+            for i in range(1,iterations):
+                cut_off=Min_Acceptance+(i*0.01)
+                print('Cutoff at:',cut_off)
+                cut_data=combined_data.drop(combined_data.index[combined_data['Fit'] < cut_off])
+                tp = cut_data['True'].sum()
+                p=cut_data['True'].count()
+                precision=tp/p
+                recall=tp/TP
+                f1=(2*(precision*recall))/(precision+recall)
+                print('Cutoff at:',cut_off,'; Precision:', precision, '; Recall:', recall, '; F1:', f1)
+            exit()
         No_Pre_Samples=math.ceil(len(base_data)/MaxMergeSize)
         Program_Dummy=[]
         prog_entry=[]
@@ -1073,7 +1110,6 @@ if Status<20:
         if p[:6]!='Custom' and (p in ModelName)==False:
            print(UI.TimeStamp(),UI.ManageTempFolders(p,'Delete'))
     for md in range(len(ModelName)):
-                print(md)
                 if md==0:
                     prog_entry=[]
                     job_sets=[]
