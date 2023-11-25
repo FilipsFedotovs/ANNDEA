@@ -585,8 +585,9 @@ while Status<len(Program):
         if Result:
             UI.Msg('status','Stage '+str(Status),': Collating the pre-merged seeds')
             with alive_bar(len(JobSets),force_tty=True, title='Checking the results from HTCondor') as bar:
+                base_data = None
                 for i in range(No_Pre_Samples):
-                  base_data = None
+
                   required_output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RUTr1d_'+RecBatchID+'_0/'+'RUTr1d'+'_'+RecBatchID+'_Fit_Pre_Merged_Seeds_'+str(i)+'.pkl'
                   new_data=UI.PickleOperations(required_output_file_location,'r','N/A')[0]
                   print(UI.TimeStamp(),'Set',str(i), 'contains', len(new_data), 'seeds')
