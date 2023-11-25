@@ -813,56 +813,54 @@ while Status<len(Program):
         Result=UI.StandardProcess(Program_Dummy,Status,SubGap,SubPause,'4','nextweek','4 GB',time_int,Patience,Meta,RecOutputMeta)
 
         if Result:
-            print('here')
-            exit()
-            #print(str(InitialDataLength), "segment pairs from different files were merged into", str(len(base_data)), 'tracks...')
-            #for v in range(0,len(base_data)):
-               #  base_data[v].AssignANNTrUID(v)
+             input_file=output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RUTr1e_'+RecBatchID+'_0/RUTr1e_'+RecBatchID+'_Fit_Merged_Seeds_'+str(i)+'.pkl'
+             base_data=UI.PickleOperations(input_file_location,'r','N/A')[0]
+             for v in range(0,len(base_data)):
+                 base_data[v].AssignANNTrUID(v)
+             output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1f_'+RecBatchID+'_Union_Tracks.pkl'
+             output_csv_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1f_'+RecBatchID+'_Union_Tracks.csv'
+             csv_out=[['Old_Track_ID','Temp_Track_Quarter','Temp_Track_ID']]
+             for Tr in base_data:
+                 for TH in Tr.Header:
+                     csv_out.append([TH,RecBatchID,Tr.UTrID])
 
-         # output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1e_'+RecBatchID+'_Union_Tracks.pkl'
-         # output_csv_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1e_'+RecBatchID+'_Union_Tracks.csv'
-         # csv_out=[['Old_Track_ID','Temp_Track_Quarter','Temp_Track_ID']]
-         # for Tr in base_data:
-         #     for TH in Tr.Header:
-         #         csv_out.append([TH,RecBatchID,Tr.UTrID])
-         #
-         # UI.Msg('location',"Saving the results into the file",output_csv_location)
-         # UI.LogOperations(output_csv_location,'w', csv_out)
-         # UI.Msg('location',"Saving the results into the file",output_file_location)
-         # print(UI.PickleOperations(output_file_location,'w',base_data)[1])
-         # if args.Log=='Y':
-         #    print(UI.TimeStamp(),'Initiating the logging...')
-         #    eval_data_file=EOS_DIR+'/ANNDEA/Data/TEST_SET/EUTr1b_'+RecBatchID+'_SEED_TRUTH_COMBINATIONS.csv'
-         #    eval_data=pd.read_csv(eval_data_file,header=0,usecols=['Segment_1','Segment_2'])
-         #    eval_data["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(eval_data['Segment_1'], eval_data['Segment_2'])]
-         #    eval_data.drop(['Segment_1'],axis=1,inplace=True)
-         #    eval_data.drop(['Segment_2'],axis=1,inplace=True)
-         #    rec_list=[]
-         #    rec_1 = pd.DataFrame(csv_out, columns = ['Segment_1','Q','Track_ID'])
-         #    rec_1['Q']=rec_1['Q'].astype(str)
-         #    rec_1['Track_ID']=rec_1['Track_ID'].astype(str)
-         #    rec_1['New_Track_ID']=rec_1['Q']+'-'+rec_1['Track_ID']
-         #    rec_1.drop(['Q'],axis=1,inplace=True)
-         #    rec_1.drop(['Track_ID'],axis=1,inplace=True)
-         #    rec_2 = pd.DataFrame(csv_out, columns = ['Segment_2','Q','Track_ID'])
-         #    rec_2['Q']=rec_2['Q'].astype(str)
-         #    rec_2['Track_ID']=rec_2['Track_ID'].astype(str)
-         #    rec_2['New_Track_ID']=rec_2['Q']+'-'+rec_2['Track_ID']
-         #    rec_2.drop(['Q'],axis=1,inplace=True)
-         #    rec_2.drop(['Track_ID'],axis=1,inplace=True)
-         #    rec=pd.merge(rec_1, rec_2, how="inner", on=['New_Track_ID'])
-         #    rec.drop(['New_Track_ID'],axis=1,inplace=True)
-         #    rec.drop(rec.index[rec['Segment_1'] == rec['Segment_2']], inplace = True)
-         #    rec["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(rec['Segment_1'], rec['Segment_2'])]
-         #    rec.drop(['Segment_1'],axis=1,inplace=True)
-         #    rec.drop(['Segment_2'],axis=1,inplace=True)
-         #    rec.drop_duplicates(subset=['Seed_ID'], keep='first', inplace=True)
-         #    rec_eval=pd.merge(eval_data, rec, how="inner", on=['Seed_ID'])
-         #    eval_no=len(rec_eval)
-         #    rec_no=(len(rec)-len(rec_eval))
-         #    UI.LogOperations(EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv', 'a', [[4+len(ModelName),'Track Seed Merging',rec_no,eval_no,eval_no/(rec_no+eval_no),eval_no/len(eval_data)]])
-         #    UI.Msg('location',"The log data has been created successfully and written to",EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv')
-         # UI.UpdateStatus(Status+1,Meta,RecOutputMeta)
+             UI.Msg('location',"Saving the results into the file",output_csv_location)
+             UI.LogOperations(output_csv_location,'w', csv_out)
+             UI.Msg('location',"Saving the results into the file",output_file_location)
+             print(UI.PickleOperations(output_file_location,'w',base_data)[1])
+             if args.Log=='Y':
+                print(UI.TimeStamp(),'Initiating the logging...')
+                eval_data_file=EOS_DIR+'/ANNDEA/Data/TEST_SET/EUTr1b_'+RecBatchID+'_SEED_TRUTH_COMBINATIONS.csv'
+                eval_data=pd.read_csv(eval_data_file,header=0,usecols=['Segment_1','Segment_2'])
+                eval_data["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(eval_data['Segment_1'], eval_data['Segment_2'])]
+                eval_data.drop(['Segment_1'],axis=1,inplace=True)
+                eval_data.drop(['Segment_2'],axis=1,inplace=True)
+                rec_list=[]
+                rec_1 = pd.DataFrame(csv_out, columns = ['Segment_1','Q','Track_ID'])
+                rec_1['Q']=rec_1['Q'].astype(str)
+                rec_1['Track_ID']=rec_1['Track_ID'].astype(str)
+                rec_1['New_Track_ID']=rec_1['Q']+'-'+rec_1['Track_ID']
+                rec_1.drop(['Q'],axis=1,inplace=True)
+                rec_1.drop(['Track_ID'],axis=1,inplace=True)
+                rec_2 = pd.DataFrame(csv_out, columns = ['Segment_2','Q','Track_ID'])
+                rec_2['Q']=rec_2['Q'].astype(str)
+                rec_2['Track_ID']=rec_2['Track_ID'].astype(str)
+                rec_2['New_Track_ID']=rec_2['Q']+'-'+rec_2['Track_ID']
+                rec_2.drop(['Q'],axis=1,inplace=True)
+                rec_2.drop(['Track_ID'],axis=1,inplace=True)
+                rec=pd.merge(rec_1, rec_2, how="inner", on=['New_Track_ID'])
+                rec.drop(['New_Track_ID'],axis=1,inplace=True)
+                rec.drop(rec.index[rec['Segment_1'] == rec['Segment_2']], inplace = True)
+                rec["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(rec['Segment_1'], rec['Segment_2'])]
+                rec.drop(['Segment_1'],axis=1,inplace=True)
+                rec.drop(['Segment_2'],axis=1,inplace=True)
+                rec.drop_duplicates(subset=['Seed_ID'], keep='first', inplace=True)
+                rec_eval=pd.merge(eval_data, rec, how="inner", on=['Seed_ID'])
+                eval_no=len(rec_eval)
+                rec_no=(len(rec)-len(rec_eval))
+                UI.LogOperations(EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv', 'a', [[4+len(ModelName),'Track Seed Merging',rec_no,eval_no,eval_no/(rec_no+eval_no),eval_no/len(eval_data)]])
+                UI.Msg('location',"The log data has been created successfully and written to",EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv')
+             UI.UpdateStatus(Status+1,Meta,RecOutputMeta)
     else:
         for md in range(len(ModelName)):
             if Program[Status]==ModelName[md]:
