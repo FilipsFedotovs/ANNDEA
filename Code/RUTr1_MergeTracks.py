@@ -106,8 +106,6 @@ required_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1_'+RecBatchID+'_TRACK_
 required_eval_file_location=EOS_DIR+'/ANNDEA/Data/TEST_SET/EUTr1_'+RecBatchID+'_TRACK_SEGMENTS.csv'
 ########################################     Phase 1 - Create compact source file    #########################################
 UI.Msg('status','Stage 0:',' Preparing the source data...')
-
-
 if Log and (os.path.isfile(required_eval_file_location)==False or Mode=='RESET'):
     if os.path.isfile(EOSsubModelMetaDIR)==False:
               UI.Msg('failed',"Fail to proceed further as the model file "+EOSsubModelMetaDIR+ " has not been found...")
@@ -178,8 +176,6 @@ if Log and (os.path.isfile(required_eval_file_location)==False or Mode=='RESET')
     new_combined_data=new_combined_data.rename(columns={PM.ty: "ty"})
     new_combined_data.to_csv(required_eval_file_location,index=False)
     UI.Msg('location',"The track segment data has been created successfully and written to",required_eval_file_location)
-
-
 if os.path.isfile(required_file_location)==False or Mode=='RESET':
         if os.path.isfile(EOSsubModelMetaDIR)==False:
               UI.Msg('failed',"Fail to proceed further as the model file "+EOSsubModelMetaDIR+ " has not been found...")
@@ -352,7 +348,6 @@ if Mode=='RESET':
     #Setting up folders for the output. The reconstruction of just one brick can easily generate >100k of files. Keeping all that blob in one directory can cause problems on lxplus.
 print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry,'Create'))
 Program.append(prog_entry)
-
 Program.append('Custom - PickR')
 
 ####### Stage 4

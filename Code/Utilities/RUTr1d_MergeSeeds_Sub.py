@@ -53,7 +53,7 @@ import U_UI as UI
 if FirstTime=='True':
     input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1c_'+BatchID+'_Fit_Filtered_Seeds_'+str(i)+'.pkl'
 else:
-    input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1c_'+BatchID+'_Pre_Merged_Seeds.pkl'
+    input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1e_'+BatchID+'_Pre_Merged_Seeds.pkl'
 output_file_location=EOS_DIR+'/'+p+'/Temp_'+pfx+'_'+BatchID+'_0/'+pfx+'_'+BatchID+'_'+o+'_'+str(i)+sfx
 
 print(UI.TimeStamp(), bcolors.OKGREEN+"Modules Have been imported successfully..."+bcolors.ENDC)
