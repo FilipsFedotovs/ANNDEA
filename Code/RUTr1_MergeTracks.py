@@ -62,6 +62,7 @@ parser.add_argument('--Acceptance',help="What is the ANN fit acceptance?", defau
 parser.add_argument('--CalibrateAcceptance',help="Would you like to recalibrate the acceptance?", default='N')
 parser.add_argument('--ReqMemory',help="Specifying the length of the HTCondor job walltime. Currently at 'workday' which is 8 hours.", default='2 GB')
 parser.add_argument('--MaxMergeSize',help="Maximum size of the batches at premerging stage?", default='50000')
+parser.add_argument('--ForceStatus',help="Local submission?", default='N')
 
 ######################################## Parsing argument values  #############################################################
 args = parser.parse_args()
@@ -74,6 +75,7 @@ SubPause=int(args.SubPause)*60
 SubGap=int(args.SubGap)
 LocalSub=(args.LocalSub=='Y')
 MaxMergeSize=int(args.MaxMergeSize)
+ForceStatus=args.ForceStatus
 if LocalSub:
    time_int=0
 else:
@@ -285,7 +287,8 @@ if Mode=='RESET':
 else:
     UI.Msg('vanilla','Analysing the current script status...')
     Status=Meta.Status[-1]
-Status=5
+if ForceStatus!='N':
+    Status=int(ForceStatus)
 UI.Msg('vanilla','Current stage is '+str(Status)+'...')
 ################ Set the execution sequence for the script
 Program=[]
@@ -532,8 +535,8 @@ while Status<len(Program):
             print(UI.PickleOperations(output_file_location,'w',base_data[(i*MaxMergeSize):min(((i+1)*MaxMergeSize),len(base_data))])[1])
         prog_entry.append(' Sending selected fit seeds to HTCondor for the pre-merging...')
         prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','Fit_Pre_Merged_Seeds','RUTr1d','.pkl',RecBatchID,No_Pre_Samples,'RUTr1d_MergeSeeds_Sub.py'])
-        prog_entry.append([" --MaxSLG "])
-        prog_entry.append([MaxSLG])
+        prog_entry.append([" --MaxSLG "," --FirstTime "])
+        prog_entry.append([MaxSLG,'True'])
         prog_entry.append(No_Pre_Samples)
         prog_entry.append(LocalSub)
         prog_entry.append(['',''])
@@ -757,16 +760,12 @@ while Status<len(Program):
 
     elif Program[Status]=='Custom - PerformMerging':
         UI.Msg('status','Stage '+str(Status),': Merging the segment seeds')
-        input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1c_'+RecBatchID+'_Pre_Merged_Seeds.pkl'
-        UI.Msg('location',"Loading the pre-merged fit track seeds from the file ",input_file_location)
-        base_data=UI.PickleOperations(input_file_location,'r','N/A')[0]
-        UI.Msg('success',"Loading is successful, there are "+str(len(base_data))+" fit seeds...")
         Program_Dummy=[]
         prog_entry=[]
         prog_entry.append(' Sending selected fit seeds to HTCondor for the pre-merging...')
         prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','Fit_Merged_Seeds','RUTr1e','.pkl',RecBatchID,1,'RUTr1d_MergeSeeds_Sub.py'])
-        prog_entry.append([" --MaxSLG "])
-        prog_entry.append([MaxSLG])
+        prog_entry.append([" --MaxSLG "," --FirstTime "])
+        prog_entry.append([MaxSLG,'False'])
         prog_entry.append(1)
         prog_entry.append(LocalSub)
         prog_entry.append(['',''])
