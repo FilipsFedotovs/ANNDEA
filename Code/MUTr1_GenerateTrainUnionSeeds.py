@@ -313,12 +313,8 @@ while Status<len(Program):
         Result=UI.StandardProcess(Program,Status,FreshStart)
         if Result[0]:
             FreshStart=Result[1]
-            if args.ForceStatus=='':
-                Status+=1
-                UpdateStatus(Status)
-                continue
-            else:
-                exit()
+            Status+=1
+            UI.UpdateStatus(Status)
         else:
             Status=len(Program)+1
             break
@@ -326,7 +322,7 @@ while Status<len(Program):
     elif Status==1:
        #Non standard processes (that don't follow the general pattern) have been coded here
         print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
-        print(UF.TimeStamp(),bcolors.BOLD+'Stage 1:'+bcolors.ENDC+' Collecting and de-duplicating the results from stage 1')
+        print(UI.TimeStamp(),bcolors.BOLD+'Stage 1:'+bcolors.ENDC+' Collecting and de-duplicating the results from stage 1')
         min_i=0
         for i in range(0,len(JobSets)): #//Temporarily measure to save space
                    test_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/Temp_MUTr1a_'+TrainSampleID+'_'+str(i)+'/MUTr1a_'+TrainSampleID+'_SelectedSeeds_'+str(i)+'_'+str(0)+'_'+str(0)+'.csv'
@@ -399,12 +395,12 @@ while Status<len(Program):
         Program[2]=prog_entry
         #############################
         FreshStart=False
-        print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 1 has successfully completed'+bcolors.ENDC)
+        print(UI.TimeStamp(),bcolors.OKGREEN+'Stage 1 has successfully completed'+bcolors.ENDC)
         Status=2
-        UpdateStatus(Status)
+        UI.UpdateStatus(Status)
     elif Status==3:
         print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
-        print(UF.TimeStamp(),bcolors.BOLD+'Stage 3:'+bcolors.ENDC+' Analysing the training samples')
+        print(UI.TimeStamp(),bcolors.BOLD+'Stage 3:'+bcolors.ENDC+' Analysing the training samples')
         JobSet=[]
         for i in range(len(JobSets)):
              JobSet.append([])
@@ -414,8 +410,8 @@ while Status<len(Program):
              output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MUTr1c_'+TrainSampleID+'_CompressedSeeds_'+str(i)+'.pkl'
              if os.path.isfile(output_file_location)==False:
                 if os.path.isfile(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MUTr1c_'+TrainSampleID+'_Temp_Stats.csv')==False:
-                   UF.LogOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MUTr1c_'+TrainSampleID+'_Temp_Stats.csv','w', [[0,0]])
-                Temp_Stats=UF.LogOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MUTr1c_'+TrainSampleID+'_Temp_Stats.csv','r', '_')
+                   UI.LogOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MUTr1c_'+TrainSampleID+'_Temp_Stats.csv','w', [[0,0]])
+                Temp_Stats=UI.LogOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MUTr1c_'+TrainSampleID+'_Temp_Stats.csv','r', '_')
 
                 TotalImages=int(Temp_Stats[0][0])
                 TrueSeeds=int(Temp_Stats[0][1])
@@ -423,14 +419,14 @@ while Status<len(Program):
                 for j in range(len(JobSet[i])):
                          for k in range(JobSet[i][j]):
                               required_output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/Temp_MUTr1b_'+TrainSampleID+'_'+str(i)+'/MUTr1b_'+TrainSampleID+'_'+'RefinedSeeds'+'_'+str(i)+'_'+str(j) + '_' + str(k)+'.pkl'
-                              new_data=UF.PickleOperations(required_output_file_location,'r','N/A')[0]
+                              new_data=UI.PickleOperations(required_output_file_location,'r','N/A')[0]
                               if base_data == None:
                                     base_data = new_data
                               else:
                                     base_data+=new_data
                 try:
                     Records=len(base_data)
-                    print(UF.TimeStamp(),'Set',str(i),'contains', Records, 'raw images',bcolors.ENDC)
+                    print(UI.TimeStamp(),'Set',str(i),'contains', Records, 'raw images',bcolors.ENDC)
 
                     base_data=list(set(base_data))
                     Records_After_Compression=len(base_data)
@@ -440,21 +436,21 @@ while Status<len(Program):
                               CompressionRatio=0
                     TotalImages+=Records_After_Compression
                     TrueSeeds+=sum(1 for im in base_data if im.Label == 1)
-                    print(UF.TimeStamp(),'Set',str(i),'compression ratio is ', Compression_Ratio, ' %',bcolors.ENDC)
-                    print(UF.PickleOperations(output_file_location,'w',base_data)[1])
+                    print(UI.TimeStamp(),'Set',str(i),'compression ratio is ', Compression_Ratio, ' %',bcolors.ENDC)
+                    print(UI.PickleOperations(output_file_location,'w',base_data)[1])
                 except:
                     continue
                 del new_data
-                UF.LogOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MUTr1c_'+TrainSampleID+'_Temp_Stats.csv','w', [[TotalImages,TrueSeeds]])
-        print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 4 has successfully completed'+bcolors.ENDC)
+                UI.LogOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MUTr1c_'+TrainSampleID+'_Temp_Stats.csv','w', [[TotalImages,TrueSeeds]])
+        print(UI.TimeStamp(),bcolors.OKGREEN+'Stage 4 has successfully completed'+bcolors.ENDC)
         Status=4
-        UpdateStatus(Status)
+        UI.UpdateStatus(Status)
         continue
     elif Status==4:
            print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
-           print(UF.TimeStamp(),bcolors.BOLD+'Stage 4:'+bcolors.ENDC+' Resampling the results from the previous stage')
-           print(UF.TimeStamp(),'Sampling the required number of seeds',bcolors.ENDC)
-           Temp_Stats=UF.LogOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MUTr1c_'+TrainSampleID+'_Temp_Stats.csv','r', '_')
+           print(UI.TimeStamp(),bcolors.BOLD+'Stage 4:'+bcolors.ENDC+' Resampling the results from the previous stage')
+           print(UI.TimeStamp(),'Sampling the required number of seeds',bcolors.ENDC)
+           Temp_Stats=UI.LogOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MUTr1c_'+TrainSampleID+'_Temp_Stats.csv','r', '_')
            TotalImages=int(Temp_Stats[0][0])
            TrueSeeds=int(Temp_Stats[0][1])
            JobSet=[]
@@ -507,13 +503,13 @@ while Status<len(Program):
                   del ExtractedTruth
                   del ExtractedFake
                   gc.collect()
-           print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 4 has successfully completed'+bcolors.ENDC)
+           print(UI.TimeStamp(),bcolors.OKGREEN+'Stage 4 has successfully completed'+bcolors.ENDC)
            Status=5
-           UpdateStatus(Status)
+           UI.UpdateStatus(Status)
            continue
     elif Status==5:
            print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
-           print(UF.TimeStamp(),bcolors.BOLD+'Stage 5:'+bcolors.ENDC+' Preparing the final output')
+           print(UI.TimeStamp(),bcolors.BOLD+'Stage 5:'+bcolors.ENDC+' Preparing the final output')
            TotalData=[]
            JobSet=[]
            for i in range(len(JobSets)):
@@ -524,49 +520,49 @@ while Status<len(Program):
            for i in range(0,len(JobSet)):
                input_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MUTr1d_'+TrainSampleID+'_SampledCompressedSeeds_'+str(i)+'.pkl'
                if os.path.isfile(input_file_location):
-                  base_data=UF.PickleOperations(input_file_location,'r','N/A')[0]
+                  base_data=UI.PickleOperations(input_file_location,'r','N/A')[0]
                   TotalData+=base_data
            del base_data
            gc.collect()
            ValidationSampleSize=int(round(min((len(TotalData)*float(PM.valRatio)),PM.MaxValSampleSize),0))
            random.shuffle(TotalData)
            output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_TRACK_SEEDS_OUTPUT.pkl'
-           print(UF.PickleOperations(output_file_location,'w',TotalData[:ValidationSampleSize])[1])
+           print(UI.PickleOperations(output_file_location,'w',TotalData[:ValidationSampleSize])[1])
            TotalData=TotalData[ValidationSampleSize:]
-           print(UF.TimeStamp(), bcolors.OKGREEN+"Validation Set has been saved at ",bcolors.OKBLUE+output_file_location+bcolors.ENDC,bcolors.OKGREEN+'file...'+bcolors.ENDC)
+           print(UI.TimeStamp(), bcolors.OKGREEN+"Validation Set has been saved at ",bcolors.OKBLUE+output_file_location+bcolors.ENDC,bcolors.OKGREEN+'file...'+bcolors.ENDC)
            No_Train_Files=int(math.ceil(len(TotalData)/TrainSampleSize))
            with alive_bar(No_Train_Files,force_tty=True, title='Resampling the files...') as bar:
                for SC in range(0,No_Train_Files):
                  output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_TRACK_SEEDS_OUTPUT_'+str(SC+1)+'.pkl'
-                 print(UF.PickleOperations(output_file_location,'w',TotalData[(SC*TrainSampleSize):min(len(TotalData),((SC+1)*TrainSampleSize))])[1])
+                 print(UI.PickleOperations(output_file_location,'w',TotalData[(SC*TrainSampleSize):min(len(TotalData),((SC+1)*TrainSampleSize))])[1])
                  bar.text = f'-> Saving the file : {output_file_location}...'
                  bar()
 
-           print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 5 has successfully completed'+bcolors.ENDC)
-           print(UF.TimeStamp(),'Would you like to delete Temporary files?')
+           print(UI.TimeStamp(),bcolors.OKGREEN+'Stage 5 has successfully completed'+bcolors.ENDC)
+           print(UI.TimeStamp(),'Would you like to delete Temporary files?')
            user_response=input()
            if user_response=='y' or user_response=='Y':
                Status=6
-               UpdateStatus(Status)
+               UI.UpdateStatus(Status)
                continue
            else:
-               print(UF.TimeStamp(), bcolors.OKGREEN+"Train sample generation has been completed"+bcolors.ENDC)
+               print(UI.TimeStamp(), bcolors.OKGREEN+"Train sample generation has been completed"+bcolors.ENDC)
                exit() 
 if Status==6:
-           print(UF.TimeStamp(),'Performing the cleanup... ',bcolors.ENDC)
+           print(UI.TimeStamp(),'Performing the cleanup... ',bcolors.ENDC)
            for p in Program:
             if p!='Custom':
-               print(UF.TimeStamp(),UF.ManageTempFolders(p,'Delete'))
+               print(UI.TimeStamp(),UI.ManageTempFolders(p,'Delete'))
            HTCondorTag="SoftUsed == \"ANNDEA-MUTr1-"+TrainSampleID+"\""
-           UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MUTr1_'+TrainSampleID, ['MUTr1_'+TrainSampleID], HTCondorTag)
+           UI.TrainCleanUp(AFS_DIR, EOS_DIR, 'MUTr1_'+TrainSampleID, ['MUTr1_'+TrainSampleID], HTCondorTag)
            HTCondorTag="SoftUsed == \"ANNDEA-MUTr1c-"+TrainSampleID+"\""
-           UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MUTr1c_'+TrainSampleID, ['MUTr1c_'+TrainSampleID], HTCondorTag)
+           UI.TrainCleanUp(AFS_DIR, EOS_DIR, 'MUTr1c_'+TrainSampleID, ['MUTr1c_'+TrainSampleID], HTCondorTag)
            HTCondorTag="SoftUsed == \"ANNDEA-MUTr1d-"+TrainSampleID+"\""
-           UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MUTr1d_'+TrainSampleID, ['MUTr1d_'+TrainSampleID], HTCondorTag)
-           print(UF.TimeStamp(), bcolors.OKGREEN+"Train sample generation has been completed"+bcolors.ENDC)
+           UI.TrainCleanUp(AFS_DIR, EOS_DIR, 'MUTr1d_'+TrainSampleID, ['MUTr1d_'+TrainSampleID], HTCondorTag)
+           print(UI.TimeStamp(), bcolors.OKGREEN+"Train sample generation has been completed"+bcolors.ENDC)
            exit()
 else:
-    print(UF.TimeStamp(), bcolors.FAIL+"Reconstruction has not been completed as one of the processes has timed out or --ForceStatus!=0 option was chosen. Please run the script again (without Reset Mode)."+bcolors.ENDC)
+    print(UI.TimeStamp(), bcolors.FAIL+"Reconstruction has not been completed as one of the processes has timed out or --ForceStatus!=0 option was chosen. Please run the script again (without Reset Mode)."+bcolors.ENDC)
     exit()
 
 
