@@ -810,7 +810,7 @@ while Status<len(Program):
             print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry,'Delete'))
         #Setting up folders for the output. The reconstruction of just one brick can easily generate >100k of files. Keeping all that blob in one directory can cause problems on lxplus.
         print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry,'Create'))
-        Result=UI.StandardProcess(Program_Dummy,Status,SubGap,SubPause,'4','nextweek','4 GB',time_int,Patience,Meta,RecOutputMeta)
+        Result=UI.StandardProcess(Program_Dummy,Status,SubGap,SubPause,4,'nextweek','4 GB',time_int,Patience,Meta,RecOutputMeta)
 
         if Result:
              input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RUTr1e_'+RecBatchID+'_0/RUTr1e_'+RecBatchID+'_Fit_Merged_Seeds_0.pkl'
