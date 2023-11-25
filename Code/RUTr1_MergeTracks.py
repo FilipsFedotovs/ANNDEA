@@ -767,7 +767,7 @@ while Status<len(Program):
         prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','Fit_Merged_Seeds','RUTr1e','.pkl',RecBatchID,1,'RUTr1d_MergeSeeds_Sub.py'])
         prog_entry.append([" --MaxSLG "])
         prog_entry.append([MaxSLG])
-        prog_entry.append(No_Pre_Samples)
+        prog_entry.append(1)
         prog_entry.append(LocalSub)
         prog_entry.append(['',''])
         prog_entry.append(False)
