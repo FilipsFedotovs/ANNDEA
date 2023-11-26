@@ -551,7 +551,7 @@ while Status<len(Program):
            user_response=input()
            if user_response=='y' or user_response=='Y':
                Status=6
-               UI.UpdateStatus(Status)
+               UI.UpdateStatus(Status,Meta,TrainSampleOutputMeta)
                continue
            else:
                print(UI.TimeStamp(), bcolors.OKGREEN+"Train sample generation has been completed"+bcolors.ENDC)
