@@ -509,7 +509,7 @@ while Status<len(Program):
         UI.Msg('completed','Stage '+str(Status)+' has successfully completed')
         UI.UpdateStatus(Status+1,Meta,RecOutputMeta)
 
-    elif Program[Status]=='Custom - PreMerging':
+    elif Program[Status]=='Custom - Merging':
         input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1c_'+RecBatchID+'_Fit_Seeds.pkl'
         UI.Msg('location',"Loading the fit track seeds from the file ",input_file_location)
         base_data=UI.PickleOperations(input_file_location,'r','N/A')[0]
@@ -521,7 +521,10 @@ while Status<len(Program):
                     for h in range(len(base_data[tr].Hits[t])):
                         base_data[tr].Hits[t][h]=base_data[tr].Hits[t][h][2] #Remove scaling factors
         base_data=[tr for tr in base_data if tr.Fit >= Acceptance]
+        output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1d_'+RecBatchID+'_Fit_Filtered_Seeds.pkl'
+
         UI.Msg('success',"The refining was successful, "+str(len(base_data))+" track seeds remain...")
+        print(UI.PickleOperations(output_file_location,'w', base_data)[1])
         if CalibrateAcceptance:
             print(UI.TimeStamp(),'Calibrating the acceptance...')
             eval_data_file=EOS_DIR+'/ANNDEA/Data/TEST_SET/EUTr1b_'+RecBatchID+'_SEED_TRUTH_COMBINATIONS.csv'
@@ -559,20 +562,17 @@ while Status<len(Program):
                 f1=(2*(precision*recall))/(precision+recall)
                 print('Cutoff at:',cut_off,'; Precision:', precision, '; Recall:', recall, '; F1:', f1)
             exit()
-        No_Pre_Samples=math.ceil(len(base_data)/MaxMergeSize)
+        UI.Msg('status','Stage '+str(Status),': Merging the segment seeds')
         Program_Dummy=[]
         prog_entry=[]
-        for i in range(No_Pre_Samples):
-            output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1c_'+RecBatchID+'_Fit_Filtered_Seeds_'+str(i)+'.pkl'
-            print(UI.PickleOperations(output_file_location,'w',base_data[(i*MaxMergeSize):min(((i+1)*MaxMergeSize),len(base_data))])[1])
         prog_entry.append(' Sending selected fit seeds to HTCondor for the pre-merging...')
-        prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','Fit_Pre_Merged_Seeds','RUTr1d','.pkl',RecBatchID,No_Pre_Samples,'RUTr1d_MergeSeeds_Sub.py'])
-        prog_entry.append([" --MaxSLG "," --FirstTime "])
-        prog_entry.append([MaxSLG,'True'])
-        prog_entry.append(No_Pre_Samples)
+        prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','Fit_Merged_Seeds','RUTr1d','.pkl',RecBatchID,1,'RUTr1d_MergeSeeds_Sub.py'])
+        prog_entry.append([" --MaxSLG "])
+        prog_entry.append([MaxSLG])
+        prog_entry.append(1)
         prog_entry.append(LocalSub)
         prog_entry.append(['',''])
-        prog_entry.append(False)
+        prog_entry.append(True)
         prog_entry.append(False)
         for dum in range(0,Status):
             Program_Dummy.append('DUM')
@@ -581,26 +581,58 @@ while Status<len(Program):
             print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry,'Delete'))
         #Setting up folders for the output. The reconstruction of just one brick can easily generate >100k of files. Keeping all that blob in one directory can cause problems on lxplus.
         print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry,'Create'))
-        Result=UI.StandardProcess(Program_Dummy,Status,SubGap,SubPause,RequestExtCPU,JobFlavour,ReqMemory,time_int,Patience,Meta,RecOutputMeta)
-        if Result:
-            UI.Msg('status','Stage '+str(Status),': Collating the pre-merged seeds')
-            with alive_bar(len(JobSets),force_tty=True, title='Checking the results from HTCondor') as bar:
-                base_data = None
-                for i in range(No_Pre_Samples):
+        Result=UI.StandardProcess(Program_Dummy,Status,SubGap,SubPause,4,'nextweek','4 GB',time_int,Patience,Meta,RecOutputMeta)
 
-                  required_output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RUTr1d_'+RecBatchID+'_0/'+'RUTr1d'+'_'+RecBatchID+'_Fit_Pre_Merged_Seeds_'+str(i)+'.pkl'
-                  new_data=UI.PickleOperations(required_output_file_location,'r','N/A')[0]
-                  print(UI.TimeStamp(),'Set',str(i), 'contains', len(new_data), 'seeds')
-                  if base_data == None:
-                        base_data = new_data
-                  else:
-                        base_data+=new_data
-                        bar()
-                Records=len(base_data)
-                print(UI.TimeStamp(),'The output contains', Records, 'raw images')
-                output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1e_'+RecBatchID+'_Pre_Merged_Seeds.pkl'
-                print(UI.PickleOperations(output_file_location,'w',base_data)[1])
-            UI.UpdateStatus(Status+1,Meta,RecOutputMeta)
+        if Result:
+             input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RUTr1e_'+RecBatchID+'_0/RUTr1e_'+RecBatchID+'_Fit_Merged_Seeds_0.pkl'
+             base_data=UI.PickleOperations(input_file_location,'r','N/A')[0]
+             for v in range(0,len(base_data)):
+                 base_data[v].AssignANNTrUID(v)
+             output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1f_'+RecBatchID+'_Union_Tracks.pkl'
+             output_csv_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1f_'+RecBatchID+'_Union_Tracks.csv'
+             csv_out=[['Old_Track_ID','Temp_Track_Quarter','Temp_Track_ID']]
+             for Tr in base_data:
+                 for TH in Tr.Header:
+                     csv_out.append([TH,RecBatchID,Tr.UTrID])
+
+             UI.Msg('location',"Saving the results into the file",output_csv_location)
+             UI.LogOperations(output_csv_location,'w', csv_out)
+             UI.Msg('location',"Saving the results into the file",output_file_location)
+             print(UI.PickleOperations(output_file_location,'w',base_data)[1])
+             if args.Log=='Y':
+                print(UI.TimeStamp(),'Initiating the logging...')
+                eval_data_file=EOS_DIR+'/ANNDEA/Data/TEST_SET/EUTr1b_'+RecBatchID+'_SEED_TRUTH_COMBINATIONS.csv'
+                eval_data=pd.read_csv(eval_data_file,header=0,usecols=['Segment_1','Segment_2'])
+                eval_data["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(eval_data['Segment_1'], eval_data['Segment_2'])]
+                eval_data.drop(['Segment_1'],axis=1,inplace=True)
+                eval_data.drop(['Segment_2'],axis=1,inplace=True)
+                rec_list=[]
+                rec_1 = pd.DataFrame(csv_out, columns = ['Segment_1','Q','Track_ID'])
+                rec_1['Q']=rec_1['Q'].astype(str)
+                rec_1['Track_ID']=rec_1['Track_ID'].astype(str)
+                rec_1['New_Track_ID']=rec_1['Q']+'-'+rec_1['Track_ID']
+                rec_1.drop(['Q'],axis=1,inplace=True)
+                rec_1.drop(['Track_ID'],axis=1,inplace=True)
+                rec_2 = pd.DataFrame(csv_out, columns = ['Segment_2','Q','Track_ID'])
+                rec_2['Q']=rec_2['Q'].astype(str)
+                rec_2['Track_ID']=rec_2['Track_ID'].astype(str)
+                rec_2['New_Track_ID']=rec_2['Q']+'-'+rec_2['Track_ID']
+                rec_2.drop(['Q'],axis=1,inplace=True)
+                rec_2.drop(['Track_ID'],axis=1,inplace=True)
+                rec=pd.merge(rec_1, rec_2, how="inner", on=['New_Track_ID'])
+                rec.drop(['New_Track_ID'],axis=1,inplace=True)
+                rec.drop(rec.index[rec['Segment_1'] == rec['Segment_2']], inplace = True)
+                rec["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(rec['Segment_1'], rec['Segment_2'])]
+                rec.drop(['Segment_1'],axis=1,inplace=True)
+                rec.drop(['Segment_2'],axis=1,inplace=True)
+                rec.drop_duplicates(subset=['Seed_ID'], keep='first', inplace=True)
+                rec_eval=pd.merge(eval_data, rec, how="inner", on=['Seed_ID'])
+                eval_no=len(rec_eval)
+                rec_no=(len(rec)-len(rec_eval))
+                UI.LogOperations(EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv', 'a', [[4+len(ModelName),'Track Seed Merging',rec_no,eval_no,eval_no/(rec_no+eval_no),eval_no/len(eval_data)]])
+                UI.Msg('location',"The log data has been created successfully and written to",EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv')
+             UI.UpdateStatus(Status+1,Meta,RecOutputMeta)
+
 
     elif Program[Status]=='Custom - TrackMapping':
                 raw_name=initial_input_file_location[:-4]
@@ -782,77 +814,6 @@ while Status<len(Program):
                 UI.Msg('location',"The merged track data has been created successfully and written to",final_output_file_location)
                 UI.UpdateStatus(Status+1,Meta,RecOutputMeta)
 
-    elif Program[Status]=='Custom - PerformMerging':
-        UI.Msg('status','Stage '+str(Status),': Merging the segment seeds')
-        Program_Dummy=[]
-        prog_entry=[]
-        prog_entry.append(' Sending selected fit seeds to HTCondor for the pre-merging...')
-        prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','Fit_Merged_Seeds','RUTr1e','.pkl',RecBatchID,1,'RUTr1d_MergeSeeds_Sub.py'])
-        prog_entry.append([" --MaxSLG "," --FirstTime "])
-        prog_entry.append([MaxSLG,'False'])
-        prog_entry.append(1)
-        prog_entry.append(LocalSub)
-        prog_entry.append(['',''])
-        prog_entry.append(True)
-        prog_entry.append(False)
-        for dum in range(0,Status):
-            Program_Dummy.append('DUM')
-        Program_Dummy.append(prog_entry)
-        if Mode=='RESET':
-            print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry,'Delete'))
-        #Setting up folders for the output. The reconstruction of just one brick can easily generate >100k of files. Keeping all that blob in one directory can cause problems on lxplus.
-        print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry,'Create'))
-        Result=UI.StandardProcess(Program_Dummy,Status,SubGap,SubPause,4,'nextweek','4 GB',time_int,Patience,Meta,RecOutputMeta)
-
-        if Result:
-             input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RUTr1e_'+RecBatchID+'_0/RUTr1e_'+RecBatchID+'_Fit_Merged_Seeds_0.pkl'
-             base_data=UI.PickleOperations(input_file_location,'r','N/A')[0]
-             for v in range(0,len(base_data)):
-                 base_data[v].AssignANNTrUID(v)
-             output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1f_'+RecBatchID+'_Union_Tracks.pkl'
-             output_csv_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1f_'+RecBatchID+'_Union_Tracks.csv'
-             csv_out=[['Old_Track_ID','Temp_Track_Quarter','Temp_Track_ID']]
-             for Tr in base_data:
-                 for TH in Tr.Header:
-                     csv_out.append([TH,RecBatchID,Tr.UTrID])
-
-             UI.Msg('location',"Saving the results into the file",output_csv_location)
-             UI.LogOperations(output_csv_location,'w', csv_out)
-             UI.Msg('location',"Saving the results into the file",output_file_location)
-             print(UI.PickleOperations(output_file_location,'w',base_data)[1])
-             if args.Log=='Y':
-                print(UI.TimeStamp(),'Initiating the logging...')
-                eval_data_file=EOS_DIR+'/ANNDEA/Data/TEST_SET/EUTr1b_'+RecBatchID+'_SEED_TRUTH_COMBINATIONS.csv'
-                eval_data=pd.read_csv(eval_data_file,header=0,usecols=['Segment_1','Segment_2'])
-                eval_data["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(eval_data['Segment_1'], eval_data['Segment_2'])]
-                eval_data.drop(['Segment_1'],axis=1,inplace=True)
-                eval_data.drop(['Segment_2'],axis=1,inplace=True)
-                rec_list=[]
-                rec_1 = pd.DataFrame(csv_out, columns = ['Segment_1','Q','Track_ID'])
-                rec_1['Q']=rec_1['Q'].astype(str)
-                rec_1['Track_ID']=rec_1['Track_ID'].astype(str)
-                rec_1['New_Track_ID']=rec_1['Q']+'-'+rec_1['Track_ID']
-                rec_1.drop(['Q'],axis=1,inplace=True)
-                rec_1.drop(['Track_ID'],axis=1,inplace=True)
-                rec_2 = pd.DataFrame(csv_out, columns = ['Segment_2','Q','Track_ID'])
-                rec_2['Q']=rec_2['Q'].astype(str)
-                rec_2['Track_ID']=rec_2['Track_ID'].astype(str)
-                rec_2['New_Track_ID']=rec_2['Q']+'-'+rec_2['Track_ID']
-                rec_2.drop(['Q'],axis=1,inplace=True)
-                rec_2.drop(['Track_ID'],axis=1,inplace=True)
-                rec=pd.merge(rec_1, rec_2, how="inner", on=['New_Track_ID'])
-                rec.drop(['New_Track_ID'],axis=1,inplace=True)
-                rec.drop(rec.index[rec['Segment_1'] == rec['Segment_2']], inplace = True)
-                rec["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(rec['Segment_1'], rec['Segment_2'])]
-                rec.drop(['Segment_1'],axis=1,inplace=True)
-                rec.drop(['Segment_2'],axis=1,inplace=True)
-                rec.drop_duplicates(subset=['Seed_ID'], keep='first', inplace=True)
-                rec_eval=pd.merge(eval_data, rec, how="inner", on=['Seed_ID'])
-                eval_no=len(rec_eval)
-                rec_no=(len(rec)-len(rec_eval))
-                UI.LogOperations(EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv', 'a', [[4+len(ModelName),'Track Seed Merging',rec_no,eval_no,eval_no/(rec_no+eval_no),eval_no/len(eval_data)]])
-                UI.Msg('location',"The log data has been created successfully and written to",EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv')
-             UI.UpdateStatus(Status+1,Meta,RecOutputMeta)
     else:
         for md in range(len(ModelName)):
             if Program[Status]==ModelName[md]:

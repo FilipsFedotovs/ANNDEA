@@ -1056,6 +1056,7 @@ class EMO:
               # print('weakhdr',EMO.ReplaceWeakerTracks(last_remain_matr,last_other_headers,last_self_headers,last_other_fits,last_self_fits))
               # print('Matrx',EMO.ProjectVectorElements(_smatr,_PostTrace[0]))
               # print('matrix',_smatr)
+              raise Exception('Fit error')
               exit()
           return True
       @staticmethod

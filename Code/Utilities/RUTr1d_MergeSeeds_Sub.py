@@ -23,8 +23,6 @@ parser.add_argument('--AFS',help="AFS location", default='')
 parser.add_argument('--PY',help="Py lib location", default='')
 parser.add_argument('--MaxSLG',help="Maximum allowed longitudinal gap value between segments", default='8000')
 parser.add_argument('--BatchID',help="Give this training sample batch an ID", default='SHIP_UR_v1')
-parser.add_argument('--MaxMergeSize',help="A maximum number of track combinations that will be used in a particular HTCondor job for this script", default='20000')
-parser.add_argument('--FirstTime',help="First time refine?", default='True')
 
 ########################################     Main body functions    #########################################
 args = parser.parse_args()
@@ -36,10 +34,8 @@ pfx=args.pfx
 AFS_DIR=args.AFS
 EOS_DIR=args.EOS
 PY_DIR=args.PY
-MaxMergeSize=int(args.MaxMergeSize)
 BatchID=args.BatchID
 MaxSLG=float(args.MaxSLG)
-FirstTime=args.FirstTime
 if PY_DIR!='': #Temp solution
     sys.path=['',PY_DIR]
     sys.path.append('/usr/lib64/python36.zip')
@@ -50,10 +46,8 @@ if PY_DIR!='': #Temp solution
 sys.path.append(AFS_DIR+'/Code/Utilities')
 import U_UI as UI
 
-if FirstTime=='True':
-    input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1c_'+BatchID+'_Fit_Filtered_Seeds_'+str(i)+'.pkl'
-else:
-    input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1e_'+BatchID+'_Pre_Merged_Seeds.pkl'
+input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1d_'+BatchID+'_Fit_Filtered_Seeds.pkl'
+
 output_file_location=EOS_DIR+'/'+p+'/Temp_'+pfx+'_'+BatchID+'_0/'+pfx+'_'+BatchID+'_'+o+'_'+str(i)+sfx
 
 print(UI.TimeStamp(), bcolors.OKGREEN+"Modules Have been imported successfully..."+bcolors.ENDC)
@@ -71,8 +65,6 @@ while SeedCounterContinue:
                            SeedCounterContinue=False
                            break
          SubjectSeed=base_data[SeedCounter]
-
-
          for ObjectSeed in base_data[SeedCounter+1:]:
                   if MaxSLG>=0:
                     if SubjectSeed.InjectDistantTrackSeed(ObjectSeed):
