@@ -6,11 +6,6 @@
 ########################################    Import libraries    #############################################
 import argparse
 import sys
-
-
-
-
-
 ######################################## Set variables  #############################################################
 #Setting the parser - this script is usually not run directly, but is used by a Master version Counterpart that passes the required arguments
 parser = argparse.ArgumentParser(description='select cut parameters')
@@ -59,7 +54,7 @@ if PY_DIR!='': #Temp solution
     sys.path.append('/usr/lib64/python3.6/site-packages')
     sys.path.append('/usr/lib/python3.6/site-packages')
 sys.path.append(AFS_DIR+'/Code/Utilities')
-import UtilityFunctions as UF #This is where we keep routine utility functions
+import U_UI as UI #This is where we keep routine utility functions
 import pandas as pd #We use Panda for a routine data processing
 import math #We use it for data manipulation
 import gc  #Helps to clear memory
@@ -70,13 +65,13 @@ VetoMotherTrack=ast.literal_eval(args.VetoMotherTrack)
 input_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MUTr1_'+BatchID+'_TRACK_SEGMENTS.csv'
 output_file_location=EOS_DIR+'/'+p+'/Temp_'+pfx+'_'+BatchID+'_'+str(i)+'/'+pfx+'_'+BatchID+'_RawSeeds_'+str(i)+'_'+str(j)+sfx
 output_result_location=EOS_DIR+'/'+p+'/Temp_'+pfx+'_'+BatchID+'_'+str(i)+'/'+pfx+'_'+BatchID+'_'+o+'_'+str(i)+'_'+str(j)+sfx
-print(UF.TimeStamp(), "Modules Have been imported successfully...")
-print(UF.TimeStamp(),'Loading pre-selected data from ',input_file_location)
+print(UI.TimeStamp(), "Modules Have been imported successfully...")
+print(UI.TimeStamp(),'Loading pre-selected data from ',input_file_location)
 data=pd.read_csv(input_file_location,header=0,
                     usecols=['x','y','z','Rec_Seg_ID','MC_Mother_Track_ID'])
 
 
-print(UF.TimeStamp(),'Creating segment combinations... ')
+print(UI.TimeStamp(),'Creating segment combinations... ')
 data_header = data.groupby('Rec_Seg_ID')['z'].min()  #Keeping only starting hits for the each track record (we do not require the full information about track in this script)
 data_header=data_header.reset_index()
 
@@ -90,7 +85,7 @@ data_header=pd.merge(data_header, data_end_header, how="inner", on=["Rec_Seg_ID"
 data_header.drop(data_header.index[data_header['z'] < PlateZ], inplace = True)
 
 Records=len(data_header.axes[0])
-print(UF.TimeStamp(),'There are total of ', Records, 'tracks in the data set')
+print(UI.TimeStamp(),'There are total of ', Records, 'tracks in the data set')
 
 Cut=math.ceil(MaxRecords/Records) #Even if use only a max of 20000 track on the right join we cannot perform the full outer join due to the memory limitations, we do it in a small 'cuts'
 Steps=math.ceil(MaxSegments/Cut)  #Calculating number of cuts
@@ -118,12 +113,12 @@ r_data=r_data.rename(columns={'MC_Mother_Track_ID': "Mother_2"})
 r_data.drop(r_data.index[r_data['z'] != PlateZ], inplace = True)
 
 Records=len(r_data.axes[0])
-print(UF.TimeStamp(),'There are  ', Records, 'segments in the starting plate')
+print(UI.TimeStamp(),'There are  ', Records, 'segments in the starting plate')
 
 r_data=r_data.iloc[StartDataCut:min(EndDataCut,Records)]
 
 Records=len(r_data.axes[0])
-print(UF.TimeStamp(),'However we will only attempt  ', Records, 'track segments in the starting plate')
+print(UI.TimeStamp(),'However we will only attempt  ', Records, 'track segments in the starting plate')
 r_data.drop(['y'],axis=1,inplace=True)
 r_data.drop(['x'],axis=1,inplace=True)
 r_data.drop(['z'],axis=1,inplace=True)
@@ -153,7 +148,7 @@ del data_header
 gc.collect()
 
 #Creating csv file for the results
-UF.LogOperations(output_file_location,'w',result_list)
+UI.LogOperations(output_file_location,'w',result_list)
 #This is where we start
 
 for i in range(0,Steps):
@@ -186,14 +181,14 @@ for i in range(0,Steps):
     merged_list = merged_data.values.tolist() #Convirting the result to List data type
     result_list+=merged_list #Adding the result to the list
   if len(result_list)>=2000000: #Once the list gets too big we dump the results into csv to save memory
-      UF.LogOperations(output_file_location,'a',result_list) #Write to the csv
+      UI.LogOperations(output_file_location,'a',result_list) #Write to the csv
       #Clearing the memory
       del result_list
       result_list=[]
       gc.collect()
-UF.LogOperations(output_file_location,'a',result_list) #Writing the remaining data into the csv
-UF.LogOperations(output_result_location,'w',[])
-print(UF.TimeStamp(), "Train seed generation is finished...")
+UI.LogOperations(output_file_location,'a',result_list) #Writing the remaining data into the csv
+UI.LogOperations(output_result_location,'w',[])
+print(UI.TimeStamp(), "Train seed generation is finished...")
 #End of the script
 
 

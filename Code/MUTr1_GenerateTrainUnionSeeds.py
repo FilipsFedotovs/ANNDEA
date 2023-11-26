@@ -495,7 +495,7 @@ while Status<len(Program):
               bar.text = f'-> Resampling the file : {input_file_location}, exists...'
               bar()
               if os.path.isfile(output_file_location)==False and os.path.isfile(input_file_location):
-                  base_data=UF.PickleOperations(input_file_location,'r','N/A')[0]
+                  base_data=UI.PickleOperations(input_file_location,'r','N/A')[0]
                   ExtractedTruth=[im for im in base_data if im.Label == 1]
                   ExtractedFake=[im for im in base_data if im.Label == 0]
                   del base_data
@@ -504,7 +504,7 @@ while Status<len(Program):
                   ExtractedFake=random.sample(ExtractedFake,int(round(FakeSeedCorrection*len(ExtractedFake),0)))
                   TotalData=[]
                   TotalData=ExtractedTruth+ExtractedFake
-                  print(UF.PickleOperations(output_file_location,'w',TotalData)[1])
+                  print(UI.PickleOperations(output_file_location,'w',TotalData)[1])
                   del TotalData
                   del ExtractedTruth
                   del ExtractedFake
