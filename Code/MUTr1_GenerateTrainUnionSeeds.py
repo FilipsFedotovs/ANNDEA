@@ -452,7 +452,7 @@ while Status<len(Program):
                 UI.LogOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MUTr1c_'+TrainSampleID+'_Temp_Stats.csv','w', [[TotalImages,TrueSeeds]])
         print(UI.TimeStamp(),bcolors.OKGREEN+'Stage 4 has successfully completed'+bcolors.ENDC)
         Status=4
-        UI.UpdateStatus(Status)
+        UI.UpdateStatus(Status,Meta,TrainSampleOutputMeta)
         continue
     elif Status==4:
            print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
