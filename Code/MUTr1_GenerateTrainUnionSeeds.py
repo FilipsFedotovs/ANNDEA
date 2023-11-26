@@ -513,7 +513,7 @@ while Status<len(Program):
                   gc.collect()
            print(UI.TimeStamp(),bcolors.OKGREEN+'Stage 4 has successfully completed'+bcolors.ENDC)
            Status=5
-           UI.UpdateStatus(Status)
+           UI.UpdateStatus(Status,Meta,TrainSampleOutputMeta)
            continue
     elif Status==5:
            print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
