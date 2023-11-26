@@ -320,7 +320,7 @@ while Status<len(Program):
         if Result[0]:
             FreshStart=Result[1]
             Status+=1
-            UI.UpdateStatus(Status)
+            UI.UpdateStatus(Status,Meta,TrainSampleOutputMeta)
         else:
             Status=len(Program)+1
             break
