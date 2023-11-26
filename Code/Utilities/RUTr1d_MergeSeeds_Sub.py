@@ -81,6 +81,7 @@ while SeedCounterContinue:
                     if SubjectSeed.InjectTrackSeed(ObjectSeed):
                         base_data.pop(base_data.index(ObjectSeed))
          SeedCounter+=1
+         print(SeedCounter)
 print(str(InitialDataLength), "segment pairs from different files were merged into", str(len(base_data)), 'tracks...')
 print(UI.PickleOperations(output_file_location,'w', base_data)[1])
 
