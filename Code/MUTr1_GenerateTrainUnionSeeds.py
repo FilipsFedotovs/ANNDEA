@@ -405,7 +405,7 @@ while Status<len(Program):
         FreshStart=False
         print(UI.TimeStamp(),bcolors.OKGREEN+'Stage 1 has successfully completed'+bcolors.ENDC)
         Status=2
-        UI.UpdateStatus(Status)
+        UI.UpdateStatus(Status, Meta, TrainSampleOutputMeta)
     elif Status==3:
         print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
         print(UI.TimeStamp(),bcolors.BOLD+'Stage 3:'+bcolors.ENDC+' Analysing the training samples')
