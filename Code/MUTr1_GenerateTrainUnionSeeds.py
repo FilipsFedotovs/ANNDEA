@@ -223,6 +223,8 @@ if Mode=='RESET':
     HTCondorTag="SoftUsed == \"ANNDEA-MUTr1a-"+TrainSampleID+"\""
     UI.TrainCleanUp(AFS_DIR, EOS_DIR, 'MUTr1_'+TrainSampleID, ['MUTr1a','MUTr1b','MUTr1c','MUTr1d'], HTCondorTag)
     FreshStart=False
+    UI.UpdateStatus(0,Meta,TrainSampleOutputMeta)
+    Status=0
 else:
     UI.Msg('vanilla','Analysing the current script status...')
     Status=Meta.Status[-1]
