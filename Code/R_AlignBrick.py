@@ -25,7 +25,6 @@ if PY_DIR!='': #Temp solution - the decision was made to move all libraries to E
 sys.path.append(AFS_DIR+'/Code/Utilities')
 import U_UI as UI
 import U_Alignment as UA
-import U_ML as ML #This is where we keep routine utility functions
 import Parameters as PM #This is where we keep framework global parameters
 import pandas as pd #We use Panda for a routine data processing
 pd.options.mode.chained_assignment = None #Silence annoying warnings
@@ -177,7 +176,7 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
             JobSets.append([])
             for j in range(x_no):
                 JobSets[i].append(y_no)
-        Meta=ML.TrainingSampleMeta(RecBatchID)
+        Meta=UI.TrainingSampleMeta(RecBatchID)
         Meta.IniBrickAlignMetaData(Size,ValMinHits,MinHits,SpatialOptBound,AngularOptBound,JobSets,Cycle,plates,[Min_x,Max_x,Min_y,Max_y])
         Meta.UpdateStatus(0,Meta,RecOutputMeta)
         print(UI.PickleOperations(RecOutputMeta,'w', Meta)[1])
