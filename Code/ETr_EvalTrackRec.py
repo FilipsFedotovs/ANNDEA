@@ -40,7 +40,7 @@ class bcolors:   #We use it for the interface (Colour fonts and so on)
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
 
-import UtilityFunctions as UF #This is where we keep routine utility functions
+import U_UI as UI #This is where we keep routine utility functions
 import Parameters as PM #This is where we keep framework global parameters
 
 #Setting the parser
@@ -63,9 +63,9 @@ print(bcolors.HEADER+"######################     Initialising Tracking  Quality 
 print(bcolors.HEADER+"#########################              Written by Filips Fedotovs              #########################"+bcolors.ENDC)
 print(bcolors.HEADER+"#########################                 PhD Student at UCL                   #########################"+bcolors.ENDC)
 print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
-print(UF.TimeStamp(), bcolors.OKGREEN+"Modules Have been imported successfully..."+bcolors.ENDC)
+print(UI.TimeStamp(), bcolors.OKGREEN+"Modules Have been imported successfully..."+bcolors.ENDC)
 print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
-print(UF.TimeStamp(),bcolors.BOLD+'Stage 1:'+bcolors.ENDC+' Preparing the input data...')
+print(UI.TimeStamp(),bcolors.BOLD+'Stage 1:'+bcolors.ENDC+' Preparing the input data...')
 ######################################## Set variables  #############################################################
 TrackID=ast.literal_eval(args.TrackID)
 MCCategories=ast.literal_eval(args.MCCategories)
@@ -78,25 +78,25 @@ Xmin,Xmax,Ymin,Ymax=float(args.Xmin),float(args.Xmax),float(args.Ymin),float(arg
 SliceData=max(Xmin,Xmax,Ymin,Ymax)>0 #We don't slice data if all values are set to zero simultaneousy (which is the default setting)
 ofn=(args.f[(args.f.rfind('/'))+1:-4])
 
-print(UF.TimeStamp(), 'Loading ',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
+print(UI.TimeStamp(), 'Loading ',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
 columns_to_extract=[PM.x,PM.y,PM.z,PM.Hit_ID,PM.MC_Event_ID,PM.MC_Track_ID]
 for col in TrackID:
     columns_to_extract+=col
 columns_to_extract+=MCCategories
 if os.path.isfile(input_file_location)!=True:
-                     print(UF.TimeStamp(), bcolors.FAIL+"Critical fail: file",input_file_location,'is missing, please check that the name/path is correct...'+bcolors.ENDC)
+                     print(UI.TimeStamp(), bcolors.FAIL+"Critical fail: file",input_file_location,'is missing, please check that the name/path is correct...'+bcolors.ENDC)
                      exit()
 
 raw_data=pd.read_csv(input_file_location,header=0,usecols=columns_to_extract)[columns_to_extract]
 total_rows=len(raw_data.axes[0])
-print(UF.TimeStamp(),'The raw data has ',total_rows,' hits')
+print(UI.TimeStamp(),'The raw data has ',total_rows,' hits')
 
 
 if SliceData:
-           print(UF.TimeStamp(),'Slicing the data...')
+           print(UI.TimeStamp(),'Slicing the data...')
            raw_data=raw_data.drop(raw_data.index[(raw_data[PM.x] > Xmax) | (raw_data[PM.x] < Xmin) | (raw_data[PM.y] > Ymax) | (raw_data[PM.y] < Ymin)])
            final_rows=len(raw_data.axes[0])
-           print(UF.TimeStamp(),'The sliced raw data has ',final_rows,' hits')
+           print(UI.TimeStamp(),'The sliced raw data has ',final_rows,' hits')
 raw_data.drop([PM.x,PM.y,PM.z],axis=1,inplace=True)
 
 raw_data[PM.MC_Event_ID] = raw_data[PM.MC_Event_ID].astype(str)
@@ -112,7 +112,7 @@ for rn in range(len(RecNames)):
     raw_data.drop([TrackID[rn][0],TrackID[rn][1]],axis=1,inplace=True)
 if SkipRcmb:
     print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
-    print(UF.TimeStamp(),bcolors.BOLD+'Stage 2:'+bcolors.ENDC+' Calculating recombination metrics...')
+    print(UI.TimeStamp(),bcolors.BOLD+'Stage 2:'+bcolors.ENDC+' Calculating recombination metrics...')
 
 
     eval_data_comb=raw_data[['MC_Mother_Track_ID',PM.Hit_ID]]
@@ -125,9 +125,9 @@ if SkipRcmb:
     TruthHitSeedCount=len(eval_data_comb)
 
 
-    print(UF.TimeStamp(),'Total 2-hit combinations are expected according to Monte Carlo:',TruthHitSeedCount)
+    print(UI.TimeStamp(),'Total 2-hit combinations are expected according to Monte Carlo:',TruthHitSeedCount)
     for RN in RecNames:
-        print(UF.TimeStamp(),'Creating '+RN+' recombination metrics...')
+        print(UI.TimeStamp(),'Creating '+RN+' recombination metrics...')
         rec_data_comb=raw_data[[RN,PM.Hit_ID]]
         rec_data_comb.drop(rec_data_comb.index[(rec_data_comb[RN] == 'nan-nan')],inplace=True)
         rec_data_comb=rec_data_comb[rec_data_comb[RN].str.contains("nan")==False]
@@ -146,21 +146,21 @@ if SkipRcmb:
             Precision=0
         else:
             Precision=round((float(OverlapHitSeedCount)/float(RecHitSeedCount))*100,2)
-        print(UF.TimeStamp(), bcolors.OKGREEN+'Recombination metrics for ',bcolors.BOLD+RN+bcolors.ENDC,' are ready and listed bellow:'+bcolors.ENDC)
-        print(UF.TimeStamp(),'Total 2-hit combinations were reconstructed by '+RN+':',RecHitSeedCount)
-        print(UF.TimeStamp(),'Correct combinations were reconstructed by '+RN+':',OverlapHitSeedCount)
-        print(UF.TimeStamp(),'Therefore the recall of the '+RN+': is' ,bcolors.BOLD+str(Recall), '%'+bcolors.ENDC)
-        print(UF.TimeStamp(),'And the precision of the '+RN+': is',bcolors.BOLD+str(Precision), '%'+bcolors.ENDC)
+        print(UI.TimeStamp(), bcolors.OKGREEN+'Recombination metrics for ',bcolors.BOLD+RN+bcolors.ENDC,' are ready and listed bellow:'+bcolors.ENDC)
+        print(UI.TimeStamp(),'Total 2-hit combinations were reconstructed by '+RN+':',RecHitSeedCount)
+        print(UI.TimeStamp(),'Correct combinations were reconstructed by '+RN+':',OverlapHitSeedCount)
+        print(UI.TimeStamp(),'Therefore the recall of the '+RN+': is' ,bcolors.BOLD+str(Recall), '%'+bcolors.ENDC)
+        print(UI.TimeStamp(),'And the precision of the '+RN+': is',bcolors.BOLD+str(Precision), '%'+bcolors.ENDC)
 
 print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
-print(UF.TimeStamp(),bcolors.BOLD+'Stage 3:'+bcolors.ENDC+' Analyzing track reconstruction metrics...')
+print(UI.TimeStamp(),bcolors.BOLD+'Stage 3:'+bcolors.ENDC+' Analyzing track reconstruction metrics...')
 
 
 raw_data_mc=raw_data[['MC_Mother_Track_ID',PM.Hit_ID]+MCCategories].groupby(by=['MC_Mother_Track_ID']+MCCategories)[PM.Hit_ID].nunique().reset_index()
 raw_data_mc.drop(raw_data_mc.index[(raw_data_mc[PM.Hit_ID] < MinHitsTrack)],inplace=True)
 raw_data_mc.rename(columns={PM.Hit_ID: "MC_Mother_Track_Size"},inplace=True)
 mc_data_tot=raw_data_mc['MC_Mother_Track_ID'].nunique()
-print(UF.TimeStamp(),'Total number of MC tracks is:',mc_data_tot)
+print(UI.TimeStamp(),'Total number of MC tracks is:',mc_data_tot)
 data_mc=pd.merge(raw_data[['MC_Mother_Track_ID',PM.Hit_ID]],raw_data_mc,how='inner', on =['MC_Mother_Track_ID'])
 for RN in RecNames:
   #raw_data_rec=raw_data.drop(raw_data.index[(raw_data[RN] == 'nan-nan')])
@@ -190,9 +190,9 @@ for RN in RecNames:
   data_rec.drop([RN],axis=1,inplace=True)
   rec_data_mtch=data_rec['MC_Mother_Track_ID'].nunique()
   raw_data_mc_loc=pd.merge(raw_data_mc,data_rec,how='left', on =['MC_Mother_Track_ID'])
-  print(UF.TimeStamp(), bcolors.OKGREEN+'Recombination metrics for ',bcolors.BOLD+RN+bcolors.ENDC,bcolors.OKGREEN+' are ready and listed bellow:'+bcolors.ENDC)
-  print(UF.TimeStamp(),'Total number of reconstructed tracks :',bcolors.BOLD+str(rec_data_tot)+bcolors.ENDC)
-  print(UF.TimeStamp(),'But the number of those tracks matched to MC tracks is:',bcolors.BOLD+str(rec_data_mtch)+bcolors.ENDC)
+  print(UI.TimeStamp(), bcolors.OKGREEN+'Recombination metrics for ',bcolors.BOLD+RN+bcolors.ENDC,bcolors.OKGREEN+' are ready and listed bellow:'+bcolors.ENDC)
+  print(UI.TimeStamp(),'Total number of reconstructed tracks :',bcolors.BOLD+str(rec_data_tot)+bcolors.ENDC)
+  print(UI.TimeStamp(),'But the number of those tracks matched to MC tracks is:',bcolors.BOLD+str(rec_data_mtch)+bcolors.ENDC)
   if raw_data_mc_loc["MC_Mother_Track_Size"].sum()>0:
     Recall=raw_data_mc_loc[RN+'_Overlap'].sum()/raw_data_mc_loc["MC_Mother_Track_Size"].sum()
   else:
@@ -202,14 +202,14 @@ for RN in RecNames:
   else:
       Precision=0
   Segmentation=raw_data_mc_loc[RN+'_Segmentation'].mean()
-  print(UF.TimeStamp(),'Average track reconstruction efficiency:',bcolors.BOLD+str(round(Recall,2)*100), '%'+bcolors.ENDC)
-  print(UF.TimeStamp(),'Average track reconstruction purity:',bcolors.BOLD+str(round(Precision,2)*100), '%'+bcolors.ENDC)
-  print(UF.TimeStamp(),'Average track segmentation:',bcolors.BOLD+str(round(Segmentation,2))+bcolors.ENDC)
+  print(UI.TimeStamp(),'Average track reconstruction efficiency:',bcolors.BOLD+str(round(Recall,2)*100), '%'+bcolors.ENDC)
+  print(UI.TimeStamp(),'Average track reconstruction purity:',bcolors.BOLD+str(round(Precision,2)*100), '%'+bcolors.ENDC)
+  print(UI.TimeStamp(),'Average track segmentation:',bcolors.BOLD+str(round(Segmentation,2))+bcolors.ENDC)
   print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
-  print(UF.TimeStamp(),bcolors.BOLD+'Stage 4:'+bcolors.ENDC+' Writing the output...')
+  print(UI.TimeStamp(),bcolors.BOLD+'Stage 4:'+bcolors.ENDC+' Writing the output...')
   output_file_location=EOS_DIR+'/ANNDEA/Data/TEST_SET/'+ofn+'_'+RN+'_ETr_rec_stats.csv'
   raw_data_mc_loc.to_csv(output_file_location,index=False)
-  print(UF.TimeStamp(), bcolors.OKGREEN+"The track reconstruction stats for further analysis are written there:"+bcolors.ENDC, bcolors.OKBLUE+output_file_location+bcolors.ENDC)
+  print(UI.TimeStamp(), bcolors.OKGREEN+"The track reconstruction stats for further analysis are written there:"+bcolors.ENDC, bcolors.OKBLUE+output_file_location+bcolors.ENDC)
 print(bcolors.HEADER+"############################################# End of the program ################################################"+bcolors.ENDC)
 #End of the script
 
