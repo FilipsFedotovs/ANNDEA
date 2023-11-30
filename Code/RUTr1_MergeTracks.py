@@ -860,8 +860,7 @@ while Status<len(Program):
                                  JobSet[i].append(JobSets[i][3][j])
                         if md==len(ModelName)-1:
                             base_data = None
-                            if Log:
-                                rec_list=[]
+
                             with alive_bar(len(JobSets),force_tty=True, title='Checking the results from HTCondor') as bar:
                              for i in range(0,len(JobSet)):
 
@@ -876,8 +875,7 @@ while Status<len(Program):
                                                   else:
                                                         base_data+=new_data
                                                   if Log:
-                                                      for rd in new_data:
-                                                            rec_list.append([rd.Header[0],rd.Header[1]])
+
                             Records=len(base_data)
                             print(UI.TimeStamp(),'The output '+str(i)+' contains', Records, 'raw images')
                             base_data=list(set(base_data))
@@ -898,6 +896,9 @@ while Status<len(Program):
                              eval_data.drop(['Segment_2'],axis=1,inplace=True)
                              rec_no=0
                              eval_no=0
+                             rec_list=[]
+                             for rd in base_data:
+                                        rec_list.append([rd.Header[0],rd.Header[1]])
                              rec = pd.DataFrame(rec_list, columns = ['Segment_1','Segment_2'])
                              rec["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(rec['Segment_1'], rec['Segment_2'])]
                              rec.drop(['Segment_1'],axis=1,inplace=True)
