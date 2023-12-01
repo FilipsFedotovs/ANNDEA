@@ -1004,8 +1004,10 @@ while Status<len(Program):
                     if Result:
                         UI.Msg('status','Stage '+str(Status),': Analysing the fitted seeds')
                         base_data = None
+                        print(TotJobs)
                         with alive_bar(len(TotJobs),force_tty=True, title='Checking the results from HTCondor') as bar:
                          for i in range(len(TotJobs)):
+                             print(TotJobs[i])
                              bar()
                              for j in range(TotJobs[i]):
 
