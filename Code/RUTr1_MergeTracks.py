@@ -274,9 +274,9 @@ MinHitsTrack=Meta.MinHitsTrack
 if Mode=='RESET':
     UI.Msg('vanilla','Performing the cleanup... ')
     HTCondorTag="SoftUsed == \"ANNDEA-EUTr1a-"+RecBatchID+"\""
-    UI.EvalCleanUp(AFS_DIR, EOS_DIR, 'EUTr1a_'+RecBatchID, ['EUTr1a','EUTr1b'], HTCondorTag)
+    UI.EvalCleanUp(AFS_DIR, EOS_DIR, 'EUTr1a_'+RecBatchID, ['EUTr1a_'+RecBatchID,'EUTr1b_'+RecBatchID], HTCondorTag)
     HTCondorTag="SoftUsed == \"ANNDEA-RUTr1a-"+RecBatchID+"\""
-    UI.RecCleanUp(AFS_DIR, EOS_DIR, 'RUTr1a_'+RecBatchID, ['RUTr1a',RecBatchID+'_REC_LOG.csv'], HTCondorTag)
+    UI.RecCleanUp(AFS_DIR, EOS_DIR, 'RUTr1a_'+RecBatchID, ['RUTr1a_'+RecBatchID,RecBatchID+'_REC_LOG.csv'], HTCondorTag)
     FreshStart=False
     UI.UpdateStatus(0,Meta,RecOutputMeta)
     Status=0
@@ -965,10 +965,6 @@ while Status<len(Program):
                                          eval_no=len(rec_eval)
                                          rec_no=(len(rec)-len(rec_eval))
                                          log_rec_no+=rec_no
-                                         print(eval_no)
-                                         print(rec_no)
-                                         print(log_rec_no)
-                                         exit()
                                          UI.LogOperations(EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv', 'a', [[3+md,ModelName[md],log_rec_no,eval_no,eval_no/(log_rec_no+eval_no),eval_no/len(eval_data)]])
                                          UI.Msg('location',"The log data has been created successfully and written to",EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv')
                 else:
