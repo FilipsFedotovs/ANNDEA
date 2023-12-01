@@ -978,12 +978,14 @@ while Status<len(Program):
                         while keep_testing:
                             test_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RUTr1'+ModelName[md-1]+'_'+RecBatchID+'_0/RUTr1'+str(ModelName[md])+'_'+RecBatchID+'_Input_Seeds_'+str(i)+'_'+str(NJobs)+'.pkl'
                             print(test_file_location)
+                            print(os.path.isfile(test_file_location))
                             x=input()
                             if os.path.isfile(test_file_location):
                                 NJobs+=1
                                 NTotJobs+=1
                             else:
                                 keep_testing=False
+                            print(NJobs)
                         TotJobs.append(NJobs)
                     prog_entry.append(' Sending tracks to the HTCondor, so track segment combination pairs can be formed...')
                     prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','OutputSeeds','RUTr1'+ModelName[md],'.pkl',RecBatchID,TotJobs,'RUTr1b_RefineSeeds_Sub.py'])
