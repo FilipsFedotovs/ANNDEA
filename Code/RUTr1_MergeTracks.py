@@ -874,8 +874,6 @@ while Status<len(Program):
                                                         base_data = new_data
                                                   else:
                                                         base_data+=new_data
-                                                  if Log:
-
                             Records=len(base_data)
                             print(UI.TimeStamp(),'The output '+str(i)+' contains', Records, 'raw images')
                             base_data=list(set(base_data))
