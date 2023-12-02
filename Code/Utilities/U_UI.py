@@ -641,18 +641,18 @@ def ManageTempFolders(spi):
        except OSError as error:
            print(bc.WARNING+spi[1][1]+spi[1][3]+'Temp_'+spi[1][5]+'_'+spi[1][7]+'_'+str(0)+" already exists"+bc.ENDC)
        try:
-          os.mkdir(spi[1][0]+'/HTCondor/SUB/'+spi[1][5]+'/Temp_'+spi[1][5]+'_'+spi[1][7]+'_'+str(0))
+          os.mkdir(spi[1][0]+'/HTCondor/SUB/'+spi[1][7]+'/Temp_'+spi[1][5]+'_'+spi[1][7]+'_'+str(0))
        except OSError as error:
-           print(bc.WARNING+spi[1][0]+'/HTCondor/SUB/'+spi[1][5]+'/Temp_'+spi[1][5]+'_'+spi[1][7]+'_'+str(0)+" already exists"+bc.ENDC)
+           print(bc.WARNING+spi[1][0]+'/HTCondor/SUB/'+spi[1][7]+'/Temp_'+spi[1][5]+'_'+spi[1][7]+'_'+str(0)+" already exists"+bc.ENDC)
        try:
-          os.mkdir(spi[1][0]+'/HTCondor/SH/'+spi[1][5]+'/Temp_'+spi[1][5]+'_'+spi[1][7]+'_'+str(0))
+          os.mkdir(spi[1][0]+'/HTCondor/SH/'+spi[1][7]+'/Temp_'+spi[1][5]+'_'+spi[1][7]+'_'+str(0))
        except OSError as error:
-           print(bc.WARNING+spi[1][0]+'/HTCondor/SH/'+spi[1][5]+'/Temp_'+spi[1][5]+'_'+spi[1][7]+'_'+str(0)+" already exists"+bc.ENDC)
+           print(bc.WARNING+spi[1][0]+'/HTCondor/SH/'+spi[1][7]+'/Temp_'+spi[1][5]+'_'+spi[1][7]+'_'+str(0)+" already exists"+bc.ENDC)
        try:
-          os.mkdir(spi[1][0]+'/HTCondor/MSG/'+spi[1][5]+'/Temp_'+spi[1][5]+'_'+spi[1][7]+'_'+str(0))
+          os.mkdir(spi[1][0]+'/HTCondor/MSG/'+spi[1][7]+'/Temp_'+spi[1][5]+'_'+spi[1][7]+'_'+str(0))
 
        except OSError as error:
-           print(bc.WARNING+spi[1][0]+'/HTCondor/MSG/'+spi[1][5]+'/Temp_'+spi[1][5]+'_'+spi[1][7]+'_'+str(0)+" already exists"+bc.ENDC)
+           print(bc.WARNING+spi[1][0]+'/HTCondor/MSG/'+spi[1][7]+'/Temp_'+spi[1][5]+'_'+spi[1][7]+'_'+str(0)+" already exists"+bc.ENDC)
    else:
        for i in range(_tot):
            try:
@@ -660,15 +660,15 @@ def ManageTempFolders(spi):
            except OSError as error:
               continue
            try:
-              os.mkdir(spi[1][0]+'/HTCondor/SUB/'+spi[1][5]+'/Temp_'+spi[1][5]+'_'+spi[1][7]+'_'+str(i))
+              os.mkdir(spi[1][0]+'/HTCondor/SUB/'+spi[1][7]+'/Temp_'+spi[1][5]+'_'+spi[1][7]+'_'+str(i))
            except OSError as error:
               continue
            try:
-              os.mkdir(spi[1][0]+'/HTCondor/SH/'+spi[1][5]+'/Temp_'+spi[1][5]+'_'+spi[1][7]+'_'+str(i))
+              os.mkdir(spi[1][0]+'/HTCondor/SH/'+spi[1][7]+'/Temp_'+spi[1][5]+'_'+spi[1][7]+'_'+str(i))
            except OSError as error:
               continue
            try:
-              os.mkdir(spi[1][0]+'/HTCondor/MSG/'+spi[1][5]+'/Temp_'+spi[1][5]+'_'+spi[1][7]+'_'+str(i))
+              os.mkdir(spi[1][0]+'/HTCondor/MSG/'+spi[1][7]+'/Temp_'+spi[1][5]+'_'+spi[1][7]+'_'+str(i))
            except OSError as error:
               continue
    return 'Temporary folders have been created'
