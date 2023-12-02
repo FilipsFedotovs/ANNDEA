@@ -72,6 +72,7 @@ RecBatchID=args.RecBatchID
 Patience=int(args.Patience)
 TrackID=args.TrackID
 BrickID=args.BrickID
+HTCondorLog=args.HTCondorLog
 SubPause=int(args.SubPause)*60
 SubGap=int(args.SubGap)
 LocalSub=(args.LocalSub=='Y')
