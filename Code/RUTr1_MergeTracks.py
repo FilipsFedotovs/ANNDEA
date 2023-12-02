@@ -442,7 +442,6 @@ while Status<len(Program):
                    Meta.JobSets[i].append([])
                 for j in range(0,int(JobSets[i][2])):
                    output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RUTr1a'+'_'+RecBatchID+'_'+str(i)+'/RUTr1a_'+RecBatchID+'_RawSeeds_'+str(i)+'_'+str(j)+'.csv'
-
                    if os.path.isfile(output_file_location)==False:
                       Meta.JobSets[j].append(0)
                       continue #Skipping because not all jobs necessarily produce the required file (if statistics are too low)
@@ -822,6 +821,8 @@ while Status<len(Program):
                     Program_Dummy=[]
                     Meta=UI.PickleOperations(RecOutputMeta,'r', 'N/A')[0]
                     JobSets=Meta.JobSets
+                    print(JobSets)
+                    exit()
                     for i in range(len(JobSets)):
                         JobSet.append([])
                         for j in range(len(JobSets[i][3])):
@@ -913,7 +914,6 @@ while Status<len(Program):
                         else:
                             log_rec_no=0
                             if Log:
-
                                  rec_no=0
                                  eval_no=0
                                  rec_list=[]
@@ -941,9 +941,8 @@ while Status<len(Program):
                                           Compression_Ratio=int((Records_After_Compression/Records)*100)
                                           output_split=int(np.ceil(Records_After_Compression/PM.MaxSegments))
                                           for os_itr in range(output_split):
-                                                output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RUTr1'+ModelName[md]+'_'+RecBatchID+'_0/RUTr1'+str(ModelName[md+1])+'_'+RecBatchID+'_Input_Seeds_'+str(i)+'_'+str(os_itr)+'.pkl'
-                                                print(UI.PickleOperations(output_file_location,'w',base_data[os_itr*PM.MaxSegments:(os_itr+1)*PM.MaxSegments])[1])
-
+                                                output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RUTr1'+ModelName[md]+'_'+RecBatchID+'_0/RUTr1'+str(ModelName[md+1])+'_'+RecBatchID+'_Input_Seeds_'+str(i)+'_'+str(j)+'.pkl'
+                                                print(UI.PickleOperations(output_file_location,'w',base_data[j*PM.MaxSegments:(j+1)*PM.MaxSegments])[1])
                                                 if Log:
                                                  for rd in base_data:
                                                      rec_list.append([rd.Header[0],rd.Header[1]])
