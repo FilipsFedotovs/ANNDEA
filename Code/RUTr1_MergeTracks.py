@@ -268,22 +268,16 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         CutData = CutData.values.tolist()
         JobData=[k for i in JobData for k in i]
         CutData=[k for i in CutData for k in i]
-        print(JobData)
-        print(CutData)
-        for i in CutData:
-          print(data_header)
-          data_temp_header=data_header.drop(data_header.index[data_header['z'] < i])
+        for i in range(len(CutData)):
+          data_temp_header=data_header.drop(data_header.index[data_header['z'] < CutData[i]])
           data_temp_header=data_temp_header.drop(['z'],axis=1)
           temp_data=pd.merge(new_combined_data, data_temp_header, how="inner", on=["Rec_Seg_ID"]) #Shrinking the Track data so just a star hit for each track is present.
-          print(i)
-          print(temp_data)
-          print(len(data_temp_header))
-          x=input()
+          temp_required_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/RUTr1_'+RecBatchID+'_TRACK_SEGMENTS_'+str(i)+'.csv'
+          temp_data.to_csv(temp_required_file_location,index=False)
+          UI.Msg('location',"The track segment data has been created successfully and written to",required_file_location)
         exit()
-        new_combined_data.to_csv(required_file_location,index=False)
+        
         UI.Msg('vanilla','Analysing the data sample in order to understand how many jobs to submit to HTCondor... ')
-
-        UI.Msg('location',"The track segment data has been created successfully and written to",required_file_location)
         Meta=UI.TrainingSampleMeta(RecBatchID)
         Meta.IniTrackSeedMetaData(MaxSLG,MaxSTG,MaxDOCA,MaxAngle,data,MaxSegments,VetoMotherTrack,MaxSeeds,MinHitsTrack)
         Meta.UpdateStatus(0)
@@ -302,7 +296,7 @@ MaxSegments=Meta.MaxSegments
 MaxSeeds=Meta.MaxSeeds
 VetoMotherTrack=Meta.VetoMotherTrack
 MinHitsTrack=Meta.MinHitsTrack
-
+exit()
 #The function bellow helps to automate the submission process
 if Mode=='RESET':
     FreshStart=False
