@@ -96,7 +96,10 @@ SliceData=max(Xmin,Xmax,Ymin,Ymax)>0 #We don't slice data if all values are set 
 FreshStart=True
 #Establishing paths
 
+if Mode=='RESET':
+    print(UI.ManageFolders(AFS_DIR, EOS_DIR, RecBatchID,'c',['EUTr1a','RUTr1a','RUTr1b','RUTr1c']))
 print(UI.ManageFolders(AFS_DIR, EOS_DIR, RecBatchID,'c'))
+
 exit()
 EOSsubDIR=EOS_DIR+'/'+'ANNDEA'
 EOSsubModelDIR=EOSsubDIR+'/'+'Models'

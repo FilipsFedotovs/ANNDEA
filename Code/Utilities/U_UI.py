@@ -584,7 +584,7 @@ def PickleOperations(flocation,mode, message):
         pickle_writer_log.close()
         return (result,"PickleOperations Message: Data has been loaded successfully from "+flocation)
 
-def ManageFolders(AFS_DIR, EOS_DIR, BatchID,op_type):
+def ManageFolders(AFS_DIR, EOS_DIR, BatchID,op_type,HTCondorJobs=[]):
     if op_type=='c':
        EOSsubDIR=EOS_DIR+'/'+'ANNDEA/Data/'
        try:
@@ -623,38 +623,11 @@ def ManageFolders(AFS_DIR, EOS_DIR, BatchID,op_type):
        shutil.rmtree(HTCondorDir+'SH/'+BatchID,True)
        shutil.rmtree(HTCondorDir+'SUB/'+BatchID,True)
        shutil.rmtree(HTCondorDir+'MSG/'+BatchID,True)
+       for HTJ in HTCondorJobs:
+           HTCondorTag="SoftUsed == \"ANNDEA-"+HTJ+"-"+BatchID+"\""
+           subprocess.call(['condor_rm', '-constraint', HTCondorTag])
        return 'Main folders for the reconstruction job '+BatchID+' have been deleted'
 
-def EvalCleanUp(AFS_DIR, EOS_DIR, Process, FileNames, ProcessId):
-      subprocess.call(['condor_rm', '-constraint', ProcessId])
-      EOSsubDIR=EOS_DIR+'/'+'ANNDEA'
-      EOSsubModelDIR=EOSsubDIR+'/'+'Data/TEST_SET'
-      folder =  EOSsubModelDIR
-      for f in FileNames:
-          CleanFolder(folder,f)
-      folder =  AFS_DIR+'/HTCondor/SH'
-      CleanFolder(folder,'SH_'+Process+'_')
-      folder =  AFS_DIR+'/HTCondor/SUB'
-      CleanFolder(folder,'SUB_'+Process+'_')
-      folder =  AFS_DIR+'/HTCondor/MSG'
-      CleanFolder(folder,'MSG_'+Process+'_')
-def TrainCleanUp(AFS_DIR, EOS_DIR, Process, FileNames, ProcessId):
-      subprocess.call(['condor_rm', '-constraint', ProcessId])
-      EOSsubDIR=EOS_DIR+'/'+'ANNDEA'
-      EOSsubModelDIR=EOSsubDIR+'/'+'Data/TRAIN_SET'
-      folder =  EOSsubModelDIR
-      for f in FileNames:
-          CleanFolder(folder,f)
-      EOSsubModelDIR=EOSsubDIR+'/'+'Models'
-      folder =  EOSsubModelDIR
-      for f in FileNames:
-          CleanFolder(folder,f)
-      folder =  AFS_DIR+'/HTCondor/SH'
-      CleanFolder(folder,'SH_'+Process+'_')
-      folder =  AFS_DIR+'/HTCondor/SUB'
-      CleanFolder(folder,'SUB_'+Process+'_')
-      folder =  AFS_DIR+'/HTCondor/MSG'
-      CleanFolder(folder,'MSG_'+Process+'_')
 def ManageTempFolders(spi,op_type):
     if type(spi[1][8]) is int:
        _tot=spi[1][8]
