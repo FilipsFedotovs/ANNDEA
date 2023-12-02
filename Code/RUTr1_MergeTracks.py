@@ -98,7 +98,11 @@ FreshStart=True
 
 if Mode=='RESET':
     print(UI.ManageFolders(AFS_DIR, EOS_DIR, RecBatchID,'c',['EUTr1a','RUTr1a','RUTr1b','RUTr1c']))
-print(UI.ManageFolders(AFS_DIR, EOS_DIR, RecBatchID,'c'))
+elif Mode=='CLEANUP':
+     print(UI.ManageFolders(AFS_DIR, EOS_DIR, RecBatchID,'c',['EUTr1a','RUTr1a','RUTr1b','RUTr1c']))
+     exit()
+else:
+    print(UI.ManageFolders(AFS_DIR, EOS_DIR, RecBatchID,'c'))
 
 exit()
 EOSsubDIR=EOS_DIR+'/'+'ANNDEA'
