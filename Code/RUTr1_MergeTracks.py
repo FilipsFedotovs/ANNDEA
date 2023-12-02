@@ -268,8 +268,8 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         print(data)
         data_list = data.values.tolist()
         print(data_list)
-        for i in data_list
-        exit()
+        # for i in data_list
+        # exit()
         new_combined_data.to_csv(required_file_location,index=False)
         UI.Msg('vanilla','Analysing the data sample in order to understand how many jobs to submit to HTCondor... ')
 
