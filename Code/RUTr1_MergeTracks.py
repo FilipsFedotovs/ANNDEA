@@ -252,7 +252,7 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         new_combined_data=new_combined_data.rename(columns={PM.tx: "tx"})
         new_combined_data=new_combined_data.rename(columns={PM.ty: "ty"})
         data_header = new_combined_data.groupby('Rec_Seg_ID')['z'].min()
-
+        data_header=data_header.reset_index()
         UI.Msg('vanilla','Analysing the data sample in order to understand how many jobs to submit to HTCondor... ')
         data=new_combined_data[['Rec_Seg_ID','z']]
         data = data.groupby('Rec_Seg_ID')['z'].min()  #Keeping only starting hits for the each track record (we do not require the full information about track in this script)
