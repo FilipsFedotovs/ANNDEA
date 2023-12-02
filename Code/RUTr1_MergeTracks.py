@@ -63,6 +63,7 @@ parser.add_argument('--CalibrateAcceptance',help="Would you like to recalibrate 
 parser.add_argument('--ReqMemory',help="Specifying the length of the HTCondor job walltime. Currently at 'workday' which is 8 hours.", default='2 GB')
 parser.add_argument('--MaxSeeds',help="Maximum size of the batches at premerging stage?", default='50000')
 parser.add_argument('--ForceStatus',help="Local submission?", default='N')
+parser.add_argument('--HTCondorLog',help="Local submission?", default='False')
 
 ######################################## Parsing argument values  #############################################################
 args = parser.parse_args()
@@ -70,6 +71,7 @@ Mode=args.Mode.upper()
 RecBatchID=args.RecBatchID
 Patience=int(args.Patience)
 TrackID=args.TrackID
+HTCondorLog=bool(args.HTCondorLog)
 BrickID=args.BrickID
 SubPause=int(args.SubPause)*60
 SubGap=int(args.SubGap)
@@ -80,6 +82,8 @@ if LocalSub:
    time_int=0
 else:
     time_int=10
+print(HTCondorLog)
+exit()
 JobFlavour=args.JobFlavour
 RequestExtCPU=int(args.RequestExtCPU)
 ReqMemory=args.ReqMemory
