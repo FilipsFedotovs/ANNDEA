@@ -325,8 +325,11 @@ job_sets=[]
 JobSet=[]
 for i in range(len(JobSets)):
     JobSet.append(int(JobSets[i][2]))
+print(JobSets)
+print(JobSet)
 TotJobs=0
-
+exit()
+NJobs=UI.CalculateNJobs(JobSet)
 if type(JobSet) is int:
             TotJobs=JobSet
 elif type(JobSet[0]) is int:
