@@ -590,29 +590,29 @@ def ManageFolders(AFS_DIR, EOS_DIR, BatchID,op_type):
        try:
           os.mkdir(EOSsubDIR+'REC_SET/'+BatchID)
        except OSError as error:
-          print(bc.WARNING+EOSsubDIR+'REC_SET/'+BatchID+bc.ENDC)
+          print(bc.WARNING+EOSsubDIR+'REC_SET/'+BatchID+" already exists"+bc.ENDC)
        try:
           os.mkdir(EOSsubDIR+'TEST_SET/'+BatchID)
        except OSError as error:
-          print(bc.WARNING+EOSsubDIR+'TEST_SET/'+BatchID+bc.ENDC)
+          print(bc.WARNING+EOSsubDIR+'TEST_SET/'+BatchID+" already exists"+bc.ENDC)
        try:
           os.mkdir(EOSsubDIR+'TRAIN_SET/'+BatchID)
        except OSError as error:
-          print(bc.WARNING+EOSsubDIR+'TRAIN_SET/'+BatchID+bc.ENDC)
+          print(bc.WARNING+EOSsubDIR+'TRAIN_SET/'+BatchID+" already exists"+bc.ENDC)
        HTCondorDir =  AFS_DIR+'/HTCondor/'
        try:
           os.mkdir(HTCondorDir+'SH/'+BatchID)
        except OSError as error:
-          print(bc.WARNING+HTCondorDir+'SH/'+BatchID+bc.ENDC)
+          print(bc.WARNING+HTCondorDir+'SH/'+BatchID+" already exists"+bc.ENDC)
        try:
           os.mkdir(HTCondorDir+'SUB/'+BatchID)
        except OSError as error:
-          print(bc.WARNING+HTCondorDir+'SUB/'+BatchID+bc.ENDC)
+          print(bc.WARNING+HTCondorDir+'SUB/'+BatchID+" already exists"+bc.ENDC)
        try:
           os.mkdir(HTCondorDir+'MSG/'+BatchID)
        except OSError as error:
-          print(bc.WARNING+HTCondorDir+'MSG/'+BatchID+bc.ENDC)
-       return 'Main folders for the reconstruction job'+BatchID+' have been created'
+          print(bc.WARNING+HTCondorDir+'MSG/'+BatchID+" already exists"+bc.ENDC)
+       return 'Main folders for the reconstruction job '+BatchID+' have been created'
 
     if op_type=='d':
        EOSsubDIR=EOS_DIR+'/'+'ANNDEA/Data/'
@@ -623,7 +623,7 @@ def ManageFolders(AFS_DIR, EOS_DIR, BatchID,op_type):
        shutil.rmtree(HTCondorDir+'SH/'+BatchID,True)
        shutil.rmtree(HTCondorDir+'SUB/'+BatchID,True)
        shutil.rmtree(HTCondorDir+'MSG/'+BatchID,True)
-       return 'Main folders for the reconstruction job'+BatchID+' have been deleted'
+       return 'Main folders for the reconstruction job '+BatchID+' have been deleted'
 
 def EvalCleanUp(AFS_DIR, EOS_DIR, Process, FileNames, ProcessId):
       subprocess.call(['condor_rm', '-constraint', ProcessId])
