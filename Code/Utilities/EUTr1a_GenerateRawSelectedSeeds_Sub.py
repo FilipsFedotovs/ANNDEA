@@ -60,7 +60,7 @@ MaxRecords=10000000 #A set parameter that helps to manage memory load of this sc
 MaxSegments=int(args.MaxSegments)
 
 #Specifying the full path to input/output files
-input_file_location=EOS_DIR+'/ANNDEA/Data/TEST_SET/EUTr1_'+BatchID+'_TRACK_SEGMENTS.csv'
+input_file_location=EOS_DIR+'/ANNDEA/Data/TEST_SET/'+BatchID+'EUTr1_'+BatchID+'_TRACK_SEGMENTS.csv'
 
 output_result_location=EOS_DIR+p+'/Temp_'+pfx+'_'+BatchID+'_'+str(0)+'/'+pfx+'_'+BatchID+'_'+o+'_'+str(i)+sfx
 output_file_location=EOS_DIR+p+'/Temp_'+pfx+'_'+BatchID+'_'+str(0)+'/'+pfx+'_'+BatchID+'_RawSeeds_'+str(i)+sfx

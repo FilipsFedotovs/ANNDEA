@@ -172,9 +172,9 @@ def CreateCondorJobs(AFS,EOS,PY,path,o,pfx,sfx,ID,loop_params,OptionHeader,Optio
                                required_output_file_location=EOS+'/'+path+'/Temp_'+pfx+'_'+ID+'_'+str(i)+'/'+pfx+'_'+ID+'_'+o+'_'+str(i)+'_'+str(j)+sfx
                                bar.text = f'-> Checking whether the file : {required_output_file_location}, exists...'
                                bar()
-                               SHName = AFS + '/HTCondor/SH/Temp_'+pfx+'_'+ID+'_'+str(i)+'/SH_'+pfx+'_'+ ID+'_' + str(i) + '_' + str(j) + '.sh'
-                               SUBName = AFS + '/HTCondor/SUB/Temp_'+pfx+'_'+ID+'_'+str(i)+'/SUB_'+pfx+'_'+ ID+'_' + str(i) + '_' + str(j) + '.sub'
-                               MSGName = AFS + '/HTCondor/MSG/Temp_'+pfx+'_'+ID+'_'+str(i)+'/MSG_'+pfx+'_'+ ID+'_' + str(i) + '_' + str(j)
+                               SHName = AFS + '/HTCondor/SH/'+ID+'/Temp_'+pfx+'_'+ID+'_'+str(i)+'/SH_'+pfx+'_'+ ID+'_' + str(i) + '_' + str(j) + '.sh'
+                               SUBName = AFS + '/HTCondor/SUB/'+ID+'/Temp_'+pfx+'_'+ID+'_'+str(i)+'/SUB_'+pfx+'_'+ ID+'_' + str(i) + '_' + str(j) + '.sub'
+                               MSGName = AFS + '/HTCondor/MSG/'+ID+'/Temp_'+pfx+'_'+ID+'_'+str(i)+'/MSG_'+pfx+'_'+ ID+'_' + str(i) + '_' + str(j)
                                ScriptName = AFS + '/Code/Utilities/'+Sub_File
                                if os.path.isfile(required_output_file_location)!=True:
                                   bad_pop.append([OH+[' --i ', ' --j ', ' --p ', ' --o ',' --pfx ', ' --sfx ', Exception[0]], OL+[i, j, path,o, pfx, sfx, Exception[1][i][0]], SHName, SUBName, MSGName, ScriptName, 1, 'ANNDEA-'+pfx+'-'+ID, Log, GPU])
@@ -186,9 +186,9 @@ def CreateCondorJobs(AFS,EOS,PY,path,o,pfx,sfx,ID,loop_params,OptionHeader,Optio
                                required_output_file_location=EOS+'/'+path+'/Temp_'+pfx+'_'+ID+'_'+str(i)+'/'+pfx+'_'+ID+'_'+o+'_'+str(i)+'_'+str(j)+sfx
                                bar.text = f'-> Checking whether the file : {required_output_file_location}, exists...'
                                bar()
-                               SHName = AFS + '/HTCondor/SH/Temp_'+pfx+'_'+ID+'_'+str(i)+'/SH_'+pfx+'_'+ ID+'_' + str(i) + '_' + str(j) + '_' + str(k) +'.sh'
-                               SUBName = AFS + '/HTCondor/SUB/Temp_'+pfx+'_'+ID+'_'+str(i)+'/SUB_'+pfx+'_'+ ID+'_' + str(i) + '_' + str(j) + '_' + str(k) +'.sub'
-                               MSGName = AFS + '/HTCondor/MSG/Temp_'+pfx+'_'+ID+'_'+str(i)+'/MSG_'+pfx+'_'+ ID+'_' + str(i) + '_' + str(j) + '_' + str(k)
+                               SHName = AFS + '/HTCondor/SH/'+ID+'/Temp_'+pfx+'_'+ID+'_'+str(i)+'/SH_'+pfx+'_'+ ID+'_' + str(i) + '_' + str(j) + '_' + str(k) +'.sh'
+                               SUBName = AFS + '/HTCondor/SUB/'+ID+'/Temp_'+pfx+'_'+ID+'_'+str(i)+'/SUB_'+pfx+'_'+ ID+'_' + str(i) + '_' + str(j) + '_' + str(k) +'.sub'
+                               MSGName = AFS + '/HTCondor/MSG/'+ID+'/Temp_'+pfx+'_'+ID+'_'+str(i)+'/MSG_'+pfx+'_'+ ID+'_' + str(i) + '_' + str(j) + '_' + str(k)
                                ScriptName = AFS + '/Code/Utilities/'+Sub_File
                                if os.path.isfile(required_output_file_location)!=True:
                                   bad_pop.append([OH+[' --i ', ' --j ',' --k ', ' --p ', ' --o ',' --pfx ', ' --sfx ', Exception[0]], OL+[i, j,k, path,o, pfx, sfx, Exception[1][i][0]], SHName, SUBName, MSGName, ScriptName, 1, 'ANNDEA-'+pfx+'-'+ID, Log,GPU])
@@ -215,9 +215,9 @@ def CreateCondorJobs(AFS,EOS,PY,path,o,pfx,sfx,ID,loop_params,OptionHeader,Optio
                  for i in range(len(loop_params)):
                                bar.text = f'-> Preparing batch submission...'
                                bar()
-                               SHName = AFS + '/HTCondor/SH/Temp_'+pfx+'_'+ID+'_'+str(i)+'/SH_'+pfx+'_'+ ID+'_' + str(i) + '.sh'
-                               SUBName = AFS + '/HTCondor/SUB/Temp_'+pfx+'_'+ID+'_'+str(i)+'/SUB_'+pfx+'_'+ ID+'_' + str(i) + '.sub'
-                               MSGName = AFS + '/HTCondor/MSG/Temp_'+pfx+'_'+ID+'_'+str(i)+'/MSG_'+pfx+'_'+ ID+'_' + str(i)
+                               SHName = AFS + '/HTCondor/SH/'+ID+'/Temp_'+pfx+'_'+ID+'_'+str(i)+'/SH_'+pfx+'_'+ ID+'_' + str(i) + '.sh'
+                               SUBName = AFS + '/HTCondor/SUB/'+ID+'/Temp_'+pfx+'_'+ID+'_'+str(i)+'/SUB_'+pfx+'_'+ ID+'_' + str(i) + '.sub'
+                               MSGName = AFS + '/HTCondor/MSG/'+ID+'/Temp_'+pfx+'_'+ID+'_'+str(i)+'/MSG_'+pfx+'_'+ ID+'_' + str(i)
                                ScriptName = AFS + '/Code/Utilities/'+Sub_File
                                bad_pop.append([OH+[' --i ', ' --j ', ' --p ', ' --o ',' --pfx ', ' --sfx ', Exception[0]], OL+[i, '$1', path,o, pfx, sfx, Exception[1][i][0]], SHName, SUBName, MSGName, ScriptName, loop_params[i], 'ANNDEA-'+pfx+'-'+ID, Log,GPU])
              if nest_lvl==3:
@@ -225,9 +225,9 @@ def CreateCondorJobs(AFS,EOS,PY,path,o,pfx,sfx,ID,loop_params,OptionHeader,Optio
                      for j in range(loop_params[i]):
                                bar.text = f'-> Preparing batch submission...'
                                bar()
-                               SHName = AFS + '/HTCondor/SH/Temp_'+pfx+'_'+ID+'_'+str(i)+'/SH_'+pfx+'_'+ ID+'_' + str(i) + '_' + str(j)+'.sh'
-                               SUBName = AFS + '/HTCondor/SUB/Temp_'+pfx+'_'+ID+'_'+str(i)+'/SUB_'+pfx+'_'+ ID+'_' + str(i) +'_' + str(j)+'.sub'
-                               MSGName = AFS + '/HTCondor/MSG/Temp_'+pfx+'_'+ID+'_'+str(i)+'/MSG_'+pfx+'_'+ ID+'_' + str(i) +'_' + str(j)
+                               SHName = AFS + '/HTCondor/SH/'+ID+'/Temp_'+pfx+'_'+ID+'_'+str(i)+'/SH_'+pfx+'_'+ ID+'_' + str(i) + '_' + str(j)+'.sh'
+                               SUBName = AFS + '/HTCondor/SUB/'+ID+'/Temp_'+pfx+'_'+ID+'_'+str(i)+'/SUB_'+pfx+'_'+ ID+'_' + str(i) +'_' + str(j)+'.sub'
+                               MSGName = AFS + '/HTCondor/MSG/'+ID+'/Temp_'+pfx+'_'+ID+'_'+str(i)+'/MSG_'+pfx+'_'+ ID+'_' + str(i) +'_' + str(j)
                                ScriptName = AFS + '/Code/Utilities/'+Sub_File
                                bad_pop.append([OH+[' --i ', ' --j ',' --k ', ' --p ', ' --o ',' --pfx ', ' --sfx ', Exception[0]], OL+[i, j, '$1', path,o, pfx, sfx, Exception[1][i][0]], SHName, SUBName, MSGName, ScriptName, loop_params[i], 'ANNDEA-'+pfx+'-'+ID, Log,GPU])
         return(bad_pop)
@@ -258,9 +258,9 @@ def CreateCondorJobs(AFS,EOS,PY,path,o,pfx,sfx,ID,loop_params,OptionHeader,Optio
                                required_output_file_location=EOS+'/'+path+'/Temp_'+pfx+'_'+ID+'_'+str(0)+'/'+pfx+'_'+ID+'_'+o+'_'+str(i)+sfx
                                bar.text = f'-> Checking whether the file : {required_output_file_location}, exists...'
                                bar()
-                               SHName = AFS + '/HTCondor/SH/Temp_'+pfx+'_'+ID+'_'+str(0)+'/SH_'+pfx+'_'+ ID+'_' + str(i) + '.sh'
-                               SUBName = AFS + '/HTCondor/SUB/Temp_'+pfx+'_'+ID+'_'+str(0)+'/SUB_'+pfx+'_'+ ID+'_' + str(i) + '.sub'
-                               MSGName = AFS + '/HTCondor/MSG/Temp_'+pfx+'_'+ID+'_'+str(0)+'/MSG_'+pfx+'_'+ ID+'_' + str(i)
+                               SHName = AFS + '/HTCondor/SH/'+ID+'/Temp_'+pfx+'_'+ID+'_'+str(0)+'/SH_'+pfx+'_'+ ID+'_' + str(i) + '.sh'
+                               SUBName = AFS + '/HTCondor/SUB/'+ID+'/Temp_'+pfx+'_'+ID+'_'+str(0)+'/SUB_'+pfx+'_'+ ID+'_' + str(i) + '.sub'
+                               MSGName = AFS + '/HTCondor/MSG/'+ID+'/Temp_'+pfx+'_'+ID+'_'+str(0)+'/MSG_'+pfx+'_'+ ID+'_' + str(i)
                                ScriptName = AFS + '/Code/Utilities/'+Sub_File
                                if os.path.isfile(required_output_file_location)!=True:
                                   bad_pop.append([OH+[' --i ', ' --p ', ' --o ',' --pfx ', ' --sfx '], OL+[i, path,o, pfx, sfx], SHName, SUBName, MSGName, ScriptName, 1, 'ANNDEA-'+pfx+'-'+ID, Log,GPU])
@@ -271,9 +271,9 @@ def CreateCondorJobs(AFS,EOS,PY,path,o,pfx,sfx,ID,loop_params,OptionHeader,Optio
                                
                                bar.text = f'-> Checking whether the file : {required_output_file_location}, exists...'
                                bar()
-                               SHName = AFS + '/HTCondor/SH/Temp_'+pfx+'_'+ID+'_'+str(i)+'/SH_'+pfx+'_'+ ID+'_' + str(i) + '_' + str(j) + '.sh'
-                               SUBName = AFS + '/HTCondor/SUB/Temp_'+pfx+'_'+ID+'_'+str(i)+'/SUB_'+pfx+'_'+ ID+'_' + str(i) + '_' + str(j) + '.sub'
-                               MSGName = AFS + '/HTCondor/MSG/Temp_'+pfx+'_'+ID+'_'+str(i)+'/MSG_'+pfx+'_'+ ID+'_' + str(i) + '_' + str(j)
+                               SHName = AFS + '/HTCondor/SH/'+ID+'/Temp_'+pfx+'_'+ID+'_'+str(i)+'/SH_'+pfx+'_'+ ID+'_' + str(i) + '_' + str(j) + '.sh'
+                               SUBName = AFS + '/HTCondor/SUB/'+ID+'/Temp_'+pfx+'_'+ID+'_'+str(i)+'/SUB_'+pfx+'_'+ ID+'_' + str(i) + '_' + str(j) + '.sub'
+                               MSGName = AFS + '/HTCondor/MSG/'+ID+'/Temp_'+pfx+'_'+ID+'_'+str(i)+'/MSG_'+pfx+'_'+ ID+'_' + str(i) + '_' + str(j)
                                ScriptName = AFS + '/Code/Utilities/'+Sub_File
                                if os.path.isfile(required_output_file_location)!=True:
                                   bad_pop.append([OH+[' --i ', ' --j ', ' --p ', ' --o ',' --pfx ', ' --sfx '], OL+[i, j, path,o, pfx, sfx], SHName, SUBName, MSGName, ScriptName, 1, 'ANNDEA-'+pfx+'-'+ID, Log,GPU])
@@ -285,9 +285,9 @@ def CreateCondorJobs(AFS,EOS,PY,path,o,pfx,sfx,ID,loop_params,OptionHeader,Optio
                                required_output_file_location=EOS+'/'+path+'/Temp_'+pfx+'_'+ID+'_'+str(i)+'/'+pfx+'_'+ID+'_'+o+'_'+str(i)+'_'+str(j) + '_' + str(k)+sfx
                                bar.text = f'-> Checking whether the file : {required_output_file_location}, exists...'
                                bar()
-                               SHName = AFS + '/HTCondor/SH/Temp_'+pfx+'_'+ID+'_'+str(i)+'/SH_'+pfx+'_'+ ID+'_' + str(i) + '_' + str(j) + '_' + str(k) +'.sh'
-                               SUBName = AFS + '/HTCondor/SUB/Temp_'+pfx+'_'+ID+'_'+str(i)+'/SUB_'+pfx+'_'+ ID+'_' + str(i) + '_' + str(j) + '_' + str(k) +'.sub'
-                               MSGName = AFS + '/HTCondor/MSG/Temp_'+pfx+'_'+ID+'_'+str(i)+'/MSG_'+pfx+'_'+ ID+'_' + str(i) + '_' + str(j) + '_' + str(k)
+                               SHName = AFS + '/HTCondor/SH/'+ID+'/Temp_'+pfx+'_'+ID+'_'+str(i)+'/SH_'+pfx+'_'+ ID+'_' + str(i) + '_' + str(j) + '_' + str(k) +'.sh'
+                               SUBName = AFS + '/HTCondor/SUB/'+ID+'/Temp_'+pfx+'_'+ID+'_'+str(i)+'/SUB_'+pfx+'_'+ ID+'_' + str(i) + '_' + str(j) + '_' + str(k) +'.sub'
+                               MSGName = AFS + '/HTCondor/MSG/'+ID+'/Temp_'+pfx+'_'+ID+'_'+str(i)+'/MSG_'+pfx+'_'+ ID+'_' + str(i) + '_' + str(j) + '_' + str(k)
                                ScriptName = AFS + '/Code/Utilities/'+Sub_File
                                if os.path.isfile(required_output_file_location)!=True:
                                   bad_pop.append([OH+[' --i ', ' --j ',' --k ', ' --p ', ' --o ',' --pfx ', ' --sfx '], OL+[i, j,k, path,o, pfx, sfx], SHName, SUBName, MSGName, ScriptName, 1, 'ANNDEA-'+pfx+'-'+ID, Log,GPU])
@@ -314,9 +314,9 @@ def CreateCondorJobs(AFS,EOS,PY,path,o,pfx,sfx,ID,loop_params,OptionHeader,Optio
                  for i in range(len(loop_params)):
                                bar.text = f'-> Preparing batch submission...'
                                bar()
-                               SHName = AFS + '/HTCondor/SH/Temp_'+pfx+'_'+ID+'_'+str(i)+'/SH_'+pfx+'_'+ ID+'_' + str(i) + '.sh'
-                               SUBName = AFS + '/HTCondor/SUB/Temp_'+pfx+'_'+ID+'_'+str(i)+'/SUB_'+pfx+'_'+ ID+'_' + str(i) + '.sub'
-                               MSGName = AFS + '/HTCondor/MSG/Temp_'+pfx+'_'+ID+'_'+str(i)+'/MSG_'+pfx+'_'+ ID+'_' + str(i)
+                               SHName = AFS + '/HTCondor/SH/'+ID+'/Temp_'+pfx+'_'+ID+'_'+str(i)+'/SH_'+pfx+'_'+ ID+'_' + str(i) + '.sh'
+                               SUBName = AFS + '/HTCondor/SUB/'+ID+'/Temp_'+pfx+'_'+ID+'_'+str(i)+'/SUB_'+pfx+'_'+ ID+'_' + str(i) + '.sub'
+                               MSGName = AFS + '/HTCondor/MSG/'+ID+'/Temp_'+pfx+'_'+ID+'_'+str(i)+'/MSG_'+pfx+'_'+ ID+'_' + str(i)
                                ScriptName = AFS + '/Code/Utilities/'+Sub_File
                                bad_pop.append([OH+[' --i ', ' --j ', ' --p ', ' --o ',' --pfx ', ' --sfx '], OL+[i, '$1', path,o, pfx, sfx], SHName, SUBName, MSGName, ScriptName, loop_params[i], 'ANNDEA-'+pfx+'-'+ID, Log,GPU])
              if nest_lvl==3:
@@ -324,17 +324,17 @@ def CreateCondorJobs(AFS,EOS,PY,path,o,pfx,sfx,ID,loop_params,OptionHeader,Optio
                      for j in range(len(loop_params[i])):
                                bar.text = f'-> Preparing batch submission...'
                                bar()
-                               SHName = AFS + '/HTCondor/SH/Temp_'+pfx+'_'+ID+'_'+str(i)+'/SH_'+pfx+ '_' + ID+ '_' + str(i) + '_' + str(j)+'.sh'
-                               SUBName = AFS + '/HTCondor/SUB/Temp_'+pfx+'_'+ID+'_'+str(i)+'/SUB_' +pfx+ '_' + ID+ '_' + str(i) + '_' + str(j)+'.sub'
-                               MSGName = AFS + '/HTCondor/MSG/Temp_'+pfx+'_'+ID+'_'+str(i)+'/MSG_' +pfx+'_' + ID+ '_' + str(i) + '_' + str(j)
+                               SHName = AFS + '/HTCondor/SH/'+ID+'/Temp_'+pfx+'_'+ID+'_'+str(i)+'/SH_'+pfx+ '_' + ID+ '_' + str(i) + '_' + str(j)+'.sh'
+                               SUBName = AFS + '/HTCondor/SUB/'+ID+'/Temp_'+pfx+'_'+ID+'_'+str(i)+'/SUB_' +pfx+ '_' + ID+ '_' + str(i) + '_' + str(j)+'.sub'
+                               MSGName = AFS + '/HTCondor/MSG/'+ID+'/Temp_'+pfx+'_'+ID+'_'+str(i)+'/MSG_' +pfx+'_' + ID+ '_' + str(i) + '_' + str(j)
                                ScriptName = AFS + '/Code/Utilities/'+Sub_File
                                bad_pop.append([OH+[' --i ', ' --j ',' --k ', ' --p ', ' --o ',' --pfx ', ' --sfx '],OL+[i, j, '$1', path,o, pfx, sfx], SHName, SUBName, MSGName, ScriptName, loop_params[i][j], 'ANNDEA-'+pfx+'-'+ID, Log,GPU])
              if nest_lvl==1:
                                bar.text = f'-> Preparing batch submission...'
                                bar()
-                               SHName = AFS + '/HTCondor/SH/Temp_'+pfx+'_'+ID+'_'+str(0)+'/SH_'+pfx+'_'+ ID+'.sh'
-                               SUBName = AFS + '/HTCondor/SUB/Temp_' +pfx+ '_' +ID+ '_' +str(0)+'/SUB_' +pfx+ '_' + ID+'.sub'
-                               MSGName = AFS + '/HTCondor/MSG/Temp_'+pfx+'_'+ID+'_'+str(0)+'/MSG_'+pfx+'_' + ID
+                               SHName = AFS + '/HTCondor/SH/'+ID+'/Temp_'+pfx+'_'+ID+'_'+str(0)+'/SH_'+pfx+'_'+ ID+'.sh'
+                               SUBName = AFS + '/HTCondor/SUB/'+ID+'/Temp_' +pfx+ '_' +ID+ '_' +str(0)+'/SUB_' +pfx+ '_' + ID+'.sub'
+                               MSGName = AFS + '/HTCondor/MSG/'+ID+'/Temp_'+pfx+'_'+ID+'_'+str(0)+'/MSG_'+pfx+'_' + ID
                                ScriptName = AFS + '/Code/Utilities/'+Sub_File
                                bad_pop.append([OH+[' --i ', ' --p ', ' --o ',' --pfx ', ' --sfx '], OL+['$1', path,o, pfx, sfx], SHName, SUBName, MSGName, ScriptName, loop_params, 'ANNDEA-'+pfx+'-'+ID, Log,GPU])
         return(bad_pop)
