@@ -684,12 +684,16 @@ def ManageTempFolders(spi,op_type):
                shutil.rmtree(spi[1][0]+'/HTCondor/MSG/Temp_'+spi[1][5]+'_'+spi[1][7]+'_'+str(i),True)
        return 'Temporary folders have been deleted'
 
-def ReduceJobSet(IS):
+def ReduceJobSet(IS,level):
     OS=[]
-    for i in range(len(IS)):
-        OS.append([])
-        for j in range(len(IS[i][3])):
-                    OS[i].append(IS[i][3][j])
+    if level==3:
+        for i in range(len(IS)):
+            OS.append([])
+            for j in range(len(IS[i][3])):
+                        OS[i].append(IS[i][3][j])
+    elif level==2:
+        for i in range(len(IS)):
+            OS.append(int(IS[i][2]))
     return OS
 
 

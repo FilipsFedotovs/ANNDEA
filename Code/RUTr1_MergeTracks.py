@@ -322,12 +322,10 @@ if Mode=='CLEANUP':
 # ###### Stage 2
 prog_entry=[]
 job_sets=[]
-JobSet=[]
-for i in range(len(JobSets)):
-    JobSet.append(int(JobSets[i][2]))
-print(JobSets)
+JobSet=UI.ReduceJobSet(JobSets,2)
+NJobs=UI.CalculateNJobs(JobSet)
+print(NJobs)
 print(JobSet)
-TotJobs=0
 exit()
 NJobs=UI.CalculateNJobs(JobSet)
 if type(JobSet) is int:
