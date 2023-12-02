@@ -82,8 +82,7 @@ if LocalSub:
    time_int=0
 else:
     time_int=10
-print(HTCondorLog)
-exit()
+
 JobFlavour=args.JobFlavour
 RequestExtCPU=int(args.RequestExtCPU)
 ReqMemory=args.ReqMemory
@@ -335,7 +334,7 @@ prog_entry.append([MaxSegments, MaxSLG, MaxSTG])
 prog_entry.append(NJobs)
 prog_entry.append(LocalSub)
 prog_entry.append([" --PlateZ ",JobSets])
-prog_entry.append(False)
+prog_entry.append(HTCondorLog)
 prog_entry.append(False)
 if Mode=='RESET':
         print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry))
@@ -827,7 +826,7 @@ while Status<len(Program):
                     prog_entry.append(NJobs)
                     prog_entry.append(LocalSub)
                     prog_entry.append(['',''])
-                    prog_entry.append(False)
+                    prog_entry.append(HTCondorLog)
                     prog_entry.append(False)
                     for dum in range(0,Status):
                         Program_Dummy.append('DUM')
