@@ -274,12 +274,14 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
           temp_data=pd.merge(new_combined_data, data_temp_header, how="inner", on=["Rec_Seg_ID"]) #Shrinking the Track data so just a star hit for each track is present.
           temp_required_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/RUTr1_'+RecBatchID+'_TRACK_SEGMENTS_'+str(i)+'.csv'
           temp_data.to_csv(temp_required_file_location,index=False)
-          UI.Msg('location',"The track segment data has been created successfully and written to",required_file_location)
-        exit()
-        
-        UI.Msg('vanilla','Analysing the data sample in order to understand how many jobs to submit to HTCondor... ')
+          UI.Msg('location',"The track segment data has been created successfully and written to",temp_required_file_location)
+        JobSetList=[]
+        for i in range(20):
+            JobSetList.append('empty')
+        JobSetList[0]=JobData
         Meta=UI.TrainingSampleMeta(RecBatchID)
-        Meta.IniTrackSeedMetaData(MaxSLG,MaxSTG,MaxDOCA,MaxAngle,data,MaxSegments,VetoMotherTrack,MaxSeeds,MinHitsTrack)
+        Meta.IniTrackSeedMetaData(MaxSLG,MaxSTG,MaxDOCA,MaxAngle,JobSetList,MaxSegments,VetoMotherTrack,MaxSeeds,MinHitsTrack)
+        print(JobSetList)
         Meta.UpdateStatus(0)
         print(UI.PickleOperations(RecOutputMeta,'w', Meta)[1])
         UI.Msg('completed','Stage 0 has successfully completed')
