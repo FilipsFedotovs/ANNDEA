@@ -615,6 +615,7 @@ def ManageFolders(AFS_DIR, EOS_DIR, BatchID,op_type,HTCondorJobs=[]):
        return 'Main folders for the reconstruction job '+BatchID+' have been created'
 
     if op_type=='d':
+       Msg('vanilla','Performing the cleanup... ')
        EOSsubDIR=EOS_DIR+'/'+'ANNDEA/Data/'
        shutil.rmtree(EOSsubDIR+'REC_SET/'+BatchID,True)
        shutil.rmtree(EOSsubDIR+'TEST_SET/'+BatchID,True)

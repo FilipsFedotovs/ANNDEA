@@ -105,7 +105,6 @@ elif Mode=='CLEANUP':
 else:
     print(UI.ManageFolders(AFS_DIR, EOS_DIR, RecBatchID,'c'))
 
-exit()
 EOSsubDIR=EOS_DIR+'/'+'ANNDEA'
 EOSsubModelDIR=EOSsubDIR+'/'+'Models'
 if ModelName[0]!='Blank':
@@ -114,9 +113,9 @@ else:
     EOSsubModelMetaDIR=EOSsubDIR+'/'+'Models/'+ModelName[1]+'_Meta'
 
 
-RecOutputMeta=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_info.pkl'
-required_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1_'+RecBatchID+'_TRACK_SEGMENTS.csv'
-required_eval_file_location=EOS_DIR+'/ANNDEA/Data/TEST_SET/EUTr1_'+RecBatchID+'_TRACK_SEGMENTS.csv'
+RecOutputMeta=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/'+RecBatchID+'_info.pkl'
+required_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/RUTr1_'+RecBatchID+'_TRACK_SEGMENTS.csv'
+required_eval_file_location=EOS_DIR+'/ANNDEA/Data/TEST_SET/'+RecBatchID+'/EUTr1_'+RecBatchID+'_TRACK_SEGMENTS.csv'
 ########################################     Phase 1 - Create compact source file    #########################################
 UI.Msg('status','Stage 0:',' Preparing the source data...')
 if Log and (os.path.isfile(required_eval_file_location)==False or Mode=='RESET'):
@@ -282,11 +281,6 @@ MinHitsTrack=Meta.MinHitsTrack
 
 #The function bellow helps to automate the submission process
 if Mode=='RESET':
-    UI.Msg('vanilla','Performing the cleanup... ')
-    HTCondorTag="SoftUsed == \"ANNDEA-EUTr1a-"+RecBatchID+"\""
-    UI.EvalCleanUp(AFS_DIR, EOS_DIR, 'EUTr1a_'+RecBatchID, ['EUTr1a_'+RecBatchID,'EUTr1b_'+RecBatchID], HTCondorTag)
-    HTCondorTag="SoftUsed == \"ANNDEA-RUTr1a-"+RecBatchID+"\""
-    UI.RecCleanUp(AFS_DIR, EOS_DIR, 'RUTr1a_'+RecBatchID, ['RUTr1a_'+RecBatchID,RecBatchID+'_REC_LOG.csv'], HTCondorTag)
     FreshStart=False
     UI.UpdateStatus(0,Meta,RecOutputMeta)
     Status=0
@@ -309,7 +303,7 @@ if Log:
     data.drop_duplicates(subset="Rec_Seg_ID",keep='first',inplace=True)  #Keeping only starting hits for each track record (we do not require the full information about track in this script)
     Records=len(data.axes[0])
     Sets=int(np.ceil(Records/MaxSegments))
-    prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TEST_SET/','RawSeedsRes','EUTr1a','.csv',RecBatchID,Sets,'EUTr1a_GenerateRawSelectedSeeds_Sub.py'])
+    prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/'+RecBatchID+'/TEST_SET/','RawSeedsRes','EUTr1a','.csv',RecBatchID,Sets,'EUTr1a_GenerateRawSelectedSeeds_Sub.py'])
     prog_entry.append([" --MaxSegments ", " --VetoMotherTrack "])
     prog_entry.append([MaxSegments, '"'+str(VetoMotherTrack)+'"'])
     prog_entry.append(Sets)
@@ -317,18 +311,13 @@ if Log:
     prog_entry.append(['',''])
     prog_entry.append(False)
     prog_entry.append(False)
-    if Mode=='RESET':
-        print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry,'Delete'))
     #Setting up folders for the output. The reconstruction of just one brick can easily generate >100k of files. Keeping all that blob in one directory can cause problems on lxplus.
     print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry,'Create'))
     Program.append(prog_entry)
     # ###### Stage 1
     Program.append('Custom - PickE')
 
-if Mode=='CLEANUP':
-    UI.UpdateStatus(19,Meta,RecOutputMeta)
-    Status=19
-
+exit()
 # ###### Stage 2
 prog_entry=[]
 job_sets=[]
