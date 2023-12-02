@@ -96,7 +96,7 @@ SliceData=max(Xmin,Xmax,Ymin,Ymax)>0 #We don't slice data if all values are set 
 FreshStart=True
 #Establishing paths
 
-UI.ManageFolders(AFS_DIR, EOS_DIR, RecBatchID,c)
+UI.ManageFolders(AFS_DIR, EOS_DIR, RecBatchID,'c')
 exit()
 EOSsubDIR=EOS_DIR+'/'+'ANNDEA'
 EOSsubModelDIR=EOSsubDIR+'/'+'Models'
