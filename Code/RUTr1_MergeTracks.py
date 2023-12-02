@@ -252,10 +252,8 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         new_combined_data=new_combined_data.rename(columns={PM.tx: "tx"})
         new_combined_data=new_combined_data.rename(columns={PM.ty: "ty"})
         print(new_combined_data)
-        exit()
-        new_combined_data.to_csv(required_file_location,index=False)
-        data=new_combined_data[['Rec_Seg_ID','z']]
         UI.Msg('vanilla','Analysing the data sample in order to understand how many jobs to submit to HTCondor... ')
+        data=new_combined_data[['Rec_Seg_ID','z']]
         data = data.groupby('Rec_Seg_ID')['z'].min()  #Keeping only starting hits for the each track record (we do not require the full information about track in this script)
         data=data.reset_index()
         data = data.groupby('z')['Rec_Seg_ID'].count()  #Keeping only starting hits for the each track record (we do not require the full information about track in this script)
@@ -263,7 +261,13 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         data=data.sort_values(['z'],ascending=True)
         data['Sub_Sets']=np.ceil(data['Rec_Seg_ID']/PM.MaxSegments)
         data['Sub_Sets'] = data['Sub_Sets'].astype(int)
+        print(data)
         data = data.values.tolist()
+        print(data)
+        exit()
+        new_combined_data.to_csv(required_file_location,index=False)
+        UI.Msg('vanilla','Analysing the data sample in order to understand how many jobs to submit to HTCondor... ')
+
         UI.Msg('location',"The track segment data has been created successfully and written to",required_file_location)
         Meta=UI.TrainingSampleMeta(RecBatchID)
         Meta.IniTrackSeedMetaData(MaxSLG,MaxSTG,MaxDOCA,MaxAngle,data,MaxSegments,VetoMotherTrack,MaxSeeds,MinHitsTrack)
