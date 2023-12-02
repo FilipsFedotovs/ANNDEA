@@ -274,7 +274,7 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
           print(data_header)
           data_temp_header=data_header.drop(data_header.index[data_header['z'] < i])
           data_temp_header=data_temp_header.drop(['z'],axis=1)
-          temp_data=pd.merge(new_combined_data, data_header, how="inner", on=["Rec_Seg_ID"]) #Shrinking the Track data so just a star hit for each track is present.
+          temp_data=pd.merge(new_combined_data, data_temp_header, how="inner", on=["Rec_Seg_ID"]) #Shrinking the Track data so just a star hit for each track is present.
           print(i)
           print(temp_data)
           print(len(data_temp_header))
