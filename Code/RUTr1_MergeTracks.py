@@ -251,9 +251,6 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         new_combined_data=new_combined_data.rename(columns={PM.z: "z"})
         new_combined_data=new_combined_data.rename(columns={PM.tx: "tx"})
         new_combined_data=new_combined_data.rename(columns={PM.ty: "ty"})
-        new_combined_data = new_combined_data[new_combined_data.Rec_Seg_ID == '10028.0-14']
-        print(new_combined_data)
-        exit()
         data_header = new_combined_data.groupby('Rec_Seg_ID')['z'].min()
         data_header=data_header.reset_index()
         UI.Msg('vanilla','Analysing the data sample in order to understand how many jobs to submit to HTCondor... ')
@@ -276,8 +273,10 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         for i in CutData:
           print(data_header)
           data_temp_header=data_header.drop(data_header.index[data_header['z'] < i])
+          data_temp_header=data_temp_header.drop(['z'],axis=1)
+          temp_data=pd.merge(new_combined_data, data_header, how="inner", on=["Rec_Seg_ID"]) #Shrinking the Track data so just a star hit for each track is present.
           print(i)
-          print(data_temp_header)
+          print(temp_data)
           print(len(data_temp_header))
           x=input()
         exit()
