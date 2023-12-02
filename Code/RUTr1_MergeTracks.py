@@ -263,10 +263,13 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         data['Sub_Sets'] = data['Sub_Sets'].astype(int)
         JobData=data.drop(['Rec_Seg_ID','z'],axis=1)
         CutData=data.drop(['Rec_Seg_ID','Sub_Sets'],axis=1)
-        print(JobData.values.tolist(),CutData.values.tolist())
+        JobData = JobData.values.tolist()
+        CutData = CutData.values.tolist()
+        JobData=[k for i in JobData for k in i]
+        CutData=[k for i in CutData for k in i]
+        print(JobData)
+        print(CutData)
         exit()
-        data_list = data.values.tolist()
-        print(data_list)
         # for i in data_list:
         #
         # exit()
