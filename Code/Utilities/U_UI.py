@@ -629,62 +629,49 @@ def ManageFolders(AFS_DIR, EOS_DIR, BatchID,op_type,HTCondorJobs=[]):
            subprocess.call(['condor_rm', '-constraint', HTCondorTag])
        return 'Main folders for the reconstruction job '+BatchID+' have been deleted'
 
-def ManageTempFolders(spi,op_type):
-    if type(spi[1][8]) is int:
+def ManageTempFolders(spi):
+   if type(spi[1][8]) is int:
        _tot=spi[1][8]
-    else:
+   else:
        _tot=len(spi[1][8])
-    if op_type=='Create':
-       if type(spi[1][8]) is int:
-           try:
-              os.mkdir(spi[1][1]+spi[1][3]+'Temp_'+spi[1][5]+'_'+spi[1][7]+'_'+str(0))
-           except OSError as error:
-               print(bc.WARNING+spi[1][1]+spi[1][3]+'Temp_'+spi[1][5]+'_'+spi[1][7]+'_'+str(0)+" already exists"+bc.ENDC)
-           try:
-              os.mkdir(spi[1][0]+'/HTCondor/SUB/Temp_'+spi[1][5]+'_'+spi[1][7]+'_'+str(0))
-           except OSError as error:
-               print(bc.WARNING+spi[1][0]+'/HTCondor/SUB/Temp_'+spi[1][5]+'_'+spi[1][7]+'_'+str(0)+" already exists"+bc.ENDC)
-           try:
-              os.mkdir(spi[1][0]+'/HTCondor/SH/Temp_'+spi[1][5]+'_'+spi[1][7]+'_'+str(0))
-           except OSError as error:
-               print(bc.WARNING+spi[1][0]+'/HTCondor/SH/Temp_'+spi[1][5]+'_'+spi[1][7]+'_'+str(0)+" already exists"+bc.ENDC)
-           try:
-              os.mkdir(spi[1][0]+'/HTCondor/MSG/Temp_'+spi[1][5]+'_'+spi[1][7]+'_'+str(0))
 
+   if type(spi[1][8]) is int:
+       try:
+          os.mkdir(spi[1][1]+spi[1][3]+'Temp_'+spi[1][5]+'_'+spi[1][7]+'_'+str(0))
+       except OSError as error:
+           print(bc.WARNING+spi[1][1]+spi[1][3]+'Temp_'+spi[1][5]+'_'+spi[1][7]+'_'+str(0)+" already exists"+bc.ENDC)
+       try:
+          os.mkdir(spi[1][0]+'/HTCondor/SUB/'+spi[1][5]+'/Temp_'+spi[1][5]+'_'+spi[1][7]+'_'+str(0))
+       except OSError as error:
+           print(bc.WARNING+spi[1][0]+'/HTCondor/SUB/'+spi[1][5]+'/Temp_'+spi[1][5]+'_'+spi[1][7]+'_'+str(0)+" already exists"+bc.ENDC)
+       try:
+          os.mkdir(spi[1][0]+'/HTCondor/SH/'+spi[1][5]+'/Temp_'+spi[1][5]+'_'+spi[1][7]+'_'+str(0))
+       except OSError as error:
+           print(bc.WARNING+spi[1][0]+'/HTCondor/SH/'+spi[1][5]+'/Temp_'+spi[1][5]+'_'+spi[1][7]+'_'+str(0)+" already exists"+bc.ENDC)
+       try:
+          os.mkdir(spi[1][0]+'/HTCondor/MSG/'+spi[1][5]+'/Temp_'+spi[1][5]+'_'+spi[1][7]+'_'+str(0))
+
+       except OSError as error:
+           print(bc.WARNING+spi[1][0]+'/HTCondor/MSG/'+spi[1][5]+'/Temp_'+spi[1][5]+'_'+spi[1][7]+'_'+str(0)+" already exists"+bc.ENDC)
+   else:
+       for i in range(_tot):
+           try:
+              os.mkdir(spi[1][1]+spi[1][3]+'Temp_'+spi[1][5]+'_'+spi[1][7]+'_'+str(i))
            except OSError as error:
-               print(bc.WARNING+spi[1][0]+'/HTCondor/MSG/Temp_'+spi[1][5]+'_'+spi[1][7]+'_'+str(0)+" already exists"+bc.ENDC)
-       else:
-           for i in range(_tot):
-               try:
-                  os.mkdir(spi[1][1]+spi[1][3]+'Temp_'+spi[1][5]+'_'+spi[1][7]+'_'+str(i))
-               except OSError as error:
-                  continue
-               try:
-                  os.mkdir(spi[1][0]+'/HTCondor/SUB/Temp_'+spi[1][5]+'_'+spi[1][7]+'_'+str(i))
-               except OSError as error:
-                  continue
-               try:
-                  os.mkdir(spi[1][0]+'/HTCondor/SH/Temp_'+spi[1][5]+'_'+spi[1][7]+'_'+str(i))
-               except OSError as error:
-                  continue
-               try:
-                  os.mkdir(spi[1][0]+'/HTCondor/MSG/Temp_'+spi[1][5]+'_'+spi[1][7]+'_'+str(i))
-               except OSError as error:
-                  continue
-       return 'Temporary folders have been created'
-    if op_type=='Delete':
-       if (type(spi[1][8]) is int):
-           shutil.rmtree(spi[1][1]+spi[1][3]+'Temp_'+spi[1][5]+'_'+spi[1][7]+'_'+str(0),True)
-           shutil.rmtree(spi[1][0]+'/HTCondor/SUB/Temp_'+spi[1][5]+'_'+spi[1][7]+'_'+str(0),True)
-           shutil.rmtree(spi[1][0]+'/HTCondor/SH/Temp_'+spi[1][5]+'_'+spi[1][7]+'_'+str(0),True)
-           shutil.rmtree(spi[1][0]+'/HTCondor/MSG/Temp_'+spi[1][5]+'_'+spi[1][7]+'_'+str(0),True)
-       else:
-           for i in range(_tot):
-               shutil.rmtree(spi[1][1]+spi[1][3]+'Temp_'+spi[1][5]+'_'+spi[1][7]+'_'+str(i),True)
-               shutil.rmtree(spi[1][0]+'/HTCondor/SUB/Temp_'+spi[1][5]+'_'+spi[1][7]+'_'+str(i),True)
-               shutil.rmtree(spi[1][0]+'/HTCondor/SH/Temp_'+spi[1][5]+'_'+spi[1][7]+'_'+str(i),True)
-               shutil.rmtree(spi[1][0]+'/HTCondor/MSG/Temp_'+spi[1][5]+'_'+spi[1][7]+'_'+str(i),True)
-       return 'Temporary folders have been deleted'
+              continue
+           try:
+              os.mkdir(spi[1][0]+'/HTCondor/SUB/'+spi[1][5]+'/Temp_'+spi[1][5]+'_'+spi[1][7]+'_'+str(i))
+           except OSError as error:
+              continue
+           try:
+              os.mkdir(spi[1][0]+'/HTCondor/SH/'+spi[1][5]+'/Temp_'+spi[1][5]+'_'+spi[1][7]+'_'+str(i))
+           except OSError as error:
+              continue
+           try:
+              os.mkdir(spi[1][0]+'/HTCondor/MSG/'+spi[1][5]+'/Temp_'+spi[1][5]+'_'+spi[1][7]+'_'+str(i))
+           except OSError as error:
+              continue
+   return 'Temporary folders have been created'
 
 def ReduceJobSet(IS,level):
     OS=[]

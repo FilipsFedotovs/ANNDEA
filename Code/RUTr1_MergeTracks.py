@@ -297,7 +297,6 @@ if Log:
     prog_entry=[]
     job_sets=[]
     prog_entry.append(' Sending eval seeds to HTCondor...')
-    UI.Msg('location',"The track segment data has been created successfully and written to",initial_input_file_location)
     data=pd.read_csv(required_eval_file_location,header=0,usecols=['Rec_Seg_ID'])
     UI.Msg('vanilla','Analysing data... ')
     data.drop_duplicates(subset="Rec_Seg_ID",keep='first',inplace=True)  #Keeping only starting hits for each track record (we do not require the full information about track in this script)
@@ -317,7 +316,6 @@ if Log:
     # ###### Stage 1
     Program.append('Custom - PickE')
 
-exit()
 # ###### Stage 2
 prog_entry=[]
 job_sets=[]
@@ -327,7 +325,7 @@ NJobs=UI.CalculateNJobs(JobSet)
 NJobs=UI.CalculateNJobs(JobSet)
 
 prog_entry.append(' Sending tracks to the HTCondor, so track segment combinations can be formed...')
-prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','RawSeedsRes','RUTr1a','.csv',RecBatchID, JobSet,'RUTr1a_GenerateRawSelectedSeeds_Sub.py'])
+prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/'+RecBatchID+'/REC_SET/','RawSeedsRes','RUTr1a','.csv',RecBatchID, JobSet,'RUTr1a_GenerateRawSelectedSeeds_Sub.py'])
 prog_entry.append([ " --MaxSegments ", " --MaxSLG "," --MaxSTG "])
 prog_entry.append([MaxSegments, MaxSLG, MaxSTG])
 prog_entry.append(NJobs)
