@@ -263,12 +263,12 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         data['Sub_Sets'] = data['Sub_Sets'].astype(int)
         JobData=data.drop(['Rec_Seg_ID','z'],axis=1)
         CutData=data.drop(['Rec_Seg_ID','Sub_Sets'],axis=1)
-        print(JobData,CutData)
+        print(JobData.values.tolist(),CutData.values.tolist())
         exit()
         data_list = data.values.tolist()
         print(data_list)
         # for i in data_list:
-        # 
+        #
         # exit()
         new_combined_data.to_csv(required_file_location,index=False)
         UI.Msg('vanilla','Analysing the data sample in order to understand how many jobs to submit to HTCondor... ')
