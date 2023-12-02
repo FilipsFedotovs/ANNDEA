@@ -334,8 +334,11 @@ elif type(JobSet[0]) is int:
 elif type(JobSet[0][0]) is int:
             for lp in JobSet:
                 TotJobs+=np.sum(lp)
+print(np.sum(JobSet))
+print(TotJobs)
+exit()
 prog_entry.append(' Sending tracks to the HTCondor, so track segment combinations can be formed...')
-prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','RawSeedsRes','RUTr1a','.csv',RecBatchID,JobSet,'RUTr1a_GenerateRawSelectedSeeds_Sub.py'])
+prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','RawSeedsRes','RUTr1a','.csv',RecBatchID, JobSet,'RUTr1a_GenerateRawSelectedSeeds_Sub.py'])
 prog_entry.append([ " --MaxSegments ", " --MaxSLG "," --MaxSTG "])
 prog_entry.append([MaxSegments, MaxSLG, MaxSTG])
 prog_entry.append(np.sum(JobSet))
@@ -822,8 +825,6 @@ while Status<len(Program):
                     Meta=UI.PickleOperations(RecOutputMeta,'r', 'N/A')[0]
                     JobSet=UI.ReduceJobSet(Meta.JobSets)
                     NJobs=UI.CalculateNJobs(JobSet)
-                    print(JobSet,NJobs)
-                    exit()
                     prog_entry.append(' Sending tracks to the HTCondor, so track segment combination pairs can be formed...')
                     prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','RefinedSeeds','RUTr1'+ModelName[md],'.pkl',RecBatchID,JobSet,'RUTr1b_RefineSeeds_Sub.py'])
 
