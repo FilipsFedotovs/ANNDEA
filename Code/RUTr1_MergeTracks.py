@@ -311,7 +311,7 @@ if Log:
     prog_entry.append(False)
     prog_entry.append(False)
     #Setting up folders for the output. The reconstruction of just one brick can easily generate >100k of files. Keeping all that blob in one directory can cause problems on lxplus.
-    print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry,'Create'))
+    print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry))
     Program.append(prog_entry)
     # ###### Stage 1
     Program.append('Custom - PickE')
@@ -334,9 +334,9 @@ prog_entry.append([" --PlateZ ",JobSets])
 prog_entry.append(False)
 prog_entry.append(False)
 if Mode=='RESET':
-        print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry,'Delete'))
+        print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry))
     #Setting up folders for the output. The reconstruction of just one brick can easily generate >100k of files. Keeping all that blob in one directory can cause problems on lxplus.
-print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry,'Create'))
+print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry))
 Program.append(prog_entry)
 Program.append('Custom - PickR')
 
@@ -347,6 +347,8 @@ for md in ModelName:
 Program.append('Custom - Merging')
 
 Program.append('Custom - TrackMapping')
+
+exit()
 
 while Status<len(Program):
     if Program[Status][:6]!='Custom' and (Program[Status] in ModelName)==False:
