@@ -252,9 +252,6 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         new_combined_data=new_combined_data.rename(columns={PM.tx: "tx"})
         new_combined_data=new_combined_data.rename(columns={PM.ty: "ty"})
         data_header = new_combined_data.groupby('Rec_Seg_ID')['z'].min()
-        print(new_combined_data)
-        print(data_header)
-        exit()
         UI.Msg('vanilla','Analysing the data sample in order to understand how many jobs to submit to HTCondor... ')
         data=new_combined_data[['Rec_Seg_ID','z']]
         data = data.groupby('Rec_Seg_ID')['z'].min()  #Keeping only starting hits for the each track record (we do not require the full information about track in this script)
@@ -264,12 +261,15 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         data=data.sort_values(['z'],ascending=True)
         data['Sub_Sets']=np.ceil(data['Rec_Seg_ID']/PM.MaxSegments)
         data['Sub_Sets'] = data['Sub_Sets'].astype(int)
-        data=data.drop(['Rec_Seg_ID'],axis=1)
-        print(data)
+        JobData=data.drop(['Rec_Seg_ID','z'],axis=1)
+        CutData=data.drop(['Rec_Seg_ID','Sub_Sets'],axis=1)
+        print(JobData,CutData)
+        exit()
         data_list = data.values.tolist()
         print(data_list)
-        # for i in data_list
-        # exit()
+        for i in data_list:
+
+        exit()
         new_combined_data.to_csv(required_file_location,index=False)
         UI.Msg('vanilla','Analysing the data sample in order to understand how many jobs to submit to HTCondor... ')
 
