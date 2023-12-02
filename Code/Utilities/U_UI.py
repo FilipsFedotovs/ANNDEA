@@ -583,19 +583,48 @@ def PickleOperations(flocation,mode, message):
         result=pickle.load(pickle_writer_log)
         pickle_writer_log.close()
         return (result,"PickleOperations Message: Data has been loaded successfully from "+flocation)
-def RecCleanUp(AFS_DIR, EOS_DIR, Process, FileNames, ProcessId):
-      subprocess.call(['condor_rm', '-constraint', ProcessId])
-      EOSsubDIR=EOS_DIR+'/'+'ANNDEA'
-      EOSsubModelDIR=EOSsubDIR+'/'+'Data/REC_SET'
-      folder =  EOSsubModelDIR
-      for f in FileNames:
-          CleanFolder(folder,f)
-      folder =  AFS_DIR+'/HTCondor/SH'
-      CleanFolder(folder,'SH_'+Process+'_')
-      folder =  AFS_DIR+'/HTCondor/SUB'
-      CleanFolder(folder,'SUB_'+Process+'_')
-      folder =  AFS_DIR+'/HTCondor/MSG'
-      CleanFolder(folder,'MSG_'+Process+'_')
+
+def ManageFolders(AFS_DIR, EOS_DIR, BatchID,op_type):
+    if op_type=='c':
+       EOSsubDIR=EOS_DIR+'/'+'ANNDEA/Data/'
+       try:
+          os.mkdir(EOSsubDIR+'REC_SET/'+BatchID)
+       except OSError as error:
+          print(bc.WARNING+EOSsubDIR+'REC_SET/'+BatchID+bc.ENDC)
+       try:
+          os.mkdir(EOSsubDIR+'TEST_SET/'+BatchID)
+       except OSError as error:
+          print(bc.WARNING+EOSsubDIR+'TEST_SET/'+BatchID+bc.ENDC)
+       try:
+          os.mkdir(EOSsubDIR+'TRAIN_SET/'+BatchID)
+       except OSError as error:
+          print(bc.WARNING+EOSsubDIR+'TRAIN_SET/'+BatchID+bc.ENDC)
+       HTCondorDir =  AFS_DIR+'/HTCondor/'
+       try:
+          os.mkdir(HTCondorDir+'SH/'+BatchID)
+       except OSError as error:
+          print(bc.WARNING+HTCondorDir+'SH/'+BatchID+bc.ENDC)
+       try:
+          os.mkdir(HTCondorDir+'SUB/'+BatchID)
+       except OSError as error:
+          print(bc.WARNING+HTCondorDir+'SUB/'+BatchID+bc.ENDC)
+       try:
+          os.mkdir(HTCondorDir+'MSG/'+BatchID)
+       except OSError as error:
+          print(bc.WARNING+HTCondorDir+'MSG/'+BatchID+bc.ENDC)
+       return 'Main folders for the reconstruction job'+BatchID+' have been created'
+
+    if op_type=='d':
+       EOSsubDIR=EOS_DIR+'/'+'ANNDEA/Data/'
+       shutil.rmtree(EOSsubDIR+'REC_SET/'+BatchID,True)
+       shutil.rmtree(EOSsubDIR+'TEST_SET/'+BatchID,True)
+       shutil.rmtree(EOSsubDIR+'TRAIN_SET/'+BatchID,True)
+       HTCondorDir =  AFS_DIR+'/HTCondor/'
+       shutil.rmtree(HTCondorDir+'SH/'+BatchID,True)
+       shutil.rmtree(HTCondorDir+'SUB/'+BatchID,True)
+       shutil.rmtree(HTCondorDir+'MSG/'+BatchID,True)
+       return 'Main folders for the reconstruction job'+BatchID+' have been deleted'
+
 def EvalCleanUp(AFS_DIR, EOS_DIR, Process, FileNames, ProcessId):
       subprocess.call(['condor_rm', '-constraint', ProcessId])
       EOSsubDIR=EOS_DIR+'/'+'ANNDEA'
@@ -651,7 +680,6 @@ def ManageTempFolders(spi,op_type):
            except OSError as error:
                print(bc.WARNING+spi[1][0]+'/HTCondor/MSG/Temp_'+spi[1][5]+'_'+spi[1][7]+'_'+str(0)+" already exists"+bc.ENDC)
        else:
-
            for i in range(_tot):
                try:
                   os.mkdir(spi[1][1]+spi[1][3]+'Temp_'+spi[1][5]+'_'+spi[1][7]+'_'+str(i))

@@ -61,7 +61,7 @@ parser.add_argument('--Log',help="Would you like to log the performance of this 
 parser.add_argument('--Acceptance',help="What is the ANN fit acceptance?", default='0.5')
 parser.add_argument('--CalibrateAcceptance',help="Would you like to recalibrate the acceptance?", default='N')
 parser.add_argument('--ReqMemory',help="Specifying the length of the HTCondor job walltime. Currently at 'workday' which is 8 hours.", default='2 GB')
-parser.add_argument('--MaxMergeSize',help="Maximum size of the batches at premerging stage?", default='50000')
+parser.add_argument('--MaxSeeds',help="Maximum size of the batches at premerging stage?", default='50000')
 parser.add_argument('--ForceStatus',help="Local submission?", default='N')
 
 ######################################## Parsing argument values  #############################################################
@@ -74,7 +74,7 @@ BrickID=args.BrickID
 SubPause=int(args.SubPause)*60
 SubGap=int(args.SubGap)
 LocalSub=(args.LocalSub=='Y')
-MaxMergeSize=int(args.MaxMergeSize)
+MaxSeeds=int(args.MaxSeeds)
 ForceStatus=args.ForceStatus
 if LocalSub:
    time_int=0
@@ -95,12 +95,17 @@ Xmin,Xmax,Ymin,Ymax=float(args.Xmin),float(args.Xmax),float(args.Ymin),float(arg
 SliceData=max(Xmin,Xmax,Ymin,Ymax)>0 #We don't slice data if all values are set to zero simultaneousy (which is the default setting)
 FreshStart=True
 #Establishing paths
+
+UI.ManageFolders(AFS_DIR, EOS_DIR, RecBatchID,c)
+exit()
 EOSsubDIR=EOS_DIR+'/'+'ANNDEA'
 EOSsubModelDIR=EOSsubDIR+'/'+'Models'
 if ModelName[0]!='Blank':
     EOSsubModelMetaDIR=EOSsubDIR+'/'+'Models/'+ModelName[0]+'_Meta'
 else:
     EOSsubModelMetaDIR=EOSsubDIR+'/'+'Models/'+ModelName[1]+'_Meta'
+
+
 RecOutputMeta=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_info.pkl'
 required_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1_'+RecBatchID+'_TRACK_SEGMENTS.csv'
 required_eval_file_location=EOS_DIR+'/ANNDEA/Data/TEST_SET/EUTr1_'+RecBatchID+'_TRACK_SEGMENTS.csv'
@@ -189,7 +194,6 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
            MaxDOCA=Meta.MaxDOCA
            MaxAngle=Meta.MaxAngle
            MaxSegments=PM.MaxSegments
-           MaxSeeds=PM.MaxSeeds
            VetoMotherTrack=PM.VetoMotherTrack
            MinHitsTrack=Meta.MinHitsTrack
         UI.Msg('location','Loading raw data from',initial_input_file_location)
@@ -268,8 +272,6 @@ MaxSeeds=Meta.MaxSeeds
 VetoMotherTrack=Meta.VetoMotherTrack
 MinHitsTrack=Meta.MinHitsTrack
 
-#The function bellow helps to monitor the HTCondor jobs and keep the submission flow
-
 #The function bellow helps to automate the submission process
 if Mode=='RESET':
     UI.Msg('vanilla','Performing the cleanup... ')
@@ -324,25 +326,14 @@ prog_entry=[]
 job_sets=[]
 JobSet=UI.ReduceJobSet(JobSets,2)
 NJobs=UI.CalculateNJobs(JobSet)
-print(NJobs)
-print(JobSet)
-exit()
+
 NJobs=UI.CalculateNJobs(JobSet)
-if type(JobSet) is int:
-            TotJobs=JobSet
-elif type(JobSet[0]) is int:
-            TotJobs=np.sum(JobSet)
-elif type(JobSet[0][0]) is int:
-            for lp in JobSet:
-                TotJobs+=np.sum(lp)
-print(np.sum(JobSet))
-print(TotJobs)
-exit()
+
 prog_entry.append(' Sending tracks to the HTCondor, so track segment combinations can be formed...')
 prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','RawSeedsRes','RUTr1a','.csv',RecBatchID, JobSet,'RUTr1a_GenerateRawSelectedSeeds_Sub.py'])
 prog_entry.append([ " --MaxSegments ", " --MaxSLG "," --MaxSTG "])
 prog_entry.append([MaxSegments, MaxSLG, MaxSTG])
-prog_entry.append(np.sum(JobSet))
+prog_entry.append(NJobs)
 prog_entry.append(LocalSub)
 prog_entry.append([" --PlateZ ",JobSets])
 prog_entry.append(False)
@@ -392,7 +383,6 @@ while Status<len(Program):
                         new_result=pd.read_csv(output_file_location,names = ['Segment_1','Segment_2'])
                         print(UI.TimeStamp(),'Set',str(i), 'contains', len(new_result), 'seeds')
                         result=pd.concat([result,new_result])
-
         Records=len(result)
         result["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(result['Segment_1'], result['Segment_2'])]
         result.drop_duplicates(subset="Seed_ID",keep='first',inplace=True)
@@ -836,7 +826,7 @@ while Status<len(Program):
                         prog_entry.append([" --MaxSTG ", " --MaxSLG ", " --MaxDOCA ", " --MaxAngle "," --ModelName "," --FirstTime "])
                         prog_entry.append([MaxSTG, MaxSLG, MaxDOCA, MaxAngle,'"'+ModelName[md]+'"', ModelName[md-1]])
 
-                    prog_entry.append(TotJobs)
+                    prog_entry.append(NJobs)
                     prog_entry.append(LocalSub)
                     prog_entry.append(['',''])
                     prog_entry.append(False)
