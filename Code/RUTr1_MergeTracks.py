@@ -815,7 +815,6 @@ while Status<len(Program):
     else:
         for md in range(len(ModelName)):
             if Program[Status]==ModelName[md]:
-                if md==0:
                     prog_entry=[]
                     job_sets=[]
                     JobSet=[]
@@ -836,8 +835,14 @@ while Status<len(Program):
                                     TotJobs+=np.sum(lp)
                     prog_entry.append(' Sending tracks to the HTCondor, so track segment combination pairs can be formed...')
                     prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','RefinedSeeds','RUTr1'+ModelName[md],'.pkl',RecBatchID,JobSet,'RUTr1b_RefineSeeds_Sub.py'])
-                    prog_entry.append([" --MaxSTG ", " --MaxSLG ", " --MaxDOCA ", " --MaxAngle "," --ModelName "," --FirstTime "])
-                    prog_entry.append([MaxSTG, MaxSLG, MaxDOCA, MaxAngle,'"'+ModelName[md]+'"', 'True'])
+
+                    if md==0:
+                        prog_entry.append([" --MaxSTG ", " --MaxSLG ", " --MaxDOCA ", " --MaxAngle "," --ModelName "," --FirstTime "])
+                        prog_entry.append([MaxSTG, MaxSLG, MaxDOCA, MaxAngle,'"'+ModelName[md]+'"', 'True'])
+                    else:
+                        prog_entry.append([" --MaxSTG ", " --MaxSLG ", " --MaxDOCA ", " --MaxAngle "," --ModelName "," --FirstTime "])
+                        prog_entry.append([MaxSTG, MaxSLG, MaxDOCA, MaxAngle,'"'+ModelName[md]+'"', ModelName[md-1]])
+
                     prog_entry.append(TotJobs)
                     prog_entry.append(LocalSub)
                     prog_entry.append(['',''])
@@ -860,7 +865,6 @@ while Status<len(Program):
                                  JobSet[i].append(JobSets[i][3][j])
                         if md==len(ModelName)-1:
                             base_data = None
-
                             with alive_bar(len(JobSets),force_tty=True, title='Checking the results from HTCondor') as bar:
                              for i in range(0,len(JobSet)):
 
@@ -967,79 +971,6 @@ while Status<len(Program):
                                          log_rec_no+=rec_no
                                          UI.LogOperations(EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv', 'a', [[3+md,ModelName[md],log_rec_no,eval_no,eval_no/(log_rec_no+eval_no),eval_no/len(eval_data)]])
                                          UI.Msg('location',"The log data has been created successfully and written to",EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv')
-                else:
-                    prog_entry=[]
-                    TotJobs=[]
-                    NTotJobs=0
-                    Program_Dummy=[]
-                    for i in range(60):
-                        keep_testing=True
-                        NJobs=0
-                        while keep_testing:
-                            test_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RUTr1'+ModelName[md-1]+'_'+RecBatchID+'_0/RUTr1'+str(ModelName[md])+'_'+RecBatchID+'_Input_Seeds_'+str(i)+'_'+str(NJobs)+'.pkl'
-                            print(test_file_location)
-                            print(os.path.isfile(test_file_location))
-                            x=input()
-                            if os.path.isfile(test_file_location):
-                                NJobs+=1
-                                NTotJobs+=1
-                            else:
-                                keep_testing=False
-                            print(NJobs)
-                        TotJobs.append(NJobs)
-                    prog_entry.append(' Sending tracks to the HTCondor, so track segment combination pairs can be formed...')
-                    prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','OutputSeeds','RUTr1'+ModelName[md],'.pkl',RecBatchID,TotJobs,'RUTr1b_RefineSeeds_Sub.py'])
-
-                    prog_entry.append([" --MaxSTG ", " --MaxSLG ", " --MaxDOCA ", " --MaxAngle "," --ModelName "," --FirstTime "])
-                    prog_entry.append([MaxSTG, MaxSLG, MaxDOCA, MaxAngle,'"'+ModelName[md]+'"', ModelName[md-1]])
-                    prog_entry.append(NTotJobs)
-                    prog_entry.append(LocalSub)
-                    prog_entry.append(['',''])
-                    prog_entry.append(False)
-                    prog_entry.append(False)
-                    for dum in range(0,Status):
-                        Program_Dummy.append('DUM')
-                    Program_Dummy.append(prog_entry)
-                    if Mode=='RESET':
-                        print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry,'Delete'))
-                    #Setting up folders for the output. The reconstruction of just one brick can easily generate >100k of files. Keeping all that blob in one directory can cause problems on lxplus.
-                    print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry,'Create'))
-                    Result=UI.StandardProcess(Program_Dummy,Status,SubGap,SubPause,RequestExtCPU,JobFlavour,ReqMemory,time_int,Patience,Meta,RecOutputMeta)
-                    if Result:
-                        UI.Msg('status','Stage '+str(Status),': Analysing the fitted seeds')
-                        base_data = None
-                        print(TotJobs)
-                        with alive_bar(len(TotJobs),force_tty=True, title='Checking the results from HTCondor') as bar:
-                         for i in range(len(TotJobs)):
-                             print(TotJobs[i])
-                             bar()
-                             for j in range(TotJobs[i]):
-
-                                              required_output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RUTr1'+ModelName[md]+'_'+RecBatchID+'_'+str(i)+'/RUTr1'+ModelName[md]+'_'+RecBatchID+'_OutputSeeds_'+str(i)+'_'+str(j)+'.pkl'
-                                              new_data=UI.PickleOperations(required_output_file_location,'r','N/A')[0]
-                                              print(UI.TimeStamp(),'Set',str(i),'and subset',str(j),'contains', len(new_data), 'seeds')
-                                              if base_data == None:
-                                                    base_data = new_data
-                                              else:
-                                                    base_data+=new_data
-                        Records=len(base_data)
-                        print(UI.TimeStamp(),'The output contains', Records, 'fit images')
-                        base_data=list(set(base_data))
-                        Records_After_Compression=len(base_data)
-                        if Records>0:
-                                              Compression_Ratio=int((Records_After_Compression/Records)*100)
-                        else:
-                                              CompressionRatio=0
-                        print(UI.TimeStamp(),'The output compression ratio is ', Compression_Ratio, ' %')
-
-                        if md==len(ModelName)-1:
-                                output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1c_'+RecBatchID+'_Fit_Seeds.pkl'
-                                print(UI.PickleOperations(output_file_location,'w',base_data)[1])
-                        else:
-                                output_split=int(np.ceil(Records_After_Compression/PM.MaxSegments))
-                                for os_itr in range(output_split):
-                                    output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RUTr1'+ModelName[md]+'_'+RecBatchID+'_0/RUTr1'+str(ModelName[md+1])+'_'+RecBatchID+'_Input_Seeds_'+str(os_itr)+'.pkl'
-                                    print(UI.PickleOperations(output_file_location,'w',base_data[os_itr*PM.MaxSegments:(os_itr+1)*PM.MaxSegments])[1])
 
     UI.Msg('location','Loading previously saved data from ',RecOutputMeta)
     MetaInput=UI.PickleOperations(RecOutputMeta,'r', 'N/A')
