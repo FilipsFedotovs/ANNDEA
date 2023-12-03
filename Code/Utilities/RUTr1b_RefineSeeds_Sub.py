@@ -92,7 +92,7 @@ if FirstTime=='True':
     MaxSTG=float(args.MaxSTG)
     MaxSLG=float(args.MaxSLG)
     MaxAngle=float(args.MaxAngle)
-    input_segment_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+BatchID+'/RUTr1_'+BatchID+'_TRACK_SEGMENTS'+str(i)+'.csv'
+    input_segment_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+BatchID+'/RUTr1_'+BatchID+'_TRACK_SEGMENTS_'+str(i)+'.csv'
     input_track_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+BatchID+'/Temp_RUTr1a'+'_'+BatchID+'_'+str(i)+'/RUTr1a_'+BatchID+'_SelectedSeeds_'+str(i)+'_'+str(j)+'.csv'
     output_file_location=EOS_DIR+'/'+p+'/Temp_RUTr1'+ModelName+'_'+BatchID+'_'+str(i)+'/'+pfx+'_'+BatchID+'_'+o+'_'+str(i)+'_'+str(j)+sfx
     print(UI.TimeStamp(),'Loading the data')
