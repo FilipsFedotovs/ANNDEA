@@ -77,7 +77,7 @@ SubPause=int(args.SubPause)*60
 SubGap=int(args.SubGap)
 LocalSub=(args.LocalSub=='Y')
 MaxSeeds=int(args.MaxSeeds)
-MaxSeeds=1000
+
 ForceStatus=args.ForceStatus
 if LocalSub:
    time_int=0
@@ -309,6 +309,7 @@ MaxAngle=Meta.MaxAngle
 JobSets=Meta.JobSets
 MaxSegments=Meta.MaxSegments
 MaxSeeds=Meta.MaxSeeds
+MaxSeeds=1000
 VetoMotherTrack=Meta.VetoMotherTrack
 MinHitsTrack=Meta.MinHitsTrack
 
