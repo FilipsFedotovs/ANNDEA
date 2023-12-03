@@ -911,7 +911,6 @@ while Status<len(Program):
                                                     if Log:
                                                      for rd in base_data:
                                                          rec_list.append([rd.Header[0],rd.Header[1]])
-                                                     del base_data
                                               NewJobSet[i]=tot_fractions
                                         else:
                                               CompressionRatio=0
