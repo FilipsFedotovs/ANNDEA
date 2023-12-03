@@ -828,10 +828,9 @@ while Status<len(Program):
                         UI.Msg('status','Stage '+str(Status),': Analysing the fitted seeds')
                         JobSet=Meta.JobSets[Status]
                         NJobs=UI.CalculateNJobs(JobSet)[1]
-                        print(JobSet)
-                        print(NJobs)
-                        exit()
                         if md==len(ModelName)-1:
+                            print('Wip')
+                            exit()
                             base_data = None
                             with alive_bar(len(JobSets),force_tty=True, title='Checking the results from HTCondor') as bar:
                              for i in range(0,len(JobSet)):
@@ -879,47 +878,49 @@ while Status<len(Program):
                              UI.LogOperations(EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/'+RecBatchID+'_REC_LOG.csv', 'a', [[3+md,ModelName[md],rec_no,eval_no,eval_no/(rec_no+eval_no),eval_no/len(eval_data)]])
                              UI.Msg('location',"The log data has been created successfully and written to",EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/'+RecBatchID+'_REC_LOG.csv')
                         else:
-                            log_rec_no=0
+                            NewJobSet=[]
+                            for i in JobSet:
+                                NewJobSet.append(0)
                             if Log:
-                                 rec_no=0
-                                 eval_no=0
                                  rec_list=[]
-                            with alive_bar(len(JobSets),force_tty=True, title='Checking the results from HTCondor') as bar:
+                            with alive_bar(NJobs,force_tty=True, title='Checking the results from HTCondor') as bar:
                              for i in range(0,len(JobSet)):
                                     base_data = None
+                                    bar.text = f'-> Analysing set : {i}...'
                                     bar()
-                                    for j in range(len(JobSet[i])):
-                                             for k in range(JobSet[i][j]):
-                                                  required_output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/Temp_RUTr1'+ModelName[md]+'_'+RecBatchID+'_'+str(i)+'/RUTr1'+ModelName[md]+'_'+RecBatchID+'_RefinedSeeds_'+str(i)+'_'+str(j)+'_'+str(k)+'.pkl'
-                                                  new_data=UI.PickleOperations(required_output_file_location,'r','N/A')[0]
-                                                  print(UI.TimeStamp(),'Set',str(i)+'_'+str(j)+'_'+str(k), 'contains', len(new_data), 'seeds')
-                                                  if base_data == None:
-                                                        base_data = new_data
-                                                  else:
-                                                        base_data+=new_data
-                                    if base_data==None:
-                                        Records=0
-                                    else:
-                                        Records=len(base_data)
-                                        print(UI.TimeStamp(),'The output '+str(i)+' contains', Records, 'raw images')
-                                        base_data=list(set(base_data))
-                                        Records_After_Compression=len(base_data)
-                                    if Records>0:
-                                          Compression_Ratio=int((Records_After_Compression/Records)*100)
-                                          output_split=int(np.ceil(Records_After_Compression/PM.MaxSegments))
-                                          for os_itr in range(output_split):
-                                                output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/Temp_RUTr1'+ModelName[md]+'_'+RecBatchID+'_0/RUTr1'+str(ModelName[md+1])+'_'+RecBatchID+'_Input_Seeds_'+str(i)+'_'+str(j)+'.pkl'
-                                                print(UI.PickleOperations(output_file_location,'w',base_data[j*PM.MaxSegments:(j+1)*PM.MaxSegments])[1])
-                                                if Log:
-                                                 for rd in base_data:
-                                                     rec_list.append([rd.Header[0],rd.Header[1]])
-                                                 del base_data
-
-                                    else:
-                                          CompressionRatio=0
-                                          print(UI.TimeStamp(),'The output '+str(i)+'  compression ratio is ', Compression_Ratio, ' %, skipping this step')
-
-
+                                    if NewJobSet[i]==0:
+                                        for j in range(len(JobSet[i])):
+                                                      required_output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/Temp_RUTr1'+ModelName[md]+'_'+RecBatchID+'_'+str(i)+'/RUTr1'+ModelName[md]+'_'+RecBatchID+'_RefinedSeeds_'+str(i)+'_'+str(j)+'.pkl'
+                                                      new_data=UI.PickleOperations(required_output_file_location,'r','N/A')[0]
+                                                      print(UI.TimeStamp(),'Set',str(i)+'_'+str(j), 'contains', len(new_data), 'seeds')
+                                                      if base_data == None:
+                                                            base_data = new_data
+                                                      else:
+                                                            base_data+=new_data
+                                                      bar()
+                                        if base_data==None:
+                                            Records=0
+                                        else:
+                                            Records=len(base_data)
+                                            print(UI.TimeStamp(),'The output '+str(i)+' contains', Records, 'raw images')
+                                            base_data=list(set(base_data))
+                                            Records_After_Compression=len(base_data)
+                                        if Records>0:
+                                              Compression_Ratio=int((Records_After_Compression/Records)*100)
+                                              tot_fractions=int(np.ceil(Records_After_Compression/MaxSeeds))
+                                              for os_itr in range(tot_fractions):
+                                                    output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/Temp_RUTr1'+ModelName[md]+'_'+RecBatchID+'_0/RUTr1'+str(ModelName[md+1])+'_'+RecBatchID+'_Input_Seeds_'+str(i)+'_'+str(j)+'.pkl'
+                                                    print(UI.PickleOperations(output_file_location,'w',base_data[j*MaxSegments:(j+1)*MaxSeeds])[1])
+                                                    if Log:
+                                                     for rd in base_data:
+                                                         rec_list.append([rd.Header[0],rd.Header[1]])
+                                                     del base_data
+                                              NewJobSet[i]=tot_fractions
+                                        else:
+                                              CompressionRatio=0
+                                              print(UI.TimeStamp(),'The output '+str(i)+'  compression ratio is ', Compression_Ratio, ' %, skipping this step')
+                            print(NewJobSet)
+                            exit()
                             if Log:
                                          eval_data_file=EOS_DIR+'/ANNDEA/Data/TEST_SET/'+RecBatchID+'/EUTr1b_'+RecBatchID+'_SEED_TRUTH_COMBINATIONS.csv'
                                          eval_data=pd.read_csv(eval_data_file,header=0,usecols=['Segment_1','Segment_2'])
