@@ -476,7 +476,7 @@ while Status<len(Program):
                              rec_new.drop(['Segment_2'],axis=1,inplace=True)
                              rec = pd.concat([rec, rec_new], ignore_index=True)
                              rec.drop_duplicates(subset="Seed_ID",keep='first',inplace=True)
-             if rec!=None:
+             if rec is not None:
                  rec_eval=pd.merge(eval_data, rec, how="inner", on=['Seed_ID'])
                  eval_no=len(rec_eval)
                  rec_no=(len(rec)-len(rec_eval))
