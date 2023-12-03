@@ -886,7 +886,7 @@ while Status<len(Program):
                                     bar.text = f'-> Analysing set : {i}...'
                                     bar()
                                     if NewJobSet[i]==0:
-                                        for j in range(len(JobSet[i])):
+                                        for j in range(JobSet[i]):
                                                       required_output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/Temp_RUTr1'+ModelName[md]+'_'+RecBatchID+'_'+str(i)+'/RUTr1'+ModelName[md]+'_'+RecBatchID+'_RefinedSeeds_'+str(i)+'_'+str(j)+'.pkl'
                                                       new_data=UI.PickleOperations(required_output_file_location,'r','N/A')[0]
                                                       print(UI.TimeStamp(),'Set',str(i)+'_'+str(j), 'contains', len(new_data), 'seeds')
