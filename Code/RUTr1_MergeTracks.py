@@ -435,8 +435,8 @@ while Status<len(Program):
         NewJobSet=[]
         for i in JobSet:
             NewJobSet.append(0)
-        with alive_bar(len(JobSets),force_tty=True, title='Checking the results from HTCondor') as bar:
-            for i in range(len(JobSets)): #//Temporarily measure to save space
+        with alive_bar(len(JobSet),force_tty=True, title='Checking the results from HTCondor') as bar:
+            for i in range(len(JobSet)): #//Temporarily measure to save space
                 bar.text = f'-> Analysing set : {i}...'
                 bar()
                 tot_fractions=0
