@@ -311,7 +311,7 @@ def AutoPilot(wait_min, interval_min, max_interval_tolerance,program,RequestExtC
          else:
               return True,False
      return False,False
-def StandardProcess(program,status,SubGap,SubPause,RequestExtCPU,JobFlavour,ReqMemory,time_int,Patience,Meta,RecOutputMeta):
+def StandardProcess(program,status,SubGap,SubPause,RequestExtCPU,JobFlavour,ReqMemory,time_int,Patience):
         print(bc.HEADER+"#############################################################################################"+bc.ENDC)
         print(TimeStamp(),bc.BOLD+'Stage '+str(status)+':'+bc.ENDC+str(program[status][0]))
         batch_sub=program[status][4]>1
@@ -333,7 +333,6 @@ def StandardProcess(program,status,SubGap,SubPause,RequestExtCPU,JobFlavour,ReqM
                                     program[status][8])
         if len(bad_pop)==0:
              print(TimeStamp(),bc.OKGREEN+'Stage '+str(status)+' has successfully completed'+bc.ENDC)
-             UpdateStatus(status+1,Meta,RecOutputMeta)
              return True,False
         elif (program[status][4])==len(bad_pop):
                  bad_pop=CreateCondorJobs(program[status][1][0],
