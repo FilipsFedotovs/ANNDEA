@@ -455,44 +455,31 @@ while Status<len(Program):
                     NewJobSet[i]=tot_fractions
                 else:
                     continue
-        print(NewJobSet)
         if Log:
-         # try:
              UI.Msg('vanilla','Initiating the logging...')
              eval_data_file=EOS_DIR+'/ANNDEA/Data/TEST_SET/'+RecBatchID+'/EUTr1b_'+RecBatchID+'_SEED_TRUTH_COMBINATIONS.csv'
              eval_data=pd.read_csv(eval_data_file,header=0,usecols=['Segment_1','Segment_2'])
              eval_data["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(eval_data['Segment_1'], eval_data['Segment_2'])]
              eval_data.drop(['Segment_1'],axis=1,inplace=True)
              eval_data.drop(['Segment_2'],axis=1,inplace=True)
-             eval_no=0
-             rec_no=0
              with alive_bar(len(JobSets),force_tty=True, title='Preparing data for the log...') as bar:
-                 for i in range(0,len(Meta.JobSets)):
+                 for i in range(len(NewJobSet)):
                     bar()
                     rec=None
-                    for j in range(0,int(Meta.JobSets[i][2])):
-                        for k in range(0,Meta.JobSets[i][3][j]):
-                          new_input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/Temp_RUTr1a'+'_'+RecBatchID+'_'+str(i)+'/RUTr1a_'+RecBatchID+'_SelectedSeeds_'+str(i)+'_'+str(j)+'_'+str(k)+'.csv'
-                          if os.path.isfile(new_input_file_location)==False:
-                                break
-                          else:
+                    for j in range(Meta.JobSets[i]):
+                          if j>0:
+                             new_input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/Temp_RUTr1a'+'_'+RecBatchID+'_'+str(i)+'/RUTr1a_'+RecBatchID+'_SelectedSeeds_'+str(i)+'_'+str(j)+'.csv'
                              rec_new=pd.read_csv(new_input_file_location,usecols = ['Segment_1','Segment_2'])
                              rec_new["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(rec_new['Segment_1'], rec_new['Segment_2'])]
                              rec_new.drop(['Segment_1'],axis=1,inplace=True)
                              rec_new.drop(['Segment_2'],axis=1,inplace=True)
                              rec = pd.concat([rec, rec_new], ignore_index=True)
                              rec.drop_duplicates(subset="Seed_ID",keep='first',inplace=True)
-                    try:
-                        rec_eval=pd.merge(eval_data, rec, how="inner", on=['Seed_ID'])
-
-                        eval_no+=len(rec_eval)
-                        rec_no+=(len(rec)-len(rec_eval))
-                    except:
-                        continue
+             rec_eval=pd.merge(eval_data, rec, how="inner", on=['Seed_ID'])
+             eval_no=len(rec_eval)
+             rec_no=(len(rec)-len(rec_eval))
              UI.LogOperations(EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/'+RecBatchID+'_REC_LOG.csv', 'a', [[2,'SLG and STG cuts',rec_no,eval_no,eval_no/(rec_no+eval_no),eval_no/len(eval_data)]])
              UI.Msg('location',"The log has been created successfully at ",EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/'+RecBatchID+'_REC_LOG.csv')
-         # except:
-         #     UI.Msg('failed','Log creation has failed')
         Meta.JobSets[Status+1]=NewJobSet
         print(UI.PickleOperations(RecOutputMeta,'w', Meta)[1])
         UI.Msg('completed','Stage '+str(Status)+' has successfully completed')
