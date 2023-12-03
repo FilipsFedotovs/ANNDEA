@@ -826,12 +826,11 @@ while Status<len(Program):
                     Result=UI.StandardProcess(Program_Dummy,Status,SubGap,SubPause,RequestExtCPU,JobFlavour,ReqMemory,time_int,Patience,Meta,RecOutputMeta)
                     if Result:
                         UI.Msg('status','Stage '+str(Status),': Analysing the fitted seeds')
+                        JobSet=Meta.JobSets[Status]
+                        NJobs=UI.CalculateNJobs(JobSet)[1]
+                        print(JobSet)
+                        print(NJobs)
                         exit()
-                        JobSet=[]
-                        for i in range(len(JobSets)):
-                             JobSet.append([])
-                             for j in range(len(JobSets[i][3])):
-                                 JobSet[i].append(JobSets[i][3][j])
                         if md==len(ModelName)-1:
                             base_data = None
                             with alive_bar(len(JobSets),force_tty=True, title='Checking the results from HTCondor') as bar:
