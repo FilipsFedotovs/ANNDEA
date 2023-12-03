@@ -345,7 +345,7 @@ if Log:
 prog_entry=[]
 NJobs=UI.CalculateNJobs(Meta.JobSets[int(Log)])[1]
 prog_entry.append(' Sending tracks to the HTCondor, so track segment combinations can be formed...')
-prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/'+RecBatchID+'/','RawSeedsRes','RUTr1a','.csv',RecBatchID, Meta.JobSets[JobIndex],'RUTr1a_GenerateRawSelectedSeeds_Sub.py'])
+prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/'+RecBatchID+'/','RawSeedsRes','RUTr1a','.csv',RecBatchID, Meta.JobSets[int(Log)],'RUTr1a_GenerateRawSelectedSeeds_Sub.py'])
 prog_entry.append([ " --MaxSegments ", " --MaxSLG "," --MaxSTG "])
 prog_entry.append([MaxSegments, MaxSLG, MaxSTG])
 prog_entry.append(NJobs)
