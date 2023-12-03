@@ -466,7 +466,7 @@ while Status<len(Program):
                  for i in range(len(NewJobSet)):
                     bar()
                     rec=None
-                    for j in range(Meta.JobSets[i]):
+                    for j in range(NewJobSet[i]):
                           if j>0:
                              new_input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/Temp_RUTr1a'+'_'+RecBatchID+'_'+str(i)+'/RUTr1a_'+RecBatchID+'_SelectedSeeds_'+str(i)+'_'+str(j)+'.csv'
                              rec_new=pd.read_csv(new_input_file_location,usecols = ['Segment_1','Segment_2'])
