@@ -445,7 +445,7 @@ while Status<len(Program):
                     result=pd.read_csv(output_file_location,names = ['Segment_1','Segment_2'])
                     Records=len(result)
                     print(UI.TimeStamp(),'Set',str(i),'and subset', str(j), 'contains', Records, 'seeds')
-                    fractions=int(math.ceil(Records_After_Compression/MaxSeeds))
+                    fractions=int(math.ceil(Records/MaxSeeds))
                     print(tot_fractions)
                     print(fractions)
                     for k in range(0,fractions):
