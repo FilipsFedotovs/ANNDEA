@@ -827,9 +827,10 @@ while Status<len(Program):
                         if md==len(ModelName)-1:
                             with alive_bar(NJobs,force_tty=True, title='Checking the results from HTCondor') as bar:
                              base_data = None
-                             bar.text = f'-> Analysing set : {i}...'
-                             bar()
+
                              for i in range(len(JobSet)):
+                                    bar.text = f'-> Analysing set : {i}...'
+                                    bar()
                                     for j in range(JobSet[i]):
                                                   required_output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/Temp_RUTr1'+ModelName[md]+'_'+RecBatchID+'_'+str(i)+'/RUTr1'+ModelName[md]+'_'+RecBatchID+'_RefinedSeeds_'+str(i)+'_'+str(j)+'.pkl'
                                                   new_data=UI.PickleOperations(required_output_file_location,'r','N/A')[0]
