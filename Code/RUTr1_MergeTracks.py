@@ -420,7 +420,6 @@ while Status<len(Program):
         UI.UpdateStatus(Status+1,Meta,RecOutputMeta)
     elif Program[Status]=='Custom - Collect Raw Seeds':
         UI.Msg('status','Stage '+str(Status),': Collecting and de-duplicating the results from previous stage '+str(Status-1)+'...')
-        min_i=0
         UI.Msg('vanilla','Analysing the data sample in order to understand how many jobs to submit to HTCondor... ')
         data=pd.read_csv(required_file_location,header=0,
                     usecols=['z','Rec_Seg_ID'])
@@ -436,31 +435,27 @@ while Status<len(Program):
         NewJobSet=[]
         for i in JobSet:
             NewJobSet.append(0)
-        print(NewJobSet)
-        with alive_bar(len(JobSets)-min_i,force_tty=True, title='Checking the results from HTCondor') as bar:
-            for i in range(min_i,len(JobSets)): #//Temporarily measure to save space
+        with alive_bar(len(JobSets),force_tty=True, title='Checking the results from HTCondor') as bar:
+            for i in range(len(JobSets)): #//Temporarily measure to save space
                 bar.text = f'-> Analysing set : {i}...'
                 bar()
                 tot_fractions=0
-                for j in range(0,JobSet[i]):
-                    output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/Temp_RUTr1a'+'_'+RecBatchID+'_'+str(i)+'/RUTr1a_'+RecBatchID+'_RawSeeds_'+str(i)+'_'+str(j)+'.csv'
-                    result=pd.read_csv(output_file_location,names = ['Segment_1','Segment_2'])
-                    Records=len(result)
-                    print(UI.TimeStamp(),'Set',str(i),'and subset', str(j), 'contains', Records, 'seeds')
-                    fractions=int(math.ceil(Records/MaxSeeds))
-                    print(tot_fractions)
-                    print(fractions)
-                    for k in range(0,fractions):
-                     new_output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/Temp_RUTr1a'+'_'+RecBatchID+'_'+str(i)+'/RUTr1a_'+RecBatchID+'_SelectedSeeds_'+str(i)+'_'+str(tot_fractions+k)+'.csv'
-                     print(new_output_file_location)
-                     result[(k*MaxSeeds):min(Records,((k+1)*MaxSeeds))].to_csv(new_output_file_location,index=False)
-                    tot_fractions+=fractions
-                    print(tot_fractions)
-                    print(fractions)
-                    x=input()
+                if NewJobSet==0:
+                    for j in range(0,JobSet[i]):
+                        output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/Temp_RUTr1a'+'_'+RecBatchID+'_'+str(i)+'/RUTr1a_'+RecBatchID+'_RawSeeds_'+str(i)+'_'+str(j)+'.csv'
+                        result=pd.read_csv(output_file_location,names = ['Segment_1','Segment_2'])
+                        Records=len(result)
+                        print(UI.TimeStamp(),'Set',str(i),'and subset', str(j), 'contains', Records, 'seeds')
+                        fractions=int(math.ceil(Records/MaxSeeds))
+                        for k in range(0,fractions):
+                         new_output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/Temp_RUTr1a'+'_'+RecBatchID+'_'+str(i)+'/RUTr1a_'+RecBatchID+'_SelectedSeeds_'+str(i)+'_'+str(tot_fractions+k)+'.csv'
+                         print(new_output_file_location)
+                         result[(k*MaxSeeds):min(Records,((k+1)*MaxSeeds))].to_csv(new_output_file_location,index=False)
+                        tot_fractions+=fractions
+                    NewJobSet[i]=tot_fractions
+                else:
+                    continue
 
-                # print(UI.PickleOperations(RecOutputMeta,'w', Meta)[1])
-        exit()
         if Log:
          try:
              UI.Msg('vanilla','Initiating the logging...')
@@ -498,7 +493,11 @@ while Status<len(Program):
              UI.Msg('location',"The log has been created successfully at ",EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/'+RecBatchID+'_REC_LOG.csv')
          except:
              UI.Msg('failed','Log creation has failed')
+        Meta.JobSets[Status+1]=NewJobSet
+        print(UI.PickleOperations(RecOutputMeta,'w', Meta)[1])
         UI.Msg('completed','Stage '+str(Status)+' has successfully completed')
+        print(Meta.JobSets)
+        exit()
         UI.UpdateStatus(Status+1,Meta,RecOutputMeta)
 
     elif Program[Status]=='Custom - Merging':
