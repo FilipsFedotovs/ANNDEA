@@ -451,7 +451,7 @@ while Status<len(Program):
                     for k in range(0,fractions):
                      new_output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/Temp_RUTr1a'+'_'+RecBatchID+'_'+str(i)+'/RUTr1a_'+RecBatchID+'_SelectedSeeds_'+str(i)+'_'+str(tot_fractions+k)+'.csv'
                      print(new_output_file_location)
-                     result[(k*MaxSeeds):min(Records_After_Compression,((k+1)*MaxSeeds))].to_csv(new_output_file_location,index=False)
+                     result[(k*MaxSeeds):min(Records,((k+1)*MaxSeeds))].to_csv(new_output_file_location,index=False)
                     tot_fractions+=fractions
                     print(tot_fractions)
                     print(fractions)
