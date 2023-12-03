@@ -121,76 +121,8 @@ required_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/RUTr1_'+RecB
 required_eval_file_location=EOS_DIR+'/ANNDEA/Data/TEST_SET/'+RecBatchID+'/EUTr1_'+RecBatchID+'_TRACK_SEGMENTS.csv'
 ########################################     Phase 1 - Create compact source file    #########################################
 UI.Msg('status','Stage 0:',' Preparing the source data...')
-if Log and (os.path.isfile(required_eval_file_location)==False or Mode=='RESET'):
-    if os.path.isfile(EOSsubModelMetaDIR)==False:
-              UI.Msg('failed',"Fail to proceed further as the model file "+EOSsubModelMetaDIR+ " has not been found...")
-              exit()
-    else:
-           UI.Msg('location','Loading previously saved data from ',EOSsubModelMetaDIR)
-           MetaInput=UI.PickleOperations(EOSsubModelMetaDIR,'r', 'N/A')
-           Meta=MetaInput[0]
-           MinHitsTrack=Meta.MinHitsTrack
-    UI.Msg('location','Loading raw data from',initial_input_file_location)
-    if BrickID=='':
-        ColUse=[TrackID,PM.x,PM.y,PM.z,PM.tx,PM.ty,PM.MC_Track_ID,PM.MC_Event_ID]
-    else:
-        ColUse=[TrackID,BrickID,PM.x,PM.y,PM.z,PM.tx,PM.ty,PM.MC_Track_ID,PM.MC_Event_ID]
-    
-    data=pd.read_csv(initial_input_file_location,
-                header=0,
-                usecols=ColUse)
-    if BrickID=='':
-        data[BrickID]='D'
-    total_rows=len(data)
-    UI.Msg('result','The raw data has',total_rows,'hits')
-    UI.Msg('vanilla','Removing unreconstructed hits...')
-    data=data.dropna()
-    final_rows=len(data)
-    UI.Msg('result','The cleaned data has',final_rows,'hits')
-    data[PM.MC_Event_ID] = data[PM.MC_Event_ID].astype(str)
-    data[PM.MC_Track_ID] = data[PM.MC_Track_ID].astype(str)
-    
-    data[BrickID] = data[BrickID].astype(str)
-    data[TrackID] = data[TrackID].astype(str)
-    data['Rec_Seg_ID'] = data[TrackID] + '-' + data[BrickID]
-    data['MC_Mother_Track_ID'] = data[PM.MC_Event_ID] + '-' + data[PM.MC_Track_ID]
-    data=data.drop([TrackID],axis=1)
-    data=data.drop([BrickID],axis=1)
-    data=data.drop([PM.MC_Event_ID],axis=1)
-    data=data.drop([PM.MC_Track_ID],axis=1)
-    compress_data=data.drop([PM.x,PM.y,PM.z,PM.tx,PM.ty],axis=1)
-    compress_data['MC_Mother_Track_No']= compress_data['MC_Mother_Track_ID']
-    compress_data=compress_data.groupby(by=['Rec_Seg_ID','MC_Mother_Track_ID'])['MC_Mother_Track_No'].count().reset_index()
-    compress_data=compress_data.sort_values(['Rec_Seg_ID','MC_Mother_Track_No'],ascending=[1,0])
-    compress_data.drop_duplicates(subset='Rec_Seg_ID',keep='first',inplace=True)
-    data=data.drop(['MC_Mother_Track_ID'],axis=1)
-    compress_data=compress_data.drop(['MC_Mother_Track_No'],axis=1)
-    data=pd.merge(data, compress_data, how="left", on=['Rec_Seg_ID'])
-    if SliceData:
-         UI.Msg('vanilla','Slicing the data...')
-         ValidEvents=data.drop(data.index[(data[PM.x] > Xmax) | (data[PM.x] < Xmin) | (data[PM.y] > Ymax) | (data[PM.y] < Ymin)])
-         ValidEvents.drop([PM.x,PM.y,PM.z,PM.tx,PM.ty,'MC_Mother_Track_ID'],axis=1,inplace=True)
-         ValidEvents.drop_duplicates(subset='Rec_Seg_ID',keep='first',inplace=True)
-         data=pd.merge(data, ValidEvents, how="inner", on=['Rec_Seg_ID'])
-         final_rows=len(data.axes[0])
-         UI.Msg('result','The sliced data has',final_rows,'hits')
-    UI.Msg('result','Removing tracks which have less than',MinHitsTrack,'hits')
-    track_no_data=data.groupby(['MC_Mother_Track_ID','Rec_Seg_ID'],as_index=False).count()
-    track_no_data=track_no_data.drop([PM.y,PM.z,PM.tx,PM.ty],axis=1)
-    track_no_data=track_no_data.rename(columns={PM.x: "Rec_Seg_No"})
-    new_combined_data=pd.merge(data, track_no_data, how="left", on=['Rec_Seg_ID','MC_Mother_Track_ID'])
-    new_combined_data = new_combined_data[new_combined_data.Rec_Seg_No >= MinHitsTrack]
-    new_combined_data = new_combined_data.drop(["Rec_Seg_No"],axis=1)
-    new_combined_data=new_combined_data.sort_values(['Rec_Seg_ID',PM.x],ascending=[1,1])
-    grand_final_rows=len(new_combined_data)
-    UI.Msg('result','The cleaned data has',grand_final_rows,'hits')
-    new_combined_data=new_combined_data.rename(columns={PM.x: "x"})
-    new_combined_data=new_combined_data.rename(columns={PM.y: "y"})
-    new_combined_data=new_combined_data.rename(columns={PM.z: "z"})
-    new_combined_data=new_combined_data.rename(columns={PM.tx: "tx"})
-    new_combined_data=new_combined_data.rename(columns={PM.ty: "ty"})
-    new_combined_data.to_csv(required_eval_file_location,index=False)
-    UI.Msg('location',"The track segment data has been created successfully and written to",required_eval_file_location)
+
+
 if os.path.isfile(required_file_location)==False or Mode=='RESET':
         if os.path.isfile(EOSsubModelMetaDIR)==False:
               UI.Msg('failed',"Fail to proceed further as the model file "+EOSsubModelMetaDIR+ " has not been found...")
@@ -278,13 +210,96 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         JobSetList=[]
         for i in range(20):
             JobSetList.append('empty')
-        JobSetList[0]=JobData
+        if Log:
+            JobSetList[1]=JobData
+        else:
+            JobSetList[0]=JobData
         Meta=UI.TrainingSampleMeta(RecBatchID)
         Meta.IniTrackSeedMetaData(MaxSLG,MaxSTG,MaxDOCA,MaxAngle,JobSetList,MaxSegments,VetoMotherTrack,MaxSeeds,MinHitsTrack)
-        print(JobSetList)
         Meta.UpdateStatus(0)
         print(UI.PickleOperations(RecOutputMeta,'w', Meta)[1])
         UI.Msg('completed','Stage 0 has successfully completed')
+
+if Log and (os.path.isfile(required_eval_file_location)==False or Mode=='RESET'):
+    if os.path.isfile(EOSsubModelMetaDIR)==False:
+              UI.Msg('failed',"Fail to proceed further as the model file "+EOSsubModelMetaDIR+ " has not been found...")
+              exit()
+    else:
+           UI.Msg('location','Loading previously saved data from ',EOSsubModelMetaDIR)
+           MetaInput=UI.PickleOperations(EOSsubModelMetaDIR,'r', 'N/A')
+           Meta=MetaInput[0]
+           MinHitsTrack=Meta.MinHitsTrack
+    UI.Msg('location','Loading raw data from',initial_input_file_location)
+    if BrickID=='':
+        ColUse=[TrackID,PM.x,PM.y,PM.z,PM.tx,PM.ty,PM.MC_Track_ID,PM.MC_Event_ID]
+    else:
+        ColUse=[TrackID,BrickID,PM.x,PM.y,PM.z,PM.tx,PM.ty,PM.MC_Track_ID,PM.MC_Event_ID]
+
+    data=pd.read_csv(initial_input_file_location,
+                header=0,
+                usecols=ColUse)
+    if BrickID=='':
+        data[BrickID]='D'
+    total_rows=len(data)
+    UI.Msg('result','The raw data has',total_rows,'hits')
+    UI.Msg('vanilla','Removing unreconstructed hits...')
+    data=data.dropna()
+    final_rows=len(data)
+    UI.Msg('result','The cleaned data has',final_rows,'hits')
+    data[PM.MC_Event_ID] = data[PM.MC_Event_ID].astype(str)
+    data[PM.MC_Track_ID] = data[PM.MC_Track_ID].astype(str)
+
+    data[BrickID] = data[BrickID].astype(str)
+    data[TrackID] = data[TrackID].astype(str)
+    data['Rec_Seg_ID'] = data[TrackID] + '-' + data[BrickID]
+    data['MC_Mother_Track_ID'] = data[PM.MC_Event_ID] + '-' + data[PM.MC_Track_ID]
+    data=data.drop([TrackID],axis=1)
+    data=data.drop([BrickID],axis=1)
+    data=data.drop([PM.MC_Event_ID],axis=1)
+    data=data.drop([PM.MC_Track_ID],axis=1)
+    compress_data=data.drop([PM.x,PM.y,PM.z,PM.tx,PM.ty],axis=1)
+    compress_data['MC_Mother_Track_No']= compress_data['MC_Mother_Track_ID']
+    compress_data=compress_data.groupby(by=['Rec_Seg_ID','MC_Mother_Track_ID'])['MC_Mother_Track_No'].count().reset_index()
+    compress_data=compress_data.sort_values(['Rec_Seg_ID','MC_Mother_Track_No'],ascending=[1,0])
+    compress_data.drop_duplicates(subset='Rec_Seg_ID',keep='first',inplace=True)
+    data=data.drop(['MC_Mother_Track_ID'],axis=1)
+    compress_data=compress_data.drop(['MC_Mother_Track_No'],axis=1)
+    data=pd.merge(data, compress_data, how="left", on=['Rec_Seg_ID'])
+    if SliceData:
+         UI.Msg('vanilla','Slicing the data...')
+         ValidEvents=data.drop(data.index[(data[PM.x] > Xmax) | (data[PM.x] < Xmin) | (data[PM.y] > Ymax) | (data[PM.y] < Ymin)])
+         ValidEvents.drop([PM.x,PM.y,PM.z,PM.tx,PM.ty,'MC_Mother_Track_ID'],axis=1,inplace=True)
+         ValidEvents.drop_duplicates(subset='Rec_Seg_ID',keep='first',inplace=True)
+         data=pd.merge(data, ValidEvents, how="inner", on=['Rec_Seg_ID'])
+         final_rows=len(data.axes[0])
+         UI.Msg('result','The sliced data has',final_rows,'hits')
+    UI.Msg('result','Removing tracks which have less than',MinHitsTrack,'hits')
+    track_no_data=data.groupby(['MC_Mother_Track_ID','Rec_Seg_ID'],as_index=False).count()
+    track_no_data=track_no_data.drop([PM.y,PM.z,PM.tx,PM.ty],axis=1)
+    track_no_data=track_no_data.rename(columns={PM.x: "Rec_Seg_No"})
+    new_combined_data=pd.merge(data, track_no_data, how="left", on=['Rec_Seg_ID','MC_Mother_Track_ID'])
+    new_combined_data = new_combined_data[new_combined_data.Rec_Seg_No >= MinHitsTrack]
+    new_combined_data = new_combined_data.drop(["Rec_Seg_No"],axis=1)
+    new_combined_data=new_combined_data.sort_values(['Rec_Seg_ID',PM.x],ascending=[1,1])
+    grand_final_rows=len(new_combined_data)
+    UI.Msg('result','The cleaned data has',grand_final_rows,'hits')
+    new_combined_data=new_combined_data.rename(columns={PM.x: "x"})
+    new_combined_data=new_combined_data.rename(columns={PM.y: "y"})
+    new_combined_data=new_combined_data.rename(columns={PM.z: "z"})
+    new_combined_data=new_combined_data.rename(columns={PM.tx: "tx"})
+    new_combined_data=new_combined_data.rename(columns={PM.ty: "ty"})
+    new_combined_data.to_csv(required_eval_file_location,index=False)
+    UI.Msg('vanilla','Analysing evaluation data... ')
+    new_combined_data.drop_duplicates(subset="Rec_Seg_ID",keep='first',inplace=True)  #Keeping only starting hits for each track record (we do not require the full information about track in this script)
+    Records=len(data.axes[0])
+    Sets=int(np.ceil(Records/MaxSegments))
+    UI.Msg('location','Updating the Meta file ',RecOutputMeta)
+    MetaInput=UI.PickleOperations(RecOutputMeta,'r', 'N/A')
+    Meta=MetaInput[0]
+    Meta.JobSets[0]=Sets
+    print(UI.PickleOperations(RecOutputMeta,'w', Meta)[0])
+    UI.Msg('location',"The track segment data has been created successfully and written to",required_eval_file_location)
+
 elif os.path.isfile(RecOutputMeta)==True:
     UI.Msg('location','Loading previously saved data from ',RecOutputMeta)
     MetaInput=UI.PickleOperations(RecOutputMeta,'r', 'N/A')
@@ -298,7 +313,10 @@ MaxSegments=Meta.MaxSegments
 MaxSeeds=Meta.MaxSeeds
 VetoMotherTrack=Meta.VetoMotherTrack
 MinHitsTrack=Meta.MinHitsTrack
+
+print(JobSets)
 exit()
+
 #The function bellow helps to automate the submission process
 if Mode=='RESET':
     FreshStart=False
@@ -317,17 +335,14 @@ if Log:
     prog_entry=[]
     job_sets=[]
     prog_entry.append(' Sending eval seeds to HTCondor...')
-    data=pd.read_csv(required_eval_file_location,header=0,usecols=['Rec_Seg_ID'])
-    UI.Msg('vanilla','Analysing data... ')
-    data.drop_duplicates(subset="Rec_Seg_ID",keep='first',inplace=True)  #Keeping only starting hits for each track record (we do not require the full information about track in this script)
-    Records=len(data.axes[0])
-    Sets=int(np.ceil(Records/MaxSegments))
+
+
     prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TEST_SET/'+RecBatchID+'/','RawSeedsRes','EUTr1a','.csv',RecBatchID,Sets,'EUTr1a_GenerateRawSelectedSeeds_Sub.py'])
     prog_entry.append([" --MaxSegments ", " --VetoMotherTrack "])
     prog_entry.append([MaxSegments, '"'+str(VetoMotherTrack)+'"'])
     prog_entry.append(Sets)
     prog_entry.append(LocalSub)
-    prog_entry.append(['',''])
+    prog_entry.append('N/A')
     prog_entry.append(False)
     prog_entry.append(False)
     #Setting up folders for the output. The reconstruction of just one brick can easily generate >100k of files. Keeping all that blob in one directory can cause problems on lxplus.
@@ -350,7 +365,7 @@ prog_entry.append([ " --MaxSegments ", " --MaxSLG "," --MaxSTG "])
 prog_entry.append([MaxSegments, MaxSLG, MaxSTG])
 prog_entry.append(NJobs)
 prog_entry.append(LocalSub)
-prog_entry.append([" --PlateZ ",JobSets])
+prog_entry.append('N/A')
 prog_entry.append(HTCondorLog)
 prog_entry.append(False)
 if Mode=='RESET':
