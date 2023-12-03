@@ -77,6 +77,7 @@ SubPause=int(args.SubPause)*60
 SubGap=int(args.SubGap)
 LocalSub=(args.LocalSub=='Y')
 MaxSeeds=int(args.MaxSeeds)
+MaxSeeds=1000
 ForceStatus=args.ForceStatus
 if LocalSub:
    time_int=0
