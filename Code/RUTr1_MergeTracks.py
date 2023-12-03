@@ -429,6 +429,8 @@ while Status<len(Program):
         UI.LogOperations(EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/'+RecBatchID+'_REC_LOG.csv', 'w', [['Step_No','Step_Desc','Fake_Seeds','Truth_Seeds','Precision','Recall'],[1,'Initial Sampling',rec_no,eval_no,eval_no/(rec_no+eval_no),1.0]])
         UI.Msg('location',"The process log has been created successfully and written to ",EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/'+RecBatchID+'_REC_LOG.csv')
         UI.Msg('completed','Stage '+str(Status)+' has successfully completed')
+        print(Status)
+        exit()
         UI.UpdateStatus(Status+1,Meta,RecOutputMeta)
     elif Program[Status]=='Custom - PickR':
         UI.Msg('status','Stage '+str(Status),': Collecting and de-duplicating the results from previous stage '+str(Status-1)+'...')
