@@ -940,7 +940,9 @@ while Status<len(Program):
                                          log_rec_no+=rec_no
                                          UI.LogOperations(EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/'+RecBatchID+'_REC_LOG.csv', 'a', [[3+md,ModelName[md],log_rec_no,eval_no,eval_no/(log_rec_no+eval_no),eval_no/len(eval_data)]])
                                          UI.Msg('location',"The log data has been created successfully and written to",EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/'+RecBatchID+'_REC_LOG.csv')
-
+    MetaInput=UI.PickleOperations(RecOutputMeta,'r', 'N/A')
+    Meta=MetaInput[0]
+    Status=Meta.Status[-1]
 
 
 if Status<20:
