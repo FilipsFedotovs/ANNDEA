@@ -489,7 +489,6 @@ while Status<len(Program):
         print(UI.PickleOperations(RecOutputMeta,'w', Meta)[1])
         UI.Msg('completed','Stage '+str(Status)+' has successfully completed')
         UI.UpdateStatus(Status+1,Meta,RecOutputMeta)
-
     elif Program[Status]=='Custom - Merging':
         input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/RUTr1c_'+RecBatchID+'_Fit_Seeds.pkl'
         UI.Msg('location',"Loading the fit track seeds from the file ",input_file_location)
@@ -611,8 +610,6 @@ while Status<len(Program):
                 UI.LogOperations(EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv', 'a', [[4+len(ModelName),'Track Seed Merging',rec_no,eval_no,eval_no/(rec_no+eval_no),eval_no/len(eval_data)]])
                 UI.Msg('location',"The log data has been created successfully and written to",EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/'+RecBatchID+'_REC_LOG.csv')
              UI.UpdateStatus(Status+1,Meta,RecOutputMeta)
-
-
     elif Program[Status]=='Custom - TrackMapping':
                 raw_name=initial_input_file_location[:-4]
                 for l in range(len(raw_name)-1,0,-1):
@@ -792,7 +789,6 @@ while Status<len(Program):
                 new_combined_data.to_csv(final_output_file_location,index=False)
                 UI.Msg('location',"The merged track data has been created successfully and written to",final_output_file_location)
                 UI.UpdateStatus(Status+1,Meta,RecOutputMeta)
-
     else:
         for md in range(len(ModelName)):
             if Program[Status]==ModelName[md]:
@@ -828,7 +824,7 @@ while Status<len(Program):
                     if Result:
                         UI.Msg('status','Stage '+str(Status),': Analysing the fitted seeds')
                         JobSet=Meta.JobSets[Status]
-                        NJobs=UI.CalculateNJobs(JobSet)[1]
+                        NJobs=int(UI.CalculateNJobs(JobSet)[1])
                         if md==len(ModelName)-1:
                             print('Wip')
                             exit()

@@ -22,6 +22,7 @@ class bc:
     ENDC = '\033[0m'
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
+    GREY= '\033[90m'
 
 #This utility provides Timestamps for print messages
 def TimeStamp():
@@ -408,24 +409,7 @@ def StandardProcess(program,status,SubGap,SubPause,RequestExtCPU,JobFlavour,ReqM
                       else:
                           print(TimeStamp(),bc.FAIL+'Stage '+str(status)+' is uncompleted...'+bc.ENDC)
                           return False,False
-#The function bellow helps to automate the submission process
-def CleanFolder(folder,key):
-    if key=='':
-      for the_file in os.listdir(folder):
-                file_path=os.path.join(folder, the_file)
-                try:
-                    if os.path.isfile(file_path):
-                        os.unlink(file_path)
-                except Exception as e:
-                    print(e)
-    else:
-      for the_file in os.listdir(folder):
-                file_path=os.path.join(folder, the_file)
-                try:
-                    if os.path.isfile(file_path) and (key in the_file):
-                        os.unlink(file_path)
-                except Exception as e:
-                    print(e)
+
 #This function automates csv read/write operations
 def LogOperations(flocation,mode, message):
     if mode=='a':
