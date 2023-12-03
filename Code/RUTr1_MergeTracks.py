@@ -385,12 +385,7 @@ while Status<len(Program):
              break
     elif Program[Status]=='Custom - PickE':
         UI.Msg('status','Stage '+str(Status),': Collecting and de-duplicating the results from previous stage'+str(Status-1))
-        UI.Msg('location','Loading preselected data from ',initial_input_file_location)
-        data=pd.read_csv(required_eval_file_location,header=0,usecols=['Rec_Seg_ID'])
-        UI.Msg('vanilla','Analysing data... ')
-        data.drop_duplicates(subset="Rec_Seg_ID",keep='first',inplace=True)  #Keeping only starting hits for the each track record (we do not require the full information about track in this script)
-        Records=len(data.axes[0])
-        Sets=int(np.ceil(Records/MaxSegments))
+        Sets=Meta.JobSets[0]
         with alive_bar(Sets,force_tty=True, title='Analysing data...') as bar:
             for i in range(Sets): #//Temporarily measure to save space
                     bar.text = f'-> Analysing set : {i}...'
