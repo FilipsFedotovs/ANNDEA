@@ -487,8 +487,6 @@ while Status<len(Program):
         Meta.JobSets[Status+1]=NewJobSet
         print(UI.PickleOperations(RecOutputMeta,'w', Meta)[1])
         UI.Msg('completed','Stage '+str(Status)+' has successfully completed')
-        print(Meta.JobSets)
-        exit()
         UI.UpdateStatus(Status+1,Meta,RecOutputMeta)
 
     elif Program[Status]=='Custom - Merging':
