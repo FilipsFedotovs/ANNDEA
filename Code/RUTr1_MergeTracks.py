@@ -894,7 +894,6 @@ while Status<len(Program):
                                                             base_data = new_data
                                                       else:
                                                             base_data+=new_data
-                                                      bar()
                                         if base_data==None:
                                             Records=0
                                         else:
@@ -915,8 +914,6 @@ while Status<len(Program):
                                         else:
                                               CompressionRatio=0
                                               print(UI.TimeStamp(),'The output '+str(i)+'  compression ratio is ', Compression_Ratio, ' %, skipping this step')
-                            print(NewJobSet)
-                            exit()
                             if Log:
                                          eval_data_file=EOS_DIR+'/ANNDEA/Data/TEST_SET/'+RecBatchID+'/EUTr1b_'+RecBatchID+'_SEED_TRUTH_COMBINATIONS.csv'
                                          eval_data=pd.read_csv(eval_data_file,header=0,usecols=['Segment_1','Segment_2'])
@@ -931,9 +928,12 @@ while Status<len(Program):
                                          rec_eval=pd.merge(eval_data, rec, how="inner", on=['Seed_ID'])
                                          eval_no=len(rec_eval)
                                          rec_no=(len(rec)-len(rec_eval))
-                                         log_rec_no+=rec_no
-                                         UI.LogOperations(EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/'+RecBatchID+'_REC_LOG.csv', 'a', [[3+md,ModelName[md],log_rec_no,eval_no,eval_no/(log_rec_no+eval_no),eval_no/len(eval_data)]])
+                                         UI.LogOperations(EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/'+RecBatchID+'_REC_LOG.csv', 'a', [[3+md,ModelName[md],rec_no,eval_no,eval_no/(rec_no+eval_no),eval_no/len(eval_data)]])
                                          UI.Msg('location',"The log data has been created successfully and written to",EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/'+RecBatchID+'_REC_LOG.csv')
+                            Meta.JobSets[Status+1]=NewJobSet
+                            print(UI.PickleOperations(RecOutputMeta,'w', Meta)[1])
+                            UI.Msg('completed','Stage '+str(Status)+' has successfully completed')
+                            UI.UpdateStatus(Status+1,Meta,RecOutputMeta)
     MetaInput=UI.PickleOperations(RecOutputMeta,'r', 'N/A')
     Meta=MetaInput[0]
     Status=Meta.Status[-1]
