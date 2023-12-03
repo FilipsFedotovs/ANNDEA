@@ -871,6 +871,7 @@ while Status<len(Program):
                              rec_no=(len(rec)-len(rec_eval))
                              UI.LogOperations(EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/'+RecBatchID+'_REC_LOG.csv', 'a', [[3+md,ModelName[md],rec_no,eval_no,eval_no/(rec_no+eval_no),eval_no/len(eval_data)]])
                              UI.Msg('location',"The log data has been created successfully and written to",EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/'+RecBatchID+'_REC_LOG.csv')
+                             NewJobSet=1
                         else:
                             NewJobSet=[]
                             for i in JobSet:
