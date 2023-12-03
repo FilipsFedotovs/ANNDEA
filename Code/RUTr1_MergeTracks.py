@@ -375,7 +375,9 @@ while Status<len(Program):
     if Program[Status][:6]!='Custom' and (Program[Status] in ModelName)==False:
         #Standard process here
         Result=UI.StandardProcess(Program,Status,SubGap,SubPause,RequestExtCPU,JobFlavour,ReqMemory,time_int,Patience)
-        if Result[0]==False:
+        if Result:
+            UI.UpdateStatus(Status+1,Meta,RecOutputMeta)
+        else:
              Status=20
              break
     elif Program[Status]=='Custom - Collect Evaluation Results':
