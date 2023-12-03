@@ -802,8 +802,6 @@ while Status<len(Program):
                     Program_Dummy=[]
                     Meta=UI.PickleOperations(RecOutputMeta,'r', 'N/A')[0]
                     JobSet=Meta.JobSets[Status]
-                    print(JobSet)
-                    exit()
                     NJobs=UI.CalculateNJobs(JobSet)
                     prog_entry.append(' Sending tracks to the HTCondor, so track segment combination pairs can be formed...')
                     prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/'+RecBatchID+'/','RefinedSeeds','RUTr1'+ModelName[md],'.pkl',RecBatchID,JobSet,'RUTr1b_RefineSeeds_Sub.py'])
@@ -817,17 +815,18 @@ while Status<len(Program):
 
                     prog_entry.append(NJobs)
                     prog_entry.append(LocalSub)
-                    prog_entry.append(['',''])
+                    prog_entry.append('N/A')
                     prog_entry.append(HTCondorLog)
                     prog_entry.append(False)
                     for dum in range(0,Status):
                         Program_Dummy.append('DUM')
                     Program_Dummy.append(prog_entry)
                     #Setting up folders for the output. The reconstruction of just one brick can easily generate >100k of files. Keeping all that blob in one directory can cause problems on lxplus.
-                    print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry,'Create'))
+                    print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry))
                     Result=UI.StandardProcess(Program_Dummy,Status,SubGap,SubPause,RequestExtCPU,JobFlavour,ReqMemory,time_int,Patience,Meta,RecOutputMeta)
                     if Result:
                         UI.Msg('status','Stage '+str(Status),': Analysing the fitted seeds')
+                        exit()
                         JobSet=[]
                         for i in range(len(JobSets)):
                              JobSet.append([])

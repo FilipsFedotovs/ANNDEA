@@ -20,7 +20,6 @@ parser.add_argument('--MaxSTG',help="Maximum Segment Transverse gap per SLG", de
 parser.add_argument('--MaxSLG',help="Maximum Segment Longitudinal Gap", default='4000')
 parser.add_argument('--i',help="Set number", default='1')
 parser.add_argument('--j',help="Subset number", default='1')
-parser.add_argument('--k',help="Fraction number", default='1')
 parser.add_argument('--p',help="Path to the output file", default='')
 parser.add_argument('--o',help="Path to the output file name", default='')
 parser.add_argument('--pfx',help="Path to the output file name", default='')
@@ -35,7 +34,6 @@ parser.add_argument('--PY',help="Python libraries directory location", default='
 args = parser.parse_args()
 i=int(args.i)    #This is just used to name the output file
 j=int(args.j)  #The subset helps to determine what portion of the track list is used to create the Seeds
-k=int(args.k)  #The subset helps to determine what portion of the track list is used to create the Seeds
 p=args.p
 o=args.o
 sfx=args.sfx
@@ -94,9 +92,9 @@ if FirstTime=='True':
     MaxSTG=float(args.MaxSTG)
     MaxSLG=float(args.MaxSLG)
     MaxAngle=float(args.MaxAngle)
-    input_segment_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+BatchID+'/RUTr1_'+BatchID+'_TRACK_SEGMENTS.csv'
-    input_track_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+BatchID+'/Temp_RUTr1a'+'_'+BatchID+'_'+str(i)+'/RUTr1a_'+BatchID+'_SelectedSeeds_'+str(i)+'_'+str(j)+'_'+str(k)+'.csv'
-    output_file_location=EOS_DIR+'/'+p+'/Temp_RUTr1'+ModelName+'_'+BatchID+'_'+str(i)+'/'+pfx+'_'+BatchID+'_'+o+'_'+str(i)+'_'+str(j)+'_'+str(k)+sfx
+    input_segment_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+BatchID+'/RUTr1_'+BatchID+'_TRACK_SEGMENTS'+str(i)+'.csv'
+    input_track_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+BatchID+'/Temp_RUTr1a'+'_'+BatchID+'_'+str(i)+'/RUTr1a_'+BatchID+'_SelectedSeeds_'+str(i)+'_'+str(j)+'.csv'
+    output_file_location=EOS_DIR+'/'+p+'/Temp_RUTr1'+ModelName+'_'+BatchID+'_'+str(i)+'/'+pfx+'_'+BatchID+'_'+o+'_'+str(i)+'_'+str(j)+sfx
     print(UI.TimeStamp(),'Loading the data')
     tracks=pd.read_csv(input_track_file_location)
     tracks_1=tracks.drop(['Segment_2'],axis=1)
