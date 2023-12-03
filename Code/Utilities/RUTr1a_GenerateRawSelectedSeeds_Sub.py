@@ -72,14 +72,11 @@ print(UI.TimeStamp(),'Creating segment combinations... ')
 data_header = data.groupby('Rec_Seg_ID')['z'].min()  #Keeping only starting hits for the each track record (we do not require the full information about track in this script)
 data_header=data_header.reset_index()
 PlateZ=data_header.z.min()
-print(PlateZ)
-x=input()
 data_end_header = data.groupby('Rec_Seg_ID')['z'].max()  #Keeping only ending hits for the each track record (we do not require the full information about track in this script)
 data_end_header=data_end_header.reset_index()
 data_end_header=data_end_header.rename(columns={"z": "e_z"})
 data_header=pd.merge(data_header, data_end_header, how="inner", on=["Rec_Seg_ID"]) #Shrinking the Track data so just a star hit for each track is present.
 #Doing a plate region cut for the Main Data
-data_header.drop(data_header.index[data_header['z'] < PlateZ], inplace = True)
 Records=len(data_header)
 print(UI.TimeStamp(),'There are total of ', Records, 'tracks in the data set')
 Cut=math.ceil(MaxRecords/Records) #Even if use only a max of 20000 track on the right join we cannot perform the full outer join due to the memory limitations, we do it in a small 'cuts'
@@ -108,7 +105,7 @@ Records=len(r_data)
 print(UI.TimeStamp(),'There are  ', Records, 'segments in the starting plate')
 r_data=r_data.iloc[StartDataCut:min(EndDataCut,Records)]
 Records=len(r_data)
-print(UI.TimeStamp(),'However we will only attempt  ', Records, 'track segments in the starting plate')
+print(UI.TimeStamp(),'However we will only attempt ', Records, 'track segments in the starting plate')
 r_data.drop(['y'],axis=1,inplace=True)
 r_data.drop(['x'],axis=1,inplace=True)
 r_data.drop(['z'],axis=1,inplace=True)
