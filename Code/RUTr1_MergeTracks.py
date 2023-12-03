@@ -462,7 +462,7 @@ while Status<len(Program):
              eval_data["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(eval_data['Segment_1'], eval_data['Segment_2'])]
              eval_data.drop(['Segment_1'],axis=1,inplace=True)
              eval_data.drop(['Segment_2'],axis=1,inplace=True)
-             NJobs=UI.CalculateNJobs(NewJobSet)[1]
+             NJobs=int(UI.CalculateNJobs(NewJobSet)[1])
              rec=None
              with alive_bar(NJobs,force_tty=True, title='Preparing data for the log...') as bar:
                  for i in range(len(NewJobSet)):
