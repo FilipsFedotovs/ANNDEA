@@ -926,6 +926,9 @@ while Status<len(Program):
                                          rec["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(rec['Segment_1'], rec['Segment_2'])]
                                          rec.drop(['Segment_1'],axis=1,inplace=True)
                                          rec.drop(['Segment_2'],axis=1,inplace=True)
+
+                                         print(rec)
+                                         rec.drop_duplicates(subset="Seed_ID",keep='first',inplace=True)
                                          print(rec)
                                          exit()
                                          rec_eval=pd.merge(eval_data, rec, how="inner", on=['Seed_ID'])
