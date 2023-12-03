@@ -462,12 +462,13 @@ while Status<len(Program):
              eval_data["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(eval_data['Segment_1'], eval_data['Segment_2'])]
              eval_data.drop(['Segment_1'],axis=1,inplace=True)
              eval_data.drop(['Segment_2'],axis=1,inplace=True)
-             with alive_bar(len(NewJobSet),force_tty=True, title='Preparing data for the log...') as bar:
+             NJobs=UI.CalculateNJobs(NewJobSet)[1]
+             rec=None
+             with alive_bar(NJobs,force_tty=True, title='Preparing data for the log...') as bar:
                  for i in range(len(NewJobSet)):
                     bar()
-                    rec=None
-                    for j in range(NewJobSet[i]):
-                          if NewJobSet[i]>0:
+                    if NewJobSet[i]>0:
+                        for j in range(NewJobSet[i]):
                              new_input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/Temp_RUTr1a'+'_'+RecBatchID+'_'+str(i)+'/RUTr1a_'+RecBatchID+'_SelectedSeeds_'+str(i)+'_'+str(j)+'.csv'
                              rec_new=pd.read_csv(new_input_file_location,usecols = ['Segment_1','Segment_2'])
                              rec_new["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(rec_new['Segment_1'], rec_new['Segment_2'])]
@@ -475,10 +476,13 @@ while Status<len(Program):
                              rec_new.drop(['Segment_2'],axis=1,inplace=True)
                              rec = pd.concat([rec, rec_new], ignore_index=True)
                              rec.drop_duplicates(subset="Seed_ID",keep='first',inplace=True)
-             rec_eval=pd.merge(eval_data, rec, how="inner", on=['Seed_ID'])
-             eval_no=len(rec_eval)
-             rec_no=(len(rec)-len(rec_eval))
-             UI.LogOperations(EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/'+RecBatchID+'_REC_LOG.csv', 'a', [[2,'SLG and STG cuts',rec_no,eval_no,eval_no/(rec_no+eval_no),eval_no/len(eval_data)]])
+             if rec!=None:
+                 rec_eval=pd.merge(eval_data, rec, how="inner", on=['Seed_ID'])
+                 eval_no=len(rec_eval)
+                 rec_no=(len(rec)-len(rec_eval))
+                 UI.LogOperations(EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/'+RecBatchID+'_REC_LOG.csv', 'a', [[2,'SLG and STG cuts',rec_no,eval_no,eval_no/(rec_no+eval_no),eval_no/len(eval_data)]])
+             else:
+                 UI.LogOperations(EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/'+RecBatchID+'_REC_LOG.csv', 'a', [[2,'SLG and STG cuts',0,0,0,0]])
              UI.Msg('location',"The log has been created successfully at ",EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/'+RecBatchID+'_REC_LOG.csv')
         Meta.JobSets[Status+1]=NewJobSet
         print(UI.PickleOperations(RecOutputMeta,'w', Meta)[1])
