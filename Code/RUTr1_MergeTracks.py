@@ -292,10 +292,11 @@ if Log and (os.path.isfile(required_eval_file_location)==False or Mode=='RESET')
     UI.Msg('vanilla','Analysing evaluation data... ')
     new_combined_data.drop_duplicates(subset="Rec_Seg_ID",keep='first',inplace=True)  #Keeping only starting hits for each track record (we do not require the full information about track in this script)
     Records=len(new_combined_data.axes[0])
-    Sets=int(np.ceil(Records/MaxSegments))
+
     UI.Msg('location','Updating the Meta file ',RecOutputMeta)
     MetaInput=UI.PickleOperations(RecOutputMeta,'r', 'N/A')
     Meta=MetaInput[0]
+    Sets=int(np.ceil(Records/Meta.MaxSegments))
     Meta.JobSets[0]=Sets
     print(UI.PickleOperations(RecOutputMeta,'w', Meta)[0])
     UI.Msg('location',"The track segment data has been created successfully and written to",required_eval_file_location)
