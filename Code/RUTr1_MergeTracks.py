@@ -462,12 +462,12 @@ while Status<len(Program):
              eval_data["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(eval_data['Segment_1'], eval_data['Segment_2'])]
              eval_data.drop(['Segment_1'],axis=1,inplace=True)
              eval_data.drop(['Segment_2'],axis=1,inplace=True)
-             with alive_bar(len(JobSets),force_tty=True, title='Preparing data for the log...') as bar:
+             with alive_bar(len(NewJobSet),force_tty=True, title='Preparing data for the log...') as bar:
                  for i in range(len(NewJobSet)):
                     bar()
                     rec=None
                     for j in range(NewJobSet[i]):
-                          if j>0:
+                          if NewJobSet[i]>0:
                              new_input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/Temp_RUTr1a'+'_'+RecBatchID+'_'+str(i)+'/RUTr1a_'+RecBatchID+'_SelectedSeeds_'+str(i)+'_'+str(j)+'.csv'
                              rec_new=pd.read_csv(new_input_file_location,usecols = ['Segment_1','Segment_2'])
                              rec_new["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(rec_new['Segment_1'], rec_new['Segment_2'])]
