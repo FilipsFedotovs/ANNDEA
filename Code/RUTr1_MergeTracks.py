@@ -440,7 +440,7 @@ while Status<len(Program):
                 bar.text = f'-> Analysing set : {i}...'
                 bar()
                 tot_fractions=0
-                if NewJobSet==0:
+                if NewJobSet[i]==0:
                     for j in range(0,JobSet[i]):
                         output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/Temp_RUTr1a'+'_'+RecBatchID+'_'+str(i)+'/RUTr1a_'+RecBatchID+'_RawSeeds_'+str(i)+'_'+str(j)+'.csv'
                         result=pd.read_csv(output_file_location,names = ['Segment_1','Segment_2'])
@@ -457,7 +457,7 @@ while Status<len(Program):
                     continue
 
         if Log:
-         try:
+         # try:
              UI.Msg('vanilla','Initiating the logging...')
              eval_data_file=EOS_DIR+'/ANNDEA/Data/TEST_SET/'+RecBatchID+'/EUTr1b_'+RecBatchID+'_SEED_TRUTH_COMBINATIONS.csv'
              eval_data=pd.read_csv(eval_data_file,header=0,usecols=['Segment_1','Segment_2'])
@@ -491,8 +491,8 @@ while Status<len(Program):
                         continue
              UI.LogOperations(EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/'+RecBatchID+'_REC_LOG.csv', 'a', [[2,'SLG and STG cuts',rec_no,eval_no,eval_no/(rec_no+eval_no),eval_no/len(eval_data)]])
              UI.Msg('location',"The log has been created successfully at ",EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/'+RecBatchID+'_REC_LOG.csv')
-         except:
-             UI.Msg('failed','Log creation has failed')
+         # except:
+         #     UI.Msg('failed','Log creation has failed')
         Meta.JobSets[Status+1]=NewJobSet
         print(UI.PickleOperations(RecOutputMeta,'w', Meta)[1])
         UI.Msg('completed','Stage '+str(Status)+' has successfully completed')
