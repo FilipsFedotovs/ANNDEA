@@ -209,10 +209,7 @@ if os.path.isfile(required_file_location)==False:
         JobSetList=[]
         for i in range(20):
             JobSetList.append('empty')
-        if Log:
-            JobSetList[1]=JobData
-        else:
-            JobSetList[0]=JobData
+        JobSetList[int(Log)]=JobData
         Meta=UI.TrainingSampleMeta(RecBatchID)
         Meta.IniTrackSeedMetaData(MaxSLG,MaxSTG,MaxDOCA,MaxAngle,JobSetList,MaxSegments,VetoMotherTrack,MaxSeeds,MinHitsTrack)
         Meta.UpdateStatus(0)
@@ -346,11 +343,7 @@ if Log:
 
 # ###### Stage 2
 prog_entry=[]
-if Log:
-    JobIndex=1
-else:
-    JobIndex=0
-NJobs=UI.CalculateNJobs(Meta.JobSets[JobIndex])[1]
+NJobs=UI.CalculateNJobs(Meta.JobSets[int(Log)])[1]
 prog_entry.append(' Sending tracks to the HTCondor, so track segment combinations can be formed...')
 prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/'+RecBatchID+'/','RawSeedsRes','RUTr1a','.csv',RecBatchID, Meta.JobSets[JobIndex],'RUTr1a_GenerateRawSelectedSeeds_Sub.py'])
 prog_entry.append([ " --MaxSegments ", " --MaxSLG "," --MaxSTG "])
@@ -425,7 +418,6 @@ while Status<len(Program):
         UI.UpdateStatus(Status+1,Meta,RecOutputMeta)
     elif Program[Status]=='Custom - Collect Raw Seeds':
         UI.Msg('status','Stage '+str(Status),': Collecting and de-duplicating the results from previous stage '+str(Status-1)+'...')
-        exit()
         min_i=0
         UI.Msg('vanilla','Analysing the data sample in order to understand how many jobs to submit to HTCondor... ')
         data=pd.read_csv(required_file_location,header=0,
@@ -437,44 +429,36 @@ while Status<len(Program):
         data=data.sort_values(['z'],ascending=True)
         data['Sub_Sets']=np.ceil(data['Rec_Seg_ID']/PM.MaxSegments)
         data['Sub_Sets'] = data['Sub_Sets'].astype(int)
-        JobSets = data.values.tolist()
+        Meta=UI.PickleOperations(RecOutputMeta,'r', 'N/A')[0]
+        JobSet=Meta.JobSets[int(Log)]
+        NewJobSet=[]
+        for i in JobSet:
+            NewJobSet.append(0)
+        print(NewJobSet)
         with alive_bar(len(JobSets)-min_i,force_tty=True, title='Checking the results from HTCondor') as bar:
             for i in range(min_i,len(JobSets)): #//Temporarily measure to save space
                 bar.text = f'-> Analysing set : {i}...'
                 bar()
-                Meta=UI.PickleOperations(RecOutputMeta,'r', 'N/A')[0]
-                MaxSLG=Meta.MaxSLG
-                JobSets=Meta.JobSets
-                if len(Meta.JobSets[i])>3:
-                   Meta.JobSets[i]=Meta.JobSets[i][:4]
-                   Meta.JobSets[i][3]=[]
-                else:
-                   Meta.JobSets[i].append([])
-                for j in range(0,int(JobSets[i][2])):
-                   output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/Temp_RUTr1a'+'_'+RecBatchID+'_'+str(i)+'/RUTr1a_'+RecBatchID+'_RawSeeds_'+str(i)+'_'+str(j)+'.csv'
-                   if os.path.isfile(output_file_location)==False:
-                      Meta.JobSets[j].append(0)
-                      continue #Skipping because not all jobs necessarily produce the required file (if statistics are too low)
-                   else:
+                tot_fractions=0
+                for j in range(0,JobSet[i]):
+                    output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/Temp_RUTr1a'+'_'+RecBatchID+'_'+str(i)+'/RUTr1a_'+RecBatchID+'_RawSeeds_'+str(i)+'_'+str(j)+'.csv'
                     result=pd.read_csv(output_file_location,names = ['Segment_1','Segment_2'])
                     Records=len(result)
                     print(UI.TimeStamp(),'Set',str(i),'and subset', str(j), 'contains', Records, 'seeds')
-                    result["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(result['Segment_1'], result['Segment_2'])]
-                    result.drop_duplicates(subset="Seed_ID",keep='first',inplace=True)
-                    result.drop(result.index[result['Segment_1'] == result['Segment_2']], inplace = True)
-                    result.drop(["Seed_ID"],axis=1,inplace=True)
-                    Records_After_Compression=len(result)
-                    if Records>0:
-                      Compression_Ratio=int((Records_After_Compression/Records)*100)
-                    else:
-                      Compression_Ratio=0
-                    print(UI.TimeStamp(),'Set',str(i),'and subset', str(j), 'compression ratio is ', Compression_Ratio, ' %')
                     fractions=int(math.ceil(Records_After_Compression/MaxSeeds))
-                    Meta.JobSets[i][3].append(fractions)
+                    print(tot_fractions)
+                    print(fractions)
                     for k in range(0,fractions):
-                     new_output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/Temp_RUTr1a'+'_'+RecBatchID+'_'+str(i)+'/RUTr1a_'+RecBatchID+'_SelectedSeeds_'+str(i)+'_'+str(j)+'_'+str(k)+'.csv'
+                     new_output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/Temp_RUTr1a'+'_'+RecBatchID+'_'+str(i)+'/RUTr1a_'+RecBatchID+'_SelectedSeeds_'+str(i)+'_'+str(tot_fractions+k)+'.csv'
+                     print(new_output_file_location)
                      result[(k*MaxSeeds):min(Records_After_Compression,((k+1)*MaxSeeds))].to_csv(new_output_file_location,index=False)
-                print(UI.PickleOperations(RecOutputMeta,'w', Meta)[1])
+                    tot_fractions+=fractions
+                    print(tot_fractions)
+                    print(fractions)
+                    x=input()
+
+                # print(UI.PickleOperations(RecOutputMeta,'w', Meta)[1])
+        exit()
         if Log:
          try:
              UI.Msg('vanilla','Initiating the logging...')
