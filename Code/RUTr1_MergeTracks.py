@@ -916,18 +916,18 @@ while Status<len(Program):
                                               print(UI.TimeStamp(),'The output '+str(i)+'  compression ratio is ', Compression_Ratio, ' %, skipping this step')
                             if Log:
                                          eval_data_file=EOS_DIR+'/ANNDEA/Data/TEST_SET/'+RecBatchID+'/EUTr1b_'+RecBatchID+'_SEED_TRUTH_COMBINATIONS.csv'
-                                         print(rec_list)
-                                         exit()
-                                         rec_list=set(rec_list)
                                          eval_data=pd.read_csv(eval_data_file,header=0,usecols=['Segment_1','Segment_2'])
                                          eval_data["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(eval_data['Segment_1'], eval_data['Segment_2'])]
                                          eval_data.drop(['Segment_1'],axis=1,inplace=True)
                                          eval_data.drop(['Segment_2'],axis=1,inplace=True)
                                          UI.Msg('vanilla','Initiating the logging...')
                                          rec = pd.DataFrame(rec_list, columns = ['Segment_1','Segment_2'])
+
                                          rec["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(rec['Segment_1'], rec['Segment_2'])]
                                          rec.drop(['Segment_1'],axis=1,inplace=True)
                                          rec.drop(['Segment_2'],axis=1,inplace=True)
+                                         print(rec)
+                                         exit()
                                          rec_eval=pd.merge(eval_data, rec, how="inner", on=['Seed_ID'])
                                          eval_no=len(rec_eval)
                                          rec_no=(len(rec)-len(rec_eval))
