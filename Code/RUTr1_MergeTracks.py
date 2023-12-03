@@ -455,7 +455,7 @@ while Status<len(Program):
                     NewJobSet[i]=tot_fractions
                 else:
                     continue
-
+        print(NewJobSet)
         if Log:
          # try:
              UI.Msg('vanilla','Initiating the logging...')
