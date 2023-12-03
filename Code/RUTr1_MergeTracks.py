@@ -490,6 +490,8 @@ while Status<len(Program):
         UI.Msg('completed','Stage '+str(Status)+' has successfully completed')
         UI.UpdateStatus(Status+1,Meta,RecOutputMeta)
     elif Program[Status]=='Custom - Merging':
+        print('Wip')
+        exit()
         input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/RUTr1c_'+RecBatchID+'_Fit_Seeds.pkl'
         UI.Msg('location',"Loading the fit track seeds from the file ",input_file_location)
         base_data=UI.PickleOperations(input_file_location,'r','N/A')[0]
@@ -793,9 +795,6 @@ while Status<len(Program):
         for md in range(len(ModelName)):
             if Program[Status]==ModelName[md]:
                     prog_entry=[]
-                    job_sets=[]
-                    JobSet=[]
-                    TotJobs=0
                     Program_Dummy=[]
                     Meta=UI.PickleOperations(RecOutputMeta,'r', 'N/A')[0]
                     JobSet=Meta.JobSets[Status]
@@ -826,24 +825,21 @@ while Status<len(Program):
                         JobSet=Meta.JobSets[Status]
                         NJobs=int(UI.CalculateNJobs(JobSet)[1])
                         if md==len(ModelName)-1:
-                            print('Wip')
-                            exit()
-                            base_data = None
-                            with alive_bar(len(JobSets),force_tty=True, title='Checking the results from HTCondor') as bar:
-                             for i in range(0,len(JobSet)):
-
-                                    bar()
-                                    for j in range(len(JobSet[i])):
-                                             for k in range(JobSet[i][j]):
-                                                  required_output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/Temp_RUTr1'+ModelName[md]+'_'+RecBatchID+'_'+str(i)+'/RUTr1'+ModelName[md]+'_'+RecBatchID+'_RefinedSeeds_'+str(i)+'_'+str(j)+'_'+str(k)+'.pkl'
+                            with alive_bar(NJobs,force_tty=True, title='Checking the results from HTCondor') as bar:
+                             base_data = None
+                             bar.text = f'-> Analysing set : {i}...'
+                             bar()
+                             for i in range(len(JobSet)):
+                                    for j in range(JobSet[i]):
+                                                  required_output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/Temp_RUTr1'+ModelName[md]+'_'+RecBatchID+'_'+str(i)+'/RUTr1'+ModelName[md]+'_'+RecBatchID+'_RefinedSeeds_'+str(i)+'_'+str(j)+'.pkl'
                                                   new_data=UI.PickleOperations(required_output_file_location,'r','N/A')[0]
-                                                  print(UI.TimeStamp(),'Set',str(i)+'_'+str(j)+'_'+str(k), 'contains', len(new_data), 'seeds')
+                                                  print(UI.TimeStamp(),'Set',str(i)+'_'+str(j), 'contains', len(new_data), 'seeds')
                                                   if base_data == None:
                                                         base_data = new_data
                                                   else:
                                                         base_data+=new_data
                             Records=len(base_data)
-                            print(UI.TimeStamp(),'The output '+str(i)+' contains', Records, 'raw images')
+                            print(UI.TimeStamp(),'The output contains', Records, 'raw images')
                             base_data=list(set(base_data))
                             Records_After_Compression=len(base_data)
                             if Records>0:
@@ -932,10 +928,10 @@ while Status<len(Program):
                                          rec_no=(len(rec)-len(rec_eval))
                                          UI.LogOperations(EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/'+RecBatchID+'_REC_LOG.csv', 'a', [[3+md,ModelName[md],rec_no,eval_no,eval_no/(rec_no+eval_no),eval_no/len(eval_data)]])
                                          UI.Msg('location',"The log data has been created successfully and written to",EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/'+RecBatchID+'_REC_LOG.csv')
-                            Meta.JobSets[Status+1]=NewJobSet
-                            print(UI.PickleOperations(RecOutputMeta,'w', Meta)[1])
-                            UI.Msg('completed','Stage '+str(Status)+' has successfully completed')
-                            UI.UpdateStatus(Status+1,Meta,RecOutputMeta)
+                        Meta.JobSets[Status+1]=NewJobSet
+                        print(UI.PickleOperations(RecOutputMeta,'w', Meta)[1])
+                        UI.Msg('completed','Stage '+str(Status)+' has successfully completed')
+                        UI.UpdateStatus(Status+1,Meta,RecOutputMeta)
     MetaInput=UI.PickleOperations(RecOutputMeta,'r', 'N/A')
     Meta=MetaInput[0]
     Status=Meta.Status[-1]
