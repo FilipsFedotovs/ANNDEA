@@ -13,7 +13,6 @@ import sys
 ######################################## Set variables  #############################################################
 #Setting the parser - this script is usually not run directly, but is used by a Master version Counterpart that passes the required arguments
 parser = argparse.ArgumentParser(description='select cut parameters')
-parser.add_argument('--PlateZ',help="The Z coordinate of the starting plate", default='-36820.0')
 parser.add_argument('--i',help="Set number", default='1')
 parser.add_argument('--j',help="Subset number", default='1')
 parser.add_argument('--p',help="Path to the output file", default='')
@@ -30,7 +29,6 @@ parser.add_argument('--PY',help="Python libraries directory location", default='
 
 ######################################## Set variables  #############################################################
 args = parser.parse_args()
-PlateZ=float(args.PlateZ)   #The coordinate of the st plate in the current scope
 i=int(args.i)    #This is just used to name the output file
 j=int(args.j)  #The subset helps to determine what portion of the track list is used to create the Seeds
 p=args.p
@@ -61,7 +59,7 @@ import math #We use it for data manipulation
 import gc  #Helps to clear memory
 import numpy as np
 #Specifying the full path to input/output files
-input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+BatchID+'/RUTr1_'+BatchID+'_TRACK_SEGMENTS.csv'
+input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+BatchID+'/RUTr1_'+BatchID+'_TRACK_SEGMENTS_'+str(i)+'.csv'
 output_file_location=EOS_DIR+p+'/Temp_'+pfx+'_'+BatchID+'_'+str(i)+'/'+pfx+'_'+BatchID+'_RawSeeds_'+str(i)+'_'+str(j)+sfx
 output_result_location=EOS_DIR+'/'+p+'/Temp_'+pfx+'_'+BatchID+'_'+str(i)+'/'+pfx+'_'+BatchID+'_'+o+'_'+str(i)+'_'+str(j)+sfx
 print(UI.TimeStamp(), "Modules Have been imported successfully...")
@@ -73,7 +71,9 @@ data=pd.read_csv(input_file_location,header=0,
 print(UI.TimeStamp(),'Creating segment combinations... ')
 data_header = data.groupby('Rec_Seg_ID')['z'].min()  #Keeping only starting hits for the each track record (we do not require the full information about track in this script)
 data_header=data_header.reset_index()
-
+PlateZ=data_header.z.min()
+print(PlateZ)
+x=input()
 data_end_header = data.groupby('Rec_Seg_ID')['z'].max()  #Keeping only ending hits for the each track record (we do not require the full information about track in this script)
 data_end_header=data_end_header.reset_index()
 data_end_header=data_end_header.rename(columns={"z": "e_z"})
