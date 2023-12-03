@@ -96,7 +96,6 @@ initial_input_file_location=args.f
 Log=args.Log=='Y'
 Xmin,Xmax,Ymin,Ymax=float(args.Xmin),float(args.Xmax),float(args.Ymin),float(args.Ymax)
 SliceData=max(Xmin,Xmax,Ymin,Ymax)>0 #We don't slice data if all values are set to zero simultaneousy (which is the default setting)
-FreshStart=True
 #Establishing paths
 
 if Mode=='RESET':
@@ -123,7 +122,7 @@ required_eval_file_location=EOS_DIR+'/ANNDEA/Data/TEST_SET/'+RecBatchID+'/EUTr1_
 UI.Msg('status','Stage 0:',' Preparing the source data...')
 
 
-if os.path.isfile(required_file_location)==False or Mode=='RESET':
+if os.path.isfile(required_file_location)==False:
         if os.path.isfile(EOSsubModelMetaDIR)==False:
               UI.Msg('failed',"Fail to proceed further as the model file "+EOSsubModelMetaDIR+ " has not been found...")
               exit()
@@ -220,7 +219,7 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         print(UI.PickleOperations(RecOutputMeta,'w', Meta)[1])
         UI.Msg('completed','Stage 0 has successfully completed')
 
-if Log and (os.path.isfile(required_eval_file_location)==False or Mode=='RESET'):
+if Log and (os.path.isfile(required_eval_file_location)==False):
     if os.path.isfile(EOSsubModelMetaDIR)==False:
               UI.Msg('failed',"Fail to proceed further as the model file "+EOSsubModelMetaDIR+ " has not been found...")
               exit()
@@ -315,20 +314,15 @@ MaxSeeds=Meta.MaxSeeds
 VetoMotherTrack=Meta.VetoMotherTrack
 MinHitsTrack=Meta.MinHitsTrack
 
-print(JobSets)
-exit()
+
 
 #The function bellow helps to automate the submission process
-if Mode=='RESET':
-    FreshStart=False
-    UI.UpdateStatus(0,Meta,RecOutputMeta)
-    Status=0
-else:
-    UI.Msg('vanilla','Analysing the current script status...')
-    Status=Meta.Status[-1]
+UI.Msg('vanilla','Analysing the current script status...')
+Status=Meta.Status[-1]
 if ForceStatus!='N':
     Status=int(ForceStatus)
 UI.Msg('vanilla','Current stage is '+str(Status)+'...')
+
 ################ Set the execution sequence for the script
 Program=[]
 if Log:
@@ -336,12 +330,10 @@ if Log:
     prog_entry=[]
     job_sets=[]
     prog_entry.append(' Sending eval seeds to HTCondor...')
-
-
-    prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TEST_SET/'+RecBatchID+'/','RawSeedsRes','EUTr1a','.csv',RecBatchID,Sets,'EUTr1a_GenerateRawSelectedSeeds_Sub.py'])
+    prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TEST_SET/'+RecBatchID+'/','RawSeedsRes','EUTr1a','.csv',RecBatchID,Meta.JobSets[0],'EUTr1a_GenerateRawSelectedSeeds_Sub.py'])
     prog_entry.append([" --MaxSegments ", " --VetoMotherTrack "])
     prog_entry.append([MaxSegments, '"'+str(VetoMotherTrack)+'"'])
-    prog_entry.append(Sets)
+    prog_entry.append(Meta.JobSets[0])
     prog_entry.append(LocalSub)
     prog_entry.append('N/A')
     prog_entry.append(False)
@@ -354,14 +346,13 @@ if Log:
 
 # ###### Stage 2
 prog_entry=[]
-job_sets=[]
-JobSet=UI.ReduceJobSet(JobSets,2)
-NJobs=UI.CalculateNJobs(JobSet)
-
-NJobs=UI.CalculateNJobs(JobSet)
-
+if Log:
+    JobIndex=1
+else:
+    JobIndex=0
+NJobs=UI.CalculateNJobs(Meta.JobSet[JobIndex])
 prog_entry.append(' Sending tracks to the HTCondor, so track segment combinations can be formed...')
-prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/'+RecBatchID+'/','RawSeedsRes','RUTr1a','.csv',RecBatchID, JobSet,'RUTr1a_GenerateRawSelectedSeeds_Sub.py'])
+prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/'+RecBatchID+'/','RawSeedsRes','RUTr1a','.csv',RecBatchID, Meta.JobSet[JobIndex],'RUTr1a_GenerateRawSelectedSeeds_Sub.py'])
 prog_entry.append([ " --MaxSegments ", " --MaxSLG "," --MaxSTG "])
 prog_entry.append([MaxSegments, MaxSLG, MaxSTG])
 prog_entry.append(NJobs)
@@ -390,7 +381,7 @@ while Status<len(Program):
         #Standard process here
         Result=UI.StandardProcess(Program,Status,SubGap,SubPause,RequestExtCPU,JobFlavour,ReqMemory,time_int,Patience,Meta,RecOutputMeta)
         if Result[0]:
-             FreshStart=Result[1]
+             continue
         else:
              Status=20
              break
@@ -437,11 +428,11 @@ while Status<len(Program):
         rec_no=(rec_no**2)-rec_no-eval_no
         UI.LogOperations(EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/'+RecBatchID+'_REC_LOG.csv', 'w', [['Step_No','Step_Desc','Fake_Seeds','Truth_Seeds','Precision','Recall'],[1,'Initial Sampling',rec_no,eval_no,eval_no/(rec_no+eval_no),1.0]])
         UI.Msg('location',"The process log has been created successfully and written to ",EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/'+RecBatchID+'_REC_LOG.csv')
-        FreshStart=False
         UI.Msg('completed','Stage '+str(Status)+' has successfully completed')
         UI.UpdateStatus(Status+1,Meta,RecOutputMeta)
     elif Program[Status]=='Custom - PickR':
         UI.Msg('status','Stage '+str(Status),': Collecting and de-duplicating the results from previous stage '+str(Status-1)+'...')
+        exit()
         min_i=0
         UI.Msg('vanilla','Analysing the data sample in order to understand how many jobs to submit to HTCondor... ')
         data=pd.read_csv(required_file_location,header=0,
@@ -528,7 +519,6 @@ while Status<len(Program):
              UI.Msg('location',"The log has been created successfully at ",EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/'+RecBatchID+'_REC_LOG.csv')
          except:
              UI.Msg('failed','Log creation has failed')
-        FreshStart=False
         UI.Msg('completed','Stage '+str(Status)+' has successfully completed')
         UI.UpdateStatus(Status+1,Meta,RecOutputMeta)
 
