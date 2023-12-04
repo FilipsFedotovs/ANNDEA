@@ -523,7 +523,9 @@ while Status<len(Program):
             rec_data.drop(['Segment_1'],axis=1,inplace=True)
             rec_data.drop(['Segment_2'],axis=1,inplace=True)
 
-            combined_data=pd.merge(rec_data,eval_data,how='left',on='Seed_ID')
+            combined_data=pd.merge(rec_data,eval_data,how='outer',on='Seed_ID')
+            print(combined_data)
+            exit()
             combined_data=combined_data.fillna(0)
             combined_data.drop(['Seed_ID'],axis=1,inplace=True)
             print(combined_data)
