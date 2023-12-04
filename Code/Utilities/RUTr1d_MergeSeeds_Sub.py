@@ -73,6 +73,8 @@ rec=pd.merge(rec,r_rec,how='left',on='Segment_2')
 rec=pd.merge(rec,l_rec,how='left',on='Segment_1')
 rec['count']=rec['l_count']+rec['r_count']
 rec.drop(['l_count','r_count'],axis=1,inplace=True)
+if i==0:
+    rec = rec[rec.count == 2]
 print(rec)
 exit()
 # rec=pd.merge(rec,r2_rec,how='left',on='Segment_2')
