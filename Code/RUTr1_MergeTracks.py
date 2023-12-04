@@ -534,7 +534,6 @@ while Status<len(Program):
             iterations=int((1.0-Min_Acceptance)/0.01)
             for i in range(1,iterations):
                 cut_off=Min_Acceptance+(i*0.01)
-                print('Cutoff at:',cut_off)
                 cut_data=combined_data.drop(combined_data.index[combined_data['Fit'] < cut_off])
                 tp = cut_data['True'].sum()
                 p=cut_data['True'].count()
