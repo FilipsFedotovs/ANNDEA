@@ -71,6 +71,7 @@ l_rec=r_rec.rename(columns={'Segment_2':"Segment_1",'r_count':'l_count'})
 
 rec=pd.merge(rec,r_rec,how='left',on='Segment_2')
 rec=pd.merge(rec,l_rec,how='left',on='Segment_1')
+rec.to_csv('Test.csv')
 print(rec)
 exit()
 # rec=pd.merge(rec,r2_rec,how='left',on='Segment_2')
