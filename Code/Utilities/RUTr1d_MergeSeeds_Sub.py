@@ -71,11 +71,11 @@ l_rec=r_rec.rename(columns={'Segment_2':"Segment_1",'r_count':'l_count'})
 
 rec=pd.merge(rec,r_rec,how='left',on='Segment_2')
 rec=pd.merge(rec,l_rec,how='left',on='Segment_1')
-rec['count']=rec['l_count']+rec['r_count']
+rec['tot_count']=rec['l_count']+rec['r_count']
 rec.drop(['l_count','r_count'],axis=1,inplace=True)
 print(rec)
 if i==0:
-    rec = rec[rec.count < 3]
+    rec = rec[rec.tot_count == 2]
 print(rec)
 exit()
 # rec=pd.merge(rec,r2_rec,how='left',on='Segment_2')
