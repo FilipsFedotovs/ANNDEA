@@ -502,8 +502,10 @@ while Status<len(Program):
                         base_data[tr].Hits[t][h]=base_data[tr].Hits[t][h][2] #Remove scaling factors
         base_data=[tr for tr in base_data if tr.Fit >= Acceptance]
         output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/RUTr1d_'+RecBatchID+'_Fit_Filtered_Seeds.pkl'
-
         UI.Msg('success',"The refining was successful, "+str(len(base_data))+" track seeds remain...")
+        print(UI.TimeStamp(),'De-duplicating the data set...')
+        base_data=list(set(base_data))
+        UI.Msg('success',"De-duplication was successful, "+str(len(base_data))+" track seeds remain...")
         print(UI.PickleOperations(output_file_location,'w', base_data)[1])
         if CalibrateAcceptance:
             print(UI.TimeStamp(),'Calibrating the acceptance...')
@@ -520,6 +522,7 @@ while Status<len(Program):
             rec_data["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(rec_data['Segment_1'], rec_data['Segment_2'])]
             rec_data.drop(['Segment_1'],axis=1,inplace=True)
             rec_data.drop(['Segment_2'],axis=1,inplace=True)
+
             combined_data=pd.merge(rec_data,eval_data,how='left',on='Seed_ID')
             combined_data=combined_data.fillna(0)
             combined_data.drop(['Seed_ID'],axis=1,inplace=True)
@@ -864,6 +867,7 @@ while Status<len(Program):
                              rec["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(rec['Segment_1'], rec['Segment_2'])]
                              rec.drop(['Segment_1'],axis=1,inplace=True)
                              rec.drop(['Segment_2'],axis=1,inplace=True)
+                             rec.drop_duplicates(subset="Seed_ID",keep='first',inplace=True)
                              rec_eval=pd.merge(eval_data, rec, how="inner", on=['Seed_ID'])
                              eval_no=len(rec_eval)
                              rec_no=(len(rec)-len(rec_eval))
