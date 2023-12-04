@@ -56,22 +56,24 @@ print(UI.TimeStamp(), bcolors.OKGREEN+"Modules Have been imported successfully..
 print(UI.TimeStamp(), "Loading fit track seeds from the file",bcolors.OKBLUE+input_file_location+bcolors.ENDC)
 
 base_data=UI.PickleOperations(input_file_location,'r', 'N/A')[0]
-rec_list=[]
-for rd in base_data:
-    rec_list.append([rd.Header[0],rd.Header[1]])
-    rec = pd.DataFrame(rec_list, columns = ['Segment_1','Segment_2'])
-r1_rec=rec.rename(columns={'Segment_1':"r_2"})
-r2_rec=rec.rename(columns={'Segment_2':"r_1",'Segment_1':"Segment_2"})
-print(r1_rec,r2_rec)
-# l1_rec=rec.rename(columns={'Segment_2':"l_1"})
-# l2_rec=rec.rename(columns={'Segment_1':"l_2"})
-
-rec=pd.merge(rec,r1_rec,how='left',on='Segment_2')
-rec=pd.merge(rec,r2_rec,how='left',on='Segment_2')
-
-
-print(rec)
-exit()
+# rec_list=[]
+# for rd in base_data:
+#     rec_list.append([rd.Header[0],rd.Header[1]])
+#     rec = pd.DataFrame(rec_list, columns = ['Segment_1','Segment_2'])
+# r1_rec=rec[['Segment_1']].rename(columns={'Segment_1':"Segment"})
+# r2_rec=rec[['Segment_2']].rename(columns={'Segment_2':"Segment"})
+# r1_rec['r_count']=1
+# r2_rec['r_count']=1
+# print(r1_rec,r2_rec)
+# # l1_rec=rec.rename(columns={'Segment_2':"l_1"})
+# # l2_rec=rec.rename(columns={'Segment_1':"l_2"})
+# 
+# rec=pd.merge(rec,r1_rec,how='left',on='Segment_2')
+# rec=pd.merge(rec,r2_rec,how='left',on='Segment_2')
+#
+#
+# print(rec)
+# exit()
 print(UI.TimeStamp(), bcolors.OKGREEN+"Loading is successful, there are total of "+str(len(base_data))+" glued tracks..."+bcolors.ENDC)
 print(UI.TimeStamp(), "Initiating the  track merging...")
 InitialDataLength=len(base_data)
@@ -92,5 +94,6 @@ while SeedCounterContinue:
          SeedCounter+=1
          print(SeedCounter)
 print(str(InitialDataLength), "segment pairs from different files were merged into", str(len(base_data)), 'tracks...')
+exit()
 print(UI.PickleOperations(output_file_location,'w', base_data)[1])
 
