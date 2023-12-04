@@ -66,7 +66,7 @@ print(r1_rec,r2_rec)
 # l1_rec=rec.rename(columns={'Segment_2':"l_1"})
 # l2_rec=rec.rename(columns={'Segment_1':"l_2"})
 
-rec=rec.pd.merge(rec,r1_rec,how='left',on='Segment_2')
+rec=pd.merge(rec,r1_rec,how='left',on='Segment_2')
 
 
 print(rec)
