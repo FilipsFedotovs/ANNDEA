@@ -65,7 +65,7 @@ r2_rec=rec[['Segment_2']].rename(columns={'Segment_2':"Segment"})
 r1_rec['count']=1
 r2_rec['count']=1
 r_rec=pd.concat([r1_rec,r2_rec])
-r_rec=r_rec.groupby(['Segment'])['count'].sum()
+r_rec=r_rec.groupby(['Segment'])['count'].sum().reset_index()
 print(r_rec)
 exit()
 # print(r1_rec,r2_rec)
