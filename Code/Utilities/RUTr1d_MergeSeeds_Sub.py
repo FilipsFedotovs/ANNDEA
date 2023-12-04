@@ -60,6 +60,15 @@ rec_list=[]
 for rd in base_data:
     rec_list.append([rd.Header[0],rd.Header[1]])
     rec = pd.DataFrame(rec_list, columns = ['Segment_1','Segment_2'])
+r1_rec=rec.rename(columns={'Segment_1':"r_2"})
+r2_rec=rec.rename(columns={'Segment_2':"r_1",'Segment_1':"Segment_2"})
+print(r1_rec,r2_rec)
+# l1_rec=rec.rename(columns={'Segment_2':"l_1"})
+# l2_rec=rec.rename(columns={'Segment_1':"l_2"})
+
+rec=rec.pd.merge(rec,r1_rec,how='left',on='Segment_2')
+
+
 print(rec)
 exit()
 print(UI.TimeStamp(), bcolors.OKGREEN+"Loading is successful, there are total of "+str(len(base_data))+" glued tracks..."+bcolors.ENDC)
