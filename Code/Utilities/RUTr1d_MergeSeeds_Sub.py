@@ -48,7 +48,7 @@ sys.path.append(AFS_DIR+'/Code/Utilities')
 import U_UI as UI
 import pandas as pd
 
-input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1d_'+BatchID+'_Fit_Filtered_Seeds.pkl'
+input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+BatchID+'/RUTr1d_'+BatchID+'_Fit_Filtered_Seeds.pkl'
 
 output_file_location=EOS_DIR+'/'+p+'/Temp_'+pfx+'_'+BatchID+'_0/'+pfx+'_'+BatchID+'_'+o+'_'+str(i)+sfx
 
