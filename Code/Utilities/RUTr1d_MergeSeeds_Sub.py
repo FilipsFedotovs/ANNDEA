@@ -62,9 +62,10 @@ for rd in base_data:
     rec = pd.DataFrame(rec_list, columns = ['Segment_1','Segment_2'])
 r1_rec=rec[['Segment_1']].rename(columns={'Segment_1':"Segment"})
 r2_rec=rec[['Segment_2']].rename(columns={'Segment_2':"Segment"})
-r1_rec['r_count']=1
-r2_rec['r_count']=1
+r1_rec['count']=1
+r2_rec['count']=1
 r_rec=pd.concat([r1_rec,r2_rec])
+r_rec=r_rec.groupby(['Segment'])['count'].sum
 print(r_rec)
 exit()
 # print(r1_rec,r2_rec)
