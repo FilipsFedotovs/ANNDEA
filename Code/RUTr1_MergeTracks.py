@@ -490,8 +490,6 @@ while Status<len(Program):
         UI.Msg('completed','Stage '+str(Status)+' has successfully completed')
         UI.UpdateStatus(Status+1,Meta,RecOutputMeta)
     elif Program[Status]=='Custom - Merging':
-        print('Wip')
-        exit()
         input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/RUTr1c_'+RecBatchID+'_Fit_Seeds.pkl'
         UI.Msg('location',"Loading the fit track seeds from the file ",input_file_location)
         base_data=UI.PickleOperations(input_file_location,'r','N/A')[0]
@@ -553,7 +551,7 @@ while Status<len(Program):
         prog_entry.append([MaxSLG])
         prog_entry.append(1)
         prog_entry.append(LocalSub)
-        prog_entry.append(['',''])
+        prog_entry.append('N/A')
         prog_entry.append(True)
         prog_entry.append(False)
         for dum in range(0,Status):

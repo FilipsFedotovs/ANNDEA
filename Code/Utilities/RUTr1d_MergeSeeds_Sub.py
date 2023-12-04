@@ -3,6 +3,7 @@
 ########################################    Import libraries    #############################################
 import sys
 import argparse
+
 class bcolors:
     HEADER = '\033[95m'
     OKBLUE = '\033[94m'
@@ -45,6 +46,7 @@ if PY_DIR!='': #Temp solution
     sys.path.append('/usr/lib/python3.6/site-packages')
 sys.path.append(AFS_DIR+'/Code/Utilities')
 import U_UI as UI
+import pandas as pd
 
 input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RUTr1d_'+BatchID+'_Fit_Filtered_Seeds.pkl'
 
@@ -54,7 +56,12 @@ print(UI.TimeStamp(), bcolors.OKGREEN+"Modules Have been imported successfully..
 print(UI.TimeStamp(), "Loading fit track seeds from the file",bcolors.OKBLUE+input_file_location+bcolors.ENDC)
 
 base_data=UI.PickleOperations(input_file_location,'r', 'N/A')[0]
-
+rec_list=[]
+for rd in base_data:
+    rec_list.append([rd.Header[0],rd.Header[1]])
+    rec = pd.DataFrame(rec_list, columns = ['Segment_1','Segment_2'])
+print(rec)
+exit()
 print(UI.TimeStamp(), bcolors.OKGREEN+"Loading is successful, there are total of "+str(len(base_data))+" glued tracks..."+bcolors.ENDC)
 print(UI.TimeStamp(), "Initiating the  track merging...")
 InitialDataLength=len(base_data)
