@@ -610,7 +610,6 @@ while Status<len(Program):
                 eval_no=len(rec_eval)
                 rec_no=(len(rec)-len(rec_eval))
                 print(rec_no,eval_no,eval_no/(rec_no+eval_no),eval_no/len(eval_data))
-                exit()
                 UI.LogOperations(EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv', 'a', [[4+len(ModelName),'Track Seed Merging',rec_no,eval_no,eval_no/(rec_no+eval_no),eval_no/len(eval_data)]])
                 UI.Msg('location',"The log data has been created successfully and written to",EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/'+RecBatchID+'_REC_LOG.csv')
              UI.UpdateStatus(Status+1,Meta,RecOutputMeta)
