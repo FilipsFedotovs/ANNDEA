@@ -572,7 +572,6 @@ while Status<len(Program):
              for Tr in base_data:
                  for TH in Tr.Header:
                      csv_out.append([TH,RecBatchID,Tr.UTrID])
-
              UI.Msg('location',"Saving the results into the file",output_csv_location)
              UI.LogOperations(output_csv_location,'w', csv_out)
              UI.Msg('location',"Saving the results into the file",output_file_location)

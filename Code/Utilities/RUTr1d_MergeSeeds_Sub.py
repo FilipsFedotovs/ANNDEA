@@ -73,47 +73,40 @@ rec=pd.merge(rec,r_rec,how='left',on='Segment_2')
 rec=pd.merge(rec,l_rec,how='left',on='Segment_1')
 rec['tot_count']=rec['l_count']+rec['r_count']
 rec.drop(['l_count','r_count'],axis=1,inplace=True)
-print(len(base_data))
 
-print(rec)
 if i==0:
     rec = rec[rec.tot_count == 2]
 else:
     rec = rec[rec.tot_count > 2]
-print(len(rec))
+
 rec['Segment']=rec['Segment_1']+'-'+rec['Segment_2']
 rec.drop(['tot_count','Segment_1','Segment_2'],axis=1,inplace=True)
 rec=rec.values.tolist()
 rec = [k for i in rec for k in i]
 base_data=[x for x in base_data if (x.Header[0]+'-'+ x.Header[1]) in rec]
-print(len(base_data))
-print(rec)
-exit()
-# rec=pd.merge(rec,r2_rec,how='left',on='Segment_2')
-#
-#
-# print(rec)
-# exit()
+
 print(UI.TimeStamp(), bcolors.OKGREEN+"Loading is successful, there are total of "+str(len(base_data))+" glued tracks..."+bcolors.ENDC)
 print(UI.TimeStamp(), "Initiating the  track merging...")
-InitialDataLength=len(base_data)
-SeedCounter=0
-SeedCounterContinue=True
-while SeedCounterContinue:
-         if SeedCounter==len(base_data):
-                           SeedCounterContinue=False
-                           break
-         SubjectSeed=base_data[SeedCounter]
-         for ObjectSeed in base_data[SeedCounter+1:]:
-                  if MaxSLG>=0:
-                    if SubjectSeed.InjectDistantTrackSeed(ObjectSeed):
-                        base_data.pop(base_data.index(ObjectSeed))
-                  else:
-                    if SubjectSeed.InjectTrackSeed(ObjectSeed):
-                        base_data.pop(base_data.index(ObjectSeed))
-         SeedCounter+=1
-         print(SeedCounter)
-print(str(InitialDataLength), "segment pairs from different files were merged into", str(len(base_data)), 'tracks...')
-exit()
-print(UI.PickleOperations(output_file_location,'w', base_data)[1])
+if i==0:
+    print(UI.PickleOperations(output_file_location,'w', base_data)[1])
+else:
+    InitialDataLength=len(base_data)
+    SeedCounter=0
+    SeedCounterContinue=True
+    while SeedCounterContinue:
+             if SeedCounter==len(base_data):
+                               SeedCounterContinue=False
+                               break
+             SubjectSeed=base_data[SeedCounter]
+             for ObjectSeed in base_data[SeedCounter+1:]:
+                      if MaxSLG>=0:
+                        if SubjectSeed.InjectDistantTrackSeed(ObjectSeed):
+                            base_data.pop(base_data.index(ObjectSeed))
+                      else:
+                        if SubjectSeed.InjectTrackSeed(ObjectSeed):
+                            base_data.pop(base_data.index(ObjectSeed))
+             SeedCounter+=1
+             print(SeedCounter)
+    print(str(InitialDataLength), "segment pairs from different files were merged into", str(len(base_data)), 'tracks...')
+    print(UI.PickleOperations(output_file_location,'w', base_data)[1])
 
