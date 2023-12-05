@@ -146,6 +146,82 @@ def UpdateStatus(status,meta,output):
     meta.UpdateStatus(status)
     print(PickleOperations(output,'w', meta)[1])
 
+class ModelMeta:
+      def __init__(self,ModelID):
+          self.ModelID=ModelID
+      def __eq__(self, other):
+        return (self.ModelID) == (other.ModelID)
+      def __hash__(self):
+        return hash(self.ModelID)
+      def IniModelMeta(self, ModelParams, framework, DataMeta, architecture, type):
+          self.ModelParameters=ModelParams
+          self.ModelFramework=framework
+          self.ModelArchitecture=architecture
+          self.ModelType=type
+          self.TrainSessionsDataID=[]
+          self.TrainSessionsDateTime=[]
+          self.TrainSessionsParameters=[]
+          self.TrainSessionsData=[]
+          if hasattr(DataMeta,'ClassHeaders'):
+              self.ClassHeaders=DataMeta.ClassHeaders
+          if hasattr(DataMeta,'ClassNames'):
+              self.ClassNames=DataMeta.ClassNames
+          if hasattr(DataMeta,'ClassValues'):
+              self.ClassValues=DataMeta.ClassValues
+
+          if (self.ModelFramework=='PyTorch') and (self.ModelArchitecture=='TCN'):
+              self.num_node_features=DataMeta.num_node_features
+              self.num_edge_features=DataMeta.num_edge_features
+              self.stepX=DataMeta.stepX
+              self.stepY=DataMeta.stepY
+              self.stepZ=DataMeta.stepZ
+              self.cut_dt=DataMeta.cut_dt
+              self.cut_dr=DataMeta.cut_dr
+          else:
+              if hasattr(DataMeta,'MaxSLG'):
+                  self.MaxSLG=DataMeta.MaxSLG
+              if hasattr(DataMeta,'MaxSTG'):
+                  self.MaxSTG=DataMeta.MaxSTG
+              if hasattr(DataMeta,'MaxDST'):
+                  self.MaxDST=DataMeta.MaxDST
+              if hasattr(DataMeta,'MaxVXT'):
+                  self.MaxVXT=DataMeta.MaxVXT
+              if hasattr(DataMeta,'MaxDOCA'):
+                  self.MaxDOCA=DataMeta.MaxDOCA
+              if hasattr(DataMeta,'MaxAngle'):
+                  self.MaxAngle=DataMeta.MaxAngle
+              if hasattr(DataMeta,'MinHitsTrack'):
+                  self.MinHitsTrack=DataMeta.MinHitsTrack
+
+      def IniTrainingSession(self, TrainDataID, DateTime, TrainParameters):
+          self.TrainSessionsDataID.append(TrainDataID)
+          self.TrainSessionsDateTime.append(DateTime)
+          self.TrainSessionsParameters.append(TrainParameters)
+      def CompleteTrainingSession(self, TrainData):
+          if len(self.TrainSessionsData)>=len(self.TrainSessionsDataID):
+             self.TrainSessionsData=self.TrainSessionsData[:len(self.TrainSessionsDataID)-1]
+          elif len(self.TrainSessionsData)<(len(self.TrainSessionsDataID)-1):
+             self.TrainSessionsDataID=self.TrainSessionsDataID[:len(self.TrainSessionsData)+1]
+          self.TrainSessionsData.append(TrainData)
+      def ModelTrainStatus(self,TST):
+            if len(self.TrainSessionsDataID)==len(self.TrainSessionsData):
+                if len(self.TrainSessionsData)>=3:
+                    test_input=[self.TrainSessionsData[-3][1],self.TrainSessionsData[-2][1],self.TrainSessionsData[-1][1]]
+                    LossDataForChecking=[]
+                    AccDataForChecking=[]
+                    for i in test_input:
+                               LossDataForChecking.append(i[6])
+                               AccDataForChecking.append(i[7])
+                    LossGrad=GetEquationOfLine(LossDataForChecking)[0]
+                    AccGrad=GetEquationOfLine(AccDataForChecking)[0]
+                    if LossGrad>=-TST and AccGrad<=TST:
+                        return 1
+                    else:
+                        return 2
+                else:
+                    return 2
+            else:
+                return 0
 def CalculateNJobs(JobSet):
             if type(JobSet) is int:
                         return 1,JobSet
