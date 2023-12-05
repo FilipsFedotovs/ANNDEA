@@ -82,6 +82,7 @@ if i==0:
 rec['Segment']=rec['Segment_1']+'-'+rec['Segment_2']
 rec.drop(['tot_count','Segment_1','Segment_2'],axis=1,inplace=True)
 rec=rec.values.tolist()
+rec = [k for i in rec for k in i]
 base_data=[x for x in base_data if (x.Header[0]+'-'+ x.Header[1]) not in rec]
 print(len(base_data))
 print(rec)
