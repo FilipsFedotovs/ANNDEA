@@ -86,10 +86,11 @@ rec = [k for i in rec for k in i]
 base_data=[x for x in base_data if (x.Header[0]+'-'+ x.Header[1]) in rec]
 
 print(UI.TimeStamp(), bcolors.OKGREEN+"Loading is successful, there are total of "+str(len(base_data))+" glued tracks..."+bcolors.ENDC)
-print(UI.TimeStamp(), "Initiating the  track merging...")
+
 if i==0:
     print(UI.PickleOperations(output_file_location,'w', base_data)[1])
 else:
+    print(UI.TimeStamp(), "Initiating the  track merging...")
     InitialDataLength=len(base_data)
     SeedCounter=0
     SeedCounterContinue=True

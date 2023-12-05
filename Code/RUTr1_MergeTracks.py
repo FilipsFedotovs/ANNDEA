@@ -564,6 +564,11 @@ while Status<len(Program):
         if Result:
              input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/Temp_RUTr1d_'+RecBatchID+'_0/RUTr1d_'+RecBatchID+'_Fit_Merged_Seeds_0.pkl'
              base_data=UI.PickleOperations(input_file_location,'r','N/A')[0]
+             print(len(base_data))
+             input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/Temp_RUTr1d_'+RecBatchID+'_0/RUTr1d_'+RecBatchID+'_Fit_Merged_Seeds_1.pkl'
+             base_data+=UI.PickleOperations(input_file_location,'r','N/A')[0]
+             print(len(base_data))
+             exit()
              for v in range(0,len(base_data)):
                  base_data[v].AssignANNTrUID(v)
              output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/RUTr1e_'+RecBatchID+'_Union_Tracks.pkl'
