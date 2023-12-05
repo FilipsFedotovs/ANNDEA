@@ -415,8 +415,8 @@ while Status<len(Program):
         rec_data.drop_duplicates(keep='first',inplace=True)
         rec_no=len(rec_data)
         rec_no=(rec_no**2)-rec_no-eval_no
-        UI.LogOperations(EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/'+RecBatchID+'_REC_LOG.csv', 'w', [['Step_No','Step_Desc','Fake_Seeds','Truth_Seeds','Precision','Recall'],[1,'Initial Sampling',rec_no,eval_no,eval_no/(rec_no+eval_no),1.0]])
-        UI.Msg('location',"The process log has been created successfully and written to ",EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/'+RecBatchID+'_REC_LOG.csv')
+        UI.LogOperations(EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv', 'w', [['Step_No','Step_Desc','Fake_Seeds','Truth_Seeds','Precision','Recall'],[1,'Initial Sampling',rec_no,eval_no,eval_no/(rec_no+eval_no),1.0]])
+        UI.Msg('location',"The process log has been created successfully and written to ",EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv')
         UI.Msg('completed','Stage '+str(Status)+' has successfully completed')
         UI.UpdateStatus(Status+1,Meta,RecOutputMeta)
     elif Program[Status]=='Custom - Collect Raw Seeds':
@@ -481,10 +481,10 @@ while Status<len(Program):
                  rec_eval=pd.merge(eval_data, rec, how="inner", on=['Seed_ID'])
                  eval_no=len(rec_eval)
                  rec_no=(len(rec)-len(rec_eval))
-                 UI.LogOperations(EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/'+RecBatchID+'_REC_LOG.csv', 'a', [[2,'SLG and STG cuts',rec_no,eval_no,eval_no/(rec_no+eval_no),eval_no/len(eval_data)]])
+                 UI.LogOperations(EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv', 'a', [[2,'SLG and STG cuts',rec_no,eval_no,eval_no/(rec_no+eval_no),eval_no/len(eval_data)]])
              else:
-                 UI.LogOperations(EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/'+RecBatchID+'_REC_LOG.csv', 'a', [[2,'SLG and STG cuts',0,0,0,0]])
-             UI.Msg('location',"The log has been created successfully at ",EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/'+RecBatchID+'_REC_LOG.csv')
+                 UI.LogOperations(EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv', 'a', [[2,'SLG and STG cuts',0,0,0,0]])
+             UI.Msg('location',"The log has been created successfully at ",EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv')
         Meta.JobSets[Status+1]=NewJobSet
         print(UI.PickleOperations(RecOutputMeta,'w', Meta)[1])
         UI.Msg('completed','Stage '+str(Status)+' has successfully completed')
@@ -610,8 +610,8 @@ while Status<len(Program):
                 eval_no=len(rec_eval)
                 rec_no=(len(rec)-len(rec_eval))
                 print(rec_no,eval_no,eval_no/(rec_no+eval_no),eval_no/len(eval_data))
-                UI.LogOperations(EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/'+RecBatchID+'_REC_LOG.csv', 'a', [[4+len(ModelName),'Track Seed Merging',rec_no,eval_no,eval_no/(rec_no+eval_no),eval_no/len(eval_data)]])
-                UI.Msg('location',"The log data has been created successfully and written to",EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/'+RecBatchID+'_REC_LOG.csv')
+                UI.LogOperations(EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv', 'a', [[4+len(ModelName),'Track Seed Merging',rec_no,eval_no,eval_no/(rec_no+eval_no),eval_no/len(eval_data)]])
+                UI.Msg('location',"The log data has been created successfully and written to",EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv')
              UI.UpdateStatus(Status+1,Meta,RecOutputMeta)
     elif Program[Status]=='Custom - TrackMapping':
                 raw_name=initial_input_file_location[:-4]
@@ -872,8 +872,8 @@ while Status<len(Program):
                              rec_eval=pd.merge(eval_data, rec, how="inner", on=['Seed_ID'])
                              eval_no=len(rec_eval)
                              rec_no=(len(rec)-len(rec_eval))
-                             UI.LogOperations(EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/'+RecBatchID+'_REC_LOG.csv', 'a', [[3+md,ModelName[md],rec_no,eval_no,eval_no/(rec_no+eval_no),eval_no/len(eval_data)]])
-                             UI.Msg('location',"The log data has been created successfully and written to",EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/'+RecBatchID+'_REC_LOG.csv')
+                             UI.LogOperations(EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv', 'a', [[3+md,ModelName[md],rec_no,eval_no,eval_no/(rec_no+eval_no),eval_no/len(eval_data)]])
+                             UI.Msg('location',"The log data has been created successfully and written to",EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv')
                              NewJobSet=1
                         else:
                             NewJobSet=[]
@@ -931,8 +931,8 @@ while Status<len(Program):
                                          rec_eval=pd.merge(eval_data, rec, how="inner", on=['Seed_ID'])
                                          eval_no=len(rec_eval)
                                          rec_no=(len(rec)-len(rec_eval))
-                                         UI.LogOperations(EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/'+RecBatchID+'_REC_LOG.csv', 'a', [[3+md,ModelName[md],rec_no,eval_no,eval_no/(rec_no+eval_no),eval_no/len(eval_data)]])
-                                         UI.Msg('location',"The log data has been created successfully and written to",EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/'+RecBatchID+'_REC_LOG.csv')
+                                         UI.LogOperations(EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv', 'a', [[3+md,ModelName[md],rec_no,eval_no,eval_no/(rec_no+eval_no),eval_no/len(eval_data)]])
+                                         UI.Msg('location',"The log data has been created successfully and written to",EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv')
                         Meta.JobSets[Status+1]=NewJobSet
                         print(UI.PickleOperations(RecOutputMeta,'w', Meta)[1])
                         UI.Msg('completed','Stage '+str(Status)+' has successfully completed')
@@ -945,7 +945,7 @@ while Status<len(Program):
 if Status<20:
     #Removing the temp files that were generated by the process
     print(UI.TimeStamp(),'Performing the cleanup... ')
-    print(UI.ManageFolders(AFS_DIR, EOS_DIR, RecBatchID,'d',['EUTr1a','RUTr1a','RUTr1b','RUTr1c']))
+    print(UI.ManageFolders(AFS_DIR, EOS_DIR, RecBatchID,'d',['EUTr1a','RUTr1a','RUTr1b','RUTr1c','RUTr1d']))
     UI.Msg('success',"Segment merging has been completed")
 else:
     UI.Msg('failed',"Segment merging has not been completed as one of the processes has timed out. Please run the script again (without Reset Mode).")
