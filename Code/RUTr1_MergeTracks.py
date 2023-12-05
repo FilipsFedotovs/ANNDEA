@@ -787,12 +787,11 @@ while Status<len(Program):
                     new_combined_data['Temp_Track_Quarter'] = new_combined_data['Temp_Track_Quarter'].fillna(new_combined_data[BrickID])
                 else:
                     new_combined_data['Temp_Track_Quarter'] = new_combined_data['Temp_Track_Quarter'].fillna('D')
-                print(new_combined_data)
-                exit()
                 new_combined_data['Temp_Track_ID'] = new_combined_data['Temp_Track_ID'].fillna(new_combined_data[TrackID])
                 new_combined_data=new_combined_data.rename(columns={'Temp_Track_Quarter': RecBatchID+'_Brick_ID','Temp_Track_ID': RecBatchID+'_Track_ID'})
                 new_combined_data.to_csv(final_output_file_location,index=False)
                 UI.Msg('location',"The merged track data has been created successfully and written to",final_output_file_location)
+                exit()
                 UI.UpdateStatus(Status+1,Meta,RecOutputMeta)
     else:
         for md in range(len(ModelName)):
