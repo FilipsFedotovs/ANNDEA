@@ -567,8 +567,6 @@ while Status<len(Program):
              print(len(base_data))
              input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/Temp_RUTr1d_'+RecBatchID+'_0/RUTr1d_'+RecBatchID+'_Fit_Merged_Seeds_1.pkl'
              base_data+=UI.PickleOperations(input_file_location,'r','N/A')[0]
-             print(len(base_data))
-             exit()
              for v in range(0,len(base_data)):
                  base_data[v].AssignANNTrUID(v)
              output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/RUTr1e_'+RecBatchID+'_Union_Tracks.pkl'
@@ -615,6 +613,8 @@ while Status<len(Program):
                 UI.Msg('location',"The log data has been created successfully and written to",EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/'+RecBatchID+'_REC_LOG.csv')
              UI.UpdateStatus(Status+1,Meta,RecOutputMeta)
     elif Program[Status]=='Custom - TrackMapping':
+                print('wip')
+                exit()
                 raw_name=initial_input_file_location[:-4]
                 for l in range(len(raw_name)-1,0,-1):
                     if raw_name[l]=='/':
