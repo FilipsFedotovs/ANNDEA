@@ -74,15 +74,15 @@ rec=pd.merge(rec,l_rec,how='left',on='Segment_1')
 rec['tot_count']=rec['l_count']+rec['r_count']
 rec.drop(['l_count','r_count'],axis=1,inplace=True)
 print(len(base_data))
-rec=rec.values.tolist()
+
 print(rec)
 if i==0:
     rec = rec[rec.tot_count == 2]
 
 rec['Segment']=rec['Segment_1']+'-'+rec['Segment_2']
 rec.drop(['tot_count','Segment_1','Segment_2'],axis=1,inplace=True)
-
-base_data=[x for x in base_data if (x.Header[0]+'-'+ x.Header[1]) not in 'item2']
+rec=rec.values.tolist()
+base_data=[x for x in base_data if (x.Header[0]+'-'+ x.Header[1]) not in rec]
 print(len(base_data))
 print(rec)
 exit()
