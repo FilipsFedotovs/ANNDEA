@@ -76,6 +76,7 @@ rec.drop(['l_count','r_count'],axis=1,inplace=True)
 print(rec)
 if i==0:
     rec = rec[rec.tot_count == 2]
+rec.drop(['tot_count'],axis=1,inplace=True)
 print(rec)
 exit()
 # rec=pd.merge(rec,r2_rec,how='left',on='Segment_2')
