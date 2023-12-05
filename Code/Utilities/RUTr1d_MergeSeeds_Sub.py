@@ -78,7 +78,9 @@ print(len(base_data))
 print(rec)
 if i==0:
     rec = rec[rec.tot_count == 2]
-
+else:
+    rec = rec[rec.tot_count > 2]
+print(len(rec))
 rec['Segment']=rec['Segment_1']+'-'+rec['Segment_2']
 rec.drop(['tot_count','Segment_1','Segment_2'],axis=1,inplace=True)
 rec=rec.values.tolist()
