@@ -77,6 +77,7 @@ parser.add_argument('--SubGap',help="How long to wait in minutes after submittin
 parser.add_argument('--MinHitsTrack',help="What is the minimum number of hits per track?", default=PM.MinHitsTrack)
 parser.add_argument('--MaxSLG',help="Maximum allowed longitudinal gap value between segments", default='7000')
 parser.add_argument('--MaxSTG',help="Maximum allowed transverse gap value between segments per SLG length", default='160')
+parser.add_argument('--MaxSeeds',help="Maximum size of the batches at premerging stage?", default='50000')
 parser.add_argument('--MaxDOCA',help="Maximum DOCA allowed", default='100')
 parser.add_argument('--MaxAngle',help="Maximum magnitude of angle allowed", default='3.6')
 parser.add_argument('--ReqMemory',help="How uch memory to request?", default='2 GB')
@@ -104,6 +105,7 @@ MaxAngle=float(args.MaxAngle)
 ForceStatus=args.ForceStatus
 RequestExtCPU=int(args.RequestExtCPU)
 ReqMemory=args.ReqMemory
+MaxSeeds=int(args.MaxSeeds)
 Xmin,Xmax,Ymin,Ymax=float(args.Xmin),float(args.Xmax),float(args.Ymin),float(args.Ymax)
 SliceData=max(Xmin,Xmax,Ymin,Ymax)>0 #We don't slice data if all values are set to zero simultaneousy (which is the default setting)
 
@@ -132,7 +134,7 @@ required_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/MUTr1_'
 
 ########################################     Phase 1 - Create compact source file    #########################################
 print(UI.TimeStamp(),bcolors.BOLD+'Stage -1:'+bcolors.ENDC+' Preparing the source data...')
-if os.path.isfile(required_file_location)==False or Mode=='RESET':
+if os.path.isfile(required_file_location)==False:
         print(UI.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
         data=pd.read_csv(input_file_location,
                     header=0,
@@ -173,7 +175,6 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
              final_rows=len(data.axes[0])
              print(UI.TimeStamp(),'The sliced data has ',final_rows,' hits')
 
-        output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MUTr1_'+TrainSampleID+'_TRACK_SEGMENTS.csv'
         print(UI.TimeStamp(),'Removing tracks which have less than',MinHitsTrack,'hits...')
         track_no_data=data.groupby(['MC_Mother_Track_ID','Rec_Seg_ID'],as_index=False).count()
         track_no_data=track_no_data.drop([PM.y,PM.z,PM.tx,PM.ty],axis=1)
@@ -189,7 +190,8 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         new_combined_data=new_combined_data.rename(columns={PM.z: "z"})
         new_combined_data=new_combined_data.rename(columns={PM.tx: "tx"})
         new_combined_data=new_combined_data.rename(columns={PM.ty: "ty"})
-        new_combined_data.to_csv(output_file_location,index=False)
+        data_header = new_combined_data.groupby('Rec_Seg_ID')['z'].min()
+        data_header=data_header.reset_index()
         data=new_combined_data[['Rec_Seg_ID','z']]
         print(UI.TimeStamp(),'Analysing the data sample in order to understand how many jobs to submit to HTCondor... ',bcolors.ENDC)
         data = data.groupby('Rec_Seg_ID')['z'].min()  #Keeping only starting hits for the each track record (we do not require the full information about track in this script)
@@ -206,16 +208,24 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         CutData = CutData.values.tolist()
         JobData=[k for i in JobData for k in i]
         CutData=[k for i in CutData for k in i]
-        print(JobData,CutData)
-        exit()
-        data = data.values.tolist()
-        print(UI.TimeStamp(), bcolors.OKGREEN+"The track segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+output_file_location+bcolors.ENDC)
+        for i in range(len(CutData)):
+          data_temp_header=data_header.drop(data_header.index[data_header['z'] < CutData[i]])
+          data_temp_header=data_temp_header.drop(['z'],axis=1)
+          temp_data=pd.merge(new_combined_data, data_temp_header, how="inner", on=["Rec_Seg_ID"]) #Shrinking the Track data so just a star hit for each track is present.
+          temp_required_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/MUTr1_'+TrainSampleID+'_TRACK_SEGMENTS_'+str(i)+'.csv'
+          temp_data.to_csv(temp_required_file_location,index=False)
+          UI.Msg('location',"The track segment data has been created successfully and written to",temp_required_file_location)
+
+        JobSetList=[]
+        for i in range(20):
+            JobSetList.append('empty')
+        JobSetList[0]=JobData
         Meta=UI.TrainingSampleMeta(TrainSampleID)
-        Meta.IniTrackSeedMetaData(MaxSLG,MaxSTG,MaxDOCA,MaxAngle,data,PM.MaxSegments,PM.VetoMotherTrack,PM.MaxSeeds,MinHitsTrack)
+        Meta.IniTrackSeedMetaData(MaxSLG,MaxSTG,MaxDOCA,MaxAngle,JobSetList,PM.MaxSegments,PM.VetoMotherTrack,MaxSeeds,MinHitsTrack)
         Meta.UpdateStatus(0)
         print(UI.PickleOperations(TrainSampleOutputMeta,'w', Meta)[1])
-        print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
-        print(UI.TimeStamp(),bcolors.OKGREEN+'Stage -1 has successfully completed'+bcolors.ENDC)
+        UI.Msg('completed','Stage 0 has successfully completed')
+        data = data.values.tolist()
 elif os.path.isfile(TrainSampleOutputMeta)==True:
     print(UI.TimeStamp(),'Loading previously saved data from ',bcolors.OKBLUE+TrainSampleOutputMeta+bcolors.ENDC)
     MetaInput=UI.PickleOperations(TrainSampleOutputMeta,'r', 'N/A')
@@ -229,46 +239,28 @@ MaxSegments=Meta.MaxSegments
 MaxSeeds=Meta.MaxSeeds
 VetoMotherTrack=Meta.VetoMotherTrack
 MinHitsTrack=Meta.MinHitsTrack
-TotJobs=0
-for j in range(0,len(JobSets)):
-          for sj in range(0,int(JobSets[j][2])):
-              TotJobs+=1
-# ########################################     Preset framework parameters    #########################################
-FreshStart=True
-Program=[]
-exit()
-#If we chose reset mode we do a full cleanup.
-# #Reconstructing a single brick can cause in gereation of 100s of thousands of files - need to make sure that we remove them.
-if Mode=='RESET':
-    print(UI.TimeStamp(),'Performing the cleanup... ',bcolors.ENDC)
-    HTCondorTag="SoftUsed == \"ANNDEA-MUTr1a-"+TrainSampleID+"\""
-    UI.TrainCleanUp(AFS_DIR, EOS_DIR, 'MUTr1_'+TrainSampleID, ['MUTr1a','MUTr1b','MUTr1c','MUTr1d'], HTCondorTag)
-    FreshStart=False
-    UI.UpdateStatus(0,Meta,TrainSampleOutputMeta)
-    Status=0
-else:
-    UI.Msg('vanilla','Analysing the current script status...')
-    Status=Meta.Status[-1]
+
+#The function bellow helps to automate the submission process
+UI.Msg('vanilla','Analysing the current script status...')
+Status=Meta.Status[-1]
 if ForceStatus!='N':
     Status=int(ForceStatus)
+UI.Msg('vanilla','Current stage is '+str(Status)+'...')
+
+# ########################################     Preset framework parameters    #########################################
+Program=[]
+
+#If we chose reset mode we do a full cleanup.
+# #Reconstructing a single brick can cause in gereation of 100s of thousands of files - need to make sure that we remove them.
+
 
 ################ Set the execution sequence for the script
 
 ###### Stage 0
 prog_entry=[]
-job_sets=[]
-
-for i in range(len(JobSets)):
-                job_sets.append(int(JobSets[i][2]))
-TotJobs=0
-if type(job_sets) is int:
-                        TotJobs=job_sets
-elif type(job_sets[0]) is int:
-                        TotJobs=np.sum(job_sets)
-elif type(job_sets[0][0]) is int:
-                        for lp in job_sets:
-                            TotJobs+=np.sum(lp)
-
+NJobs=UI.CalculateNJobs(Meta.JobSets[0])[1]
+print(NJobs)
+exit()
 prog_entry.append(' Sending hit cluster to the HTCondor, so tack segment combination pairs can be formed...')
 prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/','RawSeedsRes','MUTr1a','.csv',TrainSampleID,job_sets,'MUTr1a_GenerateRawSelectedSeeds_Sub.py'])
 prog_entry.append([ " --MaxSegments ", " --MaxSLG "," --MaxSTG "," --VetoMotherTrack "])
