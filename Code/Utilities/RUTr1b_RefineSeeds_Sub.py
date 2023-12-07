@@ -127,7 +127,9 @@ if FirstTime=='True':
     #create seeds
     GoodTracks=[]
     print(UI.TimeStamp(),'Beginning the sample generation part...')
+    counter=0
     for s in range(0,limit):
+         
          track=tracks.pop(0)
          track=EMO(track[:2])
          track.Decorate(segments)
@@ -145,6 +147,9 @@ if FirstTime=='True':
          else:
              del track
              continue
+         counter+=1
+         if counter%10==100:
+            print('Progress',counter,'seeds') 
     print(UI.TimeStamp(),bcolors.OKGREEN+'The sample generation has been completed..'+bcolors.ENDC)
     del tracks
     del segments
