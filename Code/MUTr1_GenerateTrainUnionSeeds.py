@@ -80,6 +80,7 @@ parser.add_argument('--MaxSTG',help="Maximum allowed transverse gap value betwee
 parser.add_argument('--MaxDOCA',help="Maximum DOCA allowed", default='100')
 parser.add_argument('--MaxAngle',help="Maximum magnitude of angle allowed", default='3.6')
 parser.add_argument('--ReqMemory',help="How uch memory to request?", default='2 GB')
+parser.add_argument('--HTCondorLog',help="Local submission?", default=False,type=bool)
 ######################################## Parsing argument values  #############################################################
 args = parser.parse_args()
 Mode=args.Mode.upper()
@@ -88,6 +89,7 @@ ModelName=ast.literal_eval(args.ModelName)
 TrainSampleID=args.TrainSampleID
 TrackID=args.TrackID
 BrickID=args.BrickID
+HTCondorLog=args.HTCondorLog
 Patience=int(args.Patience)
 TrainSampleSize=int(args.TrainSampleSize)
 input_file_location=args.f
@@ -104,6 +106,16 @@ RequestExtCPU=int(args.RequestExtCPU)
 ReqMemory=args.ReqMemory
 Xmin,Xmax,Ymin,Ymax=float(args.Xmin),float(args.Xmax),float(args.Ymin),float(args.Ymax)
 SliceData=max(Xmin,Xmax,Ymin,Ymax)>0 #We don't slice data if all values are set to zero simultaneousy (which is the default setting)
+
+if Mode=='RESET':
+    print(UI.ManageFolders(AFS_DIR, EOS_DIR, TrainSampleID,'d',['MUTr1a','MUTr1b','MUTr1c','MUTr1d']))
+    print(UI.ManageFolders(AFS_DIR, EOS_DIR, TrainSampleID,'c'))
+elif Mode=='CLEANUP':
+     print(UI.ManageFolders(AFS_DIR, EOS_DIR, TrainSampleID,'d',['MUTr1a','MUTr1b','MUTr1c','MUTr1d']))
+     exit()
+else:
+    print(UI.ManageFolders(AFS_DIR, EOS_DIR, TrainSampleID,'c'))
+
 LocalSub=(args.LocalSub=='Y')
 if LocalSub:
    time_int=0
@@ -114,8 +126,8 @@ else:
 #Establishing paths
 EOSsubDIR=EOS_DIR+'/'+'ANNDEA'
 EOSsubModelDIR=EOSsubDIR+'/'+'Models'
-TrainSampleOutputMeta=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_info.pkl'
-required_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MUTr1_'+TrainSampleID+'_TRACK_SEGMENTS.csv'
+TrainSampleOutputMeta=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/'+TrainSampleID+'_info.pkl'
+required_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/MUTr1_'+TrainSampleID+'_TRACK_SEGMENTS_0.csv'
 
 
 ########################################     Phase 1 - Create compact source file    #########################################
@@ -187,6 +199,15 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         data=data.sort_values(['z'],ascending=True)
         data['Sub_Sets']=np.ceil(data['Rec_Seg_ID']/PM.MaxSegments)
         data['Sub_Sets'] = data['Sub_Sets'].astype(int)
+
+        JobData=data.drop(['Rec_Seg_ID','z'],axis=1)
+        CutData=data.drop(['Rec_Seg_ID','Sub_Sets'],axis=1)
+        JobData = JobData.values.tolist()
+        CutData = CutData.values.tolist()
+        JobData=[k for i in JobData for k in i]
+        CutData=[k for i in CutData for k in i]
+        print(JobData,CutData)
+        exit()
         data = data.values.tolist()
         print(UI.TimeStamp(), bcolors.OKGREEN+"The track segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+output_file_location+bcolors.ENDC)
         Meta=UI.TrainingSampleMeta(TrainSampleID)
@@ -215,7 +236,7 @@ for j in range(0,len(JobSets)):
 # ########################################     Preset framework parameters    #########################################
 FreshStart=True
 Program=[]
-
+exit()
 #If we chose reset mode we do a full cleanup.
 # #Reconstructing a single brick can cause in gereation of 100s of thousands of files - need to make sure that we remove them.
 if Mode=='RESET':
