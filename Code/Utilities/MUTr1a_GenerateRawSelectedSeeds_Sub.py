@@ -60,7 +60,7 @@ import numpy as np
 import ast
 VetoMotherTrack=ast.literal_eval(args.VetoMotherTrack)
 #Specifying the full path to input/output files
-input_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET'+BatchID+'/MUTr1_'+BatchID+'_TRACK_SEGMENTS_'+str(i)+'.csv'
+input_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+BatchID+'/MUTr1_'+BatchID+'_TRACK_SEGMENTS_'+str(i)+'.csv'
 output_file_location=EOS_DIR+'/'+p+'/Temp_'+pfx+'_'+BatchID+'_'+str(i)+'/'+pfx+'_'+BatchID+'_RawSeeds_'+str(i)+'_'+str(j)+sfx
 output_result_location=EOS_DIR+'/'+p+'/Temp_'+pfx+'_'+BatchID+'_'+str(i)+'/'+pfx+'_'+BatchID+'_'+o+'_'+str(i)+'_'+str(j)+sfx
 print(UI.TimeStamp(), "Modules Have been imported successfully...")
