@@ -354,9 +354,7 @@ prog_entry.append(LocalSub)
 prog_entry.append('N/A')
 prog_entry.append(HTCondorLog)
 prog_entry.append(False)
-if Mode=='RESET':
-        print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry))
-    #Setting up folders for the output. The reconstruction of just one brick can easily generate >100k of files. Keeping all that blob in one directory can cause problems on lxplus.
+#Setting up folders for the output. The reconstruction of just one brick can easily generate >100k of files. Keeping all that blob in one directory can cause problems on lxplus.
 print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry))
 Program.append(prog_entry)
 Program.append('Custom - Collect Raw Seeds')
