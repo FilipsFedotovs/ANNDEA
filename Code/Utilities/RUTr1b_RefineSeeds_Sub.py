@@ -148,7 +148,8 @@ if FirstTime=='True':
              del track
              continue
          counter+=1
-         if counter%10==100:
+        
+         if counter%100==0:
             print('Progress',counter,'seeds') 
     print(UI.TimeStamp(),bcolors.OKGREEN+'The sample generation has been completed..'+bcolors.ENDC)
     del tracks
