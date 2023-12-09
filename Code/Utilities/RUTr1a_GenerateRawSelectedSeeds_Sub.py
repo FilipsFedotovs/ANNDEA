@@ -47,11 +47,11 @@ AFS_DIR=args.AFS
 PY_DIR=args.PY
 if PY_DIR!='': #Temp solution
     sys.path=['',PY_DIR]
-    sys.path.append('/usr/lib64/python36.zip')
-    sys.path.append('/usr/lib64/python3.6')
-    sys.path.append('/usr/lib64/python3.6/lib-dynload')
-    sys.path.append('/usr/lib64/python3.6/site-packages')
-    sys.path.append('/usr/lib/python3.6/site-packages')
+    sys.path.append('/usr/lib64/python39.zip')
+    sys.path.append('/usr/lib64/python3.9')
+    sys.path.append('/usr/lib64/python3.9/lib-dynload')
+    sys.path.append('/usr/lib64/python3.9/site-packages')
+    sys.path.append('/usr/lib/python3.9/site-packages')
 sys.path.append(AFS_DIR+'/Code/Utilities')
 import U_UI as UI
 import pandas as pd #We use Panda for a routine data processing
