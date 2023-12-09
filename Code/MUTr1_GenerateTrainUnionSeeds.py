@@ -310,13 +310,13 @@ while Status<len(Program):
                 tot_fractions=0
                 if NewJobSet[i]==0:
                     for j in range(0,JobSet[i]):
-                        output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+TrainSampleID+'/Temp_MUTr1a'+'_'+TrainSampleID+'_'+str(i)+'/MUTr1a_'+TrainSampleID+'_RawSeeds_'+str(i)+'_'+str(j)+'.csv'
+                        output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/Temp_MUTr1a'+'_'+TrainSampleID+'_'+str(i)+'/MUTr1a_'+TrainSampleID+'_RawSeeds_'+str(i)+'_'+str(j)+'.csv'
                         result=pd.read_csv(output_file_location,names = ['Segment_1','Segment_2'])
                         Records=len(result)
                         print(UI.TimeStamp(),'Set',str(i),'and subset', str(j), 'contains', Records, 'seeds')
                         fractions=int(math.ceil(Records/MaxSeeds))
                         for k in range(0,fractions):
-                         new_output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+TrainSampleID+'/Temp_MUTr1a'+'_'+TrainSampleID+'_'+str(i)+'/MUTr1a_'+TrainSampleID+'_SelectedSeeds_'+str(i)+'_'+str(tot_fractions+k)+'.csv'
+                         new_output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/Temp_MUTr1a'+'_'+TrainSampleID+'_'+str(i)+'/MUTr1a_'+TrainSampleID+'_SelectedSeeds_'+str(i)+'_'+str(tot_fractions+k)+'.csv'
                          print(new_output_file_location)
                          result[(k*MaxSeeds):min(Records,((k+1)*MaxSeeds))].to_csv(new_output_file_location,index=False)
                         tot_fractions+=fractions
