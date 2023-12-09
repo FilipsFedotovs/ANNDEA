@@ -38,14 +38,6 @@ class bcolors:   #We use it for the interface
     UNDERLINE = '\033[4m'
 
 #Loading Directory locations
-csv_reader=open('../config',"r")
-config = list(csv.reader(csv_reader))
-for c in config:
-    if c[0]=='AFS_DIR':
-        AFS_DIR=c[1]
-    if c[0]=='EOS_DIR':
-        EOS_DIR=c[1]
-csv_reader.close()
 import sys
 sys.path.insert(1, AFS_DIR+'/Code/Utilities/')
 import U_UI as UI #This is where we keep routine utility functions
@@ -273,7 +265,7 @@ Program.append(prog_entry)
 #Setting up folders for the output. The reconstruction of just one brick can easily generate >100k of files. Keeping all that blob in one directory can cause problems on lxplus.
 print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry))
 ###### Stage 1
-# Program.append('Custom - Collect Raw Seeds')
+Program.append('Custom - Collect Raw Seeds')
 #
 # ##############################################################################################################################################################
 # ####### Stage 4
@@ -294,47 +286,47 @@ while Status<len(Program):
         else:
              Status=20
              break
-    # elif Program[Status]=='Custom - Collect Raw Seeds':
-    #     UI.Msg('status','Stage '+str(Status),': Collecting and de-duplicating the results from previous stage '+str(Status-1)+'...')
-    #     UI.Msg('vanilla','Analysing the data sample in order to understand how many jobs to submit to HTCondor... ')
-    #     data=pd.read_csv(required_file_location,header=0,
-    #                 usecols=['z','Rec_Seg_ID'])
-    #     data = data.groupby('Rec_Seg_ID')['z'].min()  #Keeping only starting hits for the each track record (we do not require the full information about track in this script)
-    #     data=data.reset_index()
-    #     data = data.groupby('z')['Rec_Seg_ID'].count()  #Keeping only starting hits for the each track record (we do not require the full information about track in this script)
-    #     data=data.reset_index()
-    #     data=data.sort_values(['z'],ascending=True)
-    #     data['Sub_Sets']=np.ceil(data['Rec_Seg_ID']/PM.MaxSegments)
-    #     data['Sub_Sets'] = data['Sub_Sets'].astype(int)
-    #     Meta=UI.PickleOperations(TrainSampleOutputMeta,'r', 'N/A')[0]
-    #     JobSet=Meta.JobSets[0]
-    #     NewJobSet=[]
-    #     for i in JobSet:
-    #         NewJobSet.append(0)
-    #     with alive_bar(len(JobSet),force_tty=True, title='Checking the results from HTCondor') as bar:
-    #         for i in range(len(JobSet)): #//Temporarily measure to save space
-    #             bar.text = f'-> Analysing set : {i}...'
-    #             bar()
-    #             tot_fractions=0
-    #             if NewJobSet[i]==0:
-    #                 for j in range(0,JobSet[i]):
-    #                     output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+TrainSampleID+'/Temp_RUTr1a'+'_'+TrainSampleID+'_'+str(i)+'/RUTr1a_'+TrainSampleID+'_RawSeeds_'+str(i)+'_'+str(j)+'.csv'
-    #                     result=pd.read_csv(output_file_location,names = ['Segment_1','Segment_2'])
-    #                     Records=len(result)
-    #                     print(UI.TimeStamp(),'Set',str(i),'and subset', str(j), 'contains', Records, 'seeds')
-    #                     fractions=int(math.ceil(Records/MaxSeeds))
-    #                     for k in range(0,fractions):
-    #                      new_output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+TrainSampleID+'/Temp_RUTr1a'+'_'+TrainSampleID+'_'+str(i)+'/RUTr1a_'+TrainSampleID+'_SelectedSeeds_'+str(i)+'_'+str(tot_fractions+k)+'.csv'
-    #                      print(new_output_file_location)
-    #                      result[(k*MaxSeeds):min(Records,((k+1)*MaxSeeds))].to_csv(new_output_file_location,index=False)
-    #                     tot_fractions+=fractions
-    #                 NewJobSet[i]=tot_fractions
-    #             else:
-    #                 continue
-    #     Meta.JobSets[Status+1]=NewJobSet
-    #     print(UI.PickleOperations(RecOutputMeta,'w', Meta)[1])
-    #     UI.Msg('completed','Stage '+str(Status)+' has successfully completed')
-    #     UI.UpdateStatus(Status+1,Meta,RecOutputMeta)
+    elif Program[Status]=='Custom - Collect Raw Seeds':
+        UI.Msg('status','Stage '+str(Status),': Collecting and de-duplicating the results from previous stage '+str(Status-1)+'...')
+        UI.Msg('vanilla','Analysing the data sample in order to understand how many jobs to submit to HTCondor... ')
+        data=pd.read_csv(required_file_location,header=0,
+                    usecols=['z','Rec_Seg_ID'])
+        data = data.groupby('Rec_Seg_ID')['z'].min()  #Keeping only starting hits for the each track record (we do not require the full information about track in this script)
+        data=data.reset_index()
+        data = data.groupby('z')['Rec_Seg_ID'].count()  #Keeping only starting hits for the each track record (we do not require the full information about track in this script)
+        data=data.reset_index()
+        data=data.sort_values(['z'],ascending=True)
+        data['Sub_Sets']=np.ceil(data['Rec_Seg_ID']/PM.MaxSegments)
+        data['Sub_Sets'] = data['Sub_Sets'].astype(int)
+        Meta=UI.PickleOperations(TrainSampleOutputMeta,'r', 'N/A')[0]
+        JobSet=Meta.JobSets[0]
+        NewJobSet=[]
+        for i in JobSet:
+            NewJobSet.append(0)
+        with alive_bar(len(JobSet),force_tty=True, title='Checking the results from HTCondor') as bar:
+            for i in range(len(JobSet)): #//Temporarily measure to save space
+                bar.text = f'-> Analysing set : {i}...'
+                bar()
+                tot_fractions=0
+                if NewJobSet[i]==0:
+                    for j in range(0,JobSet[i]):
+                        output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+TrainSampleID+'/Temp_MUTr1a'+'_'+TrainSampleID+'_'+str(i)+'/MUTr1a_'+TrainSampleID+'_RawSeeds_'+str(i)+'_'+str(j)+'.csv'
+                        result=pd.read_csv(output_file_location,names = ['Segment_1','Segment_2'])
+                        Records=len(result)
+                        print(UI.TimeStamp(),'Set',str(i),'and subset', str(j), 'contains', Records, 'seeds')
+                        fractions=int(math.ceil(Records/MaxSeeds))
+                        for k in range(0,fractions):
+                         new_output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+TrainSampleID+'/Temp_MUTr1a'+'_'+TrainSampleID+'_'+str(i)+'/MUTr1a_'+TrainSampleID+'_SelectedSeeds_'+str(i)+'_'+str(tot_fractions+k)+'.csv'
+                         print(new_output_file_location)
+                         result[(k*MaxSeeds):min(Records,((k+1)*MaxSeeds))].to_csv(new_output_file_location,index=False)
+                        tot_fractions+=fractions
+                    NewJobSet[i]=tot_fractions
+                else:
+                    continue
+        Meta.JobSets[Status+1]=NewJobSet
+        print(UI.PickleOperations(TrainSampleOutputMeta,'w', Meta)[1])
+        UI.Msg('completed','Stage '+str(Status)+' has successfully completed')
+        UI.UpdateStatus(Status+1,Meta,TrainSampleOutputMeta)
     # elif Program[Status]=='Custom - Merging':
     #        print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
     #        print(UI.TimeStamp(),bcolors.BOLD+'Stage 4:'+bcolors.ENDC+' Resampling the results from the previous stage')
