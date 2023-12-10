@@ -418,10 +418,7 @@ while Status<len(Program):
            JobSet=[]
            Meta=UI.PickleOperations(TrainSampleOutputMeta,'r', 'N/A')[0]
            JobSet=Meta.JobSets[1]
-           print(JobSet)
            JobSet=[x for x in JobSet if x == 1]
-           print(JobSet)
-           exit()
            if args.Samples=='ALL':
                if TrueSeeds<=(float(args.LabelRatio)*TotalImages):
                    RequiredTrueSeeds=TrueSeeds
@@ -447,9 +444,9 @@ while Status<len(Program):
            else:
              FakeSeedCorrection=0
            with alive_bar(len(JobSet),force_tty=True, title='Resampling the files...') as bar:
-            for i in range(0,len(JobSet)):
-              output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MUTr1d_'+TrainSampleID+'_SampledCompressedSeeds_'+str(i)+'.pkl'
-              input_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MUTr1c_'+TrainSampleID+'_CompressedSeeds_'+str(i)+'.pkl'
+            for i in JobSet:
+              output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/MUTr1d_'+TrainSampleID+'_SampledCompressedSeeds_'+str(i)+'.pkl'
+              input_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/MUTr1c_'+TrainSampleID+'_CompressedSeeds_'+str(i)+'.pkl'
               bar.text = f'-> Resampling the file : {input_file_location}, exists...'
               bar()
               if os.path.isfile(output_file_location)==False and os.path.isfile(input_file_location):
@@ -468,7 +465,8 @@ while Status<len(Program):
                   del ExtractedFake
                   gc.collect()
            print(UI.TimeStamp(),bcolors.OKGREEN+'Stage 4 has successfully completed'+bcolors.ENDC)
-           UI.UpdateStatus(Status+1,Meta,TrainSampleOutputMeta)
+           Status=5
+           UI.UpdateStatus(Status,Meta,TrainSampleOutputMeta)
            continue
     # elif Program[Status]=='Custom - TrackMapping':
     #             raw_name=initial_input_file_location[:-4]
