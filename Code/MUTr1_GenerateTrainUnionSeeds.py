@@ -407,6 +407,7 @@ while Status<len(Program):
         Status=4
         UI.UpdateStatus(Status,Meta,TrainSampleOutputMeta)
         continue
+
     elif Program[Status]=='Custom - Resampling':
            print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
            print(UI.TimeStamp(),bcolors.BOLD+'Stage 4:'+bcolors.ENDC+' Resampling the results from the previous stage')
@@ -414,13 +415,11 @@ while Status<len(Program):
            Temp_Stats=UI.LogOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/MUTr1c_'+TrainSampleID+'_Temp_Stats.csv','r', '_')
            TotalImages=int(Temp_Stats[0][0])
            TrueSeeds=int(Temp_Stats[0][1])
-           print(TotalImages,TrueSeeds)
-           exit()
            JobSet=[]
-           for i in range(len(JobSets)):
-             JobSet.append([])
-             for j in range(len(JobSets[i][3])):
-                 JobSet[i].append(JobSets[i][3][j])
+           Meta=UI.PickleOperations(TrainSampleOutputMeta,'r', 'N/A')[0]
+           JobSet=Meta.JobSets[1]
+           print(JobSet)
+           exit()
            if args.Samples=='ALL':
                if TrueSeeds<=(float(args.LabelRatio)*TotalImages):
                    RequiredTrueSeeds=TrueSeeds
