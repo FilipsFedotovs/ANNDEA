@@ -383,8 +383,6 @@ while Status<len(Program):
                                     base_data = new_data
                               else:
                                     base_data+=new_data
-                print(len(base_data))
-                exit()
                 try:
                     Records=len(base_data)
                     print(UI.TimeStamp(),'Set',str(i),'contains', Records, 'raw images',bcolors.ENDC)
@@ -403,7 +401,7 @@ while Status<len(Program):
                     continue
                 del new_data
                 UI.LogOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MUTr1c_'+TrainSampleID+'_Temp_Stats.csv','w', [[TotalImages,TrueSeeds]])
-        print(UI.TimeStamp(),bcolors.OKGREEN+'Stage 4 has successfully completed'+bcolors.ENDC)
+        print(UI.TimeStamp(),bcolors.OKGREEN+'Stage 3 has successfully completed'+bcolors.ENDC)
         Status=4
         UI.UpdateStatus(Status,Meta,TrainSampleOutputMeta)
         continue
