@@ -341,8 +341,10 @@ while Status<len(Program):
                     NewJobSet[i]=tot_fractions
                 else:
                     continue
-        Meta.JobSets[Status+1]=NewJobSet
-        print(Program)
+        Meta.JobSets[1]=NewJobSet
+        NJobs=UI.CalculateNJobs(Meta.JobSets[1])[1]
+        print(NJobs)
+        print(Program[1][1])
         exit()
         print(UI.PickleOperations(TrainSampleOutputMeta,'w', Meta)[1])
         UI.Msg('completed','Stage '+str(Status)+' has successfully completed')
