@@ -358,11 +358,54 @@ while Status<len(Program):
         print(UI.PickleOperations(TrainSampleOutputMeta,'w', Meta)[1])
         UI.Msg('completed','Stage '+str(Status)+' has successfully completed')
         UI.UpdateStatus(Status+1,Meta,TrainSampleOutputMeta)
+
+    elif Program[Status]=='Custom - Collect Selected Seeds':
+        print(UI.TimeStamp(),bcolors.BOLD+'Stage 3:'+bcolors.ENDC+' Analysing the training samples')
+        Meta=UI.PickleOperations(TrainSampleOutputMeta,'r', 'N/A')[0]
+        JobSet=Meta.JobSets[1]
+        for i in range(0,len(JobSet)):
+             output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MUTr1c_'+TrainSampleID+'_CompressedSeeds_'+str(i)+'.pkl'
+             if os.path.isfile(output_file_location)==False:
+                if os.path.isfile(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MUTr1c_'+TrainSampleID+'_Temp_Stats.csv')==False:
+                   UI.LogOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MUTr1c_'+TrainSampleID+'_Temp_Stats.csv','w', [[0,0]])
+                Temp_Stats=UI.LogOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MUTr1c_'+TrainSampleID+'_Temp_Stats.csv','r', '_')
+                TotalImages=int(Temp_Stats[0][0])
+                TrueSeeds=int(Temp_Stats[0][1])
+                base_data = None
+                for j in range(len(JobSet[i])):
+                              required_output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/Temp_MUTr1b_'+TrainSampleID+'_'+str(i)+'/MUTr1b_'+TrainSampleID+'_'+'RefinedSeeds'+'_'+str(i)+'_'+str(j) + '.pkl'
+                              new_data=UI.PickleOperations(required_output_file_location,'r','N/A')[0]
+                              if base_data == None:
+                                    base_data = new_data
+                              else:
+                                    base_data+=new_data
+                print(len(base_data))
+                exit()
+                try:
+                    Records=len(base_data)
+                    print(UI.TimeStamp(),'Set',str(i),'contains', Records, 'raw images',bcolors.ENDC)
+
+                    base_data=list(set(base_data))
+                    Records_After_Compression=len(base_data)
+                    if Records>0:
+                              Compression_Ratio=int((Records_After_Compression/Records)*100)
+                    else:
+                              CompressionRatio=0
+                    TotalImages+=Records_After_Compression
+                    TrueSeeds+=sum(1 for im in base_data if im.Label == 1)
+                    print(UI.TimeStamp(),'Set',str(i),'compression ratio is ', Compression_Ratio, ' %',bcolors.ENDC)
+                    print(UI.PickleOperations(output_file_location,'w',base_data)[1])
+                except:
+                    continue
+                del new_data
+                UI.LogOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MUTr1c_'+TrainSampleID+'_Temp_Stats.csv','w', [[TotalImages,TrueSeeds]])
+        print(UI.TimeStamp(),bcolors.OKGREEN+'Stage 4 has successfully completed'+bcolors.ENDC)
+        Status=4
+        UI.UpdateStatus(Status,Meta,TrainSampleOutputMeta)
+        continue
     elif Program[Status]=='Custom - Resampling':
-           print('Wip')
-           exit()
            print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
-           print(UI.TimeStamp(),bcolors.BOLD+'Stage 4:'+bcolors.ENDC+' Resampling the results from the previous stage')
+           print(UI.TimeStamp(),bcolors.BOLD+'Stage 3:'+bcolors.ENDC+' Resampling the results from the previous stage')
            print(UI.TimeStamp(),'Sampling the required number of seeds',bcolors.ENDC)
            Temp_Stats=UI.LogOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MUTr1c_'+TrainSampleID+'_Temp_Stats.csv','r', '_')
            TotalImages=int(Temp_Stats[0][0])
