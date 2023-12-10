@@ -330,9 +330,19 @@ while Status<len(Program):
                 if NewJobSet[i]==0:
                     for j in range(0,JobSet[i]):
                         output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/Temp_MUTr1a'+'_'+TrainSampleID+'_'+str(i)+'/MUTr1a_'+TrainSampleID+'_RawSeeds_'+str(i)+'_'+str(j)+'.csv'
-                        result=pd.read_csv(output_file_location,names = ['Segment_1','Segment_2'])
+                        result=pd.read_csv(output_file_location,names = ['Segment_1','Segment_2', 'Seed_Type'])
                         Records=len(result)
-                        print(UI.TimeStamp(),'Set',str(i),'and subset', str(j), 'contains', Records, 'seeds')
+                        print(UI.TimeStamp(),'Set',str(i),'and subset', str(j), 'contains', Records, 'seeds',bcolors.ENDC)
+                        result["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(result['Segment_1'], result['Segment_2'])]
+                        result.drop_duplicates(subset="Seed_ID",keep='first',inplace=True)
+                        result.drop(result.index[result['Segment_1'] == result['Segment_2']], inplace = True)
+                        result.drop(["Seed_ID"],axis=1,inplace=True)
+                        Records_After_Compression=len(result)
+                        if Records>0:
+                          Compression_Ratio=int((Records_After_Compression/Records)*100)
+                        else:
+                          Compression_Ratio=0
+                        print(UI.TimeStamp(),'Set',str(i),'and subset', str(j), 'compression ratio is ', Compression_Ratio, ' %',bcolors.ENDC)
                         fractions=int(math.ceil(Records/MaxSeeds))
                         for k in range(0,fractions):
                          new_output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/Temp_MUTr1a'+'_'+TrainSampleID+'_'+str(i)+'/MUTr1a_'+TrainSampleID+'_SelectedSeeds_'+str(i)+'_'+str(tot_fractions+k)+'.csv'
