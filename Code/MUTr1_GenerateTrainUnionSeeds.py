@@ -288,6 +288,8 @@ Program.append(prog_entry)
 print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry))
 
 Program.append('Custom - Collect Selected Seeds')
+Program.append('Custom - Resampling')
+
 
 #
 # ##############################################################################################################################################################
