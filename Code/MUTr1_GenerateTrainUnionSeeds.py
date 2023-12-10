@@ -224,6 +224,8 @@ elif os.path.isfile(TrainSampleOutputMeta)==True:
     print(UI.TimeStamp(),'Loading previously saved data from ',bcolors.OKBLUE+TrainSampleOutputMeta+bcolors.ENDC)
     MetaInput=UI.PickleOperations(TrainSampleOutputMeta,'r', 'N/A')
     Meta=MetaInput[0]
+else:
+    UI.Msg('failed',"Meta file "+TrainSampleOutputMeta+" is missing...")
 MaxSLG=Meta.MaxSLG
 MaxSTG=Meta.MaxSTG
 MaxDOCA=Meta.MaxDOCA
