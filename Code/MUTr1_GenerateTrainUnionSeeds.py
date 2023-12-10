@@ -376,7 +376,7 @@ while Status<len(Program):
                 TotalImages=int(Temp_Stats[0][0])
                 TrueSeeds=int(Temp_Stats[0][1])
                 base_data = None
-                for j in range(len(JobSet[i])):
+                for j in range(JobSet[i]):
                               required_output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/Temp_MUTr1b_'+TrainSampleID+'_'+str(i)+'/MUTr1b_'+TrainSampleID+'_'+'RefinedSeeds'+'_'+str(i)+'_'+str(j) + '.pkl'
                               new_data=UI.PickleOperations(required_output_file_location,'r','N/A')[0]
                               if base_data == None:
