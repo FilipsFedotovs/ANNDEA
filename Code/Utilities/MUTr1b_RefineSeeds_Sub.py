@@ -144,10 +144,8 @@ for s in range(0,limit):
      keep_seed=True
      if track.TrackQualityCheck(MaxDOCA,MaxSLG,MaxSTG, MaxAngle):
          for m in range(len(Metas)):
-             print(track.Header)
              if track.FitSeed(Metas[m],Models[m])==False:
                 keep_seed=False
-             print(keep_seed)
          if keep_seed:
             GoodTracks.append(track)
      else:
