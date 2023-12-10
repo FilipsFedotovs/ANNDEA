@@ -111,9 +111,7 @@ segments["ty"] = pd.to_numeric(segments["ty"],downcast='float')
 
 # reorder the columns
 segments = segments[['x','y','z','tx','ty', 'Rec_Seg_ID', 'MC_Mother_Track_ID', 'Seed_Type']]
-print(track_list)
-print(segments)
-x=input()
+
 segments = segments.values.tolist() #Convirting the result to List data type
 tracks = tracks.values.tolist() #Convirting the result to List data type
 
@@ -146,6 +144,7 @@ for s in range(0,limit):
      keep_seed=True
      if track.TrackQualityCheck(MaxDOCA,MaxSLG,MaxSTG, MaxAngle):
          for m in range(len(Metas)):
+             print(track.Header)
              if track.FitSeed(Metas[m],Models[m])==False:
                 keep_seed=False
          if keep_seed:
