@@ -44,11 +44,11 @@ PY_DIR=args.PY
 
 if PY_DIR!='': #Temp solution
     sys.path=['',PY_DIR]
-    sys.path.append('/usr/lib64/python36.zip')
-    sys.path.append('/usr/lib64/python3.6')
-    sys.path.append('/usr/lib64/python3.6/lib-dynload')
-    sys.path.append('/usr/lib64/python3.6/site-packages')
-    sys.path.append('/usr/lib/python3.6/site-packages')
+    sys.path.append('/usr/lib64/python39.zip')
+    sys.path.append('/usr/lib64/python3.9')
+    sys.path.append('/usr/lib64/python3.9/lib-dynload')
+    sys.path.append('/usr/lib64/python3.9/site-packages')
+    sys.path.append('/usr/lib/python3.9/site-packages')
 sys.path.append(AFS_DIR+'/Code/Utilities')
 import U_UI as UI
 from U_EMO import EMO
@@ -88,8 +88,10 @@ MaxDOCA=float(args.MaxDOCA)
 MaxSTG=float(args.MaxSTG)
 MaxSLG=float(args.MaxSLG)
 MaxAngle=float(args.MaxAngle)
-input_segment_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MUTr1_'+BatchID+'_TRACK_SEGMENTS.csv'
-input_track_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/Temp_MUTr1a_'+BatchID+'_'+str(i)+'/MUTr1a_'+BatchID+'_SelectedSeeds_'+str(i)+'_'+str(j)+'_'+str(k)+'.csv'
+
+
+input_segment_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+BatchID+'/MUTr1_'+BatchID+'_TRACK_SEGMENTS.csv'
+input_track_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+BatchID+'/Temp_MUTr1a_'+BatchID+'_'+str(i)+'/MUTr1a_'+BatchID+'_SelectedSeeds_'+str(i)+'_'+str(j)+'_'+str(k)+'.csv'
 output_file_location=EOS_DIR+'/'+p+'/Temp_'+pfx+'_'+BatchID+'_'+str(i)+'/'+pfx+'_'+BatchID+'_'+o+'_'+str(i)+'_'+str(j)+'_'+str(k)+sfx
 print(UI.TimeStamp(),'Loading the data')
 tracks=pd.read_csv(input_track_file_location)
@@ -126,10 +128,7 @@ GoodTracks=[]
 print(UI.TimeStamp(),'Beginning the sample generation part...')
 
 for s in range(0,limit):
-      
-        
      track=tracks.pop(0)
-
      label=track[2]
      track=EMO(track[:2])
      if label:
@@ -143,14 +142,10 @@ for s in range(0,limit):
        track.GetTrInfo()
      except:
        continue
-
      keep_seed=True
-
      if track.TrackQualityCheck(MaxDOCA,MaxSLG,MaxSTG, MaxAngle):
          for m in range(len(Metas)):
-             
              if track.FitSeed(Metas[m],Models[m])==False:
-                
                 keep_seed=False
          if keep_seed:
             GoodTracks.append(track)
