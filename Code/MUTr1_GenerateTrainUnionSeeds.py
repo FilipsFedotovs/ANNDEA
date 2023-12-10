@@ -370,11 +370,11 @@ while Status<len(Program):
         Meta=UI.PickleOperations(TrainSampleOutputMeta,'r', 'N/A')[0]
         JobSet=Meta.JobSets[1]
         for i in range(0,len(JobSet)):
-             output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MUTr1c_'+TrainSampleID+'_CompressedSeeds_'+str(i)+'.pkl'
+             output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/MUTr1c_'+TrainSampleID+'_CompressedSeeds_'+str(i)+'.pkl'
              if os.path.isfile(output_file_location)==False:
-                if os.path.isfile(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MUTr1c_'+TrainSampleID+'_Temp_Stats.csv')==False:
-                   UI.LogOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MUTr1c_'+TrainSampleID+'_Temp_Stats.csv','w', [[0,0]])
-                Temp_Stats=UI.LogOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MUTr1c_'+TrainSampleID+'_Temp_Stats.csv','r', '_')
+                if os.path.isfile(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/MUTr1c_'+TrainSampleID+'_Temp_Stats.csv')==False:
+                   UI.LogOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/MUTr1c_'+TrainSampleID+'_Temp_Stats.csv','w', [[0,0]])
+                Temp_Stats=UI.LogOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/MUTr1c_'+TrainSampleID+'_Temp_Stats.csv','r', '_')
                 TotalImages=int(Temp_Stats[0][0])
                 TrueSeeds=int(Temp_Stats[0][1])
                 base_data = None
