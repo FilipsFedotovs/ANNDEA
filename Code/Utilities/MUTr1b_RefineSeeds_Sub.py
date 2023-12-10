@@ -93,6 +93,8 @@ input_track_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+BatchID+'/Temp_MUTr1
 output_file_location=EOS_DIR+'/'+p+'/Temp_'+pfx+'_'+BatchID+'_'+str(i)+'/'+pfx+'_'+BatchID+'_'+o+'_'+str(i)+'_'+str(j)+sfx
 print(UI.TimeStamp(),'Loading the data')
 tracks=pd.read_csv(input_track_file_location)
+print(tracks)
+x=input()
 tracks_1=tracks.drop(['Segment_2'],axis=1)
 tracks_1=tracks_1.rename(columns={"Segment_1": "Rec_Seg_ID"})
 tracks_2=tracks.drop(['Segment_1'],axis=1)
