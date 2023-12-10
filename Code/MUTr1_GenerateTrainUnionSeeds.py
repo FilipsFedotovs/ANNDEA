@@ -283,6 +283,7 @@ Program.append(prog_entry)
 #Setting up folders for the output. The reconstruction of just one brick can easily generate >100k of files. Keeping all that blob in one directory can cause problems on lxplus.
 print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry))
 
+Program.append('Custom - Resampling')
 
 #
 # ##############################################################################################################################################################
@@ -343,74 +344,72 @@ while Status<len(Program):
                     continue
         Meta.JobSets[1]=NewJobSet
         NJobs=UI.CalculateNJobs(Meta.JobSets[1])[1]
-        print(NJobs)
-        print(Program[2][1][8])
         Program[2][1][8]=NewJobSet
-        print(Program[2][1][8])
-        exit()
         print(UI.PickleOperations(TrainSampleOutputMeta,'w', Meta)[1])
         UI.Msg('completed','Stage '+str(Status)+' has successfully completed')
         UI.UpdateStatus(Status+1,Meta,TrainSampleOutputMeta)
-    # elif Program[Status]=='Custom - Merging':
-    #        print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
-    #        print(UI.TimeStamp(),bcolors.BOLD+'Stage 4:'+bcolors.ENDC+' Resampling the results from the previous stage')
-    #        print(UI.TimeStamp(),'Sampling the required number of seeds',bcolors.ENDC)
-    #        Temp_Stats=UI.LogOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MUTr1c_'+TrainSampleID+'_Temp_Stats.csv','r', '_')
-    #        TotalImages=int(Temp_Stats[0][0])
-    #        TrueSeeds=int(Temp_Stats[0][1])
-    #        JobSet=[]
-    #        for i in range(len(JobSets)):
-    #          JobSet.append([])
-    #          for j in range(len(JobSets[i][3])):
-    #              JobSet[i].append(JobSets[i][3][j])
-    #        if args.Samples=='ALL':
-    #            if TrueSeeds<=(float(args.LabelRatio)*TotalImages):
-    #                RequiredTrueSeeds=TrueSeeds
-    #                RequiredFakeSeeds=int(round((RequiredTrueSeeds/float(args.LabelRatio))-RequiredTrueSeeds,0))
-    #            else:
-    #                RequiredFakeSeeds=TotalImages-TrueSeeds
-    #                RequiredTrueSeeds=int(round((RequiredFakeSeeds/(1.0-float(args.LabelRatio)))-RequiredFakeSeeds,0))
-    #
-    #        else:
-    #            NormalisedTotSamples=int(args.Samples)
-    #            if TrueSeeds<=(float(args.LabelRatio)*NormalisedTotSamples):
-    #                RequiredTrueSeeds=TrueSeeds
-    #                RequiredFakeSeeds=int(round((RequiredTrueSeeds/float(args.LabelRatio))-RequiredTrueSeeds,0))
-    #            else:
-    #                RequiredFakeSeeds=NormalisedTotSamples*(1.0-float(args.LabelRatio))
-    #                RequiredTrueSeeds=int(round((RequiredFakeSeeds/(1.0-float(args.LabelRatio)))-RequiredFakeSeeds,0))
-    #        if TrueSeeds==0:
-    #            TrueSeedCorrection=0
-    #        else:
-    #           TrueSeedCorrection=RequiredTrueSeeds/TrueSeeds
-    #        if TotalImages-TrueSeeds>0:
-    #         FakeSeedCorrection=RequiredFakeSeeds/(TotalImages-TrueSeeds)
-    #        else:
-    #          FakeSeedCorrection=0
-    #        with alive_bar(len(JobSet),force_tty=True, title='Resampling the files...') as bar:
-    #         for i in range(0,len(JobSet)):
-    #           output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MUTr1d_'+TrainSampleID+'_SampledCompressedSeeds_'+str(i)+'.pkl'
-    #           input_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MUTr1c_'+TrainSampleID+'_CompressedSeeds_'+str(i)+'.pkl'
-    #           bar.text = f'-> Resampling the file : {input_file_location}, exists...'
-    #           bar()
-    #           if os.path.isfile(output_file_location)==False and os.path.isfile(input_file_location):
-    #               base_data=UI.PickleOperations(input_file_location,'r','N/A')[0]
-    #               ExtractedTruth=[im for im in base_data if im.Label == 1]
-    #               ExtractedFake=[im for im in base_data if im.Label == 0]
-    #               del base_data
-    #               gc.collect()
-    #               ExtractedTruth=random.sample(ExtractedTruth,int(round(TrueSeedCorrection*len(ExtractedTruth),0)))
-    #               ExtractedFake=random.sample(ExtractedFake,int(round(FakeSeedCorrection*len(ExtractedFake),0)))
-    #               TotalData=[]
-    #               TotalData=ExtractedTruth+ExtractedFake
-    #               print(UI.PickleOperations(output_file_location,'w',TotalData)[1])
-    #               del TotalData
-    #               del ExtractedTruth
-    #               del ExtractedFake
-    #               gc.collect()
-    #        print(UI.TimeStamp(),bcolors.OKGREEN+'Stage 4 has successfully completed'+bcolors.ENDC)
-    #        UI.UpdateStatus(Status+1,Meta,TrainSampleOutputMeta)
-    #        continue
+    elif Program[Status]=='Custom - Resampling':
+           print('Wip')
+           exit()
+           print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
+           print(UI.TimeStamp(),bcolors.BOLD+'Stage 4:'+bcolors.ENDC+' Resampling the results from the previous stage')
+           print(UI.TimeStamp(),'Sampling the required number of seeds',bcolors.ENDC)
+           Temp_Stats=UI.LogOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MUTr1c_'+TrainSampleID+'_Temp_Stats.csv','r', '_')
+           TotalImages=int(Temp_Stats[0][0])
+           TrueSeeds=int(Temp_Stats[0][1])
+           JobSet=[]
+           for i in range(len(JobSets)):
+             JobSet.append([])
+             for j in range(len(JobSets[i][3])):
+                 JobSet[i].append(JobSets[i][3][j])
+           if args.Samples=='ALL':
+               if TrueSeeds<=(float(args.LabelRatio)*TotalImages):
+                   RequiredTrueSeeds=TrueSeeds
+                   RequiredFakeSeeds=int(round((RequiredTrueSeeds/float(args.LabelRatio))-RequiredTrueSeeds,0))
+               else:
+                   RequiredFakeSeeds=TotalImages-TrueSeeds
+                   RequiredTrueSeeds=int(round((RequiredFakeSeeds/(1.0-float(args.LabelRatio)))-RequiredFakeSeeds,0))
+
+           else:
+               NormalisedTotSamples=int(args.Samples)
+               if TrueSeeds<=(float(args.LabelRatio)*NormalisedTotSamples):
+                   RequiredTrueSeeds=TrueSeeds
+                   RequiredFakeSeeds=int(round((RequiredTrueSeeds/float(args.LabelRatio))-RequiredTrueSeeds,0))
+               else:
+                   RequiredFakeSeeds=NormalisedTotSamples*(1.0-float(args.LabelRatio))
+                   RequiredTrueSeeds=int(round((RequiredFakeSeeds/(1.0-float(args.LabelRatio)))-RequiredFakeSeeds,0))
+           if TrueSeeds==0:
+               TrueSeedCorrection=0
+           else:
+              TrueSeedCorrection=RequiredTrueSeeds/TrueSeeds
+           if TotalImages-TrueSeeds>0:
+            FakeSeedCorrection=RequiredFakeSeeds/(TotalImages-TrueSeeds)
+           else:
+             FakeSeedCorrection=0
+           with alive_bar(len(JobSet),force_tty=True, title='Resampling the files...') as bar:
+            for i in range(0,len(JobSet)):
+              output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MUTr1d_'+TrainSampleID+'_SampledCompressedSeeds_'+str(i)+'.pkl'
+              input_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MUTr1c_'+TrainSampleID+'_CompressedSeeds_'+str(i)+'.pkl'
+              bar.text = f'-> Resampling the file : {input_file_location}, exists...'
+              bar()
+              if os.path.isfile(output_file_location)==False and os.path.isfile(input_file_location):
+                  base_data=UI.PickleOperations(input_file_location,'r','N/A')[0]
+                  ExtractedTruth=[im for im in base_data if im.Label == 1]
+                  ExtractedFake=[im for im in base_data if im.Label == 0]
+                  del base_data
+                  gc.collect()
+                  ExtractedTruth=random.sample(ExtractedTruth,int(round(TrueSeedCorrection*len(ExtractedTruth),0)))
+                  ExtractedFake=random.sample(ExtractedFake,int(round(FakeSeedCorrection*len(ExtractedFake),0)))
+                  TotalData=[]
+                  TotalData=ExtractedTruth+ExtractedFake
+                  print(UI.PickleOperations(output_file_location,'w',TotalData)[1])
+                  del TotalData
+                  del ExtractedTruth
+                  del ExtractedFake
+                  gc.collect()
+           print(UI.TimeStamp(),bcolors.OKGREEN+'Stage 4 has successfully completed'+bcolors.ENDC)
+           UI.UpdateStatus(Status+1,Meta,TrainSampleOutputMeta)
+           continue
     # elif Program[Status]=='Custom - TrackMapping':
     #             raw_name=initial_input_file_location[:-4]
     #             for l in range(len(raw_name)-1,0,-1):
