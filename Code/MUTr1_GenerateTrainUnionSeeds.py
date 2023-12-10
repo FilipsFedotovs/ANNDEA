@@ -419,6 +419,8 @@ while Status<len(Program):
            Meta=UI.PickleOperations(TrainSampleOutputMeta,'r', 'N/A')[0]
            JobSet=Meta.JobSets[1]
            print(JobSet)
+           JobSet=[x for x in JobSet if x == 1]
+           print(JobSet)
            exit()
            if args.Samples=='ALL':
                if TrueSeeds<=(float(args.LabelRatio)*TotalImages):
