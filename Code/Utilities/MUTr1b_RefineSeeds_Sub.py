@@ -147,6 +147,7 @@ for s in range(0,limit):
              print(track.Header)
              if track.FitSeed(Metas[m],Models[m])==False:
                 keep_seed=False
+             print(keep_seed)
          if keep_seed:
             GoodTracks.append(track)
      else:
