@@ -88,7 +88,7 @@ MaxSLG=float(args.MaxSLG)
 MaxAngle=float(args.MaxAngle)
 
 
-input_segment_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+BatchID+'/MUTr1_'+BatchID+'_TRACK_SEGMENTS.csv'
+input_segment_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+BatchID+'/MUTr1_'+BatchID+'_TRACK_SEGMENTS_'+str(i)+'.csv'
 input_track_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+BatchID+'/Temp_MUTr1a_'+BatchID+'_'+str(i)+'/MUTr1a_'+BatchID+'_SelectedSeeds_'+str(i)+'_'+str(j)+'.csv'
 output_file_location=EOS_DIR+'/'+p+'/Temp_'+pfx+'_'+BatchID+'_'+str(i)+'/'+pfx+'_'+BatchID+'_'+o+'_'+str(i)+'_'+str(j)+sfx
 print(UI.TimeStamp(),'Loading the data')
