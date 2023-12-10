@@ -226,6 +226,7 @@ elif os.path.isfile(TrainSampleOutputMeta)==True:
     Meta=MetaInput[0]
 else:
     UI.Msg('failed',"Meta file "+TrainSampleOutputMeta+" is missing...")
+    exit()
 MaxSLG=Meta.MaxSLG
 MaxSTG=Meta.MaxSTG
 MaxDOCA=Meta.MaxDOCA
