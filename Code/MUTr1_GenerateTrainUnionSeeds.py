@@ -400,18 +400,20 @@ while Status<len(Program):
                 except:
                     continue
                 del new_data
-                UI.LogOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MUTr1c_'+TrainSampleID+'_Temp_Stats.csv','w', [[TotalImages,TrueSeeds]])
+                UI.LogOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/MUTr1c_'+TrainSampleID+'_Temp_Stats.csv','w', [[TotalImages,TrueSeeds]])
         print(UI.TimeStamp(),bcolors.OKGREEN+'Stage 3 has successfully completed'+bcolors.ENDC)
         Status=4
         UI.UpdateStatus(Status,Meta,TrainSampleOutputMeta)
         continue
     elif Program[Status]=='Custom - Resampling':
            print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
-           print(UI.TimeStamp(),bcolors.BOLD+'Stage 3:'+bcolors.ENDC+' Resampling the results from the previous stage')
+           print(UI.TimeStamp(),bcolors.BOLD+'Stage 4:'+bcolors.ENDC+' Resampling the results from the previous stage')
            print(UI.TimeStamp(),'Sampling the required number of seeds',bcolors.ENDC)
-           Temp_Stats=UI.LogOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MUTr1c_'+TrainSampleID+'_Temp_Stats.csv','r', '_')
+           Temp_Stats=UI.LogOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/MUTr1c_'+TrainSampleID+'_Temp_Stats.csv','r', '_')
            TotalImages=int(Temp_Stats[0][0])
            TrueSeeds=int(Temp_Stats[0][1])
+           print(TotalImages,TrueSeeds)
+           exit()
            JobSet=[]
            for i in range(len(JobSets)):
              JobSet.append([])
