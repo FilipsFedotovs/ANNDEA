@@ -165,9 +165,14 @@ else:
     #create seeds
     GoodSeeds=[]
     print(UI.TimeStamp(),'Beginning the sample generation part...')
+    counter=0
+    print(len(seeds))
     for s in seeds:
                 if s.FitSeed(ModelMeta,model):
                        GoodSeeds.append(s)
+                counter+=1
+                if counter%100==0:
+                    print('Progress',counter,'seeds') 
     print(UI.TimeStamp(),bcolors.OKGREEN+'The sample generation has been completed..'+bcolors.ENDC)
     print(UI.PickleOperations(output_file_location,'w', GoodSeeds)[1])
 
