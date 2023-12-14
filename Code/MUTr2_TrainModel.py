@@ -88,9 +88,7 @@ prog_entry.append([''])
 prog_entry.append([1])
 prog_entry.append(1)
 prog_entry.append('N/A')
-if Mode=='RESET':
-   print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry,'Delete'))
-print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry,'Create'))
+print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry))
 
 
 UI.WelcomeMsg('Initialising ANNDEA Track Union Training Sample Generation module...','Filips Fedotovs (PhD student at UCL), Wenqing Xie (MSc student at UCL)','Please reach out to filips.fedotovs@cern.ch for any queries')
