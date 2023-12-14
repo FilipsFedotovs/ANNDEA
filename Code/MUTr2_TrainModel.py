@@ -77,6 +77,7 @@ EOSsubModelDIR=EOSsubDIR+'/'+'Models'
 import sys
 sys.path.insert(1, AFS_DIR+'/Code/Utilities/')
 import U_UI as UI #This is where we keep routine utility functions
+import U_ML as ML #This is where we keep routine utility functions
 import Parameters as PM
 import datetime
 OptionHeader = [' --TrainParams ', " --TrainSampleID "]
@@ -348,7 +349,7 @@ else:
                  print(MetaInput[1])
                  Meta=MetaInput[0]
                  Model_Meta_Path=EOSsubModelDIR+'/'+args.ModelName+'_Meta'
-                 ModelMeta=UI.ModelMeta(ModelName)
+                 ModelMeta=ML.ModelMeta(ModelName)
                  if ModelType=='CNN':
                     ModelMeta.IniModelMeta(ModelParams, 'Tensorflow', Meta, ModelArchitecture, 'CNN')
                  elif ModelType=='GNN':
