@@ -830,9 +830,10 @@ while Status<len(Program):
 
                              for i in range(len(JobSet)):
                                     bar.text = f'-> Analysing set : {i}...'
-                                    bar()
+                                    
                                     for j in range(JobSet[i]):
                                                   required_output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/Temp_RUTr1'+ModelName[md]+'_'+RecBatchID+'_'+str(i)+'/RUTr1'+ModelName[md]+'_'+RecBatchID+'_RefinedSeeds_'+str(i)+'_'+str(j)+'.pkl'
+                                                  bar()
                                                   new_data=UI.PickleOperations(required_output_file_location,'r','N/A')[0]
                                                   print(UI.TimeStamp(),'Set',str(i)+'_'+str(j), 'contains', len(new_data), 'seeds')
                                                   if base_data == None:
@@ -905,7 +906,7 @@ while Status<len(Program):
                                               tot_fractions=int(np.ceil(Records_After_Compression/MaxSeeds))
                                               for j in range(tot_fractions):
                                                     output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/Temp_RUTr1'+ModelName[md]+'_'+RecBatchID+'_0/RUTr1'+str(ModelName[md+1])+'_'+RecBatchID+'_Input_Seeds_'+str(i)+'_'+str(j)+'.pkl'
-                                                    print(UI.PickleOperations(output_file_location,'w',base_data[j*MaxSegments:(j+1)*MaxSeeds])[1])
+                                                    print(UI.PickleOperations(output_file_location,'w',base_data[j*MaxSeeds:(j+1)*MaxSeeds])[1])
                                                     if Log:
                                                      for rd in base_data:
                                                          rec_list.append([rd.Header[0],rd.Header[1]])

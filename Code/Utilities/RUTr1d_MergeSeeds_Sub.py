@@ -56,10 +56,12 @@ print(UI.TimeStamp(), bcolors.OKGREEN+"Modules Have been imported successfully..
 print(UI.TimeStamp(), "Loading fit track seeds from the file",bcolors.OKBLUE+input_file_location+bcolors.ENDC)
 
 base_data=UI.PickleOperations(input_file_location,'r', 'N/A')[0]
+print(UI.TimeStamp(),bcolors.OKBLUE+input_file_location+bcolors.ENDC, 'is loaded...')
 rec_list=[]
 for rd in base_data:
     rec_list.append([rd.Header[0],rd.Header[1]])
-    rec = pd.DataFrame(rec_list, columns = ['Segment_1','Segment_2'])
+rec = pd.DataFrame(rec_list, columns = ['Segment_1','Segment_2'])
+print(UI.TimeStamp(),'Headers loaded')
 r1_rec=rec[['Segment_1']].rename(columns={'Segment_1':"Segment"})
 r2_rec=rec[['Segment_2']].rename(columns={'Segment_2':"Segment"})
 r1_rec['count']=1
@@ -73,15 +75,16 @@ rec=pd.merge(rec,r_rec,how='left',on='Segment_2')
 rec=pd.merge(rec,l_rec,how='left',on='Segment_1')
 rec['tot_count']=rec['l_count']+rec['r_count']
 rec.drop(['l_count','r_count'],axis=1,inplace=True)
-
+print(UI.TimeStamp(),"Rec file has",len(rec),' records')
 if i==0:
     rec = rec[rec.tot_count == 2]
 else:
     rec = rec[rec.tot_count > 2]
-
+print(UI.TimeStamp(),"Rec file now has",len(rec),' records')
 rec['Segment']=rec['Segment_1']+'-'+rec['Segment_2']
 rec.drop(['tot_count','Segment_1','Segment_2'],axis=1,inplace=True)
 rec=rec.values.tolist()
+print(UI.TimeStamp(),'Filtering base data')
 rec = [k for i in rec for k in i]
 base_data=[x for x in base_data if (x.Header[0]+'-'+ x.Header[1]) in rec]
 
