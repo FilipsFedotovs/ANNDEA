@@ -13,11 +13,11 @@ csv_reader.close()
 import sys
 if PY_DIR!='': #Temp solution - the decision was made to move all libraries to EOS drive as AFS get locked during heavy HTCondor submission loads
     sys.path=['',PY_DIR]
-    sys.path.append('/usr/lib64/python36.zip')
-    sys.path.append('/usr/lib64/python3.6')
-    sys.path.append('/usr/lib64/python3.6/lib-dynload')
-    sys.path.append('/usr/lib64/python3.6/site-packages')
-    sys.path.append('/usr/lib/python3.6/site-packages')
+    sys.path.append('/usr/lib64/python39.zip')
+    sys.path.append('/usr/lib64/python3.9')
+    sys.path.append('/usr/lib64/python3.9/lib-dynload')
+    sys.path.append('/usr/lib64/python3.9/site-packages')
+    sys.path.append('/usr/lib/python3.9/site-packages')
 sys.path.append(AFS_DIR+'/Code/Utilities')
 
 #import libraries
@@ -82,13 +82,12 @@ import datetime
 OptionHeader = [' --TrainParams ', " --TrainSampleID "]
 OptionLine = [TrainParamsStr, TrainSampleID]
 prog_entry=[]
-job_sets=[1]
 prog_entry.append(' Sending hit cluster to the HTCondor, so the reconstructed clusters can be merged along z-axis')
-prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/','hit_cluster_rec_z_set','MUTr2','.pkl',ModelName,job_sets,''])
+prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/','hit_cluster_rec_z_set','MUTr2','.pkl',ModelName,1,''])
 prog_entry.append([''])
 prog_entry.append([1])
 prog_entry.append(1)
-prog_entry.append('NA')
+prog_entry.append('N/A')
 if Mode=='RESET':
    print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry,'Delete'))
 print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry,'Create'))
