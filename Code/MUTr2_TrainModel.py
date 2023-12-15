@@ -185,7 +185,7 @@ if Mode=='RESET':
  print(MetaInput[1])
  Meta=MetaInput[0]
  Model_Meta_Path=EOSsubModelDIR+'/'+args.ModelName+'_Meta'
- ModelMeta=UI.ModelMeta(ModelName)
+ ModelMeta=ML.ModelMeta(ModelName)
  if ModelType=='CNN':
     ModelMeta.IniModelMeta(ModelParams, 'Tensorflow', Meta, ModelArchitecture, 'CNN')
  elif ModelType=='GNN':
