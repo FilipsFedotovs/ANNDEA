@@ -80,11 +80,18 @@ import U_UI as UI #This is where we keep routine utility functions
 import U_ML as ML #This is where we keep routine utility functions
 import Parameters as PM
 import datetime
+
+if Mode=='RESET':
+    print(UI.ManageFolders(AFS_DIR, EOS_DIR, ModelName,'d',['MUTr2']))
+    print(UI.ManageFolders(AFS_DIR, EOS_DIR, ModelName,'c'))
+else:
+    print(UI.ManageFolders(AFS_DIR, EOS_DIR, ModelName,'c'))
+
 OptionHeader = [' --TrainParams ', " --TrainSampleID "]
 OptionLine = [TrainParamsStr, TrainSampleID]
 prog_entry=[]
 prog_entry.append(' Sending hit cluster to the HTCondor, so the reconstructed clusters can be merged along z-axis')
-prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/','hit_cluster_rec_z_set','MUTr2','.pkl',ModelName,1,''])
+prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/'+ModelName+'/','hit_cluster_rec_z_set','MUTr2','.pkl',ModelName,1,''])
 prog_entry.append([''])
 prog_entry.append([1])
 prog_entry.append(1)
@@ -94,6 +101,7 @@ print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry))
 
 UI.WelcomeMsg('Initialising ANNDEA Track Union Training Sample Generation module...','Filips Fedotovs (PhD student at UCL), Wenqing Xie (MSc student at UCL)','Please reach out to filips.fedotovs@cern.ch for any queries')
 print(UI.TimeStamp(), bcolors.OKGREEN+"Modules Have been imported successfully..."+bcolors.ENDC)
+exit()
 #This code fragment covers the Algorithm logic on the first run
 def AutoPilot(wait_min, interval_min):
     print(UI.TimeStamp(),'Going on an autopilot mode for ',wait_min, 'minutes while checking HTCondor every',interval_min,'min',bcolors.ENDC)
