@@ -45,7 +45,14 @@ AFS_DIR=args.AFS
 EOS_DIR=args.EOS
 PY_DIR=args.PY
 import sys
-sys.path.insert(1, AFS_DIR+'/Code/Utilities/')
+if PY_DIR!='': #Temp solution
+    sys.path=['',PY_DIR]
+    sys.path.append('/usr/lib64/python39.zip')
+    sys.path.append('/usr/lib64/python3.9')
+    sys.path.append('/usr/lib64/python3.9/lib-dynload')
+    sys.path.append('/usr/lib64/python3.9/site-packages')
+    sys.path.append('/usr/lib/python3.9/site-packages')
+sys.path.append(AFS_DIR+'/Code/Utilities')
 import U_UI as UI
 #Load data configuration
 EOSsubDIR=EOS_DIR+'/'+'ANNDEA'
@@ -54,11 +61,6 @@ EOSsubModelDIR=EOSsubDIR+'/'+'Models'
 
 ##############################################################################################################################
 ######################################### Starting the program ################################################################
-print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
-print(bcolors.HEADER+"#########################  Initialising     ANNDEA   model creation module     #########################"+bcolors.ENDC)
-print(bcolors.HEADER+"#########################              Written by Filips Fedotovs              #########################"+bcolors.ENDC)
-print(bcolors.HEADER+"#########################                 PhD Student at UCL                   #########################"+bcolors.ENDC)
-print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
 print(UI.TimeStamp(), bcolors.OKGREEN+"Modules Have been imported successfully..."+bcolors.ENDC)
 def zero_divide(a, b):
     if (b==0): return 0
