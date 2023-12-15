@@ -101,7 +101,6 @@ print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry))
 
 UI.WelcomeMsg('Initialising ANNDEA Track Union Training Sample Generation module...','Filips Fedotovs (PhD student at UCL), Wenqing Xie (MSc student at UCL)','Please reach out to filips.fedotovs@cern.ch for any queries')
 print(UI.TimeStamp(), bcolors.OKGREEN+"Modules Have been imported successfully..."+bcolors.ENDC)
-exit()
 #This code fragment covers the Algorithm logic on the first run
 def AutoPilot(wait_min, interval_min):
     print(UI.TimeStamp(),'Going on an autopilot mode for ',wait_min, 'minutes while checking HTCondor every',interval_min,'min',bcolors.ENDC)
@@ -179,12 +178,7 @@ def AutoPilot(wait_min, interval_min):
     return True
 
 if Mode=='RESET':
- HTCondorTag="SoftUsed == \"ANNDEA-MUTr2-"+ModelName+"\""
- UI.TrainCleanUp(AFS_DIR, EOS_DIR, 'MUTr2_'+ModelName, [ModelName], HTCondorTag)
- if ModelType=='CNN':
-    Job=UI.CreateCondorJobs(AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/','N/A','MUTr2','N/A',ModelName,1,OptionHeader,OptionLine,'MUTr2_TrainModel_Sub.py',False,"['','']", True, True)[0]
- else:
-    Job=UI.CreateCondorJobs(AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/','N/A','MUTr2','N/A',ModelName,1,OptionHeader,OptionLine,'MUTr2_TrainModel_Sub.py',False,"['','']", True, False)[0]
+ Job=UI.CreateCondorJobs(AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/'+ModelName+'/','N/A','MUTr2','N/A',ModelName,1,OptionHeader,OptionLine,'MUTr2_TrainModel_Sub.py',False,"['','']", True, ModelType=='CNN')[0]
  TrainSampleInputMeta=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_info.pkl'
  print(UI.TimeStamp(),'Loading the data file ',bcolors.OKBLUE+TrainSampleInputMeta+bcolors.ENDC)
  MetaInput=UI.PickleOperations(TrainSampleInputMeta,'r', 'N/A')
@@ -195,7 +189,7 @@ if Mode=='RESET':
  if ModelType=='CNN':
     ModelMeta.IniModelMeta(ModelParams, 'Tensorflow', Meta, ModelArchitecture, 'CNN')
  elif ModelType=='GNN':
-                    ModelMeta.IniModelMeta(ModelParams, 'PyTorch', Meta, ModelArchitecture, 'GNN')
+    ModelMeta.IniModelMeta(ModelParams, 'PyTorch', Meta, ModelArchitecture, 'GNN')
  ModelMeta.IniTrainingSession(TrainSampleID, datetime.datetime.now(), TrainParams)
  print(UI.PickleOperations(Model_Meta_Path, 'w', ModelMeta)[1])
  UI.SubmitJobs2Condor(Job,False,RequestExtCPU,JobFlavour,ReqMemory)
@@ -245,10 +239,7 @@ else:
                   print(UI.TimeStamp(),'OK, exiting now then')
                   exit()
               if UserAnswer=='R':
-                 if Model_Meta.ModelType=='CNN':
-                    Job=UI.CreateCondorJobs(AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/','N/A','MUTr2','N/A',ModelName,1,OptionHeader,OptionLine,'MUTr2_TrainModel_Sub.py',False,"['','']", True, True)[0]
-                 else:
-                    Job=UI.CreateCondorJobs(AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/','N/A','MUTr2','N/A',ModelName,1,OptionHeader,OptionLine,'MUTr2_TrainModel_Sub.py',False,"['','']", True, False)[0]
+                 Job=UI.CreateCondorJobs(AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/'+ModelName+'/','N/A','MUTr2','N/A',ModelName,1,OptionHeader,OptionLine,'MUTr2_TrainModel_Sub.py',False,"['','']", True, Model_Meta.ModelType=='CNN')[0]
                  Model_Meta.IniTrainingSession(TrainSampleID, datetime.datetime.now(), TrainParams)
                  print(UI.PickleOperations(Model_Meta_Path, 'w', Model_Meta)[1])
                  UI.SubmitJobs2Condor(Job,False,RequestExtCPU,JobFlavour,ReqMemory)
@@ -256,10 +247,7 @@ else:
                  print(UI.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
                  exit()
               else:
-                 if Model_Meta.ModelType=='CNN':
-                    Job=UI.CreateCondorJobs(AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/','N/A','MUTr2','N/A',ModelName,1,OptionHeader,OptionLine,'MUTr2_TrainModel_Sub.py',False,"['','']", True, True)[0]
-                 else:
-                    Job=UI.CreateCondorJobs(AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/','N/A','MUTr2','N/A',ModelName,1,OptionHeader,OptionLine,'MUTr2_TrainModel_Sub.py',False,"['','']", True, False)[0]
+                 Job=UI.CreateCondorJobs(AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/'+ModelName+'/','N/A','MUTr2','N/A',ModelName,1,OptionHeader,OptionLine,'MUTr2_TrainModel_Sub.py',False,"['','']", True, Model_Meta.ModelType=='CNN')[0]
                  Model_Meta.IniTrainingSession(TrainSampleID, datetime.datetime.now(), TrainParams)
                  print(UI.PickleOperations(Model_Meta_Path, 'w', Model_Meta)[1])
                  UI.SubmitJobs2Condor(Job,False,RequestExtCPU,JobFlavour,ReqMemory)
@@ -296,21 +284,14 @@ else:
                   print(UI.TimeStamp(),'OK, exiting now then')
                   exit()
                  elif UserAnswer=='S':
-
-                    if Model_Meta.ModelType=='CNN':
-                         Job=UI.CreateCondorJobs(AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/','N/A','MUTr2','N/A',ModelName,1,OptionHeader,OptionLine,'MUTr2_TrainModel_Sub.py',False,"['','']", True, True)[0]
-                    else:
-                         Job=UI.CreateCondorJobs(AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/','N/A','MUTr2','N/A',ModelName,1,OptionHeader,OptionLine,'MUTr2_TrainModel_Sub.py',False,"['','']", True, False)[0]
+                    Job=UI.CreateCondorJobs(AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/','N/A','MUTr2','N/A',ModelName,1,OptionHeader,OptionLine,'MUTr2_TrainModel_Sub.py',False,"['','']", True, Model_Meta.ModelType=='CNN')[0]
                     HTCondorTag="SoftUsed == \"ANNDEA-MUTr2-"+ModelName+"\""
                     Model_Meta.IniTrainingSession(TrainSampleID, datetime.datetime.now(), TrainParams)
                     print(UI.PickleOperations(Model_Meta_Path, 'w', Model_Meta)[1])
                     UI.SubmitJobs2Condor(Job,False,RequestExtCPU,JobFlavour,ReqMemory)
                     print(bcolors.BOLD+"The job has been submitted..."+bcolors.ENDC)
                  else:
-                     if Model_Meta.ModelType=='CNN':
-                         Job=UI.CreateCondorJobs(AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/','N/A','MUTr2','N/A',ModelName,1,OptionHeader,OptionLine,'MUTr2_TrainModel_Sub.py',False,"['','']", True, True)[0]
-                     else:
-                         Job=UI.CreateCondorJobs(AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/','N/A','MUTr2','N/A',ModelName,1,OptionHeader,OptionLine,'MUTr2_TrainModel_Sub.py',False,"['','']", True, False)[0]
+                     Job=UI.CreateCondorJobs(AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/','N/A','MUTr2','N/A',ModelName,1,OptionHeader,OptionLine,'MUTr2_TrainModel_Sub.py',False,"['','']", True, Model_Meta.ModelType=='CNN')[0]
                      HTCondorTag="SoftUsed == \"ANNDEA-MUTr2-"+ModelName+"\""
                      Model_Meta.IniTrainingSession(TrainSampleID, datetime.datetime.now(), TrainParams)
                      print(UI.PickleOperations(Model_Meta_Path, 'w', Model_Meta)[1])
@@ -334,10 +315,7 @@ else:
                   print(UI.TimeStamp(),'OK, exiting now then')
                   exit()
            elif UserAnswer=='R':
-                 if Model_Meta.ModelType=='CNN':
-                         Job=UI.CreateCondorJobs(AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/','N/A','MUTr2','N/A',ModelName,1,OptionHeader,OptionLine,'MUTr2_TrainModel_Sub.py',False,"['','']", True, True)[0]
-                 else:
-                         Job=UI.CreateCondorJobs(AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/','N/A','MUTr2','N/A',ModelName,1,OptionHeader,OptionLine,'MUTr2_TrainModel_Sub.py',False,"['','']", True, False)[0]
+                 Job=UI.CreateCondorJobs(AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/','N/A','MUTr2','N/A',ModelName,1,OptionHeader,OptionLine,'MUTr2_TrainModel_Sub.py',False,"['','']", True, Model_Meta.ModelType=='CNN')[0]
                  UI.SubmitJobs2Condor(Job,False,RequestExtCPU,JobFlavour,ReqMemory)
                  print(bcolors.BOLD+"The job has been submitted..."+bcolors.ENDC)
                  print(UI.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
@@ -346,10 +324,7 @@ else:
               AutoPilot(int(UserAnswer),Wait)
      else:
                  print(UI.TimeStamp(),bcolors.WARNING+'Warning! No existing meta files have been found, starting everything from the scratch.'+bcolors.ENDC)
-                 if ModelType=='CNN':
-                         Job=UI.CreateCondorJobs(AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/','N/A','MUTr2','N/A',ModelName,1,OptionHeader,OptionLine,'MUTr2_TrainModel_Sub.py',False,"['','']", True, True)[0]
-                 else:
-                         Job=UI.CreateCondorJobs(AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/','N/A','MUTr2','N/A',ModelName,1,OptionHeader,OptionLine,'MUTr2_TrainModel_Sub.py',False,"['','']", True, False)[0]
+                 Job=UI.CreateCondorJobs(AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/','N/A','MUTr2','N/A',ModelName,1,OptionHeader,OptionLine,'MUTr2_TrainModel_Sub.py',False,"['','']", True, ModelType=='CNN')[0]
                  HTCondorTag="SoftUsed == \"ANNDEA-MUTr2-"+ModelName+"\""
                  TrainSampleInputMeta=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_info.pkl'
                  print(UI.TimeStamp(),'Loading the data file ',bcolors.OKBLUE+TrainSampleInputMeta+bcolors.ENDC)
