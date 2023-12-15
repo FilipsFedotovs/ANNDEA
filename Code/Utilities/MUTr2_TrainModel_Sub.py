@@ -46,7 +46,7 @@ EOS_DIR=args.EOS
 PY_DIR=args.PY
 import sys
 sys.path.insert(1, AFS_DIR+'/Code/Utilities/')
-import UtilityFunctions as UF
+import U_UI as UI
 #Load data configuration
 EOSsubDIR=EOS_DIR+'/'+'ANNDEA'
 EOSsubModelDIR=EOSsubDIR+'/'+'Models'
@@ -55,11 +55,11 @@ EOSsubModelDIR=EOSsubDIR+'/'+'Models'
 ##############################################################################################################################
 ######################################### Starting the program ################################################################
 print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
-print(bcolors.HEADER+"#########################  Initialising     ANNDEA   model creation module   #########################"+bcolors.ENDC)
+print(bcolors.HEADER+"#########################  Initialising     ANNDEA   model creation module     #########################"+bcolors.ENDC)
 print(bcolors.HEADER+"#########################              Written by Filips Fedotovs              #########################"+bcolors.ENDC)
 print(bcolors.HEADER+"#########################                 PhD Student at UCL                   #########################"+bcolors.ENDC)
 print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
-print(UF.TimeStamp(), bcolors.OKGREEN+"Modules Have been imported successfully..."+bcolors.ENDC)
+print(UI.TimeStamp(), bcolors.OKGREEN+"Modules Have been imported successfully..."+bcolors.ENDC)
 def zero_divide(a, b):
     if (b==0): return 0
     return a/b
@@ -69,7 +69,7 @@ def CNNtrain(model, Sample, Batches,num_classes=2):
     for ib in range(Batches):
         StartSeed=(ib*TrainParams[1])+1
         EndSeed=StartSeed+TrainParams[1]-1
-        BatchImages=UF.LoadRenderImages(Sample,StartSeed,EndSeed,num_classes)
+        BatchImages=UI.LoadRenderImages(Sample,StartSeed,EndSeed,num_classes)
         t=model.train_on_batch(BatchImages[0],BatchImages[1],reset_metrics=False)
     return t
 
@@ -101,27 +101,27 @@ def CNNvalidate(model, Sample, Batches,num_classes=2):
     for ib in range(Batches):
         StartSeed=(ib*TrainParams[1])+1
         EndSeed=StartSeed+TrainParams[1]-1
-        BatchImages=UF.LoadRenderImages(Sample,StartSeed,EndSeed,num_classes)
+        BatchImages=UI.LoadRenderImages(Sample,StartSeed,EndSeed,num_classes)
         v=model.test_on_batch(BatchImages[0],BatchImages[1],reset_metrics=False)
     return v
 
 
 
 TrainSampleInputMeta=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_info.pkl'
-print(UF.TimeStamp(),'Loading the data file ',bcolors.OKBLUE+TrainSampleInputMeta+bcolors.ENDC)
-MetaInput=UF.PickleOperations(TrainSampleInputMeta,'r', 'N/A')
+print(UI.TimeStamp(),'Loading the data file ',bcolors.OKBLUE+TrainSampleInputMeta+bcolors.ENDC)
+MetaInput=UI.PickleOperations(TrainSampleInputMeta,'r', 'N/A')
 print(MetaInput[1])
 Meta=MetaInput[0]
 Model_Meta_Path=EOSsubModelDIR+'/'+ModelName+'_Meta'
 Model_Path=EOSsubModelDIR+'/'+ModelName
-ModelMeta=UF.PickleOperations(Model_Meta_Path, 'r', 'N/A')[0]
-ValSamples=UF.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_TRACK_SEEDS_OUTPUT.pkl','r', 'N/A')[0]
-print(UF.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_TRACK_SEEDS_OUTPUT.pkl','r', 'N/A')[1])
+ModelMeta=UI.PickleOperations(Model_Meta_Path, 'r', 'N/A')[0]
+ValSamples=UI.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_TRACK_SEEDS_OUTPUT.pkl','r', 'N/A')[0]
+print(UI.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_TRACK_SEEDS_OUTPUT.pkl','r', 'N/A')[1])
 train_set=1
 if ModelMeta.ModelType=='CNN':
    if len(ModelMeta.TrainSessionsData)==0:
-       TrainSamples=UF.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_TRACK_SEEDS_OUTPUT_1.pkl','r', 'N/A')[0]
-       print(UF.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_TRACK_SEEDS_OUTPUT_1.pkl','r', 'N/A')[1])
+       TrainSamples=UI.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_TRACK_SEEDS_OUTPUT_1.pkl','r', 'N/A')[0]
+       print(UI.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_TRACK_SEEDS_OUTPUT_1.pkl','r', 'N/A')[1])
        train_set=1
    else:
 
@@ -131,12 +131,12 @@ if ModelMeta.ModelType=='CNN':
 
            next_file=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_TRACK_SEEDS_OUTPUT_'+str(train_set)+'.pkl'
            if os.path.isfile(next_file):
-               TrainSamples=UF.PickleOperations(next_file,'r', 'N/A')[0]
-               print(UF.PickleOperations(next_file,'r', 'N/A')[1])
+               TrainSamples=UI.PickleOperations(next_file,'r', 'N/A')[0]
+               print(UI.PickleOperations(next_file,'r', 'N/A')[1])
            else:
                train_set=1
-               TrainSamples=UF.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_TRACK_SEEDS_OUTPUT_1.pkl','r', 'N/A')[0]
-               print(UF.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_TRACK_SEEDS_OUTPUT_1.pkl','r', 'N/A')[1])
+               TrainSamples=UI.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_TRACK_SEEDS_OUTPUT_1.pkl','r', 'N/A')[0]
+               print(UI.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_TRACK_SEEDS_OUTPUT_1.pkl','r', 'N/A')[1])
         break
    NTrainBatches=math.ceil(float(len(TrainSamples))/float(TrainParams[1]))
    NValBatches=math.ceil(float(len(ValSamples))/float(TrainParams[1]))
@@ -149,8 +149,8 @@ elif ModelMeta.ModelType=='GNN':
        import torch
        criterion = torch.nn.CrossEntropyLoss()
        if len(ModelMeta.TrainSessionsData)==0:
-           TrainSamples=UF.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_TRACK_SEEDS_OUTPUT_1.pkl','r', 'N/A')[0]
-           print(UF.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_TRACK_SEEDS_OUTPUT_1.pkl','r', 'N/A')[1])
+           TrainSamples=UI.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_TRACK_SEEDS_OUTPUT_1.pkl','r', 'N/A')[0]
+           print(UI.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_TRACK_SEEDS_OUTPUT_1.pkl','r', 'N/A')[1])
            train_set=1
 
        else:
@@ -159,12 +159,12 @@ elif ModelMeta.ModelType=='GNN':
                train_set=ModelMeta.TrainSessionsData[el][-1][8]+1
                next_file=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_TRACK_SEEDS_OUTPUT_'+str(train_set)+'.pkl'
                if os.path.isfile(next_file):
-                   TrainSamples=UF.PickleOperations(next_file,'r', 'N/A')[0]
-                   print(UF.PickleOperations(next_file,'r', 'N/A')[1])
+                   TrainSamples=UI.PickleOperations(next_file,'r', 'N/A')[0]
+                   print(UI.PickleOperations(next_file,'r', 'N/A')[1])
                else:
                    train_set=1
-                   TrainSamples=UF.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_TRACK_SEEDS_OUTPUT_1.pkl','r', 'N/A')[0]
-                   print(UF.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_TRACK_SEEDS_OUTPUT_1.pkl','r', 'N/A')[1])
+                   TrainSamples=UI.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_TRACK_SEEDS_OUTPUT_1.pkl','r', 'N/A')[0]
+                   print(UI.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_TRACK_SEEDS_OUTPUT_1.pkl','r', 'N/A')[1])
             break
        NTrainBatches=math.ceil(float(len(TrainSamples))/float(TrainParams[1]))
        NValBatches=math.ceil(float(len(ValSamples))/float(TrainParams[1]))
@@ -188,13 +188,13 @@ elif ModelMeta.ModelType=='GNN':
        TrainSamples = DataLoader(train_dataset, batch_size=TrainParams[1], shuffle=True)
        ValSamples = DataLoader(val_dataset, batch_size=TrainParams[1], shuffle=False)
 
-print(UF.TimeStamp(), bcolors.OKGREEN+"Train and Validation data has loaded and analysed successfully..."+bcolors.ENDC)
+print(UI.TimeStamp(), bcolors.OKGREEN+"Train and Validation data has loaded and analysed successfully..."+bcolors.ENDC)
 print(len(TrainSamples),len(ValSamples))
 def main(self):
     Model_Meta_Path=EOSsubModelDIR+'/'+ModelName+'_Meta'
     Model_Path=EOSsubModelDIR+'/'+ModelName
-    ModelMeta=UF.PickleOperations(Model_Meta_Path, 'r', 'N/A')[0]
-    print(UF.TimeStamp(),'Starting the training process... ')
+    ModelMeta=UI.PickleOperations(Model_Meta_Path, 'r', 'N/A')[0]
+    print(UI.TimeStamp(),'Starting the training process... ')
     if ModelMeta.ModelType=='CNN':
         import os
         os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # FATAL
@@ -209,44 +209,44 @@ def main(self):
             model=tf.keras.models.load_model(Model_Path)
             K.set_value(model.optimizer.learning_rate, TrainParams[0])
         except:
-             print(UF.TimeStamp(), bcolors.WARNING+"Model/state data files are missing, skipping this step..." +bcolors.ENDC)
-             model = UF.GenerateModel(ModelMeta,TrainParams)
+             print(UI.TimeStamp(), bcolors.WARNING+"Model/state data files are missing, skipping this step..." +bcolors.ENDC)
+             model = UI.GenerateModel(ModelMeta,TrainParams)
         model.summary()
         records=[]
         for epoch in range(0, TrainParams[2]):
             train_loss, itr=CNNtrain(model, TrainSamples, NTrainBatches),len(TrainSamples)
             val_loss=CNNvalidate(model, ValSamples, NValBatches)
             test_loss=val_loss
-            print(UF.TimeStamp(),'Epoch ',epoch, ' is completed')
+            print(UI.TimeStamp(),'Epoch ',epoch, ' is completed')
             records.append([epoch,itr,train_loss[0],0.5,val_loss[0],val_loss[1],test_loss[0],test_loss[1],train_set])
         model.save(Model_Path)
         Header=[['Epoch','# Samples','Train Loss','Optimal Threshold','Validation Loss','Validation Accuracy','Test Loss','Test Accuracy','Training Set']]
         Header+=records
         ModelMeta.CompleteTrainingSession(Header)
-        print(UF.PickleOperations(Model_Meta_Path, 'w', ModelMeta)[1])
+        print(UI.PickleOperations(Model_Meta_Path, 'w', ModelMeta)[1])
         exit()
     elif ModelMeta.ModelType=='GNN':
         from torch import optim
         from torch.optim.lr_scheduler import StepLR
-        print(UF.TimeStamp(),'Starting the training process... ')
+        print(UI.TimeStamp(),'Starting the training process... ')
         State_Save_Path=EOSsubModelDIR+'/'+ModelName+'_State'
         Model_Meta_Path=EOSsubModelDIR+'/'+ModelName+'_Meta'
         Model_Path=EOSsubModelDIR+'/'+ModelName
-        ModelMeta=UF.PickleOperations(Model_Meta_Path, 'r', 'N/A')[0]
+        ModelMeta=UI.PickleOperations(Model_Meta_Path, 'r', 'N/A')[0]
         device = torch.device('cpu')
-        model = UF.GenerateModel(ModelMeta).to(device)
+        model = UI.GenerateModel(ModelMeta).to(device)
         print(model)
         optimizer = optim.Adam(model.parameters(), lr=TrainParams[0])
 
         scheduler = StepLR(optimizer, step_size=0.1,gamma=0.1)
-        print(UF.TimeStamp(),'Try to load the previously saved model/optimiser state files ')
+        print(UI.TimeStamp(),'Try to load the previously saved model/optimiser state files ')
         try:
                model.load_state_dict(torch.load(Model_Path))
                checkpoint = torch.load(State_Save_Path)
                optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
                scheduler.load_state_dict(checkpoint['scheduler'])
         except:
-               print(UF.TimeStamp(), bcolors.WARNING+"Model/state data files are missing, skipping this step..." +bcolors.ENDC)
+               print(UI.TimeStamp(), bcolors.WARNING+"Model/state data files are missing, skipping this step..." +bcolors.ENDC)
         records=[]
         for epoch in range(0, TrainParams[2]):
             train_loss,itr= GNNtrain(model,TrainSamples, optimizer),len(TrainSamples.dataset)
@@ -256,7 +256,7 @@ def main(self):
             test_loss=val_loss
             test_acc=val_acc
             scheduler.step()
-            print(UF.TimeStamp(),'Epoch ',epoch, ' is completed')
+            print(UI.TimeStamp(),'Epoch ',epoch, ' is completed')
             records.append([epoch,itr,train_loss.item(),0.5,val_loss,val_acc,test_loss,test_acc,train_set])
             torch.save({    'epoch': epoch,
                           'optimizer_state_dict': optimizer.state_dict(),
@@ -266,7 +266,7 @@ def main(self):
         Header=[['Epoch','# Samples','Train Loss','Optimal Threshold','Validation Loss','Validation Accuracy','Test Loss','Test Accuracy','Training Set']]
         Header+=records
         ModelMeta.CompleteTrainingSession(Header)
-        print(UF.PickleOperations(Model_Meta_Path, 'w', ModelMeta)[1])
+        print(UI.PickleOperations(Model_Meta_Path, 'w', ModelMeta)[1])
         exit()
 if __name__ == '__main__':
      main(sys.argv[1:])
