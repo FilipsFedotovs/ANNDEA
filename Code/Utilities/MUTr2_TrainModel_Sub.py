@@ -54,6 +54,7 @@ if PY_DIR!='': #Temp solution
     sys.path.append('/usr/lib/python3.9/site-packages')
 sys.path.append(AFS_DIR+'/Code/Utilities')
 import U_UI as UI
+import U_ML as ML
 #Load data configuration
 EOSsubDIR=EOS_DIR+'/'+'ANNDEA'
 EOSsubModelDIR=EOSsubDIR+'/'+'Models'
@@ -236,7 +237,7 @@ def main(self):
         Model_Path=EOSsubModelDIR+'/'+ModelName
         ModelMeta=UI.PickleOperations(Model_Meta_Path, 'r', 'N/A')[0]
         device = torch.device('cpu')
-        model = UI.GenerateModel(ModelMeta).to(device)
+        model = ML.GenerateModel(ModelMeta).to(device)
         print(model)
         optimizer = optim.Adam(model.parameters(), lr=TrainParams[0])
 
