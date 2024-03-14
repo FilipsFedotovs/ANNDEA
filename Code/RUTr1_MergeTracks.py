@@ -448,7 +448,6 @@ while Status<len(Program):
                         fractions=int(math.ceil(Records/MaxSeeds))
                         for k in range(0,fractions):
                          new_output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/Temp_RUTr1a'+'_'+RecBatchID+'_'+str(i)+'/RUTr1a_'+RecBatchID+'_SelectedSeeds_'+str(i)+'_'+str(tot_fractions+k)+'.csv'
-                         print(new_output_file_location)
                          result[(k*MaxSeeds):min(Records,((k+1)*MaxSeeds))].to_csv(new_output_file_location,index=False)
                         tot_fractions+=fractions
                     NewJobSet[i]=tot_fractions
@@ -562,7 +561,6 @@ while Status<len(Program):
         if Result:
              input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/Temp_RUTr1d_'+RecBatchID+'_0/RUTr1d_'+RecBatchID+'_Fit_Merged_Seeds_0.pkl'
              base_data=UI.PickleOperations(input_file_location,'r','N/A')[0]
-             print(len(base_data))
              input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/Temp_RUTr1d_'+RecBatchID+'_0/RUTr1d_'+RecBatchID+'_Fit_Merged_Seeds_1.pkl'
              base_data+=UI.PickleOperations(input_file_location,'r','N/A')[0]
              for v in range(0,len(base_data)):
@@ -607,7 +605,6 @@ while Status<len(Program):
                 rec_eval=pd.merge(eval_data, rec, how="inner", on=['Seed_ID'])
                 eval_no=len(rec_eval)
                 rec_no=(len(rec)-len(rec_eval))
-                print(rec_no,eval_no,eval_no/(rec_no+eval_no),eval_no/len(eval_data))
                 UI.LogOperations(EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv', 'a', [[4+len(ModelName),'Track Seed Merging',rec_no,eval_no,eval_no/(rec_no+eval_no),eval_no/len(eval_data)]])
                 UI.Msg('location',"The log data has been created successfully and written to",EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv')
              UI.UpdateStatus(Status+1,Meta,RecOutputMeta)
@@ -615,7 +612,6 @@ while Status<len(Program):
                 raw_name=initial_input_file_location[:-4]
                 for l in range(len(raw_name)-1,0,-1):
                     if raw_name[l]=='/':
-                        print(l,raw_name)
                         break
                 raw_name=raw_name[l+1:]
                 final_output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+raw_name+'_'+RecBatchID+'.csv'
@@ -788,7 +784,6 @@ while Status<len(Program):
                 new_combined_data['Temp_Track_ID'] = new_combined_data['Temp_Track_ID'].fillna(new_combined_data[TrackID])
                 new_combined_data=new_combined_data.rename(columns={'Temp_Track_Quarter': RecBatchID+'_Brick_ID','Temp_Track_ID': RecBatchID+'_Track_ID'})
                 new_combined_data.to_csv(final_output_file_location,index=False)
-                print(new_combined_data)
                 UI.Msg('location',"The merged track data has been created successfully and written to",final_output_file_location)
                 UI.UpdateStatus(Status+1,Meta,RecOutputMeta)
     else:
