@@ -131,9 +131,7 @@ if os.path.isfile(required_file_location)==False:
         data=data.dropna()
         final_rows=len(data.axes[0])
         print(UI.TimeStamp(),'The cleaned data has ',final_rows,' hits')
-        print(data)
-        print('You are here')
-        exit()
+
         data[PM.MC_Event_ID] = data[PM.MC_Event_ID].astype(str)
         for i in ExtraColumns:
             data[i]=data[i].astype(str)
@@ -147,6 +145,9 @@ if os.path.isfile(required_file_location)==False:
         data=data.drop([BrickID],axis=1)
         data=data.drop([PM.MC_Event_ID],axis=1)
         data=data.drop([PM.MC_Track_ID],axis=1)
+        print(data)
+        print('You are here')
+        exit()
         if len(RemoveTracksZ)>0:
             print(UF.TimeStamp(),'Removing tracks based on start point')
             TracksZdf = pd.DataFrame(RemoveTracksZ, columns = ['Bad_z'], dtype=float)
