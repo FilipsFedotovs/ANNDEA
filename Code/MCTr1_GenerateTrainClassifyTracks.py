@@ -64,6 +64,7 @@ parser.add_argument('--MinHitsTrack',help="What is the minimum number of hits pe
 parser.add_argument('--SubPause',help="How long to wait in minutes after submitting 10000 jobs?", default='60')
 parser.add_argument('--SubGap',help="How long to wait in minutes after submitting 10000 jobs?", default='10000')
 parser.add_argument('--PY',help="Python libraries directory location", default='.')
+parser.add_argument('--HTCondorLog',help="Local submission?", default=False,type=bool)
 ######################################## Parsing argument values  #############################################################
 args = parser.parse_args()
 Mode=args.Mode.upper()
@@ -86,6 +87,7 @@ ReqMemory=args.ReqMemory
 JobFlavour=args.JobFlavour
 MinHitsTrack=int(args.MinHitsTrack)
 LocalSub=(args.LocalSub=='Y')
+HTCondorLog=args.HTCondorLog
 if LocalSub:
    time_int=0
 else:
@@ -283,8 +285,9 @@ prog_entry.append([ " --MaxSegments ", " --ClassNames "," --ClassValues "])
 prog_entry.append([MaxSegments,'"'+str(ClassNames)+'"','"'+str(ClassValues)+'"'])
 prog_entry.append(JobSets)
 prog_entry.append(LocalSub)
-prog_entry.append(['',''])
-Program.append(prog_entry)
+prog_entry.append('N/A')
+prog_entry.append(HTCondorLog)
+prog_entry.append(False)
 
 ###### Stage 1
 Program.append('Custom')
