@@ -192,13 +192,14 @@ if os.path.isfile(required_file_location)==False:
             data_aggregated_show=data_aggregated_show.rename(columns={'Rec_Seg_ID': "No_Tracks"})
             print('Track length distribution:')
             print(data_aggregated_show)
-            RTLChoice = input('Enter the list of track lengths to exlude" : ')
+            RTLChoice = input('Enter the list of track lengths to exclude" : ')
             if len(RTLChoice)>1:
                 RTLChoice=ast.literal_eval(RTLChoice)
             else:
                 RTLChoice=[int(RTLChoice)]
-            TracksLdf = pd.DataFrame(RTLChoice, columns = ['PID'], dtype=int)
-            print(TracksLdf)
+            TracksLdf = pd.DataFrame(RTLChoice, columns = ['track_len'], dtype=int)
+            data_aggregated=pd.merge(data_aggregated,TracksLdf,how='inner',on='track_len')
+            print(data_aggregated)
             exit()
 
 
