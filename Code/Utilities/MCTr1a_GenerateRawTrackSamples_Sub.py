@@ -64,7 +64,7 @@ for j in ClassNames:
         if (k in ExtraColumns)==False:
             ExtraColumns.append(k)
 #Specifying the full path to input/output files
-input_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+BatchID+'MCTr1_'+BatchID+'_TRACKS.csv'
+input_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+BatchID+'/MCTr1_'+BatchID+'_TRACKS.csv'
 output_file_location=EOS_DIR+p+'/Temp_'+pfx+'_'+BatchID+'_0/'+pfx+'_'+BatchID+'_'+o+'_'+str(i)+sfx
 
 print(UI.TimeStamp(), "Modules Have been imported successfully...")
