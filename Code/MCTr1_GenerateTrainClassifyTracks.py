@@ -308,6 +308,8 @@ while Status<len(Program):
             Status=20
             break
       if Program[Status]=='Custom':
+          print(Status)
+          exit()
           if Status==1:
             print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
             print(UI.TimeStamp(),bcolors.BOLD+'Stage 2:'+bcolors.ENDC+' Collecting and de-duplicating the results from stage 1')
