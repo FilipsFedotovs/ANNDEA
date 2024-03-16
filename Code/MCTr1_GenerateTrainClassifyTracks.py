@@ -176,9 +176,9 @@ if os.path.isfile(required_file_location)==False:
         RLChoice = input('Would you like to remove tracks based on their length in traverse plates? If no, press "Enter", otherwise type "y", followed by "Enter" : ')
         if RLChoice.upper()=='Y':
             print(UI.TimeStamp(),'Removing tracks based on length')
-            data_aggregated=data
+            data_aggregated=data[['Rec_Seg_ID','z']]
             data_aggregated['min_z']=data.groupby(['Rec_Seg_ID'])['z'].min().reset_index()
-            data_aggregated['max_z']=data_aggregated.groupby(['Rec_Seg_ID'])['z'].max().reset_index()
+            data_aggregated['max_z']=data.groupby(['Rec_Seg_ID'])['z'].max().reset_index()
             print(data_aggregated)
             exit()
             data_aggregated=data.groupby(['Rec_Seg_ID'])['z'].min().reset_index()
