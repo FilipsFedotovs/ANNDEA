@@ -275,7 +275,7 @@ Status=Meta.Status[-1]
 if ForceStatus!='N':
     Status=int(ForceStatus)
 UI.Msg('vanilla','Current stage is '+str(Status)+'...')
-NJobs=UI.CalculateNJobs(Meta.JobSets[0])[1]
+NJobs=UI.CalculateNJobs(Meta.JobSets[0])
 print(NJobs)
 exit()
 ###### Stage 0
