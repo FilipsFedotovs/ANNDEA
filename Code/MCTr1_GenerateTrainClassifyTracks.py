@@ -172,6 +172,39 @@ if os.path.isfile(required_file_location)==False:
             data=data.drop(['Tracks_Remove'],axis=1)
         final_rows=len(data.axes[0])
         print(UI.TimeStamp(),'After removing tracks that start at the specific plates we have',final_rows,' hits left')
+
+        RLChoice = input('Would you like to remove tracks based on their length in traverse plates? If no, press "Enter", otherwise type "y", followed by "Enter" : ')
+        if RLChoice.upper()=='Y':
+            print(UI.TimeStamp(),'Removing tracks based on length')
+            data_aggregated['min_z']=data.groupby(['Rec_Seg_ID'])['z'].min().reset_index()
+            data_aggregated['max_z']=data.groupby(['Rec_Seg_ID'])['z'].max().reset_index()
+            print(data_aggregated)
+            exit()
+            data_aggregated=data.groupby(['Rec_Seg_ID'])['z'].min().reset_index()
+            data_aggregated_show=data_aggregated.groupby(['z']).count().reset_index()
+            data_aggregated_show=data_aggregated_show.rename(columns={'Rec_Seg_ID': "No_Tracks"})
+            data_aggregated_show['PID']=data_aggregated_show['z'].rank(ascending=True).astype(int)
+            print('A list of plates and the number of tracks starting on them is listed bellow:')
+            print(data_aggregated_show)
+            RPChoice = input('Enter the list of plates separated by comma that you want to remove followed by "Enter" : ')
+            if len(RPChoice)>1:
+                RPChoice=ast.literal_eval(RPChoice)
+            else:
+                RPChoice=[int(RPChoice)]
+            TracksZdf = pd.DataFrame(RPChoice, columns = ['PID'], dtype=int)
+            data_aggregated_show=pd.merge(data_aggregated_show,TracksZdf,how='inner',on='PID')
+
+            data_aggregated_show.drop(['No_Tracks','PID'],axis=1,inplace=True)
+            data_aggregated=pd.merge(data_aggregated,data_aggregated_show,how='inner',on='z')
+            data_aggregated=data_aggregated.rename(columns={'z': 'Tracks_Remove'})
+
+            data=pd.merge(data, data_aggregated, how="left", on=['Rec_Seg_ID'])
+
+            data=data[data['Tracks_Remove'].isnull()]
+            data=data.drop(['Tracks_Remove'],axis=1)
+        final_rows=len(data.axes[0])
+        print(UI.TimeStamp(),'After removing tracks that start at the specific plates we have',final_rows,' hits left')
+
         print('We are here')
         exit()
         compress_data=data.drop([PM.x,PM.y,PM.z,PM.tx,PM.ty],axis=1)
