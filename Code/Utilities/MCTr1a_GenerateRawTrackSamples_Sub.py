@@ -35,8 +35,6 @@ sfx=args.sfx
 pfx=args.pfx
 BatchID=args.BatchID
 
-
-
 ########################################     Preset framework parameters    #########################################
 MaxSegments=int(args.MaxSegments)
 #Loading Directory locations
@@ -101,22 +99,12 @@ for s in range(0,limit):
         class_flag=False
         for j in range(len(ClassNames[i])):
             pos_counter=track_column_headers.index(ClassNames[i][j])
-            print(pos_counter)
-            x=input()
-            print('Class val',ClassValues[i][j])
-            print('val',track[pos_counter])
-            print('track',track)
             if (str(track[pos_counter]) in ClassValues[i][j])==False:
-
                     class_flag=True
-        print(class_flag)
-        x=input()
         if class_flag==False:
             break
         else:
                label+=1
-        print('Class label',label)
-    print('Super Class label',label)
     track_obj.LabelTrack(label)
     track_obj.Decorate(track_data)
     GoodTracks.append(track_obj)
