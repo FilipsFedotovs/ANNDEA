@@ -308,8 +308,6 @@ while Status<len(Program):
             Status=20
             break
       if Program[Status]=='Custom':
-          print(Status)
-          exit()
           if Status==1:
             print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
             print(UI.TimeStamp(),bcolors.BOLD+'Stage 2:'+bcolors.ENDC+' Collecting and de-duplicating the results from stage 1')
@@ -353,16 +351,6 @@ while Status<len(Program):
               UI.UpdateStatus(Status+1,Meta,TrainSampleOutputMeta)
               Status+=1
               continue
-      print(UI.TimeStamp(),'Loading previously saved data from ',bcolors.OKBLUE+TrainSampleOutputMeta+bcolors.ENDC)
-      print(UI.TimeStamp(),'Would you like to delete Temporary files?')
-      user_response=input()
-      if user_response=='y' or user_response=='Y':
-               UI.UpdateStatus(Status+1,Meta,TrainSampleOutputMeta)
-               Status+=1
-               continue
-      else:
-               print(UI.TimeStamp(), bcolors.OKGREEN+"Train sample generation has been completed"+bcolors.ENDC)
-               exit()
       MetaInput=UI.PickleOperations(TrainSampleOutputMeta,'r', 'N/A')
       Meta=MetaInput[0]
       Status=Meta.Status[-1]
