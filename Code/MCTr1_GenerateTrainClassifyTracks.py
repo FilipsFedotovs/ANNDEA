@@ -317,6 +317,8 @@ while Status<len(Program):
                     base_data=UI.PickleOperations(req_file,'r', 'N/A')[0]
                     ExtractedData=[]
                     min_len=len([j for j in base_data if j.Label==0])
+                    print(min_len)
+                    exit()
                     for j in range(len(ClassHeaders)+1):
                         if len([k for k in base_data if k.Label==j])!=0:
                            ExtractedData.append([k for k in base_data if k.Label==j])
