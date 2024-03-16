@@ -120,7 +120,7 @@ else:
 print('You are here')
 exit()
 
-elif os.path.isfile(required_file_location)==False or Mode=='RESET':
+if os.path.isfile(required_file_location)==False or Mode=='RESET':
         print(UF.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
         data=pd.read_csv(input_file_location,
                     header=0,
