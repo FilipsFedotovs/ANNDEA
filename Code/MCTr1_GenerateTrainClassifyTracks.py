@@ -110,7 +110,6 @@ for i in ClassNames:
 print(UI.TimeStamp(),bcolors.BOLD+'Stage 0:'+bcolors.ENDC+' Preparing the source data...')
 if Mode=='RESET':
     print(UI.ManageFolders(AFS_DIR, EOS_DIR, TrainSampleID,'d',['MCTr1a']))
-    os.remove(TrainSampleOutputMeta)
     print(UI.ManageFolders(AFS_DIR, EOS_DIR, TrainSampleID,'c'))
 elif Mode=='CLEANUP':
      print(UI.ManageFolders(AFS_DIR, EOS_DIR, TrainSampleID,'d',['MCTr1a']))

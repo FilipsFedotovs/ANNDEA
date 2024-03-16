@@ -105,7 +105,6 @@ TrainSampleOutputMeta=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/'+TrainS
 
 if Mode=='RESET':
     print(UI.ManageFolders(AFS_DIR, EOS_DIR, TrainSampleID,'d',['MUTr1a','MUTr1b','MUTr1c','MUTr1d']))
-    os.remove(TrainSampleOutputMeta)
     print(UI.ManageFolders(AFS_DIR, EOS_DIR, TrainSampleID,'c'))
 elif Mode=='CLEANUP':
      print(UI.ManageFolders(AFS_DIR, EOS_DIR, TrainSampleID,'d',['MUTr1a','MUTr1b','MUTr1c','MUTr1d']))
