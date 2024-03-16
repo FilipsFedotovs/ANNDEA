@@ -263,6 +263,7 @@ JobSets=Meta.JobSets
 MaxSegments=Meta.MaxSegments
 TotJobs=JobSets
 
+print(new_combined_data)
 exit()
 
 ########################################     Preset framework parameters    #########################################
