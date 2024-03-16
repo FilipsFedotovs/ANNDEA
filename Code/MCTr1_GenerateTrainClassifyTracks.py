@@ -338,6 +338,8 @@ while Status<len(Program):
                     req_file=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/Temp_MCTr1a_'+TrainSampleID+'_0/MCTr1b_'+TrainSampleID+'_SelectedTrackSamples_'+str(i)+'.pkl'
                     base_data=UI.PickleOperations(req_file,'r', 'N/A')[0]
                     TotalData+=base_data
+              print(TotalData)
+              exit()
               ValidationSampleSize=int(round(min((len(TotalData)*float(PM.valRatio)),PM.MaxValSampleSize),0))
               random.shuffle(TotalData)
               output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_TRACK_OUTPUT.pkl'
