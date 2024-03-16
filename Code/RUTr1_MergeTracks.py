@@ -24,7 +24,6 @@ if PY_DIR!='': #Temp solution - the decision was made to move all libraries to E
     sys.path.append('/usr/lib/python3.9/site-packages')
 sys.path.append(AFS_DIR+'/Code/Utilities')
 import U_UI as UI
-#import UtilityFunctions as UF #This is where we keep routine utility functions
 import Parameters as PM #This is where we keep framework global parameters
 import pandas as pd #We use Panda for a routine data processing
 pd.options.mode.chained_assignment = None #Silence annoying warnings

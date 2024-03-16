@@ -8,13 +8,10 @@ import csv
 import argparse
 import pandas as pd #We use Panda for a routine data processing
 import math #We use it for data manipulation
-import numpy as np
 import os
 import time
 import ast
-from alive_progress import alive_bar
 import random
-import gc
 class bcolors:   #We use it for the interface
     HEADER = '\033[95m'
     OKBLUE = '\033[94m'
@@ -24,14 +21,6 @@ class bcolors:   #We use it for the interface
     ENDC = '\033[0m'
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
-
-print('                                                                                                                                    ')
-print('                                                                                                                                    ')
-print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
-print(bcolors.HEADER+"#########     Initialising ANNDEA Track Union Training Sample Generation module          ###############"+bcolors.ENDC)
-print(bcolors.HEADER+"#########################              Written by Filips Fedotovs              #########################"+bcolors.ENDC)
-print(bcolors.HEADER+"#########################                 PhD Student at UCL                   #########################"+bcolors.ENDC)
-print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
 
 #Loading Directory locations
 csv_reader=open('../config',"r")
@@ -46,9 +35,9 @@ for c in config:
 csv_reader.close()
 import sys
 sys.path.insert(1, AFS_DIR+'/Code/Utilities/')
-import UtilityFunctions as UF #This is where we keep routine utility functions
+import U_UI as UI #This is where we keep routine utility functions
 import Parameters as PM #This is where we keep framework global parameters
-
+UI.WelcomeMsg('Initialising ANNDEA track classification module training sample generator...','Filips Fedotovs (PhD student at UCL), Wenqing Xie (MSc student at UCL)','Please reach out to filips.fedotovs@cern.ch for any queries')
 #Setting the parser - this script is usually not run directly, but is used by a Master version Counterpart that passes the required arguments
 parser = argparse.ArgumentParser(description='This script prepares training data for training the tracking model')
 parser.add_argument('--Mode', help='Script will continue from the last checkpoint, unless you want to start from the scratch, then type "Reset"',default='')
@@ -105,8 +94,8 @@ else:
 #Establishing paths
 EOSsubDIR=EOS_DIR+'/'+'ANNDEA'
 EOSsubModelDIR=EOSsubDIR+'/'+'Models'
-TrainSampleOutputMeta=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_info.pkl'
-required_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MCTr1_'+TrainSampleID+'_TRACKS.csv'
+TrainSampleOutputMeta=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/'+TrainSampleID+'_info.pkl'
+required_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/MCTr1_'+TrainSampleID+'_TRACKS.csv'
 ColumnsToImport=[TrackID,BrickID,PM.x,PM.y,PM.z,PM.tx,PM.ty,PM.MC_Track_ID,PM.MC_Event_ID]
 ExtraColumns=[]
 for i in ClassNames:
@@ -117,11 +106,20 @@ for i in ClassNames:
                 ExtraColumns.append(j)
 
 ########################################     Phase 1 - Create compact source file    #########################################
-print(UF.TimeStamp(),bcolors.BOLD+'Stage 0:'+bcolors.ENDC+' Preparing the source data...')
-if Mode.upper() == 'CLEANUP':
-   Status=4
-   MetaInput=UF.PickleOperations(TrainSampleOutputMeta,'r', 'N/A')
-   Meta=MetaInput[0]
+print(UI.TimeStamp(),bcolors.BOLD+'Stage 0:'+bcolors.ENDC+' Preparing the source data...')
+if Mode=='RESET':
+    print(UI.ManageFolders(AFS_DIR, EOS_DIR, TrainSampleID,'d',['MCTr1a']))
+    os.remove(TrainSampleOutputMeta)
+    print(UI.ManageFolders(AFS_DIR, EOS_DIR, TrainSampleID,'c'))
+elif Mode=='CLEANUP':
+     print(UI.ManageFolders(AFS_DIR, EOS_DIR, TrainSampleID,'d',['MCTr1a']))
+     exit()
+else:
+    print(UI.ManageFolders(AFS_DIR, EOS_DIR, TrainSampleID,'c'))
+
+print('You are here')
+exit()
+
 elif os.path.isfile(required_file_location)==False or Mode=='RESET':
         print(UF.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
         data=pd.read_csv(input_file_location,

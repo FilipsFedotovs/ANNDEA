@@ -17,18 +17,17 @@ csv_reader.close()
 import sys
 if PY_DIR!='': #Temp solution - the decision was made to move all libraries to EOS drive as AFS get locked during heavy HTCondor submission loads
     sys.path=['',PY_DIR]
-    sys.path.append('/usr/lib64/python36.zip')
-    sys.path.append('/usr/lib64/python3.6')
-    sys.path.append('/usr/lib64/python3.6/lib-dynload')
-    sys.path.append('/usr/lib64/python3.6/site-packages')
-    sys.path.append('/usr/lib/python3.6/site-packages')
+    sys.path.append('/usr/lib64/python39.zip')
+    sys.path.append('/usr/lib64/python3.9')
+    sys.path.append('/usr/lib64/python3.9/lib-dynload')
+    sys.path.append('/usr/lib64/python3.9/site-packages')
+    sys.path.append('/usr/lib/python3.9/site-packages')
 sys.path.append(AFS_DIR+'/Code/Utilities')
-import UtilityFunctions as UF #This is where we keep routine utility functions
+import U_UI as UI
 import Parameters as PM #This is where we keep framework global parameters
 import pandas as pd #We use Panda for a routine data processing
 pd.options.mode.chained_assignment = None #Silence annoying warnings
 import math #We use it for data manipulation
-import numpy as np
 import os
 import time
 from alive_progress import alive_bar
@@ -44,13 +43,7 @@ class bcolors:   #We use it for the interface
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
 
-print('                                                                                                                                    ')
-print('                                                                                                                                    ')
-print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
-print(bcolors.HEADER+"#########     Initialising ANNDEA Track Union Training Sample Generation module          ###############"+bcolors.ENDC)
-print(bcolors.HEADER+"#########################              Written by Filips Fedotovs              #########################"+bcolors.ENDC)
-print(bcolors.HEADER+"#########################                 PhD Student at UCL                   #########################"+bcolors.ENDC)
-print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
+UI.WelcomeMsg('Initialising ANNDEA track classification module...','Filips Fedotovs (PhD student at UCL), Wenqing Xie (MSc student at UCL)','Please reach out to filips.fedotovs@cern.ch for any queries')
 
 #Setting the parser - this script is usually not run directly, but is used by a Master version Counterpart that passes the required arguments
 parser = argparse.ArgumentParser(description='This script prepares training data for training the tracking model')
@@ -107,8 +100,17 @@ RecOutputMeta=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_info.pkl'
 required_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RCTr1_'+RecBatchID+'_TRACKS.csv'
 ColumnsToImport=[TrackID,BrickID,PM.x,PM.y,PM.z,PM.tx,PM.ty]
 ########################################     Phase 1 - Create compact source file    #########################################
-print(UF.TimeStamp(),bcolors.BOLD+'Stage 0:'+bcolors.ENDC+' Preparing the source data...')
 
+if Mode=='RESET':
+    print(UI.ManageFolders(AFS_DIR, EOS_DIR, RecBatchID,'d',['EUTr1a','RUTr1a','RUTr1b','RUTr1c']))
+    print(UI.ManageFolders(AFS_DIR, EOS_DIR, RecBatchID,'c'))
+elif Mode=='CLEANUP':
+     print(UI.ManageFolders(AFS_DIR, EOS_DIR, RecBatchID,'d',['EUTr1a','RUTr1a','RUTr1b','RUTr1c']))
+     exit()
+else:
+    print(UI.ManageFolders(AFS_DIR, EOS_DIR, RecBatchID,'c'))
+print(UI.TimeStamp(),bcolors.BOLD+'Stage 0:'+bcolors.ENDC+' Preparing the source data...')
+exit()
 if os.path.isfile(required_file_location)==False or Mode=='RESET':
         if os.path.isfile(EOSsubModelMetaDIR)==False:
               print(UF.TimeStamp(), bcolors.FAIL+"Fail to proceed further as the model file "+EOSsubModelMetaDIR+ " has not been found..."+bcolors.ENDC)

@@ -101,7 +101,7 @@ ReqMemory=args.ReqMemory
 MaxSeeds=int(args.MaxSeeds)
 Xmin,Xmax,Ymin,Ymax=float(args.Xmin),float(args.Xmax),float(args.Ymin),float(args.Ymax)
 SliceData=max(Xmin,Xmax,Ymin,Ymax)>0 #We don't slice data if all values are set to zero simultaneousy (which is the default setting)
-TrainSampleOutputMeta=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_info.pkl'
+TrainSampleOutputMeta=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/'+TrainSampleID+'_info.pkl'
 
 if Mode=='RESET':
     print(UI.ManageFolders(AFS_DIR, EOS_DIR, TrainSampleID,'d',['MUTr1a','MUTr1b','MUTr1c','MUTr1d']))
