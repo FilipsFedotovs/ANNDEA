@@ -151,7 +151,8 @@ if os.path.isfile(required_file_location)==False:
             #TracksZdf = pd.DataFrame(RemoveTracksZ, columns = ['Bad_z'], dtype=float)
 
             data_aggregated=data.groupby(['Rec_Seg_ID'])['z'].min().reset_index()
-            print(data_aggregated)
+            data_aggregated_show=data.groupby(['z']).count().reset_index()
+            print(data_aggregated_show)
             exit()
 
             data_aggregated=data_aggregated.rename(columns={'z': "PosBad_Z"})
