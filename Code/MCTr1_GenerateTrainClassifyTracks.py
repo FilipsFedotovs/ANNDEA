@@ -177,8 +177,10 @@ if os.path.isfile(required_file_location)==False:
         if RLChoice.upper()=='Y':
             print(UI.TimeStamp(),'Removing tracks based on length')
             data_aggregated=data[['Rec_Seg_ID','z']]
-            data_aggregated_l=data_aggregated.groupby(['Rec_Seg_ID'])['z'].min()
-            print(data_aggregated_l)
+            data_aggregated_l=data_aggregated.groupby(['Rec_Seg_ID'])['z'].min().reset_index().rename(columns={'z': "min_z"})
+            data_aggregated_r=data_aggregated.groupby(['Rec_Seg_ID'])['z'].max().reset_index().rename(columns={'z': "max_z"})
+            data_aggregated=pd.merge(data_aggregated_l,data_aggregated_r,how='inner', on='Rec_Seg_ID')
+            print(data_aggregated)
             exit()
             data_aggregated['max_z']=data.groupby(['Rec_Seg_ID'])['z'].max().reset_index()
 
