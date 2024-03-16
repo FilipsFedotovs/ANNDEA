@@ -117,15 +117,17 @@ elif Mode=='CLEANUP':
 else:
     print(UI.ManageFolders(AFS_DIR, EOS_DIR, TrainSampleID,'c'))
 
-print('You are here')
-exit()
 
-if os.path.isfile(required_file_location)==False or Mode=='RESET':
-        print(UF.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
+
+if os.path.isfile(required_file_location)==False:
+        print(UI.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
         data=pd.read_csv(input_file_location,
                     header=0,
                     usecols=ColumnsToImport)
         total_rows=len(data.axes[0])
+        print(data)
+        print('You are here')
+        exit()
         print(UF.TimeStamp(),'The raw data has ',total_rows,' hits')
         print(UF.TimeStamp(),'Removing unreconstructed hits...')
         data=data.dropna()
