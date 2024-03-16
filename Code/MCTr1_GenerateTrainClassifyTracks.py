@@ -188,7 +188,7 @@ if os.path.isfile(required_file_location)==False:
             data_aggregated['track_len']=data_aggregated['PID_r']-data_aggregated['PID_l']+1
 
             data_aggregated=data_aggregated[['Rec_Seg_ID','track_len']]
-            data_aggregated_show=data_aggregated.groupby(['z']).count().reset_index()
+            data_aggregated_show=data_aggregated.groupby(['track_len']).count().reset_index()
             data_aggregated_show=data_aggregated_show.rename(columns={'Rec_Seg_ID': "No_Tracks"})
             print('Track length distribution:')
             print(data_aggregated_show)
