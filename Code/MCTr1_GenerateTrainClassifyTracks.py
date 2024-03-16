@@ -164,11 +164,11 @@ if os.path.isfile(required_file_location)==False:
             print(data_aggregated_show)
             data_aggregated_show.drop(['No_Tracks','PID'],axis=1,inplace=True)
             data_aggregated=pd.merge(data_aggregated,data_aggregated_show,how='inner',on='z')
-            print(data_aggregated)
-            exit()
+            data_aggregated=data_aggregated.rename(columns={'z': 'Tracks_Remove'})
 
-            data_aggregated=data_aggregated.rename(columns={'z': "PosBad_Z"})
             data=pd.merge(data, data_aggregated, how="left", on=['Rec_Seg_ID'])
+            print(data)
+            exit()
             data=pd.merge(data, TracksZdf, how="left", left_on=["PosBad_Z"], right_on=['Bad_z'])
             data=data[data['Bad_z'].isnull()]
             data=data.drop(['Bad_z', 'PosBad_Z'],axis=1)
