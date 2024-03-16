@@ -65,11 +65,10 @@ for j in ClassNames:
             ExtraColumns.append(k)
 #Specifying the full path to input/output files
 input_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+BatchID+'MCTr1_'+BatchID+'_TRACKS.csv'
-output_file_location=EOS_DIR+p+'/Temp_'+pfx+'_'+BatchID+'_0/'+pfx+'_'+BatchID+'_'+o+'_'+str(i)+sfx
-print(output_file_location)
-exit()
-print(UF.TimeStamp(), "Modules Have been imported successfully...")
-print(UF.TimeStamp(),'Loading pre-selected data from ',input_file_location)
+output_file_location=EOS_DIR+p+'Temp_'+pfx+'_'+BatchID+'_0/'+pfx+'_'+BatchID+'_'+o+'_'+str(i)+sfx
+
+print(UI.TimeStamp(), "Modules Have been imported successfully...")
+print(UI.TimeStamp(),'Loading pre-selected data from ',input_file_location)
 data=pd.read_csv(input_file_location,header=0,
                     usecols=['x','y','z','tx','ty','Rec_Seg_ID']+ExtraColumns)
 for j in ExtraColumns:
@@ -87,7 +86,7 @@ track_counter=0
 print('Data has been successfully loaded and prepared..')
 #create seeds
 GoodTracks=[]
-print(UF.TimeStamp(),'Beginning the image generation part...')
+print(UI.TimeStamp(),'Beginning the image generation part...')
 limit = len(track_headers)
 
 Max_Labels=len(ClassNames)+1
@@ -113,9 +112,9 @@ for s in range(0,limit):
     continue
 
 print('The raw image generation has been completed..')
-print(UF.TimeStamp(),'Saving the results..')
-print(UF.PickleOperations(output_file_location,'w', GoodTracks)[1])
-print(UF.TimeStamp(), "Train seed generation is finished...")
+print(UI.TimeStamp(),'Saving the results..')
+print(UI.PickleOperations(output_file_location,'w', GoodTracks)[1])
+print(UI.TimeStamp(), "Train seed generation is finished...")
 #End of the script
 
 
