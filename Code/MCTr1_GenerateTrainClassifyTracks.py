@@ -182,9 +182,11 @@ if os.path.isfile(required_file_location)==False:
             data_aggregated=pd.merge(data_aggregated_l,data_aggregated_r,how='inner', on='Rec_Seg_ID')
             data_aggregated_list_z=data[['z']].groupby(['z']).count().reset_index()
             data_aggregated_list_z['PID_l']=data_aggregated_list_z['z'].rank(ascending=True).astype(int)
-            data_aggregated=pd.merge(data_aggregated,data_aggregated_list_z, how='inner', left_on='min_z', right_on='z')
             data_aggregated_list_z['PID_r']=data_aggregated_list_z['PID_l']
-            data_aggregated=pd.merge(data_aggregated,data_aggregated_list_z, how='inner', left_on='max_z', right_on='z')['Rec_Seg_ID','PID_l','PID_r']
+            data_aggregated=pd.merge(data_aggregated,data_aggregated_list_z[['z','PID_l']], how='inner', left_on='min_z', right_on='z')
+
+
+            data_aggregated=pd.merge(data_aggregated,data_aggregated_list_z[['z','PID_r']], how='inner', left_on='max_z', right_on='z')[['Rec_Seg_ID','PID_l','PID_r']]
             print(data_aggregated)
             exit()
             data_aggregated['max_z']=data.groupby(['Rec_Seg_ID'])['z'].max().reset_index()
