@@ -73,6 +73,8 @@ print(UI.TimeStamp(), "Modules Have been imported successfully...")
 print(UI.TimeStamp(),'Loading pre-selected data from ',input_file_location)
 data=pd.read_csv(input_file_location,header=0,
                     usecols=['x','y','z','tx','ty','Rec_Seg_ID']+ExtraColumns)
+print(data)
+exit()
 for j in ExtraColumns:
             data[j]=data[j].astype(str)
 track_headers = data[['Rec_Seg_ID']+ExtraColumns]
