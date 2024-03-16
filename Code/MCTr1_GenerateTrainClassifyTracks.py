@@ -146,13 +146,14 @@ if os.path.isfile(required_file_location)==False:
 
 
         RZChoice = input('Would you like to remove tracks based on the starting plate? If no, press "Enter", otherwise type "y", followed by "Enter" : ')
-        print(RZChoice)
         if RZChoice.upper()=='Y':
             print(UI.TimeStamp(),'Removing tracks based on start point')
-            print('You are here')
+            #TracksZdf = pd.DataFrame(RemoveTracksZ, columns = ['Bad_z'], dtype=float)
+            data_show_z=data.groupby(['z'])['Rec_Seg_ID'].unique().reset_index()
+            print(data_show_z)
             exit()
-            TracksZdf = pd.DataFrame(RemoveTracksZ, columns = ['Bad_z'], dtype=float)
             data_aggregated=data.groupby(['Rec_Seg_ID'])['z'].min().reset_index()
+
             data_aggregated=data_aggregated.rename(columns={'z': "PosBad_Z"})
             data=pd.merge(data, data_aggregated, how="left", on=['Rec_Seg_ID'])
             data=pd.merge(data, TracksZdf, how="left", left_on=["PosBad_Z"], right_on=['Bad_z'])
