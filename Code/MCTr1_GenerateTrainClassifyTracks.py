@@ -149,10 +149,10 @@ if os.path.isfile(required_file_location)==False:
         if RZChoice.upper()=='Y':
             print(UI.TimeStamp(),'Removing tracks based on start point')
             #TracksZdf = pd.DataFrame(RemoveTracksZ, columns = ['Bad_z'], dtype=float)
-            data_show_z=data.groupby(['z'])['Rec_Seg_ID'].unique().count()
-            print(data_show_z)
-            exit()
+
             data_aggregated=data.groupby(['Rec_Seg_ID'])['z'].min().reset_index()
+            print(data_aggregated)
+            exit()
 
             data_aggregated=data_aggregated.rename(columns={'z': "PosBad_Z"})
             data=pd.merge(data, data_aggregated, how="left", on=['Rec_Seg_ID'])
