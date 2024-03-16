@@ -148,10 +148,10 @@ if os.path.isfile(required_file_location)==False:
         RZChoice = input('Would you like to remove tracks based on the starting plate? If no, press "Enter", otherwise type "y", followed by "Enter" : ')
         if RZChoice.upper()=='Y':
             print(UI.TimeStamp(),'Removing tracks based on start point')
-            data_aggregated=data.groupby(['Rec_Seg_ID'])['z'].min().reset_index()
-            data_aggregated_show=data_aggregated.groupby(['z']).count().reset_index()
+            data_aggregated=data.groupby(['Rec_Seg_ID'])[PM.z].min().reset_index()
+            data_aggregated_show=data_aggregated.groupby([PM.z]).count().reset_index()
             data_aggregated_show=data_aggregated_show.rename(columns={'Rec_Seg_ID': "No_Tracks"})
-            data_aggregated_show['PID']=data_aggregated_show['z'].rank(ascending=True).astype(int)
+            data_aggregated_show['PID']=data_aggregated_show[PM.z].rank(ascending=True).astype(int)
             print('A list of plates and the number of tracks starting on them is listed bellow:')
             print(data_aggregated_show)
             RPChoice = input('Enter the list of plates separated by comma that you want to remove followed by "Enter" : ')
@@ -163,8 +163,8 @@ if os.path.isfile(required_file_location)==False:
             data_aggregated_show=pd.merge(data_aggregated_show,TracksZdf,how='inner',on='PID')
 
             data_aggregated_show.drop(['No_Tracks','PID'],axis=1,inplace=True)
-            data_aggregated=pd.merge(data_aggregated,data_aggregated_show,how='inner',on='z')
-            data_aggregated=data_aggregated.rename(columns={'z': 'Tracks_Remove'})
+            data_aggregated=pd.merge(data_aggregated,data_aggregated_show,how='inner',on=PM.z)
+            data_aggregated=data_aggregated.rename(columns={PM.z: 'Tracks_Remove'})
 
             data=pd.merge(data, data_aggregated, how="left", on=['Rec_Seg_ID'])
 
@@ -176,15 +176,15 @@ if os.path.isfile(required_file_location)==False:
         RLChoice = input('Would you like to remove tracks based on their length in traverse plates? If no, press "Enter", otherwise type "y", followed by "Enter" : ')
         if RLChoice.upper()=='Y':
             print(UI.TimeStamp(),'Removing tracks based on length')
-            data_aggregated=data[['Rec_Seg_ID','z']]
-            data_aggregated_l=data_aggregated.groupby(['Rec_Seg_ID'])['z'].min().reset_index().rename(columns={'z': "min_z"})
-            data_aggregated_r=data_aggregated.groupby(['Rec_Seg_ID'])['z'].max().reset_index().rename(columns={'z': "max_z"})
+            data_aggregated=data[['Rec_Seg_ID',PM.z]]
+            data_aggregated_l=data_aggregated.groupby(['Rec_Seg_ID'])[PM.z].min().reset_index().rename(columns={PM.z: "min_z"})
+            data_aggregated_r=data_aggregated.groupby(['Rec_Seg_ID'])[PM.z].max().reset_index().rename(columns={PM.z: "max_z"})
             data_aggregated=pd.merge(data_aggregated_l,data_aggregated_r,how='inner', on='Rec_Seg_ID')
-            data_aggregated_list_z=data[['z']].groupby(['z']).count().reset_index()
-            data_aggregated_list_z['PID_l']=data_aggregated_list_z['z'].rank(ascending=True).astype(int)
+            data_aggregated_list_z=data[[PM.z]].groupby([PM.z]).count().reset_index()
+            data_aggregated_list_z['PID_l']=data_aggregated_list_z[PM.z].rank(ascending=True).astype(int)
             data_aggregated_list_z['PID_r']=data_aggregated_list_z['PID_l']
-            data_aggregated=pd.merge(data_aggregated,data_aggregated_list_z[['z','PID_l']], how='inner', left_on='min_z', right_on='z')
-            data_aggregated=pd.merge(data_aggregated,data_aggregated_list_z[['z','PID_r']], how='inner', left_on='max_z', right_on='z')[['Rec_Seg_ID','PID_l','PID_r']]
+            data_aggregated=pd.merge(data_aggregated,data_aggregated_list_z[[PM.z,'PID_l']], how='inner', left_on='min_z', right_on=PM.z)
+            data_aggregated=pd.merge(data_aggregated,data_aggregated_list_z[[PM.z,'PID_r']], how='inner', left_on='max_z', right_on=PM.z)[['Rec_Seg_ID','PID_l','PID_r']]
             data_aggregated['track_len']=data_aggregated['PID_r']-data_aggregated['PID_l']+1
 
             data_aggregated=data_aggregated[['Rec_Seg_ID','track_len']]
@@ -204,11 +204,7 @@ if os.path.isfile(required_file_location)==False:
             data=data.drop(['track_len'],axis=1)
         final_rows=len(data.axes[0])
         print(UI.TimeStamp(),'After removing tracks with specific lengths we have',final_rows,' hits left')
-
-        print('We are here')
-        exit()
         compress_data=data.drop([PM.x,PM.y,PM.z,PM.tx,PM.ty],axis=1)
-
         compress_data['MC_Mother_Track_No']= compress_data['MC_Mother_Track_ID']
         compress_data=compress_data.groupby(by=['Rec_Seg_ID','MC_Mother_Track_ID'])['MC_Mother_Track_No'].count().reset_index()
         compress_data=compress_data.sort_values(['Rec_Seg_ID','MC_Mother_Track_No'],ascending=[1,0])
@@ -216,18 +212,17 @@ if os.path.isfile(required_file_location)==False:
         data=data.drop(['MC_Mother_Track_ID'],axis=1)
         compress_data=compress_data.drop(['MC_Mother_Track_No'],axis=1)
         data=pd.merge(data, compress_data, how="left", on=['Rec_Seg_ID'])
-
         if SliceData:
-             print(UF.TimeStamp(),'Slicing the data...')
+             print(UI.TimeStamp(),'Slicing the data...')
              ValidEvents=data.drop(data.index[(data[PM.x] > Xmax) | (data[PM.x] < Xmin) | (data[PM.y] > Ymax) | (data[PM.y] < Ymin)])
              ValidEvents.drop([PM.x,PM.y,PM.z,PM.tx,PM.ty,'MC_Mother_Track_ID']+ExtraColumns,axis=1,inplace=True)
              ValidEvents.drop_duplicates(subset='Rec_Seg_ID',keep='first',inplace=True)
              data=pd.merge(data, ValidEvents, how="inner", on=['Rec_Seg_ID'])
              final_rows=len(data.axes[0])
-             print(UF.TimeStamp(),'The sliced data has ',final_rows,' hits')
+             print(UI.TimeStamp(),'The sliced data has ',final_rows,' hits')
 
-        output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MCTr1_'+TrainSampleID+'_TRACKS.csv'
-        print(UF.TimeStamp(),'Removing tracks which have less than',MinHitsTrack,'hits...')
+        output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/MCTr1_'+TrainSampleID+'_TRACKS.csv'
+        print(UI.TimeStamp(),'Removing tracks which have less than',MinHitsTrack,'hits...')
         track_no_data=data.groupby(['MC_Mother_Track_ID','Rec_Seg_ID']+ExtraColumns,as_index=False).count()
         track_no_data=track_no_data.drop([PM.y,PM.z,PM.tx,PM.ty],axis=1)
         track_no_data=track_no_data.rename(columns={PM.x: "Rec_Seg_No"})
@@ -236,7 +231,7 @@ if os.path.isfile(required_file_location)==False:
         new_combined_data = new_combined_data.drop(["Rec_Seg_No"],axis=1)
         new_combined_data=new_combined_data.sort_values(['Rec_Seg_ID',PM.x],ascending=[1,1])
         grand_final_rows=len(new_combined_data.axes[0])
-        print(UF.TimeStamp(),'The cleaned data has ',grand_final_rows,' hits')
+        print(UI.TimeStamp(),'The cleaned data has ',grand_final_rows,' hits')
         new_combined_data=new_combined_data.rename(columns={PM.x: "x"})
         new_combined_data=new_combined_data.rename(columns={PM.y: "y"})
         new_combined_data=new_combined_data.rename(columns={PM.z: "z"})
@@ -245,20 +240,20 @@ if os.path.isfile(required_file_location)==False:
         new_combined_data.drop(['MC_Mother_Track_ID'],axis=1,inplace=True)
         new_combined_data.to_csv(output_file_location,index=False)
         data=new_combined_data[['Rec_Seg_ID']]
-        print(UF.TimeStamp(),'Analysing the data sample in order to understand how many jobs to submit to HTCondor... ',bcolors.ENDC)
+        print(UI.TimeStamp(),'Analysing the data sample in order to understand how many jobs to submit to HTCondor... ',bcolors.ENDC)
         data.drop_duplicates(subset='Rec_Seg_ID',keep='first',inplace=True)
         data = data.values.tolist()
         no_submissions=math.ceil(len(data)/PM.MaxSegments)
-        print(UF.TimeStamp(), bcolors.OKGREEN+"The track segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+output_file_location+bcolors.ENDC)
-        Meta=UF.TrainingSampleMeta(TrainSampleID)
+        print(UI.TimeStamp(), bcolors.OKGREEN+"The track segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+output_file_location+bcolors.ENDC)
+        Meta=UI.TrainingSampleMeta(TrainSampleID)
         Meta.IniTrackMetaData(ClassHeaders,ClassNames,ClassValues,PM.MaxSegments,no_submissions,MinHitsTrack)
         Meta.UpdateStatus(0)
-        print(UF.PickleOperations(TrainSampleOutputMeta,'w', Meta)[1])
+        print(UI.PickleOperations(TrainSampleOutputMeta,'w', Meta)[1])
         print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
-        print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 0 has successfully completed'+bcolors.ENDC)
+        print(UI.TimeStamp(),bcolors.OKGREEN+'Stage 0 has successfully completed'+bcolors.ENDC)
 elif os.path.isfile(TrainSampleOutputMeta)==True:
-    print(UF.TimeStamp(),'Loading previously saved data from ',bcolors.OKBLUE+TrainSampleOutputMeta+bcolors.ENDC)
-    MetaInput=UF.PickleOperations(TrainSampleOutputMeta,'r', 'N/A')
+    print(UI.TimeStamp(),'Loading previously saved data from ',bcolors.OKBLUE+TrainSampleOutputMeta+bcolors.ENDC)
+    MetaInput=UI.PickleOperations(TrainSampleOutputMeta,'r', 'N/A')
     Meta=MetaInput[0]
 
 ClassHeaders=Meta.ClassHeaders
@@ -268,6 +263,7 @@ JobSets=Meta.JobSets
 MaxSegments=Meta.MaxSegments
 TotJobs=JobSets
 
+exit()
 
 ########################################     Preset framework parameters    #########################################
 FreshStart=True
