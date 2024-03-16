@@ -125,14 +125,15 @@ if os.path.isfile(required_file_location)==False:
                     header=0,
                     usecols=ColumnsToImport)
         total_rows=len(data.axes[0])
+
+        print(UI.TimeStamp(),'The raw data has ',total_rows,' hits')
+        print(UI.TimeStamp(),'Removing unreconstructed hits...')
+        data=data.dropna()
+        final_rows=len(data.axes[0])
+        print(UI.TimeStamp(),'The cleaned data has ',final_rows,' hits')
         print(data)
         print('You are here')
         exit()
-        print(UF.TimeStamp(),'The raw data has ',total_rows,' hits')
-        print(UF.TimeStamp(),'Removing unreconstructed hits...')
-        data=data.dropna()
-        final_rows=len(data.axes[0])
-        print(UF.TimeStamp(),'The cleaned data has ',final_rows,' hits')
         data[PM.MC_Event_ID] = data[PM.MC_Event_ID].astype(str)
         for i in ExtraColumns:
             data[i]=data[i].astype(str)
