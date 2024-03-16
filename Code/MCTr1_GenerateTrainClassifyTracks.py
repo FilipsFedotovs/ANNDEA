@@ -170,12 +170,10 @@ if os.path.isfile(required_file_location)==False:
 
             data=data[data['Tracks_Remove'].isnull()]
             data=data.drop(['Tracks_Remove'],axis=1)
-            print(data)
-            exit()
-        print('You are here2')
-        exit()
         final_rows=len(data.axes[0])
-        print(UF.TimeStamp(),'After removing tracks that start at the specific plates we have',final_rows,' hits left')
+        print(UI.TimeStamp(),'After removing tracks that start at the specific plates we have',final_rows,' hits left')
+        print('We are here')
+        exit()
         compress_data=data.drop([PM.x,PM.y,PM.z,PM.tx,PM.ty],axis=1)
 
         compress_data['MC_Mother_Track_No']= compress_data['MC_Mother_Track_ID']
