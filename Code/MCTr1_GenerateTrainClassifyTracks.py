@@ -157,6 +157,7 @@ if os.path.isfile(required_file_location)==False:
             RPChoice = input('Enter the list of plates separated by comma that you want to remove followed by "Enter" : ')
 
             RPChoice=ast.literal_eval(RPChoice)
+            print(RPChoice)
             TracksZdf = pd.DataFrame(RPChoice, columns = ['PID'], dtype=int)
             print(TracksZdf)
             data_aggregated_show=pd.merge(data_aggregated_show,TracksZdf,how='inner',on='PID')
