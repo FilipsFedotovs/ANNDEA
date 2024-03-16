@@ -159,7 +159,9 @@ if os.path.isfile(required_file_location)==False:
             RPChoice=ast.literal_eval(RPChoice)
             TracksZdf = pd.DataFrame(RPChoice, columns = ['PID'], dtype=int)
             data_aggregated_show=pd.merge(data_aggregated_show,TracksZdf,how='inner',on='PID')
-            print(data_aggregated_show)
+            data_aggregated_show.drop(['No_Tracks','PID'],inplace=True)
+            data_aggregated=pd.merge(data_aggregated,data_aggregated_show,how='inner',on='z')
+            print(data_aggregated)
             exit()
 
             data_aggregated=data_aggregated.rename(columns={'z': "PosBad_Z"})
