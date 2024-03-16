@@ -317,8 +317,6 @@ while Status<len(Program):
                     base_data=UI.PickleOperations(req_file,'r', 'N/A')[0]
                     ExtractedData=[]
                     min_len=len([j for j in base_data if j.Label==0])
-                    print(min_len)
-                    exit()
                     for j in range(len(ClassHeaders)+1):
                         if len([k for k in base_data if k.Label==j])!=0:
                            ExtractedData.append([k for k in base_data if k.Label==j])
@@ -341,8 +339,6 @@ while Status<len(Program):
                     base_data=UI.PickleOperations(req_file,'r', 'N/A')[0]
                     print(base_data)
                     TotalData+=base_data
-              print(TotalData)
-              exit()
               ValidationSampleSize=int(round(min((len(TotalData)*float(PM.valRatio)),PM.MaxValSampleSize),0))
               random.shuffle(TotalData)
               output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_TRACK_OUTPUT.pkl'
