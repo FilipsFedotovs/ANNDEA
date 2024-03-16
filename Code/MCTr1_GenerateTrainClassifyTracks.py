@@ -152,7 +152,7 @@ if os.path.isfile(required_file_location)==False:
 
             data_aggregated=data.groupby(['Rec_Seg_ID'])['z'].min().reset_index()
             data_aggregated_show=data_aggregated.groupby(['z']).count().reset_index()
-            print(data_aggregated_show.rename(columns={'Rec_Seg_ID': "No_Tracks"}))
+            print(data_aggregated_show.rename(columns={'Rec_Seg_ID': "No_Tracks"})['z'].rank(ascending=False))
             exit()
 
             data_aggregated=data_aggregated.rename(columns={'z': "PosBad_Z"})
