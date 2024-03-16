@@ -183,7 +183,7 @@ if os.path.isfile(required_file_location)==False:
             data_aggregated_list_z=data[['z']].groupby(['z']).count().reset_index()
             data_aggregated_list_z['PID_l']=data_aggregated_list_z['z'].rank(ascending=True).astype(int)
             data_aggregated_list_z['PID_r']=data_aggregated_list_z['PID_l']
-            data_aggregated=pd.merge(data_aggregated,data_aggregated_list_z[['z','PID_l']], how='inner', left_on='min_z', right_on='z')
+            data_aggregated=pd.merge(data_aggregated,data_aggregated_list_z[['z','PID_l','PID_r']], how='inner', left_on='min_z', right_on='z')
             print(data_aggregated)
             data_aggregated['track_len']=data_aggregated['PID_r']-data_aggregated['PID_l']+1
             print(data_aggregated)
