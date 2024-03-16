@@ -58,6 +58,7 @@ parser.add_argument('--TrackID',help="What track name is used?", default='ANN_Tr
 parser.add_argument('--BrickID',help="What brick ID name is used?", default='ANN_Brick_ID')
 parser.add_argument('--ReqMemory',help="How uch memory to request?", default='2 GB')
 parser.add_argument('--RequestExtCPU',help="Would you like to request extra CPUs?", default=1)
+parser.add_argument('--ForceStatus',help="Would you like the program run from specific status number? (Only for advance users)", default='N')
 parser.add_argument('--JobFlavour',help="Specifying the length of the HTCondor job walltime. Currently at 'workday' which is 8 hours.", default='workday')
 parser.add_argument('--MinHitsTrack',help="What is the minimum number of hits per track?", default=PM.MinHitsTrack)
 parser.add_argument('--SubPause',help="How long to wait in minutes after submitting 10000 jobs?", default='60')
@@ -73,6 +74,7 @@ ClassValues=ast.literal_eval(args.ClassValues)
 TrackID=args.TrackID
 BrickID=args.BrickID
 TrainSampleID=args.TrainSampleID
+ForceStatus=args.ForceStatus
 Patience=int(args.Patience)
 TrainSampleSize=int(args.TrainSampleSize)
 input_file_location=args.f
@@ -263,172 +265,24 @@ JobSets=Meta.JobSets
 MaxSegments=Meta.MaxSegments
 TotJobs=JobSets
 
-print(new_combined_data)
-exit()
-
 ########################################     Preset framework parameters    #########################################
 FreshStart=True
 Program=[]
-def UpdateStatus(status):
-    Meta.UpdateStatus(status)
-    print(UF.PickleOperations(TrainSampleOutputMeta,'w', Meta)[1])
-
-def AutoPilot(wait_min, interval_min, max_interval_tolerance,program):
-     print(UF.TimeStamp(),'Going on an autopilot mode for ',wait_min, 'minutes while checking HTCondor every',interval_min,'min',bcolors.ENDC)
-     wait_sec=wait_min*60
-     interval_sec=interval_min*60
-     intervals=int(math.ceil(wait_sec/interval_sec))
-     for interval in range(1,intervals+1):
-         time.sleep(interval_sec)
-         print(UF.TimeStamp(),"Scheduled job checkup...") #Progress display
-         bad_pop=UF.CreateCondorJobs(program[1][0],
-                                    program[1][1],
-                                    program[1][2],
-                                    program[1][3],
-                                    program[1][4],
-                                    program[1][5],
-                                    program[1][6],
-                                    program[1][7],
-                                    program[1][8],
-                                    program[2],
-                                    program[3],
-                                    program[1][9],
-                                    False,
-                                    program[6])
-         if len(bad_pop)>0:
-               print(UF.TimeStamp(),bcolors.WARNING+'Autopilot status update: There are still', len(bad_pop), 'HTCondor jobs remaining'+bcolors.ENDC)
-               if interval%max_interval_tolerance==0:
-                  for bp in bad_pop:
-                      UF.SubmitJobs2Condor(bp,program[5],RequestExtCPU,JobFlavour,ReqMemory)
-                  print(UF.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
-         else:
-              return True,False
-     return False,False
-def StandardProcess(program,status,freshstart):
-        print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
-        print(UF.TimeStamp(),bcolors.BOLD+'Stage '+str(status)+':'+bcolors.ENDC+str(program[status][0]))
-        batch_sub=program[status][4]>1
-        bad_pop=UF.CreateCondorJobs(program[status][1][0],
-                                    program[status][1][1],
-                                    program[status][1][2],
-                                    program[status][1][3],
-                                    program[status][1][4],
-                                    program[status][1][5],
-                                    program[status][1][6],
-                                    program[status][1][7],
-                                    program[status][1][8],
-                                    program[status][2],
-                                    program[status][3],
-                                    program[status][1][9],
-                                    False,
-                                    program[status][6])
-        if len(bad_pop)==0:
-             print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
-             return True,False
 
 
-        elif (program[status][4])==len(bad_pop):
-                 bad_pop=UF.CreateCondorJobs(program[status][1][0],
-                                    program[status][1][1],
-                                    program[status][1][2],
-                                    program[status][1][3],
-                                    program[status][1][4],
-                                    program[status][1][5],
-                                    program[status][1][6],
-                                    program[status][1][7],
-                                    program[status][1][8],
-                                    program[status][2],
-                                    program[status][3],
-                                    program[status][1][9],
-                                    batch_sub,
-                                    program[status][6])
-                 print(UF.TimeStamp(),'Submitting jobs to HTCondor... ',bcolors.ENDC)
-                 _cnt=0
-                 for bp in bad_pop:
-                          if _cnt>SubGap:
-                              print(UF.TimeStamp(),'Pausing submissions for  ',str(int(SubPause/60)), 'minutes to relieve congestion...',bcolors.ENDC)
-                              time.sleep(SubPause)
-                              _cnt=0
-                          UF.SubmitJobs2Condor(bp,program[status][5],RequestExtCPU,JobFlavour,ReqMemory)
-                          _cnt+=bp[6]
-                 if program[status][5]:
-                    print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
-                    return True,False
-                 elif AutoPilot(600,time_int,Patience,program[status]):
-                        print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
-                        return True,False
-                 else:
-                        print(UF.TimeStamp(),bcolors.FAIL+'Stage '+str(status)+' is uncompleted...'+bcolors.ENDC)
-                        return False,False
-
-
-        elif len(bad_pop)>0:
-            if freshstart:
-                   print(UF.TimeStamp(),bcolors.WARNING+'Warning, there are still', len(bad_pop), 'HTCondor jobs remaining'+bcolors.ENDC)
-                   print(bcolors.BOLD+'If you would like to wait and exit please enter E'+bcolors.ENDC)
-                   print(bcolors.BOLD+'If you would like to wait please enter enter the maximum wait time in minutes'+bcolors.ENDC)
-                   print(bcolors.BOLD+'If you would like to resubmit please enter R'+bcolors.ENDC)
-                   UserAnswer=input(bcolors.BOLD+"Please, enter your option\n"+bcolors.ENDC)
-                   if UserAnswer=='E':
-                       print(UF.TimeStamp(),'OK, exiting now then')
-                       exit()
-                   if UserAnswer=='R':
-                      HTCondorTag="SoftUsed == \"ANNDEA-"+program[status][1][5]+"-"+TrainSampleID+"\""
-                      UF.TrainCleanUp(AFS_DIR, EOS_DIR, program[status][1][5]+'_'+TrainSampleID, [], HTCondorTag)
-                      for bp in bad_pop:
-                           UF.SubmitJobs2Condor(bp,program[status][5],RequestExtCPU,JobFlavour,ReqMemory)
-                      print(UF.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
-                      if program[status][5]:
-                          print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
-                          return True,False
-                      elif AutoPilot(600,time_int,Patience,program[status]):
-                          print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+ 'has successfully completed'+bcolors.ENDC)
-                          return True,False
-                      else:
-                          print(UF.TimeStamp(),bcolors.FAIL+'Stage '+str(status)+' is uncompleted...'+bcolors.ENDC)
-                          return False,False
-                   else:
-                      if program[status][5]:
-                          print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
-                          return True,False
-                      elif AutoPilot(int(UserAnswer),time_int,Patience,program[status]):
-                          print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+ 'has successfully completed'+bcolors.ENDC)
-                          return True,False
-                      else:
-                          print(UF.TimeStamp(),bcolors.FAIL+'Stage '+str(status)+' is uncompleted...'+bcolors.ENDC)
-                          return False,False
-            else:
-                      HTCondorTag="SoftUsed == \"ANNDEA-"+program[status][1][5]+"-"+TrainSampleID+"\""
-                      UF.TrainCleanUp(AFS_DIR, EOS_DIR, program[status][1][5]+'_'+TrainSampleID, [], HTCondorTag)
-                      for bp in bad_pop:
-                           UF.SubmitJobs2Condor(bp,program[status][5],RequestExtCPU,JobFlavour,ReqMemory)
-                      if program[status][5]:
-                           print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
-                           return True,False
-                      elif AutoPilot(600,time_int,Patience,program[status]):
-                           print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+ 'has successfully completed'+bcolors.ENDC)
-                           return True,False
-                      else:
-                          print(UF.TimeStamp(),bcolors.FAIL+'Stage '+str(status)+' is uncompleted...'+bcolors.ENDC)
-                          return False,False
-
-#If we chose reset mode we do a full cleanup.
-# #Reconstructing a single brick can cause in gereation of 100s of thousands of files - need to make sure that we remove them.
-if Mode=='RESET':
-    print(UF.TimeStamp(),'Performing the cleanup... ',bcolors.ENDC)
-    HTCondorTag="SoftUsed == \"ANNDEA-MCTr1a-"+TrainSampleID+"\""
-    UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MCTr1a_'+TrainSampleID, [], HTCondorTag)
-    FreshStart=False
-    UpdateStatus(0)
-    Status=0
-else:
-    print(UF.TimeStamp(),'Analysing the current script status...',bcolors.ENDC)
-    Status=Meta.Status[-1]
-
+#The function bellow helps to automate the submission process
+UI.Msg('vanilla','Analysing the current script status...')
+Status=Meta.Status[-1]
+if ForceStatus!='N':
+    Status=int(ForceStatus)
+UI.Msg('vanilla','Current stage is '+str(Status)+'...')
+NJobs=UI.CalculateNJobs(Meta.JobSets[0])[1]
+print(NJobs)
+exit()
 ###### Stage 0
 prog_entry=[]
-prog_entry.append(UF.TimeStamp()+bcolors.BOLD+'Stage 1:'+bcolors.ENDC+' Sending hit cluster to the HTCondor, so tack segment combination pairs can be formed...')
-prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/','IDseeds','MCTr1a','.pkl',TrainSampleID,JobSets,'MCTr1a_GenerateRawTrackSamples_Sub.py'])
+prog_entry.append('Sending tracks to HTCondor for conversion int training/validation samples...')
+prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/','IDseeds','MCTr1a','.pkl',TrainSampleID,JobSets,'MCTr1a_GenerateRawTrackSamples_Sub.py'])
 prog_entry.append([ " --MaxSegments ", " --ClassNames "," --ClassValues "])
 prog_entry.append([MaxSegments,'"'+str(ClassNames)+'"','"'+str(ClassValues)+'"'])
 prog_entry.append(JobSets)
