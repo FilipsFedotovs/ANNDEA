@@ -59,7 +59,6 @@ parser.add_argument('--BrickID',help="What brick ID name is used?", default='ANN
 parser.add_argument('--ReqMemory',help="How uch memory to request?", default='2 GB')
 parser.add_argument('--RequestExtCPU',help="Would you like to request extra CPUs?", default=1)
 parser.add_argument('--JobFlavour',help="Specifying the length of the HTCondor job walltime. Currently at 'workday' which is 8 hours.", default='workday')
-parser.add_argument('--RemoveTracksZ',help="This option enables to remove particular tracks of starting Z-coordinate", default='[]')
 parser.add_argument('--MinHitsTrack',help="What is the minimum number of hits per track?", default=PM.MinHitsTrack)
 parser.add_argument('--SubPause',help="How long to wait in minutes after submitting 10000 jobs?", default='60')
 parser.add_argument('--SubGap',help="How long to wait in minutes after submitting 10000 jobs?", default='10000')
@@ -84,7 +83,6 @@ SubPause=int(args.SubPause)*60
 SubGap=int(args.SubGap)
 ReqMemory=args.ReqMemory
 JobFlavour=args.JobFlavour
-RemoveTracksZ=ast.literal_eval(args.RemoveTracksZ)
 MinHitsTrack=int(args.MinHitsTrack)
 LocalSub=(args.LocalSub=='Y')
 if LocalSub:
@@ -145,11 +143,13 @@ if os.path.isfile(required_file_location)==False:
         data=data.drop([BrickID],axis=1)
         data=data.drop([PM.MC_Event_ID],axis=1)
         data=data.drop([PM.MC_Track_ID],axis=1)
-        print(data)
-        print('You are here')
-        exit()
-        if len(RemoveTracksZ)>0:
-            print(UF.TimeStamp(),'Removing tracks based on start point')
+
+
+        RZChoice = input('Would you like to remove tracks based on the starting plate? If no, press "Enter", otherwise type "y", followed by "Enter" : ')
+        if RZChoice.upper=='Y':
+            print(UI.TimeStamp(),'Removing tracks based on start point')
+            print('You are here')
+            exit()
             TracksZdf = pd.DataFrame(RemoveTracksZ, columns = ['Bad_z'], dtype=float)
             data_aggregated=data.groupby(['Rec_Seg_ID'])['z'].min().reset_index()
             data_aggregated=data_aggregated.rename(columns={'z': "PosBad_Z"})
@@ -157,6 +157,8 @@ if os.path.isfile(required_file_location)==False:
             data=pd.merge(data, TracksZdf, how="left", left_on=["PosBad_Z"], right_on=['Bad_z'])
             data=data[data['Bad_z'].isnull()]
             data=data.drop(['Bad_z', 'PosBad_Z'],axis=1)
+        print('You are here2')
+        exit()
         final_rows=len(data.axes[0])
         print(UF.TimeStamp(),'After removing tracks that start at the specific plates we have',final_rows,' hits left')
         compress_data=data.drop([PM.x,PM.y,PM.z,PM.tx,PM.ty],axis=1)
