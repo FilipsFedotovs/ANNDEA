@@ -82,6 +82,7 @@ track_headers=track_headers.values.tolist()
 track_data = data[['x','y','z','tx','ty','Rec_Seg_ID']].values.tolist() #Convirting the result to List data type
 track_headers = track_headers[int(i)*MaxSegments : min((int(i)+1)*MaxSegments, len(track_headers))]
 
+print(track_headers)
 
 gc.collect()
 track_counter=0
@@ -110,9 +111,10 @@ for s in range(0,limit):
                label+=1
     track_obj.LabelTrack(label)
     track_obj.Decorate(track_data)
+    print(track_obj)
     GoodTracks.append(track_obj)
     continue
-
+print(GoodTracks)
 print('The raw image generation has been completed..')
 print(UI.TimeStamp(),'Saving the results..')
 print(UI.PickleOperations(output_file_location,'w', GoodTracks)[1])
