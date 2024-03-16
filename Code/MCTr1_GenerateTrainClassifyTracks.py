@@ -337,6 +337,7 @@ while Status<len(Program):
               for i in range(JobSets):
                     req_file=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/Temp_MCTr1a_'+TrainSampleID+'_0/MCTr1b_'+TrainSampleID+'_SelectedTrackSamples_'+str(i)+'.pkl'
                     base_data=UI.PickleOperations(req_file,'r', 'N/A')[0]
+                    print(base_data)
                     TotalData+=base_data
               print(TotalData)
               exit()
