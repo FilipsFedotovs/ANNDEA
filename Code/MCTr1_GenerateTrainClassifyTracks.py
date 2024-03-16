@@ -296,7 +296,8 @@ Program.append('Custom')
 
 print(UI.TimeStamp(),'There are ',len(Program),' stages of this script', bcolors.ENDC)
 print(UI.TimeStamp(),'Current status has a stage',Status+1,bcolors.ENDC)
-
+print(Program)
+exit()
 while Status<len(Program):
       if Program[Status]!='Custom':
         #Standard process here
