@@ -146,6 +146,7 @@ if os.path.isfile(required_file_location)==False:
 
 
         RZChoice = input('Would you like to remove tracks based on the starting plate? If no, press "Enter", otherwise type "y", followed by "Enter" : ')
+        print(RZChoice)
         if RZChoice.upper=='Y':
             print(UI.TimeStamp(),'Removing tracks based on start point')
             print('You are here')
