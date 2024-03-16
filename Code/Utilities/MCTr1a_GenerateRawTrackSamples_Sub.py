@@ -116,6 +116,7 @@ for s in range(0,limit):
         else:
                label+=1
         print('Class label',label)
+    print('Super Class label',label)
     track_obj.LabelTrack(label)
     track_obj.Decorate(track_data)
     GoodTracks.append(track_obj)
