@@ -302,16 +302,9 @@ while Status<len(Program):
         Result=UI.StandardProcess(Program,Status,SubGap,SubPause,RequestExtCPU,JobFlavour,ReqMemory,time_int,Patience)
         print(Result)
         if Result[0]:
-            FreshStart=Result[1]
-            if args.ForceStatus=='':
-                Status+=1
-                UI.UpdateStatus(Status+1,Meta,TrainSampleOutputMeta)
-                continue
-            else:
-                exit()
-        else:
-            Status=len(Program)+1
             UI.UpdateStatus(Status+1,Meta,TrainSampleOutputMeta)
+        else:
+            Status=20
             break
       if Program[Status]=='Custom':
           if Status==1:
