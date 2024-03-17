@@ -233,8 +233,6 @@ if os.path.isfile(required_file_location)==False:
             data_agg=data_agg.rename(columns={'subject_reg_val': ClassNames[0][0]})
             data.drop([ClassNames[0][0]],axis=1,inplace=True)
             data=pd.merge(data,data_agg, how="inner", on=['Rec_Seg_ID','MC_Mother_Track_ID'])
-            print(data)
-            exit()
         print(UI.TimeStamp(),'Removing tracks which have less than',MinHitsTrack,'hits...')
         track_no_data=data.groupby(['MC_Mother_Track_ID','Rec_Seg_ID']+ExtraColumns,as_index=False).count()
         track_no_data=track_no_data.drop([PM.y,PM.z,PM.tx,PM.ty],axis=1)
