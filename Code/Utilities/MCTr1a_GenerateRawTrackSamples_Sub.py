@@ -65,7 +65,9 @@ for j in ClassNames:
 input_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+BatchID+'/MCTr1_'+BatchID+'_TRACKS.csv'
 output_file_location=EOS_DIR+p+'/Temp_'+pfx+'_'+BatchID+'_0/'+pfx+'_'+BatchID+'_'+o+'_'+str(i)+sfx
 #output_file_location=EOS_DIR+p+'/'+pfx+'_'+BatchID+'_'+o+'_'+str(i)+sfx
-
+Regression=ClassValues[0][0]=='Reg'
+print(Regression)
+x=input()
 
 print(UI.TimeStamp(), "Modules Have been imported successfully...")
 print(UI.TimeStamp(),'Loading pre-selected data from ',input_file_location)
@@ -94,6 +96,7 @@ Max_Labels=len(ClassNames)+1
 for s in range(0,limit):
     track=track_headers.pop(0)
     track_obj=EMO([track[0]])
+    if
     label=0
     for i in range(len(ClassNames)):
         class_flag=False
