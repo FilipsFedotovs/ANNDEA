@@ -229,7 +229,7 @@ if os.path.isfile(required_file_location)==False:
         output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/MCTr1_'+TrainSampleID+'_TRACKS.csv'
         if Regression:
             print(UI.TimeStamp(),'Normalising regression value',ExtraColumns[0])
-            data=data.groupby(['Rec_Seg_ID','MC_Mother_Track_ID']).agg(subject_reg_val=pd.NamedAgg(column=ClassNames[0][0], aggfunc=ClassValues[0][1]))
+            data_agg=data.groupby(['Rec_Seg_ID','MC_Mother_Track_ID']).agg(subject_reg_val=pd.NamedAgg(column=ClassNames[0][0], aggfunc=ClassValues[0][1])).reset_index()
             print(data)
             exit()
         print(UI.TimeStamp(),'Removing tracks which have less than',MinHitsTrack,'hits...')
