@@ -106,6 +106,9 @@ for i in ClassNames:
         if (j in ExtraColumns)==False:
                 ExtraColumns.append(j)
 
+Regression=ClassValues[0][0]=='Reg'
+print(Regression)
+exit()
 ########################################     Phase 1 - Create compact source file    #########################################
 print(UI.TimeStamp(),bcolors.BOLD+'Stage 0:'+bcolors.ENDC+' Preparing the source data...')
 if Mode=='RESET':
@@ -301,7 +304,6 @@ while Status<len(Program):
       if Program[Status]!='Custom':
         #Standard process here
         Result=UI.StandardProcess(Program,Status,SubGap,SubPause,RequestExtCPU,JobFlavour,ReqMemory,time_int,Patience)
-        print(Result)
         if Result[0]:
             UI.UpdateStatus(Status+1,Meta,TrainSampleOutputMeta)
         else:
@@ -337,7 +339,6 @@ while Status<len(Program):
               for i in range(JobSets):
                     req_file=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/Temp_MCTr1a_'+TrainSampleID+'_0/MCTr1b_'+TrainSampleID+'_SelectedTrackSamples_'+str(i)+'.pkl'
                     base_data=UI.PickleOperations(req_file,'r', 'N/A')[0]
-                    print(base_data)
                     TotalData+=base_data
               ValidationSampleSize=int(round(min((len(TotalData)*float(PM.valRatio)),PM.MaxValSampleSize),0))
               random.shuffle(TotalData)
