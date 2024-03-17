@@ -53,20 +53,13 @@ EOS_DIR=args.EOS
 PY_DIR=args.PY
 import sys
 sys.path.insert(1, AFS_DIR+'/Code/Utilities/')
-import UtilityFunctions as UF
+import U_UI as UI
 #Load data configuration
 EOSsubDIR=EOS_DIR+'/'+'ANNDEA'
 EOSsubModelDIR=EOSsubDIR+'/'+'Models'
 
 
 ##############################################################################################################################
-######################################### Starting the program ################################################################
-print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
-print(bcolors.HEADER+"#########################  Initialising     ANNDEA   model creation module   #########################"+bcolors.ENDC)
-print(bcolors.HEADER+"#########################              Written by Filips Fedotovs              #########################"+bcolors.ENDC)
-print(bcolors.HEADER+"#########################                 PhD Student at UCL                   #########################"+bcolors.ENDC)
-print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
-print(UF.TimeStamp(), bcolors.OKGREEN+"Modules Have been imported successfully..."+bcolors.ENDC)
 def zero_divide(a, b):
     if (b==0): return 0
     return a/b

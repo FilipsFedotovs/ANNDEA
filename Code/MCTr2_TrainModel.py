@@ -13,15 +13,16 @@ csv_reader.close()
 import sys
 if PY_DIR!='': #Temp solution - the decision was made to move all libraries to EOS drive as AFS get locked during heavy HTCondor submission loads
     sys.path=['',PY_DIR]
-    sys.path.append('/usr/lib64/python36.zip')
-    sys.path.append('/usr/lib64/python3.6')
-    sys.path.append('/usr/lib64/python3.6/lib-dynload')
-    sys.path.append('/usr/lib64/python3.6/site-packages')
-    sys.path.append('/usr/lib/python3.6/site-packages')
+    sys.path.append('/usr/lib64/python39.zip')
+    sys.path.append('/usr/lib64/python3.9')
+    sys.path.append('/usr/lib64/python3.9/lib-dynload')
+    sys.path.append('/usr/lib64/python3.9/site-packages')
+    sys.path.append('/usr/lib/python3.9/site-packages')
 sys.path.append(AFS_DIR+'/Code/Utilities')
 
 #import libraries
 import argparse
+import pandas as pd
 import ast
 import os
 import time
@@ -40,12 +41,12 @@ class bcolors:
 
 #Set the parsing module
 parser = argparse.ArgumentParser(description='Enter training job parameters')
-parser.add_argument('--ModelName',help="Which model would you like to use as a base for training (please enter N if you want to train a new model from scratch)", default='1T_GMM_IC_6_150_4_Test_Job_ID_model')
+parser.add_argument('--ModelName',help="Which model would you like to use as a base for training (please enter N if you want to train a new model from scratch)", default='Default')
 parser.add_argument('--ModelType',help="What Neural Network type would you like to use: CNN/GNN?", default='GNN')
 parser.add_argument('--ModelArchitecture',help="What Type of Image/Graph: CNN, CNN-E", default='GMM-6N-IC')
 parser.add_argument('--ModelParams',help="Please enter the model params", default="[[150,3],[150,3],[150,3],[150,3],[],[],[],[],[],[],[7,2],[3000,3000,20000,50]]")
 parser.add_argument('--TrainParams',help="Please enter the train params: '[<Learning Rate>, <Batch size>, <Epochs>]'", default='[0.0001, 4, 10]')
-parser.add_argument('--TrainSampleID',help="Give name to this train sample", default='Test_Job')
+parser.add_argument('--TrainSampleID',help="Give name to this train sample", default='SHIP_TrainSample_v1')
 parser.add_argument('--Mode',help="Please enter 'Reset' if you want to overwrite the existing model", default='')
 parser.add_argument('--JobFlavour',help="Specifying the length of the HTCondor job wall-time. Currently at 'workday' which is 8 hours.", default='workday')
 parser.add_argument('--ReqMemory',help="How much memory to request?", default='4 GB')
@@ -75,184 +76,226 @@ EOSsubDataDIR=EOSsubDIR+'/'+'Data'
 EOSsubModelDIR=EOSsubDIR+'/'+'Models'
 import sys
 sys.path.insert(1, AFS_DIR+'/Code/Utilities/')
-import UtilityFunctions as UF
+import U_UI as UI #This is where we keep routine utility functions
+import U_ML as ML #This is where we keep routine utility functions
 import Parameters as PM
 import datetime
+
+if Mode=='RESET':
+    print(UI.ManageFolders(AFS_DIR, EOS_DIR, ModelName,'d',['MCTr2']))
+    print(UI.ManageFolders(AFS_DIR, EOS_DIR, ModelName,'c'))
+else:
+    print(UI.ManageFolders(AFS_DIR, EOS_DIR, ModelName,'c'))
+
 OptionHeader = [' --TrainParams ', " --TrainSampleID "]
 OptionLine = [TrainParamsStr, TrainSampleID]
 prog_entry=[]
-job_sets=[1]
 prog_entry.append(' Sending hit cluster to the HTCondor, so the reconstructed clusters can be merged along z-axis')
-prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/','hit_cluster_rec_z_set','MCTr2','.pkl',ModelName,job_sets,''])
+prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/'+ModelName+'/','hit_cluster_rec_z_set','MCTr2','.pkl',ModelName,1,''])
 prog_entry.append([''])
 prog_entry.append([1])
 prog_entry.append(1)
-prog_entry.append('NA')
-if Mode=='RESET':
-   print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Delete'))
-print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Create'))
+prog_entry.append('N/A')
+print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry))
 
 
-print(bcolors.HEADER+"####################################################################################################"+bcolors.ENDC)
-print(bcolors.HEADER+"#########################  Initialising ANNDEA model training module       #########################"+bcolors.ENDC)
-print(bcolors.HEADER+"#########################            Written by Filips Fedotovs            #########################"+bcolors.ENDC)
-print(bcolors.HEADER+"#########################               PhD Student at UCL                 #########################"+bcolors.ENDC)
-print(bcolors.HEADER+"###################### For troubleshooting please contact filips.fedotovs@cern.ch ##################"+bcolors.ENDC)
-print(bcolors.HEADER+"####################################################################################################"+bcolors.ENDC)
-print(UF.TimeStamp(), bcolors.OKGREEN+"Modules Have been imported successfully..."+bcolors.ENDC)
+UI.WelcomeMsg('Initialising ANNDEA Track Classification Model Training Generation module...','Filips Fedotovs (PhD student at UCL), Wenqing Xie (MSc student at UCL)','Please reach out to filips.fedotovs@cern.ch for any queries')
+print(UI.TimeStamp(), bcolors.OKGREEN+"Modules Have been imported successfully..."+bcolors.ENDC)
 #This code fragment covers the Algorithm logic on the first run
 def AutoPilot(wait_min, interval_min):
-    print(UF.TimeStamp(),'Going on an autopilot mode for ',wait_min, 'minutes while checking HTCondor every',interval_min,'min',bcolors.ENDC)
+    print(UI.TimeStamp(),'Going on an autopilot mode for ',wait_min, 'minutes while checking HTCondor every',interval_min,'min',bcolors.ENDC)
     wait_sec=wait_min*60
     interval_sec=interval_min*60
     intervals=int(math.ceil(wait_sec/interval_sec))
     Model_Meta_Path=EOSsubModelDIR+'/'+args.ModelName+'_Meta'
     for interval in range(1,intervals+1):
        time.sleep(interval_sec)
-       print(UF.TimeStamp(),"Scheduled job checkup...") #Progress display
-       print(UF.TimeStamp(),'Loading the data file ',bcolors.OKBLUE+Model_Meta_Path+bcolors.ENDC)
-       Model_Meta_Raw=UF.PickleOperations(Model_Meta_Path, 'r', 'N/A')
+       print(UI.TimeStamp(),"Scheduled job checkup...") #Progress display
+       print(UI.TimeStamp(),'Loading the data file ',bcolors.OKBLUE+Model_Meta_Path+bcolors.ENDC)
+       Model_Meta_Raw=UI.PickleOperations(Model_Meta_Path, 'r', 'N/A')
        print(Model_Meta_Raw[1])
        Model_Meta=Model_Meta_Raw[0]
        Model_Status=Model_Meta.ModelTrainStatus(PM.TST)
        if Model_Status==1:
-              print(UF.TimeStamp(),bcolors.WARNING+'Warning, the model seems to be over saturated'+bcolors.ENDC)
-              print(UF.TimeStamp(),'Aborting the training...')
+              print(UI.TimeStamp(),bcolors.WARNING+'Warning, the model seems to be over saturated'+bcolors.ENDC)
+              print(UI.TimeStamp(),'Aborting the training...')
               exit()
        elif Model_Status==2:
-                 print(UF.TimeStamp(), bcolors.OKGREEN+"Training is finished, starting another session..."+bcolors.ENDC)
+                 print(UI.TimeStamp(), bcolors.OKGREEN+"Training is finished, starting another session..."+bcolors.ENDC)
+                 Model_Meta_Path=EOSsubModelDIR+'/'+args.ModelName+'_Meta'
+                 print(UI.TimeStamp(),'Loading the data file ',bcolors.OKBLUE+Model_Meta_Path+bcolors.ENDC)
+                 if os.path.isfile(Model_Meta_Path):
+                       Model_Meta_Raw=UI.PickleOperations(Model_Meta_Path, 'r', 'N/A')
+                       print(Model_Meta_Raw[1])
+                       Model_Meta=Model_Meta_Raw[0]
+                       Header=Model_Meta.TrainSessionsData[0][0]+['Model Parameters','Train Sample ID','LR','Batch Size','Normalised Epochs']
+                       New_Data=[Header]
+                       Print_New_Data=[] 
+                       counter=0
+                       print(UI.TimeStamp(),bcolors.OKGREEN+'The model training profile is printed bellow: '+bcolors.ENDC)
+                       for TSD in range(len(Model_Meta.TrainSessionsData)):
+                           for Record in Model_Meta.TrainSessionsData[TSD][1:]:
+                               counter+=1
+                               New_Data.append(Record+[Model_Meta.ModelParameters,Model_Meta.TrainSessionsDataID[TSD],Model_Meta.TrainSessionsParameters[TSD][0],Model_Meta.TrainSessionsParameters[TSD][1],counter])
+                               Print_New_Data.append(Record)
+                       print(pd.DataFrame(Print_New_Data, columns=Model_Meta.TrainSessionsData[0][0]))
+                       Model_Meta_csv=EOSsubModelDIR+'/'+args.ModelName+'_Out.csv'
+                       UI.LogOperations(Model_Meta_csv,'w', New_Data)
+                       print(UI.TimeStamp(),bcolors.OKGREEN+'Csv output has been saved as '+bcolors.ENDC+bcolors.OKBLUE+Model_Meta_csv+bcolors.ENDC)
                  if Model_Meta.ModelType=='CNN':
-                    Job=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/','N/A','MCTr2','N/A',ModelName,1,OptionHeader,OptionLine,'MCTr2_TrainModel_Sub.py',False,"['','']", True, True)[0]
+                    Job=UI.CreateCondorJobs(AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/','N/A','MCTr2','N/A',ModelName,1,OptionHeader,OptionLine,'MCTr2_TrainModel_Sub.py',False,"['','']", True, True)[0]
                  else:
-                    Job=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/','N/A','MCTr2','N/A',ModelName,1,OptionHeader,OptionLine,'MCTr2_TrainModel_Sub.py',False,"['','']", True, False)[0]
+                    Job=UI.CreateCondorJobs(AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/','N/A','MCTr2','N/A',ModelName,1,OptionHeader,OptionLine,'MCTr2_TrainModel_Sub.py',False,"['','']", True, False)[0]
 
                  TrainSampleInputMeta=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_info.pkl'
-                 print(UF.TimeStamp(),'Loading the data file ',bcolors.OKBLUE+TrainSampleInputMeta+bcolors.ENDC)
+                 print(UI.TimeStamp(),'Loading the data file ',bcolors.OKBLUE+TrainSampleInputMeta+bcolors.ENDC)
                  Model_Meta.IniTrainingSession(TrainSampleID, datetime.datetime.now(), TrainParams)
-                 print(UF.PickleOperations(Model_Meta_Path, 'w', Model_Meta)[1])
-                 UF.SubmitJobs2Condor(Job,False,RequestExtCPU,JobFlavour,ReqMemory)
-                 print(UF.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
+                 print(UI.PickleOperations(Model_Meta_Path, 'w', Model_Meta)[1])
+                 UI.SubmitJobs2Condor(Job,False,RequestExtCPU,JobFlavour,ReqMemory)
+                 print(UI.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
                  print(bcolors.OKGREEN+"......................................................................."+bcolors.ENDC)
        else:
                 try:
-                    HTCondorTag="SoftUsed == \"ANNDEA-MCTr2-"+ModelName+"\""
+                    HTCondorTag="SoftUsed == \"ANNDEA-MUTr2-"+ModelName+"\""
                     q=schedd.query(constraint=HTCondorTag,projection=['CLusterID','JobStatus'])
                     if len(q)==0:
-                        print(UF.TimeStamp(),bcolors.FAIL+'The HTCondor job has failed, resubmitting...'+bcolors.ENDC)
+                        print(UI.TimeStamp(),bcolors.FAIL+'The HTCondor job has failed, resubmitting...'+bcolors.ENDC)
                         if Model_Meta.ModelType=='CNN':
-                            Job=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/','N/A','MCTr2','N/A',ModelName,1,OptionHeader,OptionLine,'MCTr2_TrainModel_Sub.py',False,"['','']", True, True)[0]
+                            Job=UI.CreateCondorJobs(AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/','N/A','MCTr2','N/A',ModelName,1,OptionHeader,OptionLine,'MCTr2_TrainModel_Sub.py',False,"['','']", True, True)[0]
                         else:
-                            Job=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/','N/A','MCTr2','N/A',ModelName,1,OptionHeader,OptionLine,'MCTr2_TrainModel_Sub.py',False,"['','']", True, False)[0]
+                            Job=UI.CreateCondorJobs(AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/','N/A','MCTr2','N/A',ModelName,1,OptionHeader,OptionLine,'MCTr2_TrainModel_Sub.py',False,"['','']", True, False)[0]
 
-                        UF.SubmitJobs2Condor(Job,False,RequestExtCPU,JobFlavour,ReqMemory)
+                        UI.SubmitJobs2Condor(Job,False,RequestExtCPU,JobFlavour,ReqMemory)
                         print(bcolors.BOLD+"The job has been submitted..."+bcolors.ENDC)
                     else:
-                        print(UF.TimeStamp(),bcolors.WARNING+'Warning, the training is still running on HTCondor, the job parameters are listed bellow:'+bcolors.ENDC)
+                        print(UI.TimeStamp(),bcolors.WARNING+'Warning, the training is still running on HTCondor, the job parameters are listed bellow:'+bcolors.ENDC)
                         print(q)
                         continue
                 except:
-                    print(UF.TimeStamp(),bcolors.FAIL+'No response from HTCondor, will check again in a while...:'+bcolors.ENDC)
+                    print(UI.TimeStamp(),bcolors.FAIL+'No response from HTCondor, will check again in a while...:'+bcolors.ENDC)
                     continue
 
     return True
 
 if Mode=='RESET':
- HTCondorTag="SoftUsed == \"ANNDEA-MCTr2-"+ModelName+"\""
- UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MCTr2_'+ModelName, [ModelName], HTCondorTag)
- if ModelType=='CNN':
-    Job=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/','N/A','MCTr2','N/A',ModelName,1,OptionHeader,OptionLine,'MCTr2_TrainModel_Sub.py',False,"['','']", True, True)[0]
- else:
-    Job=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/','N/A','MCTr2','N/A',ModelName,1,OptionHeader,OptionLine,'MCTr2_TrainModel_Sub.py',False,"['','']", True, False)[0]
+ Job=UI.CreateCondorJobs(AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/'+ModelName+'/','N/A','MCTr2','N/A',ModelName,1,OptionHeader,OptionLine,'MCTr2_TrainModel_Sub.py',False,"['','']", True, ModelType=='CNN')[0]
  TrainSampleInputMeta=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_info.pkl'
- print(UF.TimeStamp(),'Loading the data file ',bcolors.OKBLUE+TrainSampleInputMeta+bcolors.ENDC)
- MetaInput=UF.PickleOperations(TrainSampleInputMeta,'r', 'N/A')
+ print(UI.TimeStamp(),'Loading the data file ',bcolors.OKBLUE+TrainSampleInputMeta+bcolors.ENDC)
+ MetaInput=UI.PickleOperations(TrainSampleInputMeta,'r', 'N/A')
  print(MetaInput[1])
  Meta=MetaInput[0]
  Model_Meta_Path=EOSsubModelDIR+'/'+args.ModelName+'_Meta'
- ModelMeta=UF.ModelMeta(ModelName)
+ ModelMeta=ML.ModelMeta(ModelName)
  if ModelType=='CNN':
     ModelMeta.IniModelMeta(ModelParams, 'Tensorflow', Meta, ModelArchitecture, 'CNN')
  elif ModelType=='GNN':
-                    ModelMeta.IniModelMeta(ModelParams, 'PyTorch', Meta, ModelArchitecture, 'GNN')
+    ModelMeta.IniModelMeta(ModelParams, 'PyTorch', Meta, ModelArchitecture, 'GNN')
  ModelMeta.IniTrainingSession(TrainSampleID, datetime.datetime.now(), TrainParams)
- print(UF.PickleOperations(Model_Meta_Path, 'w', ModelMeta)[1])
- UF.SubmitJobs2Condor(Job,False,RequestExtCPU,JobFlavour,ReqMemory)
+ print(UI.PickleOperations(Model_Meta_Path, 'w', ModelMeta)[1])
+ UI.SubmitJobs2Condor(Job,False,RequestExtCPU,JobFlavour,ReqMemory)
  print(bcolors.BOLD+'If you would like to stop training and exit please enter E'+bcolors.ENDC)
  print(bcolors.BOLD+'If you would like to continue training on autopilot please type waiting time in minutes'+bcolors.ENDC)
  UserAnswer=input(bcolors.BOLD+"Please, enter your option\n"+bcolors.ENDC)
  if UserAnswer=='E':
-                  print(UF.TimeStamp(),'OK, exiting now then')
+                  print(UI.TimeStamp(),'OK, exiting now then')
                   exit()
  else:
     AutoPilot(int(UserAnswer),Wait)
 else:
      Model_Meta_Path=EOSsubModelDIR+'/'+args.ModelName+'_Meta'
-     print(UF.TimeStamp(),'Loading the data file ',bcolors.OKBLUE+Model_Meta_Path+bcolors.ENDC)
+     print(UI.TimeStamp(),'Loading the data file ',bcolors.OKBLUE+Model_Meta_Path+bcolors.ENDC)
      if os.path.isfile(Model_Meta_Path):
-       Model_Meta_Raw=UF.PickleOperations(Model_Meta_Path, 'r', 'N/A')
+       Model_Meta_Raw=UI.PickleOperations(Model_Meta_Path, 'r', 'N/A')
        print(Model_Meta_Raw[1])
        Model_Meta=Model_Meta_Raw[0]
        Models_Status=Model_Meta.ModelTrainStatus(PM.TST)
        if Models_Status==1:
-              print(UF.TimeStamp(),bcolors.WARNING+'Warning, the model seems to be over saturated'+bcolors.ENDC)
+              print(UI.TimeStamp(),bcolors.WARNING+'Warning, the model seems to be over saturated'+bcolors.ENDC)
+              Model_Meta_Path=EOSsubModelDIR+'/'+args.ModelName+'_Meta'
+              print(UI.TimeStamp(),'Loading the data file ',bcolors.OKBLUE+Model_Meta_Path+bcolors.ENDC)
+              if os.path.isfile(Model_Meta_Path):
+                   Model_Meta_Raw=UI.PickleOperations(Model_Meta_Path, 'r', 'N/A')
+                   print(Model_Meta_Raw[1])
+                   Model_Meta=Model_Meta_Raw[0]
+                   Header=Model_Meta.TrainSessionsData[0][0]+['Model Parameters','Train Sample ID','LR','Batch Size','Normalised Epochs']
+                   New_Data=[Header]
+                   Print_New_Data=[] 
+                   counter=0
+                   print(UI.TimeStamp(),bcolors.OKGREEN+'The model training profile is printed bellow: '+bcolors.ENDC)
+                   for TSD in range(len(Model_Meta.TrainSessionsData)):
+                       for Record in Model_Meta.TrainSessionsData[TSD][1:]:
+                           counter+=1
+                           New_Data.append(Record+[Model_Meta.ModelParameters,Model_Meta.TrainSessionsDataID[TSD],Model_Meta.TrainSessionsParameters[TSD][0],Model_Meta.TrainSessionsParameters[TSD][1],counter])
+                           Print_New_Data.append(Record)
+                   print(pd.DataFrame(Print_New_Data, columns=Model_Meta.TrainSessionsData[0][0]))
+                   Model_Meta_csv=EOSsubModelDIR+'/'+args.ModelName+'_Out.csv'
+                   UI.LogOperations(Model_Meta_csv,'w', New_Data)
+                   print(UI.TimeStamp(),bcolors.OKGREEN+'Csv output has been saved as '+bcolors.ENDC+bcolors.OKBLUE+Model_Meta_csv+bcolors.ENDC)
               print(bcolors.BOLD+'If you would like to stop training and exit please enter E'+bcolors.ENDC)
               print(bcolors.BOLD+'If you would like to resubmit your script and exit enter R'+bcolors.ENDC)
               print(bcolors.BOLD+'If you would like to continue training on autopilot please type waiting time in minutes'+bcolors.ENDC)
               UserAnswer=input(bcolors.BOLD+"Please, enter your option\n"+bcolors.ENDC)
               if UserAnswer=='E':
-                  print(UF.TimeStamp(),'OK, exiting now then')
+                  print(UI.TimeStamp(),'OK, exiting now then')
                   exit()
               if UserAnswer=='R':
-                 if Model_Meta.ModelType=='CNN':
-                    Job=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/','N/A','MCTr2','N/A',ModelName,1,OptionHeader,OptionLine,'MCTr2_TrainModel_Sub.py',False,"['','']", True, True)[0]
-                 else:
-                    Job=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/','N/A','MCTr2','N/A',ModelName,1,OptionHeader,OptionLine,'MCTr2_TrainModel_Sub.py',False,"['','']", True, False)[0]
+                 Job=UI.CreateCondorJobs(AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/'+ModelName+'/','N/A','MCTr2','N/A',ModelName,1,OptionHeader,OptionLine,'MCTr2_TrainModel_Sub.py',False,"['','']", True, Model_Meta.ModelType=='CNN')[0]
                  Model_Meta.IniTrainingSession(TrainSampleID, datetime.datetime.now(), TrainParams)
-                 print(UF.PickleOperations(Model_Meta_Path, 'w', Model_Meta)[1])
-                 UF.SubmitJobs2Condor(Job,False,RequestExtCPU,JobFlavour,ReqMemory)
+                 print(UI.PickleOperations(Model_Meta_Path, 'w', Model_Meta)[1])
+                 UI.SubmitJobs2Condor(Job,False,RequestExtCPU,JobFlavour,ReqMemory)
                  print(bcolors.BOLD+"The job has been submitted..."+bcolors.ENDC)
-                 print(UF.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
+                 print(UI.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
                  exit()
               else:
-                 if Model_Meta.ModelType=='CNN':
-                    Job=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/','N/A','MCTr2','N/A',ModelName,1,OptionHeader,OptionLine,'MCTr2_TrainModel_Sub.py',False,"['','']", True, True)[0]
-                 else:
-                    Job=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/','N/A','MCTr2','N/A',ModelName,1,OptionHeader,OptionLine,'MCTr2_TrainModel_Sub.py',False,"['','']", True, False)[0]
+                 Job=UI.CreateCondorJobs(AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/'+ModelName+'/','N/A','MCTr2','N/A',ModelName,1,OptionHeader,OptionLine,'MCTr2_TrainModel_Sub.py',False,"['','']", True, Model_Meta.ModelType=='CNN')[0]
                  Model_Meta.IniTrainingSession(TrainSampleID, datetime.datetime.now(), TrainParams)
-                 print(UF.PickleOperations(Model_Meta_Path, 'w', Model_Meta)[1])
-                 UF.SubmitJobs2Condor(Job,False,RequestExtCPU,JobFlavour,ReqMemory)
+                 print(UI.PickleOperations(Model_Meta_Path, 'w', Model_Meta)[1])
+                 UI.SubmitJobs2Condor(Job,False,RequestExtCPU,JobFlavour,ReqMemory)
                  print(bcolors.BOLD+"The job has been submitted..."+bcolors.ENDC)
-                 print(UF.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
+                 print(UI.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
                  AutoPilot(int(UserAnswer),Wait)
        elif Models_Status==2:
-                 print(UF.TimeStamp(),bcolors.OKGREEN+'The training session has been completed'+bcolors.ENDC)
+                 print(UI.TimeStamp(),bcolors.OKGREEN+'The training session has been completed'+bcolors.ENDC)
+                 Model_Meta_Path=EOSsubModelDIR+'/'+args.ModelName+'_Meta'
+                 print(UI.TimeStamp(),'Loading the data file ',bcolors.OKBLUE+Model_Meta_Path+bcolors.ENDC)
+                 if os.path.isfile(Model_Meta_Path):
+                   Model_Meta_Raw=UI.PickleOperations(Model_Meta_Path, 'r', 'N/A')
+                   print(Model_Meta_Raw[1])
+                   Model_Meta=Model_Meta_Raw[0]
+                   Header=Model_Meta.TrainSessionsData[0][0]+['Model Parameters','Train Sample ID','LR','Batch Size','Normalised Epochs']
+                   New_Data=[Header]
+                   Print_New_Data=[] 
+                   counter=0
+                   print(UI.TimeStamp(),bcolors.OKGREEN+'The model training profile is printed bellow: '+bcolors.ENDC)
+                   for TSD in range(len(Model_Meta.TrainSessionsData)):
+                       for Record in Model_Meta.TrainSessionsData[TSD][1:]:
+                           counter+=1
+                           New_Data.append(Record+[Model_Meta.ModelParameters,Model_Meta.TrainSessionsDataID[TSD],Model_Meta.TrainSessionsParameters[TSD][0],Model_Meta.TrainSessionsParameters[TSD][1],counter])
+                           Print_New_Data.append(Record)
+                   print(pd.DataFrame(Print_New_Data, columns=Model_Meta.TrainSessionsData[0][0]))
+                   Model_Meta_csv=EOSsubModelDIR+'/'+args.ModelName+'_Out.csv'
+                   UI.LogOperations(Model_Meta_csv,'w', New_Data)
+                   print(UI.TimeStamp(),bcolors.OKGREEN+'Csv output has been saved as '+bcolors.ENDC+bcolors.OKBLUE+Model_Meta_csv+bcolors.ENDC)
                  print(bcolors.BOLD+'If you would like to stop training and exit please enter E'+bcolors.ENDC)
                  print(bcolors.BOLD+'If you would like to submit another one and exit enter S'+bcolors.ENDC)
                  print(bcolors.BOLD+'If you would like to continue training on autopilot please type waiting time in minutes'+bcolors.ENDC)
                  UserAnswer=input(bcolors.BOLD+"Please, enter your option\n"+bcolors.ENDC)
                  if UserAnswer=='E':
-                  print(UF.TimeStamp(),'OK, exiting now then')
+                  print(UI.TimeStamp(),'OK, exiting now then')
                   exit()
                  elif UserAnswer=='S':
-
-                    if Model_Meta.ModelType=='CNN':
-                         Job=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/','N/A','MCTr2','N/A',ModelName,1,OptionHeader,OptionLine,'MCTr2_TrainModel_Sub.py',False,"['','']", True, True)[0]
-                    else:
-                         Job=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/','N/A','MCTr2','N/A',ModelName,1,OptionHeader,OptionLine,'MCTr2_TrainModel_Sub.py',False,"['','']", True, False)[0]
+                    Job=UI.CreateCondorJobs(AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/'+ModelName+'/','N/A','MCTr2','N/A',ModelName,1,OptionHeader,OptionLine,'MCTr2_TrainModel_Sub.py',False,"['','']", True, Model_Meta.ModelType=='CNN')[0]
                     HTCondorTag="SoftUsed == \"ANNDEA-MCTr2-"+ModelName+"\""
                     Model_Meta.IniTrainingSession(TrainSampleID, datetime.datetime.now(), TrainParams)
-                    print(UF.PickleOperations(Model_Meta_Path, 'w', Model_Meta)[1])
-                    UF.SubmitJobs2Condor(Job,False,RequestExtCPU,JobFlavour,ReqMemory)
+                    print(UI.PickleOperations(Model_Meta_Path, 'w', Model_Meta)[1])
+                    UI.SubmitJobs2Condor(Job,False,RequestExtCPU,JobFlavour,ReqMemory)
                     print(bcolors.BOLD+"The job has been submitted..."+bcolors.ENDC)
                  else:
-                     if Model_Meta.ModelType=='CNN':
-                         Job=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/','N/A','MCTr2','N/A',ModelName,1,OptionHeader,OptionLine,'MCTr2_TrainModel_Sub.py',False,"['','']", True, True)[0]
-                     else:
-                         Job=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/','N/A','MCTr2','N/A',ModelName,1,OptionHeader,OptionLine,'MCTr2_TrainModel_Sub.py',False,"['','']", True, False)[0]
+                     Job=UI.CreateCondorJobs(AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/'+ModelName+'/','N/A','MCTr2','N/A',ModelName,1,OptionHeader,OptionLine,'MCTr2_TrainModel_Sub.py',False,"['','']", True, Model_Meta.ModelType=='CNN')[0]
                      HTCondorTag="SoftUsed == \"ANNDEA-MCTr2-"+ModelName+"\""
                      Model_Meta.IniTrainingSession(TrainSampleID, datetime.datetime.now(), TrainParams)
-                     print(UF.PickleOperations(Model_Meta_Path, 'w', Model_Meta)[1])
-                     UF.SubmitJobs2Condor(Job,False,RequestExtCPU,JobFlavour,ReqMemory)
+                     print(UI.PickleOperations(Model_Meta_Path, 'w', Model_Meta)[1])
+                     UI.SubmitJobs2Condor(Job,False,RequestExtCPU,JobFlavour,ReqMemory)
                      print(bcolors.BOLD+"The job has been submitted..."+bcolors.ENDC)
                      AutoPilot(int(UserAnswer),Wait)
 
@@ -260,52 +303,46 @@ else:
            HTCondorTag="SoftUsed == \"ANNDEA-MCTr2-"+ModelName+"\""
            q=schedd.query(constraint=HTCondorTag,projection=['CLusterID','JobStatus'])
            if len(q)==0:
-                print(UF.TimeStamp(),bcolors.FAIL+'HTCondor has failed...'+bcolors.ENDC)
+                print(UI.TimeStamp(),bcolors.FAIL+'HTCondor has failed...'+bcolors.ENDC)
            else:
-                print(UF.TimeStamp(),bcolors.WARNING+'Warning, the training is still running on HTCondor, the job parameters are listed bellow:'+bcolors.ENDC)
+                print(UI.TimeStamp(),bcolors.WARNING+'Warning, the training is still running on HTCondor, the job parameters are listed bellow:'+bcolors.ENDC)
                 print(q)
            print(bcolors.BOLD+'If you would like to wait and exit please enter E'+bcolors.ENDC)
            print(bcolors.BOLD+'If you would like to resubmit your script enter R'+bcolors.ENDC)
            print(bcolors.BOLD+'If you would like to put the script on the autopilot type number of minutes to wait'+bcolors.ENDC)
            UserAnswer=input(bcolors.BOLD+"Please, enter your option\n"+bcolors.ENDC)
            if UserAnswer=='E':
-                  print(UF.TimeStamp(),'OK, exiting now then')
+                  print(UI.TimeStamp(),'OK, exiting now then')
                   exit()
            elif UserAnswer=='R':
-                 if Model_Meta.ModelType=='CNN':
-                         Job=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/','N/A','MCTr2','N/A',ModelName,1,OptionHeader,OptionLine,'MCTr2_TrainModel_Sub.py',False,"['','']", True, True)[0]
-                 else:
-                         Job=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/','N/A','MCTr2','N/A',ModelName,1,OptionHeader,OptionLine,'MCTr2_TrainModel_Sub.py',False,"['','']", True, False)[0]
-                 UF.SubmitJobs2Condor(Job,False,RequestExtCPU,JobFlavour,ReqMemory)
+                 Job=UI.CreateCondorJobs(AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/'+ModelName+'/','N/A','MCTr2','N/A',ModelName,1,OptionHeader,OptionLine,'MCTr2_TrainModel_Sub.py',False,"['','']", True, Model_Meta.ModelType=='CNN')[0]
+                 UI.SubmitJobs2Condor(Job,False,RequestExtCPU,JobFlavour,ReqMemory)
                  print(bcolors.BOLD+"The job has been submitted..."+bcolors.ENDC)
-                 print(UF.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
+                 print(UI.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
                  exit()
            else:
               AutoPilot(int(UserAnswer),Wait)
      else:
-                 print(UF.TimeStamp(),bcolors.WARNING+'Warning! No existing meta files have been found, starting everything from the scratch.'+bcolors.ENDC)
-                 if ModelType=='CNN':
-                         Job=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/','N/A','MCTr2','N/A',ModelName,1,OptionHeader,OptionLine,'MCTr2_TrainModel_Sub.py',False,"['','']", True, True)[0]
-                 else:
-                         Job=UF.CreateCondorJobs(AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/','N/A','MCTr2','N/A',ModelName,1,OptionHeader,OptionLine,'MCTr2_TrainModel_Sub.py',False,"['','']", True, False)[0]
+                 print(UI.TimeStamp(),bcolors.WARNING+'Warning! No existing meta files have been found, starting everything from the scratch.'+bcolors.ENDC)
+                 Job=UI.CreateCondorJobs(AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/'+ModelName+'/','N/A','MCTr2','N/A',ModelName,1,OptionHeader,OptionLine,'MCTr2_TrainModel_Sub.py',False,"['','']", True, ModelType=='CNN')[0]
                  HTCondorTag="SoftUsed == \"ANNDEA-MCTr2-"+ModelName+"\""
                  TrainSampleInputMeta=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_info.pkl'
-                 print(UF.TimeStamp(),'Loading the data file ',bcolors.OKBLUE+TrainSampleInputMeta+bcolors.ENDC)
-                 MetaInput=UF.PickleOperations(TrainSampleInputMeta,'r', 'N/A')
+                 print(UI.TimeStamp(),'Loading the data file ',bcolors.OKBLUE+TrainSampleInputMeta+bcolors.ENDC)
+                 MetaInput=UI.PickleOperations(TrainSampleInputMeta,'r', 'N/A')
                  print(MetaInput[1])
                  Meta=MetaInput[0]
                  Model_Meta_Path=EOSsubModelDIR+'/'+args.ModelName+'_Meta'
-                 ModelMeta=UF.ModelMeta(ModelName)
+                 ModelMeta=ML.ModelMeta(ModelName)
                  if ModelType=='CNN':
                     ModelMeta.IniModelMeta(ModelParams, 'Tensorflow', Meta, ModelArchitecture, 'CNN')
                  elif ModelType=='GNN':
                     ModelMeta.IniModelMeta(ModelParams, 'PyTorch', Meta, ModelArchitecture, 'GNN')
                  ModelMeta.IniTrainingSession(TrainSampleID, datetime.datetime.now(), TrainParams)
-                 print(UF.PickleOperations(Model_Meta_Path, 'w', ModelMeta)[1])
-                 UF.SubmitJobs2Condor(Job,False,RequestExtCPU,JobFlavour,ReqMemory)
+                 print(UI.PickleOperations(Model_Meta_Path, 'w', ModelMeta)[1])
+                 UI.SubmitJobs2Condor(Job,False,RequestExtCPU,JobFlavour,ReqMemory)
                  print(bcolors.BOLD+"The job has been submitted..."+bcolors.ENDC)
                  AutoPilot(600,Wait)
-print(UF.TimeStamp(),bcolors.OKGREEN+'Training is finished then, thank you and goodbye'+bcolors.ENDC)
+print(UI.TimeStamp(),bcolors.OKGREEN+'Training is finished then, thank you and goodbye'+bcolors.ENDC)
 print(bcolors.HEADER+"############################################# End of the program ################################################"+bcolors.ENDC)
 exit()
 
