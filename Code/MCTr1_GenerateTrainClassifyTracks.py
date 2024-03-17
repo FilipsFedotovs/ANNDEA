@@ -107,8 +107,7 @@ for i in ClassNames:
                 ExtraColumns.append(j)
 
 Regression=ClassValues[0][0]=='Reg'
-print(Regression)
-exit()
+
 ########################################     Phase 1 - Create compact source file    #########################################
 print(UI.TimeStamp(),bcolors.BOLD+'Stage 0:'+bcolors.ENDC+' Preparing the source data...')
 if Mode=='RESET':
@@ -226,6 +225,7 @@ if os.path.isfile(required_file_location)==False:
              final_rows=len(data.axes[0])
              print(UI.TimeStamp(),'The sliced data has ',final_rows,' hits')
 
+
         output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/MCTr1_'+TrainSampleID+'_TRACKS.csv'
         print(UI.TimeStamp(),'Removing tracks which have less than',MinHitsTrack,'hits...')
         track_no_data=data.groupby(['MC_Mother_Track_ID','Rec_Seg_ID']+ExtraColumns,as_index=False).count()
@@ -243,6 +243,8 @@ if os.path.isfile(required_file_location)==False:
         new_combined_data=new_combined_data.rename(columns={PM.tx: "tx"})
         new_combined_data=new_combined_data.rename(columns={PM.ty: "ty"})
         new_combined_data.drop(['MC_Mother_Track_ID'],axis=1,inplace=True)
+        print(new_combined_data)
+        exit()
         new_combined_data.to_csv(output_file_location,index=False)
         data=new_combined_data[['Rec_Seg_ID']]
         print(UI.TimeStamp(),'Analysing the data sample in order to understand how many jobs to submit to HTCondor... ',bcolors.ENDC)
