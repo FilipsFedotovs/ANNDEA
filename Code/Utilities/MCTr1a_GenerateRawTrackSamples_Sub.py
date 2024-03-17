@@ -96,7 +96,8 @@ for s in range(0,limit):
     track=track_headers.pop(0)
     track_obj=EMO([track[0]])
     if Regression:
-        print(track[0])
+        print(track[1])
+        print(track)
         x=input()
         #able=
     label=0
