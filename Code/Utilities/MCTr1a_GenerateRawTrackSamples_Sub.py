@@ -96,21 +96,19 @@ for s in range(0,limit):
     track=track_headers.pop(0)
     track_obj=EMO([track[0]])
     if Regression:
-        print(track[1])
-        print(track)
-        x=input()
-        #able=
-    label=0
-    for i in range(len(ClassNames)):
-        class_flag=False
-        for j in range(len(ClassNames[i])):
-            pos_counter=track_column_headers.index(ClassNames[i][j])
-            if (str(track[pos_counter]) in ClassValues[i][j])==False:
-                    class_flag=True
-        if class_flag==False:
-            break
-        else:
-               label+=1
+        label=track[1]
+    else:
+        label=0
+        for i in range(len(ClassNames)):
+            class_flag=False
+            for j in range(len(ClassNames[i])):
+                pos_counter=track_column_headers.index(ClassNames[i][j])
+                if (str(track[pos_counter]) in ClassValues[i][j])==False:
+                        class_flag=True
+            if class_flag==False:
+                break
+            else:
+                   label+=1
     track_obj.LabelTrack(label)
     track_obj.Decorate(track_data)
     GoodTracks.append(track_obj)
