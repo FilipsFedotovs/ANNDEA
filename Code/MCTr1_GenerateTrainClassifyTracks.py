@@ -230,7 +230,7 @@ if os.path.isfile(required_file_location)==False:
         if Regression:
             print(UI.TimeStamp(),'Normalising regression value',ExtraColumns[0])
             data_agg=data.groupby(['Rec_Seg_ID','MC_Mother_Track_ID']).agg(subject_reg_val=pd.NamedAgg(column=ClassNames[0][0], aggfunc=ClassValues[0][1])).reset_index()
-            print(data)
+            print(data_agg)
             exit()
         print(UI.TimeStamp(),'Removing tracks which have less than',MinHitsTrack,'hits...')
         track_no_data=data.groupby(['MC_Mother_Track_ID','Rec_Seg_ID']+ExtraColumns,as_index=False).count()
