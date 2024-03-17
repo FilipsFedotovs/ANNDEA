@@ -325,15 +325,17 @@ while Status<len(Program):
                     output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/Temp_MCTr1a_'+TrainSampleID+'_0/MCTr1b_'+TrainSampleID+'_SelectedTrackSamples_'+str(i)+'.pkl'
                     base_data=UI.PickleOperations(req_file,'r', 'N/A')[0]
                     ExtractedData=[]
-                    min_len=len([j for j in base_data if j.Label==0])
-                    for j in range(len(ClassHeaders)+1):
-                        if len([k for k in base_data if k.Label==j])!=0:
-                           ExtractedData.append([k for k in base_data if k.Label==j])
-                           min_len=min(len([k for k in base_data if k.Label==j]),min_len)
-                    TotalData=[]
-                    for s in range(len(ExtractedData)):
-                        TotalData+=random.sample(ExtractedData[s],min_len)
-                    print(UI.PickleOperations(output_file_location,'w', TotalData)[1])
+                    if Regression==False:
+                        min_len=len([j for j in base_data if j.Label==0])
+                        for j in range(len(ClassHeaders)+1):
+                            if len([k for k in base_data if k.Label==j])!=0:
+                               ExtractedData.append([k for k in base_data if k.Label==j])
+                               min_len=min(len([k for k in base_data if k.Label==j]),min_len)
+                        TotalData=[]
+                        for s in range(len(ExtractedData)):
+                            TotalData+=random.sample(ExtractedData[s],min_len)
+                        print(UI.PickleOperations(output_file_location,'w', TotalData)[1])
+                    else: print(UI.PickleOperations(output_file_location,'w', base_data)[1])
             print(UI.TimeStamp(),bcolors.OKGREEN+'Stage 2 has successfully completed'+bcolors.ENDC)
             UI.UpdateStatus(Status+1,Meta,TrainSampleOutputMeta)
             Status+=1
