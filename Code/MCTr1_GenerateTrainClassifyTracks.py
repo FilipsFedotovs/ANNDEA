@@ -233,7 +233,7 @@ if os.path.isfile(required_file_location)==False:
             data_agg=data_agg.rename(columns={'subject_reg_val': ClassNames[0][0]})
             print(data_agg)
             print(float(ClassValues[0][2]))
-            data_agg[ClassNames[0][0]]=data_agg[ClassNames[0][0]].div(float(ClassValues[0][2]))
+            data_agg[ClassNames[0][0]]=data_agg[ClassNames[0][0]].astype(float).div(float(ClassValues[0][2]))
             data.drop([ClassNames[0][0]],axis=1,inplace=True)
             data=pd.merge(data,data_agg, how="inner", on=['Rec_Seg_ID','MC_Mother_Track_ID'])
         print(UI.TimeStamp(),'Removing tracks which have less than',MinHitsTrack,'hits...')
