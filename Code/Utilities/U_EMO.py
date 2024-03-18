@@ -1392,7 +1392,6 @@ def LoadRenderImages(Seeds,StartSeed,EndSeed,num_classes=2):
     ImagesX= ImagesX[..., np.newaxis]
     if num_classes>1:
         ImagesY=tf.keras.utils.to_categorical(ImagesY,num_classes)
-    print(ImagesY)
     return (ImagesX,ImagesY)
 
 

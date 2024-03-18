@@ -102,7 +102,7 @@ def CNNvalidate(model, Sample, Batches,num_classes):
         StartSeed=(ib*TrainParams[1])+1
         EndSeed=StartSeed+TrainParams[1]-1
         BatchImages=EMO.LoadRenderImages(Sample,StartSeed,EndSeed,num_classes)
-        v=model.test_on_batch(BatchImages[0],BatchImages[1],reset_metrics=False)
+        v=model.test_on_batch(BatchImages[0],BatchImages[1])
     return v
 
 
@@ -115,12 +115,12 @@ Meta=MetaInput[0]
 Model_Meta_Path=EOSsubModelDIR+'/'+ModelName+'_Meta'
 Model_Path=EOSsubModelDIR+'/'+ModelName
 ModelMeta=UI.PickleOperations(Model_Meta_Path, 'r', 'N/A')[0]
-ValSamples=UI.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_TRACK_OUTPUT.pkl','r', 'N/A')[0][:10]
+ValSamples=UI.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_TRACK_OUTPUT.pkl','r', 'N/A')[0][:4]
 print(UI.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_TRACK_OUTPUT.pkl','r', 'N/A')[1])
 train_set=1
 if ModelMeta.ModelType=='CNN':
    if len(ModelMeta.TrainSessionsData)==0:
-       TrainSamples=UI.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_TRACK_OUTPUT_1.pkl','r', 'N/A')[0][:10]
+       TrainSamples=UI.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_TRACK_OUTPUT_1.pkl','r', 'N/A')[0][:4]
        print(UI.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_TRACK_OUTPUT_1.pkl','r', 'N/A')[1])
        train_set=1
    else:
@@ -135,7 +135,7 @@ if ModelMeta.ModelType=='CNN':
                print(UI.PickleOperations(next_file,'r', 'N/A')[1])
            else:
                train_set=1
-               TrainSamples=UI.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_TRACK_OUTPUT_1.pkl','r', 'N/A')[0][:10]
+               TrainSamples=UI.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_TRACK_OUTPUT_1.pkl','r', 'N/A')[0][:4]
                print(UI.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_TRACK_OUTPUT_1.pkl','r', 'N/A')[1])
         break
    NTrainBatches=math.ceil(float(len(TrainSamples))/float(TrainParams[1]))
