@@ -6,16 +6,9 @@
 ########################################    Import libraries    ########################################################
 import ast
 import argparse
+import csv
 ########################## Visual Formatting #################################################
-class bcolors:
-    HEADER = '\033[95m'
-    OKBLUE = '\033[94m'
-    OKGREEN = '\033[92m'
-    WARNING = '\033[93m'
-    FAIL = '\033[91m'
-    ENDC = '\033[0m'
-    BOLD = '\033[1m'
-    UNDERLINE = '\033[4m'
+
 
 ########################## Setting the parser ################################################
 parser = argparse.ArgumentParser(description='select cut parameters')
@@ -34,9 +27,27 @@ ModelFramework=args.ModelFramework
 
 import sys
 sys.path.insert(1, './Utilities/')
+csv_reader=open('../config',"r")
+config = list(csv.reader(csv_reader))
+for c in config:
+    if c[0]=='AFS_DIR':
+        AFS_DIR=c[1]
+    if c[0]=='EOS_DIR':
+        EOS_DIR=c[1]
+    if c[0]=='PY_DIR':
+        PY_DIR=c[1]
+csv_reader.close()
+import sys
+if PY_DIR!='': #Temp solution - the decision was made to move all libraries to EOS drive as AFS get locked during heavy HTCondor submission loads
+    sys.path=['',PY_DIR]
+    sys.path.append('/usr/lib64/python39.zip')
+    sys.path.append('/usr/lib64/python3.9')
+    sys.path.append('/usr/lib64/python3.9/lib-dynload')
+    sys.path.append('/usr/lib64/python3.9/site-packages')
+    sys.path.append('/usr/lib/python3.9/site-packages')
+sys.path.append(AFS_DIR+'/Code/Utilities')
 import U_UI as UI
 import U_ML as ML
-
 
 
 ##############################################################################################################################
