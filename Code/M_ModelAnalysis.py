@@ -34,34 +34,31 @@ ModelFramework=args.ModelFramework
 
 import sys
 sys.path.insert(1, './Utilities/')
-import UtilityFunctions as UF
+import U_UI as UI
+import U_ML as ML
 
 
 
 ##############################################################################################################################
 ######################################### Starting the program ################################################################
-print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
-print(bcolors.HEADER+"#########################  Initialising     ANNDEA   model creation module   #########################"+bcolors.ENDC)
-print(bcolors.HEADER+"#########################              Written by Filips Fedotovs              #########################"+bcolors.ENDC)
-print(bcolors.HEADER+"#########################                 PhD Student at UCL                   #########################"+bcolors.ENDC)
-print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
-print(UF.TimeStamp(), bcolors.OKGREEN+"Modules Have been imported successfully..."+bcolors.ENDC)
+UI.WelcomeMsg('Initialising ANNDEA model validation unit...','Filips Fedotovs (PhD student at UCL), Wenqing Xie (MSc student at UCL)','Please reach out to filips.fedotovs@cern.ch for any queries')
+print(UI.TimeStamp(), bcolors.OKGREEN+"Modules Have been imported successfully..."+bcolors.ENDC)
 def zero_divide(a, b):
     if (b==0): return 0
     return a/b
-Meta=UF.TrainingSampleMeta('N/A')
+Meta=ML.TrainingSampleMeta('N/A')
 Meta.IniTrackSeedMetaData(0,0,0,0,[],0,[],0,0)
-ModelMeta=UF.ModelMeta('N/A')
+ModelMeta=ML.ModelMeta('N/A')
 ModelMeta.IniModelMeta(ModelParams,ModelFramework, Meta, ModelArchitecture, ModelType)
 if ModelType=='CNN':
         import os
         os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # FATAL
-        model = UF.GenerateModel(ModelMeta,[0,0,0,0])
+        model = ML.GenerateModel(ModelMeta,[0,0,0,0])
         model.summary()
 elif ModelMeta.ModelType=='GNN':
         import torch
         device = torch.device('cpu')
-        model = UF.GenerateModel(ModelMeta).to(device)
+        model = ML.GenerateModel(ModelMeta).to(device)
         print(model)
 
 
