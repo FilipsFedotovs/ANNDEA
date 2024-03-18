@@ -216,9 +216,12 @@ def main(self):
              print(UI.TimeStamp(), bcolors.WARNING+"Model/state data files are missing, skipping this step..." +bcolors.ENDC)
              model = ML.GenerateModel(ModelMeta,TrainParams)
         model.summary()
+        for el in ModelMeta.ModelParameters:
+          if len(el)==2:
+             OutputSize=el[1]
         records=[]
         for epoch in range(0, TrainParams[2]):
-            train_loss, itr=CNNtrain(model, TrainSamples, NTrainBatches,ModelMeta.ModelParameters[10][1]),len(TrainSamples)
+            train_loss, itr=CNNtrain(model, TrainSamples, NTrainBatches,OutputSize),len(TrainSamples)
             val_loss=CNNvalidate(model, ValSamples, NValBatches,ModelMeta.ModelParameters[10][1])
             test_loss=val_loss
             print(UI.TimeStamp(),'Epoch ',epoch, ' is completed')
