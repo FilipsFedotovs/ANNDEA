@@ -1369,10 +1369,16 @@ def LoadRenderImages(Seeds,StartSeed,EndSeed,num_classes=2):
 
     ImagesX=np.empty([len(NewSeeds),NewSeeds[0].H,NewSeeds[0].W,NewSeeds[0].L],dtype=np.float16)
     for im in range(len(NewSeeds)):
-        if hasattr(NewSeeds[im],'Label'):
-           ImagesY[im]=int(float(NewSeeds[im].Label))
+        if num_classes>1:
+            if hasattr(NewSeeds[im],'Label'):
+               ImagesY[im]=int(float(NewSeeds[im].Label))
+            else:
+               ImagesY[im]=0
         else:
-           ImagesY[im]=0
+            if hasattr(NewSeeds[im],'Label'):
+               ImagesY[im]=float(NewSeeds[im].Label)
+            else:
+               ImagesY[im]=0.0
         BlankRenderedImage=[]
         for x in range(-NewSeeds[im].bX,NewSeeds[im].bX):
           for y in range(-NewSeeds[im].bY,NewSeeds[im].bY):
