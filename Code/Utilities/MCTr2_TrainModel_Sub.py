@@ -71,10 +71,7 @@ def CNNtrain(model, Sample, Batches,num_classes):
         StartSeed=(ib*TrainParams[1])+1
         EndSeed=StartSeed+TrainParams[1]-1
         BatchImages=EMO.LoadRenderImages(Sample,StartSeed,EndSeed,num_classes)
-        print(BatchImages[0],BatchImages[1])
         t=model.train_on_batch(BatchImages[0],BatchImages[1])
-        print(t)
-        x=input()
     return t
 
 # def GNNtrain(model, Sample,optimizer):
@@ -118,12 +115,12 @@ Meta=MetaInput[0]
 Model_Meta_Path=EOSsubModelDIR+'/'+ModelName+'_Meta'
 Model_Path=EOSsubModelDIR+'/'+ModelName
 ModelMeta=UI.PickleOperations(Model_Meta_Path, 'r', 'N/A')[0]
-ValSamples=UI.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_TRACK_OUTPUT.pkl','r', 'N/A')[0]
+ValSamples=UI.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_TRACK_OUTPUT.pkl','r', 'N/A')[0][:10]
 print(UI.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_TRACK_OUTPUT.pkl','r', 'N/A')[1])
 train_set=1
 if ModelMeta.ModelType=='CNN':
    if len(ModelMeta.TrainSessionsData)==0:
-       TrainSamples=UI.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_TRACK_OUTPUT_1.pkl','r', 'N/A')[0]
+       TrainSamples=UI.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_TRACK_OUTPUT_1.pkl','r', 'N/A')[0][:10]
        print(UI.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_TRACK_OUTPUT_1.pkl','r', 'N/A')[1])
        train_set=1
    else:
@@ -138,7 +135,7 @@ if ModelMeta.ModelType=='CNN':
                print(UI.PickleOperations(next_file,'r', 'N/A')[1])
            else:
                train_set=1
-               TrainSamples=UI.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_TRACK_OUTPUT_1.pkl','r', 'N/A')[0]
+               TrainSamples=UI.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_TRACK_OUTPUT_1.pkl','r', 'N/A')[0][:10]
                print(UI.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_TRACK_OUTPUT_1.pkl','r', 'N/A')[1])
         break
    NTrainBatches=math.ceil(float(len(TrainSamples))/float(TrainParams[1]))
@@ -222,15 +219,16 @@ def main(self):
         records=[]
         for epoch in range(0, TrainParams[2]):
             train_loss, itr=CNNtrain(model, TrainSamples, NTrainBatches,OutputSize),len(TrainSamples)
-            val_loss=CNNvalidate(model, ValSamples, NValBatches,ModelMeta.ModelParameters[10][1])
+            val_loss=CNNvalidate(model, ValSamples, NValBatches,OutputSize)
             test_loss=val_loss
             print(UI.TimeStamp(),'Epoch ',epoch, ' is completed')
+            print([epoch,itr,train_loss[0],0.5,val_loss[0],val_loss[1],test_loss[0],test_loss[1],train_set])
             records.append([epoch,itr,train_loss[0],0.5,val_loss[0],val_loss[1],test_loss[0],test_loss[1],train_set])
         model.save(Model_Path)
         Header=[['Epoch','# Samples','Train Loss','Optimal Threshold','Validation Loss','Validation Accuracy','Test Loss','Test Accuracy','Training Set']]
         Header+=records
         ModelMeta.CompleteTrainingSession(Header)
-        print(UF.PickleOperations(Model_Meta_Path, 'w', ModelMeta)[1])
+        print(UI.PickleOperations(Model_Meta_Path, 'w', ModelMeta)[1])
         exit()
     # elif ModelMeta.ModelType=='GNN':
     #     from torch import optim
