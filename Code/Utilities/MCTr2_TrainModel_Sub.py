@@ -71,8 +71,10 @@ def CNNtrain(model, Sample, Batches,num_classes):
         StartSeed=(ib*TrainParams[1])+1
         EndSeed=StartSeed+TrainParams[1]-1
         BatchImages=EMO.LoadRenderImages(Sample,StartSeed,EndSeed,num_classes)
+        print(BatchImages[0],BatchImages[1])
         t=model.train_on_batch(BatchImages[0],BatchImages[1],reset_metrics=False)
         print(t)
+        x=input()
     return t
 
 # def GNNtrain(model, Sample,optimizer):
@@ -214,13 +216,12 @@ def main(self):
              print(UI.TimeStamp(), bcolors.WARNING+"Model/state data files are missing, skipping this step..." +bcolors.ENDC)
              model = ML.GenerateModel(ModelMeta,TrainParams)
         model.summary()
-        exit()
         records=[]
         for epoch in range(0, TrainParams[2]):
             train_loss, itr=CNNtrain(model, TrainSamples, NTrainBatches,ModelMeta.ModelParameters[10][1]),len(TrainSamples)
             val_loss=CNNvalidate(model, ValSamples, NValBatches,ModelMeta.ModelParameters[10][1])
             test_loss=val_loss
-            print(UF.TimeStamp(),'Epoch ',epoch, ' is completed')
+            print(UI.TimeStamp(),'Epoch ',epoch, ' is completed')
             records.append([epoch,itr,train_loss[0],0.5,val_loss[0],val_loss[1],test_loss[0],test_loss[1],train_set])
         model.save(Model_Path)
         Header=[['Epoch','# Samples','Train Loss','Optimal Threshold','Validation Loss','Validation Accuracy','Test Loss','Test Accuracy','Training Set']]
