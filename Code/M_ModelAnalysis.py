@@ -64,7 +64,7 @@ ModelMeta.IniModelMeta(ModelParams,ModelFramework, Meta, ModelArchitecture, Mode
 if ModelType=='CNN':
         import os
         os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # FATAL
-        model = ML.GenerateModel(ModelMeta,[0,0,0,0])
+        model = ML.GenerateModel(ModelMeta,[0.001,0,0,0])
         model.summary()
 elif ModelMeta.ModelType=='GNN':
         import torch
