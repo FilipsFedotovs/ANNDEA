@@ -72,7 +72,7 @@ def CNNtrain(model, Sample, Batches,num_classes):
         EndSeed=StartSeed+TrainParams[1]-1
         BatchImages=EMO.LoadRenderImages(Sample,StartSeed,EndSeed,num_classes)
         print(BatchImages[0],BatchImages[1])
-        t=model.train_on_batch(BatchImages[0],BatchImages[1],reset_metrics=False)
+        t=model.train_on_batch(BatchImages[0],BatchImages[1])
         print(t)
         x=input()
     return t
