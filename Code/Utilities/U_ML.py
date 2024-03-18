@@ -903,7 +903,7 @@ def GenerateModel(ModelMeta,TrainParams=None):
             if OutputLayer[1]==1:
                 model.add(Dense(OutputLayer[1]))
                 opt = Adam(learning_rate=TrainParams[0])
-                model.compile(loss='mean_squared_loss',optimizer=opt,metrics=['mse'])
+                model.compile(loss='mean_squared_error',optimizer=opt,metrics=['mse'])
             else:
                 model.add(Dense(OutputLayer[1], activation=act_fun_list[OutputLayer[0]]))
                 opt = Adam(learning_rate=TrainParams[0])
