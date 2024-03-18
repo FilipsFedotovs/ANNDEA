@@ -46,7 +46,7 @@ print(UI.TimeStamp(), bcolors.OKGREEN+"Modules Have been imported successfully..
 def zero_divide(a, b):
     if (b==0): return 0
     return a/b
-Meta=ML.TrainingSampleMeta('N/A')
+Meta=UI.TrainingSampleMeta('N/A')
 Meta.IniTrackSeedMetaData(0,0,0,0,[],0,[],0,0)
 ModelMeta=ML.ModelMeta('N/A')
 ModelMeta.IniModelMeta(ModelParams,ModelFramework, Meta, ModelArchitecture, ModelType)

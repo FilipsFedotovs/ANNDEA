@@ -82,6 +82,7 @@ class ModelMeta:
                     return 2
             else:
                 return 0
+
 def GenerateModel(ModelMeta,TrainParams=None):
       if ModelMeta.ModelFramework=='PyTorch':
          import torch
