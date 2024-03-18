@@ -53,7 +53,7 @@ import U_ML as ML
 ##############################################################################################################################
 ######################################### Starting the program ################################################################
 UI.WelcomeMsg('Initialising ANNDEA model validation unit...','Filips Fedotovs (PhD student at UCL), Wenqing Xie (MSc student at UCL)','Please reach out to filips.fedotovs@cern.ch for any queries')
-print(UI.TimeStamp(), bcolors.OKGREEN+"Modules Have been imported successfully..."+bcolors.ENDC)
+
 def zero_divide(a, b):
     if (b==0): return 0
     return a/b
