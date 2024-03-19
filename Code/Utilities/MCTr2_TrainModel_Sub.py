@@ -80,7 +80,7 @@ def CNNtrain(model, Sample, Batches,num_classes):
         EndSeed=StartSeed+TrainParams[1]-1
         BatchImages=EMO.LoadRenderImages(Sample,StartSeed,EndSeed,num_classes)
         t=model.train_on_batch(BatchImages[0],BatchImages[1])
-    return t[0][0]
+    return t[0]
 
 # def GNNtrain(model, Sample,optimizer):
 #     model.train()
@@ -111,7 +111,7 @@ def CNNvalidate(model, Sample, Batches,num_classes):
         EndSeed=StartSeed+TrainParams[1]-1
         BatchImages=EMO.LoadRenderImages(Sample,StartSeed,EndSeed,num_classes)
         v=model.test_on_batch(BatchImages[0],BatchImages[1])
-    return v[0][0]
+    return v[0]
 
 
 
@@ -230,6 +230,7 @@ def main(self):
             train_loss, itr=CNNtrain(model, TrainSamples, NTrainBatches,OutputSize),len(TrainSamples)
             val_loss=CNNvalidate(model, ValSamples, NValBatches,OutputSize)
             print(train_loss)
+            print(type(train_loss))
             print(val_loss)
             exit()
             test_loss=val_loss
