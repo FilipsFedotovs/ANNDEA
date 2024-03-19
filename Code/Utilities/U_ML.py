@@ -828,7 +828,8 @@ def GenerateModel(ModelMeta,TrainParams=None):
                         self.conv3 = GMMConv(HiddenLayer[1][0],HiddenLayer[2][0],dim=4,kernel_size=HiddenLayer[2][1])
                         self.conv4 = GMMConv(HiddenLayer[2][0],HiddenLayer[3][0],dim=4,kernel_size=HiddenLayer[3][1])
                         self.lin = Linear(HiddenLayer[3][0],OutputLayer[1])
-                    self.softmax = Softmax(dim=-1)
+                    if OutputLayer[1]>1:
+                        self.softmax = Softmax(dim=-1)
 
                 def forward(self, x, edge_index, edge_attr, batch):
                     # 1. Obtain node embeddings
