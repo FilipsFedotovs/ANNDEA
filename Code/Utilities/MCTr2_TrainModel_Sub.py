@@ -216,23 +216,24 @@ def main(self):
         for epoch in range(0, TrainParams[2]):
             train_loss,itr= ML.GNNtrain(model,TrainSamples, optimizer,ModelMeta.ModelParameters[0][1],criterion),len(TrainSamples.dataset)
             print(train_loss)
-            # val=ML.GNNvalidate(model,  ValSamples)
-            # val_loss=val[1]
-            # val_acc=val[0]
-            # test_loss=val_loss
-            # test_acc=val_acc
+            val=ML.GNNvalidate(model,  ValSamples)
+            val_loss=val[1]
+            val_acc=val[0]
+            test_loss=val_loss
+            test_acc=val_acc
             scheduler.step()
             print(UI.TimeStamp(),'Epoch ',epoch, ' is completed')
-            # records.append([epoch,itr,train_loss.item(),0.5,val_loss,val_acc,test_loss,test_acc,train_set])
-        #     torch.save({    'epoch': epoch,
-        #                   'optimizer_state_dict': optimizer.state_dict(),
-        #                   'scheduler': scheduler.state_dict(),    # HERE IS THE CHANGE
-        #                   }, State_Save_Path)
-        # torch.save(model.state_dict(), Model_Path)
-        # Header=[['Epoch','# Samples','Train Loss','Optimal Threshold','Validation Loss','Validation Accuracy','Test Loss','Test Accuracy','Training Set']]
-        # Header+=records
-        # ModelMeta.CompleteTrainingSession(Header)
-        # print(UF.PickleOperations(Model_Meta_Path, 'w', ModelMeta)[1])
+            print([epoch,itr,train_loss.item(),0.5,val_loss,val_acc,test_loss,test_acc,train_set])
+            records.append([epoch,itr,train_loss.item(),0.5,val_loss,val_acc,test_loss,test_acc,train_set])
+            torch.save({    'epoch': epoch,
+                          'optimizer_state_dict': optimizer.state_dict(),
+                          'scheduler': scheduler.state_dict(),    # HERE IS THE CHANGE
+                          }, State_Save_Path)
+        torch.save(model.state_dict(), Model_Path)
+        Header=[['Epoch','# Samples','Train Loss','Optimal Threshold','Validation Loss','Validation Accuracy','Test Loss','Test Accuracy','Training Set']]
+        Header+=records
+        ModelMeta.CompleteTrainingSession(Header)
+        print(UI.PickleOperations(Model_Meta_Path, 'w', ModelMeta)[1])
         exit()
 if __name__ == '__main__':
      main(sys.argv[1:])

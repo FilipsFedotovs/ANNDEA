@@ -979,8 +979,6 @@ def GNNtrain(model, Sample, optimizer,num_classes,criterion):
     for data in Sample:
         out = model(data.x, data.edge_index, data.edge_attr, data.batch)
         loss = criterion(out, data.y)
-        print(loss)
-        exit()
         loss.backward()  # Derive gradients.
         optimizer.step()  # Update parameters based on gradients.
         optimizer.zero_grad()
