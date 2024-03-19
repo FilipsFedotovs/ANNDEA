@@ -195,7 +195,7 @@ def main(self):
         Model_Path=EOSsubModelDIR+'/'+ModelName
         ModelMeta=UI.PickleOperations(Model_Meta_Path, 'r', 'N/A')[0]
         device = torch.device('cpu')
-        model = UI.GenerateModel(ModelMeta).to(device)
+        model = ML.GenerateModel(ModelMeta).to(device)
         print(model)
         exit()
         optimizer = optim.Adam(model.parameters(), lr=TrainParams[0])
