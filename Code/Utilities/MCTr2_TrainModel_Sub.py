@@ -111,7 +111,7 @@ def CNNvalidate(model, Sample, Batches,num_classes):
         EndSeed=StartSeed+TrainParams[1]-1
         BatchImages=EMO.LoadRenderImages(Sample,StartSeed,EndSeed,num_classes)
         v=model.test_on_batch(BatchImages[0],BatchImages[1])
-    return v[0]
+    return v
 
 
 
@@ -233,8 +233,8 @@ def main(self):
             print(val_loss)
             test_loss=val_loss
             print(UI.TimeStamp(),'Epoch ',epoch, ' is completed')
-            print([epoch,itr,train_loss.item(),0.5,val_loss.item(),val_loss.item(),test_loss.item(),test_loss.item(),train_set])
-            records.append([epoch,itr,train_loss.item(),0.5,val_loss.item(),val_loss.item(),test_loss.item(),test_loss.item(),train_set])
+            print([epoch,itr,train_loss.item(),0.5,val_loss[0].item(),val_loss[1].item(),test_loss[0].item(),test_loss[1].item(),train_set])
+            records.append([epoch,itr,train_loss.item(),0.5,val_loss[0].item(),val_loss[1].item(),test_loss[0].item(),test_loss[1].item(),train_set])
         model.save(Model_Path)
         Header=[['Epoch','# Samples','Train Loss','Optimal Threshold','Validation Loss','Validation Accuracy','Test Loss','Test Accuracy','Training Set']]
         Header+=records
