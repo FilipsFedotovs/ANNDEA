@@ -111,6 +111,7 @@ def CNNvalidate(model, Sample, Batches,num_classes):
         EndSeed=StartSeed+TrainParams[1]-1
         BatchImages=EMO.LoadRenderImages(Sample,StartSeed,EndSeed,num_classes)
         v=model.test_on_batch(BatchImages[0],BatchImages[1])
+        print(v)
     return v
 
 
