@@ -241,26 +241,15 @@ JobSets=Meta.JobSets
 MaxSegments=Meta.MaxSegments
 TotJobs=JobSets
 #The function bellow helps to monitor the HTCondor jobs and keep the submission flow
-exit()
 
-# if Mode=='RESET':
-#     print(UF.TimeStamp(),'Performing the cleanup... ',bcolors.ENDC)
-#     HTCondorTag="SoftUsed == \"ANNDEA-RCTr1a-"+RecBatchID+"\""
-#     UF.RecCleanUp(AFS_DIR, EOS_DIR, 'RCTr1a_'+RecBatchID, ['RCTr1a'], HTCondorTag)
-#     FreshStart=False
-#     UpdateStatus(0)
-#     Status=0
-# else:
-#     print(UF.TimeStamp(),'Analysing the current script status...',bcolors.ENDC)
-#     Status=Meta.Status[-1]
-#
-# print(UF.TimeStamp(),'Current status is ',Status,bcolors.ENDC)
+
+
+#The function bellow helps to automate the submission process
+UI.Msg('vanilla','Analysing the current script status...')
+Status=Meta.Status[-1]
+UI.Msg('vanilla','Current stage is '+str(Status)+'...')
+
 # ################ Set the execution sequence for the script
-# Program=[]
-# if Mode=='CLEANUP':
-#     UpdateStatus(19)
-#     Status=19
-#
 # # ###### Stage 1
 # prog_entry=[]
 # prog_entry.append(' Sending tracks to the HTCondor, so track segment combinations can be formed...')
