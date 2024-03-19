@@ -212,7 +212,7 @@ def main(self):
         import warnings
         warnings.simplefilter(action='ignore', category=FutureWarning)
         import tensorflow as tf
-        from tensorflow import keras
+        import keras
         from keras import backend as K
         try:
             model=tf.keras.models.load_model(Model_Path)
