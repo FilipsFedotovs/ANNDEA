@@ -175,13 +175,10 @@ def main(self):
         for epoch in range(0, TrainParams[2]):
             train_loss, itr=ML.CNNtrain(model, TrainSamples, NTrainBatches,OutputSize,TrainParams[1]),len(TrainSamples)
             val_loss=ML.CNNvalidate(model, ValSamples, NValBatches,OutputSize,TrainParams[1])
-            print(train_loss)
-            print(val_loss)
-            exit()
             test_loss=val_loss
             print(UI.TimeStamp(),'Epoch ',epoch, ' is completed')
-            print([epoch,itr,train_loss.item(),0.5,val_loss[0].item(),val_loss[1].item(),test_loss[0].item(),test_loss[1].item(),train_set])
-            records.append([epoch,itr,train_loss.item(),0.5,val_loss[0].item(),val_loss[1].item(),test_loss[0].item(),test_loss[1].item(),train_set])
+            print([epoch,itr,train_loss[0],0.5,val_loss[0],val_loss[1],test_loss[0],test_loss[1],train_set])
+            records.append([epoch,itr,train_loss[0],0.5,val_loss[0],val_loss[1],test_loss[0],test_loss[1],train_set])
         model.save(Model_Path)
         Header=[['Epoch','# Samples','Train Loss','Optimal Threshold','Validation Loss','Validation Accuracy','Test Loss','Test Accuracy','Training Set']]
         Header+=records
