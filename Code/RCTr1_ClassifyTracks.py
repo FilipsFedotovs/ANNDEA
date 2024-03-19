@@ -80,7 +80,6 @@ else:
     time_int=10
 JobFlavour=args.JobFlavour
 RequestExtCPU=int(args.RequestExtCPU)
-RemoveTracksZ=ast.literal_eval(args.RemoveTracksZ)
 ReqMemory=args.ReqMemory
 Xmin,Xmax,Ymin,Ymax=float(args.Xmin),float(args.Xmax),float(args.Ymin),float(args.Ymax)
 SliceData=max(Xmin,Xmax,Ymin,Ymax)>0 #We don't slice data if all values are set to zero simultaneousy (which is the default setting)
