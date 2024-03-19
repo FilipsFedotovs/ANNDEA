@@ -231,6 +231,7 @@ def main(self):
             val_loss=CNNvalidate(model, ValSamples, NValBatches,OutputSize)
             print(train_loss)
             print(val_loss)
+            exit()
             test_loss=val_loss
             print(UI.TimeStamp(),'Epoch ',epoch, ' is completed')
             print([epoch,itr,train_loss.item(),0.5,val_loss[0].item(),val_loss[1].item(),test_loss[0].item(),test_loss[1].item(),train_set])
