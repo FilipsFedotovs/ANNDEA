@@ -146,7 +146,6 @@ elif ModelMeta.ModelType=='GNN':
 
 print(UI.TimeStamp(), bcolors.OKGREEN+"Train and Validation data has loaded and analysed successfully..."+bcolors.ENDC)
 print(len(TrainSamples),len(ValSamples))
-exit()
 def main(self):
     Model_Meta_Path=EOSsubModelDIR+'/'+ModelName+'_Meta'
    
@@ -187,49 +186,50 @@ def main(self):
         ModelMeta.CompleteTrainingSession(Header)
         print(UI.PickleOperations(Model_Meta_Path, 'w', ModelMeta)[1])
         exit()
-    # elif ModelMeta.ModelType=='GNN':
-    #     from torch import optim
-    #     from torch.optim.lr_scheduler import StepLR
-    #     print(UF.TimeStamp(),'Starting the training process... ')
-    #     State_Save_Path=EOSsubModelDIR+'/'+ModelName+'_State'
-    #     Model_Meta_Path=EOSsubModelDIR+'/'+ModelName+'_Meta'
-    #     Model_Path=EOSsubModelDIR+'/'+ModelName
-    #     ModelMeta=UF.PickleOperations(Model_Meta_Path, 'r', 'N/A')[0]
-    #     device = torch.device('cpu')
-    #     model = UF.GenerateModel(ModelMeta).to(device)
-    #     print(model)
-    #     optimizer = optim.Adam(model.parameters(), lr=TrainParams[0])
-    #
-    #     scheduler = StepLR(optimizer, step_size=0.1,gamma=0.1)
-    #     print(UF.TimeStamp(),'Try to load the previously saved model/optimiser state files ')
-    #     try:
-    #            model.load_state_dict(torch.load(Model_Path))
-    #            checkpoint = torch.load(State_Save_Path)
-    #            optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
-    #            scheduler.load_state_dict(checkpoint['scheduler'])
-    #     except:
-    #            print(UF.TimeStamp(), bcolors.WARNING+"Model/state data files are missing, skipping this step..." +bcolors.ENDC)
-    #     records=[]
-    #     for epoch in range(0, TrainParams[2]):
-    #         train_loss,itr= GNNtrain(model,TrainSamples, optimizer),len(TrainSamples.dataset)
-    #         val=GNNvalidate(model,  ValSamples)
-    #         val_loss=val[1]
-    #         val_acc=val[0]
-    #         test_loss=val_loss
-    #         test_acc=val_acc
-    #         scheduler.step()
-    #         print(UF.TimeStamp(),'Epoch ',epoch, ' is completed')
-    #         records.append([epoch,itr,train_loss.item(),0.5,val_loss,val_acc,test_loss,test_acc,train_set])
-    #         torch.save({    'epoch': epoch,
-    #                       'optimizer_state_dict': optimizer.state_dict(),
-    #                       'scheduler': scheduler.state_dict(),    # HERE IS THE CHANGE
-    #                       }, State_Save_Path)
-    #     torch.save(model.state_dict(), Model_Path)
-    #     Header=[['Epoch','# Samples','Train Loss','Optimal Threshold','Validation Loss','Validation Accuracy','Test Loss','Test Accuracy','Training Set']]
-    #     Header+=records
-    #     ModelMeta.CompleteTrainingSession(Header)
-    #     print(UF.PickleOperations(Model_Meta_Path, 'w', ModelMeta)[1])
-    #     exit()
+    elif ModelMeta.ModelType=='GNN':
+        from torch import optim
+        from torch.optim.lr_scheduler import StepLR
+        print(UF.TimeStamp(),'Starting the training process... ')
+        State_Save_Path=EOSsubModelDIR+'/'+ModelName+'_State'
+        Model_Meta_Path=EOSsubModelDIR+'/'+ModelName+'_Meta'
+        Model_Path=EOSsubModelDIR+'/'+ModelName
+        ModelMeta=UI.PickleOperations(Model_Meta_Path, 'r', 'N/A')[0]
+        device = torch.device('cpu')
+        model = UI.GenerateModel(ModelMeta).to(device)
+        print(model)
+        exit()
+        optimizer = optim.Adam(model.parameters(), lr=TrainParams[0])
+
+        scheduler = StepLR(optimizer, step_size=0.1,gamma=0.1)
+        print(UF.TimeStamp(),'Try to load the previously saved model/optimiser state files ')
+        try:
+               model.load_state_dict(torch.load(Model_Path))
+               checkpoint = torch.load(State_Save_Path)
+               optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
+               scheduler.load_state_dict(checkpoint['scheduler'])
+        except:
+               print(UF.TimeStamp(), bcolors.WARNING+"Model/state data files are missing, skipping this step..." +bcolors.ENDC)
+        records=[]
+        for epoch in range(0, TrainParams[2]):
+            train_loss,itr= GNNtrain(model,TrainSamples, optimizer),len(TrainSamples.dataset)
+            val=GNNvalidate(model,  ValSamples)
+            val_loss=val[1]
+            val_acc=val[0]
+            test_loss=val_loss
+            test_acc=val_acc
+            scheduler.step()
+            print(UF.TimeStamp(),'Epoch ',epoch, ' is completed')
+            records.append([epoch,itr,train_loss.item(),0.5,val_loss,val_acc,test_loss,test_acc,train_set])
+            torch.save({    'epoch': epoch,
+                          'optimizer_state_dict': optimizer.state_dict(),
+                          'scheduler': scheduler.state_dict(),    # HERE IS THE CHANGE
+                          }, State_Save_Path)
+        torch.save(model.state_dict(), Model_Path)
+        Header=[['Epoch','# Samples','Train Loss','Optimal Threshold','Validation Loss','Validation Accuracy','Test Loss','Test Accuracy','Training Set']]
+        Header+=records
+        ModelMeta.CompleteTrainingSession(Header)
+        print(UF.PickleOperations(Model_Meta_Path, 'w', ModelMeta)[1])
+        exit()
 if __name__ == '__main__':
      main(sys.argv[1:])
 
