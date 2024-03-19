@@ -121,12 +121,12 @@ MetaInput=UI.PickleOperations(TrainSampleInputMeta,'r', 'N/A')
 print(MetaInput[1])
 Meta=MetaInput[0]
 Model_Meta_Path=EOSsubModelDIR+'/'+ModelName+'_Meta'
-Model_Path=EOSsubModelDIR+'/'+ModelName
 ModelMeta=UI.PickleOperations(Model_Meta_Path, 'r', 'N/A')[0]
 ValSamples=UI.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_TRACK_OUTPUT.pkl','r', 'N/A')[0][:4]
 print(UI.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_TRACK_OUTPUT.pkl','r', 'N/A')[1])
 train_set=1
 if ModelMeta.ModelType=='CNN':
+   Model_Path=EOSsubModelDIR+'/'+ModelName+'.h5'
    if len(ModelMeta.TrainSessionsData)==0:
        TrainSamples=UI.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_TRACK_OUTPUT_1.pkl','r', 'N/A')[0][:4]
        print(UI.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_TRACK_OUTPUT_1.pkl','r', 'N/A')[1])
@@ -201,10 +201,11 @@ print(UI.TimeStamp(), bcolors.OKGREEN+"Train and Validation data has loaded and 
 print(len(TrainSamples),len(ValSamples))
 def main(self):
     Model_Meta_Path=EOSsubModelDIR+'/'+ModelName+'_Meta'
-    Model_Path=EOSsubModelDIR+'/'+ModelName
+   
     ModelMeta=UI.PickleOperations(Model_Meta_Path, 'r', 'N/A')[0]
     print(UI.TimeStamp(),'Starting the training process... ')
     if ModelMeta.ModelType=='CNN':
+        Model_Path=EOSsubModelDIR+'/'+ModelName+'.h5'
         import os
         os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # FATAL
         import logging
