@@ -947,13 +947,19 @@ def zero_divide(a, b):
     return a/b
 
 def CNNtrain(model, Sample, Batches,num_classes, BatchSize):
+    loss_accumulative = 0
+    acc_accumulative = 0
     for ib in range(Batches):
         StartSeed=(ib*BatchSize)+1
         EndSeed=StartSeed+BatchSize-1
         BatchImages=LoadRenderImages(Sample,StartSeed,EndSeed,num_classes)
         t=model.train_on_batch(BatchImages[0],BatchImages[1])
+        loss_accumulative+=t[0].item()
+        acc_accumulative+=t[1].item()
         print(t)
-    return t
+    loss=loss_accumulative/range(Batches)
+    acc=acc_accumulative/range(Batches)
+    return loss,acc
 
 # def GNNtrain(model, Sample, optimizer):
 #     model.train()
@@ -986,7 +992,11 @@ def CNNvalidate(model, Sample, Batches,num_classes, BatchSize):
         EndSeed=StartSeed+BatchSize-1
         BatchImages=LoadRenderImages(Sample,StartSeed,EndSeed,num_classes)
         v=model.test_on_batch(BatchImages[0],BatchImages[1])
+        loss_accumulative+=v[0].item()
+        acc_accumulative+=v[1].item()
         print(v)
-    return v
+    loss=loss_accumulative/range(Batches)
+    acc=acc_accumulative/range(Batches)
+    return loss,acc
 
 
