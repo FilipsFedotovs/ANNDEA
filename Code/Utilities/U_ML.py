@@ -957,8 +957,8 @@ def CNNtrain(model, Sample, Batches,num_classes, BatchSize):
         loss_accumulative+=t[0].item()
         acc_accumulative+=t[1].item()
         print(t)
-    loss=loss_accumulative/range(Batches)
-    acc=acc_accumulative/range(Batches)
+    loss=loss_accumulative/Batches
+    acc=acc_accumulative/Batches
     return loss,acc
 
 # def GNNtrain(model, Sample, optimizer):
@@ -995,8 +995,8 @@ def CNNvalidate(model, Sample, Batches,num_classes, BatchSize):
         loss_accumulative+=v[0].item()
         acc_accumulative+=v[1].item()
         print(v)
-    loss=loss_accumulative/range(Batches)
-    acc=acc_accumulative/range(Batches)
+    loss=loss_accumulative/Batches
+    acc=acc_accumulative/Batches
     return loss,acc
 
 
