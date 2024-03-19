@@ -230,7 +230,7 @@ def main(self):
             train_loss, itr=CNNtrain(model, TrainSamples, NTrainBatches,OutputSize),len(TrainSamples)
             val_loss=CNNvalidate(model, ValSamples, NValBatches,OutputSize)
             print(train_loss)
-            print(val_loss)
+            print(val_loss[1])
             exit()
             test_loss=val_loss
             print(UI.TimeStamp(),'Epoch ',epoch, ' is completed')
