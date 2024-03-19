@@ -205,7 +205,7 @@ def main(self):
     ModelMeta=UI.PickleOperations(Model_Meta_Path, 'r', 'N/A')[0]
     print(UI.TimeStamp(),'Starting the training process... ')
     if ModelMeta.ModelType=='CNN':
-        Model_Path=EOSsubModelDIR+'/'+ModelName+'.h5'
+        Model_Path=EOSsubModelDIR+'/'+ModelName+'.keras'
         import os
         os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # FATAL
         import logging
@@ -229,6 +229,9 @@ def main(self):
         for epoch in range(0, TrainParams[2]):
             train_loss, itr=CNNtrain(model, TrainSamples, NTrainBatches,OutputSize),len(TrainSamples)
             val_loss=CNNvalidate(model, ValSamples, NValBatches,OutputSize)
+            print(train_loss)
+            print(train_loss)
+            exit()
             test_loss=val_loss
             print(UI.TimeStamp(),'Epoch ',epoch, ' is completed')
             print([epoch,itr,train_loss[0],0.5,val_loss[0],val_loss[1],test_loss[0],test_loss[1],train_set])
