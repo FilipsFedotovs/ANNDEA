@@ -9,14 +9,6 @@ import argparse
 import math
 import ast
 import os
-import copy
-import random
-# import torch
-# from torch import optim
-# from torch.optim.lr_scheduler import StepLR
-# import torch.nn.functional as F
-# device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-# device = "cpu"
 ########################## Visual Formatting #################################################
 class bcolors:
     HEADER = '\033[95m'
@@ -69,53 +61,6 @@ EOSsubDIR=EOS_DIR+'/'+'ANNDEA'
 EOSsubModelDIR=EOSsubDIR+'/'+'Models'
 
 ##############################################################################################################################
-def zero_divide(a, b):
-    if (b==0): return 0
-    return a/b
-
-def CNNtrain(model, Sample, Batches,num_classes):
-
-    for ib in range(Batches):
-        StartSeed=(ib*TrainParams[1])+1
-        EndSeed=StartSeed+TrainParams[1]-1
-        BatchImages=EMO.LoadRenderImages(Sample,StartSeed,EndSeed,num_classes)
-        t=model.train_on_batch(BatchImages[0],BatchImages[1])
-    return t[0]
-
-# def GNNtrain(model, Sample,optimizer):
-#     model.train()
-#     for data in Sample:
-#         out = model(data.x, data.edge_index, data.edge_attr, data.batch)
-#         loss = criterion(out, data.y)
-#         loss.backward()  # Derive gradients.
-#         optimizer.step()  # Update parameters based on gradients.
-#         optimizer.zero_grad()
-#     return loss
-
-# def GNNvalidate(model, Sample):
-#     model.eval()
-#     correct = 0
-#     loss_accumulative = 0
-#     for data in Sample:
-#          out = model(data.x, data.edge_index, data.edge_attr, data.batch)
-#          pred = out.argmax(dim=1)  # Use the class with highest probability.
-#          y_index = data.y.argmax(dim=1)
-#          correct += int((pred == y_index).sum())  # Check against ground-truth labels.
-#          loss = criterion(out, data.y)
-#          loss_accumulative += float(loss)
-#     return (correct / len(Sample.dataset), loss_accumulative/len(Sample.dataset))
-
-def CNNvalidate(model, Sample, Batches,num_classes):
-    for ib in range(Batches):
-        StartSeed=(ib*TrainParams[1])+1
-        EndSeed=StartSeed+TrainParams[1]-1
-        BatchImages=EMO.LoadRenderImages(Sample,StartSeed,EndSeed,num_classes)
-        v=model.test_on_batch(BatchImages[0],BatchImages[1])
-        print(v)
-    return v
-
-
-
 TrainSampleInputMeta=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_info.pkl'
 print(UI.TimeStamp(),'Loading the data file ',bcolors.OKBLUE+TrainSampleInputMeta+bcolors.ENDC)
 MetaInput=UI.PickleOperations(TrainSampleInputMeta,'r', 'N/A')
@@ -123,13 +68,13 @@ print(MetaInput[1])
 Meta=MetaInput[0]
 Model_Meta_Path=EOSsubModelDIR+'/'+ModelName+'_Meta'
 ModelMeta=UI.PickleOperations(Model_Meta_Path, 'r', 'N/A')[0]
-ValSamples=UI.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_TRACK_OUTPUT.pkl','r', 'N/A')[0][:8]
+ValSamples=UI.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_TRACK_OUTPUT.pkl','r', 'N/A')[0][:12]
 print(UI.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_TRACK_OUTPUT.pkl','r', 'N/A')[1])
 train_set=1
 if ModelMeta.ModelType=='CNN':
    Model_Path=EOSsubModelDIR+'/'+ModelName+'.h5'
    if len(ModelMeta.TrainSessionsData)==0:
-       TrainSamples=UI.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_TRACK_OUTPUT_1.pkl','r', 'N/A')[0][:8]
+       TrainSamples=UI.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_TRACK_OUTPUT_1.pkl','r', 'N/A')[0][:12]
        print(UI.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_TRACK_OUTPUT_1.pkl','r', 'N/A')[1])
        train_set=1
    else:
@@ -144,7 +89,7 @@ if ModelMeta.ModelType=='CNN':
                print(UI.PickleOperations(next_file,'r', 'N/A')[1])
            else:
                train_set=1
-               TrainSamples=UI.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_TRACK_OUTPUT_1.pkl','r', 'N/A')[0][:8]
+               TrainSamples=UI.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_TRACK_OUTPUT_1.pkl','r', 'N/A')[0][:12]
                print(UI.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_TRACK_OUTPUT_1.pkl','r', 'N/A')[1])
         break
    NTrainBatches=math.ceil(float(len(TrainSamples))/float(TrainParams[1]))
@@ -228,10 +173,11 @@ def main(self):
              OutputSize=el[1]
         records=[]
         for epoch in range(0, TrainParams[2]):
-            train_loss, itr=CNNtrain(model, TrainSamples, NTrainBatches,OutputSize),len(TrainSamples)
-            val_loss=CNNvalidate(model, ValSamples, NValBatches,OutputSize)
+            train_loss, itr=ML.CNNtrain(model, TrainSamples, NTrainBatches,OutputSize,TrainParams[1]),len(TrainSamples)
+            val_loss=ML.CNNvalidate(model, ValSamples, NValBatches,OutputSize,TrainParams[1])
             print(train_loss)
-            print(val_loss[1])
+            print(val_loss)
+            exit()
             test_loss=val_loss
             print(UI.TimeStamp(),'Epoch ',epoch, ' is completed')
             print([epoch,itr,train_loss.item(),0.5,val_loss[0].item(),val_loss[1].item(),test_loss[0].item(),test_loss[1].item(),train_set])

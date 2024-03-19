@@ -911,4 +911,82 @@ def GenerateModel(ModelMeta,TrainParams=None):
      # Compile the model
             return model
 
+def LoadRenderImages(Seeds,StartSeed,EndSeed,num_classes=2):
+    import tensorflow as tf
+    NewSeeds=Seeds[StartSeed-1:min(EndSeed,len(Seeds))]
+    ImagesY=np.empty([len(NewSeeds),1])
+
+    ImagesX=np.empty([len(NewSeeds),NewSeeds[0].H,NewSeeds[0].W,NewSeeds[0].L],dtype=np.float16)
+    for im in range(len(NewSeeds)):
+        if num_classes>1:
+            if hasattr(NewSeeds[im],'Label'):
+               ImagesY[im]=int(float(NewSeeds[im].Label))
+            else:
+               ImagesY[im]=0
+        else:
+            if hasattr(NewSeeds[im],'Label'):
+               ImagesY[im]=float(NewSeeds[im].Label)
+            else:
+               ImagesY[im]=0.0
+        BlankRenderedImage=[]
+        for x in range(-NewSeeds[im].bX,NewSeeds[im].bX):
+          for y in range(-NewSeeds[im].bY,NewSeeds[im].bY):
+            for z in range(0,NewSeeds[im].bZ):
+             BlankRenderedImage.append(0)
+        RenderedImage = np.array(BlankRenderedImage)
+        RenderedImage = np.reshape(RenderedImage,(NewSeeds[im].H,NewSeeds[im].W,NewSeeds[im].L))
+        for Hits in NewSeeds[im].TrackPrint:
+                   RenderedImage[Hits[0]+NewSeeds[im].bX][Hits[1]+NewSeeds[im].bY][Hits[2]]=1
+        ImagesX[im]=RenderedImage
+    ImagesX= ImagesX[..., np.newaxis]
+    if num_classes>1:
+        ImagesY=tf.keras.utils.to_categorical(ImagesY,num_classes)
+    return (ImagesX,ImagesY)
+def zero_divide(a, b):
+    if (b==0): return 0
+    return a/b
+
+def CNNtrain(model, Sample, Batches,num_classes, BatchSize):
+    for ib in range(Batches):
+        StartSeed=(ib*BatchSize)+1
+        EndSeed=StartSeed+BatchSize-1
+        BatchImages=LoadRenderImages(Sample,StartSeed,EndSeed,num_classes)
+        t=model.train_on_batch(BatchImages[0],BatchImages[1])
+        print(t)
+    return t
+
+# def GNNtrain(model, Sample, optimizer):
+#     model.train()
+#     for data in Sample:
+#         out = model(data.x, data.edge_index, data.edge_attr, data.batch)
+#         loss = criterion(out, data.y)
+#         loss.backward()  # Derive gradients.
+#         optimizer.step()  # Update parameters based on gradients.
+#         optimizer.zero_grad()
+#     return loss
+#
+# def GNNvalidate(model, Sample):
+#     model.eval()
+#     correct = 0
+#     loss_accumulative = 0
+#     for data in Sample:
+#          out = model(data.x, data.edge_index, data.edge_attr, data.batch)
+#          pred = out.argmax(dim=1)  # Use the class with the highest probability.
+#          y_index = data.y.argmax(dim=1)
+#          correct += int((pred == y_index).sum())  # Check against ground-truth labels.
+#          loss = criterion(out, data.y)
+#          loss_accumulative += float(loss)
+#     return (correct / len(Sample.dataset), loss_accumulative/len(Sample.dataset))
+
+def CNNvalidate(model, Sample, Batches,num_classes, BatchSize):
+    loss_accumulative = 0
+    acc_accumulative = 0
+    for ib in range(Batches):
+        StartSeed=(ib*BatchSize)+1
+        EndSeed=StartSeed+BatchSize-1
+        BatchImages=LoadRenderImages(Sample,StartSeed,EndSeed,num_classes)
+        v=model.test_on_batch(BatchImages[0],BatchImages[1])
+        print(v)
+    return v
+
 
