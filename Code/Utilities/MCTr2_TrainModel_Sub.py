@@ -102,7 +102,7 @@ if ModelMeta.ModelType=='CNN':
 
 elif ModelMeta.ModelType=='GNN':
        import torch
-       criterion = torch.nn.CrossEntropyLoss()
+
        if len(ModelMeta.TrainSessionsData)==0:
            TrainSamples=UI.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_TRACK_OUTPUT_1.pkl','r', 'N/A')[0][:12]
            print(UI.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_TRACK_OUTPUT_1.pkl','r', 'N/A')[1])
@@ -196,29 +196,34 @@ def main(self):
         ModelMeta=UI.PickleOperations(Model_Meta_Path, 'r', 'N/A')[0]
         device = torch.device('cpu')
         model = ML.GenerateModel(ModelMeta).to(device)
-        print(model)
-        exit()
         optimizer = optim.Adam(model.parameters(), lr=TrainParams[0])
-
         scheduler = StepLR(optimizer, step_size=0.1,gamma=0.1)
-        print(UF.TimeStamp(),'Try to load the previously saved model/optimiser state files ')
+        print(UI.TimeStamp(),'Try to load the previously saved model/optimiser state files ')
         try:
                model.load_state_dict(torch.load(Model_Path))
                checkpoint = torch.load(State_Save_Path)
                optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
                scheduler.load_state_dict(checkpoint['scheduler'])
         except:
-               print(UF.TimeStamp(), bcolors.WARNING+"Model/state data files are missing, skipping this step..." +bcolors.ENDC)
+               print(UI.TimeStamp(), bcolors.WARNING+"Model/state data files are missing, skipping this step..." +bcolors.ENDC)
         records=[]
+        if ModelMeta.ModelParameters[0][1]==1:
+           criterion=torch.nn.MSELoss()
+           print('MSE')
+        else:
+            criterion = torch.nn.CrossEntropyLoss()
+            print('Xentropy')
         for epoch in range(0, TrainParams[2]):
-            train_loss,itr= GNNtrain(model,TrainSamples, optimizer),len(TrainSamples.dataset)
-            val=GNNvalidate(model,  ValSamples)
+            train_loss,itr= ML.GNNtrain(model,TrainSamples, optimizer,ModelMeta.ModelParameters[0][1],criterion),len(TrainSamples.dataset)
+            print(train_loss)
+            exit()
+            val=ML.GNNvalidate(model,  ValSamples)
             val_loss=val[1]
             val_acc=val[0]
             test_loss=val_loss
             test_acc=val_acc
             scheduler.step()
-            print(UF.TimeStamp(),'Epoch ',epoch, ' is completed')
+            print(UI.TimeStamp(),'Epoch ',epoch, ' is completed')
             records.append([epoch,itr,train_loss.item(),0.5,val_loss,val_acc,test_loss,test_acc,train_set])
             torch.save({    'epoch': epoch,
                           'optimizer_state_dict': optimizer.state_dict(),
