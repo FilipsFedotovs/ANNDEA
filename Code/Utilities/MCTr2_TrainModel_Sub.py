@@ -189,7 +189,7 @@ def main(self):
     elif ModelMeta.ModelType=='GNN':
         from torch import optim
         from torch.optim.lr_scheduler import StepLR
-        print(UF.TimeStamp(),'Starting the training process... ')
+        print(UI.TimeStamp(),'Starting the training process... ')
         State_Save_Path=EOSsubModelDIR+'/'+ModelName+'_State'
         Model_Meta_Path=EOSsubModelDIR+'/'+ModelName+'_Meta'
         Model_Path=EOSsubModelDIR+'/'+ModelName
