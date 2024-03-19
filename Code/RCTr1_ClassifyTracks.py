@@ -107,56 +107,101 @@ elif Mode=='CLEANUP':
 else:
     print(UI.ManageFolders(AFS_DIR, EOS_DIR, RecBatchID,'c'))
 print(UI.TimeStamp(),bcolors.BOLD+'Stage 0:'+bcolors.ENDC+' Preparing the source data...')
-exit()
+
 if os.path.isfile(required_file_location)==False or Mode=='RESET':
         if os.path.isfile(EOSsubModelMetaDIR)==False:
               print(UI.TimeStamp(), bcolors.FAIL+"Fail to proceed further as the model file "+EOSsubModelMetaDIR+ " has not been found..."+bcolors.ENDC)
               exit()
         else:
-           print(UF.TimeStamp(),'Loading previously saved data from ',bcolors.OKBLUE+EOSsubModelMetaDIR+bcolors.ENDC)
-           MetaInput=UF.PickleOperations(EOSsubModelMetaDIR,'r', 'N/A')
+           print(UI.TimeStamp(),'Loading previously saved data from ',bcolors.OKBLUE+EOSsubModelMetaDIR+bcolors.ENDC)
+           MetaInput=UI.PickleOperations(EOSsubModelMetaDIR,'r', 'N/A')
            Meta=MetaInput[0]
            ClassHeaders=Meta.ClassHeaders
            ClassValues=Meta.ClassValues
            ClassNames=Meta.ClassNames
            MaxSegments=PM.MaxSegments
            MinHitsTrack=Meta.MinHitsTrack
-        print(UF.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+initial_input_file_location+bcolors.ENDC)
+        print(UI.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+initial_input_file_location+bcolors.ENDC)
         data=pd.read_csv(initial_input_file_location,
                     header=0,
                     usecols=ColumnsToImport)
         total_rows=len(data.axes[0])
-        print(UF.TimeStamp(),'The raw data has ',total_rows,' hits')
-        print(UF.TimeStamp(),'Removing unreconstructed hits...')
+        print(UI.TimeStamp(),'The raw data has ',total_rows,' hits')
+        print(UI.TimeStamp(),'Removing unreconstructed hits...')
         data=data.dropna()
         final_rows=len(data.axes[0])
-        print(UF.TimeStamp(),'The cleaned data has ',final_rows,' hits')
+        print(UI.TimeStamp(),'The cleaned data has ',final_rows,' hits')
         data[BrickID] = data[BrickID].astype(str)
         data[TrackID] = data[TrackID].astype(str)
 
         data['Rec_Seg_ID'] = data[TrackID] + '-' + data[BrickID]
         data=data.drop([TrackID],axis=1)
         data=data.drop([BrickID],axis=1)
-        if len(RemoveTracksZ)>0:
-            print(UF.TimeStamp(),'Removing tracks based on start point')
-            TracksZdf = pd.DataFrame(RemoveTracksZ, columns = ['Bad_z'], dtype=float)
-            data_aggregated=data.groupby(['Rec_Seg_ID'])['z'].min().reset_index()
-            data_aggregated=data_aggregated.rename(columns={'z': "PosBad_Z"})
+        RZChoice = input('Would you like to remove tracks based on the starting plate? If no, press "Enter", otherwise type "y", followed by "Enter" : ')
+        if RZChoice.upper()=='Y':
+            print(UI.TimeStamp(),'Removing tracks based on start point')
+            data_aggregated=data.groupby(['Rec_Seg_ID'])[PM.z].min().reset_index()
+            data_aggregated_show=data_aggregated.groupby([PM.z]).count().reset_index()
+            data_aggregated_show=data_aggregated_show.rename(columns={'Rec_Seg_ID': "No_Tracks"})
+            data_aggregated_show['PID']=data_aggregated_show[PM.z].rank(ascending=True).astype(int)
+            print('A list of plates and the number of tracks starting on them is listed bellow:')
+            print(data_aggregated_show)
+            RPChoice = input('Enter the list of plates separated by comma that you want to remove followed by "Enter" : ')
+            if len(RPChoice)>1:
+                RPChoice=ast.literal_eval(RPChoice)
+            else:
+                RPChoice=[int(RPChoice)]
+            TracksZdf = pd.DataFrame(RPChoice, columns = ['PID'], dtype=int)
+            data_aggregated_show=pd.merge(data_aggregated_show,TracksZdf,how='inner',on='PID')
+
+            data_aggregated_show.drop(['No_Tracks','PID'],axis=1,inplace=True)
+            data_aggregated=pd.merge(data_aggregated,data_aggregated_show,how='inner',on=PM.z)
+            data_aggregated=data_aggregated.rename(columns={PM.z: 'Tracks_Remove'})
+
             data=pd.merge(data, data_aggregated, how="left", on=['Rec_Seg_ID'])
-            data=pd.merge(data, TracksZdf, how="left", left_on=["PosBad_Z"], right_on=['Bad_z'])
-            data=data[data['Bad_z'].isnull()]
-            data=data.drop(['Bad_z', 'PosBad_Z'],axis=1)
+
+            data=data[data['Tracks_Remove'].isnull()]
+            data=data.drop(['Tracks_Remove'],axis=1)
         final_rows=len(data.axes[0])
-        print(UF.TimeStamp(),'After removing tracks that start at the specific plates we have',final_rows,' hits left')
+        print(UI.TimeStamp(),'After removing tracks that start at the specific plates we have',final_rows,' hits left')
+        RLChoice = input('Would you like to remove tracks based on their length in traverse plates? If no, press "Enter", otherwise type "y", followed by "Enter" : ')
+        if RLChoice.upper()=='Y':
+            print(UI.TimeStamp(),'Removing tracks based on length')
+            data_aggregated=data[['Rec_Seg_ID',PM.z]]
+            data_aggregated_l=data_aggregated.groupby(['Rec_Seg_ID'])[PM.z].min().reset_index().rename(columns={PM.z: "min_z"})
+            data_aggregated_r=data_aggregated.groupby(['Rec_Seg_ID'])[PM.z].max().reset_index().rename(columns={PM.z: "max_z"})
+            data_aggregated=pd.merge(data_aggregated_l,data_aggregated_r,how='inner', on='Rec_Seg_ID')
+            data_aggregated_list_z=data[[PM.z]].groupby([PM.z]).count().reset_index()
+            data_aggregated_list_z['PID_l']=data_aggregated_list_z[PM.z].rank(ascending=True).astype(int)
+            data_aggregated_list_z['PID_r']=data_aggregated_list_z['PID_l']
+            data_aggregated=pd.merge(data_aggregated,data_aggregated_list_z[[PM.z,'PID_l']], how='inner', left_on='min_z', right_on=PM.z)
+            data_aggregated=pd.merge(data_aggregated,data_aggregated_list_z[[PM.z,'PID_r']], how='inner', left_on='max_z', right_on=PM.z)[['Rec_Seg_ID','PID_l','PID_r']]
+            data_aggregated['track_len']=data_aggregated['PID_r']-data_aggregated['PID_l']+1
+
+            data_aggregated=data_aggregated[['Rec_Seg_ID','track_len']]
+            data_aggregated_show=data_aggregated.groupby(['track_len']).count().reset_index()
+            data_aggregated_show=data_aggregated_show.rename(columns={'Rec_Seg_ID': "No_Tracks"})
+            print('Track length distribution:')
+            print(data_aggregated_show)
+            RTLChoice = input('Enter the list of track lengths to exclude" : ')
+            if len(RTLChoice)>1:
+                RTLChoice=ast.literal_eval(RTLChoice)
+            else:
+                RTLChoice=[int(RTLChoice)]
+            TracksLdf = pd.DataFrame(RTLChoice, columns = ['track_len'], dtype=int)
+            data_aggregated=pd.merge(data_aggregated,TracksLdf,how='inner',on='track_len')
+            data=pd.merge(data, data_aggregated, how="left", on=['Rec_Seg_ID'])
+            data=data[data['track_len'].isnull()]
+            data=data.drop(['track_len'],axis=1)
         if SliceData:
-             print(UF.TimeStamp(),'Slicing the data...')
+             print(UI.TimeStamp(),'Slicing the data...')
              ValidEvents=data.drop(data.index[(data[PM.x] > Xmax) | (data[PM.x] < Xmin) | (data[PM.y] > Ymax) | (data[PM.y] < Ymin)])
              ValidEvents.drop([PM.x,PM.y,PM.z,PM.tx,PM.ty],axis=1,inplace=True)
              ValidEvents.drop_duplicates(subset="Rec_Seg_ID",keep='first',inplace=True)
              data=pd.merge(data, ValidEvents, how="inner", on=['Rec_Seg_ID'])
              final_rows=len(data.axes[0])
-             print(UF.TimeStamp(),'The sliced data has ',final_rows,' hits')
-        print(UF.TimeStamp(),'Removing tracks which have less than',MinHitsTrack,'hits...')
+             print(UI.TimeStamp(),'The sliced data has ',final_rows,' hits')
+        print(UI.TimeStamp(),'Removing tracks which have less than',MinHitsTrack,'hits...')
         track_no_data=data.groupby(['Rec_Seg_ID'],as_index=False).count()
         track_no_data=track_no_data.drop([PM.y,PM.z,PM.tx,PM.ty],axis=1)
         track_no_data=track_no_data.rename(columns={PM.x: "Track_No"})
@@ -165,7 +210,7 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         new_combined_data = new_combined_data.drop(['Track_No'],axis=1)
         new_combined_data=new_combined_data.sort_values(['Rec_Seg_ID',PM.x],ascending=[1,1])
         grand_final_rows=len(new_combined_data.axes[0])
-        print(UF.TimeStamp(),'The cleaned data has ',grand_final_rows,' hits')
+        print(UI.TimeStamp(),'The cleaned data has ',grand_final_rows,' hits')
         new_combined_data=new_combined_data.rename(columns={PM.x: "x"})
         new_combined_data=new_combined_data.rename(columns={PM.y: "y"})
         new_combined_data=new_combined_data.rename(columns={PM.z: "z"})
@@ -173,21 +218,21 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         new_combined_data=new_combined_data.rename(columns={PM.ty: "ty"})
         new_combined_data.to_csv(required_file_location,index=False)
         data=new_combined_data[['Rec_Seg_ID']]
-        print(UF.TimeStamp(),'Analysing the data sample in order to understand how many jobs to submit to HTCondor... ',bcolors.ENDC)
+        print(UI.TimeStamp(),'Analysing the data sample in order to understand how many jobs to submit to HTCondor... ',bcolors.ENDC)
         data.drop_duplicates(subset='Rec_Seg_ID',keep='first',inplace=True)
         data = data.values.tolist()
         no_submissions=math.ceil(len(data)/MaxSegments)
-        print(UF.TimeStamp(), bcolors.OKGREEN+"The track segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+required_file_location+bcolors.ENDC)
-        Meta=UF.TrainingSampleMeta(RecBatchID)
+        print(UI.TimeStamp(), bcolors.OKGREEN+"The track segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+required_file_location+bcolors.ENDC)
+        Meta=UI.TrainingSampleMeta(RecBatchID)
         Meta.IniTrackMetaData(ClassHeaders,ClassNames,ClassValues,MaxSegments,no_submissions,MinHitsTrack)
         Meta.UpdateStatus(0)
-        print(UF.PickleOperations(RecOutputMeta,'w', Meta)[1])
+        print(UI.PickleOperations(RecOutputMeta,'w', Meta)[1])
         print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
-        print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 0 has successfully completed'+bcolors.ENDC)
+        print(UI.TimeStamp(),bcolors.OKGREEN+'Stage 0 has successfully completed'+bcolors.ENDC)
 
 elif os.path.isfile(RecOutputMeta)==True:
-    print(UF.TimeStamp(),'Loading previously saved data from ',bcolors.OKBLUE+RecOutputMeta+bcolors.ENDC)
-    MetaInput=UF.PickleOperations(RecOutputMeta,'r', 'N/A')
+    print(UI.TimeStamp(),'Loading previously saved data from ',bcolors.OKBLUE+RecOutputMeta+bcolors.ENDC)
+    MetaInput=UI.PickleOperations(RecOutputMeta,'r', 'N/A')
     Meta=MetaInput[0]
 ClassHeaders=Meta.ClassHeaders
 ClassNames=Meta.ClassNames
@@ -196,238 +241,102 @@ JobSets=Meta.JobSets
 MaxSegments=Meta.MaxSegments
 TotJobs=JobSets
 #The function bellow helps to monitor the HTCondor jobs and keep the submission flow
-def AutoPilot(wait_min, interval_min, max_interval_tolerance,program):
-     print(UF.TimeStamp(),'Going on an autopilot mode for ',wait_min, 'minutes while checking HTCondor every',interval_min,'min',bcolors.ENDC)
-     wait_sec=wait_min*60
-     interval_sec=interval_min*60
-     intervals=int(math.ceil(wait_sec/interval_sec))
-     for interval in range(1,intervals+1):
-         time.sleep(interval_sec)
-         print(UF.TimeStamp(),"Scheduled job checkup...") #Progress display
-         bad_pop=UF.CreateCondorJobs(program[1][0],
-                                    program[1][1],
-                                    program[1][2],
-                                    program[1][3],
-                                    program[1][4],
-                                    program[1][5],
-                                    program[1][6],
-                                    program[1][7],
-                                    program[1][8],
-                                    program[2],
-                                    program[3],
-                                    program[1][9],
-                                    False,
-                                    program[6])
-         if len(bad_pop)>0:
-               print(UF.TimeStamp(),bcolors.WARNING+'Autopilot status update: There are still', len(bad_pop), 'HTCondor jobs remaining'+bcolors.ENDC)
-               if interval%max_interval_tolerance==0:
-                  for bp in bad_pop:
-                      UF.SubmitJobs2Condor(bp,program[5],RequestExtCPU,JobFlavour,ReqMemory)
-                  print(UF.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
-         else:
-              return True,False
-     return False,False
-#The function bellow helps to automate the submission process
-def StandardProcess(program,status,freshstart):
-        print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
-        print(UF.TimeStamp(),bcolors.BOLD+'Stage '+str(status)+':'+bcolors.ENDC+str(program[status][0]))
-        batch_sub=program[status][4]>1
-        bad_pop=UF.CreateCondorJobs(program[status][1][0],
-                                    program[status][1][1],
-                                    program[status][1][2],
-                                    program[status][1][3],
-                                    program[status][1][4],
-                                    program[status][1][5],
-                                    program[status][1][6],
-                                    program[status][1][7],
-                                    program[status][1][8],
-                                    program[status][2],
-                                    program[status][3],
-                                    program[status][1][9],
-                                    False,
-                                    program[status][6])
+exit()
 
-
-        if len(bad_pop)==0:
-             print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
-             UpdateStatus(status+1)
-             return True,False
-
-
-
-        elif (program[status][4])==len(bad_pop):
-                 bad_pop=UF.CreateCondorJobs(program[status][1][0],
-                                    program[status][1][1],
-                                    program[status][1][2],
-                                    program[status][1][3],
-                                    program[status][1][4],
-                                    program[status][1][5],
-                                    program[status][1][6],
-                                    program[status][1][7],
-                                    program[status][1][8],
-                                    program[status][2],
-                                    program[status][3],
-                                    program[status][1][9],
-                                    batch_sub,
-                                    program[status][6])
-                 print(UF.TimeStamp(),'Submitting jobs to HTCondor... ',bcolors.ENDC)
-                 _cnt=0
-                 for bp in bad_pop:
-                          if _cnt>SubGap:
-                              print(UF.TimeStamp(),'Pausing submissions for  ',str(int(SubPause/60)), 'minutes to relieve congestion...',bcolors.ENDC)
-                              time.sleep(SubPause)
-                              _cnt=0
-                          UF.SubmitJobs2Condor(bp,program[status][5],RequestExtCPU,JobFlavour,ReqMemory)
-                          _cnt+=bp[6]
-                 if program[status][5]:
-                    print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
-                    return True,False
-                 elif AutoPilot(600,time_int,Patience,program[status]):
-                        print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
-                        return True,False
-                 else:
-                        print(UF.TimeStamp(),bcolors.FAIL+'Stage '+str(status)+' is uncompleted...'+bcolors.ENDC)
-                        return False,False
-
-
-        elif len(bad_pop)>0:
-            # if freshstart:
-                   print(UF.TimeStamp(),bcolors.WARNING+'Warning, there are still', len(bad_pop), 'HTCondor jobs remaining'+bcolors.ENDC)
-                   print(bcolors.BOLD+'If you would like to wait and exit please enter E'+bcolors.ENDC)
-                   print(bcolors.BOLD+'If you would like to wait please enter enter the maximum wait time in minutes'+bcolors.ENDC)
-                   print(bcolors.BOLD+'If you would like to resubmit please enter R'+bcolors.ENDC)
-                   UserAnswer=input(bcolors.BOLD+"Please, enter your option\n"+bcolors.ENDC)
-                   if UserAnswer=='E':
-                       print(UF.TimeStamp(),'OK, exiting now then')
-                       exit()
-                   if UserAnswer=='R':
-                      _cnt=0
-                      for bp in bad_pop:
-                           if _cnt>SubGap:
-                              print(UF.TimeStamp(),'Pausing submissions for  ',str(int(SubPause/60)), 'minutes to relieve congestion...',bcolors.ENDC)
-                              time.sleep(SubPause)
-                              _cnt=0
-                           UF.SubmitJobs2Condor(bp,program[status][5],RequestExtCPU,JobFlavour,ReqMemory)
-                           _cnt+=bp[6]
-                      print(UF.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
-                      if program[status][5]:
-                          print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
-                          return True,False
-                      elif AutoPilot(600,time_int,Patience,program[status]):
-                          print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+ 'has successfully completed'+bcolors.ENDC)
-                          return True,False
-                      else:
-                          print(UF.TimeStamp(),bcolors.FAIL+'Stage '+str(status)+' is uncompleted...'+bcolors.ENDC)
-                          return False,False
-                   else:
-                      if program[status][5]:
-                          print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
-                          return True,False
-                      elif AutoPilot(int(UserAnswer),time_int,Patience,program[status]):
-                          print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+ 'has successfully completed'+bcolors.ENDC)
-                          return True,False
-                      else:
-                          print(UF.TimeStamp(),bcolors.FAIL+'Stage '+str(status)+' is uncompleted...'+bcolors.ENDC)
-                          return False,False
-
-def UpdateStatus(status):
-    Meta.UpdateStatus(status)
-    print(UF.PickleOperations(RecOutputMeta,'w', Meta)[1])
-
-if Mode=='RESET':
-    print(UF.TimeStamp(),'Performing the cleanup... ',bcolors.ENDC)
-    HTCondorTag="SoftUsed == \"ANNDEA-RCTr1a-"+RecBatchID+"\""
-    UF.RecCleanUp(AFS_DIR, EOS_DIR, 'RCTr1a_'+RecBatchID, ['RCTr1a'], HTCondorTag)
-    FreshStart=False
-    UpdateStatus(0)
-    Status=0
-else:
-    print(UF.TimeStamp(),'Analysing the current script status...',bcolors.ENDC)
-    Status=Meta.Status[-1]
-
-print(UF.TimeStamp(),'Current status is ',Status,bcolors.ENDC)
-################ Set the execution sequence for the script
-Program=[]
-if Mode=='CLEANUP':
-    UpdateStatus(19)
-    Status=19
-
-# ###### Stage 1
-prog_entry=[]
-prog_entry.append(' Sending tracks to the HTCondor, so track segment combinations can be formed...')
-prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','ClassifiedTrackSamples','RCTr1a','.pkl',RecBatchID,TotJobs,'RCTr1a_GenerateClassifiedTracks_Sub.py'])
-prog_entry.append([ " --MaxSegments ", " --ModelName "])
-prog_entry.append([MaxSegments,ModelName])
-prog_entry.append(TotJobs)
-prog_entry.append(LocalSub)
-prog_entry.append(["",""])
-if Mode=='RESET':
-        print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Delete'))
-    #Setting up folders for the output. The reconstruction of just one brick can easily generate >100k of files. Keeping all that blob in one directory can cause problems on lxplus.
-print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Create'))
-Program.append(prog_entry)
-
-Program.append('Custom')
-
-while Status<len(Program):
-    if Program[Status]!='Custom':
-        #Standard process here
-        Result=StandardProcess(Program,Status,FreshStart)
-        if Result[0]:
-             FreshStart=Result[1]
-        else:
-             Status=20
-             break
-    else:
-        if Status==1:
-            print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
-            print(UF.TimeStamp(),bcolors.BOLD+'Stage 2:'+bcolors.ENDC+' Collecting and de-duplicating the results from stage 1')
-            req_file=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RCTr1a_'+RecBatchID+'_0/RCTr1a_'+RecBatchID+'_ClassifiedTrackSamples_0.pkl'
-            base_data=UF.PickleOperations(req_file,'r', 'N/A')[0]
-            ExtractedHeader=['Rec_Seg_ID']+base_data[0].ClassHeaders
-            ExtractedData=[]
-            for i in base_data:
-                ExtractedData.append(i.Header+i.Class)
-            for i in range(1,JobSets):
-                    req_file=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RCTr1a_'+RecBatchID+'_0/RCTr1a'+'_'+RecBatchID+'_ClassifiedTrackSamples_'+str(i)+'.pkl'
-                    base_data=UF.PickleOperations(req_file,'r', 'N/A')[0]
-                    for i in base_data:
-                         ExtractedData.append(i.Header+i.Class)
-
-            ExtractedData = pd.DataFrame (ExtractedData, columns = ExtractedHeader)
-            data=pd.read_csv(args.f,header=0)
-            data.drop(base_data[0].ClassHeaders,axis=1,errors='ignore',inplace=True)
-            data['Rec_Seg_ID'] = data[TrackID].astype(str) + '-' + data[BrickID].astype(str)
-            data=pd.merge(data,ExtractedData,how='left',on=['Rec_Seg_ID'])
-            data=data.drop(['Rec_Seg_ID'],axis=1)
-            raw_name=initial_input_file_location[:-4]
-            for l in range(len(raw_name)-1,0,-1):
-                    if raw_name[l]=='/':
-                        print(l,raw_name)
-                        break
-            raw_name=raw_name[l+1:]
-            final_output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+raw_name+'_'+RecBatchID+'_CLASSIFIED_TRACKS.csv'
-            data.to_csv(final_output_file_location,index=False)
-            print(UF.TimeStamp(), bcolors.OKGREEN+"The classified track data has been written to"+bcolors.ENDC, bcolors.OKBLUE+final_output_file_location+bcolors.ENDC)
-            print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 1 has successfully completed'+bcolors.ENDC)
-            UpdateStatus(2)
-            Status=2
-            continue
-    print(UF.TimeStamp(),'Loading previously saved data from ',bcolors.OKBLUE+RecOutputMeta+bcolors.ENDC)
-    MetaInput=UF.PickleOperations(RecOutputMeta,'r', 'N/A')
-    Meta=MetaInput[0]
-    Status=Meta.Status[-1]
-
-if Status<20:
-    #Removing the temp files that were generated by the process
-    print(UF.TimeStamp(),'Performing the cleanup... ',bcolors.ENDC)
-    HTCondorTag="SoftUsed == \"ANNDEA-RCTr1a-"+RecBatchID+"\""
-    UF.RecCleanUp(AFS_DIR, EOS_DIR, 'RUTr1a_'+RecBatchID, [], HTCondorTag)
-    print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Delete'))
-    print(UF.TimeStamp(), bcolors.OKGREEN+"Track classification has been completed"+bcolors.ENDC)
-else:
-    print(UF.TimeStamp(), bcolors.FAIL+"Segment merging has not been completed as one of the processes has timed out. Please run the script again (without Reset Mode)."+bcolors.ENDC)
-    exit()
+# if Mode=='RESET':
+#     print(UF.TimeStamp(),'Performing the cleanup... ',bcolors.ENDC)
+#     HTCondorTag="SoftUsed == \"ANNDEA-RCTr1a-"+RecBatchID+"\""
+#     UF.RecCleanUp(AFS_DIR, EOS_DIR, 'RCTr1a_'+RecBatchID, ['RCTr1a'], HTCondorTag)
+#     FreshStart=False
+#     UpdateStatus(0)
+#     Status=0
+# else:
+#     print(UF.TimeStamp(),'Analysing the current script status...',bcolors.ENDC)
+#     Status=Meta.Status[-1]
+#
+# print(UF.TimeStamp(),'Current status is ',Status,bcolors.ENDC)
+# ################ Set the execution sequence for the script
+# Program=[]
+# if Mode=='CLEANUP':
+#     UpdateStatus(19)
+#     Status=19
+#
+# # ###### Stage 1
+# prog_entry=[]
+# prog_entry.append(' Sending tracks to the HTCondor, so track segment combinations can be formed...')
+# prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','ClassifiedTrackSamples','RCTr1a','.pkl',RecBatchID,TotJobs,'RCTr1a_GenerateClassifiedTracks_Sub.py'])
+# prog_entry.append([ " --MaxSegments ", " --ModelName "])
+# prog_entry.append([MaxSegments,ModelName])
+# prog_entry.append(TotJobs)
+# prog_entry.append(LocalSub)
+# prog_entry.append(["",""])
+# if Mode=='RESET':
+#         print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Delete'))
+#     #Setting up folders for the output. The reconstruction of just one brick can easily generate >100k of files. Keeping all that blob in one directory can cause problems on lxplus.
+# print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Create'))
+# Program.append(prog_entry)
+#
+# Program.append('Custom')
+#
+# while Status<len(Program):
+#     if Program[Status]!='Custom':
+#         #Standard process here
+#         Result=StandardProcess(Program,Status,FreshStart)
+#         if Result[0]:
+#              FreshStart=Result[1]
+#         else:
+#              Status=20
+#              break
+#     else:
+#         if Status==1:
+#             print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
+#             print(UF.TimeStamp(),bcolors.BOLD+'Stage 2:'+bcolors.ENDC+' Collecting and de-duplicating the results from stage 1')
+#             req_file=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RCTr1a_'+RecBatchID+'_0/RCTr1a_'+RecBatchID+'_ClassifiedTrackSamples_0.pkl'
+#             base_data=UF.PickleOperations(req_file,'r', 'N/A')[0]
+#             ExtractedHeader=['Rec_Seg_ID']+base_data[0].ClassHeaders
+#             ExtractedData=[]
+#             for i in base_data:
+#                 ExtractedData.append(i.Header+i.Class)
+#             for i in range(1,JobSets):
+#                     req_file=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RCTr1a_'+RecBatchID+'_0/RCTr1a'+'_'+RecBatchID+'_ClassifiedTrackSamples_'+str(i)+'.pkl'
+#                     base_data=UF.PickleOperations(req_file,'r', 'N/A')[0]
+#                     for i in base_data:
+#                          ExtractedData.append(i.Header+i.Class)
+#
+#             ExtractedData = pd.DataFrame (ExtractedData, columns = ExtractedHeader)
+#             data=pd.read_csv(args.f,header=0)
+#             data.drop(base_data[0].ClassHeaders,axis=1,errors='ignore',inplace=True)
+#             data['Rec_Seg_ID'] = data[TrackID].astype(str) + '-' + data[BrickID].astype(str)
+#             data=pd.merge(data,ExtractedData,how='left',on=['Rec_Seg_ID'])
+#             data=data.drop(['Rec_Seg_ID'],axis=1)
+#             raw_name=initial_input_file_location[:-4]
+#             for l in range(len(raw_name)-1,0,-1):
+#                     if raw_name[l]=='/':
+#                         print(l,raw_name)
+#                         break
+#             raw_name=raw_name[l+1:]
+#             final_output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+raw_name+'_'+RecBatchID+'_CLASSIFIED_TRACKS.csv'
+#             data.to_csv(final_output_file_location,index=False)
+#             print(UF.TimeStamp(), bcolors.OKGREEN+"The classified track data has been written to"+bcolors.ENDC, bcolors.OKBLUE+final_output_file_location+bcolors.ENDC)
+#             print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 1 has successfully completed'+bcolors.ENDC)
+#             UpdateStatus(2)
+#             Status=2
+#             continue
+#     print(UF.TimeStamp(),'Loading previously saved data from ',bcolors.OKBLUE+RecOutputMeta+bcolors.ENDC)
+#     MetaInput=UF.PickleOperations(RecOutputMeta,'r', 'N/A')
+#     Meta=MetaInput[0]
+#     Status=Meta.Status[-1]
+#
+# if Status<20:
+#     #Removing the temp files that were generated by the process
+#     print(UF.TimeStamp(),'Performing the cleanup... ',bcolors.ENDC)
+#     HTCondorTag="SoftUsed == \"ANNDEA-RCTr1a-"+RecBatchID+"\""
+#     UF.RecCleanUp(AFS_DIR, EOS_DIR, 'RUTr1a_'+RecBatchID, [], HTCondorTag)
+#     print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Delete'))
+#     print(UF.TimeStamp(), bcolors.OKGREEN+"Track classification has been completed"+bcolors.ENDC)
+# else:
+#     print(UF.TimeStamp(), bcolors.FAIL+"Segment merging has not been completed as one of the processes has timed out. Please run the script again (without Reset Mode)."+bcolors.ENDC)
+#     exit()
 
 
 
