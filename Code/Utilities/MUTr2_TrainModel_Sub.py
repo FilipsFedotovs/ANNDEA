@@ -63,10 +63,6 @@ EOSsubModelDIR=EOSsubDIR+'/'+'Models'
 ##############################################################################################################################
 ######################################### Starting the program ################################################################
 print(UI.TimeStamp(), bcolors.OKGREEN+"Modules Have been imported successfully..."+bcolors.ENDC)
-
-
-
-
 TrainSampleInputMeta=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_info.pkl'
 print(UI.TimeStamp(),'Loading the data file ',bcolors.OKBLUE+TrainSampleInputMeta+bcolors.ENDC)
 MetaInput=UI.PickleOperations(TrainSampleInputMeta,'r', 'N/A')
@@ -152,7 +148,6 @@ print(UI.TimeStamp(), bcolors.OKGREEN+"Train and Validation data has loaded and 
 print(len(TrainSamples),len(ValSamples))
 def main(self):
     Model_Meta_Path=EOSsubModelDIR+'/'+ModelName+'_Meta'
-    Model_Path=EOSsubModelDIR+'/'+ModelName
     ModelMeta=UI.PickleOperations(Model_Meta_Path, 'r', 'N/A')[0]
     print(UI.TimeStamp(),'Starting the training process... ')
     if ModelMeta.ModelType=='CNN':
@@ -165,6 +160,7 @@ def main(self):
         import tensorflow as tf
         from tensorflow import keras
         from keras import backend as K
+        Model_Path=EOSsubModelDIR+'/'+ModelName+'.keras'
         try:
             model=tf.keras.models.load_model(Model_Path)
             K.set_value(model.optimizer.learning_rate, TrainParams[0])
@@ -174,8 +170,8 @@ def main(self):
         model.summary()
         records=[]
         for epoch in range(0, TrainParams[2]):
-            train_loss, itr=CNNtrain(model, TrainSamples, NTrainBatches),len(TrainSamples)
-            val_loss=CNNvalidate(model, ValSamples, NValBatches)
+            train_loss, itr=ML.CNNtrain(model, TrainSamples, NTrainBatches,2,TrainParams[1]),len(TrainSamples)
+            val_loss=ML.CNNvalidate(model, ValSamples, NValBatches,2,TrainParams[1])
             test_loss=val_loss
             print(UI.TimeStamp(),'Epoch ',epoch, ' is completed')
             records.append([epoch,itr,train_loss[0],0.5,val_loss[0],val_loss[1],test_loss[0],test_loss[1],train_set])

@@ -851,7 +851,8 @@ def GenerateModel(ModelMeta,TrainParams=None):
                     # 3. Apply a final classifier
                     x = F.dropout(x, p=0.5, training=self.training)
                     x = self.lin(x)
-                    x = self.softmax(x)
+                    if OutputLayer[1]>1:
+                        x = self.softmax(x)
                     return x
             return GMM()
       elif ModelMeta.ModelFramework=='Tensorflow':
