@@ -69,7 +69,7 @@ print(MetaInput[1])
 Meta=MetaInput[0]
 Model_Meta_Path=EOSsubModelDIR+'/'+ModelName+'_Meta'
 ModelMeta=UI.PickleOperations(Model_Meta_Path, 'r', 'N/A')[0]
-ValSamples=UI.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_TRACK_OUTPUT.pkl','r', 'N/A')[0][:12]
+ValSamples=UI.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_TRACK_OUTPUT.pkl','r', 'N/A')[0]
 print(UI.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_TRACK_OUTPUT.pkl','r', 'N/A')[1])
 train_set=1
 if ModelMeta.ModelType=='CNN':
@@ -214,9 +214,9 @@ def main(self):
             criterion = torch.nn.CrossEntropyLoss()
             print('Xentropy')
         for epoch in range(0, TrainParams[2]):
-            train_loss,itr= ML.GNNtrain(model,TrainSamples, optimizer,ModelMeta.ModelParameters[0][1],criterion),len(TrainSamples.dataset)
+            train_loss,itr= ML.GNNtrain(model,TrainSamples, optimizer,criterion),len(TrainSamples.dataset)
             print(train_loss)
-            val=ML.GNNvalidate(model,  ValSamples)
+            val=ML.GNNvalidate(model,  ValSamples, criterion)
             val_loss=val[1]
             val_acc=val[0]
             test_loss=val_loss

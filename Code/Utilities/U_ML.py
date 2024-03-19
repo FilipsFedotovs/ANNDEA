@@ -974,7 +974,7 @@ def CNNtrain(model, Sample, Batches,num_classes, BatchSize):
     acc=acc_accumulative/Batches
     return loss,acc
 
-def GNNtrain(model, Sample, optimizer,num_classes,criterion):
+def GNNtrain(model, Sample, optimizer,criterion):
     model.train()
     for data in Sample:
         out = model(data.x, data.edge_index, data.edge_attr, data.batch)
@@ -984,7 +984,7 @@ def GNNtrain(model, Sample, optimizer,num_classes,criterion):
         optimizer.zero_grad()
     return loss
 
-def GNNvalidate(model, Sample,num_classes,criterion):
+def GNNvalidate(model, Sample,criterion):
     model.eval()
     correct = 0
     loss_accumulative = 0
