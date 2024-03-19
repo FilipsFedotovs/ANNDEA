@@ -233,8 +233,8 @@ def main(self):
             print(val_loss)
             test_loss=val_loss
             print(UI.TimeStamp(),'Epoch ',epoch, ' is completed')
-            print([epoch,itr,train_loss[0],0.5,val_loss[0],val_loss[1],test_loss[0],test_loss[1],train_set])
-            records.append([epoch,itr,train_loss[0],0.5,val_loss[0],val_loss[1],test_loss[0],test_loss[1],train_set])
+            print([epoch,itr,train_loss,0.5,val_loss,val_loss,test_loss,test_loss,train_set])
+            records.append([epoch,itr,train_loss,0.5,val_loss,val_loss,test_loss,test_losstrain_set])
         model.save(Model_Path)
         Header=[['Epoch','# Samples','Train Loss','Optimal Threshold','Validation Loss','Validation Accuracy','Test Loss','Test Accuracy','Training Set']]
         Header+=records
