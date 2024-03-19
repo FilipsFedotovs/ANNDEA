@@ -205,8 +205,8 @@ def main(self):
                print(UI.TimeStamp(), bcolors.WARNING+"Model/state data files are missing, skipping this step..." +bcolors.ENDC)
         records=[]
         for epoch in range(0, TrainParams[2]):
-            train_loss,itr= GNNtrain(model,TrainSamples, optimizer),len(TrainSamples.dataset)
-            val=GNNvalidate(model,  ValSamples)
+            train_loss,itr= ML.GNNtrain(model,TrainSamples, optimizer,criterion),len(TrainSamples.dataset)
+            val=ML.GNNvalidate(model,  ValSamples,criterion)
             val_loss=val[1]
             val_acc=val[0]
             test_loss=val_loss

@@ -145,7 +145,6 @@ elif ModelMeta.ModelType=='GNN':
        ValSamples = DataLoader(val_dataset, batch_size=TrainParams[1], shuffle=False)
 
 print(UI.TimeStamp(), bcolors.OKGREEN+"Train and Validation data has loaded and analysed successfully..."+bcolors.ENDC)
-print(len(TrainSamples),len(ValSamples))
 def main(self):
     Model_Meta_Path=EOSsubModelDIR+'/'+ModelName+'_Meta'
    
@@ -178,7 +177,6 @@ def main(self):
             val_loss=ML.CNNvalidate(model, ValSamples, NValBatches,OutputSize,TrainParams[1])
             test_loss=val_loss
             print(UI.TimeStamp(),'Epoch ',epoch, ' is completed')
-            print([epoch,itr,train_loss[0],0.5,val_loss[0],val_loss[1],test_loss[0],test_loss[1],train_set])
             records.append([epoch,itr,train_loss[0],0.5,val_loss[0],val_loss[1],test_loss[0],test_loss[1],train_set])
         model.save(Model_Path)
         Header=[['Epoch','# Samples','Train Loss','Optimal Threshold','Validation Loss','Validation Accuracy','Test Loss','Test Accuracy','Training Set']]
@@ -209,10 +207,8 @@ def main(self):
         records=[]
         if ModelMeta.ModelParameters[10][1]==1:
            criterion=torch.nn.MSELoss()
-           print('MSE')
         else:
             criterion = torch.nn.CrossEntropyLoss()
-            print('Xentropy')
         for epoch in range(0, TrainParams[2]):
             train_loss,itr= ML.GNNtrain(model,TrainSamples, optimizer,criterion),len(TrainSamples.dataset)
             print(train_loss)
@@ -223,7 +219,6 @@ def main(self):
             test_acc=val_acc
             scheduler.step()
             print(UI.TimeStamp(),'Epoch ',epoch, ' is completed')
-            print([epoch,itr,train_loss.item(),0.5,val_loss,val_acc,test_loss,test_acc,train_set])
             records.append([epoch,itr,train_loss.item(),0.5,val_loss,val_acc,test_loss,test_acc,train_set])
             torch.save({    'epoch': epoch,
                           'optimizer_state_dict': optimizer.state_dict(),

@@ -30,7 +30,6 @@ pd.options.mode.chained_assignment = None #Silence annoying warnings
 import math #We use it for data manipulation
 import os
 import time
-from alive_progress import alive_bar
 import argparse
 import ast
 class bcolors:   #We use it for the interface
@@ -64,7 +63,6 @@ parser.add_argument('--Xmax',help="This option restricts data to only those even
 parser.add_argument('--Ymin',help="This option restricts data to only those events that have tracks with hits y-coordinates that are above this value", default='0')
 parser.add_argument('--Ymax',help="This option restricts data to only those events that have tracks with hits y-coordinates that are below this value", default='0')
 parser.add_argument('--ReqMemory',help="Specifying the length of the HTCondor job walltime. Currently at 'workday' which is 8 hours.", default='2 GB')
-parser.add_argument('--RemoveTracksZ',help="This option enables to remove particular tracks of starting Z-coordinate", default='[]')
 
 ######################################## Parsing argument values  #############################################################
 args = parser.parse_args()
@@ -97,15 +95,15 @@ EOSsubDIR=EOS_DIR+'/'+'ANNDEA'
 EOSsubModelDIR=EOSsubDIR+'/'+'Models'
 EOSsubModelMetaDIR=EOSsubDIR+'/'+'Models/'+ModelName+'_Meta'
 RecOutputMeta=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_info.pkl'
-required_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RCTr1_'+RecBatchID+'_TRACKS.csv'
+required_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/RCTr1_'+RecBatchID+'_TRACKS.csv'
 ColumnsToImport=[TrackID,BrickID,PM.x,PM.y,PM.z,PM.tx,PM.ty]
 ########################################     Phase 1 - Create compact source file    #########################################
 
 if Mode=='RESET':
-    print(UI.ManageFolders(AFS_DIR, EOS_DIR, RecBatchID,'d',['EUTr1a','RUTr1a','RUTr1b','RUTr1c']))
+    print(UI.ManageFolders(AFS_DIR, EOS_DIR, RecBatchID,'d',['RCTr1a']))
     print(UI.ManageFolders(AFS_DIR, EOS_DIR, RecBatchID,'c'))
 elif Mode=='CLEANUP':
-     print(UI.ManageFolders(AFS_DIR, EOS_DIR, RecBatchID,'d',['EUTr1a','RUTr1a','RUTr1b','RUTr1c']))
+     print(UI.ManageFolders(AFS_DIR, EOS_DIR, RecBatchID,'d',['RUTr1a']))
      exit()
 else:
     print(UI.ManageFolders(AFS_DIR, EOS_DIR, RecBatchID,'c'))
@@ -113,7 +111,7 @@ print(UI.TimeStamp(),bcolors.BOLD+'Stage 0:'+bcolors.ENDC+' Preparing the source
 exit()
 if os.path.isfile(required_file_location)==False or Mode=='RESET':
         if os.path.isfile(EOSsubModelMetaDIR)==False:
-              print(UF.TimeStamp(), bcolors.FAIL+"Fail to proceed further as the model file "+EOSsubModelMetaDIR+ " has not been found..."+bcolors.ENDC)
+              print(UI.TimeStamp(), bcolors.FAIL+"Fail to proceed further as the model file "+EOSsubModelMetaDIR+ " has not been found..."+bcolors.ENDC)
               exit()
         else:
            print(UF.TimeStamp(),'Loading previously saved data from ',bcolors.OKBLUE+EOSsubModelMetaDIR+bcolors.ENDC)
