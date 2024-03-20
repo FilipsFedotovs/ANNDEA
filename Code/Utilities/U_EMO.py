@@ -774,11 +774,7 @@ class EMO:
              self.Class=M(graph.x, graph.edge_index, graph.edge_attr,graph.batch).tolist()[0]
              self.ClassHeaders=Mmeta.ClassHeaders+['Other']
              if Mmeta.ClassValues[0][0]=='Reg':
-                self.ClassHeaders=Mmeta.ClassHeaders[0]
-                self.Class=self.Class[0]
-                print(self.Class)
-                print(self.ClassHeaders)
-             x=input()
+                self.ClassHeaders=Mmeta.ClassHeaders
 
       def InjectSeed(self,OtherSeed):
           __overlap=False
