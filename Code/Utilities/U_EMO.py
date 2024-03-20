@@ -769,8 +769,7 @@ class EMO:
              EMO.PrepareSeedPrint(self,Mmeta)
              __Image=LoadRenderImages([self],1,1)[0]
              self.Class=M.predict(__Image)[0]
-             print(self.Class)
-             x=input()
+
              self.ClassHeaders=Mmeta.ClassHeaders.append('Other')
              if Mmeta.ClassValues[0][0]=='Reg':
                 self.ClassHeaders=Mmeta.ClassHeaders
