@@ -770,7 +770,7 @@ class EMO:
              __Image=LoadRenderImages([self],1,1)[0]
              self.Class=M.predict(__Image)[0]
 
-             self.ClassHeaders=Mmeta.ClassHeaders.append('Other')
+             self.ClassHeaders=Mmeta.ClassHeaders+['Other']
              if Mmeta.ClassValues[0][0]=='Reg':
                 self.ClassHeaders=Mmeta.ClassHeaders
              del __Image
