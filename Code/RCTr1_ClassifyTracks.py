@@ -255,7 +255,7 @@ Program=[]
 ###### Stage 1
 prog_entry=[]
 prog_entry.append(' Sending tracks to the HTCondor, so tracks can be analysed by Neural Network...')
-prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','ClassifiedTrackSamples','RCTr1a','.pkl',RecBatchID,TotJobs,'RCTr1a_GenerateClassifiedTracks_Sub.py'])
+prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/'+RecBatchID+'/','ClassifiedTrackSamples','RCTr1a','.pkl',RecBatchID,TotJobs,'RCTr1a_GenerateClassifiedTracks_Sub.py'])
 prog_entry.append([ " --MaxSegments ", " --ModelName "])
 prog_entry.append([MaxSegments,ModelName])
 prog_entry.append(TotJobs)
