@@ -1004,15 +1004,9 @@ def GNNvalidate(model, Sample,criterion):
     for data in Sample:
          out = model(data.x, data.edge_index, data.edge_attr, data.batch)
          pred = out.argmax(dim=1)  # Use the class with the highest probability.
-         print('pred',out)
-         print('y',data.y)
          y_index = data.y.argmax(dim=1)
-         print('y_ind',y_index)
-
          correct += int((pred == y_index).sum())  # Check against ground-truth labels.
          loss = criterion(out, data.y)
-         print('loss',loss)
-         x=input()
          loss_accumulative += float(loss)
     return (correct / len(Sample.dataset), loss_accumulative/len(Sample.dataset))
 
@@ -1026,7 +1020,6 @@ def CNNvalidate(model, Sample, Batches,num_classes, BatchSize):
         v=model.test_on_batch(BatchImages[0],BatchImages[1])
         loss_accumulative+=v[0].item()
         acc_accumulative+=v[1].item()
-        print(v)
     loss=loss_accumulative/Batches
     acc=acc_accumulative/Batches
     return loss,acc
