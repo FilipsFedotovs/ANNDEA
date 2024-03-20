@@ -103,7 +103,7 @@ if Mode=='RESET':
     print(UI.ManageFolders(AFS_DIR, EOS_DIR, RecBatchID,'d',['RCTr1a']))
     print(UI.ManageFolders(AFS_DIR, EOS_DIR, RecBatchID,'c'))
 elif Mode=='CLEANUP':
-     print(UI.ManageFolders(AFS_DIR, EOS_DIR, RecBatchID,'d',['RUTr1a']))
+     print(UI.ManageFolders(AFS_DIR, EOS_DIR, RecBatchID,'d',['RCTr1a']))
      exit()
 else:
     print(UI.ManageFolders(AFS_DIR, EOS_DIR, RecBatchID,'c'))
