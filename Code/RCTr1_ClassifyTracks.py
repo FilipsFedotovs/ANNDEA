@@ -293,7 +293,7 @@ while Status<len(Program):
 
             ExtractedData=[]
             for i in base_data:
-                ExtractedData.append(i.Header+i.Class)
+                ExtractedData.append(i.Header+[float(i.Class)])
             for i in range(1,JobSets):
                     req_file=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/Temp_RCTr1a_'+RecBatchID+'_0/RCTr1a'+'_'+RecBatchID+'_ClassifiedTrackSamples_'+str(i)+'.pkl'
                     base_data=UI.PickleOperations(req_file,'r', 'N/A')[0]
