@@ -459,11 +459,14 @@ class EMO:
 
                       try:
                           __y=[]
-                          for i in range(MM.ModelParameters[10][1]):
-                            if self.Label==i:
-                                __y.append(1)
-                            else:
-                                __y.append(0)
+                          if MM.ModelParameters[10][1]==1:
+                              __y.append(float(self.Label))
+                          else:
+                              for i in range(MM.ModelParameters[10][1]):
+                                if self.Label==i:
+                                    __y.append(1)
+                                else:
+                                    __y.append(0)
                           __graphData_y = (__y)
                           import torch
                           import torch_geometric
@@ -588,7 +591,6 @@ class EMO:
                           __y=[]
                           if MM.ModelParameters[10][1]==1:
                               __y.append(float(self.Label))
-                              print(__y)
                           else:
                               for i in range(MM.ModelParameters[10][1]):
                                 if self.Label==i:
@@ -664,11 +666,14 @@ class EMO:
                             __graphData_edge_attr.append(np.array(__graphData_pos[i]) - np.array(__graphData_pos[j]))
                       if(hasattr(self, 'Label')):
                           __y=[]
-                          for i in range(MM.ModelParameters[10][1]):
-                            if self.Label==i:
-                                __y.append(1)
-                            else:
-                                __y.append(0)
+                          if MM.ModelParameters[10][1]==1:
+                              __y.append(float(self.Label))
+                          else:
+                              for i in range(MM.ModelParameters[10][1]):
+                                if self.Label==i:
+                                    __y.append(1)
+                                else:
+                                    __y.append(0)
                           __graphData_y = (__y)
                           import torch
                           import torch_geometric
