@@ -46,21 +46,21 @@ AFS_DIR=args.AFS
 PY_DIR=args.PY
 if PY_DIR!='': #Temp solution
     sys.path=['',PY_DIR]
-    sys.path.append('/usr/lib64/python36.zip')
-    sys.path.append('/usr/lib64/python3.6')
-    sys.path.append('/usr/lib64/python3.6/lib-dynload')
-    sys.path.append('/usr/lib64/python3.6/site-packages')
-    sys.path.append('/usr/lib/python3.6/site-packages')
+    sys.path.append('/usr/lib64/python39.zip')
+    sys.path.append('/usr/lib64/python3.9')
+    sys.path.append('/usr/lib64/python3.9/lib-dynload')
+    sys.path.append('/usr/lib64/python3.9/site-packages')
+    sys.path.append('/usr/lib/python3.69/site-packages')
 sys.path.append(AFS_DIR+'/Code/Utilities')
-import UtilityFunctions as UF #This is where we keep routine utility functions
+import U_UI as UI #This is where we keep routine utility functions
 import pandas as pd #We use Panda for a routine data processing
 import gc  #Helps to clear memory
-from UtilityFunctions import EMO
+from U_EMO import EMO
 EOSsubDIR=EOS_DIR+'/'+'ANNDEA'
 EOSsubModelDIR=EOSsubDIR+'/'+'Models'
 Model_Meta_Path=EOSsubModelDIR+'/'+ModelName+'_Meta'
 Model_Path=EOSsubModelDIR+'/'+ModelName
-ModelMeta=UF.PickleOperations(Model_Meta_Path, 'r', 'N/A')[0]
+ModelMeta=UI.PickleOperations(Model_Meta_Path, 'r', 'N/A')[0]
 if ModelMeta.ModelFramework=='Tensorflow':
         import tensorflow as tf
         from tensorflow import keras
@@ -77,7 +77,7 @@ if ModelMeta.ModelFramework=='PyTorch':
 
 
 #Specifying the full path to input/output files
-input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RCTr1_'+BatchID+'_TRACKS.csv'
+input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+BatchID+'/RCTr1_'+BatchID+'_TRACKS.csv'
 output_file_location=EOS_DIR+p+'/Temp_'+pfx+'_'+BatchID+'_0/'+pfx+'_'+BatchID+'_'+o+'_'+str(i)+sfx
 print(UF.TimeStamp(), "Modules Have been imported successfully...")
 print(UF.TimeStamp(),'Loading pre-selected data from ',input_file_location)
@@ -89,14 +89,15 @@ track_column_headers=track_headers.columns.values.tolist()
 track_headers=track_headers.values.tolist()
 track_data = data[['x','y','z','tx','ty','Rec_Seg_ID']].values.tolist() #Convirting the result to List data type
 track_headers = track_headers[int(i)*MaxSegments : min((int(i)+1)*MaxSegments, len(track_headers))]
-
+print(track_headers)
+exit()
 
 gc.collect()
 track_counter=0
 print('Data has been successfully loaded and prepared..')
 #create seeds
 GoodTracks=[]
-print(UF.TimeStamp(),'Beginning the image generation part...')
+print(UI.TimeStamp(),'Beginning the image generation part...')
 limit = len(track_headers)
 
 for s in range(0,limit):

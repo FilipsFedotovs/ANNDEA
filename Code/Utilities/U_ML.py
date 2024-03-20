@@ -461,7 +461,6 @@ def GenerateModel(ModelMeta,TrainParams=None):
                  HiddenLayer.append(el)
               elif ModelMeta.ModelParameters.index(el)==10:
                  OutputLayer=el
-
             class GCN(torch.nn.Module):
                 def __init__(self):
                     super(GCN, self).__init__()
@@ -471,25 +470,25 @@ def GenerateModel(ModelMeta,TrainParams=None):
                         self.conv2 = GCNConv(HiddenLayer[0][0],HiddenLayer[1][0])
                         self.conv3 = GCNConv(HiddenLayer[1][0],HiddenLayer[2][0])
                         self.lin = Linear(HiddenLayer[2][0],OutputLayer[1])
-                    self.softmax = Softmax(dim=-1)
+                    if OutputLayer[1]>1:
+                        self.softmax = Softmax(dim=-1)
 
                 def forward(self, x, edge_index, edge_attr, batch):
                     # 1. Obtain node embeddings
                     if len(HiddenLayer)==3:
-
                         x = self.conv1(x, edge_index)
                         x = x.relu()
                         x = self.conv2(x, edge_index)
                         x = x.relu()
                         x = self.conv3(x, edge_index)
-
+                        x = x.relu()
                     # 2. Readout layer
                     x = global_mean_pool(x, batch)  # [batch_size, hidden_channels]
-
                     # 3. Apply a final classifier
                     x = F.dropout(x, p=0.5, training=self.training)
                     x = self.lin(x)
-                    x = self.softmax(x)
+                    if OutputLayer[1]>1:
+                        x = self.softmax(x)
                     return x
             return GCN()
          elif ModelMeta.ModelArchitecture=='GCN-6N-IC':
@@ -511,25 +510,25 @@ def GenerateModel(ModelMeta,TrainParams=None):
                         self.conv2 = GCNConv(HiddenLayer[0][0],HiddenLayer[1][0])
                         self.conv3 = GCNConv(HiddenLayer[1][0],HiddenLayer[2][0])
                         self.lin = Linear(HiddenLayer[2][0],OutputLayer[1])
-                    self.softmax = Softmax(dim=-1)
+                    if OutputLayer[1]>1:
+                        self.softmax = Softmax(dim=-1)
 
                 def forward(self, x, edge_index, edge_attr, batch):
                     # 1. Obtain node embeddings
                     if len(HiddenLayer)==3:
-
                         x = self.conv1(x, edge_index)
                         x = x.relu()
                         x = self.conv2(x, edge_index)
                         x = x.relu()
                         x = self.conv3(x, edge_index)
-
+                        x = x.relu()
                     # 2. Readout layer
                     x = global_mean_pool(x, batch)  # [batch_size, hidden_channels]
-
                     # 3. Apply a final classifier
                     x = F.dropout(x, p=0.5, training=self.training)
                     x = self.lin(x)
-                    x = self.softmax(x)
+                    if OutputLayer[1]>1:
+                        x = self.softmax(x)
                     return x
             return GCN()
          elif ModelMeta.ModelArchitecture=='GCN-5N-FC':
@@ -557,8 +556,8 @@ def GenerateModel(ModelMeta,TrainParams=None):
                         self.conv3 = GCNConv(HiddenLayer[1][0],HiddenLayer[2][0])
                         self.conv4 = GCNConv(HiddenLayer[2][0],HiddenLayer[3][0])
                         self.lin = Linear(HiddenLayer[3][0],OutputLayer[1])
-                    self.softmax = Softmax(dim=-1)
-
+                    if OutputLayer[1]>1:
+                        self.softmax = Softmax(dim=-1)
                 def forward(self, x, edge_index, edge_attr, batch):
                     # 1. Obtain node embeddings
                     if len(HiddenLayer)==3:
@@ -567,6 +566,7 @@ def GenerateModel(ModelMeta,TrainParams=None):
                         x = self.conv2(x, edge_index)
                         x = x.relu()
                         x = self.conv3(x, edge_index)
+                        x = x.relu()
                     elif len(HiddenLayer)==4:
                         x = self.conv1(x, edge_index)
                         x = x.relu()
@@ -575,6 +575,7 @@ def GenerateModel(ModelMeta,TrainParams=None):
                         x = self.conv3(x, edge_index)
                         x = x.relu()
                         x = self.conv4(x, edge_index)
+                        x = x.relu()
 
                     # 2. Readout layer
                     x = global_mean_pool(x, batch)  # [batch_size, hidden_channels]
@@ -582,7 +583,8 @@ def GenerateModel(ModelMeta,TrainParams=None):
                     # 3. Apply a final classifier
                     x = F.dropout(x, p=0.5, training=self.training)
                     x = self.lin(x)
-                    x = self.softmax(x)
+                    if OutputLayer[1]>1:
+                        x = self.softmax(x)
                     return x
             return GCN()
          elif ModelMeta.ModelArchitecture=='TAG-4N-IC':
@@ -610,17 +612,18 @@ def GenerateModel(ModelMeta,TrainParams=None):
                         self.conv3 = TAGConv(HiddenLayer[1][0],HiddenLayer[2][0])
                         self.conv4 = TAGConv(HiddenLayer[2][0],HiddenLayer[3][0])
                         self.lin = Linear(HiddenLayer[3][0],OutputLayer[1])
-                    self.softmax = Softmax(dim=-1)
+                    if OutputLayer[1]>1:
+                        self.softmax = Softmax(dim=-1)
 
                 def forward(self, x, edge_index, edge_attr, batch):
                     # 1. Obtain node embeddings
                     if len(HiddenLayer)==3:
-
                         x = self.conv1(x, edge_index)
                         x = x.relu()
                         x = self.conv2(x, edge_index)
                         x = x.relu()
                         x = self.conv3(x, edge_index)
+                        x = x.relu()
                     elif len(HiddenLayer)==4:
 
                         x = self.conv1(x, edge_index)
@@ -630,13 +633,15 @@ def GenerateModel(ModelMeta,TrainParams=None):
                         x = self.conv3(x, edge_index)
                         x = x.relu()
                         x = self.conv4(x, edge_index)
+                        x = x.relu()
                     # 2. Readout layer
                     x = global_mean_pool(x, batch)  # [batch_size, hidden_channels]
 
                     # 3. Apply a final classifier
                     x = F.dropout(x, p=0.5, training=self.training)
                     x = self.lin(x)
-                    x = self.softmax(x)
+                    if OutputLayer[1]>1:
+                        x = self.softmax(x)
                     return x
             return TAG()
          elif ModelMeta.ModelArchitecture=='TAG-5N-FC':
@@ -664,7 +669,8 @@ def GenerateModel(ModelMeta,TrainParams=None):
                         self.conv3 = TAGConv(HiddenLayer[1][0],HiddenLayer[2][0])
                         self.conv4 = TAGConv(HiddenLayer[2][0],HiddenLayer[3][0])
                         self.lin = Linear(HiddenLayer[3][0],OutputLayer[1])
-                    self.softmax = Softmax(dim=-1)
+                    if OutputLayer[1]>1:
+                        self.softmax = Softmax(dim=-1)
 
                 def forward(self, x, edge_index, edge_attr, batch):
                     # 1. Obtain node embeddings
@@ -674,6 +680,7 @@ def GenerateModel(ModelMeta,TrainParams=None):
                         x = self.conv2(x, edge_index)
                         x = x.relu()
                         x = self.conv3(x, edge_index)
+                        x = x.relu()
                     elif len(HiddenLayer)==4:
                         x = self.conv1(x, edge_index)
                         x = x.relu()
@@ -682,14 +689,14 @@ def GenerateModel(ModelMeta,TrainParams=None):
                         x = self.conv3(x, edge_index)
                         x = x.relu()
                         x = self.conv4(x, edge_index)
-
+                        x = x.relu()
                     # 2. Readout layer
                     x = global_mean_pool(x, batch)  # [batch_size, hidden_channels]
-
                     # 3. Apply a final classifier
                     x = F.dropout(x, p=0.5, training=self.training)
                     x = self.lin(x)
-                    x = self.softmax(x)
+                    if OutputLayer[1]>1:
+                        x = self.softmax(x)
                     return x
             return TAG()
          elif ModelMeta.ModelArchitecture=='GMM-5N-FC':
@@ -717,7 +724,8 @@ def GenerateModel(ModelMeta,TrainParams=None):
                         self.conv3 = GMMConv(HiddenLayer[1][0],HiddenLayer[2][0],dim=3,kernel_size=HiddenLayer[2][1])
                         self.conv4 = GMMConv(HiddenLayer[2][0],HiddenLayer[3][0],dim=3,kernel_size=HiddenLayer[3][1])
                         self.lin = Linear(HiddenLayer[3][0],OutputLayer[1])
-                    self.softmax = Softmax(dim=-1)
+                    if OutputLayer[1]>1:
+                        self.softmax = Softmax(dim=-1)
 
                 def forward(self, x, edge_index, edge_attr, batch):
                     # 1. Obtain node embeddings
@@ -727,6 +735,7 @@ def GenerateModel(ModelMeta,TrainParams=None):
                         x = self.conv2(x, edge_index,edge_attr)
                         x = x.relu()
                         x = self.conv3(x, edge_index,edge_attr)
+                        x = x.relu()
                     elif len(HiddenLayer)==4:
                         x = self.conv1(x, edge_index,edge_attr)
                         x = x.relu()
@@ -735,13 +744,14 @@ def GenerateModel(ModelMeta,TrainParams=None):
                         x = self.conv3(x, edge_index,edge_attr)
                         x = x.relu()
                         x = self.conv4(x, edge_index,edge_attr)
-
+                        x = x.relu()
                     # 2. Readout layer
                     x = global_mean_pool(x, batch)  # [batch_size, hidden_channels]
                     # 3. Apply a final classifier
                     x = F.dropout(x, p=0.5, training=self.training)
                     x = self.lin(x)
-                    x = self.softmax(x)
+                    if OutputLayer[1]>1:
+                        x = self.softmax(x)
                     return x
             return GMM()
          elif ModelMeta.ModelArchitecture=='GMM-4N-IC':
@@ -769,7 +779,8 @@ def GenerateModel(ModelMeta,TrainParams=None):
                         self.conv3 = GMMConv(HiddenLayer[1][0],HiddenLayer[2][0],dim=4,kernel_size=HiddenLayer[2][1])
                         self.conv4 = GMMConv(HiddenLayer[2][0],HiddenLayer[3][0],dim=4,kernel_size=HiddenLayer[3][1])
                         self.lin = Linear(HiddenLayer[3][0],OutputLayer[1])
-                    self.softmax = Softmax(dim=-1)
+                    if OutputLayer[1]>1:
+                        self.softmax = Softmax(dim=-1)
 
                 def forward(self, x, edge_index, edge_attr, batch):
                     # 1. Obtain node embeddings
@@ -779,6 +790,7 @@ def GenerateModel(ModelMeta,TrainParams=None):
                         x = self.conv2(x, edge_index,edge_attr)
                         x = x.relu()
                         x = self.conv3(x, edge_index,edge_attr)
+                        x = x.relu()
                     elif len(HiddenLayer)==4:
                         x = self.conv1(x, edge_index,edge_attr)
                         x = x.relu()
@@ -787,13 +799,15 @@ def GenerateModel(ModelMeta,TrainParams=None):
                         x = self.conv3(x, edge_index,edge_attr)
                         x = x.relu()
                         x = self.conv4(x, edge_index,edge_attr)
+                        x = x.relu()
 
                     # 2. Readout layer
                     x = global_mean_pool(x, batch)  # [batch_size, hidden_channels]
                     # 3. Apply a final classifier
                     x = F.dropout(x, p=0.5, training=self.training)
                     x = self.lin(x)
-                    x = self.softmax(x)
+                    if OutputLayer[1]>1:
+                        x = self.softmax(x)
                     return x
             return GMM()
          elif ModelMeta.ModelArchitecture=='GMM-6N-IC':
@@ -857,7 +871,6 @@ def GenerateModel(ModelMeta,TrainParams=None):
                         x = x.relu()
                         x = self.conv4(x, edge_index,edge_attr)
                         x = x.relu()
-
                     # 2. Readout layer
                     x = global_mean_pool(x, batch)  # [batch_size, hidden_channels]
                     # 3. Apply a final classifier

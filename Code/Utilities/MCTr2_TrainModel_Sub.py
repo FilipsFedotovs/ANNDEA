@@ -147,7 +147,6 @@ elif ModelMeta.ModelType=='GNN':
 print(UI.TimeStamp(), bcolors.OKGREEN+"Train and Validation data has loaded and analysed successfully..."+bcolors.ENDC)
 def main(self):
     Model_Meta_Path=EOSsubModelDIR+'/'+ModelName+'_Meta'
-   
     ModelMeta=UI.PickleOperations(Model_Meta_Path, 'r', 'N/A')[0]
     print(UI.TimeStamp(),'Starting the training process... ')
     if ModelMeta.ModelType=='CNN':

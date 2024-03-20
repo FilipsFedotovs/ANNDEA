@@ -63,12 +63,13 @@ parser.add_argument('--Xmax',help="This option restricts data to only those even
 parser.add_argument('--Ymin',help="This option restricts data to only those events that have tracks with hits y-coordinates that are above this value", default='0')
 parser.add_argument('--Ymax',help="This option restricts data to only those events that have tracks with hits y-coordinates that are below this value", default='0')
 parser.add_argument('--ReqMemory',help="Specifying the length of the HTCondor job walltime. Currently at 'workday' which is 8 hours.", default='2 GB')
-
+parser.add_argument('--HTCondorLog',help="Local submission?", default=False,type=bool)
 ######################################## Parsing argument values  #############################################################
 args = parser.parse_args()
 Mode=args.Mode.upper()
 RecBatchID=args.RecBatchID
 Patience=int(args.Patience)
+HTCondorLog=args.HTCondorLog
 TrackID=args.TrackID
 BrickID=args.BrickID
 SubPause=int(args.SubPause)*60
@@ -248,84 +249,82 @@ TotJobs=JobSets
 UI.Msg('vanilla','Analysing the current script status...')
 Status=Meta.Status[-1]
 UI.Msg('vanilla','Current stage is '+str(Status)+'...')
+Program=[]
 
-# ################ Set the execution sequence for the script
-# # ###### Stage 1
-# prog_entry=[]
-# prog_entry.append(' Sending tracks to the HTCondor, so track segment combinations can be formed...')
-# prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','ClassifiedTrackSamples','RCTr1a','.pkl',RecBatchID,TotJobs,'RCTr1a_GenerateClassifiedTracks_Sub.py'])
-# prog_entry.append([ " --MaxSegments ", " --ModelName "])
-# prog_entry.append([MaxSegments,ModelName])
-# prog_entry.append(TotJobs)
-# prog_entry.append(LocalSub)
-# prog_entry.append(["",""])
-# if Mode=='RESET':
-#         print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Delete'))
-#     #Setting up folders for the output. The reconstruction of just one brick can easily generate >100k of files. Keeping all that blob in one directory can cause problems on lxplus.
-# print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Create'))
-# Program.append(prog_entry)
-#
-# Program.append('Custom')
-#
-# while Status<len(Program):
-#     if Program[Status]!='Custom':
-#         #Standard process here
-#         Result=StandardProcess(Program,Status,FreshStart)
-#         if Result[0]:
-#              FreshStart=Result[1]
-#         else:
-#              Status=20
-#              break
-#     else:
-#         if Status==1:
-#             print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
-#             print(UF.TimeStamp(),bcolors.BOLD+'Stage 2:'+bcolors.ENDC+' Collecting and de-duplicating the results from stage 1')
-#             req_file=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RCTr1a_'+RecBatchID+'_0/RCTr1a_'+RecBatchID+'_ClassifiedTrackSamples_0.pkl'
-#             base_data=UF.PickleOperations(req_file,'r', 'N/A')[0]
-#             ExtractedHeader=['Rec_Seg_ID']+base_data[0].ClassHeaders
-#             ExtractedData=[]
-#             for i in base_data:
-#                 ExtractedData.append(i.Header+i.Class)
-#             for i in range(1,JobSets):
-#                     req_file=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RCTr1a_'+RecBatchID+'_0/RCTr1a'+'_'+RecBatchID+'_ClassifiedTrackSamples_'+str(i)+'.pkl'
-#                     base_data=UF.PickleOperations(req_file,'r', 'N/A')[0]
-#                     for i in base_data:
-#                          ExtractedData.append(i.Header+i.Class)
-#
-#             ExtractedData = pd.DataFrame (ExtractedData, columns = ExtractedHeader)
-#             data=pd.read_csv(args.f,header=0)
-#             data.drop(base_data[0].ClassHeaders,axis=1,errors='ignore',inplace=True)
-#             data['Rec_Seg_ID'] = data[TrackID].astype(str) + '-' + data[BrickID].astype(str)
-#             data=pd.merge(data,ExtractedData,how='left',on=['Rec_Seg_ID'])
-#             data=data.drop(['Rec_Seg_ID'],axis=1)
-#             raw_name=initial_input_file_location[:-4]
-#             for l in range(len(raw_name)-1,0,-1):
-#                     if raw_name[l]=='/':
-#                         print(l,raw_name)
-#                         break
-#             raw_name=raw_name[l+1:]
-#             final_output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+raw_name+'_'+RecBatchID+'_CLASSIFIED_TRACKS.csv'
-#             data.to_csv(final_output_file_location,index=False)
-#             print(UF.TimeStamp(), bcolors.OKGREEN+"The classified track data has been written to"+bcolors.ENDC, bcolors.OKBLUE+final_output_file_location+bcolors.ENDC)
-#             print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 1 has successfully completed'+bcolors.ENDC)
-#             UpdateStatus(2)
-#             Status=2
-#             continue
-#     print(UF.TimeStamp(),'Loading previously saved data from ',bcolors.OKBLUE+RecOutputMeta+bcolors.ENDC)
-#     MetaInput=UF.PickleOperations(RecOutputMeta,'r', 'N/A')
-#     Meta=MetaInput[0]
-#     Status=Meta.Status[-1]
-#
-# if Status<20:
-#     #Removing the temp files that were generated by the process
-#     print(UF.TimeStamp(),'Performing the cleanup... ',bcolors.ENDC)
-#     HTCondorTag="SoftUsed == \"ANNDEA-RCTr1a-"+RecBatchID+"\""
-#     UF.RecCleanUp(AFS_DIR, EOS_DIR, 'RUTr1a_'+RecBatchID, [], HTCondorTag)
-#     print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Delete'))
-#     print(UF.TimeStamp(), bcolors.OKGREEN+"Track classification has been completed"+bcolors.ENDC)
-# else:
-#     print(UF.TimeStamp(), bcolors.FAIL+"Segment merging has not been completed as one of the processes has timed out. Please run the script again (without Reset Mode)."+bcolors.ENDC)
-#     exit()
+################ Set the execution sequence for the script
+###### Stage 1
+prog_entry=[]
+prog_entry.append(' Sending tracks to the HTCondor, so tracks can be analysed by Neural Network...')
+prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','ClassifiedTrackSamples','RCTr1a','.pkl',RecBatchID,TotJobs,'RCTr1a_GenerateClassifiedTracks_Sub.py'])
+prog_entry.append([ " --MaxSegments ", " --ModelName "])
+prog_entry.append([MaxSegments,ModelName])
+prog_entry.append(TotJobs)
+prog_entry.append(LocalSub)
+prog_entry.append('N/A')
+prog_entry.append(HTCondorLog)
+prog_entry.append(False)
 
+#Setting up folders for the output. The reconstruction of just one brick can easily generate >100k of files. Keeping all that blob in one directory can cause problems on lxplus.
+print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry))
+Program.append(prog_entry)
+
+Program.append('Custom')
+
+while Status<len(Program):
+    if Program[Status]!='Custom':
+        #Standard process here
+        Result=UI.StandardProcess(Program,Status,SubGap,SubPause,RequestExtCPU,JobFlavour,ReqMemory,time_int,Patience)
+        if Result[0]:
+             UI.UpdateStatus(Status+1,Meta,RecOutputMeta)
+        else:
+             Status=20
+             break
+    else:
+        if Status==1:
+            print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
+            print(UI.TimeStamp(),bcolors.BOLD+'Stage 2:'+bcolors.ENDC+' Collecting and de-duplicating the results from stage 1')
+            req_file=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RCTr1a_'+RecBatchID+'_0/RCTr1a_'+RecBatchID+'_ClassifiedTrackSamples_0.pkl'
+            base_data=UI.PickleOperations(req_file,'r', 'N/A')[0]
+            ExtractedHeader=['Rec_Seg_ID']+base_data[0].ClassHeaders
+            ExtractedData=[]
+            for i in base_data:
+                ExtractedData.append(i.Header+i.Class)
+            for i in range(1,JobSets):
+                    req_file=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RCTr1a_'+RecBatchID+'_0/RCTr1a'+'_'+RecBatchID+'_ClassifiedTrackSamples_'+str(i)+'.pkl'
+                    base_data=UI.PickleOperations(req_file,'r', 'N/A')[0]
+                    for i in base_data:
+                         ExtractedData.append(i.Header+i.Class)
+            ExtractedData = pd.DataFrame (ExtractedData, columns = ExtractedHeader)
+            data=pd.read_csv(args.f,header=0)
+            data.drop(base_data[0].ClassHeaders,axis=1,errors='ignore',inplace=True)
+            data['Rec_Seg_ID'] = data[TrackID].astype(str) + '-' + data[BrickID].astype(str)
+            data=pd.merge(data,ExtractedData,how='left',on=['Rec_Seg_ID'])
+            data=data.drop(['Rec_Seg_ID'],axis=1)
+            raw_name=initial_input_file_location[:-4]
+            for l in range(len(raw_name)-1,0,-1):
+                    if raw_name[l]=='/':
+                        print(l,raw_name)
+                        break
+            raw_name=raw_name[l+1:]
+            final_output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+raw_name+'_'+RecBatchID+'_CLASSIFIED_TRACKS.csv'
+            data.to_csv(final_output_file_location,index=False)
+            print(UI.TimeStamp(), bcolors.OKGREEN+"The classified track data has been written to"+bcolors.ENDC, bcolors.OKBLUE+final_output_file_location+bcolors.ENDC)
+            print(UI.TimeStamp(),bcolors.OKGREEN+'Stage 1 has successfully completed'+bcolors.ENDC)
+            UI.UpdateStatus(2)
+            Status=2
+            continue
+    print(UI.TimeStamp(),'Loading previously saved data from ',bcolors.OKBLUE+RecOutputMeta+bcolors.ENDC)
+    MetaInput=UI.PickleOperations(RecOutputMeta,'r', 'N/A')
+    Meta=MetaInput[0]
+    Status=Meta.Status[-1]
+#
+if Status<20:
+    #Removing the temp files that were generated by the process
+    print(UI.TimeStamp(),'Performing the cleanup... ')
+    print(UI.ManageFolders(AFS_DIR, EOS_DIR, RecBatchID,'d',['RCTr1a']))
+    UI.Msg('success',"Segment merging has been completed")
+else:
+    UI.Msg('failed',"Segment merging has not been completed as one of the processes has timed out. Please run the script again (without Reset Mode).")
+    exit()
 
 
