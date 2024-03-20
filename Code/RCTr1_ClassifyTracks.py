@@ -320,8 +320,7 @@ while Status<len(Program):
             data.to_csv(final_output_file_location,index=False)
             print(UI.TimeStamp(), bcolors.OKGREEN+"The classified track data has been written to"+bcolors.ENDC, bcolors.OKBLUE+final_output_file_location+bcolors.ENDC)
             print(UI.TimeStamp(),bcolors.OKGREEN+'Stage 1 has successfully completed'+bcolors.ENDC)
-            UI.UpdateStatus(2)
-            Status=2
+            UI.UpdateStatus(Status+1,Meta,RecOutputMeta)
             continue
     print(UI.TimeStamp(),'Loading previously saved data from ',bcolors.OKBLUE+RecOutputMeta+bcolors.ENDC)
     MetaInput=UI.PickleOperations(RecOutputMeta,'r', 'N/A')
