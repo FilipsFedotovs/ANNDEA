@@ -772,11 +772,14 @@ class EMO:
              graph.batch = torch.zeros(len(graph.x),dtype=torch.int64)
              #self.Fit=M(graph.x, graph.edge_index, graph.edge_attr,graph.batch)[0][1].item()
              self.Class=M(graph.x, graph.edge_index, graph.edge_attr,graph.batch).tolist()[0]
-             print(Mmeta.ClassNames)
-             print(Mmeta.ClassValues)
-             print(self.Class)
-             x=input()
              self.ClassHeaders=Mmeta.ClassHeaders+['Other']
+             if Mmeta.ClassValues[0][0]=='Reg':
+                self.ClassHeaders=Mmeta.ClassHeaders
+                self.Class=self.Class[0]
+                print(self.Class)
+                print(self.ClassHeaders)
+             x=input()
+
       def InjectSeed(self,OtherSeed):
           __overlap=False
           for t1 in self.Header:
