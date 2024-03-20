@@ -585,14 +585,16 @@ class EMO:
                         edge_attr.append(h[:4])
 
                       try:
-                          print(MM.ModelParameters[10][1])
-                          x=input()
                           __y=[]
-                          for i in range(MM.ModelParameters[10][1]):
-                            if self.Label==i:
-                                __y.append(1)
-                            else:
-                                __y.append(0)
+                          if MM.ModelParameters[10][1]==1:
+                              __y.append(self.Label)
+                              print(__y)
+                          else:
+                              for i in range(MM.ModelParameters[10][1]):
+                                if self.Label==i:
+                                    __y.append(1)
+                                else:
+                                    __y.append(0)
                           __graphData_y = (__y)
                           import torch
                           import torch_geometric
