@@ -982,7 +982,6 @@ def CNNtrain(model, Sample, Batches,num_classes, BatchSize):
         t=model.train_on_batch(BatchImages[0],BatchImages[1])
         loss_accumulative+=t[0].item()
         acc_accumulative+=t[1].item()
-        print(t)
     loss=loss_accumulative/Batches
     acc=acc_accumulative/Batches
     return loss,acc

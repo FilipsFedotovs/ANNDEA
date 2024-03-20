@@ -290,7 +290,8 @@ while Status<len(Program):
             req_file=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/Temp_RCTr1a_'+RecBatchID+'_0/RCTr1a_'+RecBatchID+'_ClassifiedTrackSamples_0.pkl'
             base_data=UI.PickleOperations(req_file,'r', 'N/A')[0]
             ExtractedHeader=['Rec_Seg_ID']+base_data[0].ClassHeaders
-
+            print(ExtractedHeader)
+            exit()
             ExtractedData=[]
             for i in base_data:
                 ExtractedData.append(i.Header+i.Class)
@@ -307,8 +308,7 @@ while Status<len(Program):
             data=pd.read_csv(args.f,header=0)
             data.drop(base_data[0].ClassHeaders,axis=1,errors='ignore',inplace=True)
             data['Rec_Seg_ID'] = data[TrackID].astype(str) + '-' + data[BrickID].astype(str)
-#            data=pd.merge(data,ExtractedData,how='left',on=['Rec_Seg_ID'])
-            data=pd.merge(data,ExtractedData,how='inner',on=['Rec_Seg_ID'])
+            data=pd.merge(data,ExtractedData,how='left',on=['Rec_Seg_ID'])
             data=data.drop(['Rec_Seg_ID'],axis=1)
             raw_name=initial_input_file_location[:-4]
             for l in range(len(raw_name)-1,0,-1):
