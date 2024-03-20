@@ -587,7 +587,7 @@ class EMO:
                       try:
                           __y=[]
                           if MM.ModelParameters[10][1]==1:
-                              __y.append(self.Label)
+                              __y.append(float(self.Label))
                               print(__y)
                           else:
                               for i in range(MM.ModelParameters[10][1]):
