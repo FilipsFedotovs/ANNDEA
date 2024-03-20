@@ -194,6 +194,8 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
             data=pd.merge(data, data_aggregated, how="left", on=['Rec_Seg_ID'])
             data=data[data['track_len'].isnull()]
             data=data.drop(['track_len'],axis=1)
+        final_rows=len(data.axes[0])
+        print(UI.TimeStamp(),'After removing tracks with specific plate lengths we have',final_rows,' hits left')
         if SliceData:
              print(UI.TimeStamp(),'Slicing the data...')
              ValidEvents=data.drop(data.index[(data[PM.x] > Xmax) | (data[PM.x] < Xmin) | (data[PM.y] > Ymax) | (data[PM.y] < Ymin)])
@@ -203,6 +205,8 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
              final_rows=len(data.axes[0])
              print(UI.TimeStamp(),'The sliced data has ',final_rows,' hits')
         print(UI.TimeStamp(),'Removing tracks which have less than',MinHitsTrack,'hits...')
+        final_rows=len(data.axes[0])
+        print(UI.TimeStamp(),'After removing tracks with number of hits we have',final_rows,' hits left')
         track_no_data=data.groupby(['Rec_Seg_ID'],as_index=False).count()
         track_no_data=track_no_data.drop([PM.y,PM.z,PM.tx,PM.ty],axis=1)
         track_no_data=track_no_data.rename(columns={PM.x: "Track_No"})
@@ -283,7 +287,7 @@ while Status<len(Program):
         if Status==1:
             print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
             print(UI.TimeStamp(),bcolors.BOLD+'Stage 2:'+bcolors.ENDC+' Collecting and de-duplicating the results from stage 1')
-            req_file=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RCTr1a_'+RecBatchID+'_0/RCTr1a_'+RecBatchID+'_ClassifiedTrackSamples_0.pkl'
+            req_file=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/Temp_RCTr1a_'+RecBatchID+'_0/RCTr1a_'+RecBatchID+'_ClassifiedTrackSamples_0.pkl'
             base_data=UI.PickleOperations(req_file,'r', 'N/A')[0]
             ExtractedHeader=['Rec_Seg_ID']+base_data[0].ClassHeaders
             print(ExtractedHeader)
@@ -292,7 +296,7 @@ while Status<len(Program):
             for i in base_data:
                 ExtractedData.append(i.Header+i.Class)
             for i in range(1,JobSets):
-                    req_file=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RCTr1a_'+RecBatchID+'_0/RCTr1a'+'_'+RecBatchID+'_ClassifiedTrackSamples_'+str(i)+'.pkl'
+                    req_file=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/Temp_RCTr1a_'+RecBatchID+'_0/RCTr1a'+'_'+RecBatchID+'_ClassifiedTrackSamples_'+str(i)+'.pkl'
                     base_data=UI.PickleOperations(req_file,'r', 'N/A')[0]
                     for i in base_data:
                          ExtractedData.append(i.Header+i.Class)
