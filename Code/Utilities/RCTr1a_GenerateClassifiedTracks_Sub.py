@@ -50,7 +50,7 @@ if PY_DIR!='': #Temp solution
     sys.path.append('/usr/lib64/python3.9')
     sys.path.append('/usr/lib64/python3.9/lib-dynload')
     sys.path.append('/usr/lib64/python3.9/site-packages')
-    sys.path.append('/usr/lib/python3.69/site-packages')
+    sys.path.append('/usr/lib/python3.9/site-packages')
 sys.path.append(AFS_DIR+'/Code/Utilities')
 import U_UI as UI #This is where we keep routine utility functions
 import U_ML as ML #This is where we keep routine utility functions
@@ -101,6 +101,7 @@ print(UI.TimeStamp(),'Beginning the image generation part...')
 limit = len(track_headers)
 
 for s in range(0,limit):
+
      track=track_headers.pop(0)
      track=EMO([track[0]])
      track.Decorate(track_data)

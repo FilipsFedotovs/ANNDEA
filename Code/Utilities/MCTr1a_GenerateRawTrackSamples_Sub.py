@@ -3,13 +3,9 @@
 #Made by Filips Fedotovs
 #Current version 1.0
 
-
 ########################################    Import libraries    #############################################
 import argparse
 import sys
-
-
-
 ######################################## Set variables  #############################################################
 #Setting the parser - this script is usually not run directly, but is used by a Master version Counterpart that passes the required arguments
 parser = argparse.ArgumentParser(description='select cut parameters')
@@ -80,8 +76,6 @@ track_column_headers=track_headers.columns.values.tolist()
 track_headers=track_headers.values.tolist()
 track_data = data[['x','y','z','tx','ty','Rec_Seg_ID']].values.tolist() #Convirting the result to List data type
 track_headers = track_headers[int(i)*MaxSegments : min((int(i)+1)*MaxSegments, len(track_headers))]
-
-
 
 gc.collect()
 track_counter=0

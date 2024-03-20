@@ -155,7 +155,6 @@ class EMO:
                 MaxZ = FiducialVolumeCut[5]
                 return (self.DOCA<=MaxDoca and min(self.V_Tr)<=MaxVXT and self.Vx>=MinX and self.Vx<=MaxX and self.Vy>=MinY and self.Vy<=MaxY and self.Vz>=MinZ and self.Vz<=MaxZ and abs(self.angle)<=MaxAngle)
           return (self.DOCA<=MaxDoca and min(self.V_Tr)<=MaxVXT and abs(self.angle)<=MaxAngle)
-    
       def PrepareSeedPrint(self,MM):
           __TempTrack=copy.deepcopy(self.Hits)
 
@@ -739,7 +738,6 @@ class EMO:
           plt.show()
         else:
           print('Invalid plot type input value! Should be XZ, YZ or XY')
-
       def FitSeed(self,Mmeta,M):
           if Mmeta.ModelType=='CNN':
              EMO.PrepareSeedPrint(self,Mmeta)
@@ -774,6 +772,9 @@ class EMO:
              graph.batch = torch.zeros(len(graph.x),dtype=torch.int64)
              #self.Fit=M(graph.x, graph.edge_index, graph.edge_attr,graph.batch)[0][1].item()
              self.Class=M(graph.x, graph.edge_index, graph.edge_attr,graph.batch).tolist()[0]
+             print(Mmeta.ClassNames)
+             print(self.Class)
+             x=input()
              self.ClassHeaders=Mmeta.ClassHeaders+['Other']
       def InjectSeed(self,OtherSeed):
           __overlap=False
@@ -866,7 +867,6 @@ class EMO:
 
           else:
               return __overlap
-
       def InjectTrackSeed(self,OtherSeed):
           Overlap=list(set(self.Header) & set(OtherSeed.Header)) #Basic check - does the other seed have at least one track segment in common?
 
@@ -1076,7 +1076,6 @@ class EMO:
             dot = v1_u[0]*v2_u[0] + v1_u[1]*v2_u[1]      # dot product
             det = v1_u[0]*v2_u[1] - v1_u[1]*v2_u[0]      # determinant
             return np.arctan2(det, dot)
-
       def GetEquationOfTrack(EMO):
           Xval=[]
           Yval=[]
@@ -1088,7 +1087,6 @@ class EMO:
           XZ=np.polyfit(Zval,Xval,1)
           YZ=np.polyfit(Zval,Yval,1)
           return (XZ,YZ, 'N/A',Xval[0],Yval[0],Zval[0])
-
       def closestDistanceBetweenLines(a0,a1,b0,b1,clampAll=False,clampA0=False,clampA1=False,clampB0=False,clampB1=False):
             a0=np.array(a0)
             a1=np.array(a1)
