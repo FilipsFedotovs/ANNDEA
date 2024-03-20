@@ -784,8 +784,6 @@ class EMO:
              #self.Fit=M(graph.x, graph.edge_index, graph.edge_attr,graph.batch)[0][1].item()
              print(M(graph.x, graph.edge_index, graph.edge_attr,graph.batch).tolist())
              self.Class=M(graph.x, graph.edge_index, graph.edge_attr,graph.batch).tolist()[0]
-             print(self.Class)
-             x=input()
              self.ClassHeaders=Mmeta.ClassHeaders+['Other']
              if Mmeta.ClassValues[0][0]=='Reg':
                 self.ClassHeaders=Mmeta.ClassHeaders
