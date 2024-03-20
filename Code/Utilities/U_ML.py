@@ -975,7 +975,8 @@ def zero_divide(a, b):
 def CNNtrain(model, Sample, Batches,num_classes, BatchSize):
     loss_accumulative = 0
     acc_accumulative = 0
-    for ib in range(Batches):
+ #   for ib in range(Batches):
+    for ib in range(10):
         StartSeed=(ib*BatchSize)+1
         EndSeed=StartSeed+BatchSize-1
         BatchImages=LoadRenderImages(Sample,StartSeed,EndSeed,num_classes)
@@ -1013,7 +1014,8 @@ def GNNvalidate(model, Sample,criterion):
 def CNNvalidate(model, Sample, Batches,num_classes, BatchSize):
     loss_accumulative = 0
     acc_accumulative = 0
-    for ib in range(Batches):
+#    for ib in range(Batches):
+    for ib in range(10):
         StartSeed=(ib*BatchSize)+1
         EndSeed=StartSeed+BatchSize-1
         BatchImages=LoadRenderImages(Sample,StartSeed,EndSeed,num_classes)
