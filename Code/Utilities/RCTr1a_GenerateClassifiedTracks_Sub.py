@@ -53,6 +53,7 @@ if PY_DIR!='': #Temp solution
     sys.path.append('/usr/lib/python3.69/site-packages')
 sys.path.append(AFS_DIR+'/Code/Utilities')
 import U_UI as UI #This is where we keep routine utility functions
+import U_ML as ML #This is where we keep routine utility functions
 import pandas as pd #We use Panda for a routine data processing
 import gc  #Helps to clear memory
 from U_EMO import EMO
@@ -64,23 +65,24 @@ ModelMeta=UI.PickleOperations(Model_Meta_Path, 'r', 'N/A')[0]
 if ModelMeta.ModelFramework=='Tensorflow':
         import tensorflow as tf
         from tensorflow import keras
+        Model_Path=EOSsubModelDIR+'/'+ModelName+'.keras'
         model=tf.keras.models.load_model(Model_Path)
 if ModelMeta.ModelFramework=='PyTorch':
         import torch
         from torch import optim
         Model_Meta_Path=EOSsubModelDIR+'/'+ModelName+'_Meta'
         Model_Path=EOSsubModelDIR+'/'+ModelName
-        ModelMeta=UF.PickleOperations(Model_Meta_Path, 'r', 'N/A')[0]
+        ModelMeta=UI.PickleOperations(Model_Meta_Path, 'r', 'N/A')[0]
         device = torch.device('cpu')
-        model = UF.GenerateModel(ModelMeta).to(device)
+        model = ML.GenerateModel(ModelMeta).to(device)
         model.load_state_dict(torch.load(Model_Path))
 
 
 #Specifying the full path to input/output files
 input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+BatchID+'/RCTr1_'+BatchID+'_TRACKS.csv'
 output_file_location=EOS_DIR+p+'/Temp_'+pfx+'_'+BatchID+'_0/'+pfx+'_'+BatchID+'_'+o+'_'+str(i)+sfx
-print(UF.TimeStamp(), "Modules Have been imported successfully...")
-print(UF.TimeStamp(),'Loading pre-selected data from ',input_file_location)
+print(UI.TimeStamp(), "Modules Have been imported successfully...")
+print(UI.TimeStamp(),'Loading pre-selected data from ',input_file_location)
 data=pd.read_csv(input_file_location,header=0,
                     usecols=['x','y','z','tx','ty','Rec_Seg_ID'])
 track_headers = data[['Rec_Seg_ID']]
