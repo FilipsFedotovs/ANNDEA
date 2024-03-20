@@ -91,8 +91,6 @@ track_column_headers=track_headers.columns.values.tolist()
 track_headers=track_headers.values.tolist()
 track_data = data[['x','y','z','tx','ty','Rec_Seg_ID']].values.tolist() #Convirting the result to List data type
 track_headers = track_headers[int(i)*MaxSegments : min((int(i)+1)*MaxSegments, len(track_headers))]
-print(track_headers)
-exit()
 
 gc.collect()
 track_counter=0
@@ -109,9 +107,9 @@ for s in range(0,limit):
      track.ClassifySeed(ModelMeta,model)
      GoodTracks.append(track)
 
-print(UF.TimeStamp(),'The track classification has been completed..')
-print(UF.TimeStamp(),'Saving the results..')
-print(UF.PickleOperations(output_file_location,'w', GoodTracks)[1])
+print(UI.TimeStamp(),'The track classification has been completed..')
+print(UI.TimeStamp(),'Saving the results..')
+print(UI.PickleOperations(output_file_location,'w', GoodTracks)[1])
 #End of the script
 
 
