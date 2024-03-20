@@ -774,6 +774,9 @@ class EMO:
              graph.batch = torch.zeros(len(graph.x),dtype=torch.int64)
              #self.Fit=M(graph.x, graph.edge_index, graph.edge_attr,graph.batch)[0][1].item()
              self.Class=M(graph.x, graph.edge_index, graph.edge_attr,graph.batch).tolist()[0]
+             print(self.Class)
+             print(self.Class*1000)
+             x=input()
              self.ClassHeaders=Mmeta.ClassHeaders+['Other']
              if Mmeta.ClassValues[0][0]=='Reg':
                 self.ClassHeaders=Mmeta.ClassHeaders
