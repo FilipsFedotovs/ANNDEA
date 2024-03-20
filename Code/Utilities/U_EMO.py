@@ -585,6 +585,8 @@ class EMO:
                         edge_attr.append(h[:4])
 
                       try:
+                          print(MM.ModelParameters[10][1])
+                          x=input()
                           __y=[]
                           for i in range(MM.ModelParameters[10][1]):
                             if self.Label==i:
