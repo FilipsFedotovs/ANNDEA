@@ -310,8 +310,6 @@ while Status<len(Program):
 #            data=pd.merge(data,ExtractedData,how='left',on=['Rec_Seg_ID'])
             data=pd.merge(data,ExtractedData,how='inner',on=['Rec_Seg_ID'])
             data=data.drop(['Rec_Seg_ID'],axis=1)
-            print(data)
-            exit()
             raw_name=initial_input_file_location[:-4]
             for l in range(len(raw_name)-1,0,-1):
                     if raw_name[l]=='/':
