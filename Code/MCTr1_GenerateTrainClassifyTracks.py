@@ -157,7 +157,7 @@ if os.path.isfile(required_file_location)==False:
             data_aggregated_show=data_aggregated_show.rename(columns={'Rec_Seg_ID': "No_Tracks"})
             data_aggregated_show['PID']=data_aggregated_show[PM.z].rank(ascending=True).astype(int)
             print('A list of plates and the number of tracks starting on them is listed bellow:')
-            print(data_aggregated_show)
+            print(data_aggregated_show.to_string())
             RPChoice = input('Enter the list of plates separated by comma that you want to remove followed by "Enter" : ')
             if len(RPChoice)>1:
                 RPChoice=ast.literal_eval(RPChoice)
@@ -195,7 +195,7 @@ if os.path.isfile(required_file_location)==False:
             data_aggregated_show=data_aggregated.groupby(['track_len']).count().reset_index()
             data_aggregated_show=data_aggregated_show.rename(columns={'Rec_Seg_ID': "No_Tracks"})
             print('Track length distribution:')
-            print(data_aggregated_show)
+            print(data_aggregated_show.to_string())
             RTLChoice = input('Enter the list of track lengths to exclude" : ')
             if len(RTLChoice)>1:
                 RTLChoice=ast.literal_eval(RTLChoice)

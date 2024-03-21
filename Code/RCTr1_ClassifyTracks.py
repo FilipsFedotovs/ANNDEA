@@ -134,7 +134,6 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         print(UI.TimeStamp(),'The cleaned data has ',final_rows,' hits')
         data[BrickID] = data[BrickID].astype(str)
         data[TrackID] = data[TrackID].astype(str)
-
         data['Rec_Seg_ID'] = data[TrackID] + '-' + data[BrickID]
         data=data.drop([TrackID],axis=1)
         data=data.drop([BrickID],axis=1)
@@ -146,7 +145,7 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
             data_aggregated_show=data_aggregated_show.rename(columns={'Rec_Seg_ID': "No_Tracks"})
             data_aggregated_show['PID']=data_aggregated_show[PM.z].rank(ascending=True).astype(int)
             print('A list of plates and the number of tracks starting on them is listed bellow:')
-            print(data_aggregated_show)
+            print(data_aggregated_show.to_string())
             RPChoice = input('Enter the list of plates separated by comma that you want to remove followed by "Enter" : ')
             if len(RPChoice)>1:
                 RPChoice=ast.literal_eval(RPChoice)
@@ -178,12 +177,11 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
             data_aggregated=pd.merge(data_aggregated,data_aggregated_list_z[[PM.z,'PID_l']], how='inner', left_on='min_z', right_on=PM.z)
             data_aggregated=pd.merge(data_aggregated,data_aggregated_list_z[[PM.z,'PID_r']], how='inner', left_on='max_z', right_on=PM.z)[['Rec_Seg_ID','PID_l','PID_r']]
             data_aggregated['track_len']=data_aggregated['PID_r']-data_aggregated['PID_l']+1
-
             data_aggregated=data_aggregated[['Rec_Seg_ID','track_len']]
             data_aggregated_show=data_aggregated.groupby(['track_len']).count().reset_index()
             data_aggregated_show=data_aggregated_show.rename(columns={'Rec_Seg_ID': "No_Tracks"})
             print('Track length distribution:')
-            print(data_aggregated_show)
+            print(data_aggregated_show.to_string())
             RTLChoice = input('Enter the list of track lengths to exclude" : ')
             if len(RTLChoice)>1:
                 RTLChoice=ast.literal_eval(RTLChoice)
@@ -247,8 +245,6 @@ MaxSegments=Meta.MaxSegments
 TotJobs=JobSets
 #The function bellow helps to monitor the HTCondor jobs and keep the submission flow
 
-
-
 #The function bellow helps to automate the submission process
 UI.Msg('vanilla','Analysing the current script status...')
 Status=Meta.Status[-1]
@@ -271,7 +267,6 @@ prog_entry.append(False)
 #Setting up folders for the output. The reconstruction of just one brick can easily generate >100k of files. Keeping all that blob in one directory can cause problems on lxplus.
 print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry))
 Program.append(prog_entry)
-
 Program.append('Custom')
 
 while Status<len(Program):
@@ -290,7 +285,6 @@ while Status<len(Program):
             req_file=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/Temp_RCTr1a_'+RecBatchID+'_0/RCTr1a_'+RecBatchID+'_ClassifiedTrackSamples_0.pkl'
             base_data=UI.PickleOperations(req_file,'r', 'N/A')[0]
             ExtractedHeader=['Rec_Seg_ID']+base_data[0].ClassHeaders
-
             ExtractedData=[]
             for i in base_data:
                 ExtractedData.append(i.Header+[float(i.Class)])
