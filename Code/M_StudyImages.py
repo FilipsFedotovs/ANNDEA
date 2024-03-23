@@ -30,6 +30,7 @@ csv_reader.close()
 import sys
 sys.path.insert(1, AFS_DIR+'/Code/Utilities/')
 import U_UI as UF
+import U_ML as ML
 from  U_EMO import EMO
 import Parameters as PM
 
@@ -97,7 +98,7 @@ print(UF.TimeStamp(),'Loading the data file ',bcolors.OKBLUE+TrainSampleInputMet
 MetaInput=UF.PickleOperations(TrainSampleInputMeta,'r', 'N/A')
 print(MetaInput[1])
 Meta=MetaInput[0]
-DummyModelObj=UF.ModelMeta("Dummy'")
+DummyModelObj=ML.ModelMeta("Dummy'")
 DummyModelObj.IniModelMeta([[],[],[],[],[],[],[],[],[],[],[],[MaxX,MaxY,MaxZ,resolution]], 'Tensorflow', Meta, EImg, 'CNN')
 
 #ImageObjectSet[0].PrepareSeedPrint(DummyModelObj)
