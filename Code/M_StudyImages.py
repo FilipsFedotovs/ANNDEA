@@ -81,9 +81,9 @@ print(bcolors.HEADER+"#########################                 PhD Student at U
 print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
 print(UF.TimeStamp(), bcolors.OKGREEN+"Modules Have been imported successfully..."+bcolors.ENDC)
 if args.Type=='Val':
- input_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_'+SeedType+'_SEEDS_OUTPUT.pkl'
+ input_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_'+SeedType+'_OUTPUT.pkl'
 else:
- input_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_'+SeedType+'_SEEDS_OUTPUT_'+args.Type+'.pkl'
+ input_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_'+SeedType+'_OUTPUT_'+args.Type+'.pkl'
 
 ImageObjectSet=UF.PickleOperations(input_file_location,'r', 'N/A')[0]
 
