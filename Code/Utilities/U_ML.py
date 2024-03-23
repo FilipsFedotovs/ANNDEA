@@ -470,11 +470,17 @@ def GenerateModel(ModelMeta,TrainParams=None):
                         self.conv2 = GCNConv(HiddenLayer[0][0],HiddenLayer[1][0])
                         self.conv3 = GCNConv(HiddenLayer[1][0],HiddenLayer[2][0])
                         self.lin = Linear(HiddenLayer[2][0],OutputLayer[1])
+                    if len(HiddenLayer)==1:
+                        self.conv1 = GCNConv(4 , HiddenLayer[0][0])
+                        self.lin = Linear(HiddenLayer[0][0],OutputLayer[1])
                     if OutputLayer[1]>1:
                         self.softmax = Softmax(dim=-1)
 
                 def forward(self, x, edge_index, edge_attr, batch):
                     # 1. Obtain node embeddings
+                    if len(HiddenLayer)==1:
+                        x = self.conv1(x, edge_index)
+                        x = x.relu()
                     if len(HiddenLayer)==3:
                         x = self.conv1(x, edge_index)
                         x = x.relu()
