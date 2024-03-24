@@ -156,7 +156,7 @@ def AutoPilot(wait_min, interval_min):
                  print(bcolors.OKGREEN+"......................................................................."+bcolors.ENDC)
        else:
                 try:
-                    HTCondorTag="SoftUsed == \"ANNDEA-MUTr2-"+ModelName+"\""
+                    HTCondorTag="SoftUsed == \"ANNDEA-MCTr2-"+ModelName+"\""
                     q=schedd.query(constraint=HTCondorTag,projection=['CLusterID','JobStatus'])
                     if len(q)==0:
                         print(UI.TimeStamp(),bcolors.FAIL+'The HTCondor job has failed, resubmitting...'+bcolors.ENDC)

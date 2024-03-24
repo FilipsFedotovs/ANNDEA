@@ -516,6 +516,9 @@ def GenerateModel(ModelMeta,TrainParams=None):
                         self.conv2 = GCNConv(HiddenLayer[0][0],HiddenLayer[1][0])
                         self.conv3 = GCNConv(HiddenLayer[1][0],HiddenLayer[2][0])
                         self.lin = Linear(HiddenLayer[2][0],OutputLayer[1])
+                    if len(HiddenLayer)==3:
+                        self.conv1 = GCNConv(6 , HiddenLayer[0][0])
+                        self.lin = Linear(HiddenLayer[0][0],OutputLayer[1])
                     if OutputLayer[1]>1:
                         self.softmax = Softmax(dim=-1)
 
@@ -527,6 +530,9 @@ def GenerateModel(ModelMeta,TrainParams=None):
                         x = self.conv2(x, edge_index)
                         x = x.relu()
                         x = self.conv3(x, edge_index)
+                        x = x.relu()
+                    if len(HiddenLayer)==1:
+                        x = self.conv1(x, edge_index)
                         x = x.relu()
                     # 2. Readout layer
                     x = global_mean_pool(x, batch)  # [batch_size, hidden_channels]
