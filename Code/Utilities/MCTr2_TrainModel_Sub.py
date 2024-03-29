@@ -86,7 +86,7 @@ if ModelMeta.ModelType=='CNN':
 
            next_file=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_TRACK_OUTPUT_'+str(train_set)+'.pkl'
            if os.path.isfile(next_file):
-               TrainSamples=UI.PickleOperations(next_file,'r', 'N/A')[0]
+               TrainSamples=UI.PickleOperations(next_file,'r', 'N/A')[0][:4]
                print(UI.PickleOperations(next_file,'r', 'N/A')[1])
            else:
                train_set=1
