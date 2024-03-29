@@ -162,6 +162,8 @@ def main(self):
         K = tf.keras.backend 
         try:
             model=tf.keras.models.load_model(Model_Path)
+            print(sess.run(model.optimizer._lr))
+            exit()
             #K.set_value(model.optimizer.learning_rate, lr)
         
         except:
