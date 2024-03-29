@@ -163,7 +163,7 @@ def main(self):
         K = tf.keras.backend 
         # try:
         model=tf.keras.models.load_model(Model_Path)
-        print(sess.run(model.optimizer.learning_rate))
+        print(model.optimizer.learning_rate.numpy())
         exit()
         #K.set_value(model.optimizer.learning_rate, lr)
         
