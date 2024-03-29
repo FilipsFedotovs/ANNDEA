@@ -163,7 +163,7 @@ def main(self):
         # try:
         model=tf.keras.models.load_model(Model_Path)
         lr = tf.Variable(float(TrainParams[0]), trainable=False)
-        print(model.optimizer.learning_rate)
+        print(model.optimizer.Adam)
         exit()
         K.set_value(model.optimizer.learning_rate, lr)
         # except:
