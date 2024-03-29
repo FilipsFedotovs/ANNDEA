@@ -159,7 +159,7 @@ def main(self):
         import warnings
         warnings.simplefilter(action='ignore', category=FutureWarning)
         import tensorflow as tf
-        sess = tf.v1.Session()
+        sess = tf.Session()
         K = tf.keras.backend 
         # try:
         model=tf.keras.models.load_model(Model_Path)
