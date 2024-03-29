@@ -159,8 +159,7 @@ def main(self):
         import warnings
         warnings.simplefilter(action='ignore', category=FutureWarning)
         import tensorflow as tf
-        import keras
-        from keras import backend as K
+        K = tf.keras.backend 
         # try:
         model=tf.keras.models.load_model(Model_Path)
         K.set_value(model.optimizer.learning_rate, TrainParams[0])
