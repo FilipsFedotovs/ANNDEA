@@ -151,6 +151,8 @@ def main(self):
     print(UI.TimeStamp(),'Starting the training process... ')
     if ModelMeta.ModelType=='CNN':
         Model_Path=EOSsubModelDIR+'/'+ModelName+'.keras'
+        print(Model_Path)
+        exit()
         import os
         os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # FATAL
         import logging
