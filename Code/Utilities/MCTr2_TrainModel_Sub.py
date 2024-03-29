@@ -161,15 +161,13 @@ def main(self):
         import tensorflow as tf
         sess = tf.compat.v1.Session()
         K = tf.keras.backend 
-        # try:
-        model=tf.keras.models.load_model(Model_Path)
-        print(model.optimizer.learning_rate.numpy())
-        exit()
-        #K.set_value(model.optimizer.learning_rate, lr)
-        
-        # except:
-        #      print(UI.TimeStamp(), bcolors.WARNING+"Model/state data files are missing, skipping this step..." +bcolors.ENDC)
-        #      model = ML.GenerateModel(ModelMeta,TrainParams)
+        try:
+            model=tf.keras.models.load_model(Model_Path)
+            print(model.optimizer.learning_rate.numpy())
+            #K.set_value(model.optimizer.learning_rate, lr)
+        except:
+             print(UI.TimeStamp(), bcolors.WARNING+"Model/state data files are missing, skipping this step..." +bcolors.ENDC)
+             model = ML.GenerateModel(ModelMeta,TrainParams)
         model.summary()
         for el in ModelMeta.ModelParameters:
           if len(el)==2:
