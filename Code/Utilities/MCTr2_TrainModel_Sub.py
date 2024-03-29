@@ -163,7 +163,7 @@ def main(self):
         # try:
         model=tf.keras.models.load_model(Model_Path)
         print(model.optimizer.learning_rate)
-        print(model.optimizer._decayed_lr('float32').numpy())
+        print(tf.get_static_value(model.optimizer.learning_rate))
         exit()
         K.set_value(model.optimizer.learning_rate, lr)
         
