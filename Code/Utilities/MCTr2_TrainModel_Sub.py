@@ -160,16 +160,13 @@ def main(self):
         warnings.simplefilter(action='ignore', category=FutureWarning)
         import tensorflow as tf
         K = tf.keras.backend 
-        # try:
-        model=tf.keras.models.load_model(Model_Path)
-        print(model.optimizer.learning_rate)
-        print(tf.get_static_value(model.optimizer.learning_rate))
-        exit()
-        K.set_value(model.optimizer.learning_rate, lr)
+        try:
+            model=tf.keras.models.load_model(Model_Path)
+            #K.set_value(model.optimizer.learning_rate, lr)
         
-        # except:
-        #      print(UI.TimeStamp(), bcolors.WARNING+"Model/state data files are missing, skipping this step..." +bcolors.ENDC)
-        #      model = ML.GenerateModel(ModelMeta,TrainParams)
+        except:
+             print(UI.TimeStamp(), bcolors.WARNING+"Model/state data files are missing, skipping this step..." +bcolors.ENDC)
+             model = ML.GenerateModel(ModelMeta,TrainParams)
         model.summary()
         for el in ModelMeta.ModelParameters:
           if len(el)==2:
