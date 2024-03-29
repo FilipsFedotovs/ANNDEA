@@ -162,7 +162,7 @@ def main(self):
         K = tf.keras.backend 
         # try:
         model=tf.keras.models.load_model(Model_Path)
-        K.set_value(model.optimizer.learning_rate, TrainParams[0])
+        K.set_value(model.optimizer.learning_rate, float(TrainParams[0]))
         # except:
         #      print(UI.TimeStamp(), bcolors.WARNING+"Model/state data files are missing, skipping this step..." +bcolors.ENDC)
         #      model = ML.GenerateModel(ModelMeta,TrainParams)
