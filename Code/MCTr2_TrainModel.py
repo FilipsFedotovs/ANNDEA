@@ -86,7 +86,7 @@ if Mode=='RESET':
     print(UI.ManageFolders(AFS_DIR, EOS_DIR, ModelName,'c'))
     import shutil
     print(EOSsubModelDIR+'/'+args.ModelName)
-    print(EOSsubModelDIR+'/'+args.ModelName+'.keras)
+    print(EOSsubModelDIR+'/'+args.ModelName+'.keras')
     shutil.rmtree(EOSsubModelDIR+'/'+args.ModelName,True)
     shutil.rmtree(EOSsubModelDIR+'/'+args.ModelName+'.keras',True)
 else:
