@@ -163,6 +163,8 @@ def main(self):
         # try:
         model=tf.keras.models.load_model(Model_Path)
         lr = tf.Variable(float(TrainParams[0]), trainable=False)
+        print(model.optimizer.learning_rate)
+        exit()
         K.set_value(model.optimizer.learning_rate, lr)
         # except:
         #      print(UI.TimeStamp(), bcolors.WARNING+"Model/state data files are missing, skipping this step..." +bcolors.ENDC)
