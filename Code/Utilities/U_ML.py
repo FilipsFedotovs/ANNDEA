@@ -1014,8 +1014,10 @@ def GNNvalidate(model, Sample,criterion):
     loss_accumulative = 0
     for data in Sample:
          print(len(Sample.dataset))
-         exit()
          out = model(data.x, data.edge_index, data.edge_attr, data.batch)
+         print(data.y)
+         print(out)
+         exit()
          pred = out.argmax(dim=1)  # Use the class with the highest probability.
          y_index = data.y.argmax(dim=1)
          correct += int((pred == y_index).sum())  # Check against ground-truth labels.
