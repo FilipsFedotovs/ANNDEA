@@ -1021,9 +1021,10 @@ def GNNvalidate(model, Sample,criterion):
          y_index = data.y.argmax(dim=1)
          correct += int((pred == y_index).sum())  # Check against ground-truth labels.
          loss = criterion(out, data.y)
-         print(loss)
-         exit()
+         print('loss',loss)
          loss_accumulative += float(loss)
+         print('acc loss',loss_accumulative)
+         x=input()
     return (correct / len(Sample.dataset), loss_accumulative/len(Sample.dataset))
 
 def CNNvalidate(model, Sample, Batches,num_classes, BatchSize):
