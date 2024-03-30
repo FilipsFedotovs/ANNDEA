@@ -69,7 +69,7 @@ print(MetaInput[1])
 Meta=MetaInput[0]
 Model_Meta_Path=EOSsubModelDIR+'/'+ModelName+'_Meta'
 ModelMeta=UI.PickleOperations(Model_Meta_Path, 'r', 'N/A')[0]
-ValSamples=UI.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_TRACK_OUTPUT.pkl','r', 'N/A')[0][:12]
+ValSamples=UI.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_TRACK_OUTPUT.pkl','r', 'N/A')[0]
 print(UI.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_TRACK_OUTPUT.pkl','r', 'N/A')[1])
 train_set=1
 if ModelMeta.ModelType=='CNN':
@@ -104,7 +104,7 @@ elif ModelMeta.ModelType=='GNN':
        import torch
 
        if len(ModelMeta.TrainSessionsData)==0:
-           TrainSamples=UI.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_TRACK_OUTPUT_1.pkl','r', 'N/A')[0][:12]
+           TrainSamples=UI.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_TRACK_OUTPUT_1.pkl','r', 'N/A')[0]
            print(UI.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_TRACK_OUTPUT_1.pkl','r', 'N/A')[1])
            train_set=1
 
@@ -118,7 +118,7 @@ elif ModelMeta.ModelType=='GNN':
                    print(UI.PickleOperations(next_file,'r', 'N/A')[1])
                else:
                    train_set=1
-                   TrainSamples=UI.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_TRACK_OUTPUT_1.pkl','r', 'N/A')[0][:12]
+                   TrainSamples=UI.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_TRACK_OUTPUT_1.pkl','r', 'N/A')[0]
                    print(UI.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_TRACK_OUTPUT_1.pkl','r', 'N/A')[1])
             break
        NTrainBatches=math.ceil(float(len(TrainSamples))/float(TrainParams[1]))
