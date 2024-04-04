@@ -287,12 +287,18 @@ while Status<len(Program):
             ExtractedHeader=['Rec_Seg_ID']+base_data[0].ClassHeaders
             ExtractedData=[]
             for i in base_data:
-                ExtractedData.append(i.Header+[float(i.Class)])
+                if ClassValues[0][0]=='Reg':
+                    ExtractedData.append(i.Header+[float(i.Class)])
+                else:
+                    ExtractedData.append(i.Header+i.Class)
             for i in range(1,JobSets):
                     req_file=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/Temp_RCTr1a_'+RecBatchID+'_0/RCTr1a'+'_'+RecBatchID+'_ClassifiedTrackSamples_'+str(i)+'.pkl'
                     base_data=UI.PickleOperations(req_file,'r', 'N/A')[0]
                     for i in base_data:
-                         ExtractedData.append(i.Header+[float(i.Class)])
+                         if ClassValues[0][0]=='Reg':
+                            ExtractedData.append(i.Header+[float(i.Class)])
+                         else:
+                            ExtractedData.append(i.Header+i.Class)
             ExtractedData = pd.DataFrame (ExtractedData, columns = ExtractedHeader)
             if ClassValues[0][0]=='Reg':
                 ExtractedData[ClassHeaders[0]]=ExtractedData[ClassHeaders[0]]*float(ClassValues[0][2])
