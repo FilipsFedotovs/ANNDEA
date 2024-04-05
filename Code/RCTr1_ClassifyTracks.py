@@ -288,9 +288,7 @@ while Status<len(Program):
             ExtractedData=[]
             for i in base_data:
                 if ClassValues[0][0]=='Reg':
-                    print(i.Class)
-                    exit()
-                    ExtractedData.append(i.Header+[float(i.Class)])
+                    ExtractedData.append(i.Header+i.Class)
                 else:
                     ExtractedData.append(i.Header+i.Class)
             for i in range(1,JobSets):
@@ -298,7 +296,7 @@ while Status<len(Program):
                     base_data=UI.PickleOperations(req_file,'r', 'N/A')[0]
                     for i in base_data:
                          if ClassValues[0][0]=='Reg':
-                            ExtractedData.append(i.Header+[float(i.Class)])
+                            ExtractedData.append(i.Header+[float(i.Class[0])])
                          else:
                             ExtractedData.append(i.Header+i.Class)
             ExtractedData = pd.DataFrame (ExtractedData, columns = ExtractedHeader)
