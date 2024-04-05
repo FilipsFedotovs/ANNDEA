@@ -288,6 +288,8 @@ while Status<len(Program):
             ExtractedData=[]
             for i in base_data:
                 if ClassValues[0][0]=='Reg':
+                    print(i.Class)
+                    exit()
                     ExtractedData.append(i.Header+[float(i.Class)])
                 else:
                     ExtractedData.append(i.Header+i.Class)
