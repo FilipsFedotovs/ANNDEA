@@ -304,6 +304,8 @@ while Status<len(Program):
                 #data_agg[ClassNames[0][0]]=data_agg[ClassNames[0][0]].astype(float)-(float(ClassValues[0][2])/2)
                # data_agg[ClassNames[0][0]]=data_agg[ClassNames[0][0]].astype(float).div(float(ClassValues[0][2])/2)
                 print(ExtractedData[ClassHeaders[0]])
+                ExtractedData[ClassHeaders[0]]=ExtractedData[ClassHeaders[0]]*float(ClassValues[0][2])/2
+                print(ExtractedData[ClassHeaders[0]])
                 exit()
                 ExtractedData[ClassHeaders[0]]=ExtractedData[ClassHeaders[0]]*float(ClassValues[0][2])
             data=pd.read_csv(args.f,header=0)
