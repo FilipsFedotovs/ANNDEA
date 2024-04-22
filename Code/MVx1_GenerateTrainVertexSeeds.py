@@ -234,7 +234,6 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
             data=data.drop(['track_len'],axis=1)
         final_rows=len(data.axes[0])
         print(UI.TimeStamp(),'After removing tracks with specific lengths we have',final_rows,' hits left')
-        exit()
         compress_data=data.drop([PM.x,PM.y,PM.z,PM.tx,PM.ty],axis=1)
         compress_data['MC_Mother_No']= compress_data['MC_VX_ID']
         compress_data=compress_data.groupby(by=['Rec_Seg_ID','MC_VX_ID'])['MC_Mother_No'].count().reset_index()
@@ -253,7 +252,7 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
              final_rows=len(data.axes[0])
              print(UI.TimeStamp(),'The sliced data has ',final_rows,' hits')
 
-        output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MVx1_'+TrainSampleID+'_TRACK_SEGMENTS.csv'
+        output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/MVx1_'+TrainSampleID+'_TRACK_SEGMENTS.csv'
         print(UI.TimeStamp(),'Removing tracks which have less than',MinHitsTrack,'hits...')
         track_no_data=data.groupby(['MC_VX_ID','Rec_Seg_ID'],as_index=False).count()
         track_no_data=track_no_data.drop([PM.y,PM.z,PM.tx,PM.ty],axis=1)
@@ -269,22 +268,14 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         new_combined_data=new_combined_data.rename(columns={PM.z: "z"})
         new_combined_data=new_combined_data.rename(columns={PM.tx: "tx"})
         new_combined_data=new_combined_data.rename(columns={PM.ty: "ty"})
+
+        final_rows=len(new_combined_data.axes[0])
+        print(UI.TimeStamp(),'After removing tracks that start at the specific plates we have',final_rows,' hits left')
         print(new_combined_data)
         exit()
-        if len(RemoveTracksZ)>0:
-            print(UF.TimeStamp(),'Removing tracks based on start point')
-            TracksZdf = pd.DataFrame(RemoveTracksZ, columns = ['Bad_z'], dtype=float)
-            data_aggregated=new_combined_data.groupby(['Rec_Seg_ID'])['z'].min().reset_index()
-            data_aggregated=data_aggregated.rename(columns={'z': "PosBad_Z"})
-            new_combined_data=pd.merge(new_combined_data, data_aggregated, how="left", on=['Rec_Seg_ID'])
-            new_combined_data=pd.merge(new_combined_data, TracksZdf, how="left", left_on=["PosBad_Z"], right_on=['Bad_z'])
-            new_combined_data=new_combined_data[new_combined_data['Bad_z'].isnull()]
-            new_combined_data=new_combined_data.drop(['Bad_z', 'PosBad_Z'],axis=1)
-        final_rows=len(new_combined_data.axes[0])
-        print(UF.TimeStamp(),'After removing tracks that start at the specific plates we have',final_rows,' hits left')
         new_combined_data.to_csv(output_file_location,index=False)
         data=new_combined_data[['Rec_Seg_ID','z']]
-        print(UF.TimeStamp(),'Analysing the data sample in order to understand how many jobs to submit to HTCondor... ',bcolors.ENDC)
+        print(UI.TimeStamp(),'Analysing the data sample in order to understand how many jobs to submit to HTCondor... ',bcolors.ENDC)
         data = data.groupby('Rec_Seg_ID')['z'].min()  #Keeping only starting hits for the each track record (we do not require the full information about track in this script)
         data=data.reset_index()
         data = data.groupby('z')['Rec_Seg_ID'].count()  #Keeping only starting hits for the each track record (we do not require the full information about track in this script)
@@ -293,8 +284,8 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         data['Sub_Sets']=np.ceil(data['Rec_Seg_ID']/PM.MaxSegments)
         data['Sub_Sets'] = data['Sub_Sets'].astype(int)
         data = data.values.tolist()
-        print(UF.TimeStamp(), bcolors.OKGREEN+"The track segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+output_file_location+bcolors.ENDC)
-        Meta=UF.TrainingSampleMeta(TrainSampleID)
+        print(UI.TimeStamp(), bcolors.OKGREEN+"The track segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+output_file_location+bcolors.ENDC)
+        Meta=UI.TrainingSampleMeta(TrainSampleID)
         Meta.IniVertexSeedMetaData(MaxDST,MaxVXT,MaxDOCA,MaxAngle,data,PM.MaxSegments,PM.MaxSeeds,MinHitsTrack,FiducialVolumeCut,ExcludeClassNames,ExcludeClassValues)
         Meta.UpdateStatus(0)
         print(UF.PickleOperations(TrainSampleOutputMeta,'w', Meta)[1])
