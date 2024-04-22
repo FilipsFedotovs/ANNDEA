@@ -14,7 +14,6 @@ import sys
 ######################################## Set variables  #############################################################
 #Setting the parser - this script is usually not run directly, but is used by a Master version Counterpart that passes the required arguments
 parser = argparse.ArgumentParser(description='select cut parameters')
-parser.add_argument('--PlateZ',help="The Z coordinate of the starting plate", default='-36820.0')
 parser.add_argument('--i',help="Set number", default='1')
 parser.add_argument('--j',help="Subset number", default='1')
 parser.add_argument('--p',help="Path to the output file", default='')
@@ -30,7 +29,6 @@ parser.add_argument('--PY',help="Python libraries directory location", default='
 
 ######################################## Set variables  #############################################################
 args = parser.parse_args()
-PlateZ=float(args.PlateZ)   #The coordinate of the st plate in the current scope
 i=int(args.i)    #This is just used to name the output file
 j=int(args.j)  #The subset helps to determine what portion of the track list is used to create the Seeds
 p=args.p
@@ -74,13 +72,7 @@ data=pd.read_csv(input_file_location,header=0,
 print(UF.TimeStamp(),'Creating segment combinations... ')
 data_header = data.groupby('Rec_Seg_ID')['z'].min()  #Keeping only starting hits for the each track record (we do not require the full information about track in this script)
 data_header=data_header.reset_index()
-
-print(data_header)
-#Doing a plate region cut for the Main Data
-data_header.drop(data_header.index[data_header['z'] > (PlateZ+MaxDST)], inplace = True) #Not applicable for TSU
-data_header.drop(data_header.index[data_header['z'] < PlateZ], inplace = True)
-print(data_header)
-exit()
+PlateZ=data_header.z.min()
 Records=len(data_header.axes[0])
 print(UI.TimeStamp(),'There are total of ', Records, 'tracks in the data set')
 
@@ -96,8 +88,10 @@ EndDataCut=(j+1)*MaxSegments
 
 r_data=data.rename(columns={"x": "r_x"})
 r_data=r_data.rename(columns={'MC_VX_ID': "Mother_2"})
+print(r_data)
 r_data.drop(r_data.index[r_data['z'] != PlateZ], inplace = True)
-
+print(r_data)
+exit()
 Records=len(r_data.axes[0])
 print(UF.TimeStamp(),'There are  ', Records, 'segments in the starting plate')
 
