@@ -56,22 +56,22 @@ if PY_DIR!='': #Temp solution
     sys.path.append('/usr/lib64/python3.9/site-packages')
     sys.path.append('/usr/lib/python3.9/site-packages')
 sys.path.append(AFS_DIR+'/Code/Utilities')
-exit()
-import UtilityFunctions as UF #This is where we keep routine utility functions
+import U_UI as UF #This is where we keep routine utility functions
 import pandas as pd #We use Panda for a routine data processing
 import math #We use it for data manipulation
 import gc  #Helps to clear memory
 import numpy as np
 import ast
 #Specifying the full path to input/output files
-input_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MVx1_'+BatchID+'_TRACK_SEGMENTS.csv'
+input_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+BatchID+'/MVx1_'+BatchID+'_TRACK_SEGMENTS_'+str(i)+'.csv'
 output_file_location=EOS_DIR+'/'+p+'/Temp_'+pfx+'_'+BatchID+'_'+str(i)+'/'+pfx+'_'+BatchID+'_RawSeeds_'+str(i)+'_'+str(j)+sfx
 output_result_location=EOS_DIR+'/'+p+'/Temp_'+pfx+'_'+BatchID+'_'+str(i)+'/'+pfx+'_'+BatchID+'_'+o+'_'+str(i)+'_'+str(j)+sfx
 print(UF.TimeStamp(), "Modules Have been imported successfully...")
 print(UF.TimeStamp(),'Loading pre-selected data from ',input_file_location)
 data=pd.read_csv(input_file_location,header=0,
                     usecols=['x','y','z','Rec_Seg_ID','MC_VX_ID'])
-
+print(data)
+exit()
 print(UF.TimeStamp(),'Creating segment combinations... ')
 data_header = data.groupby('Rec_Seg_ID')['z'].min()  #Keeping only starting hits for the each track record (we do not require the full information about track in this script)
 data_header=data_header.reset_index()
