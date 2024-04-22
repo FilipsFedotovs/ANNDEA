@@ -438,8 +438,6 @@ while Status<len(Program):
                     for j in range(0,JobSet[i]):
                         output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/Temp_MVx1a'+'_'+TrainSampleID+'_'+str(i)+'/MVx1a_'+TrainSampleID+'_RawSeeds_'+str(i)+'_'+str(j)+'.csv'
                         result=pd.read_csv(output_file_location,names = ['Segment_1','Segment_2', 'Seed_Type'])
-                        print(result)
-                        exit()
                         Records=len(result)
                         print(UI.TimeStamp(),'Set',str(i),'and subset', str(j), 'contains', Records, 'seeds',bcolors.ENDC)
                         result["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(result['Segment_1'], result['Segment_2'])]
