@@ -174,6 +174,67 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         data=data.drop(['Exclude'],axis=1)
         for c in ExtraColumns:
             data=data.drop([c],axis=1)
+
+        RZChoice = input('Would you like to remove tracks based on the starting plate? If no, press "Enter", otherwise type "y", followed by "Enter" : ')
+        if RZChoice.upper()=='Y':
+            print(UI.TimeStamp(),'Removing tracks based on start point')
+            data_aggregated=data.groupby(['Rec_Seg_ID'])[PM.z].min().reset_index()
+            data_aggregated_show=data_aggregated.groupby([PM.z]).count().reset_index()
+            data_aggregated_show=data_aggregated_show.rename(columns={'Rec_Seg_ID': "No_Tracks"})
+            data_aggregated_show['PID']=data_aggregated_show[PM.z].rank(ascending=True).astype(int)
+            print('A list of plates and the number of tracks starting on them is listed bellow:')
+            print(data_aggregated_show.to_string())
+            RPChoice = input('Enter the list of plates separated by comma that you want to remove followed by "Enter" : ')
+            if len(RPChoice)>1:
+                RPChoice=ast.literal_eval(RPChoice)
+            else:
+                RPChoice=[int(RPChoice)]
+            TracksZdf = pd.DataFrame(RPChoice, columns = ['PID'], dtype=int)
+            data_aggregated_show=pd.merge(data_aggregated_show,TracksZdf,how='inner',on='PID')
+
+            data_aggregated_show.drop(['No_Tracks','PID'],axis=1,inplace=True)
+            data_aggregated=pd.merge(data_aggregated,data_aggregated_show,how='inner',on=PM.z)
+            data_aggregated=data_aggregated.rename(columns={PM.z: 'Tracks_Remove'})
+
+            data=pd.merge(data, data_aggregated, how="left", on=['Rec_Seg_ID'])
+
+            data=data[data['Tracks_Remove'].isnull()]
+            data=data.drop(['Tracks_Remove'],axis=1)
+        final_rows=len(data.axes[0])
+        print(UI.TimeStamp(),'After removing tracks that start at the specific plates we have',final_rows,' hits left')
+
+        RLChoice = input('Would you like to remove tracks based on their length in traverse plates? If no, press "Enter", otherwise type "y", followed by "Enter" : ')
+        if RLChoice.upper()=='Y':
+            print(UI.TimeStamp(),'Removing tracks based on length')
+            data_aggregated=data[['Rec_Seg_ID',PM.z]]
+            data_aggregated_l=data_aggregated.groupby(['Rec_Seg_ID'])[PM.z].min().reset_index().rename(columns={PM.z: "min_z"})
+            data_aggregated_r=data_aggregated.groupby(['Rec_Seg_ID'])[PM.z].max().reset_index().rename(columns={PM.z: "max_z"})
+            data_aggregated=pd.merge(data_aggregated_l,data_aggregated_r,how='inner', on='Rec_Seg_ID')
+            data_aggregated_list_z=data[[PM.z]].groupby([PM.z]).count().reset_index()
+            data_aggregated_list_z['PID_l']=data_aggregated_list_z[PM.z].rank(ascending=True).astype(int)
+            data_aggregated_list_z['PID_r']=data_aggregated_list_z['PID_l']
+            data_aggregated=pd.merge(data_aggregated,data_aggregated_list_z[[PM.z,'PID_l']], how='inner', left_on='min_z', right_on=PM.z)
+            data_aggregated=pd.merge(data_aggregated,data_aggregated_list_z[[PM.z,'PID_r']], how='inner', left_on='max_z', right_on=PM.z)[['Rec_Seg_ID','PID_l','PID_r']]
+            data_aggregated['track_len']=data_aggregated['PID_r']-data_aggregated['PID_l']+1
+
+            data_aggregated=data_aggregated[['Rec_Seg_ID','track_len']]
+            data_aggregated_show=data_aggregated.groupby(['track_len']).count().reset_index()
+            data_aggregated_show=data_aggregated_show.rename(columns={'Rec_Seg_ID': "No_Tracks"})
+            print('Track length distribution:')
+            print(data_aggregated_show.to_string())
+            RTLChoice = input('Enter the list of track lengths to exclude" : ')
+            if len(RTLChoice)>1:
+                RTLChoice=ast.literal_eval(RTLChoice)
+            else:
+                RTLChoice=[int(RTLChoice)]
+            TracksLdf = pd.DataFrame(RTLChoice, columns = ['track_len'], dtype=int)
+            data_aggregated=pd.merge(data_aggregated,TracksLdf,how='inner',on='track_len')
+            data=pd.merge(data, data_aggregated, how="left", on=['Rec_Seg_ID'])
+            data=data[data['track_len'].isnull()]
+            data=data.drop(['track_len'],axis=1)
+        final_rows=len(data.axes[0])
+        print(UI.TimeStamp(),'After removing tracks with specific lengths we have',final_rows,' hits left')
+        exit()
         compress_data=data.drop([PM.x,PM.y,PM.z,PM.tx,PM.ty],axis=1)
         compress_data['MC_Mother_No']= compress_data['MC_VX_ID']
         compress_data=compress_data.groupby(by=['Rec_Seg_ID','MC_VX_ID'])['MC_Mother_No'].count().reset_index()
