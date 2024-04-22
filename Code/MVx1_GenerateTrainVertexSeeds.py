@@ -56,7 +56,7 @@ import U_UI as UI #This is where we keep routine utility functions
 import Parameters as PM #This is where we keep framework global parameters
 
 UI.WelcomeMsg('Initialising ANNDEA Vertexing Training Sample Generation module...','Filips Fedotovs (PhD student at UCL), Leah Wolf (MSc student at UCL)','Please reach out to filips.fedotovs@cern.ch for any queries')
-exit()
+
 #Setting the parser - this script is usually not run directly, but is used by a Master version Counterpart that passes the required arguments
 parser = argparse.ArgumentParser(description='This script prepares training data for training the tracking model')
 parser.add_argument('--Mode', help='Script will continue from the last checkpoint, unless you want to start from the scratch, then type "Reset"',default='')
@@ -86,7 +86,6 @@ parser.add_argument('--MaxDOCA',help="Maximum DOCA allowed", default='200')
 parser.add_argument('--MaxAngle',help="Maximum magnitude of angle allowed", default='3.6')
 parser.add_argument('--ReqMemory',help="How much memory to request?", default='2 GB')
 parser.add_argument('--FiducialVolumeCut',help="Limits on the vx, y, z coordinates of the vertex origin", default='[]')
-parser.add_argument('--RemoveTracksZ',help="This option enables to remove particular tracks of starting Z-coordinate", default='[]')
 parser.add_argument('--ExcludeClassNames',help="What class headers to use?", default="[]")
 parser.add_argument('--ExcludeClassValues',help="What class values to use?", default="[[]]")
 ######################################## Parsing argument values  #############################################################
@@ -124,7 +123,6 @@ for i in range(len(ExcludeClassNames)):
         if (ExcludeClassNames[i] in ExtraColumns)==False:
                 ExtraColumns.append(ExcludeClassNames[i])
 
-RemoveTracksZ=ast.literal_eval(args.RemoveTracksZ)
 Xmin,Xmax,Ymin,Ymax=float(args.Xmin),float(args.Xmax),float(args.Ymin),float(args.Ymax)
 SliceData=max(Xmin,Xmax,Ymin,Ymax)>0 #We don't slice data if all values are set to zero simultaneously (which is the default setting)
 LocalSub=(args.LocalSub=='Y')
@@ -142,16 +140,16 @@ required_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MVx1_'+TrainSampleID+'_TR
 
 
 ########################################     Phase 1 - Create compact source file    #########################################
-print(UF.TimeStamp(),bcolors.BOLD+'Stage -1:'+bcolors.ENDC+' Preparing the source data...')
+print(UI.TimeStamp(),bcolors.BOLD+'Stage -1:'+bcolors.ENDC+' Preparing the source data...')
 
 if os.path.isfile(required_file_location)==False or Mode=='RESET':
-        print(UF.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
+        print(UI.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
         data=pd.read_csv(input_file_location,
                     header=0,
                     usecols=ColumnsToImport+ExtraColumns)
         total_rows=len(data)
-        print(UF.TimeStamp(),'The raw data has ',total_rows,' hits')
-        print(UF.TimeStamp(),'Removing unreconstructed hits...')
+        print(UI.TimeStamp(),'The raw data has ',total_rows,' hits')
+        print(UI.TimeStamp(),'Removing unreconstructed hits...')
         if len(ExtraColumns)>0:
             for c in ExtraColumns:
                 data[c] = data[c].astype(str)
@@ -161,7 +159,9 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
             data['Exclude']=''
         data=data.dropna()
         final_rows=len(data)
-        print(UF.TimeStamp(),'The cleaned data has ',final_rows,' hits')
+        print(UI.TimeStamp(),'The cleaned data has ',final_rows,' hits')
+        print(data)
+        exit()
         data[PM.MC_Event_ID] = data[PM.MC_Event_ID].astype(str)
         data[PM.MC_VX_ID] = data[PM.MC_VX_ID].astype(str)
         data[TrackID] = data[TrackID].astype(str)
