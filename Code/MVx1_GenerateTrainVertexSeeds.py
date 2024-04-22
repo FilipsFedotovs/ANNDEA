@@ -73,7 +73,7 @@ parser.add_argument('--Ymax',help="This option restricts data to only those even
 parser.add_argument('--Samples',help="How many samples? Please enter the number or ALL if you want to use all data", default='ALL')
 parser.add_argument('--LabelRatio',help="What is the desired proportion of genuine seeds in the training/validation sets", default='0.5')
 parser.add_argument('--TrainSampleSize',help="Maximum number of samples per Training file", default='50000')
-parser.add_argument('--ForceStatus',help="Would you like the program run from specific status number? (Only for advance users)", default='')
+parser.add_argument('--ForceStatus',help="Would you like the program run from specific status number? (Only for advance users)", default='N')
 parser.add_argument('--RequestExtCPU',help="Would you like to request extra CPUs?", default=1)
 parser.add_argument('--JobFlavour',help="Specifying the length of the HTCondor job wall time. Currently at 'workday' which is 8 hours.", default='workday')
 parser.add_argument('--LocalSub',help="Local submission?", default='N')
