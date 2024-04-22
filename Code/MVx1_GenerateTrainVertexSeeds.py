@@ -336,10 +336,6 @@ MinHitsTrack=Meta.MinHitsTrack
 FiducialVolumeCut=Meta.FiducialVolumeCut
 ExcludeClassNames=Meta.ClassNames
 ExcludeClassValues=Meta.ClassValues
-TotJobs=0
-for j in range(0,len(JobSets)):
-          for sj in range(0,int(JobSets[j][2])):
-              TotJobs+=1
 
 # ########################################     Preset framework parameters    #########################################
 Program=[]
