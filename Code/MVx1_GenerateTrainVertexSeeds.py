@@ -315,8 +315,6 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         for i in range(20):
             JobSetList.append('empty')
         JobSetList[0]=JobData
-        print(JobSetList)
-        exit()
         Meta=UI.TrainingSampleMeta(TrainSampleID)
         Meta.IniVertexSeedMetaData(MaxDST,MaxVXT,MaxDOCA,MaxAngle,JobSetList,PM.MaxSegments,PM.MaxSeedsPerVxPool,MinHitsTrack,FiducialVolumeCut,ExcludeClassNames,ExcludeClassValues)
         Meta.UpdateStatus(0)
