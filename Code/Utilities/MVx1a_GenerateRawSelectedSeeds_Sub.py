@@ -147,14 +147,14 @@ for i in range(0,Steps):
     merged_list = merged_data.values.tolist() #Convirting the result to List data type
     result_list+=merged_list #Adding the result to the list
   if len(result_list)>=2000000: #Once the list gets too big we dump the results into csv to save memory
-      UF.LogOperations(output_file_location,'a',result_list) #Write to the csv
+      UI.LogOperations(output_file_location,'a',result_list) #Write to the csv
       #Clearing the memory
       del result_list
       result_list=[]
       gc.collect()
-UF.LogOperations(output_file_location,'a',result_list) #Writing the remaining data into the csv
-UF.LogOperations(output_result_location,'w',[])
-print(UF.TimeStamp(), "Train seed generation is finished...")
+UI.LogOperations(output_file_location,'a',result_list) #Writing the remaining data into the csv
+UI.LogOperations(output_result_location,'w',[])
+print(UI.TimeStamp(), "Train seed generation is finished...")
 #End of the script
 
 
