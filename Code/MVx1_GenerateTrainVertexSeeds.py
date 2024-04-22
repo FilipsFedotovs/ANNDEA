@@ -324,7 +324,7 @@ Status=Meta.Status[-1]
 if ForceStatus!='N':
     Status=int(ForceStatus)
 UI.Msg('vanilla','Current stage is '+str(Status)+'...')
-exit()
+
 
 #The function bellow helps to automate the submission process
 
