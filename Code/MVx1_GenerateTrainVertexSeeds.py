@@ -137,7 +137,7 @@ else:
 EOSsubDIR=EOS_DIR+'/'+'ANNDEA'
 EOSsubModelDIR=EOSsubDIR+'/'+'Models'
 TrainSampleOutputMeta=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/'+TrainSampleID+'_info.pkl'
-required_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/MVx1_'+TrainSampleID+'_TRACK_SEGMENTS.csv'
+required_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/MVx1_'+TrainSampleID+'_TRACK_SEGMENTS_0.csv'
 
 
 ########################################     Phase 1 - Create compact source file    #########################################
@@ -306,25 +306,19 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         for i in range(len(CutData)):
           data_temp_header=data_header.drop(data_header.index[data_header['z'] < CutData[i]])
           data_temp_header=data_temp_header.drop(data_temp_header.index[data_temp_header['z'] > CutData[i]+MaxDST])
-          print(data_temp_header)
-          x=input()
           data_temp_header=data_temp_header.drop(['z'],axis=1)
           temp_data=pd.merge(new_combined_data, data_temp_header, how="inner", on=["Rec_Seg_ID"]) #Shrinking the Track data so just a star hit for each track is present.
           temp_required_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/MVx1_'+TrainSampleID+'_TRACK_SEGMENTS_'+str(i)+'.csv'
           temp_data.to_csv(temp_required_file_location,index=False)
           UI.Msg('location',"The track segment data has been created successfully and written to",temp_required_file_location)
-        exit()
         JobSetList=[]
         for i in range(20):
             JobSetList.append('empty')
         JobSetList[0]=JobData
-
-        data['Sub_Sets']=np.ceil(data['Rec_Seg_ID']/PM.MaxSegments)
-        data['Sub_Sets'] = data['Sub_Sets'].astype(int)
-        data = data.values.tolist()
-        print(UI.TimeStamp(), bcolors.OKGREEN+"The track segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+output_file_location+bcolors.ENDC)
+        print(JobSetList)
+        exit()
         Meta=UI.TrainingSampleMeta(TrainSampleID)
-        Meta.IniVertexSeedMetaData(MaxDST,MaxVXT,MaxDOCA,MaxAngle,data,PM.MaxSegments,PM.MaxSeedsPerVxPool,MinHitsTrack,FiducialVolumeCut,ExcludeClassNames,ExcludeClassValues)
+        Meta.IniVertexSeedMetaData(MaxDST,MaxVXT,MaxDOCA,MaxAngle,JobSetList,PM.MaxSegments,PM.MaxSeedsPerVxPool,MinHitsTrack,FiducialVolumeCut,ExcludeClassNames,ExcludeClassValues)
         Meta.UpdateStatus(0)
         print(UI.PickleOperations(TrainSampleOutputMeta,'w', Meta)[1])
         print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
