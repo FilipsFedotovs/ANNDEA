@@ -277,7 +277,6 @@ MaxSegments=Meta.MaxSegments
 TotJobs=JobSets
 
 ########################################     Preset framework parameters    #########################################
-FreshStart=True
 Program=[]
 
 
