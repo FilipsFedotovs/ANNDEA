@@ -160,8 +160,7 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         data=data.dropna()
         final_rows=len(data)
         print(UI.TimeStamp(),'The cleaned data has ',final_rows,' hits')
-        print(data)
-        exit()
+
         data[PM.MC_Event_ID] = data[PM.MC_Event_ID].astype(str)
         data[PM.MC_VX_ID] = data[PM.MC_VX_ID].astype(str)
         data[TrackID] = data[TrackID].astype(str)
@@ -185,16 +184,16 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         data=pd.merge(data, compress_data, how="left", on=['Rec_Seg_ID'])
         
         if SliceData:
-             print(UF.TimeStamp(),'Slicing the data...')
+             print(UI.TimeStamp(),'Slicing the data...')
              ValidEvents=data.drop(data.index[(data[PM.x] > Xmax) | (data[PM.x] < Xmin) | (data[PM.y] > Ymax) | (data[PM.y] < Ymin)])
              ValidEvents.drop([PM.x,PM.y,PM.z,PM.tx,PM.ty,'MC_VX_ID']+ExtraColumns,axis=1,inplace=True)
              ValidEvents.drop_duplicates(subset='Rec_Seg_ID',keep='first',inplace=True)
              data=pd.merge(data, ValidEvents, how="inner", on=['Rec_Seg_ID'])
              final_rows=len(data.axes[0])
-             print(UF.TimeStamp(),'The sliced data has ',final_rows,' hits')
+             print(UI.TimeStamp(),'The sliced data has ',final_rows,' hits')
 
         output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MVx1_'+TrainSampleID+'_TRACK_SEGMENTS.csv'
-        print(UF.TimeStamp(),'Removing tracks which have less than',MinHitsTrack,'hits...')
+        print(UI.TimeStamp(),'Removing tracks which have less than',MinHitsTrack,'hits...')
         track_no_data=data.groupby(['MC_VX_ID','Rec_Seg_ID'],as_index=False).count()
         track_no_data=track_no_data.drop([PM.y,PM.z,PM.tx,PM.ty],axis=1)
         track_no_data=track_no_data.rename(columns={PM.x: "Rec_Seg_No"})
@@ -203,12 +202,14 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         new_combined_data = new_combined_data.drop(["Rec_Seg_No"],axis=1)
         new_combined_data=new_combined_data.sort_values(['Rec_Seg_ID',PM.x],ascending=[1,1])
         grand_final_rows=len(new_combined_data)
-        print(UF.TimeStamp(),'The cleaned data has ',grand_final_rows,' hits')
+        print(UI.TimeStamp(),'The cleaned data has ',grand_final_rows,' hits')
         new_combined_data=new_combined_data.rename(columns={PM.x: "x"})
         new_combined_data=new_combined_data.rename(columns={PM.y: "y"})
         new_combined_data=new_combined_data.rename(columns={PM.z: "z"})
         new_combined_data=new_combined_data.rename(columns={PM.tx: "tx"})
         new_combined_data=new_combined_data.rename(columns={PM.ty: "ty"})
+        print(new_combined_data)
+        exit()
         if len(RemoveTracksZ)>0:
             print(UF.TimeStamp(),'Removing tracks based on start point')
             TracksZdf = pd.DataFrame(RemoveTracksZ, columns = ['Bad_z'], dtype=float)
