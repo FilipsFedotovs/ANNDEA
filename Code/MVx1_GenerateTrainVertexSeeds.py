@@ -135,12 +135,21 @@ else:
 #Establishing paths
 EOSsubDIR=EOS_DIR+'/'+'ANNDEA'
 EOSsubModelDIR=EOSsubDIR+'/'+'Models'
-TrainSampleOutputMeta=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_info.pkl'
-required_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MVx1_'+TrainSampleID+'_TRACK_SEGMENTS.csv'
+TrainSampleOutputMeta=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/'+TrainSampleID+'_info.pkl'
+required_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/MVx1_'+TrainSampleID+'_TRACK_SEGMENTS.csv'
 
 
 ########################################     Phase 1 - Create compact source file    #########################################
 print(UI.TimeStamp(),bcolors.BOLD+'Stage -1:'+bcolors.ENDC+' Preparing the source data...')
+if Mode=='RESET':
+    print(UI.ManageFolders(AFS_DIR, EOS_DIR, TrainSampleID,'d',['MVTr1a']))
+    print(UI.ManageFolders(AFS_DIR, EOS_DIR, TrainSampleID,'c'))
+elif Mode=='CLEANUP':
+     print(UI.ManageFolders(AFS_DIR, EOS_DIR, TrainSampleID,'d',['MVTr1a']))
+     exit()
+else:
+    print(UI.ManageFolders(AFS_DIR, EOS_DIR, TrainSampleID,'c'))
+
 
 if os.path.isfile(required_file_location)==False or Mode=='RESET':
         print(UI.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
