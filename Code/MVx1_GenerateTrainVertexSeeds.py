@@ -268,11 +268,6 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         new_combined_data=new_combined_data.rename(columns={PM.z: "z"})
         new_combined_data=new_combined_data.rename(columns={PM.tx: "tx"})
         new_combined_data=new_combined_data.rename(columns={PM.ty: "ty"})
-
-        final_rows=len(new_combined_data.axes[0])
-        print(UI.TimeStamp(),'After removing tracks that start at the specific plates we have',final_rows,' hits left')
-        print(new_combined_data)
-        exit()
         new_combined_data.to_csv(output_file_location,index=False)
         data=new_combined_data[['Rec_Seg_ID','z']]
         print(UI.TimeStamp(),'Analysing the data sample in order to understand how many jobs to submit to HTCondor... ',bcolors.ENDC)
@@ -288,12 +283,12 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         Meta=UI.TrainingSampleMeta(TrainSampleID)
         Meta.IniVertexSeedMetaData(MaxDST,MaxVXT,MaxDOCA,MaxAngle,data,PM.MaxSegments,PM.MaxSeeds,MinHitsTrack,FiducialVolumeCut,ExcludeClassNames,ExcludeClassValues)
         Meta.UpdateStatus(0)
-        print(UF.PickleOperations(TrainSampleOutputMeta,'w', Meta)[1])
+        print(UI.PickleOperations(TrainSampleOutputMeta,'w', Meta)[1])
         print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
-        print(UF.TimeStamp(),bcolors.OKGREEN+'Stage -1 has successfully completed'+bcolors.ENDC)
+        print(UI.TimeStamp(),bcolors.OKGREEN+'Stage -1 has successfully completed'+bcolors.ENDC)
 elif os.path.isfile(TrainSampleOutputMeta)==True:
-    print(UF.TimeStamp(),'Loading previously saved data from ',bcolors.OKBLUE+TrainSampleOutputMeta+bcolors.ENDC)
-    MetaInput=UF.PickleOperations(TrainSampleOutputMeta,'r', 'N/A')
+    print(UI.TimeStamp(),'Loading previously saved data from ',bcolors.OKBLUE+TrainSampleOutputMeta+bcolors.ENDC)
+    MetaInput=UI.PickleOperations(TrainSampleOutputMeta,'r', 'N/A')
     Meta=MetaInput[0]
 MaxDST=Meta.MaxDST
 MaxVXT=Meta.MaxVXT
@@ -310,7 +305,8 @@ TotJobs=0
 for j in range(0,len(JobSets)):
           for sj in range(0,int(JobSets[j][2])):
               TotJobs+=1
-
+print(TotJobs)
+exit()
 # ########################################     Preset framework parameters    #########################################
 FreshStart=True
 Program=[]
