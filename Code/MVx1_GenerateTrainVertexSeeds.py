@@ -414,7 +414,6 @@ while Status<len(Program):
              break
     elif Program[Status]=='Custom - Collect Raw Seeds':
         UI.Msg('status','Stage '+str(Status),': Collecting and de-duplicating the results from previous stage '+str(Status-1)+'...')
-        exit()
         UI.Msg('vanilla','Analysing the data sample in order to understand how many jobs to submit to HTCondor... ')
         data=pd.read_csv(required_file_location,header=0,
                     usecols=['z','Rec_Seg_ID'])
@@ -437,8 +436,10 @@ while Status<len(Program):
                 tot_fractions=0
                 if NewJobSet[i]==0:
                     for j in range(0,JobSet[i]):
-                        output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/Temp_MUTr1a'+'_'+TrainSampleID+'_'+str(i)+'/MUTr1a_'+TrainSampleID+'_RawSeeds_'+str(i)+'_'+str(j)+'.csv'
+                        output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/Temp_MVx1a'+'_'+TrainSampleID+'_'+str(i)+'/MVx1a_'+TrainSampleID+'_RawSeeds_'+str(i)+'_'+str(j)+'.csv'
                         result=pd.read_csv(output_file_location,names = ['Segment_1','Segment_2', 'Seed_Type'])
+                        print(result)
+                        exit()
                         Records=len(result)
                         print(UI.TimeStamp(),'Set',str(i),'and subset', str(j), 'contains', Records, 'seeds',bcolors.ENDC)
                         result["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(result['Segment_1'], result['Segment_2'])]
@@ -453,7 +454,7 @@ while Status<len(Program):
                         print(UI.TimeStamp(),'Set',str(i),'and subset', str(j), 'compression ratio is ', Compression_Ratio, ' %',bcolors.ENDC)
                         fractions=int(math.ceil(Records/MaxSeeds))
                         for k in range(0,fractions):
-                         new_output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/Temp_MUTr1a'+'_'+TrainSampleID+'_'+str(i)+'/MUTr1a_'+TrainSampleID+'_SelectedSeeds_'+str(i)+'_'+str(tot_fractions+k)+'.csv'
+                         new_output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/Temp_MVx1a'+'_'+TrainSampleID+'_'+str(i)+'/MVx1a_'+TrainSampleID+'_SelectedSeeds_'+str(i)+'_'+str(tot_fractions+k)+'.csv'
                          print(new_output_file_location)
                          result[(k*MaxSeeds):min(Records,((k+1)*MaxSeeds))].to_csv(new_output_file_location,index=False)
                         tot_fractions+=fractions
