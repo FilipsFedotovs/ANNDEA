@@ -279,13 +279,47 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         new_combined_data=new_combined_data.rename(columns={PM.tx: "tx"})
         new_combined_data=new_combined_data.rename(columns={PM.ty: "ty"})
         new_combined_data.to_csv(output_file_location,index=False)
+        data_header = new_combined_data.groupby('Rec_Seg_ID')['z'].min()
+        data_header=data_header.reset_index()
         data=new_combined_data[['Rec_Seg_ID','z']]
         print(UI.TimeStamp(),'Analysing the data sample in order to understand how many jobs to submit to HTCondor... ',bcolors.ENDC)
         data = data.groupby('Rec_Seg_ID')['z'].min()  #Keeping only starting hits for the each track record (we do not require the full information about track in this script)
         data=data.reset_index()
+
         data = data.groupby('z')['Rec_Seg_ID'].count()  #Keeping only starting hits for the each track record (we do not require the full information about track in this script)
         data=data.reset_index()
         data=data.sort_values(['z'],ascending=True)
+
+        data['Sub_Sets']=np.ceil(data['Rec_Seg_ID']/PM.MaxSegments)
+        data['Sub_Sets'] = data['Sub_Sets'].astype(int)
+
+        JobData=data.drop(['Rec_Seg_ID','z'],axis=1)
+        CutData=data.drop(['Rec_Seg_ID','Sub_Sets'],axis=1)
+
+        print(JobData)
+        print(CutData)
+        exit()
+
+        JobData = JobData.values.tolist()
+        CutData = CutData.values.tolist()
+        JobData=[k for i in JobData for k in i]
+        CutData=[k for i in CutData for k in i]
+
+
+
+        for i in range(len(CutData)):
+          data_temp_header=data_header.drop(data_header.index[data_header['z'] < CutData[i]])
+          data_temp_header=data_temp_header.drop(['z'],axis=1)
+          temp_data=pd.merge(new_combined_data, data_temp_header, how="inner", on=["Rec_Seg_ID"]) #Shrinking the Track data so just a star hit for each track is present.
+          temp_required_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/MUTr1_'+TrainSampleID+'_TRACK_SEGMENTS_'+str(i)+'.csv'
+          temp_data.to_csv(temp_required_file_location,index=False)
+          UI.Msg('location',"The track segment data has been created successfully and written to",temp_required_file_location)
+
+        JobSetList=[]
+        for i in range(20):
+            JobSetList.append('empty')
+        JobSetList[0]=JobData
+
         data['Sub_Sets']=np.ceil(data['Rec_Seg_ID']/PM.MaxSegments)
         data['Sub_Sets'] = data['Sub_Sets'].astype(int)
         data = data.values.tolist()
