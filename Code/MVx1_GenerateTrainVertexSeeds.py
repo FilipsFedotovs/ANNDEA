@@ -37,13 +37,9 @@ class bcolors:   #We use it for the interface
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
 
-print('                                                                                                                                    ')
-print('                                                                                                                                    ')
-print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
-print(bcolors.HEADER+"#########     Initialising ANNDEA Track Union Training Sample Generation module          ###############"+bcolors.ENDC)
-print(bcolors.HEADER+"#########################              Written by Filips Fedotovs              #########################"+bcolors.ENDC)
-print(bcolors.HEADER+"#########################                 PhD Student at UCL                   #########################"+bcolors.ENDC)
-print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
+
+
+
 
 #Loading Directory locations
 csv_reader=open('../config',"r")
@@ -56,9 +52,11 @@ for c in config:
 csv_reader.close()
 import sys
 sys.path.insert(1, AFS_DIR+'/Code/Utilities/')
-import UtilityFunctions as UF #This is where we keep routine utility functions
+import U_UI as UI #This is where we keep routine utility functions
 import Parameters as PM #This is where we keep framework global parameters
 
+UI.WelcomeMsg('Initialising ANNDEA Vertexing Training Sample Generation module...','Filips Fedotovs (PhD student at UCL), Leah Wolf (MSc student at UCL)','Please reach out to filips.fedotovs@cern.ch for any queries')
+exit()
 #Setting the parser - this script is usually not run directly, but is used by a Master version Counterpart that passes the required arguments
 parser = argparse.ArgumentParser(description='This script prepares training data for training the tracking model')
 parser.add_argument('--Mode', help='Script will continue from the last checkpoint, unless you want to start from the scratch, then type "Reset"',default='')
