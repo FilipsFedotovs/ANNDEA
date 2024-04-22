@@ -368,7 +368,7 @@ prog_entry=[]
 #                             TotJobs+=np.sum(lp)
 
 NJobs=UI.CalculateNJobs(Meta.JobSets[0])[1]
-print(Meta.JobSets)
+print(NJobs)
 exit()
 
 prog_entry.append(' Sending hit cluster to the HTCondor, so tack segment combination pairs can be formed...')
