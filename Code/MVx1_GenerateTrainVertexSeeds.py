@@ -358,7 +358,7 @@ else:
 
 NJobs=UI.CalculateNJobs(Meta.JobSets[0])[1]
 prog_entry.append(' Sending hit cluster to the HTCondor, so tack segment combination pairs can be formed...')
-prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/','RawSeedsRes','MVx1a','.csv',TrainSampleID,JobSet,'MVx1a_GenerateRawSelectedSeeds_Sub.py'])
+prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/','RawSeedsRes','MVx1a','.csv',TrainSampleID,Meta.JobSets[0],'MVx1a_GenerateRawSelectedSeeds_Sub.py'])
 prog_entry.append([ " --MaxSegments ", " --MaxDST "])
 prog_entry.append([MaxSegments, MaxDST])
 prog_entry.append(NJobs)
