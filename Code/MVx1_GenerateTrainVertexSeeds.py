@@ -304,18 +304,16 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
 
 
         for i in range(len(CutData)):
-          print(data_header)
           data_temp_header=data_header.drop(data_header.index[data_header['z'] < CutData[i]])
-          print(data_temp_header)
           data_temp_header=data_temp_header.drop(data_temp_header.index[data_temp_header['z'] > CutData[i]+MaxDST])
           print(data_temp_header)
-          exit()
+          x=input()
           data_temp_header=data_temp_header.drop(['z'],axis=1)
           temp_data=pd.merge(new_combined_data, data_temp_header, how="inner", on=["Rec_Seg_ID"]) #Shrinking the Track data so just a star hit for each track is present.
-          temp_required_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/MUTr1_'+TrainSampleID+'_TRACK_SEGMENTS_'+str(i)+'.csv'
+          temp_required_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/MVx1_'+TrainSampleID+'_TRACK_SEGMENTS_'+str(i)+'.csv'
           temp_data.to_csv(temp_required_file_location,index=False)
           UI.Msg('location',"The track segment data has been created successfully and written to",temp_required_file_location)
-
+        exit()
         JobSetList=[]
         for i in range(20):
             JobSetList.append('empty')
