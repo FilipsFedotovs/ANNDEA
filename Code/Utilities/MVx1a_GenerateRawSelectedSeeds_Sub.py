@@ -54,7 +54,7 @@ if PY_DIR!='': #Temp solution
     sys.path.append('/usr/lib64/python3.9/site-packages')
     sys.path.append('/usr/lib/python3.9/site-packages')
 sys.path.append(AFS_DIR+'/Code/Utilities')
-import U_UI as UF #This is where we keep routine utility functions
+import U_UI as UI #This is where we keep routine utility functions
 import pandas as pd #We use Panda for a routine data processing
 import math #We use it for data manipulation
 import gc  #Helps to clear memory
@@ -64,12 +64,12 @@ import ast
 input_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+BatchID+'/MVx1_'+BatchID+'_TRACK_SEGMENTS_'+str(i)+'.csv'
 output_file_location=EOS_DIR+'/'+p+'/Temp_'+pfx+'_'+BatchID+'_'+str(i)+'/'+pfx+'_'+BatchID+'_RawSeeds_'+str(i)+'_'+str(j)+sfx
 output_result_location=EOS_DIR+'/'+p+'/Temp_'+pfx+'_'+BatchID+'_'+str(i)+'/'+pfx+'_'+BatchID+'_'+o+'_'+str(i)+'_'+str(j)+sfx
-print(UF.TimeStamp(), "Modules Have been imported successfully...")
-print(UF.TimeStamp(),'Loading pre-selected data from ',input_file_location)
+print(UI.TimeStamp(), "Modules Have been imported successfully...")
+print(UI.TimeStamp(),'Loading pre-selected data from ',input_file_location)
 data=pd.read_csv(input_file_location,header=0,
                     usecols=['x','y','z','Rec_Seg_ID','MC_VX_ID'])
 
-print(UF.TimeStamp(),'Creating segment combinations... ')
+print(UI.TimeStamp(),'Creating segment combinations... ')
 data_header = data.groupby('Rec_Seg_ID')['z'].min()  #Keeping only starting hits for the each track record (we do not require the full information about track in this script)
 data_header=data_header.reset_index()
 PlateZ=data_header.z.min()
@@ -93,12 +93,12 @@ r_data.drop(r_data.index[r_data['z'] != PlateZ], inplace = True)
 print(r_data)
 exit()
 Records=len(r_data.axes[0])
-print(UF.TimeStamp(),'There are  ', Records, 'segments in the starting plate')
+print(UI.TimeStamp(),'There are  ', Records, 'segments in the starting plate')
 
 r_data=r_data.iloc[StartDataCut:min(EndDataCut,Records)]
 
 Records=len(r_data.axes[0])
-print(UF.TimeStamp(),'However we will only attempt  ', Records, 'track segments in the starting plate')
+print(UI.TimeStamp(),'However we will only attempt  ', Records, 'track segments in the starting plate')
 r_data=r_data.rename(columns={"y": "r_y"})
 r_data=r_data.rename(columns={"z": "r_z"})
 data=data.rename(columns={"Rec_Seg_ID": "Track_1"})
