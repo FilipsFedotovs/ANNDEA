@@ -88,7 +88,6 @@ parser.add_argument('--ReqMemory',help="How much memory to request?", default='2
 parser.add_argument('--FiducialVolumeCut',help="Limits on the vx, y, z coordinates of the vertex origin", default='[]')
 parser.add_argument('--ExcludeClassNames',help="What class headers to use?", default="[]")
 parser.add_argument('--ExcludeClassValues',help="What class values to use?", default="[[]]")
-parser.add_argument('--ForceStatus',help="Would you like the program run from specific status number? (Only for advance users)", default='N')
 ######################################## Parsing argument values  #############################################################
 args = parser.parse_args()
 Mode=args.Mode.upper()
