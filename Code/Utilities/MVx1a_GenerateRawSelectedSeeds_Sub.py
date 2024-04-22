@@ -88,10 +88,9 @@ EndDataCut=(j+1)*MaxSegments
 
 r_data=data.rename(columns={"x": "r_x"})
 r_data=r_data.rename(columns={'MC_VX_ID': "Mother_2"})
-print(r_data)
+
 r_data.drop(r_data.index[r_data['z'] != PlateZ], inplace = True)
-print(r_data)
-exit()
+
 Records=len(r_data.axes[0])
 print(UI.TimeStamp(),'There are  ', Records, 'segments in the starting plate')
 
@@ -125,13 +124,15 @@ del data_header
 gc.collect()
 
 #Creating csv file for the results
-UF.LogOperations(output_file_location,'w',result_list)
+UI.LogOperations(output_file_location,'w',result_list)
 #This is where we start
 
 for i in range(0,Steps):
   r_temp_data=r_data.iloc[0:min(Cut,len(r_data.axes[0]))] #Taking a small slice of the data
   r_data.drop(r_data.index[0:min(Cut,len(r_data.axes[0]))],inplace=True) #Shrinking the right join dataframe
   merged_data=pd.merge(data, r_temp_data, how="inner", on=['join_key']) #Merging Tracks to check whether they could form a seed
+  print(merged_data)
+  exit()
   merged_data['separation']=np.sqrt(((merged_data['x']-merged_data['r_x'])**2)+((merged_data['y']-merged_data['r_y'])**2)+((merged_data['z']-merged_data['r_z'])**2)) #Calculating the Euclidean distance between Track start hits
   merged_data.drop(merged_data.index[merged_data['separation'] >= MaxDST], inplace = True) #Dropping the track segment combinations where the length of the gap between segments is too large
   merged_data.drop(['y','z','x','r_x','r_y','r_z','join_key','separation'],axis=1,inplace=True) #Removing the information that we don't need anymore
