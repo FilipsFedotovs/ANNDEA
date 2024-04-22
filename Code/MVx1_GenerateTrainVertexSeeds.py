@@ -333,18 +333,22 @@ exit()
 
 ###### Stage 0
 prog_entry=[]
-job_sets=[]
+# job_sets=[]
+#
+# for i in range(len(JobSets)):
+#                 job_sets.append(int(JobSets[i][2]))
+# TotJobs=0
+# if type(job_sets) is int:
+#                         TotJobs=job_sets
+# elif type(job_sets[0]) is int:
+#                         TotJobs=np.sum(job_sets)
+# elif type(job_sets[0][0]) is int:
+#                         for lp in job_sets:
+#                             TotJobs+=np.sum(lp)
 
-for i in range(len(JobSets)):
-                job_sets.append(int(JobSets[i][2]))
-TotJobs=0
-if type(job_sets) is int:
-                        TotJobs=job_sets
-elif type(job_sets[0]) is int:
-                        TotJobs=np.sum(job_sets)
-elif type(job_sets[0][0]) is int:
-                        for lp in job_sets:
-                            TotJobs+=np.sum(lp)
+NJobs=UI.CalculateNJobs(Meta.JobSets[0])[1]
+print(NJobs)
+exit()
 
 prog_entry.append(' Sending hit cluster to the HTCondor, so tack segment combination pairs can be formed...')
 prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/','RawSeedsRes','MVx1a','.csv',TrainSampleID,job_sets,'MVx1a_GenerateRawSelectedSeeds_Sub.py'])
