@@ -19,7 +19,6 @@ parser.add_argument('--MaxDST',help="", default='50')
 parser.add_argument('--MaxVXT',help="", default='4000')
 parser.add_argument('--i',help="Set number", default='1')
 parser.add_argument('--j',help="Subset number", default='1')
-parser.add_argument('--k',help="Fraction number", default='1')
 parser.add_argument('--p',help="Path to the output file", default='')
 parser.add_argument('--o',help="Path to the output file name", default='')
 parser.add_argument('--pfx',help="Path to the output file name", default='')
@@ -44,14 +43,14 @@ PY_DIR=args.PY
 
 if PY_DIR!='': #Temp solution
     sys.path=['',PY_DIR]
-    sys.path.append('/usr/lib64/python36.zip')
-    sys.path.append('/usr/lib64/python3.6')
-    sys.path.append('/usr/lib64/python3.6/lib-dynload')
-    sys.path.append('/usr/lib64/python3.6/site-packages')
-    sys.path.append('/usr/lib/python3.6/site-packages')
+    sys.path.append('/usr/lib64/python39.zip')
+    sys.path.append('/usr/lib64/python3.9')
+    sys.path.append('/usr/lib64/python3.9/lib-dynload')
+    sys.path.append('/usr/lib64/python3.9/site-packages')
+    sys.path.append('/usr/lib/python3.9/site-packages')
 sys.path.append(AFS_DIR+'/Code/Utilities')
-import UtilityFunctions as UF
-from UtilityFunctions import EMO
+import U_UI as UI
+from U_EMO import EMO
 import ast
 
 import pandas as pd #We use Panda for a routine data processing
@@ -67,10 +66,10 @@ MaxDOCA=float(args.MaxDOCA)
 MaxDST=float(args.MaxDST)
 MaxVXT=float(args.MaxVXT)
 MaxAngle=float(args.MaxAngle)
-input_segment_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MVx1_'+BatchID+'_TRACK_SEGMENTS.csv'
-input_track_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/Temp_MVx1a_'+BatchID+'_'+str(i)+'/MVx1a_'+BatchID+'_SelectedSeeds_'+str(i)+'_'+str(j)+'_'+str(k)+'.csv'
-output_file_location=EOS_DIR+'/'+p+'/Temp_'+pfx+'_'+BatchID+'_'+str(i)+'/'+pfx+'_'+BatchID+'_'+o+'_'+str(i)+'_'+str(j)+'_'+str(k)+sfx
-print(UF.TimeStamp(),'Loading the data')
+input_segment_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+BatchID+'/MVx1_'+BatchID+'_TRACK_SEGMENTS_'+str(i)+'.csv'
+input_track_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+BatchID+'/Temp_MVx1a_'+BatchID+'_'+str(i)+'/MVx1a_'+BatchID+'_SelectedSeeds_'+str(i)+'_'+str(j)+'.csv'
+output_file_location=EOS_DIR+'/'+p+'/Temp_'+pfx+'_'+BatchID+'_'+str(i)+'/'+pfx+'_'+BatchID+'_'+o+'_'+str(i)+'_'+str(j)+sfx
+print(UI.TimeStamp(),'Loading the data')
 tracks=pd.read_csv(input_track_file_location)
 tracks_1=tracks.drop(['Track_2'],axis=1)
 tracks_1=tracks_1.rename(columns={"Track_1": "Rec_Seg_ID"})
@@ -80,7 +79,7 @@ track_list=result = pd.concat([tracks_1,tracks_2])
 track_list=track_list.sort_values(['Rec_Seg_ID'])
 track_list.drop_duplicates(subset="Rec_Seg_ID",keep='first',inplace=True)
 segments=pd.read_csv(input_segment_file_location)
-print(UF.TimeStamp(),'Analysing the data')
+print(UI.TimeStamp(),'Analysing the data')
 segments=pd.merge(segments, track_list, how="inner", on=["Rec_Seg_ID"]) #Shrinking the Track data so just a star hit for each segment is present.
 segments["x"] = pd.to_numeric(segments["x"],downcast='float')
 segments["y"] = pd.to_numeric(segments["y"],downcast='float')
@@ -99,10 +98,10 @@ del track_list
 gc.collect()
 limit=len(tracks)
 track_counter=0
-print(UF.TimeStamp(),bcolors.OKGREEN+'Data has been successfully loaded and prepared..'+bcolors.ENDC)
+print(UI.TimeStamp(),bcolors.OKGREEN+'Data has been successfully loaded and prepared..'+bcolors.ENDC)
 #create seeds
 GoodTracks=[]
-print(UF.TimeStamp(),'Beginning the sample generation part...')
+print(UI.TimeStamp(),'Beginning the sample generation part...')
 for s in range(0,limit):
       
         
@@ -116,7 +115,9 @@ for s in range(0,limit):
          num_label = 0
      track.LabelSeed(num_label)
      track.Decorate(segments)
-
+     print(track.Header)
+     print(track.Hits)
+     exit()
      try:
         track.GetVXInfo()
      except:
@@ -131,9 +132,9 @@ for s in range(0,limit):
          del track
          continue
 
-print(UF.TimeStamp(),bcolors.OKGREEN+'The sample generation has been completed..'+bcolors.ENDC)
+print(UI.TimeStamp(),bcolors.OKGREEN+'The sample generation has been completed..'+bcolors.ENDC)
 del tracks
 del segments
 gc.collect()
-print(UF.PickleOperations(output_file_location,'w', GoodTracks)[1])
+print(UI.PickleOperations(output_file_location,'w', GoodTracks)[1])
 
