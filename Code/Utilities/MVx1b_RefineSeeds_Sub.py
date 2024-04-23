@@ -32,7 +32,6 @@ parser.add_argument('--FiducialVolumeCut',help="", default='')
 args = parser.parse_args()
 i=int(args.i)    #This is just used to name the output file
 j=int(args.j)  #The subset helps to determine what portion of the track list is used to create the Seeds
-k=int(args.k)  #The subset helps to determine what portion of the track list is used to create the Seeds
 p=args.p
 o=args.o
 sfx=args.sfx
