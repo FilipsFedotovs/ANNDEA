@@ -101,7 +101,7 @@ ReqMemory=args.ReqMemory
 MaxSeeds=int(args.MaxSeeds)
 Xmin,Xmax,Ymin,Ymax=float(args.Xmin),float(args.Xmax),float(args.Ymin),float(args.Ymax)
 SliceData=max(Xmin,Xmax,Ymin,Ymax)>0 #We don't slice data if all values are set to zero simultaneousy (which is the default setting)
-TrainSampleOutputMeta=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/'+TrainSampleID+'_info.pkl'
+TrainSampleOutputMeta=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_info.pkl'
 
 if Mode=='RESET':
     print(UI.ManageFolders(AFS_DIR, EOS_DIR, TrainSampleID,'d',['MUTr1a','MUTr1b','MUTr1c','MUTr1d']))
@@ -484,14 +484,14 @@ while Status<len(Program):
            gc.collect()
            ValidationSampleSize=int(round(min((len(TotalData)*float(PM.valRatio)),PM.MaxValSampleSize),0))
            random.shuffle(TotalData)
-           output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_TRACK_SEEDS_OUTPUT.pkl'
+           output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_OUTPUT.pkl'
            print(UI.PickleOperations(output_file_location,'w',TotalData[:ValidationSampleSize])[1])
            TotalData=TotalData[ValidationSampleSize:]
            print(UI.TimeStamp(), bcolors.OKGREEN+"Validation Set has been saved at ",bcolors.OKBLUE+output_file_location+bcolors.ENDC,bcolors.OKGREEN+'file...'+bcolors.ENDC)
            No_Train_Files=int(math.ceil(len(TotalData)/TrainSampleSize))
            with alive_bar(No_Train_Files,force_tty=True, title='Resampling the files...') as bar:
                for SC in range(0,No_Train_Files):
-                 output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_TRACK_SEEDS_OUTPUT_'+str(SC+1)+'.pkl'
+                 output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_OUTPUT_'+str(SC+1)+'.pkl'
                  print(UI.PickleOperations(output_file_location,'w',TotalData[(SC*TrainSampleSize):min(len(TotalData),((SC+1)*TrainSampleSize))])[1])
                  bar.text = f'-> Saving the file : {output_file_location}...'
                  bar()
