@@ -351,12 +351,12 @@ while Status<len(Program):
                     TotalData+=base_data
               ValidationSampleSize=int(round(min((len(TotalData)*float(PM.valRatio)),PM.MaxValSampleSize),0))
               random.shuffle(TotalData)
-              output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_TRACK_OUTPUT.pkl'
+              output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_OUTPUT.pkl'
               print(UI.PickleOperations(output_file_location,'w', TotalData[:ValidationSampleSize])[1])
               TotalData=TotalData[ValidationSampleSize:]
               No_Train_Files=int(math.ceil(len(TotalData)/TrainSampleSize))
               for i in range(0,No_Train_Files):
-                  output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_TRACK_OUTPUT_'+str(i+1)+'.pkl'
+                  output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_OUTPUT_'+str(i+1)+'.pkl'
                   print(UI.PickleOperations(output_file_location,'w', TotalData[(i*TrainSampleSize):min(len(TotalData),((i+1)*TrainSampleSize))])[1])
               print(UI.TimeStamp(),bcolors.OKGREEN+'Stage 2 has successfully completed'+bcolors.ENDC)
               UI.UpdateStatus(Status+1,Meta,TrainSampleOutputMeta)
