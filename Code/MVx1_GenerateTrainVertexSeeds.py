@@ -461,8 +461,6 @@ while Status<len(Program):
                     continue
         Meta.JobSets[1]=NewJobSet
         NJobs=UI.CalculateNJobs(Meta.JobSets[1])[1]
-        print(Program[2][1])
-        exit()
         Program[2][1][8]=NewJobSet
         print(UI.PickleOperations(TrainSampleOutputMeta,'w', Meta)[1])
         UI.Msg('completed','Stage '+str(Status)+' has successfully completed')
