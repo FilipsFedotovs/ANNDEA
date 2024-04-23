@@ -129,7 +129,7 @@ if args.PlotType=='XY':
   Matrix=np.reshape(Matrix,(H,W))
 
 
-Title=args.Label+' Track Image, Label:['+ImageObjectSet[0].Label+']'
+Title=args.Label+' Track Image, Label:['+str(ImageObjectSet[0].Label)+']'
 
 
 counter=0
