@@ -572,7 +572,6 @@ while Status<len(Program):
     elif Program[Status]=='Custom - Final Output':
            print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
            print(UI.TimeStamp(),bcolors.BOLD+'Stage 5:'+bcolors.ENDC+' Preparing the final output')
-           exit()
            TotalData=[]
            Meta=UI.PickleOperations(TrainSampleOutputMeta,'r', 'N/A')[0]
            JobSet=Meta.JobSets[1]
