@@ -131,7 +131,5 @@ print(UI.TimeStamp(),bcolors.OKGREEN+'The sample generation has been completed..
 del tracks
 del segments
 gc.collect()
-print(output_file_location)
-exit()
 print(UI.PickleOperations(output_file_location,'w', GoodTracks)[1])
 
