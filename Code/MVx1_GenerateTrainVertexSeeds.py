@@ -583,6 +583,8 @@ while Status<len(Program):
            del base_data
            gc.collect()
            ValidationSampleSize=int(round(min((len(TotalData)*float(PM.valRatio)),PM.MaxValSampleSize),0))
+           print(ValidationSampleSize)
+           exit()
            random.shuffle(TotalData)
            output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_OUTPUT.pkl'
            print(UI.PickleOperations(output_file_location,'w',TotalData[:ValidationSampleSize])[1])
