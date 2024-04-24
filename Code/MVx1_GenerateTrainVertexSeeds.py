@@ -574,7 +574,10 @@ while Status<len(Program):
            TotalData=[]
            Meta=UI.PickleOperations(TrainSampleOutputMeta,'r', 'N/A')[0]
            JobSet=Meta.JobSets[1]
+           
            JobSet=[x for x in JobSet if x == 1]
+           print(JobSet)
+           exit()
            for i in JobSet:
                input_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/MVx1d_'+TrainSampleID+'_SampledCompressedSeeds_'+str(i)+'.pkl'
                if os.path.isfile(input_file_location):
