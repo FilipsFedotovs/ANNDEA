@@ -301,9 +301,6 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         CutData = CutData.values.tolist()
         JobData=[k for i in JobData for k in i]
         CutData=[k for i in CutData for k in i]
-
-
-
         for i in range(len(CutData)):
           data_temp_header=data_header.drop(data_header.index[data_header['z'] < CutData[i]])
           data_temp_header=data_temp_header.drop(data_temp_header.index[data_temp_header['z'] > CutData[i]+MaxDST])
@@ -462,6 +459,11 @@ while Status<len(Program):
         Meta.JobSets[1]=NewJobSet
         NJobs=UI.CalculateNJobs(Meta.JobSets[1])[1]
         Program[2][1][8]=NewJobSet
+        print(Program[2])
+        print(Program[2][1])
+        exit()
+        print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry))
+
         print(Program)
         exit()
         print(UI.PickleOperations(TrainSampleOutputMeta,'w', Meta)[1])
