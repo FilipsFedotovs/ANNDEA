@@ -460,6 +460,7 @@ while Status<len(Program):
         NJobs=UI.CalculateNJobs(Meta.JobSets[1])[1]
         Program[2][1][8]=NewJobSet
         print(UI.TimeStamp(),UI.ManageTempFolders(Program[2][1]))
+        exit()
         print(UI.PickleOperations(TrainSampleOutputMeta,'w', Meta)[1])
         UI.Msg('completed','Stage '+str(Status)+' has successfully completed')
         UI.UpdateStatus(Status+1,Meta,TrainSampleOutputMeta)
@@ -540,6 +541,8 @@ while Status<len(Program):
             FakeSeedCorrection=RequiredFakeSeeds/(TotalImages-TrueSeeds)
            else:
              FakeSeedCorrection=0
+           print(JobSet)
+           exit()
            with alive_bar(len(JobSet),force_tty=True, title='Resampling the files...') as bar:
             for i in range(len(JobSet)):
               if JobSet[i]==1:
