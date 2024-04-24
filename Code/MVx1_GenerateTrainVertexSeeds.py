@@ -379,6 +379,7 @@ if len(Meta.JobSets)>1:
 else:
     JobSet=Meta.JobSets[0]
 NJobs=UI.CalculateNJobs(JobSet)[1]
+print(Meta.JobSets)
 print(JobSet)
 print(NJobs)
 
@@ -578,7 +579,6 @@ while Status<len(Program):
            TotalData=[]
            Meta=UI.PickleOperations(TrainSampleOutputMeta,'r', 'N/A')[0]
            JobSet=Meta.JobSets[1]
-           
            #JobSet=[x for x in JobSet if x == 1]
            for i in range(len(JobSet)):
               if JobSet[i]==1:
