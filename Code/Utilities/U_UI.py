@@ -436,12 +436,12 @@ def PickleOperations(flocation,mode, message):
         pickle_writer_log=open(flocation,"wb")
         pickle.dump(message, pickle_writer_log)
         pickle_writer_log.close()
-        return ('',"PickleOperations Message: Data has been written successfully into "+flocation)
+        return ('',"PickleOperations Message: "+str(len(message))+" have(s) been written successfully into "+flocation)
     if mode=='r':
         pickle_writer_log=open(flocation,'rb')
         result=pickle.load(pickle_writer_log)
         pickle_writer_log.close()
-        return (result,"PickleOperations Message: Data has been loaded successfully from "+flocation)
+        return (result,"PickleOperations Message: "+str(len(result))+" have(s) been loaded successfully from "+flocation)
 
 def ManageFolders(AFS_DIR, EOS_DIR, BatchID,op_type,HTCondorJobs=[]):
     if op_type=='c':

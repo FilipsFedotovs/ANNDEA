@@ -459,7 +459,6 @@ while Status<len(Program):
         Meta.JobSets[1]=NewJobSet
         NJobs=UI.CalculateNJobs(Meta.JobSets[1])[1]
         Program[2][1][8]=NewJobSet
-        print(Program[2][1])
         print(UI.TimeStamp(),UI.ManageTempFolders(Program[2]))
         print(UI.PickleOperations(TrainSampleOutputMeta,'w', Meta)[1])
         UI.Msg('completed','Stage '+str(Status)+' has successfully completed')
