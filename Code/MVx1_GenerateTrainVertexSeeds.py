@@ -388,7 +388,7 @@ prog_entry.append(HTCondorLog)
 prog_entry.append(False)
 Program.append(prog_entry)
 print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry))
-print(prog_entry)
+
 
 ###### Stage 3
 Program.append('Custom - Collect Selected Seeds')
@@ -460,8 +460,7 @@ while Status<len(Program):
         NJobs=UI.CalculateNJobs(Meta.JobSets[1])[1]
         Program[2][1][8]=NewJobSet
         print(Program[2][1])
-        print(UI.TimeStamp(),UI.ManageTempFolders(Program[2][1]))
-        exit()
+        print(UI.TimeStamp(),UI.ManageTempFolders(Program[2]))
         print(UI.PickleOperations(TrainSampleOutputMeta,'w', Meta)[1])
         UI.Msg('completed','Stage '+str(Status)+' has successfully completed')
         UI.UpdateStatus(Status+1,Meta,TrainSampleOutputMeta)
