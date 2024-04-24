@@ -551,6 +551,8 @@ while Status<len(Program):
                   base_data=UI.PickleOperations(input_file_location,'r','N/A')[0]
                   ExtractedTruth=[im for im in base_data if im.Label == 1]
                   ExtractedFake=[im for im in base_data if im.Label == 0]
+                  print(ExtractedTruth,ExtractedFake)
+                  exit()
                   del base_data
                   gc.collect()
                   ExtractedTruth=random.sample(ExtractedTruth,int(round(TrueSeedCorrection*len(ExtractedTruth),0)))
