@@ -552,8 +552,6 @@ while Status<len(Program):
                       base_data=UI.PickleOperations(input_file_location,'r','N/A')[0]
                       ExtractedTruth=[im for im in base_data if im.Label == 1]
                       ExtractedFake=[im for im in base_data if im.Label == 0]
-                      print(ExtractedTruth,ExtractedFake)
-                      xfg=input()
                       del base_data
                       gc.collect()
                       ExtractedTruth=random.sample(ExtractedTruth,int(round(TrueSeedCorrection*len(ExtractedTruth),0)))
@@ -579,20 +577,15 @@ while Status<len(Program):
            JobSet=Meta.JobSets[1]
            
            #JobSet=[x for x in JobSet if x == 1]
-           for i in range(0,len(JobSet)):
+           for i in range(len(JobSet)):
+              if JobSet[i]==1:
                input_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/MVx1d_'+TrainSampleID+'_SampledCompressedSeeds_'+str(i)+'.pkl'
-               print(input_file_location)
-               xfg=input()
                if os.path.isfile(input_file_location):
                   base_data=UI.PickleOperations(input_file_location,'r','N/A')[0]
                   TotalData+=base_data
            del base_data
            gc.collect()
-           print(len(TotalData))
-           exit()
            ValidationSampleSize=int(round(min((len(TotalData)*float(PM.valRatio)),PM.MaxValSampleSize),0))
-           print(ValidationSampleSize)
-           exit()
            random.shuffle(TotalData)
            output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_OUTPUT.pkl'
            print(UI.PickleOperations(output_file_location,'w',TotalData[:ValidationSampleSize])[1])
