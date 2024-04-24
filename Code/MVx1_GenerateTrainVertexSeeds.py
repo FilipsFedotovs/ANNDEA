@@ -540,11 +540,9 @@ while Status<len(Program):
             FakeSeedCorrection=RequiredFakeSeeds/(TotalImages-TrueSeeds)
            else:
              FakeSeedCorrection=0
-           print(JobSet)
-           exit()
            with alive_bar(len(JobSet),force_tty=True, title='Resampling the files...') as bar:
             for i in range(len(JobSet)):
-              if JobSet[i]==1:
+              if JobSet[i]>=1:
                   output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/MVx1d_'+TrainSampleID+'_SampledCompressedSeeds_'+str(i)+'.pkl'
                   input_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/MVx1c_'+TrainSampleID+'_CompressedSeeds_'+str(i)+'.pkl'
                   bar.text = f'-> Resampling the file : {input_file_location}, exists...'
@@ -578,7 +576,7 @@ while Status<len(Program):
            JobSet=Meta.JobSets[1]
            #JobSet=[x for x in JobSet if x == 1]
            for i in range(len(JobSet)):
-              if JobSet[i]==1:
+              if JobSet[i]>=1:
                input_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/MVx1d_'+TrainSampleID+'_SampledCompressedSeeds_'+str(i)+'.pkl'
                if os.path.isfile(input_file_location):
                   base_data=UI.PickleOperations(input_file_location,'r','N/A')[0]

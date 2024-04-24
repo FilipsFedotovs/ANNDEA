@@ -437,7 +437,7 @@ def PickleOperations(flocation,mode, message):
         pickle.dump(message, pickle_writer_log)
         pickle_writer_log.close()
         if type(message) is list:
-            return ('',"PickleOperations Message: "+str(len(message))+" have(s) been written successfully into "+flocation)
+            return ('',"PickleOperations Message: "+str(len(message))+" records have(s) been written successfully into "+flocation)
         else:
             return ('',"PickleOperations Message: 1 item has been written successfully into "+flocation)
     if mode=='r':
@@ -445,7 +445,7 @@ def PickleOperations(flocation,mode, message):
         result=pickle.load(pickle_writer_log)
         pickle_writer_log.close()
         if type(result) is list:
-            return (result,"PickleOperations Message: "+str(len(result))+" have(s) been loaded successfully from "+flocation)
+            return (result,"PickleOperations Message: "+str(len(result))+" records have(s) been loaded successfully from "+flocation)
         else:
             return (result,"PickleOperations Message: 1 item has been loaded successfully from "+flocation)
 
