@@ -582,6 +582,8 @@ while Status<len(Program):
                   TotalData+=base_data
            del base_data
            gc.collect()
+           print(len(TotalData))
+           exit()
            ValidationSampleSize=int(round(min((len(TotalData)*float(PM.valRatio)),PM.MaxValSampleSize),0))
            print(ValidationSampleSize)
            exit()
