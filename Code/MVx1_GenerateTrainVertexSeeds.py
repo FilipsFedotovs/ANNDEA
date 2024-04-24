@@ -516,7 +516,7 @@ while Status<len(Program):
 
            Meta=UI.PickleOperations(TrainSampleOutputMeta,'r', 'N/A')[0]
            JobSet=Meta.JobSets[1]
-           JobSet=[x for x in JobSet if x == 1]
+           #JobSet=[x for x in JobSet if x == 1]
            if args.Samples=='ALL':
                if TrueSeeds<=(float(args.LabelRatio)*TotalImages):
                    RequiredTrueSeeds=TrueSeeds
@@ -542,28 +542,29 @@ while Status<len(Program):
            else:
              FakeSeedCorrection=0
            with alive_bar(len(JobSet),force_tty=True, title='Resampling the files...') as bar:
-            for i in JobSet:
-              output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/MVx1d_'+TrainSampleID+'_SampledCompressedSeeds_'+str(i)+'.pkl'
-              input_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/MVx1c_'+TrainSampleID+'_CompressedSeeds_'+str(i)+'.pkl'
-              bar.text = f'-> Resampling the file : {input_file_location}, exists...'
-              bar()
-              if os.path.isfile(output_file_location)==False and os.path.isfile(input_file_location):
-                  base_data=UI.PickleOperations(input_file_location,'r','N/A')[0]
-                  ExtractedTruth=[im for im in base_data if im.Label == 1]
-                  ExtractedFake=[im for im in base_data if im.Label == 0]
-                  print(ExtractedTruth,ExtractedFake)
-                  exit()
-                  del base_data
-                  gc.collect()
-                  ExtractedTruth=random.sample(ExtractedTruth,int(round(TrueSeedCorrection*len(ExtractedTruth),0)))
-                  ExtractedFake=random.sample(ExtractedFake,int(round(FakeSeedCorrection*len(ExtractedFake),0)))
-                  TotalData=[]
-                  TotalData=ExtractedTruth+ExtractedFake
-                  print(UI.PickleOperations(output_file_location,'w',TotalData)[1])
-                  del TotalData
-                  del ExtractedTruth
-                  del ExtractedFake
-                  gc.collect()
+            for i in range(len(JobSet)):
+              if JobSet[i]==1:
+                  output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/MVx1d_'+TrainSampleID+'_SampledCompressedSeeds_'+str(i)+'.pkl'
+                  input_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/MVx1c_'+TrainSampleID+'_CompressedSeeds_'+str(i)+'.pkl'
+                  bar.text = f'-> Resampling the file : {input_file_location}, exists...'
+                  bar()
+                  if os.path.isfile(output_file_location)==False and os.path.isfile(input_file_location):
+                      base_data=UI.PickleOperations(input_file_location,'r','N/A')[0]
+                      ExtractedTruth=[im for im in base_data if im.Label == 1]
+                      ExtractedFake=[im for im in base_data if im.Label == 0]
+                      print(ExtractedTruth,ExtractedFake)
+                      xfg=input()
+                      del base_data
+                      gc.collect()
+                      ExtractedTruth=random.sample(ExtractedTruth,int(round(TrueSeedCorrection*len(ExtractedTruth),0)))
+                      ExtractedFake=random.sample(ExtractedFake,int(round(FakeSeedCorrection*len(ExtractedFake),0)))
+                      TotalData=[]
+                      TotalData=ExtractedTruth+ExtractedFake
+                      print(UI.PickleOperations(output_file_location,'w',TotalData)[1])
+                      del TotalData
+                      del ExtractedTruth
+                      del ExtractedFake
+                      gc.collect()
            print(UI.TimeStamp(),bcolors.OKGREEN+'Stage 4 has successfully completed'+bcolors.ENDC)
            Status=5
            UI.UpdateStatus(Status,Meta,TrainSampleOutputMeta)
@@ -577,8 +578,8 @@ while Status<len(Program):
            Meta=UI.PickleOperations(TrainSampleOutputMeta,'r', 'N/A')[0]
            JobSet=Meta.JobSets[1]
            
-           JobSet=[x for x in JobSet if x == 1]
-           for i in JobSet:
+           #JobSet=[x for x in JobSet if x == 1]
+           for i in range(0,len(JobSet)):
                input_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/MVx1d_'+TrainSampleID+'_SampledCompressedSeeds_'+str(i)+'.pkl'
                print(input_file_location)
                xfg=input()
