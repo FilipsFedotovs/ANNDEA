@@ -588,16 +588,13 @@ while Status<len(Program):
            output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_OUTPUT.pkl'
            print(UI.PickleOperations(output_file_location,'w',TotalData[:ValidationSampleSize])[1])
            TotalData=TotalData[ValidationSampleSize:]
-           print(UI.TimeStamp(), bcolors.OKGREEN+"Validation set made of"+str(len(TotalData[:ValidationSampleSize]))+"seeds, has been saved at ",bcolors.OKBLUE+output_file_location+bcolors.ENDC,bcolors.OKGREEN+'file...'+bcolors.ENDC)
            No_Train_Files=int(math.ceil(len(TotalData)/TrainSampleSize))
            with alive_bar(No_Train_Files,force_tty=True, title='Resampling the files...') as bar:
                for SC in range(0,No_Train_Files):
                  output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_OUTPUT_'+str(SC+1)+'.pkl'
                  bar.text = f'-> Saving the file : {output_file_location}...'
                  print(UI.PickleOperations(output_file_location,'w',TotalData[(SC*TrainSampleSize):min(len(TotalData),((SC+1)*TrainSampleSize))])[1])
-                 print(UI.TimeStamp(), bcolors.OKGREEN+"Train set made of"+str(len(TotalData[(SC*TrainSampleSize):min(len(TotalData),((SC+1)*TrainSampleSize))]))+"seeds, has been saved at ",bcolors.OKBLUE+output_file_location+bcolors.ENDC,bcolors.OKGREEN+'file...'+bcolors.ENDC)
                  bar()
-
            print(UI.TimeStamp(),bcolors.OKGREEN+'Stage 5 has successfully completed'+bcolors.ENDC)
            print(UI.TimeStamp(),'Would you like to delete temporary files?')
            user_response=input()
