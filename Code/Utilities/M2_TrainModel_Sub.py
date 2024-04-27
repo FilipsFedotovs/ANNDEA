@@ -69,15 +69,15 @@ print(MetaInput[1])
 Meta=MetaInput[0]
 Model_Meta_Path=EOSsubModelDIR+'/'+ModelName+'_Meta'
 ModelMeta=UI.PickleOperations(Model_Meta_Path, 'r', 'N/A')[0]
-ValSamples=UI.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_OUTPUT.pkl','r', 'N/A')[0]
+ValSamples=UI.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_OUTPUT.pkl','r', 'N/A')[0][:10]
 print(UI.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_OUTPUT.pkl','r', 'N/A')[1])
 train_set=1
 if ModelMeta.ModelType=='CNN':
    Model_Path=EOSsubModelDIR+'/'+ModelName+'.keras'
    train_set=1
-   TrainSamples=UI.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_OUTPUT_1.pkl','r', 'N/A')[0]
+   TrainSamples=UI.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_OUTPUT_1.pkl','r', 'N/A')[0][:10]
    if len(ModelMeta.TrainSessionsData)==0:
-       TrainSamples=UI.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_OUTPUT_1.pkl','r', 'N/A')[0]
+       TrainSamples=UI.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_OUTPUT_1.pkl','r', 'N/A')[0][:10]
        print(UI.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_OUTPUT_1.pkl','r', 'N/A')[1])
        train_set=1
    else:
@@ -92,7 +92,7 @@ if ModelMeta.ModelType=='CNN':
                print(UI.PickleOperations(next_file,'r', 'N/A')[1])
            else:
                train_set=1
-               TrainSamples=UI.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_OUTPUT_1.pkl','r', 'N/A')[0]
+               TrainSamples=UI.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_OUTPUT_1.pkl','r', 'N/A')[0][:10]
                print(UI.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_OUTPUT_1.pkl','r', 'N/A')[1])
         break
    NTrainBatches=math.ceil(float(len(TrainSamples))/float(TrainParams[1]))
@@ -165,6 +165,8 @@ def main(self):
         import tensorflow as tf
         sess = tf.compat.v1.Session()
         K = tf.keras.backend 
+        print(tf.test.is_gpu_available)
+    
         try:
             model=tf.keras.models.load_model(Model_Path)
             model.optimizer.learning_rate.assign(TrainParams[0])
