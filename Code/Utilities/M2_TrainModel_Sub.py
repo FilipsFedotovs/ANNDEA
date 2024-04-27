@@ -153,7 +153,7 @@ def main(self):
     ModelMeta=UI.PickleOperations(Model_Meta_Path, 'r', 'N/A')[0]
     print(UI.TimeStamp(),'Starting the training process... ')
     if ModelMeta.ModelType=='CNN':
-        Model_Path=EOSsubModelDIR+'/'+ModelName+'.h5'
+        Model_Path=EOSsubModelDIR+'/'+ModelName+'.keras'
         #Model_Path=EOSsubModelDIR+'/'+ModelName
         print(Model_Path)
         import os
@@ -165,12 +165,12 @@ def main(self):
         import tensorflow as tf
         sess = tf.compat.v1.Session()
         K = tf.keras.backend 
-        #try:
-        model=tf.keras.models.load_model(Model_Path)
-        model.optimizer.learning_rate.assign(TrainParams[0])
-        #except:
-             #print(UI.TimeStamp(), bcolors.WARNING+"Model/state data files are missing, skipping this step..." +bcolors.ENDC)
-             #model = ML.GenerateModel(ModelMeta,TrainParams)
+        try:
+            model=tf.keras.models.load_model(Model_Path)
+            model.optimizer.learning_rate.assign(TrainParams[0])
+        except:
+             print(UI.TimeStamp(), bcolors.WARNING+"Model/state data files are missing, skipping this step..." +bcolors.ENDC)
+             model = ML.GenerateModel(ModelMeta,TrainParams)
         model.summary()
         for el in ModelMeta.ModelParameters:
           if len(el)==2:
