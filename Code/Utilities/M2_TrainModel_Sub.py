@@ -153,8 +153,8 @@ def main(self):
     ModelMeta=UI.PickleOperations(Model_Meta_Path, 'r', 'N/A')[0]
     print(UI.TimeStamp(),'Starting the training process... ')
     if ModelMeta.ModelType=='CNN':
-        #Model_Path=EOSsubModelDIR+'/'+ModelName+'.keras'
-        Model_Path=EOSsubModelDIR+'/'+ModelName
+        Model_Path=EOSsubModelDIR+'/'+ModelName+'.h5'
+        #Model_Path=EOSsubModelDIR+'/'+ModelName
         print(Model_Path)
         import os
         os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # FATAL
