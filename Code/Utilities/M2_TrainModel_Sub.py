@@ -74,6 +74,8 @@ print(UI.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_
 train_set=1
 if ModelMeta.ModelType=='CNN':
    Model_Path=EOSsubModelDIR+'/'+ModelName+'.keras'
+   train_set=1
+   TrainSamples=UI.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_OUTPUT_1.pkl','r', 'N/A')[0] 
    if len(ModelMeta.TrainSessionsData)==0:
        TrainSamples=UI.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_OUTPUT_1.pkl','r', 'N/A')[0]
        print(UI.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_OUTPUT_1.pkl','r', 'N/A')[1])
@@ -102,7 +104,8 @@ if ModelMeta.ModelType=='CNN':
 
 elif ModelMeta.ModelType=='GNN':
        import torch
-
+       train_set=1
+       TrainSamples=UI.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_OUTPUT_1.pkl','r', 'N/A')[0] 
        if len(ModelMeta.TrainSessionsData)==0:
            TrainSamples=UI.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_OUTPUT_1.pkl','r', 'N/A')[0]
            print(UI.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_OUTPUT_1.pkl','r', 'N/A')[1])
