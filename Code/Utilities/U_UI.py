@@ -250,7 +250,7 @@ def SubmitJobs2Condor(job,local=False,ExtCPU=1,JobFlavour='workday', ExtMemory='
         f.write('requirements = (CERNEnvironment =!= "qa")')
         f.write("\n")
         if job[9]:
-            f.write('request_gpus = 2')
+            f.write('request_gpus = 1')
             f.write("\n")
         if ExtCPU>1 and job[9]==False:
             f.write('request_cpus = '+str(ExtCPU))
