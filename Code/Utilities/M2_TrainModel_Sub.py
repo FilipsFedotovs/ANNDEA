@@ -165,7 +165,7 @@ def main(self):
         import tensorflow as tf
         sess = tf.compat.v1.Session()
         K = tf.keras.backend 
-        print(tf.test.is_gpu_available)
+        print(tf.test.is_gpu_available())
     
         try:
             model=tf.keras.models.load_model(Model_Path)
