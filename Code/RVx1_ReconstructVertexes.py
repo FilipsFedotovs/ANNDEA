@@ -279,7 +279,7 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
            MaxDOCA=Meta.MaxDOCA
            MaxAngle=Meta.MaxAngle
            MaxSegments=PM.MaxSegments
-           MaxSeeds=PM.MaxSeeds
+           MaxSeeds=PM.MaxSeedsPerVxPool
            MinHitsTrack=Meta.MinHitsTrack
         print(UI.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+initial_input_file_location+bcolors.ENDC)
         data=pd.read_csv(initial_input_file_location,
@@ -360,14 +360,14 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         exit()
 
         if SliceData:
-             print(UF.TimeStamp(),'Slicing the data...')
+             print(UI.TimeStamp(),'Slicing the data...')
              ValidEvents=data.drop(data.index[(data[PM.x] > Xmax) | (data[PM.x] < Xmin) | (data[PM.y] > Ymax) | (data[PM.y] < Ymin)])
              ValidEvents.drop([PM.x,PM.y,PM.z,PM.tx,PM.ty],axis=1,inplace=True)
              ValidEvents.drop_duplicates(subset="Rec_Seg_ID",keep='first',inplace=True)
              data=pd.merge(data, ValidEvents, how="inner", on=['Rec_Seg_ID'])
              final_rows=len(data.axes[0])
-             print(UF.TimeStamp(),'The sliced data has ',final_rows,' hits')
-        print(UF.TimeStamp(),'Removing tracks which have less than',MinHitsTrack,'hits...')
+             print(UI.TimeStamp(),'The sliced data has ',final_rows,' hits')
+        print(UI.TimeStamp(),'Removing tracks which have less than',MinHitsTrack,'hits...')
         track_no_data=data.groupby(['Rec_Seg_ID'],as_index=False).count()
         track_no_data=track_no_data.drop([PM.y,PM.z,PM.tx,PM.ty],axis=1)
         track_no_data=track_no_data.rename(columns={PM.x: "Track_No"})
@@ -376,30 +376,16 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         new_combined_data = new_combined_data.drop(['Track_No'],axis=1)
         new_combined_data=new_combined_data.sort_values(['Rec_Seg_ID',PM.x],ascending=[1,1])
         grand_final_rows=len(new_combined_data.axes[0])
-        print(UF.TimeStamp(),'The cleaned data has ',grand_final_rows,' hits')
+        print(UI.TimeStamp(),'The cleaned data has ',grand_final_rows,' hits')
         new_combined_data=new_combined_data.rename(columns={PM.x: "x"})
         new_combined_data=new_combined_data.rename(columns={PM.y: "y"})
         new_combined_data=new_combined_data.rename(columns={PM.z: "z"})
         new_combined_data=new_combined_data.rename(columns={PM.tx: "tx"})
         new_combined_data=new_combined_data.rename(columns={PM.ty: "ty"})
-        if len(RemoveTracksZ)>0:
-             print(UF.TimeStamp(),'Removing tracks based on start point')
-             TracksZdf = pd.DataFrame(RemoveTracksZ, columns = ['Bad_z'], dtype=float)
-             data_aggregated=new_combined_data.groupby(['Rec_Seg_ID'])['z'].min().reset_index()
-             data_aggregated=data_aggregated.rename(columns={'z': "PosBad_Z"})
-             new_combined_data=pd.merge(new_combined_data, data_aggregated, how="left", on=['Rec_Seg_ID'])
-             new_combined_data=pd.merge(new_combined_data, TracksZdf, how="left", left_on=["PosBad_Z"], right_on=['Bad_z'])
-             new_combined_data=new_combined_data[new_combined_data['Bad_z'].isnull()]
-             new_combined_data=new_combined_data.drop(['Bad_z', 'PosBad_Z'],axis=1)
-             print(UF.TimeStamp(),'After removing starting tracks ',len(new_combined_data),' hits are left')
-             if grand_final_rows==len(new_combined_data):
-                print(bcolors.WARNING+"Seems like removing starting tracks did not have any effect..."+bcolors.ENDC)
-                u_x=input('Type "N" if you want to restart with different parameters')
-                if u_x=='N':
-                   exit()
+
         new_combined_data.to_csv(required_file_location,index=False)
         data=new_combined_data[['Rec_Seg_ID','z']]
-        print(UF.TimeStamp(),'Analysing the data sample in order to understand how many jobs to submit to HTCondor... ',bcolors.ENDC)
+        print(UI.TimeStamp(),'Analysing the data sample in order to understand how many jobs to submit to HTCondor... ',bcolors.ENDC)
         data = data.groupby('Rec_Seg_ID')['z'].min()  #Keeping only starting hits for the each track record (we do not require the full information about track in this script)
         data=data.reset_index()
         data = data.groupby('z')['Rec_Seg_ID'].count()  #Keeping only starting hits for the each track record (we do not require the full information about track in this script)
@@ -408,16 +394,16 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         data['Sub_Sets']=np.ceil(data['Rec_Seg_ID']/PM.MaxSegments)
         data['Sub_Sets'] = data['Sub_Sets'].astype(int)
         data = data.values.tolist()
-        print(UF.TimeStamp(), bcolors.OKGREEN+"The track segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+required_file_location+bcolors.ENDC)
-        Meta=UF.TrainingSampleMeta(RecBatchID)
+        print(UI.TimeStamp(), bcolors.OKGREEN+"The track segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+required_file_location+bcolors.ENDC)
+        Meta=UI.TrainingSampleMeta(RecBatchID)
         Meta.IniVertexSeedMetaData(MaxDST,MaxVXT,MaxDOCA,MaxAngle,data,MaxSegments,MaxSeeds,MinHitsTrack,FiducialVolumeCut,ExcludeClassNames,ExcludeClassValues)
         Meta.UpdateStatus(0)
-        print(UF.PickleOperations(RecOutputMeta,'w', Meta)[1])
+        print(UI.PickleOperations(RecOutputMeta,'w', Meta)[1])
         print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
-        print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 0 has successfully completed'+bcolors.ENDC)
+        print(UI.TimeStamp(),bcolors.OKGREEN+'Stage 0 has successfully completed'+bcolors.ENDC)
 elif os.path.isfile(RecOutputMeta)==True:
-    print(UF.TimeStamp(),'Loading previously saved data from ',bcolors.OKBLUE+RecOutputMeta+bcolors.ENDC)
-    MetaInput=UF.PickleOperations(RecOutputMeta,'r', 'N/A')
+    print(UI.TimeStamp(),'Loading previously saved data from ',bcolors.OKBLUE+RecOutputMeta+bcolors.ENDC)
+    MetaInput=UI.PickleOperations(RecOutputMeta,'r', 'N/A')
     Meta=MetaInput[0]
 MaxDST=Meta.MaxDST
 MaxVXT=Meta.MaxVXT
@@ -425,147 +411,9 @@ MaxDOCA=Meta.MaxDOCA
 MaxAngle=Meta.MaxAngle
 JobSets=Meta.JobSets
 MaxSegments=Meta.MaxSegments
-MaxSeeds=Meta.MaxSeeds
+MaxSeeds=PM.MaxSeedsPerVxPool
 MinHitsTrack=Meta.MinHitsTrack
-
-#The function bellow helps to monitor the HTCondor jobs and keep the submission flow
-def AutoPilot(wait_min, interval_min, max_interval_tolerance,program):
-     print(UF.TimeStamp(),'Going on an autopilot mode for ',wait_min, 'minutes while checking HTCondor every',interval_min,'min',bcolors.ENDC)
-     wait_sec=wait_min*60
-     interval_sec=interval_min*60
-     intervals=int(math.ceil(wait_sec/interval_sec))
-     for interval in range(1,intervals+1):
-         time.sleep(interval_sec)
-         print(UF.TimeStamp(),"Scheduled job checkup...") #Progress display
-         bad_pop=UF.CreateCondorJobs(program[1][0],
-                                    program[1][1],
-                                    program[1][2],
-                                    program[1][3],
-                                    program[1][4],
-                                    program[1][5],
-                                    program[1][6],
-                                    program[1][7],
-                                    program[1][8],
-                                    program[2],
-                                    program[3],
-                                    program[1][9],
-                                    False,
-                                    program[6])
-         if len(bad_pop)>0:
-               print(UF.TimeStamp(),bcolors.WARNING+'Autopilot status update: There are still', len(bad_pop), 'HTCondor jobs remaining'+bcolors.ENDC)
-               if interval%max_interval_tolerance==0:
-                  for bp in bad_pop:
-                      UF.SubmitJobs2Condor(bp,program[5],RequestExtCPU,JobFlavour,ReqMemory)
-                  print(UF.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
-         else:
-              return True,False
-     return False,False
-#The function bellow helps to automate the submission process
-def StandardProcess(program,status,freshstart):
-        print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
-        print(UF.TimeStamp(),bcolors.BOLD+'Stage '+str(status)+':'+bcolors.ENDC+str(program[status][0]))
-        batch_sub=program[status][4]>1
-        bad_pop=UF.CreateCondorJobs(program[status][1][0],
-                                    program[status][1][1],
-                                    program[status][1][2],
-                                    program[status][1][3],
-                                    program[status][1][4],
-                                    program[status][1][5],
-                                    program[status][1][6],
-                                    program[status][1][7],
-                                    program[status][1][8],
-                                    program[status][2],
-                                    program[status][3],
-                                    program[status][1][9],
-                                    False,
-                                    program[status][6])
-
-
-        if len(bad_pop)==0:
-             print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
-             UpdateStatus(status+1)
-             return True,False
-
-
-
-        elif (program[status][4])==len(bad_pop):
-                 bad_pop=UF.CreateCondorJobs(program[status][1][0],
-                                    program[status][1][1],
-                                    program[status][1][2],
-                                    program[status][1][3],
-                                    program[status][1][4],
-                                    program[status][1][5],
-                                    program[status][1][6],
-                                    program[status][1][7],
-                                    program[status][1][8],
-                                    program[status][2],
-                                    program[status][3],
-                                    program[status][1][9],
-                                    batch_sub,
-                                    program[status][6])
-                 print(UF.TimeStamp(),'Submitting jobs to HTCondor... ',bcolors.ENDC)
-                 _cnt=0
-                 for bp in bad_pop:
-                          if _cnt>SubGap:
-                              print(UF.TimeStamp(),'Pausing submissions for  ',str(int(SubPause/60)), 'minutes to relieve congestion...',bcolors.ENDC)
-                              time.sleep(SubPause)
-                              _cnt=0
-                          UF.SubmitJobs2Condor(bp,program[status][5],RequestExtCPU,JobFlavour,ReqMemory)
-                          _cnt+=bp[6]
-                 if program[status][5]:
-                    print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
-                    return True,False
-                 elif AutoPilot(600,time_int,Patience,program[status]):
-                        print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
-                        return True,False
-                 else:
-                        print(UF.TimeStamp(),bcolors.FAIL+'Stage '+str(status)+' is uncompleted...'+bcolors.ENDC)
-                        return False,False
-
-
-        elif len(bad_pop)>0:
-            # if freshstart:
-                   print(UF.TimeStamp(),bcolors.WARNING+'Warning, there are still', len(bad_pop), 'HTCondor jobs remaining'+bcolors.ENDC)
-                   print(bcolors.BOLD+'If you would like to wait and exit please enter E'+bcolors.ENDC)
-                   print(bcolors.BOLD+'If you would like to wait please enter enter the maximum wait time in minutes'+bcolors.ENDC)
-                   print(bcolors.BOLD+'If you would like to resubmit please enter R'+bcolors.ENDC)
-                   UserAnswer=input(bcolors.BOLD+"Please, enter your option\n"+bcolors.ENDC)
-                   if UserAnswer=='E':
-                       print(UF.TimeStamp(),'OK, exiting now then')
-                       exit()
-                   if UserAnswer=='R':
-                      _cnt=0
-                      for bp in bad_pop:
-                           if _cnt>SubGap:
-                              print(UF.TimeStamp(),'Pausing submissions for  ',str(int(SubPause/60)), 'minutes to relieve congestion...',bcolors.ENDC)
-                              time.sleep(SubPause)
-                              _cnt=0
-                           UF.SubmitJobs2Condor(bp,program[status][5],RequestExtCPU,JobFlavour,ReqMemory)
-                           _cnt+=bp[6]
-                      print(UF.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
-                      if program[status][5]:
-                          print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
-                          return True,False
-                      elif AutoPilot(600,time_int,Patience,program[status]):
-                          print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+ 'has successfully completed'+bcolors.ENDC)
-                          return True,False
-                      else:
-                          print(UF.TimeStamp(),bcolors.FAIL+'Stage '+str(status)+' is uncompleted...'+bcolors.ENDC)
-                          return False,False
-                   else:
-                      if program[status][5]:
-                          print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
-                          return True,False
-                      elif AutoPilot(int(UserAnswer),time_int,Patience,program[status]):
-                          print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+ 'has successfully completed'+bcolors.ENDC)
-                          return True,False
-                      else:
-                          print(UF.TimeStamp(),bcolors.FAIL+'Stage '+str(status)+' is uncompleted...'+bcolors.ENDC)
-                          return False,False
-
-def UpdateStatus(status):
-    Meta.UpdateStatus(status)
-    print(UF.PickleOperations(RecOutputMeta,'w', Meta)[1])
+exit()
 
 if Mode=='RESET':
     print(UF.TimeStamp(),'Performing the cleanup... ',bcolors.ENDC)
