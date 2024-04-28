@@ -17,13 +17,13 @@ csv_reader.close()
 import sys
 if PY_DIR!='': #Temp solution - the decision was made to move all libraries to EOS drive as AFS get locked during heavy HTCondor submission loads
     sys.path=['',PY_DIR]
-    sys.path.append('/usr/lib64/python36.zip')
-    sys.path.append('/usr/lib64/python3.6')
-    sys.path.append('/usr/lib64/python3.6/lib-dynload')
-    sys.path.append('/usr/lib64/python3.6/site-packages')
-    sys.path.append('/usr/lib/python3.6/site-packages')
+    sys.path.append('/usr/lib64/python39.zip')
+    sys.path.append('/usr/lib64/python3.9')
+    sys.path.append('/usr/lib64/python3.9/lib-dynload')
+    sys.path.append('/usr/lib64/python3.9/site-packages')
+    sys.path.append('/usr/lib/python3.9/site-packages')
 sys.path.append(AFS_DIR+'/Code/Utilities')
-import UtilityFunctions as UF #This is where we keep routine utility functions
+import U_UI as UI #This is where we keep routine utility functions
 import Parameters as PM #This is where we keep framework global parameters
 import pandas as pd #We use Panda for a routine data processing
 pd.options.mode.chained_assignment = None #Silence annoying warnings
@@ -44,13 +44,7 @@ class bcolors:   #We use it for the interface
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
 
-print('                                                                                                                                    ')
-print('                                                                                                                                    ')
-print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
-print(bcolors.HEADER+"#########     Initialising ANNDEA Track Union Training Sample Generation module          ###############"+bcolors.ENDC)
-print(bcolors.HEADER+"#########################              Written by Filips Fedotovs              #########################"+bcolors.ENDC)
-print(bcolors.HEADER+"#########################                 PhD Student at UCL                   #########################"+bcolors.ENDC)
-print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
+UI.WelcomeMsg('Initialising ANNDEA Vertexing Training Sample Generation module...','Filips Fedotovs (PhD student at UCL), Leah Wolf (MSc student at UCL), Henry Wilson (MSc student at UCL)','Please reach out to filips.fedotovs@cern.ch for any queries')
 
 #Setting the parser - this script is usually not run directly, but is used by a Master version Counterpart that passes the required arguments
 parser = argparse.ArgumentParser(description='This script prepares training data for training the tracking model')
@@ -74,7 +68,6 @@ parser.add_argument('--Log',help="Would you like to log the performance of this 
 parser.add_argument('--Acceptance',help="What is the ANN fit acceptance?", default='0.5')
 parser.add_argument('--CalibrateAcceptance',help="Would you like to recalibrate the acceptance?", default='N')
 parser.add_argument('--ReqMemory',help="Specifying the length of the HTCondor job walltime. Currently at 'workday' which is 8 hours.", default='2 GB')
-parser.add_argument('--RemoveTracksZ',help="This option enables to remove particular tracks of starting Z-coordinate", default='[]')
 parser.add_argument('--FiducialVolumeCut',help="Limits on the vx, y, z coordinates of the vertex origin", default='[]')
 
 ######################################## Parsing argument values  #############################################################
@@ -103,7 +96,6 @@ CalibrateAcceptance=(args.CalibrateAcceptance=='Y')
 initial_input_file_location=args.f
 Log=args.Log=='Y'
 FiducialVolumeCut=ast.literal_eval(args.FiducialVolumeCut)
-RemoveTracksZ=ast.literal_eval(args.RemoveTracksZ)
 Xmin,Xmax,Ymin,Ymax=float(args.Xmin),float(args.Xmax),float(args.Ymin),float(args.Ymax)
 SliceData=max(Xmin,Xmax,Ymin,Ymax)>0 #We don't slice data if all values are set to zero simultaneousy (which is the default setting)
 FreshStart=True
@@ -118,8 +110,8 @@ RecOutputMeta=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_info.pkl'
 required_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RVx1_'+RecBatchID+'_VERTEX_SEGMENTS.csv'
 required_eval_file_location=EOS_DIR+'/ANNDEA/Data/TEST_SET/EVx1_'+RecBatchID+'_VERTEX_SEGMENTS.csv'
 ########################################     Phase 1 - Create compact source file    #########################################
-print(UF.TimeStamp(),bcolors.BOLD+'Stage 0:'+bcolors.ENDC+' Preparing the source data...')
-
+print(UI.TimeStamp(),bcolors.BOLD+'Stage 0:'+bcolors.ENDC+' Preparing the source data...')
+exit()
 if Log and (os.path.isfile(required_eval_file_location)==False or Mode=='RESET'):
     if os.path.isfile(EOSsubModelMetaDIR)==False:
               print(UF.TimeStamp(), bcolors.FAIL+"Fail to proceed further as the model file "+EOSsubModelMetaDIR+ " has not been found..."+bcolors.ENDC)
