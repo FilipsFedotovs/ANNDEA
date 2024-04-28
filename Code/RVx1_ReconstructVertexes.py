@@ -96,6 +96,8 @@ CalibrateAcceptance=(args.CalibrateAcceptance=='Y')
 initial_input_file_location=args.f
 Log=args.Log=='Y'
 FiducialVolumeCut=ast.literal_eval(args.FiducialVolumeCut)
+ExcludeClassNames=ast.literal_eval(args.ExcludeClassNames)
+ExcludeClassValues=ast.literal_eval(args.ExcludeClassValues)
 Xmin,Xmax,Ymin,Ymax=float(args.Xmin),float(args.Xmax),float(args.Ymin),float(args.Ymax)
 SliceData=max(Xmin,Xmax,Ymin,Ymax)>0 #We don't slice data if all values are set to zero simultaneousy (which is the default setting)
 FreshStart=True
