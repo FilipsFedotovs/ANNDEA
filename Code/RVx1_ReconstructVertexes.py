@@ -69,7 +69,8 @@ parser.add_argument('--Acceptance',help="What is the ANN fit acceptance?", defau
 parser.add_argument('--CalibrateAcceptance',help="Would you like to recalibrate the acceptance?", default='N')
 parser.add_argument('--ReqMemory',help="Specifying the length of the HTCondor job walltime. Currently at 'workday' which is 8 hours.", default='2 GB')
 parser.add_argument('--FiducialVolumeCut',help="Limits on the vx, y, z coordinates of the vertex origin", default='[]')
-
+parser.add_argument('--ExcludeClassNames',help="What class headers to use?", default="[]")
+parser.add_argument('--ExcludeClassValues',help="What class values to use?", default="[[]]")
 ######################################## Parsing argument values  #############################################################
 args = parser.parse_args()
 Mode=args.Mode.upper()
