@@ -357,7 +357,7 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
             data=data.drop(['track_len'],axis=1)
         final_rows=len(data.axes[0])
         print(UI.TimeStamp(),'After removing tracks with specific lengths we have',final_rows,' hits left')
-        exit()
+
 
         if SliceData:
              print(UI.TimeStamp(),'Slicing the data...')
