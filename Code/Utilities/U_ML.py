@@ -987,13 +987,22 @@ def zero_divide(a, b):
 def CNNtrain(model, Sample, Batches,num_classes, BatchSize):
     loss_accumulative = 0
     acc_accumulative = 0
+    import psutil
     for ib in range(Batches):
+
+
+# Calling psutil.cpu_precent() for 4 seconds
         StartSeed=(ib*BatchSize)+1
         EndSeed=StartSeed+BatchSize-1
         BatchImages=LoadRenderImages(Sample,StartSeed,EndSeed,num_classes)
         t=model.train_on_batch(BatchImages[0],BatchImages[1])
         loss_accumulative+=t[0].item()
         acc_accumulative+=t[1].item()
+        print('-----------------------------')
+        print('The CPU usage is: ', psutil.cpu_percent(4))
+        print('RAM memory % used:', psutil.virtual_memory()[2])
+        print('Images:',len(BatchImages))
+        print('-----------------------------')
     loss=loss_accumulative/Batches
     acc=acc_accumulative/Batches
     return loss,acc
@@ -1027,6 +1036,7 @@ def GNNvalidate(model, Sample,criterion):
 def CNNvalidate(model, Sample, Batches,num_classes, BatchSize):
     loss_accumulative = 0
     acc_accumulative = 0
+    import psutil
     for ib in range(Batches):
         StartSeed=(ib*BatchSize)+1
         EndSeed=StartSeed+BatchSize-1
@@ -1034,6 +1044,11 @@ def CNNvalidate(model, Sample, Batches,num_classes, BatchSize):
         v=model.test_on_batch(BatchImages[0],BatchImages[1])
         loss_accumulative+=v[0].item()
         acc_accumulative+=v[1].item()
+        print('-----------------------------')
+        print('The CPU usage is: ', psutil.cpu_percent(4))
+        print('RAM memory % used:', psutil.virtual_memory()[2])
+        print('Images:',len(BatchImages))
+        print('-----------------------------')
     loss=loss_accumulative/Batches
     acc=acc_accumulative/Batches
     return loss,acc
