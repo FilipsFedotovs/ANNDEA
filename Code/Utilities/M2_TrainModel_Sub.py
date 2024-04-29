@@ -10,6 +10,9 @@ import math
 import ast
 import os
 import copy
+
+
+import datetime
 ########################## Visual Formatting #################################################
 class bcolors:
     HEADER = '\033[95m'
@@ -69,15 +72,15 @@ print(MetaInput[1])
 Meta=MetaInput[0]
 Model_Meta_Path=EOSsubModelDIR+'/'+ModelName+'_Meta'
 ModelMeta=UI.PickleOperations(Model_Meta_Path, 'r', 'N/A')[0]
-ValSamples=UI.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_OUTPUT.pkl','r', 'N/A')[0]
+ValSamples=UI.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_OUTPUT.pkl','r', 'N/A')[0][:100]
 print(UI.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_OUTPUT.pkl','r', 'N/A')[1])
 train_set=1
 if ModelMeta.ModelType=='CNN':
    Model_Path=EOSsubModelDIR+'/'+ModelName+'.keras'
    train_set=1
-   TrainSamples=UI.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_OUTPUT_1.pkl','r', 'N/A')[0]
+   TrainSamples=UI.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_OUTPUT_1.pkl','r', 'N/A')[0][:100]
    if len(ModelMeta.TrainSessionsData)==0:
-       TrainSamples=UI.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_OUTPUT_1.pkl','r', 'N/A')[0]
+       TrainSamples=UI.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_OUTPUT_1.pkl','r', 'N/A')[0][:100]
        print(UI.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_OUTPUT_1.pkl','r', 'N/A')[1])
        train_set=1
    else:
@@ -92,7 +95,7 @@ if ModelMeta.ModelType=='CNN':
                print(UI.PickleOperations(next_file,'r', 'N/A')[1])
            else:
                train_set=1
-               TrainSamples=UI.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_OUTPUT_1.pkl','r', 'N/A')[0]
+               TrainSamples=UI.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_OUTPUT_1.pkl','r', 'N/A')[0][:100]
                print(UI.PickleOperations(EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_OUTPUT_1.pkl','r', 'N/A')[1])
         break
    NTrainBatches=math.ceil(float(len(TrainSamples))/float(TrainParams[1]))
@@ -154,8 +157,6 @@ def main(self):
     print(UI.TimeStamp(),'Starting the training process... ')
     if ModelMeta.ModelType=='CNN':
         Model_Path=EOSsubModelDIR+'/'+ModelName+'.keras'
-        #Model_Path=EOSsubModelDIR+'/'+ModelName
-        print(Model_Path)
         import os
         os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # FATAL
         import logging
@@ -165,8 +166,10 @@ def main(self):
         import tensorflow as tf
         sess = tf.compat.v1.Session()
         K = tf.keras.backend 
-        print(tf.test.is_gpu_available())
-    
+        if tf.test.is_gpu_available():
+            print(UI.TimeStamp(), bcolors.OKGREEN+"GPU has been allocated..." +bcolors.ENDC)
+        else:
+            print(UI.TimeStamp(), bcolors.WARNING+"No GPU detected, proceeding with CPU..." +bcolors.ENDC)
         try:
             model=tf.keras.models.load_model(Model_Path)
             model.optimizer.learning_rate.assign(TrainParams[0])
@@ -178,9 +181,15 @@ def main(self):
           if len(el)==2:
              OutputSize=el[1]
         records=[]
+        print('Params:',TrainSamples, NTrainBatches,OutputSize,TrainParams[1])
         for epoch in range(0, TrainParams[2]):
+            CP1=datetime.datetime.now()
             train_loss, itr=ML.CNNtrain(model, TrainSamples, NTrainBatches,OutputSize,TrainParams[1]),len(TrainSamples)
+            CP2=datetime.datetime.now()
+            print('Train time lapse ', (CP2-CP1).strftime("%H:%M:%S"))
             val_loss=ML.CNNvalidate(model, ValSamples, NValBatches,OutputSize,TrainParams[1])
+            CP3=datetime.datetime.now()
+            print('Validation time lapse ', (CP3-CP2).strftime("%H:%M:%S"))
             test_loss=val_loss
             print(UI.TimeStamp(),'Epoch ',epoch, ' is completed')
             records.append([epoch,itr,train_loss[0],0.5,val_loss[0],val_loss[1],test_loss[0],test_loss[1],train_set])
