@@ -998,11 +998,11 @@ def CNNtrain(model, Sample, Batches,num_classes, BatchSize):
         t=model.train_on_batch(BatchImages[0],BatchImages[1])
         loss_accumulative+=t[0].item()
         acc_accumulative+=t[1].item()
-        print('-----------------------------')
-        print('The CPU usage is: ', psutil.cpu_percent(4))
-        print('RAM memory % used:', psutil.virtual_memory()[2])
-        print('Images:',len(BatchImages[0]))
-        print('-----------------------------')
+
+    print('-----------------------------')
+    print('1.The CPU usage is: ', psutil.cpu_percent(4))
+    print('RAM memory % used:', psutil.virtual_memory()[2])
+    print('-----------------------------')
     loss=loss_accumulative/Batches
     acc=acc_accumulative/Batches
     return loss,acc
@@ -1037,6 +1037,10 @@ def CNNvalidate(model, Sample, Batches,num_classes, BatchSize):
     loss_accumulative = 0
     acc_accumulative = 0
     import psutil
+    print('-----------------------------')
+    print('2.The CPU usage is: ', psutil.cpu_percent(4))
+    print('RAM memory % used:', psutil.virtual_memory()[2])
+    print('-----------------------------')
     for ib in range(Batches):
         StartSeed=(ib*BatchSize)+1
         EndSeed=StartSeed+BatchSize-1
@@ -1044,13 +1048,13 @@ def CNNvalidate(model, Sample, Batches,num_classes, BatchSize):
         v=model.test_on_batch(BatchImages[0],BatchImages[1])
         loss_accumulative+=v[0].item()
         acc_accumulative+=v[1].item()
-        print('-----------------------------')
-        print('The CPU usage is: ', psutil.cpu_percent(4))
-        print('RAM memory % used:', psutil.virtual_memory()[2])
-        print('Images:',len(BatchImages[0]))
-        print('-----------------------------')
+    print('-----------------------------')
+    print('3.The CPU usage is: ', psutil.cpu_percent(4))
+    print('RAM memory % used:', psutil.virtual_memory()[2])
+    print('-----------------------------')
     loss=loss_accumulative/Batches
     acc=acc_accumulative/Batches
+
     return loss,acc
 
 
