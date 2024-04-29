@@ -988,6 +988,7 @@ def CNNtrain(model, Sample, Batches,num_classes, BatchSize):
     loss_accumulative = 0
     acc_accumulative = 0
     import psutil
+    import datetime
     for ib in range(Batches):
 
 
@@ -1000,6 +1001,7 @@ def CNNtrain(model, Sample, Batches,num_classes, BatchSize):
         acc_accumulative+=t[1].item()
         if ib%100==0:
             print('-----------------------------')
+            print("["+datetime.datetime.now().strftime("%D")+' '+datetime.datetime.now().strftime("%H:%M:%S")+"]")
             print('1.The CPU usage is: ', psutil.cpu_percent(4))
             print('RAM memory % used:', psutil.virtual_memory()[2])
             print('-----------------------------')
@@ -1037,6 +1039,7 @@ def CNNvalidate(model, Sample, Batches,num_classes, BatchSize):
     loss_accumulative = 0
     acc_accumulative = 0
     import psutil
+    import datetime
     print('-----------------------------')
     print('2.The CPU usage is: ', psutil.cpu_percent(4))
     print('RAM memory % used:', psutil.virtual_memory()[2])
