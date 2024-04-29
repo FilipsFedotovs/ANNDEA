@@ -998,11 +998,11 @@ def CNNtrain(model, Sample, Batches,num_classes, BatchSize):
         t=model.train_on_batch(BatchImages[0],BatchImages[1])
         loss_accumulative+=t[0].item()
         acc_accumulative+=t[1].item()
-
-    print('-----------------------------')
-    print('1.The CPU usage is: ', psutil.cpu_percent(4))
-    print('RAM memory % used:', psutil.virtual_memory()[2])
-    print('-----------------------------')
+        if ib%100==0:
+            print('-----------------------------')
+            print('1.The CPU usage is: ', psutil.cpu_percent(4))
+            print('RAM memory % used:', psutil.virtual_memory()[2])
+            print('-----------------------------')
     loss=loss_accumulative/Batches
     acc=acc_accumulative/Batches
     return loss,acc
