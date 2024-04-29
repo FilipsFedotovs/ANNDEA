@@ -59,7 +59,6 @@ sys.path.append(AFS_DIR+'/Code/Utilities')
 
 import U_UI as UI
 import U_ML as ML
-import U_EMO as EMO
 #Load data configuration
 EOSsubDIR=EOS_DIR+'/'+'ANNDEA'
 EOSsubModelDIR=EOSsubDIR+'/'+'Models'
@@ -181,15 +180,15 @@ def main(self):
           if len(el)==2:
              OutputSize=el[1]
         records=[]
-        print('Params:',TrainSamples, NTrainBatches,OutputSize,TrainParams[1])
+        print('Params:',len(TrainSamples),NTrainBatches,OutputSize,TrainParams[1])
         for epoch in range(0, TrainParams[2]):
             CP1=datetime.datetime.now()
             train_loss, itr=ML.CNNtrain(model, TrainSamples, NTrainBatches,OutputSize,TrainParams[1]),len(TrainSamples)
             CP2=datetime.datetime.now()
-            print('Train time lapse ', (CP2-CP1).strftime("%H:%M:%S"))
+            print('Train time lapse ', CP2-CP1)
             val_loss=ML.CNNvalidate(model, ValSamples, NValBatches,OutputSize,TrainParams[1])
             CP3=datetime.datetime.now()
-            print('Validation time lapse ', (CP3-CP2).strftime("%H:%M:%S"))
+            print('Validation time lapse ', CP3-CP2)
             test_loss=val_loss
             print(UI.TimeStamp(),'Epoch ',epoch, ' is completed')
             records.append([epoch,itr,train_loss[0],0.5,val_loss[0],val_loss[1],test_loss[0],test_loss[1],train_set])
