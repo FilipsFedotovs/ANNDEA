@@ -467,6 +467,7 @@ if Log:
 
 ###### Stage 2
 prog_entry=[]
+print(Meta.JobSets)
 NJobs=UI.CalculateNJobs(Meta.JobSets[int(Log)])[1]
 print(NJobs)
 exit()
