@@ -135,8 +135,6 @@ for i in range(0,Steps):
   merged_data.drop(['y','z','x','r_x','r_y','r_z','join_key','separation'],axis=1,inplace=True) #Removing the information that we don't need anymore
   if merged_data.empty==False:
     merged_data.drop(merged_data.index[merged_data['Track_1'] == merged_data['Track_2']], inplace = True) #Removing the cases where Seed tracks are the same
-    print(merged_data)
-    exit()
     merged_list = merged_data.values.tolist() #Convirting the result to List data type
     result_list+=merged_list #Adding the result to the list
   if len(result_list)>=2000000: #Once the list gets too big we dump the results into csv to save memory
