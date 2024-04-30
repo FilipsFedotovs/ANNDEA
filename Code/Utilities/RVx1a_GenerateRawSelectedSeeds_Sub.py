@@ -71,13 +71,8 @@ print(UI.TimeStamp(),'Creating segment combinations... ')
 data_header = data.groupby('Rec_Seg_ID')['z'].min()  #Keeping only starting hits for the each track record (we do not require the full information about track in this script)
 data_header=data_header.reset_index()
 PlateZ=data_header.z.min()
-print(data_header)
 #Doing a plate region cut for the Main Data
-data_header.drop(data_header.index[data_header['z'] > (PlateZ+MaxDST)], inplace = True) #Not applicable for TSU
-print(data_header)
 data_header.drop(data_header.index[data_header['z'] < PlateZ], inplace = True)
-print(data_header)
-exit()
 Records=len(data_header.axes[0])
 print(UI.TimeStamp(),'There are total of ', Records, 'tracks in the data set')
 
@@ -92,8 +87,10 @@ EndDataCut=(j+1)*MaxSegments
 #Specifying the right join
 
 r_data=data.rename(columns={"x": "r_x"})
+print(r_data)
 r_data.drop(r_data.index[r_data['z'] != PlateZ], inplace = True)
-
+print(r_data)
+exit()
 Records=len(r_data.axes[0])
 print(UI.TimeStamp(),'There are  ', Records, 'segments in the starting plate')
 
