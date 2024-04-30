@@ -551,8 +551,6 @@ while Status<len(Program):
                         result=pd.concat([result,new_result])
 
         Records=len(result)
-        print(result)
-        exit()
         result["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(result['Segment_1'], result['Segment_2'])]
         result.drop_duplicates(subset="Seed_ID",keep='first',inplace=True)
         result.drop(result.index[result['Segment_1'] == result['Segment_2']], inplace = True)
@@ -562,8 +560,8 @@ while Status<len(Program):
                       Compression_Ratio=int((Records_After_Compression/Records)*100)
         else:
                       Compression_Ratio=0
-        print(UF.TimeStamp(),'Set',str(i), 'compression ratio is ', Compression_Ratio, ' %',bcolors.ENDC)
-        new_output_file_location=EOS_DIR+'/ANNDEA/Data/TEST_SET/EVx1b_'+RecBatchID+'_SEED_TRUTH_COMBINATIONS.csv'
+        print(UI.TimeStamp(),'Set',str(i), 'compression ratio is ', Compression_Ratio, ' %',bcolors.ENDC)
+        new_output_file_location=EOS_DIR+'/ANNDEA/Data/TEST_SET/'+RecBatchID+'/EVx1b_'+RecBatchID+'_SEED_TRUTH_COMBINATIONS.csv'
         result.to_csv(new_output_file_location,index=False)
         eval_no=len(result)
         rec_data=pd.read_csv(required_file_location,header=0,
@@ -572,11 +570,10 @@ while Status<len(Program):
         rec_data.drop_duplicates(keep='first',inplace=True)
         rec_no=len(rec_data)
         rec_no=(rec_no**2)-rec_no-eval_no
-        UF.LogOperations(EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv', 'w', [['Step_No','Step_Desc','Fake_Seeds','Truth_Seeds','Precision','Recall'],[1,'Initial Sampling',rec_no,eval_no,eval_no/(rec_no+eval_no),1.0]])
-        print(UF.TimeStamp(), bcolors.OKGREEN+"The process log has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv'+bcolors.ENDC)
-        FreshStart=False
-        print(UF.TimeStamp(),bcolors.OKGREEN+'Stage',Status,' has successfully completed'+bcolors.ENDC)
-        UpdateStatus(Status+1)
+        UI.LogOperations(EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv', 'w', [['Step_No','Step_Desc','Fake_Seeds','Truth_Seeds','Precision','Recall'],[1,'Initial Sampling',rec_no,eval_no,eval_no/(rec_no+eval_no),1.0]])
+        UI.Msg('location',"The process log has been created successfully and written to ",EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv')
+        UI.Msg('completed','Stage '+str(Status)+' has successfully completed')
+        UI.UpdateStatus(Status+1,Meta,RecOutputMeta)
     elif Program[Status]=='Custom - Collect Raw Seeds':
         print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
         print(UF.TimeStamp(),bcolors.BOLD+'Stage '+str(Status)+':'+bcolors.ENDC+' Collecting and de-duplicating the results from stage 2')
