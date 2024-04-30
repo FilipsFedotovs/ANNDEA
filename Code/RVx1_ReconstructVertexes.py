@@ -71,6 +71,8 @@ parser.add_argument('--ReqMemory',help="Specifying the length of the HTCondor jo
 parser.add_argument('--FiducialVolumeCut',help="Limits on the vx, y, z coordinates of the vertex origin", default='[]')
 parser.add_argument('--ExcludeClassNames',help="What class headers to use?", default="[]")
 parser.add_argument('--ExcludeClassValues',help="What class values to use?", default="[[]]")
+parser.add_argument('--ForceStatus',help="Local submission?", default='N')
+parser.add_argument('--HTCondorLog',help="Local submission?", default=False,type=bool)
 ######################################## Parsing argument values  #############################################################
 args = parser.parse_args()
 Mode=args.Mode.upper()
@@ -78,6 +80,8 @@ RecBatchID=args.RecBatchID
 Patience=int(args.Patience)
 TrackID=args.TrackID
 BrickID=args.BrickID
+ForceStatus=args.ForceStatus
+HTCondorLog=args.HTCondorLog
 SubPause=int(args.SubPause)*60
 SubGap=int(args.SubGap)
 LocalSub=(args.LocalSub=='Y')
@@ -101,7 +105,16 @@ ExcludeClassNames=ast.literal_eval(args.ExcludeClassNames)
 ExcludeClassValues=ast.literal_eval(args.ExcludeClassValues)
 Xmin,Xmax,Ymin,Ymax=float(args.Xmin),float(args.Xmax),float(args.Ymin),float(args.Ymax)
 SliceData=max(Xmin,Xmax,Ymin,Ymax)>0 #We don't slice data if all values are set to zero simultaneousy (which is the default setting)
-FreshStart=True
+
+if Mode=='RESET':
+    print(UI.ManageFolders(AFS_DIR, EOS_DIR, RecBatchID,'d',['EVx1a','RVx1a','RVx1b','RVx1c']))
+    print(UI.ManageFolders(AFS_DIR, EOS_DIR, RecBatchID,'c'))
+elif Mode=='CLEANUP':
+     print(UI.ManageFolders(AFS_DIR, EOS_DIR, RecBatchID,'d',['EVx1a','RVx1a','RVx1b','RVx1c']))
+     exit()
+else:
+    print(UI.ManageFolders(AFS_DIR, EOS_DIR, RecBatchID,'c'))
+
 #Establishing paths
 EOSsubDIR=EOS_DIR+'/'+'ANNDEA'
 EOSsubModelDIR=EOSsubDIR+'/'+'Models'
@@ -109,12 +122,14 @@ if ModelName[0]!='Blank':
     EOSsubModelMetaDIR=EOSsubDIR+'/'+'Models/'+ModelName[0]+'_Meta'
 else:
     EOSsubModelMetaDIR=EOSsubDIR+'/'+'Models/'+ModelName[1]+'_Meta'
-RecOutputMeta=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_info.pkl'
-required_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RVx1_'+RecBatchID+'_VERTEX_SEGMENTS.csv'
-required_eval_file_location=EOS_DIR+'/ANNDEA/Data/TEST_SET/EVx1_'+RecBatchID+'_VERTEX_SEGMENTS.csv'
+
+
+RecOutputMeta=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/'+RecBatchID+'_info.pkl'
+required_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/RVx1_'+RecBatchID+'_VERTEX_SEGMENTS.csv'
+required_eval_file_location=EOS_DIR+'/ANNDEA/Data/TEST_SET/'+RecBatchID+'/EVx1_'+RecBatchID+'_VERTEX_SEGMENTS.csv'
 ########################################     Phase 1 - Create compact source file    #########################################
 print(UI.TimeStamp(),bcolors.BOLD+'Stage 0:'+bcolors.ENDC+' Preparing the source data...')
-if Log and (os.path.isfile(required_eval_file_location)==False or Mode=='RESET'):
+if Log and (os.path.isfile(required_eval_file_location)==False):
     if os.path.isfile(EOSsubModelMetaDIR)==False:
               print(UI.TimeStamp(), bcolors.FAIL+"Fail to proceed further as the model file "+EOSsubModelMetaDIR+ " has not been found..."+bcolors.ENDC)
               exit()
@@ -268,8 +283,7 @@ if Log and (os.path.isfile(required_eval_file_location)==False or Mode=='RESET')
     print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
     print(UI.TimeStamp(), bcolors.OKGREEN+"The track segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+required_eval_file_location+bcolors.ENDC)
     print(bcolors.HEADER+"############################################# End of the program ################################################"+bcolors.ENDC)
-
-if os.path.isfile(required_file_location)==False or Mode=='RESET':
+if os.path.isfile(required_file_location)==False:
         if os.path.isfile(EOSsubModelMetaDIR)==False:
               print(UI.TimeStamp(), bcolors.FAIL+"Fail to proceed further as the model file "+EOSsubModelMetaDIR+ " has not been found..."+bcolors.ENDC)
               exit()
@@ -416,22 +430,14 @@ JobSets=Meta.JobSets
 MaxSegments=Meta.MaxSegments
 MaxSeeds=PM.MaxSeedsPerVxPool
 MinHitsTrack=Meta.MinHitsTrack
-exit()
 
-if Mode=='RESET':
-    print(UF.TimeStamp(),'Performing the cleanup... ',bcolors.ENDC)
-    HTCondorTag="SoftUsed == \"ANNDEA-EVx1a-"+RecBatchID+"\""
-    UF.EvalCleanUp(AFS_DIR, EOS_DIR, 'EVx1a_'+RecBatchID, ['EVx1a','EVx1b'], HTCondorTag)
-    HTCondorTag="SoftUsed == \"ANNDEA-RVx1a-"+RecBatchID+"\""
-    UF.RecCleanUp(AFS_DIR, EOS_DIR, 'RVx1a_'+RecBatchID, ['RVx1a',RecBatchID+'_REC_LOG.csv'], HTCondorTag)
-    FreshStart=False
-    UpdateStatus(0)
-    Status=0
-else:
-    print(UF.TimeStamp(),'Analysing the current script status...',bcolors.ENDC)
-    Status=Meta.Status[-1]
 
-print(UF.TimeStamp(),'Current status is ',Status,bcolors.ENDC)
+#The function bellow helps to automate the submission process
+UI.Msg('vanilla','Analysing the current script status...')
+Status=Meta.Status[-1]
+if ForceStatus!='N':
+    Status=int(ForceStatus)
+UI.Msg('vanilla','Current stage is '+str(Status)+'...')
 ################ Set the execution sequence for the script
 Program=[]
 
@@ -440,9 +446,9 @@ if Log:
     prog_entry=[]
     job_sets=[]
     prog_entry.append(' Sending eval seeds to HTCondor...')
-    print(UF.TimeStamp(),'Loading preselected data from ',bcolors.OKBLUE+initial_input_file_location+bcolors.ENDC)
+    print(UI.TimeStamp(),'Loading preselected data from ',bcolors.OKBLUE+initial_input_file_location+bcolors.ENDC)
     data=pd.read_csv(required_eval_file_location,header=0,usecols=['Rec_Seg_ID'])
-    print(UF.TimeStamp(),'Analysing data... ',bcolors.ENDC)
+    print(UI.TimeStamp(),'Analysing data... ',bcolors.ENDC)
     data.drop_duplicates(subset="Rec_Seg_ID",keep='first',inplace=True)  #Keeping only starting hits for each track record (we do not require the full information about track in this script)
     Records=len(data.axes[0])
     Sets=int(np.ceil(Records/MaxSegments))
@@ -451,39 +457,19 @@ if Log:
     prog_entry.append([MaxSegments])
     prog_entry.append(Sets)
     prog_entry.append(LocalSub)
-    prog_entry.append(['',''])
-    if Mode=='RESET':
-        print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Delete'))
-    #Setting up folders for the output. The reconstruction of just one brick can easily generate >100k of files. Keeping all that blob in one directory can cause problems on lxplus.
-    print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Create'))
+    prog_entry.append('N/A')
+    prog_entry.append(HTCondorLog)
+    prog_entry.append(False)
+    print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry))
     Program.append(prog_entry)
     # ###### Stage 1
-    Program.append('Custom - PickE')
-
-else:
-    UpdateStatus(0)
-    Status=0
-
-if Mode=='CLEANUP':
-    UpdateStatus(19)
-    Status=19
-
+    Program.append('Custom - Collect Evaluation Results')
 
 ###### Stage 2
 prog_entry=[]
-job_sets=[]
-JobSet=[]
-for i in range(len(JobSets)):
-    JobSet.append(int(JobSets[i][2]))
-TotJobs=0
-
-if type(JobSet) is int:
-            TotJobs=JobSet
-elif type(JobSet[0]) is int:
-            TotJobs=np.sum(JobSet)
-elif type(JobSet[0][0]) is int:
-            for lp in JobSet:
-                TotJobs+=np.sum(lp)
+NJobs=UI.CalculateNJobs(Meta.JobSets[int(Log)])[1]
+print(NJobs)
+exit()
 prog_entry.append(' Sending tracks to the HTCondor, so track segment combinations can be formed...')
 prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','RawSeedsRes','RVx1a','.csv',RecBatchID,JobSet,'RVx1a_GenerateRawSelectedSeeds_Sub.py'])
 prog_entry.append([ " --MaxSegments ", " --MaxDST "])
