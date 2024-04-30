@@ -125,7 +125,7 @@ else:
 
 
 RecOutputMeta=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/'+RecBatchID+'_info.pkl'
-required_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/RVx1_'+RecBatchID+'_VERTEX_SEGMENTS.csv'
+required_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/RVx1_'+RecBatchID+'_VERTEX_SEGMENTS_0.csv'
 required_eval_file_location=EOS_DIR+'/ANNDEA/Data/TEST_SET/'+RecBatchID+'/EVx1_'+RecBatchID+'_VERTEX_SEGMENTS.csv'
 ########################################     Phase 1 - Create compact source file    #########################################
 print(UI.TimeStamp(),bcolors.BOLD+'Stage 0:'+bcolors.ENDC+' Preparing the source data...')
@@ -496,10 +496,9 @@ if Log:
 
 ###### Stage 2
 prog_entry=[]
-print(Meta.JobSets)
 NJobs=UI.CalculateNJobs(Meta.JobSets[int(Log)])[1]
 prog_entry.append(' Sending tracks to the HTCondor, so track segment combinations can be formed...')
-prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','RawSeedsRes','RVx1a','.csv',RecBatchID,JobSet,'RVx1a_GenerateRawSelectedSeeds_Sub.py'])
+prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','RawSeedsRes','RVx1a','.csv',RecBatchID, Meta.JobSets[int(Log)],'RVx1a_GenerateRawSelectedSeeds_Sub.py'])
 prog_entry.append([ " --MaxSegments ", " --MaxDST "])
 prog_entry.append([MaxSegments, MaxDST])
 prog_entry.append(NJobs)
