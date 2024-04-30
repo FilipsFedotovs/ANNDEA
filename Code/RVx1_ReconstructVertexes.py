@@ -575,14 +575,8 @@ while Status<len(Program):
         UI.Msg('completed','Stage '+str(Status)+' has successfully completed')
         UI.UpdateStatus(Status+1,Meta,RecOutputMeta)
     elif Program[Status]=='Custom - Collect Raw Seeds':
-        print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
-        print(UF.TimeStamp(),bcolors.BOLD+'Stage '+str(Status)+':'+bcolors.ENDC+' Collecting and de-duplicating the results from stage 2')
-        min_i=0
-        for i in range(0,len(JobSets)): #//Temporarily measure to save space
-                   test_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RVx1a'+'_'+RecBatchID+'_'+str(i)+'/RVx1a_'+RecBatchID+'_SelectedSeeds_'+str(i)+'_'+str(0)+'_'+str(0)+'.csv'
-                   if os.path.isfile(test_file_location):
-                        min_i=max(0,i-1)
-        print(UF.TimeStamp(),'Analysing the data sample in order to understand how many jobs to submit to HTCondor... ',bcolors.ENDC)
+        UI.Msg('status','Stage '+str(Status),': Collecting and de-duplicating the results from previous stage '+str(Status-1)+'...')
+        UI.Msg('vanilla','Analysing the data sample in order to understand how many jobs to submit to HTCondor... ')
         data=pd.read_csv(required_file_location,header=0,
                     usecols=['z','Rec_Seg_ID'])
         data = data.groupby('Rec_Seg_ID')['z'].min()  #Keeping only starting hits for the each track record (we do not require the full information about track in this script)
@@ -592,85 +586,161 @@ while Status<len(Program):
         data=data.sort_values(['z'],ascending=True)
         data['Sub_Sets']=np.ceil(data['Rec_Seg_ID']/PM.MaxSegments)
         data['Sub_Sets'] = data['Sub_Sets'].astype(int)
-        JobSets = data.values.tolist()
-        with alive_bar(len(JobSets)-min_i,force_tty=True, title='Checking the results from HTCondor') as bar:
-            for i in range(min_i,len(JobSets)): #//Temporarily measure to save space
+        Meta=UI.PickleOperations(RecOutputMeta,'r', 'N/A')[0]
+        JobSet=Meta.JobSets[int(Log)]
+        NewJobSet=[]
+        for i in JobSet:
+            NewJobSet.append(0)
+        with alive_bar(len(JobSet),force_tty=True, title='Checking the results from HTCondor') as bar:
+            for i in range(len(JobSet)): #//Temporarily measure to save space
                 bar.text = f'-> Analysing set : {i}...'
                 bar()
-                Meta=UF.PickleOperations(RecOutputMeta,'r', 'N/A')[0]
-                MaxDST=Meta.MaxDST
-                JobSets=Meta.JobSets
-                if len(Meta.JobSets[i])>3:
-                   Meta.JobSets[i]=Meta.JobSets[i][:4]
-                   Meta.JobSets[i][3]=[]
+                tot_fractions=0
+                if NewJobSet[i]==0:
+                    for j in range(0,JobSet[i]):
+                        output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/Temp_RVx1a'+'_'+RecBatchID+'_'+str(i)+'/RVx1a_'+RecBatchID+'_RawSeeds_'+str(i)+'_'+str(j)+'.csv'
+                        result=pd.read_csv(output_file_location,names = ['Segment_1','Segment_2'])
+                        Records=len(result)
+                        print(UI.TimeStamp(),'Set',str(i),'and subset', str(j), 'contains', Records, 'seeds')
+                        fractions=int(math.ceil(Records/MaxSeeds))
+                        for k in range(0,fractions):
+                         new_output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/Temp_RVx1a'+'_'+RecBatchID+'_'+str(i)+'/RVx1a_'+RecBatchID+'_SelectedSeeds_'+str(i)+'_'+str(tot_fractions+k)+'.csv'
+                         result[(k*MaxSeeds):min(Records,((k+1)*MaxSeeds))].to_csv(new_output_file_location,index=False)
+                        tot_fractions+=fractions
+                    NewJobSet[i]=tot_fractions
                 else:
-                   Meta.JobSets[i].append([])
-                for j in range(0,int(JobSets[i][2])):
-                   output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RVx1a'+'_'+RecBatchID+'_'+str(i)+'/RVx1a_'+RecBatchID+'_RawSeeds_'+str(i)+'_'+str(j)+'.csv'
-
-                   if os.path.isfile(output_file_location)==False:
-                      Meta.JobSets[j].append(0)
-                      continue #Skipping because not all jobs necesseraly produce the required file (if statistics are too low)
-                   else:
-                    result=pd.read_csv(output_file_location,names = ['Segment_1','Segment_2'])
-                    Records=len(result)
-                    print(UF.TimeStamp(),'Set',str(i),'and subset', str(j), 'contains', Records, 'seeds',bcolors.ENDC)
-                    result["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(result['Segment_1'], result['Segment_2'])]
-                    result.drop_duplicates(subset="Seed_ID",keep='first',inplace=True)
-                    result.drop(result.index[result['Segment_1'] == result['Segment_2']], inplace = True)
-                    result.drop(["Seed_ID"],axis=1,inplace=True)
-                    Records_After_Compression=len(result)
-                    if Records>0:
-                      Compression_Ratio=int((Records_After_Compression/Records)*100)
-                    else:
-                      Compression_Ratio=0
-                    print(UF.TimeStamp(),'Set',str(i),'and subset', str(j), 'compression ratio is ', Compression_Ratio, ' %',bcolors.ENDC)
-                    fractions=int(math.ceil(Records_After_Compression/MaxSeeds))
-                    Meta.JobSets[i][3].append(fractions)
-                    for k in range(0,fractions):
-                     new_output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RVx1a'+'_'+RecBatchID+'_'+str(i)+'/RVx1a_'+RecBatchID+'_SelectedSeeds_'+str(i)+'_'+str(j)+'_'+str(k)+'.csv'
-                     result[(k*MaxSeeds):min(Records_After_Compression,((k+1)*MaxSeeds))].to_csv(new_output_file_location,index=False)
-                print(UF.PickleOperations(RecOutputMeta,'w', Meta)[1])
+                    continue
         if Log:
-         try:
-             print(UF.TimeStamp(),'Initiating the logging...')
-             eval_data_file=EOS_DIR+'/ANNDEA/Data/TEST_SET/EVx1b_'+RecBatchID+'_SEED_TRUTH_COMBINATIONS.csv'
+             UI.Msg('vanilla','Initiating the logging...')
+             eval_data_file=EOS_DIR+'/ANNDEA/Data/TEST_SET/'+RecBatchID+'/EVx1b_'+RecBatchID+'_SEED_TRUTH_COMBINATIONS.csv'
              eval_data=pd.read_csv(eval_data_file,header=0,usecols=['Segment_1','Segment_2'])
              eval_data["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(eval_data['Segment_1'], eval_data['Segment_2'])]
              eval_data.drop(['Segment_1'],axis=1,inplace=True)
              eval_data.drop(['Segment_2'],axis=1,inplace=True)
-             eval_no=0
-             rec_no=0
-             with alive_bar(len(JobSets),force_tty=True, title='Preparing data for the log...') as bar:
-                 for i in range(0,len(Meta.JobSets)):
+             NJobs=int(UI.CalculateNJobs(NewJobSet)[1])
+             rec=None
+             with alive_bar(NJobs,force_tty=True, title='Preparing data for the log...') as bar:
+                 for i in range(len(NewJobSet)):
                     bar()
-                    rec=None
-                    for j in range(0,int(Meta.JobSets[i][2])):
-                        for k in range(0,Meta.JobSets[i][3][j]):
-                          new_input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RVx1a'+'_'+RecBatchID+'_'+str(i)+'/RVx1a_'+RecBatchID+'_SelectedSeeds_'+str(i)+'_'+str(j)+'_'+str(k)+'.csv'
-                          if os.path.isfile(new_input_file_location)==False:
-                                break
-                          else:
+                    if NewJobSet[i]>0:
+                        for j in range(NewJobSet[i]):
+                             new_input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/Temp_RVx1a'+'_'+RecBatchID+'_'+str(i)+'/RVx1a_'+RecBatchID+'_SelectedSeeds_'+str(i)+'_'+str(j)+'.csv'
                              rec_new=pd.read_csv(new_input_file_location,usecols = ['Segment_1','Segment_2'])
                              rec_new["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(rec_new['Segment_1'], rec_new['Segment_2'])]
                              rec_new.drop(['Segment_1'],axis=1,inplace=True)
                              rec_new.drop(['Segment_2'],axis=1,inplace=True)
                              rec = pd.concat([rec, rec_new], ignore_index=True)
                              rec.drop_duplicates(subset="Seed_ID",keep='first',inplace=True)
-                    try:
-                        rec_eval=pd.merge(eval_data, rec, how="inner", on=['Seed_ID'])
+             if rec is not None:
+                 rec_eval=pd.merge(eval_data, rec, how="inner", on=['Seed_ID'])
+                 eval_no=len(rec_eval)
+                 rec_no=(len(rec)-len(rec_eval))
+                 UI.LogOperations(EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv', 'a', [[2,'Basic track distance cuts',rec_no,eval_no,eval_no/(rec_no+eval_no),eval_no/len(eval_data)]])
+             else:
+                 UI.LogOperations(EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv', 'a', [[2,'Basic track distance cuts',0,0,0,0]])
+             UI.Msg('location',"The log has been created successfully at ",EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv')
+        Meta.JobSets[Status+1]=NewJobSet
+        print(UI.PickleOperations(RecOutputMeta,'w', Meta)[1])
+        UI.Msg('completed','Stage '+str(Status)+' has successfully completed')
+        UI.UpdateStatus(Status+1,Meta,RecOutputMeta)
 
-                        eval_no+=len(rec_eval)
-                        rec_no+=(len(rec)-len(rec_eval))
-                    except:
-                        continue
-             UF.LogOperations(EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv', 'a', [[2,'DST cut',rec_no,eval_no,eval_no/(rec_no+eval_no),eval_no/len(eval_data)]])
-             print(UF.TimeStamp(), bcolors.OKGREEN+"The log has been created successfully at "+bcolors.ENDC, bcolors.OKBLUE+EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv'+bcolors.ENDC)
-         except:
-             print(UF.TimeStamp(), bcolors.WARNING+'Log creation has failed'+bcolors.ENDC)
-        FreshStart=False
-        print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(Status)+' has successfully completed'+bcolors.ENDC)
-        UpdateStatus(Status+1)
+
+        # print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
+        # print(UF.TimeStamp(),bcolors.BOLD+'Stage '+str(Status)+':'+bcolors.ENDC+' Collecting and de-duplicating the results from stage 2')
+        # min_i=0
+        # for i in range(0,len(JobSets)): #//Temporarily measure to save space
+        #            test_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RVx1a'+'_'+RecBatchID+'_'+str(i)+'/RVx1a_'+RecBatchID+'_SelectedSeeds_'+str(i)+'_'+str(0)+'_'+str(0)+'.csv'
+        #            if os.path.isfile(test_file_location):
+        #                 min_i=max(0,i-1)
+        # print(UF.TimeStamp(),'Analysing the data sample in order to understand how many jobs to submit to HTCondor... ',bcolors.ENDC)
+        # data=pd.read_csv(required_file_location,header=0,
+        #             usecols=['z','Rec_Seg_ID'])
+        # data = data.groupby('Rec_Seg_ID')['z'].min()  #Keeping only starting hits for the each track record (we do not require the full information about track in this script)
+        # data=data.reset_index()
+        # data = data.groupby('z')['Rec_Seg_ID'].count()  #Keeping only starting hits for the each track record (we do not require the full information about track in this script)
+        # data=data.reset_index()
+        # data=data.sort_values(['z'],ascending=True)
+        # data['Sub_Sets']=np.ceil(data['Rec_Seg_ID']/PM.MaxSegments)
+        # data['Sub_Sets'] = data['Sub_Sets'].astype(int)
+        # JobSets = data.values.tolist()
+        # with alive_bar(len(JobSets)-min_i,force_tty=True, title='Checking the results from HTCondor') as bar:
+        #     for i in range(min_i,len(JobSets)): #//Temporarily measure to save space
+        #         bar.text = f'-> Analysing set : {i}...'
+        #         bar()
+        #         Meta=UF.PickleOperations(RecOutputMeta,'r', 'N/A')[0]
+        #         MaxDST=Meta.MaxDST
+        #         JobSets=Meta.JobSets
+        #         if len(Meta.JobSets[i])>3:
+        #            Meta.JobSets[i]=Meta.JobSets[i][:4]
+        #            Meta.JobSets[i][3]=[]
+        #         else:
+        #            Meta.JobSets[i].append([])
+        #         for j in range(0,int(JobSets[i][2])):
+        #            output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RVx1a'+'_'+RecBatchID+'_'+str(i)+'/RVx1a_'+RecBatchID+'_RawSeeds_'+str(i)+'_'+str(j)+'.csv'
+        #
+        #            if os.path.isfile(output_file_location)==False:
+        #               Meta.JobSets[j].append(0)
+        #               continue #Skipping because not all jobs necesseraly produce the required file (if statistics are too low)
+        #            else:
+        #             result=pd.read_csv(output_file_location,names = ['Segment_1','Segment_2'])
+        #             Records=len(result)
+        #             print(UF.TimeStamp(),'Set',str(i),'and subset', str(j), 'contains', Records, 'seeds',bcolors.ENDC)
+        #             result["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(result['Segment_1'], result['Segment_2'])]
+        #             result.drop_duplicates(subset="Seed_ID",keep='first',inplace=True)
+        #             result.drop(result.index[result['Segment_1'] == result['Segment_2']], inplace = True)
+        #             result.drop(["Seed_ID"],axis=1,inplace=True)
+        #             Records_After_Compression=len(result)
+        #             if Records>0:
+        #               Compression_Ratio=int((Records_After_Compression/Records)*100)
+        #             else:
+        #               Compression_Ratio=0
+        #             print(UF.TimeStamp(),'Set',str(i),'and subset', str(j), 'compression ratio is ', Compression_Ratio, ' %',bcolors.ENDC)
+        #             fractions=int(math.ceil(Records_After_Compression/MaxSeeds))
+        #             Meta.JobSets[i][3].append(fractions)
+        #             for k in range(0,fractions):
+        #              new_output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RVx1a'+'_'+RecBatchID+'_'+str(i)+'/RVx1a_'+RecBatchID+'_SelectedSeeds_'+str(i)+'_'+str(j)+'_'+str(k)+'.csv'
+        #              result[(k*MaxSeeds):min(Records_After_Compression,((k+1)*MaxSeeds))].to_csv(new_output_file_location,index=False)
+        #         print(UF.PickleOperations(RecOutputMeta,'w', Meta)[1])
+        # if Log:
+        #  try:
+        #      print(UF.TimeStamp(),'Initiating the logging...')
+        #      eval_data_file=EOS_DIR+'/ANNDEA/Data/TEST_SET/EVx1b_'+RecBatchID+'_SEED_TRUTH_COMBINATIONS.csv'
+        #      eval_data=pd.read_csv(eval_data_file,header=0,usecols=['Segment_1','Segment_2'])
+        #      eval_data["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(eval_data['Segment_1'], eval_data['Segment_2'])]
+        #      eval_data.drop(['Segment_1'],axis=1,inplace=True)
+        #      eval_data.drop(['Segment_2'],axis=1,inplace=True)
+        #      eval_no=0
+        #      rec_no=0
+        #      with alive_bar(len(JobSets),force_tty=True, title='Preparing data for the log...') as bar:
+        #          for i in range(0,len(Meta.JobSets)):
+        #             bar()
+        #             rec=None
+        #             for j in range(0,int(Meta.JobSets[i][2])):
+        #                 for k in range(0,Meta.JobSets[i][3][j]):
+        #                   new_input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RVx1a'+'_'+RecBatchID+'_'+str(i)+'/RVx1a_'+RecBatchID+'_SelectedSeeds_'+str(i)+'_'+str(j)+'_'+str(k)+'.csv'
+        #                   if os.path.isfile(new_input_file_location)==False:
+        #                         break
+        #                   else:
+        #                      rec_new=pd.read_csv(new_input_file_location,usecols = ['Segment_1','Segment_2'])
+        #                      rec_new["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(rec_new['Segment_1'], rec_new['Segment_2'])]
+        #                      rec_new.drop(['Segment_1'],axis=1,inplace=True)
+        #                      rec_new.drop(['Segment_2'],axis=1,inplace=True)
+        #                      rec = pd.concat([rec, rec_new], ignore_index=True)
+        #                      rec.drop_duplicates(subset="Seed_ID",keep='first',inplace=True)
+        #             try:
+        #                 rec_eval=pd.merge(eval_data, rec, how="inner", on=['Seed_ID'])
+        #
+        #                 eval_no+=len(rec_eval)
+        #                 rec_no+=(len(rec)-len(rec_eval))
+        #             except:
+        #                 continue
+        #      UF.LogOperations(EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv', 'a', [[2,'DST cut',rec_no,eval_no,eval_no/(rec_no+eval_no),eval_no/len(eval_data)]])
+        #      print(UF.TimeStamp(), bcolors.OKGREEN+"The log has been created successfully at "+bcolors.ENDC, bcolors.OKBLUE+EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv'+bcolors.ENDC)
+        #  except:
+        #      print(UF.TimeStamp(), bcolors.WARNING+'Log creation has failed'+bcolors.ENDC)
+        # FreshStart=False
+        # print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(Status)+' has successfully completed'+bcolors.ENDC)
+        # UpdateStatus(Status+1)
     elif Program[Status]=='Custom - LinkAnalysis':
         input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RVx1c_'+RecBatchID+'_Fit_Seeds.pkl'
         print(UF.TimeStamp(), "Loading the fit track seeds from the file",bcolors.OKBLUE+input_file_location+bcolors.ENDC)
@@ -892,6 +962,8 @@ while Status<len(Program):
          for md in range(len(ModelName)):
             if Program[Status]==ModelName[md]:
                 if md==0:
+                    print('Here')
+                    exit()
                     prog_entry=[]
                     job_sets=[]
                     JobSet=[]

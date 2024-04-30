@@ -131,7 +131,6 @@ for i in range(0,Steps):
   merged_data=pd.merge(data, r_temp_data, how="inner", on=['join_key']) #Merging Tracks to check whether they could form a seed
   merged_data['separation']=np.sqrt(((merged_data['x']-merged_data['r_x'])**2)+((merged_data['y']-merged_data['r_y'])**2)+((merged_data['z']-merged_data['r_z'])**2)) #Calculating the Euclidean distance between Track start hits
   merged_data.drop(merged_data.index[merged_data['separation'] >= MaxDST], inplace = True) #Dropping the track segment combinations where the length of the gap between segments is too large
-  print(merged_data)
   merged_data.drop(['y','z','x','r_x','r_y','r_z','join_key','separation'],axis=1,inplace=True) #Removing the information that we don't need anymore
   if merged_data.empty==False:
     merged_data.drop(merged_data.index[merged_data['Track_1'] == merged_data['Track_2']], inplace = True) #Removing the cases where Seed tracks are the same
