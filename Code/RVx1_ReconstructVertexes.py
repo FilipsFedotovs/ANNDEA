@@ -870,7 +870,7 @@ while Status<len(Program):
                     JobSet=Meta.JobSets[Status]
                     NJobs=UI.CalculateNJobs(JobSet)[1]
                     prog_entry.append(' Sending tracks to the HTCondor, so track combination pairs can be formed...')
-                    prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','RefinedSeeds','RVx1'+ModelName[md],'.pkl',RecBatchID,JobSet,'RVx1b_RefineSeeds_Sub.py'])
+                    prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/'+RecBatchID+'/','RefinedSeeds','RVx1'+ModelName[md],'.pkl',RecBatchID,JobSet,'RVx1b_RefineSeeds_Sub.py'])
 
                     if md==0:
                         prog_entry.append([" --MaxDST ", " --MaxVXT ", " --MaxDOCA ", " --MaxAngle "," --ModelName "," --FirstTime ", " --FiducialVolumeCut "])
