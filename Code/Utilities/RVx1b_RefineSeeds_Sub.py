@@ -122,8 +122,7 @@ if FirstTime=='True':
 
     # reorder the columns
     segments = segments[['x','y','z','tx','ty', 'Rec_Seg_ID']]
-    print(segments)
-    exit()
+
     segments = segments.values.tolist() #Convirting the result to List data type
     tracks = tracks.values.tolist() #Convirting the result to List data type
     del tracks_1
@@ -136,6 +135,7 @@ if FirstTime=='True':
     #create seeds
     GoodTracks=[]
     print(UF.TimeStamp(),'Beginning the sample generation part...')
+    counter=0
     for s in range(0,limit):
          track=tracks.pop(0)
          track=EMO(track[:2])
@@ -154,6 +154,9 @@ if FirstTime=='True':
          else:
              del track
              continue
+         counter+=1
+         if counter%100==0:
+            print('Progress',counter,'seeds')
     print(UF.TimeStamp(),bcolors.OKGREEN+'The sample generation has been completed..'+bcolors.ENDC)
     del tracks
     del segments
