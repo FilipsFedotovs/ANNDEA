@@ -90,7 +90,7 @@ if ModelName!='Blank':
         device = torch.device('cpu')
         model = UF.GenerateModel(ModelMeta).to(device)
         model.load_state_dict(torch.load(Model_Path))
-exit()
+
 if FirstTime=='True':
     MaxDOCA=float(args.MaxDOCA)
     MaxDST=float(args.MaxDST)
