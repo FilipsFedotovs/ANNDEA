@@ -55,16 +55,16 @@ EOSsubModelDIR=EOSsubDIR+'/'+'Models'
 
 if PY_DIR!='': #Temp solution
     sys.path=['',PY_DIR]
-    sys.path.append('/usr/lib64/python36.zip')
-    sys.path.append('/usr/lib64/python3.6')
-    sys.path.append('/usr/lib64/python3.6/lib-dynload')
-    sys.path.append('/usr/lib64/python3.6/site-packages')
-    sys.path.append('/usr/lib/python3.6/site-packages')
+    sys.path.append('/usr/lib64/python39.zip')
+    sys.path.append('/usr/lib64/python3.9')
+    sys.path.append('/usr/lib64/python3.9/lib-dynload')
+    sys.path.append('/usr/lib64/python3.9/site-packages')
+    sys.path.append('/usr/lib/python3.9/site-packages')
 sys.path.append(AFS_DIR+'/Code/Utilities')
 import pandas as pd #We use Panda for a routine data processing
 import gc  #Helps to clear memory
-import UtilityFunctions as UF
-from UtilityFunctions import EMO
+import U_UI as UF
+from U_EMO import EMO
 import ast
 
 
@@ -90,7 +90,7 @@ if ModelName!='Blank':
         device = torch.device('cpu')
         model = UF.GenerateModel(ModelMeta).to(device)
         model.load_state_dict(torch.load(Model_Path))
-
+exit()
 if FirstTime=='True':
     MaxDOCA=float(args.MaxDOCA)
     MaxDST=float(args.MaxDST)
