@@ -65,6 +65,7 @@ import pandas as pd #We use Panda for a routine data processing
 import gc  #Helps to clear memory
 import U_UI as UF
 from U_EMO import EMO
+import U_ML as ML
 import ast
 
 
@@ -78,6 +79,7 @@ if ModelName!='Blank':
     print(Model_Path)
     ModelMeta=UF.PickleOperations(Model_Meta_Path, 'r', 'N/A')[0]
     if ModelMeta.ModelFramework=='Tensorflow':
+        Model_Path+='.keras'
         import tensorflow as tf
         from tensorflow import keras
         model=tf.keras.models.load_model(Model_Path)
@@ -88,7 +90,7 @@ if ModelName!='Blank':
         Model_Path=EOSsubModelDIR+'/'+ModelName
         ModelMeta=UF.PickleOperations(Model_Meta_Path, 'r', 'N/A')[0]
         device = torch.device('cpu')
-        model = UF.GenerateModel(ModelMeta).to(device)
+        model = ML.GenerateModel(ModelMeta).to(device)
         model.load_state_dict(torch.load(Model_Path))
 
 if FirstTime=='True':
