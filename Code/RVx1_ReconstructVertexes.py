@@ -796,7 +796,7 @@ while Status<len(Program):
               print(UI.TimeStamp(), "Saving the results into the file",bcolors.OKBLUE+output_csv_location+bcolors.ENDC)
               UI.LogOperations(output_csv_location,'w', csv_out)
               print(UI.TimeStamp(), "Saving the results into the file",bcolors.OKBLUE+output_file_location+bcolors.ENDC)
-              print(UI.PickleOperations(output_file_location,'w',base_data)[1])
+              print(UI.PickleOperations(output_file_location,'w',VertexPool)[1])
  
               if args.Log=='Y':
                   try:
