@@ -673,16 +673,16 @@ while Status<len(Program):
                  req_file = EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/Temp_RVx1c_'+RecBatchID+'_'+str(0)+'/RVx1c_'+RecBatchID+'_AnalyseSeedLinks_'+str(f)+'.csv'
                  progress=round((float(f)/float(N_Jobs))*100,2)
                  print(UI.TimeStamp(),'progress is ',progress,' %', end="\r", flush=True) #Progress display
-            if os.path.isfile(req_file)==False:
-                 print(UI.TimeStamp(), bcolors.FAIL+"Critical fail: file",req_file,'is missing, please restart the script with the option "--Mode R"'+bcolors.ENDC)
-            elif os.path.isfile(req_file):
-                 if (f)==0:
-                     base_data = pd.read_csv(req_file,usecols=['Track_1', 'Track_2','Seed_CNN_Fit','Link_Strength','AntiLink_Strenth'])
-                 else:
-                     new_data = pd.read_csv(req_file,usecols=['Track_1', 'Track_2','Seed_CNN_Fit','Link_Strength','AntiLink_Strenth'])
-                     frames = [base_data, new_data]
-                     base_data = pd.concat(frames,ignore_index=True)
-                     Records=len(base_data)
+                 if os.path.isfile(req_file)==False:
+                     print(UI.TimeStamp(), bcolors.FAIL+"Critical fail: file",req_file,'is missing, please restart the script with the option "--Mode R"'+bcolors.ENDC)
+                 elif os.path.isfile(req_file):
+                     if (f)==0:
+                         base_data = pd.read_csv(req_file,usecols=['Track_1', 'Track_2','Seed_CNN_Fit','Link_Strength','AntiLink_Strenth'])
+                     else:
+                         new_data = pd.read_csv(req_file,usecols=['Track_1', 'Track_2','Seed_CNN_Fit','Link_Strength','AntiLink_Strenth'])
+                         frames = [base_data, new_data]
+                         base_data = pd.concat(frames,ignore_index=True)
+                         Records=len(base_data)
         print(UI.TimeStamp(),'The pre-analysed reconstructed set contains', Records, '2-track link-fitted seeds',bcolors.ENDC)
         base_data['Seed_Link_Fit'] = base_data.apply(PM.Seed_Bond_Fit_Acceptance,axis=1)
         base_data['Seed_Index'] = base_data.index
