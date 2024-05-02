@@ -735,18 +735,20 @@ while Status<len(Program):
     elif Program[Status]=='Custom - PerformMerging':
         input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/RVx1c_'+RecBatchID+'_Link_Fit_Seeds.pkl'
         print(UI.TimeStamp(), "Loading the fit track seeds from the file",bcolors.OKBLUE+input_file_location+bcolors.ENDC)
-        exit()
-        base_data=UF.PickleOperations(input_file_location,'r','N/A')[0]
+        base_data=UI.PickleOperations(input_file_location,'r','N/A')[0]
         original_data_seeds=len(base_data)
         no_iter = int(math.ceil(float(original_data_seeds / float(PM.MaxSeedsPerVxPool))))
         prog_entry=[]
         Program_Dummy=[]
         prog_entry.append('Sending vertices to HTCondor so they can be merged')
-        prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','MergeVertices','RVx1d','.pkl',RecBatchID,no_iter,'RVx1d_MergeVertices_Sub.py'])
+        prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/'+RecBatchID+'/','MergeVertices','RVx1d','.pkl',RecBatchID,no_iter,'RVx1d_MergeVertices_Sub.py'])
         prog_entry.append([" --MaxPoolSeeds "])
         prog_entry.append([PM.MaxSeedsPerVxPool])
         prog_entry.append(no_iter)
         prog_entry.append(LocalSub)
+        prog_entry.append('N/A')
+        prog_entry.append(HTCondorLog)
+        prog_entry.append(False)
         prog_entry.append(['',''])
         for dum in range(0,Status):
             Program_Dummy.append('DUM')
@@ -760,13 +762,13 @@ while Status<len(Program):
               for i in range(no_iter):
                     progress = round((float(i) / float(no_iter)) * 100, 2)
                     print(UI.TimeStamp(), 'progress is ', progress, ' %', end="\r", flush=True)
-                    required_file_location = EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RVx1d_'+RecBatchID+'_'+str(0)+'/RVx1d_'+RecBatchID+'_MergeVertices_'+str(i)+'.pkl'
+                    required_file_location = EOS_DIR+'/ANNDEA/Data/REC_SET'+RecBatchID+'/Temp_RVx1d_'+RecBatchID+'_'+str(0)+'/RVx1d_'+RecBatchID+'_MergeVertices_'+str(i)+'.pkl'
                     NewData=UI.PickleOperations(required_file_location,'r','N/A')[0]
                     VertexPool+=NewData
-              print(UF.TimeStamp(), 'As a result of the previous operation',str(original_data_seeds),'seeds were merged into',str(len(VertexPool)),'vertices...')
+              print(UI.TimeStamp(), 'As a result of the previous operation',str(original_data_seeds),'seeds were merged into',str(len(VertexPool)),'vertices...')
               comp_ratio = round((float(len(VertexPool)) / float(original_data_seeds)) * 100, 2)
-              print(UF.TimeStamp(), 'The compression ratio is',comp_ratio, '%...')
-              print(UF.TimeStamp(), 'Ok starting the final merging of the remained vertices')
+              print(UI.TimeStamp(), 'The compression ratio is',comp_ratio, '%...')
+              print(UI.TimeStamp(), 'Ok starting the final merging of the remained vertices')
               InitialDataLength=len(VertexPool)
               SeedCounter=0
               SeedCounterContinue=True
@@ -775,7 +777,7 @@ while Status<len(Program):
                                   SeedCounterContinue=False
                                   break
                   progress=round((float(SeedCounter)/float(len(VertexPool)))*100,0)
-                  print(UF.TimeStamp(),'progress is ',progress,' %', end="\r", flush=True) #Progress display
+                  print(UI.TimeStamp(),'progress is ',progress,' %', end="\r", flush=True) #Progress display
                   SubjectSeed=VertexPool[SeedCounter]
                   for ObjectSeed in VertexPool[SeedCounter+1:]:
                               if SubjectSeed.InjectSeed(ObjectSeed):
@@ -789,19 +791,19 @@ while Status<len(Program):
               for Vx in VertexPool:
                     for Tr in Vx.Header:
                         csv_out.append([Tr,RecBatchID,Vx.UVxID])
-              output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RVx1e_'+RecBatchID+'_Union_Vertexes.pkl'
-              output_csv_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RVx1e_'+RecBatchID+'_Union_Vertexes.csv'
+              output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/RVx1e_'+RecBatchID+'_Union_Vertexes.pkl'
+              output_csv_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/RVx1e_'+RecBatchID+'_Union_Vertexes.csv'
 
               print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
-              print(UF.TimeStamp(), "Saving the results into the file",bcolors.OKBLUE+output_csv_location+bcolors.ENDC)
-              UF.LogOperations(output_csv_location,'w', csv_out)
-              print(UF.TimeStamp(), "Saving the results into the file",bcolors.OKBLUE+output_file_location+bcolors.ENDC)
-              print(UF.PickleOperations(output_file_location,'w',base_data)[1])
+              print(UI.TimeStamp(), "Saving the results into the file",bcolors.OKBLUE+output_csv_location+bcolors.ENDC)
+              UI.LogOperations(output_csv_location,'w', csv_out)
+              print(UI.TimeStamp(), "Saving the results into the file",bcolors.OKBLUE+output_file_location+bcolors.ENDC)
+              print(UI.PickleOperations(output_file_location,'w',base_data)[1])
  
               if args.Log=='Y':
                   try:
-                    print(UF.TimeStamp(),'Initiating the logging...')
-                    eval_data_file=EOS_DIR+'/ANNDEA/Data/TEST_SET/EVx1b_'+RecBatchID+'_SEED_TRUTH_COMBINATIONS.csv'
+                    print(UI.TimeStamp(),'Initiating the logging...')
+                    eval_data_file=EOS_DIR+'/ANNDEA/Data/TEST_SET/'+RecBatchID+'/EVx1b_'+RecBatchID+'_SEED_TRUTH_COMBINATIONS.csv'
                     eval_data=pd.read_csv(eval_data_file,header=0,usecols=['Segment_1','Segment_2'])
                     eval_data["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(eval_data['Segment_1'], eval_data['Segment_2'])]
                     eval_data.drop(['Segment_1'],axis=1,inplace=True)
@@ -821,10 +823,10 @@ while Status<len(Program):
                     rec_eval=pd.merge(eval_data, rec, how="inner", on=['Seed_ID'])
                     eval_no=len(rec_eval)
                     rec_no=(len(rec)-len(rec_eval))
-                    UF.LogOperations(EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv', 'a', [[6,'Vertex Merging',rec_no,eval_no,eval_no/(rec_no+eval_no),eval_no/len(eval_data)]])
-                    print(UF.TimeStamp(), bcolors.OKGREEN+"The log has been created successfully at "+bcolors.ENDC, bcolors.OKBLUE+EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv'+bcolors.ENDC)
+                    UI.LogOperations(EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv', 'a', [[6,'Vertex Merging',rec_no,eval_no,eval_no/(rec_no+eval_no),eval_no/len(eval_data)]])
+                    print(UI.TimeStamp(), bcolors.OKGREEN+"The log has been created successfully at "+bcolors.ENDC, bcolors.OKBLUE+EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv'+bcolors.ENDC)
                   except:
-                    print(UF.TimeStamp(), bcolors.WARNING+'Log creation has failed'+bcolors.ENDC)
+                    print(UI.TimeStamp(), bcolors.WARNING+'Log creation has failed'+bcolors.ENDC)
     elif Program[Status]=='Custom - VertexMapping':
                 raw_name=initial_input_file_location[:-4]
                 for l in range(len(raw_name)-1,0,-1):
@@ -835,13 +837,13 @@ while Status<len(Program):
                 final_output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+raw_name+'_'+RecBatchID+'_VERTEXED.csv'
                 final_output_file_location_object=EOS_DIR+'/ANNDEA/Data/REC_SET/'+raw_name+'_'+RecBatchID+'_VERTEXED.pkl'
                 print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
-                print(UF.TimeStamp(),bcolors.BOLD+'Stage '+str(Status)+':'+bcolors.ENDC+' Taking the list of seeds previously generated by Stage '+str(Status-1)+' and mapping them to the input data')
-                print(UF.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+initial_input_file_location+bcolors.ENDC)
-                required_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RVx1_'+RecBatchID+'_VERTEX_SEGMENTS.csv'
-                print(UF.TimeStamp(),'Loading mapped data from',bcolors.OKBLUE+EOS_DIR+'/ANNDEA/Data/REC_SET/RVx1e_'+RecBatchID+'_Union_Vertexes.csv'+bcolors.ENDC)
-                map_data=pd.read_csv(EOS_DIR+'/ANNDEA/Data/REC_SET/RVx1e_'+RecBatchID+'_Union_Vertexes.csv',header=0)
-                Vertex_Object=UF.PickleOperations(EOS_DIR+'/ANNDEA/Data/REC_SET/RVx1e_'+RecBatchID+'_Union_Vertexes.pkl','r', 'N/A')[0]
-                print(UF.PickleOperations(final_output_file_location_object,'w',Vertex_Object)[1])
+                print(UI.TimeStamp(),bcolors.BOLD+'Stage '+str(Status)+':'+bcolors.ENDC+' Taking the list of seeds previously generated by Stage '+str(Status-1)+' and mapping them to the input data')
+                print(UI.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+initial_input_file_location+bcolors.ENDC)
+                required_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/RVx1_'+RecBatchID+'_VERTEX_SEGMENTS.csv'
+                print(UI.TimeStamp(),'Loading mapped data from',bcolors.OKBLUE+EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/RVx1e_'+RecBatchID+'_Union_Vertexes.csv'+bcolors.ENDC)
+                map_data=pd.read_csv(EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/RVx1e_'+RecBatchID+'_Union_Vertexes.csv',header=0)
+                Vertex_Object=UI.PickleOperations(EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/RVx1e_'+RecBatchID+'_Union_Vertexes.pkl','r', 'N/A')[0]
+                print(UI.PickleOperations(final_output_file_location_object,'w',Vertex_Object)[1])
 
                 initial_data=pd.read_csv(initial_input_file_location,header=0)
                 initial_data[BrickID] = initial_data[BrickID].astype(str)
@@ -853,10 +855,10 @@ while Status<len(Program):
                 new_combined_data.drop(['Old_Track_ID'],axis=1,inplace=True)
                 new_combined_data=new_combined_data.rename(columns={'Temp_Vertex_Domain': RecBatchID+'_Brick_ID','Temp_Vertex_ID': RecBatchID+'_Vertex_ID'})
                 new_combined_data.to_csv(final_output_file_location,index=False)
-                print(UF.TimeStamp(), bcolors.OKGREEN+"The vertex data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+final_output_file_location+bcolors.ENDC)
-                print(UF.TimeStamp(), bcolors.OKGREEN+"The vertex object data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+final_output_file_location_object+bcolors.ENDC)
+                print(UI.TimeStamp(), bcolors.OKGREEN+"The vertex data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+final_output_file_location+bcolors.ENDC)
+                print(UI.TimeStamp(), bcolors.OKGREEN+"The vertex object data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+final_output_file_location_object+bcolors.ENDC)
                 print(bcolors.HEADER+"############################################# End of the program ################################################"+bcolors.ENDC)
-                UpdateStatus(Status+1)
+                UI.UpdateStatus(Status+1,Meta,RecOutputMeta)
     
     else:
          for md in range(len(ModelName)):
@@ -1012,7 +1014,7 @@ while Status<len(Program):
 if Status<20:
     #Removing the temp files that were generated by the process
     print(UI.TimeStamp(),'Performing the cleanup... ')
-    print(UI.ManageFolders(AFS_DIR, EOS_DIR, RecBatchID,'d',['EVx1a','RVx1a','RVx1b','RVx1c','RVx1d']))
+    #print(UI.ManageFolders(AFS_DIR, EOS_DIR, RecBatchID,'d',['EVx1a','RVx1a','RVx1b','RVx1c','RVx1d']))
     UI.Msg('success',"Segment merging has been completed")
 else:
     UI.Msg('failed',"Segment merging has not been completed as one of the processes has timed out. Please run the script again (without Reset Mode).")

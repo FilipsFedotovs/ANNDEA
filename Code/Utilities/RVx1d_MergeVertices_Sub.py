@@ -52,7 +52,7 @@ import math #We use it for data manipulation
 import gc  #Helps to clear memory
 import numpy as np
 #Specifying the full path to input/output files
-input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RVx1c_'+BatchID+'_Link_Fit_Seeds.pkl'
+input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+BatchID+'/RVx1c_'+BatchID+'_Link_Fit_Seeds.pkl'
 output_file_location=EOS_DIR+p+'/Temp_'+pfx+'_'+BatchID+'_'+str(0)+'/'+pfx+'_'+BatchID+'_'+o+'_'+str(i)+sfx
 
 base_data=UF.PickleOperations(input_file_location,'r','N/A')[0]
