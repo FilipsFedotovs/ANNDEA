@@ -644,38 +644,37 @@ while Status<len(Program):
         UI.Msg('completed','Stage '+str(Status)+' has successfully completed')
         UI.UpdateStatus(Status+1,Meta,RecOutputMeta)
     elif Program[Status]=='Custom - LinkAnalysis':
-        input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RVx1c_'+RecBatchID+'_Fit_Seeds.pkl'
+        input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/RVx1c_'+RecBatchID+'_Fit_Seeds.pkl'
         print(UI.TimeStamp(), "Loading the fit track seeds from the file",bcolors.OKBLUE+input_file_location+bcolors.ENDC)
-        exit()
-        base_data=UF.PickleOperations(input_file_location,'r','N/A')[0]
-        print(UF.TimeStamp(), bcolors.OKGREEN+"Loading is successful, there are "+str(len(base_data))+" fit seeds..."+bcolors.ENDC)
+        base_data=UI.PickleOperations(input_file_location,'r','N/A')[0]
+        print(UI.TimeStamp(), bcolors.OKGREEN+"Loading is successful, there are "+str(len(base_data))+" fit seeds..."+bcolors.ENDC)
         prog_entry=[]
         N_Jobs=math.ceil(len(base_data)/MaxSeeds)
         Program_Dummy=[]
         prog_entry.append(' Sending vertexes to the HTCondor, so vertex can be subject to link analysis...')
-        prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','AnalyseSeedLinks','RVx1c','.csv',RecBatchID,N_Jobs,'RVx1c_AnalyseSeedLinks_Sub.py'])
+        prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/'+RecBatchID+'/','AnalyseSeedLinks','RVx1c','.csv',RecBatchID,N_Jobs,'RVx1c_AnalyseSeedLinks_Sub.py'])
         prog_entry.append([" --MaxSegments "])
         prog_entry.append([MaxSeeds])
         prog_entry.append(N_Jobs)
         prog_entry.append(LocalSub)
+        prog_entry.append('N/A')
+        prog_entry.append(HTCondorLog)
+        prog_entry.append(False)
         prog_entry.append(['',''])
         for dum in range(0,Status):
             Program_Dummy.append('DUM')
         Program_Dummy.append(prog_entry)
-        if Mode=='RESET':
-            print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Delete'))
-        #Setting up folders for the output. The reconstruction of just one brick can easily generate >100k of files. Keeping all that blob in one directory can cause problems on lxplus.
-        print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Create'))
-        Result=StandardProcess(Program_Dummy,Status,FreshStart)
+        print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry))
+        Result=UI.StandardProcess(Program_Dummy,Status,SubGap,SubPause,RequestExtCPU,JobFlavour,ReqMemory,time_int,Patience)
         if Result:
-            print(UF.TimeStamp(),bcolors.OKGREEN+'All HTCondor Seed Creation jobs have finished'+bcolors.ENDC)
-            print(UF.TimeStamp(),'Collating the results...')
+            print(UI.TimeStamp(),bcolors.OKGREEN+'All HTCondor Seed Creation jobs have finished'+bcolors.ENDC)
+            print(UI.TimeStamp(),'Collating the results...')
             for f in range(N_Jobs):
-                 req_file = EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RVx1c_'+RecBatchID+'_'+str(0)+'/RVx1c_'+RecBatchID+'_AnalyseSeedLinks_'+str(f)+'.csv'
+                 req_file = EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/Temp_RVx1c_'+RecBatchID+'_'+str(0)+'/RVx1c_'+RecBatchID+'_AnalyseSeedLinks_'+str(f)+'.csv'
                  progress=round((float(f)/float(N_Jobs))*100,2)
-                 print(UF.TimeStamp(),'progress is ',progress,' %', end="\r", flush=True) #Progress display
+                 print(UI.TimeStamp(),'progress is ',progress,' %', end="\r", flush=True) #Progress display
             if os.path.isfile(req_file)==False:
-                 print(UF.TimeStamp(), bcolors.FAIL+"Critical fail: file",req_file,'is missing, please restart the script with the option "--Mode R"'+bcolors.ENDC)
+                 print(UI.TimeStamp(), bcolors.FAIL+"Critical fail: file",req_file,'is missing, please restart the script with the option "--Mode R"'+bcolors.ENDC)
             elif os.path.isfile(req_file):
                  if (f)==0:
                      base_data = pd.read_csv(req_file,usecols=['Track_1', 'Track_2','Seed_CNN_Fit','Link_Strength','AntiLink_Strenth'])
@@ -684,7 +683,7 @@ while Status<len(Program):
                      frames = [base_data, new_data]
                      base_data = pd.concat(frames,ignore_index=True)
                      Records=len(base_data)
-        print(UF.TimeStamp(),'The pre-analysed reconstructed set contains', Records, '2-track link-fitted seeds',bcolors.ENDC)
+        print(UI.TimeStamp(),'The pre-analysed reconstructed set contains', Records, '2-track link-fitted seeds',bcolors.ENDC)
         base_data['Seed_Link_Fit'] = base_data.apply(PM.Seed_Bond_Fit_Acceptance,axis=1)
         base_data['Seed_Index'] = base_data.index
         base_data.drop(base_data.index[base_data['Seed_Link_Fit'] < PM.link_acceptance],inplace=True)  # Dropping the seeds that don't pass the link fit threshold
@@ -692,8 +691,8 @@ while Status<len(Program):
         Records_After_Compression=len(base_data)
         if args.Log=='Y':
           #try:
-             print(UF.TimeStamp(),'Initiating the logging...')
-             eval_data_file=EOS_DIR+'/ANNDEA/Data/TEST_SET/EVx1b_'+RecBatchID+'_SEED_TRUTH_COMBINATIONS.csv'
+             print(UI.TimeStamp(),'Initiating the logging...')
+             eval_data_file=EOS_DIR+'/ANNDEA/Data/TEST_SET/'+RecBatchID+'/EVx1b_'+RecBatchID+'_SEED_TRUTH_COMBINATIONS.csv'
              eval_data=pd.read_csv(eval_data_file,header=0,usecols=['Segment_1','Segment_2'])
              eval_data["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(eval_data['Segment_1'], eval_data['Segment_2'])]
              eval_data.drop(['Segment_1'],axis=1,inplace=True)
@@ -709,33 +708,34 @@ while Status<len(Program):
              rec_eval=pd.merge(eval_data, rec, how="inner", on=['Seed_ID'])
              eval_no=len(rec_eval)
              rec_no=(len(rec)-len(rec_eval))
-             UF.LogOperations(EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv', 'a', [[5,'Link Analysis',rec_no,eval_no,eval_no/(rec_no+eval_no),eval_no/len(eval_data)]])
-             print(UF.TimeStamp(), bcolors.OKGREEN+"The log has been created successfully at "+bcolors.ENDC, bcolors.OKBLUE+EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv'+bcolors.ENDC)
+             UI.LogOperations(EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv', 'a', [[5,'Link Analysis',rec_no,eval_no,eval_no/(rec_no+eval_no),eval_no/len(eval_data)]])
+             print(UI.TimeStamp(), bcolors.OKGREEN+"The log has been created successfully at "+bcolors.ENDC, bcolors.OKBLUE+EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv'+bcolors.ENDC)
           #except:
            #    print(UF.TimeStamp(), bcolors.WARNING+'Log creation has failed'+bcolors.ENDC)
-        print(UF.TimeStamp(), 'Decorating seed objects in ' + bcolors.ENDC,bcolors.OKBLUE + input_file_location + bcolors.ENDC)
+        print(UI.TimeStamp(), 'Decorating seed objects in ' + bcolors.ENDC,bcolors.OKBLUE + input_file_location + bcolors.ENDC)
         base_data=base_data.values.tolist()
         new_data=[]
         for b in base_data:
             new_data.append(b[6])
         base_data=new_data
         del new_data
-        print(UF.TimeStamp(), 'Loading seed object data from ', bcolors.OKBLUE + input_file_location + bcolors.ENDC)
-        object_data = UF.PickleOperations(input_file_location,'r','N/A')[0]
+        print(UI.TimeStamp(), 'Loading seed object data from ', bcolors.OKBLUE + input_file_location + bcolors.ENDC)
+        object_data = UI.PickleOperations(input_file_location,'r','N/A')[0]
         selected_objects=[]
         for nd in range(len(base_data)):
             selected_objects.append(object_data[base_data[nd]])
             progress = round((float(nd) / float(len(base_data))) * 100, 1)
-            print(UF.TimeStamp(), 'Refining the seed objects, progress is ', progress, ' %', end="\r", flush=True)  # Progress display
+            print(UI.TimeStamp(), 'Refining the seed objects, progress is ', progress, ' %', end="\r", flush=True)  # Progress display
         del object_data
         del base_data
-        output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RVx1c_'+RecBatchID+'_Link_Fit_Seeds.pkl'
-        print(UF.PickleOperations(output_file_location,'w',selected_objects)[0])
-        print(UF.TimeStamp(), bcolors.OKGREEN + str(len(selected_objects))+" seed objects are saved in" + bcolors.ENDC,bcolors.OKBLUE + output_file_location + bcolors.ENDC)
-        UpdateStatus(Status+1)
+        output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/RVx1c_'+RecBatchID+'_Link_Fit_Seeds.pkl'
+        print(UI.PickleOperations(output_file_location,'w',selected_objects)[0])
+        print(UI.TimeStamp(), bcolors.OKGREEN + str(len(selected_objects))+" seed objects are saved in" + bcolors.ENDC,bcolors.OKBLUE + output_file_location + bcolors.ENDC)
+        UI.UpdateStatus(Status+1,Meta,RecOutputMeta)
     elif Program[Status]=='Custom - PerformMerging':
-        input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RVx1c_'+RecBatchID+'_Link_Fit_Seeds.pkl'
-        print(UF.TimeStamp(), "Loading the fit track seeds from the file",bcolors.OKBLUE+input_file_location+bcolors.ENDC)
+        input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/RVx1c_'+RecBatchID+'_Link_Fit_Seeds.pkl'
+        print(UI.TimeStamp(), "Loading the fit track seeds from the file",bcolors.OKBLUE+input_file_location+bcolors.ENDC)
+        exit()
         base_data=UF.PickleOperations(input_file_location,'r','N/A')[0]
         original_data_seeds=len(base_data)
         no_iter = int(math.ceil(float(original_data_seeds / float(PM.MaxSeedsPerVxPool))))
@@ -751,20 +751,17 @@ while Status<len(Program):
         for dum in range(0,Status):
             Program_Dummy.append('DUM')
         Program_Dummy.append(prog_entry)
-        if Mode=='RESET':
-            print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Delete'))
-        #Setting up folders for the output. The reconstruction of just one brick can easily generate >100k of files. Keeping all that blob in one directory can cause problems on lxplus.
-        print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Create'))
-        Result=StandardProcess(Program_Dummy,Status,FreshStart)
+        print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry))
+        Result=UI.StandardProcess(Program_Dummy,Status,SubGap,SubPause,RequestExtCPU,JobFlavour,ReqMemory,time_int,Patience)
         if Result:
-              print(UF.TimeStamp(), bcolors.OKGREEN + 'All HTCondor Seed Creation jobs have finished' + bcolors.ENDC)
-              print(UF.TimeStamp(), 'Collating the results...')
+              print(UI.TimeStamp(), bcolors.OKGREEN + 'All HTCondor Seed Creation jobs have finished' + bcolors.ENDC)
+              print(UI.TimeStamp(), 'Collating the results...')
               VertexPool=[]
               for i in range(no_iter):
                     progress = round((float(i) / float(no_iter)) * 100, 2)
-                    print(UF.TimeStamp(), 'progress is ', progress, ' %', end="\r", flush=True)
+                    print(UI.TimeStamp(), 'progress is ', progress, ' %', end="\r", flush=True)
                     required_file_location = EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RVx1d_'+RecBatchID+'_'+str(0)+'/RVx1d_'+RecBatchID+'_MergeVertices_'+str(i)+'.pkl'
-                    NewData=UF.PickleOperations(required_file_location,'r','N/A')[0]
+                    NewData=UI.PickleOperations(required_file_location,'r','N/A')[0]
                     VertexPool+=NewData
               print(UF.TimeStamp(), 'As a result of the previous operation',str(original_data_seeds),'seeds were merged into',str(len(VertexPool)),'vertices...')
               comp_ratio = round((float(len(VertexPool)) / float(original_data_seeds)) * 100, 2)
