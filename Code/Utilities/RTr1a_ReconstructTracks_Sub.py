@@ -44,11 +44,11 @@ PY_DIR=args.PY
 
 if PY_DIR!='': #Temp solution
     sys.path=['',PY_DIR]
-    sys.path.append('/usr/lib64/python36.zip')
-    sys.path.append('/usr/lib64/python3.6')
-    sys.path.append('/usr/lib64/python3.6/lib-dynload')
-    sys.path.append('/usr/lib64/python3.6/site-packages')
-    sys.path.append('/usr/lib/python3.6/site-packages')
+    sys.path.append('/usr/lib64/python39.zip')
+    sys.path.append('/usr/lib64/python3.9')
+    sys.path.append('/usr/lib64/python3.9/lib-dynload')
+    sys.path.append('/usr/lib64/python3.9/site-packages')
+    sys.path.append('/usr/lib/python3.9/site-packages')
 sys.path.append(AFS_DIR+'/Code/Utilities')
 import pandas as pd #We use Panda for a routine data processing
 import numpy as np
@@ -77,7 +77,7 @@ o=args.o
 sfx=args.sfx
 pfx=args.pfx
 
-import UtilityFunctions as UF #This is where we keep routine utility functions
+import U_UI as UI #This is where we keep routine utility functions
 
 #This function combines two segment object. Example: Segment 1 is [[a, _ ,b ,_ ,_ ][0.9,0.0,0.9,0.0,0.0]];  Segment 2 is [[a, _ ,c ,_ ,_ ][0.9,0.0,0.8,0.0,0.0]]; Segment 3 is [[_, d ,b ,_ ,_ ][0.0,0.8,0.8,0.0,0.0]]
 #In order to combine segments we have to have at least one common hit and no clashes. Segment 1 and 2 have a common hit a, but their third plates clash. Segment 1 can be combined with segment 3 which yields: [[a, d ,b ,_ ,_ ][0.8,0.0,1.7,0.0,0.0]]
@@ -125,11 +125,11 @@ def InjectHit(Predator,Prey, Soft):
 
 #Specifying the full path to input/output files
 
-input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RTr1_'+RecBatchID+'_'+args.i+'_'+args.j+'_hits.csv'
+input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/RTr1_'+RecBatchID+'_'+args.i+'_'+args.j+'_hits.csv'
 output_file_location=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(X_ID_n)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(X_ID_n)+'_'+str(Y_ID_n)+sfx
 
-print(UF.TimeStamp(), "Modules Have been imported successfully...")
-print(UF.TimeStamp(),'Loading pre-selected data from ',input_file_location)
+print(UI.TimeStamp(), "Modules Have been imported successfully...")
+print(UI.TimeStamp(),'Loading pre-selected data from ',input_file_location)
 
 #Load the file with Hit detailed information
 data=pd.read_csv(input_file_location,header=0,usecols=["Hit_ID","x","y","z","tx","ty"])[["Hit_ID","x","y","z","tx","ty"]]
@@ -137,7 +137,7 @@ data["x"] = pd.to_numeric(data["x"],downcast='float')
 data["y"] = pd.to_numeric(data["y"],downcast='float')
 data["z"] = pd.to_numeric(data["z"],downcast='float')
 data["Hit_ID"] = data["Hit_ID"].astype(str)
-print(UF.TimeStamp(),'Preparing data... ')
+print(UI.TimeStamp(),'Preparing data... ')
 #Keeping only sections of the Hit data relevant to the volume being reconstructed to use less memory
 torch_import=True
 cluster_output=[]
@@ -153,27 +153,27 @@ for k in range(0,Z_ID_Max):
             LC_Value=ClusterData['z'].values[-1]
             
             if LC_Label=='Control' and len(ClusterData)-1==LC_Value:
-                print(UF.TimeStamp(),'Checkpoint file ',EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(X_ID_n)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(X_ID_n)+'_'+str(Y_ID_n) +'_' +str(k)+'_CP'+sfx, 'already exists, skipping this step....')
+                print(UI.TimeStamp(),'Checkpoint file ',EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(X_ID_n)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(X_ID_n)+'_'+str(Y_ID_n) +'_' +str(k)+'_CP'+sfx, 'already exists, skipping this step....')
                 continue
     Z_ID=int(k)/Z_overlap
     temp_data=data.drop(data.index[data['z'] >= ((Z_ID+1)*stepZ)])  #Keeping the relevant z slice
     temp_data=temp_data.drop(temp_data.index[temp_data['z'] < (Z_ID*stepZ)])  #Keeping the relevant z slice
     temp_data_list=temp_data.values.tolist()
-    print(UF.TimeStamp(),'Creating the cluster', X_ID,Y_ID,Z_ID)
-    HC=UF.HitCluster([X_ID,Y_ID,Z_ID],[stepX,stepY,stepZ]) #Initializing the cluster
-    print(UF.TimeStamp(),'Decorating the clusters')
+    print(UI.TimeStamp(),'Creating the cluster', X_ID,Y_ID,Z_ID)
+    HC=UI.HitCluster([X_ID,Y_ID,Z_ID],[stepX,stepY,stepZ]) #Initializing the cluster
+    print(UI.TimeStamp(),'Decorating the clusters')
     HC.LoadClusterHits(temp_data_list) #Decorating the Clusters with Hit information
     if len(HC.RawClusterGraph)>1: #If we have at least 2 Hits in the cluster that can create
-        print(UF.TimeStamp(),'Generating the edges...')
-        print(UF.TimeStamp(),"Hit density of the Cluster",round(X_ID,1),round(Y_ID,1),round(Z_ID,1), "is  {} hits per cm\u00b3".format(round(len(HC.RawClusterGraph)/(0.6*0.6*1.2)),2))
+        print(UI.TimeStamp(),'Generating the edges...')
+        print(UI.TimeStamp(),"Hit density of the Cluster",round(X_ID,1),round(Y_ID,1),round(Z_ID,1), "is  {} hits per cm\u00b3".format(round(len(HC.RawClusterGraph)/(0.6*0.6*1.2)),2))
         GraphStatus = HC.GenerateEdges(cut_dt, cut_dr)
         combined_weight_list=[]
         if GraphStatus:
             if HC.ClusterGraph.num_edges>0: #We only bring torch and GNN if we have some edges to classify
-                        print(UF.TimeStamp(),'Classifying the edges...')
+                        print(UI.TimeStamp(),'Classifying the edges...')
                         if args.ModelName!='blank':
                             if torch_import:
-                                print(UF.TimeStamp(),'Preparing the model')
+                                print(UI.TimeStamp(),'Preparing the model')
                                 import torch
                                 EOSsubDIR=EOS_DIR+'/'+'ANNDEA'
                                 EOSsubModelDIR=EOSsubDIR+'/'+'Models'
@@ -181,12 +181,12 @@ for k in range(0,Z_ID_Max):
                                 Model_Meta_Path=EOSsubModelDIR+'/'+args.ModelName+'_Meta'
                                 #Specify the model path
                                 Model_Path=EOSsubModelDIR+'/'+args.ModelName
-                                ModelMeta=UF.PickleOperations(Model_Meta_Path, 'r', 'N/A')[0]
+                                ModelMeta=UI.PickleOperations(Model_Meta_Path, 'r', 'N/A')[0]
                                 #Meta file contatins training session stats. They also record the optimal acceptance.
                                 Acceptance=ModelMeta.TrainSessionsData[-1][-1][3]
                                 device = torch.device('cpu')
                                 #In PyTorch we don't save the actual model like in Tensorflow. We just save the weights, so we must regenerate the model again. The recipe is in the Model Meta file
-                                model = UF.GenerateModel(ModelMeta).to(device)
+                                model = UI.GenerateModel(ModelMeta).to(device)
                                 model.load_state_dict(torch.load(Model_Path))
                                 model.eval() #In Pytorch this function sets the model into the evaluation mode.
                                 torch_import=False
@@ -201,9 +201,9 @@ for k in range(0,Z_ID_Max):
                             _Tot_Hits=HC.HitPairs
                             _Tot_Hits['link_strength']=1.0
 
-                        print(UF.TimeStamp(),'Number of all  hit combinations passing GNN selection:',len(_Tot_Hits))
+                        print(UI.TimeStamp(),'Number of all  hit combinations passing GNN selection:',len(_Tot_Hits))
                         _Tot_Hits=_Tot_Hits[['r_HitID','l_HitID','r_z','l_z','link_strength']]
-                        print(UF.TimeStamp(),'Preparing the weighted hits for tracking...')
+                        print(UI.TimeStamp(),'Preparing the weighted hits for tracking...')
                         #Bellow just some data prep before the tracking procedure
                         _Tot_Hits.sort_values(by = ['r_HitID', 'l_z','link_strength'], ascending=[True,True, False],inplace=True)
                         _Loc_Hits_r=_Tot_Hits[['r_z']].rename(columns={'r_z': 'z'})
@@ -226,7 +226,7 @@ for k in range(0,Z_ID_Max):
                         _Tot_Hits.drop_duplicates(subset=['r_HitID', 'l_index','link_strength'], keep='first', inplace=True)
                         _Tot_Hits.sort_values(by = ['l_HitID', 'r_index','link_strength'], ascending=[True,True, False],inplace=True)
                         _Tot_Hits.drop_duplicates(subset=['l_HitID', 'r_index','link_strength'], keep='first', inplace=True)
-                        print(UF.TimeStamp(),'Tracking the cluster...')
+                        print(UI.TimeStamp(),'Tracking the cluster...')
                         _Tot_Hits=_Tot_Hits.values.tolist()
                         _Temp_Tot_Hits=[]
 
@@ -256,9 +256,9 @@ for k in range(0,Z_ID_Max):
                                         _Tot_Hits_PCopy=copy.deepcopy(_Tot_Hits)
                                         _Tot_Hits_Predator=[]
                                         #Bellow we build all possible hit combinations that can occur in the data
-                                        print(UF.TimeStamp(),'Building all possible track combinations...')
+                                        print(UI.TimeStamp(),'Building all possible track combinations...')
                                         for prd in range(len(_Tot_Hits_PCopy)):
-                                            print(UF.TimeStamp(),'Progress is ',round(100*prd/len(_Tot_Hits_PCopy),2), '%',end="\r", flush=True)
+                                            print(UI.TimeStamp(),'Progress is ',round(100*prd/len(_Tot_Hits_PCopy),2), '%',end="\r", flush=True)
                                             Predator=_Tot_Hits_PCopy[prd]
 
                                             for pry in range(len(_Tot_Hits_PCopy)):
@@ -279,11 +279,11 @@ for k in range(0,Z_ID_Max):
 
                                         column_no=len(_Tot_Hits_Predator[0])-1
                                         columns=[]
-                                        print(UF.TimeStamp(),'Applying physical assumptions...')
+                                        print(UI.TimeStamp(),'Applying physical assumptions...')
                                         #Here we making sure that the tracks satisfy minimum fit requirements
                                         q_itr=0
                                         for thp in _Tot_Hits_Predator:
-                                            print(UF.TimeStamp(),'Progress is ',round(100*q_itr/len(_Tot_Hits_Predator),2), '%',end="\r", flush=True)
+                                            print(UI.TimeStamp(),'Progress is ',round(100*q_itr/len(_Tot_Hits_Predator),2), '%',end="\r", flush=True)
                                             q_itr+=1
                                             fit_data_x=[]
                                             fit_data_y=[]
@@ -348,7 +348,7 @@ for k in range(0,Z_ID_Max):
                                              _track_list.append([_segment_id+'-'+str(t+1),h])
                         _Rec_Hits_Pool=pd.DataFrame(_track_list, columns = ['Segment_ID','HitID'])
                         _Rec_Hits_Pool=pd.merge(_z_map, _Rec_Hits_Pool, how="right", on=['HitID'])
-                        print(UF.TimeStamp(),_no_tracks, 'track segments have been reconstructed in this cluster set ...')
+                        print(UI.TimeStamp(),_no_tracks, 'track segments have been reconstructed in this cluster set ...')
                         
                         Control=[['Control',len(_Rec_Hits_Pool),'Control']]
                         Control=pd.DataFrame(Control, columns = ['HitID','z','Segment_ID'])
@@ -380,7 +380,7 @@ print('Final Time lapse', datetime.datetime.now()-Before)
 
 
 if CheckPoint:
-    print(UF.TimeStamp(),'Loading all saved check points...')
+    print(UI.TimeStamp(),'Loading all saved check points...')
     z_clusters_results=[]
     for k in range(0,Z_ID_Max):
         CheckPointFile=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(X_ID_n)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(X_ID_n)+'_'+str(Y_ID_n) +'_' +str(k)+'_CP'+sfx
@@ -391,17 +391,17 @@ if CheckPoint:
             if LC_Label=='Control' and len(ClusterData)-1==LC_Value:
                 z_clusters_results.append(ClusterData)
             else:
-                print(UF.TimeStamp(),'Critical fail ',CheckPointFile, 'is corrupted and needs reprocessing...')
+                print(UI.TimeStamp(),'Critical fail ',CheckPointFile, 'is corrupted and needs reprocessing...')
                 exit()
         else:
-            print(UF.TimeStamp(),'Critical fail ',CheckPointFile, 'is missing and needs reprocessing...')
+            print(UI.TimeStamp(),'Critical fail ',CheckPointFile, 'is missing and needs reprocessing...')
             exit()
 
             
 
 #Once we track all clusters we need to merge them along z-axis
 if len(z_clusters_results)>0:
-    print(UF.TimeStamp(),'Merging all clusters along z-axis...')
+    print(UI.TimeStamp(),'Merging all clusters along z-axis...')
     ZContractedTable=z_clusters_results[0].rename(columns={"Segment_ID": "Master_Segment_ID","z": "Master_z" }) #First cluster is like a Pacman: it absorbs proceeding clusters and gets bigger
     for i in range(1,len(z_clusters_results)):
         SecondFileTable=z_clusters_results[i]
@@ -419,10 +419,10 @@ if len(z_clusters_results)>0:
         ZContractedTable.drop_duplicates(subset=["Master_Segment_ID","HitID",'Master_z'],keep='first',inplace=True)
     ZContractedTable=ZContractedTable.sort_values(["Master_Segment_ID",'Master_z'],ascending=[1,1])
 else: #If Cluster tracking yielded no segments we just create an empty array for consistency
-     print(UF.TimeStamp(),'No suitable hit pairs in the cluster set, just writing the empty one...')
+     print(UI.TimeStamp(),'No suitable hit pairs in the cluster set, just writing the empty one...')
      ZContractedTable=pd.DataFrame([], columns = ['HitID','Master_z','Master_Segment_ID'])
 output_file_location=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(X_ID_n)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(X_ID_n)+'_'+str(Y_ID_n)+sfx
-print(UF.TimeStamp(),'Writing the output...')
+print(UI.TimeStamp(),'Writing the output...')
 ZContractedTable.to_csv(output_file_location,index=False) #Write the final result
-print(UF.TimeStamp(),'Output is written to ',output_file_location)
+print(UI.TimeStamp(),'Output is written to ',output_file_location)
 exit()
