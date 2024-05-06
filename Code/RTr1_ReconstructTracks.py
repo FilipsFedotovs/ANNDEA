@@ -214,7 +214,7 @@ if os.path.isfile(required_file_location)==False:
                  tdata.drop(tdata.index[tdata['y'] >= ((Y_ID+1)*stepY)], inplace = True)  #Keeping the relevant z slice
                  tdata.drop(tdata.index[tdata['y'] < (Y_ID*stepY)], inplace = True)  #Keeping the relevant z slice
                  required_tfile_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/RTr1_'+RecBatchID+'_'+str(i)+'_'+str(j)+'_hits.csv'
-                 if os.isfile(required_tfile_location)==False:
+                 if os.path.isfile(required_tfile_location)==False:
                      tdata.to_csv(required_tfile_location,index=False)
                      print(UI.TimeStamp(), bcolors.OKGREEN+"The segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+required_tfile_location+bcolors.ENDC)
          data.to_csv(required_file_location,index=False)
