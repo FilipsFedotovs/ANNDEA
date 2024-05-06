@@ -105,6 +105,14 @@ Xmin,Xmax,Ymin,Ymax=float(args.Xmin),float(args.Xmax),float(args.Ymin),float(arg
 Z_overlap,Y_overlap,X_overlap=int(args.Z_overlap),int(args.Y_overlap),int(args.X_overlap)
 SliceData=max(Xmin,Xmax,Ymin,Ymax)>0 #We don't slice data if all values are set to zero simultaneousy (which is the default setting)
 
+if Mode=='RESET':
+    print(UI.ManageFolders(AFS_DIR, EOS_DIR, RecBatchID,'d',['RTr1a','RTr1b','RTr1c','RTr1d']))
+    print(UI.ManageFolders(AFS_DIR, EOS_DIR, RecBatchID,'c'))
+elif Mode=='CLEANUP':
+     print(UI.ManageFolders(AFS_DIR, EOS_DIR, RecBatchID,'d',['RTr1a','RTr1b','RTr1c','RTr1d']))
+     exit()
+else:
+    print(UI.ManageFolders(AFS_DIR, EOS_DIR, RecBatchID,'c'))
 
 
 #Establishing paths
@@ -140,7 +148,7 @@ else:
 
 ########################################     Phase 1 - Create compact source file    #########################################
 print(UI.TimeStamp(),bcolors.BOLD+'Preparation 2/3:'+bcolors.ENDC+' Preparing the source data...')
-required_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RTr1_'+RecBatchID+'_hits.csv'
+required_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/RTr1_'+RecBatchID+'_hits.csv'
 if os.path.isfile(required_file_location)==False:
          print(UI.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
          data=pd.read_csv(input_file_location,
@@ -162,17 +170,17 @@ if os.path.isfile(required_file_location)==False:
          data[PM.Hit_ID] = data[PM.Hit_ID].astype(str)
             
          if SliceData:
-              print(UF.TimeStamp(),'Slicing the data...')
+              print(UI.TimeStamp(),'Slicing the data...')
               data=data.drop(data.index[(data[PM.x] > Xmax) | (data[PM.x] < Xmin) | (data[PM.y] > Ymax) | (data[PM.y] < Ymin)])
               final_rows=len(data.axes[0])
-              print(UF.TimeStamp(),'The sliced data has ',final_rows,' hits')
+              print(UI.TimeStamp(),'The sliced data has ',final_rows,' hits')
          data=data.rename(columns={PM.x: "x"})
          data=data.rename(columns={PM.y: "y"})
          data=data.rename(columns={PM.z: "z"})
          data=data.rename(columns={PM.tx: "tx"})
          data=data.rename(columns={PM.ty: "ty"})
          data=data.rename(columns={PM.Hit_ID: "Hit_ID"})
-         print(UF.TimeStamp(),'Analysing data... ',bcolors.ENDC)
+         print(UI.TimeStamp(),'Analysing data... ',bcolors.ENDC)
          z_offset=data['z'].min()
          data['z']=data['z']-z_offset
          z_max=data['z'].max()
@@ -197,7 +205,7 @@ if os.path.isfile(required_file_location)==False:
             Ysteps=math.ceil((y_max)/stepY)
          else:
             Ysteps=(math.ceil((y_max)/stepY)*(Y_overlap))-1
-         print(UF.TimeStamp(),'Distributing input files...')
+         print(UI.TimeStamp(),'Distributing input files...')
          for i in range(Xsteps):
              for j in range(Ysteps):
                  Y_ID=int(j)/Y_overlap
@@ -206,14 +214,14 @@ if os.path.isfile(required_file_location)==False:
                  tdata.drop(tdata.index[tdata['x'] < (X_ID*stepX)], inplace = True)  #Keeping the relevant z slice
                  tdata.drop(tdata.index[tdata['y'] >= ((Y_ID+1)*stepY)], inplace = True)  #Keeping the relevant z slice
                  tdata.drop(tdata.index[tdata['y'] < (Y_ID*stepY)], inplace = True)  #Keeping the relevant z slice
-                 required_tfile_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RTr1_'+RecBatchID+'_'+str(i)+'_'+str(j)+'_hits.csv'
+                 required_tfile_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/RTr1_'+RecBatchID+'_'+str(i)+'_'+str(j)+'_hits.csv'
                  tdata.to_csv(required_tfile_location,index=False)
-                 print(UF.TimeStamp(), bcolors.OKGREEN+"The segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+required_tfile_location+bcolors.ENDC)
+                 print(UI.TimeStamp(), bcolors.OKGREEN+"The segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+required_tfile_location+bcolors.ENDC)
          data.to_csv(required_file_location,index=False)
-         print(UF.TimeStamp(), bcolors.OKGREEN+"The segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+required_file_location+bcolors.ENDC)
-
+         print(UI.TimeStamp(), bcolors.OKGREEN+"The segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+required_file_location+bcolors.ENDC)
+exit()
 # ########################################     Preset framework parameters    #########################################
-input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RTr1_'+RecBatchID+'_hits.csv'
+input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/RTr1_'+RecBatchID+'_hits.csv'
 print(UF.TimeStamp(),'Loading preselected data from ',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
 data=pd.read_csv(input_file_location,header=0,usecols=['z','x','y'])
 print(UF.TimeStamp(),'Analysing data... ',bcolors.ENDC)
@@ -246,14 +254,7 @@ else:
 #If we chose reset mode we do a full cleanup.
 # #Reconstructing a single brick can cause in gereation of 100s of thousands of files - need to make sure that we remove them.
 
-if Mode=='RESET':
-    print(UI.ManageFolders(AFS_DIR, EOS_DIR, RecBatchID,'d',['RTr1a','RTr1b','RTr1c','RTr1d']))
-    print(UI.ManageFolders(AFS_DIR, EOS_DIR, RecBatchID,'c'))
-elif Mode=='CLEANUP':
-     print(UI.ManageFolders(AFS_DIR, EOS_DIR, RecBatchID,'d',['RTr1a','RTr1b','RTr1c','RTr1d']))
-     exit()
-else:
-    print(UI.ManageFolders(AFS_DIR, EOS_DIR, RecBatchID,'c'))
+
 
 #The function bellow helps to automate the submission process
 UI.Msg('vanilla','Analysing the current script status...')
