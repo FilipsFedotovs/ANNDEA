@@ -258,10 +258,10 @@ else:
 
 #If we chose reset mode we do a full cleanup.
 # #Reconstructing a single brick can cause in gereation of 100s of thousands of files - need to make sure that we remove them.
-elif os.path.isfile(RecOutputMeta)==True:
-    print(UI.TimeStamp(),'Loading previously saved data from ',bcolors.OKBLUE+RecOutputMeta+bcolors.ENDC)
-    MetaInput=UI.PickleOperations(RecOutputMeta,'r', 'N/A')
-    Meta=MetaInput[0]
+# elif os.path.isfile(RecOutputMeta)==True:
+#     print(UI.TimeStamp(),'Loading previously saved data from ',bcolors.OKBLUE+RecOutputMeta+bcolors.ENDC)
+#     MetaInput=UI.PickleOperations(RecOutputMeta,'r', 'N/A')
+#     Meta=MetaInput[0]
 
 
 #The function bellow helps to automate the submission process
