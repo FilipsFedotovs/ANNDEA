@@ -995,7 +995,14 @@ def CNNtrain(model, Sample, Batches,num_classes, BatchSize):
 # Calling psutil.cpu_precent() for 4 seconds
         StartSeed=(ib*BatchSize)+1
         EndSeed=StartSeed+BatchSize-1
-        BatchImages=LoadRenderImages(Sample,StartSeed,EndSeed,num_classes)
+        print(len(Sample))
+        Subsample=[]
+        for s in range(BatchSize):
+            Subsample.append(Sample.pop(0))
+        print(len(Sample))
+        print(len(Subsample))
+
+        BatchImages=LoadRenderImages(Subsample,1,4,num_classes)
         t=model.train_on_batch(BatchImages[0],BatchImages[1])
         loss_accumulative+=t[0].item()
         acc_accumulative+=t[1].item()
@@ -1045,9 +1052,15 @@ def CNNvalidate(model, Sample, Batches,num_classes, BatchSize):
     print('RAM memory % used:', psutil.virtual_memory()[2])
     print('-----------------------------')
     for ib in range(Batches):
+        Subsample=[]
+        print(len(Sample))
+        for s in range(BatchSize):
+            Subsample.append(Sample.pop(0))
+        print(len(Sample))
+        print(len(Subsample))
         StartSeed=(ib*BatchSize)+1
         EndSeed=StartSeed+BatchSize-1
-        BatchImages=LoadRenderImages(Sample,StartSeed,EndSeed,num_classes)
+        BatchImages=LoadRenderImages(Sample,1,4,num_classes)
         v=model.test_on_batch(BatchImages[0],BatchImages[1])
         loss_accumulative+=v[0].item()
         acc_accumulative+=v[1].item()
