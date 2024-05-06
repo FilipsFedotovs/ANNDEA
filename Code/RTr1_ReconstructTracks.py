@@ -497,6 +497,9 @@ while Status<len(Program):
            Bad_Tracks_Head['t2y'] = Bad_Tracks_Head['t2y'].astype(float)
 
         print(UI.TimeStamp(),'Removing problematic hits...')
+        print(Bad_Tracks)
+        print(Bad_Tracks_Head)
+        exit()
         Bad_Tracks=pd.merge(Bad_Tracks,Bad_Tracks_Head,how='inner',on = [RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID'])
 
 
