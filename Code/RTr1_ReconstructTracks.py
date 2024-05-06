@@ -82,6 +82,7 @@ parser.add_argument('--Y_overlap',help="Enter the level of overlap in integer nu
 parser.add_argument('--X_overlap',help="Enter the level of overlap in integer number between reconstruction blocks along x-axis. (In order to avoid segmentation this value should be more than 1)", default='2')
 parser.add_argument('--CheckPoint',help="Save cluster sets during individual cluster tracking.", default='N')
 parser.add_argument('--ReqMemory',help="How much memory?", default='2 GB')
+parser.add_argument('--HTCondorLog',help="Local submission?", default=False,type=bool)
 
 ######################################## Parsing argument values  #############################################################
 args = parser.parse_args()
@@ -92,6 +93,7 @@ Patience=int(args.Patience)
 SubPause=int(args.SubPause)*60
 TrackFitCut=ast.literal_eval(args.TrackFitCut)
 SubGap=int(args.SubGap)
+HTCondorLog=args.HTCondorLog
 ForceStatus=args.ForceStatus
 LocalSub=(args.LocalSub=='Y')
 if LocalSub:
@@ -258,51 +260,50 @@ job_sets=[]
 for i in range(0,Xsteps):
                 job_sets.append(Ysteps)
 prog_entry.append(' Sending hit cluster to the HTCondor, so the model assigns weights between hits')
-prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','hit_cluster_rec_set','RTr1a','.csv',RecBatchID,job_sets,'RTr1a_ReconstructTracks_Sub.py'])
+prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/'+RecBatchID+'/','hit_cluster_rec_set','RTr1a','.csv',RecBatchID,job_sets,'RTr1a_ReconstructTracks_Sub.py'])
 prog_entry.append([' --stepZ ', ' --stepY ', ' --stepX ', ' --cut_dt ', ' --cut_dr ', ' --ModelName ',' --Z_overlap ',' --Y_overlap ',' --X_overlap ', ' --Z_ID_Max ', ' --CheckPoint ', ' --TrackFitCutRes ',' --TrackFitCutSTD ',' --TrackFitCutMRes '])
 prog_entry.append([stepZ,stepY,stepX, cut_dt,cut_dr, ModelName,Z_overlap,Y_overlap,X_overlap, Zsteps, args.CheckPoint]+TrackFitCut)
 prog_entry.append(Xsteps*Ysteps)
 prog_entry.append(LocalSub)
+prog_entry.append('N/A')
+prog_entry.append(HTCondorLog)
+prog_entry.append(False)
 Program.append(prog_entry)
-
-if Mode=='RESET':
-   print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Delete'))
-#Setting up folders for the output. The reconstruction of just one brick can easily generate >100k of files. Keeping all that blob in one directory can cause problems on lxplus.
-print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Create'))
+print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry))
 
 ###### Stage 1
 prog_entry=[]
 job_sets=Xsteps
 prog_entry.append(' Sending hit cluster to the HTCondor, so the reconstructed clusters can be merged along y-axis')
-prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','hit_cluster_rec_y_set','RTr1b','.csv',RecBatchID,job_sets,'RTr1b_LinkSegmentsY_Sub.py'])
+prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/'+RecBatchID+'/','hit_cluster_rec_y_set','RTr1b','.csv',RecBatchID,job_sets,'RTr1b_LinkSegmentsY_Sub.py'])
 prog_entry.append([' --Y_ID_Max ', ' --i '])
 prog_entry.append([Ysteps,Xsteps])
 prog_entry.append(Xsteps)
 prog_entry.append(LocalSub)
+prog_entry.append('N/A')
+prog_entry.append(HTCondorLog)
+prog_entry.append(False)
 Program.append(prog_entry)
-if Mode=='RESET':
-   print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Delete'))
-#Setting up folders for the output. The reconstruction of just one brick can easily generate >100k of files. Keeping all that blob in one directory can cause problems on lxplus.
-print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Create'))
+print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry))
 
 ###### Stage 2
 prog_entry=[]
 job_sets=1
 prog_entry.append(' Sending hit cluster to the HTCondor, so the reconstructed clusters can be merged along x-axis')
-prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/','hit_cluster_rec_x_set','RTr1c','.csv',RecBatchID,job_sets,'RTr1c_LinkSegmentsX_Sub.py'])
+prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/'+RecBatchID+'/','hit_cluster_rec_x_set','RTr1c','.csv',RecBatchID,job_sets,'RTr1c_LinkSegmentsX_Sub.py'])
 prog_entry.append([' --X_ID_Max '])
 prog_entry.append([Xsteps])
 prog_entry.append(1)
 prog_entry.append(True) #This part we can execute locally, no need for HTCondor
+prog_entry.append('N/A')
+prog_entry.append(HTCondorLog)
+prog_entry.append(False)
 Program.append(prog_entry)
-if Mode=='RESET':
-   print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Delete'))
-#Setting up folders for the output. The reconstruction of just one brick can easily generate >100k of files. Keeping all that blob in one directory can cause problems on lxplus.
-print(UF.TimeStamp(),UF.ManageTempFolders(prog_entry,'Create'))
+print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry))
 
 ###### Stage 3
 Program.append('Custom')
-
+exit()
 
 print(UF.TimeStamp(),'There are '+str(len(Program)+1)+' stages (0-'+str(len(Program)+1)+') of this script',bcolors.ENDC)
 print(UF.TimeStamp(),'Current stage has a code',Status,bcolors.ENDC)
