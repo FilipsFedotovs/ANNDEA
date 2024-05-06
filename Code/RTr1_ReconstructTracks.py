@@ -42,13 +42,7 @@ class bcolors:   #We use it for the interface
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
 
-print('                                                                                                                                    ')
-print('                                                                                                                                    ')
-print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
-print(bcolors.HEADER+"######################        Initialising ANNDEA Hit Tracking module              #####################"+bcolors.ENDC)
-print(bcolors.HEADER+"#########################              Written by Filips Fedotovs              #########################"+bcolors.ENDC)
-print(bcolors.HEADER+"#########################                 PhD Student at UCL                   #########################"+bcolors.ENDC)
-print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
+UI.WelcomeMsg('Initialising ANNDEA Tracking module...','Filips Fedotovs (PhD student at UCL), Dinis Beleza (MSci student at UCL)','Please reach out to filips.fedotovs@cern.ch for any queries')
 #Setting the parser - this script is usually not run directly, but is used by a Master version Counterpart that passes the required arguments
 parser = argparse.ArgumentParser(description='This script prepares training data for training the tracking model')
 parser.add_argument('--Mode', help='Script will continue from the last checkpoint, unless you want to start from the scratch, then type "Reset"',default='')
@@ -109,19 +103,19 @@ for c in config:
 csv_reader.close()
 import sys
 sys.path.insert(1, AFS_DIR+'/Code/Utilities/')
-import UtilityFunctions as UF #This is where we keep routine utility functions
+import U_UI as UI #This is where we keep routine utility functions
 import Parameters as PM #This is where we keep framework global parameters
 
 #Establishing paths
 EOSsubDIR=EOS_DIR+'/'+'ANNDEA'
 EOSsubModelDIR=EOSsubDIR+'/'+'Models'
 Model_Meta_Path=EOSsubModelDIR+'/'+args.ModelName+'_Meta'
-print(UF.TimeStamp(),bcolors.BOLD+'Preparation 1/3:'+bcolors.ENDC+' Setting up metafiles...')
+print(UI.TimeStamp(),bcolors.BOLD+'Preparation 1/3:'+bcolors.ENDC+' Setting up metafiles...')
 #Loading the model meta file
-print(UF.TimeStamp(),'Loading the data file ',bcolors.OKBLUE+Model_Meta_Path+bcolors.ENDC)
+print(UI.TimeStamp(),'Loading the data file ',bcolors.OKBLUE+Model_Meta_Path+bcolors.ENDC)
 
 if args.ModelName=='blank':
-   print(UF.TimeStamp(),bcolors.WARNING+'You have specified the model name as "blank": This means that no GNN model will be used as part of the tracking process which can degrade the tracking performance.'+bcolors.ENDC)
+   print(UI.TimeStamp(),bcolors.WARNING+'You have specified the model name as "blank": This means that no GNN model will be used as part of the tracking process which can degrade the tracking performance.'+bcolors.ENDC)
    UserAnswer=input(bcolors.BOLD+"Do you want to continue? (y/n)\n"+bcolors.ENDC)
    if UserAnswer.upper()=='N':
        exit()
@@ -131,7 +125,7 @@ if args.ModelName=='blank':
    cut_dt=PM.cut_dt
    cut_dr=PM.cut_dr
 elif os.path.isfile(Model_Meta_Path):
-       Model_Meta_Raw=UF.PickleOperations(Model_Meta_Path, 'r', 'N/A')
+       Model_Meta_Raw=UI.PickleOperations(Model_Meta_Path, 'r', 'N/A')
        print(Model_Meta_Raw[1])
        Model_Meta=Model_Meta_Raw[0]
        stepX=Model_Meta.stepX
@@ -140,9 +134,9 @@ elif os.path.isfile(Model_Meta_Path):
        cut_dt=Model_Meta.cut_dt
        cut_dr=Model_Meta.cut_dr
 else:
-       print(UF.TimeStamp(),bcolors.FAIL+'Fail! No existing model meta files have been found, exiting now'+bcolors.ENDC)
+       print(UI.TimeStamp(),bcolors.FAIL+'Fail! No existing model meta files have been found, exiting now'+bcolors.ENDC)
        exit()
-
+exit()
 ########################################     Phase 1 - Create compact source file    #########################################
 print(UF.TimeStamp(),bcolors.BOLD+'Preparation 2/3:'+bcolors.ENDC+' Preparing the source data...')
 required_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RTr1_'+RecBatchID+'_hits.csv'
