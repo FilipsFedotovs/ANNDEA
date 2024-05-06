@@ -321,7 +321,7 @@ while Status<len(Program):
       #Non standard processes (that don't follow the general pattern) have been coded here
         print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
         print(UI.TimeStamp(),bcolors.BOLD+'Stage 3:'+bcolors.ENDC+' Using the results from previous steps to map merged trackIDs to the original reconstruction file')
-      #try:
+      try:
         #Read the output with hit- ANN Track map
         FirstFile=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/Temp_RTr1c_'+RecBatchID+'_0'+'/RTr1c_'+RecBatchID+'_hit_cluster_rec_x_set_0.csv'
         print(UI.TimeStamp(),'Loading the file ',bcolors.OKBLUE+FirstFile+bcolors.ENDC)
@@ -535,10 +535,10 @@ while Status<len(Program):
         print(UI.TimeStamp(), bcolors.OKGREEN+"The tracked data has been written to"+bcolors.ENDC, bcolors.OKBLUE+output_file_location+bcolors.ENDC)
         print(UI.TimeStamp(),bcolors.OKGREEN+'Stage 4 has successfully completed'+bcolors.ENDC)
         UI.UpdateStatus(Status+1,Meta,RecOutputMeta)
-      # except Exception as e:
-      #     print(UI.TimeStamp(),bcolors.FAIL+'Stage 4 is uncompleted due to: '+str(e)+bcolors.ENDC)
-      #     Status=21
-      #     break
+      except Exception as e:
+          print(UI.TimeStamp(),bcolors.FAIL+'Stage 4 is uncompleted due to: '+str(e)+bcolors.ENDC)
+          Status=21
+          break
     MetaInput=UI.PickleOperations(RecOutputMeta,'r', 'N/A')
     Meta=MetaInput[0]
     Status=Meta.Status[-1]
