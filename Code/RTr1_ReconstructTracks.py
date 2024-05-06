@@ -81,7 +81,6 @@ parser.add_argument('--Z_overlap',help="Enter the level of overlap in integer nu
 parser.add_argument('--Y_overlap',help="Enter the level of overlap in integer number between reconstruction blocks along y-axis. (In order to avoid segmentation this value should be more than 1)", default='2')
 parser.add_argument('--X_overlap',help="Enter the level of overlap in integer number between reconstruction blocks along x-axis. (In order to avoid segmentation this value should be more than 1)", default='2')
 parser.add_argument('--CheckPoint',help="Save cluster sets during individual cluster tracking.", default='N')
-parser.add_argument('--ForceStatus',help="Local submission?", default='N')
 parser.add_argument('--ReqMemory',help="How much memory?", default='2 GB')
 
 ######################################## Parsing argument values  #############################################################
@@ -219,7 +218,7 @@ if os.path.isfile(required_file_location)==False:
                          tdata.drop(tdata.index[tdata['y'] >= ((Y_ID+1)*stepY)], inplace = True)  #Keeping the relevant z slice
                          tdata.drop(tdata.index[tdata['y'] < (Y_ID*stepY)], inplace = True)  #Keeping the relevant z slice
                          tdata.to_csv(required_tfile_location,index=False)
-                         print(UI.TimeStamp(), bcolors.OKGREEN+"The segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+required_tfile_location+bcolors.ENDC)
+                         #print(UI.TimeStamp(), bcolors.OKGREEN+"The segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+required_tfile_location+bcolors.ENDC)
                      bar()
 
 
