@@ -534,7 +534,7 @@ while Status<len(Program):
         Data.to_csv(output_file_location,index=False)
         print(UI.TimeStamp(), bcolors.OKGREEN+"The tracked data has been written to"+bcolors.ENDC, bcolors.OKBLUE+output_file_location+bcolors.ENDC)
         print(UI.TimeStamp(),bcolors.OKGREEN+'Stage 4 has successfully completed'+bcolors.ENDC)
-        Status=4
+        UI.UpdateStatus(Status+1,Meta,RecOutputMeta)
       # except Exception as e:
       #     print(UI.TimeStamp(),bcolors.FAIL+'Stage 4 is uncompleted due to: '+str(e)+bcolors.ENDC)
       #     Status=21
