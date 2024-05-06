@@ -149,6 +149,7 @@ else:
 ########################################     Phase 1 - Create compact source file    #########################################
 print(UI.TimeStamp(),bcolors.BOLD+'Preparation 2/3:'+bcolors.ENDC+' Preparing the source data...')
 required_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/RTr1_'+RecBatchID+'_hits.csv'
+RecOutputMeta=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/'+RecBatchID+'_info.pkl'
 if os.path.isfile(required_file_location)==False:
          print(UI.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
          data=pd.read_csv(input_file_location,
@@ -213,16 +214,22 @@ if os.path.isfile(required_file_location)==False:
                  tdata.drop(tdata.index[tdata['y'] >= ((Y_ID+1)*stepY)], inplace = True)  #Keeping the relevant z slice
                  tdata.drop(tdata.index[tdata['y'] < (Y_ID*stepY)], inplace = True)  #Keeping the relevant z slice
                  required_tfile_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/RTr1_'+RecBatchID+'_'+str(i)+'_'+str(j)+'_hits.csv'
-                 tdata.to_csv(required_tfile_location,index=False)
-                 print(UI.TimeStamp(), bcolors.OKGREEN+"The segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+required_tfile_location+bcolors.ENDC)
+                 if os.isfile(required_tfile_location)==False:
+                     tdata.to_csv(required_tfile_location,index=False)
+                     print(UI.TimeStamp(), bcolors.OKGREEN+"The segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+required_tfile_location+bcolors.ENDC)
          data.to_csv(required_file_location,index=False)
+         Meta=UI.TrainingSampleMeta(RecBatchID)
+         Meta.IniHitClusterMetaData(stepX,stepY,stepZ,cut_dt,cut_dr,0.05,0.1,z_offset,y_offset,x_offset, Xsteps, Zsteps,X_overlap,Y_overlap,Z_overlap)
+         Meta.UpdateStatus(0)
+         print(UI.PickleOperations(RecOutputMeta,'w', Meta)[1])
+         UI.Msg('completed','Stage 0 has successfully completed')
          print(UI.TimeStamp(), bcolors.OKGREEN+"The segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+required_file_location+bcolors.ENDC)
 exit()
 # ########################################     Preset framework parameters    #########################################
 input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/RTr1_'+RecBatchID+'_hits.csv'
-print(UF.TimeStamp(),'Loading preselected data from ',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
+print(UI.TimeStamp(),'Loading preselected data from ',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
 data=pd.read_csv(input_file_location,header=0,usecols=['z','x','y'])
-print(UF.TimeStamp(),'Analysing data... ',bcolors.ENDC)
+print(UI.TimeStamp(),'Analysing data... ',bcolors.ENDC)
 z_offset=data['z'].min()
 data['z']=data['z']-z_offset
 z_max=data['z'].max()
@@ -236,7 +243,7 @@ data['x']=data['x']-x_offset
 data['y']=data['y']-y_offset
 x_max=data['x'].max()
 y_max=data['y'].max()
-FreshStart=True
+
 Program=[]
 #Calculating the number of volumes that will be sent to HTCondor for reconstruction. Account for overlap if specified.
 if X_overlap==1:
@@ -251,7 +258,10 @@ else:
 
 #If we chose reset mode we do a full cleanup.
 # #Reconstructing a single brick can cause in gereation of 100s of thousands of files - need to make sure that we remove them.
-
+elif os.path.isfile(RecOutputMeta)==True:
+    print(UI.TimeStamp(),'Loading previously saved data from ',bcolors.OKBLUE+RecOutputMeta+bcolors.ENDC)
+    MetaInput=UI.PickleOperations(RecOutputMeta,'r', 'N/A')
+    Meta=MetaInput[0]
 
 
 #The function bellow helps to automate the submission process
