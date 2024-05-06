@@ -987,31 +987,15 @@ def zero_divide(a, b):
 def CNNtrain(model, Sample, Batches,num_classes, BatchSize):
     loss_accumulative = 0
     acc_accumulative = 0
-    import psutil
-    import datetime
     for ib in range(Batches):
-
-
 # Calling psutil.cpu_precent() for 4 seconds
-        StartSeed=(ib*BatchSize)+1
-        EndSeed=StartSeed+BatchSize-1
-        print(len(Sample))
         Subsample=[]
         for s in range(BatchSize):
             Subsample.append(Sample.pop(0))
-        print(len(Sample))
-        print(len(Subsample))
-
         BatchImages=LoadRenderImages(Subsample,1,4,num_classes)
         t=model.train_on_batch(BatchImages[0],BatchImages[1])
         loss_accumulative+=t[0].item()
         acc_accumulative+=t[1].item()
-        if ib%100==0:
-            print('-----------------------------')
-            print("["+datetime.datetime.now().strftime("%D")+' '+datetime.datetime.now().strftime("%H:%M:%S")+"]")
-            print('1.The CPU usage is: ', psutil.cpu_percent(4))
-            print('RAM memory % used:', psutil.virtual_memory()[2])
-            print('-----------------------------')
     loss=loss_accumulative/Batches
     acc=acc_accumulative/Batches
     return loss,acc
@@ -1045,29 +1029,14 @@ def GNNvalidate(model, Sample,criterion):
 def CNNvalidate(model, Sample, Batches,num_classes, BatchSize):
     loss_accumulative = 0
     acc_accumulative = 0
-    import psutil
-    import datetime
-    print('-----------------------------')
-    print('2.The CPU usage is: ', psutil.cpu_percent(4))
-    print('RAM memory % used:', psutil.virtual_memory()[2])
-    print('-----------------------------')
     for ib in range(Batches):
         Subsample=[]
-        print(len(Sample))
         for s in range(BatchSize):
             Subsample.append(Sample.pop(0))
-        print(len(Sample))
-        print(len(Subsample))
-        StartSeed=(ib*BatchSize)+1
-        EndSeed=StartSeed+BatchSize-1
         BatchImages=LoadRenderImages(Sample,1,4,num_classes)
         v=model.test_on_batch(BatchImages[0],BatchImages[1])
         loss_accumulative+=v[0].item()
         acc_accumulative+=v[1].item()
-    print('-----------------------------')
-    print('3.The CPU usage is: ', psutil.cpu_percent(4))
-    print('RAM memory % used:', psutil.virtual_memory()[2])
-    print('-----------------------------')
     loss=loss_accumulative/Batches
     acc=acc_accumulative/Batches
 

@@ -163,8 +163,6 @@ def main(self):
         import warnings
         warnings.simplefilter(action='ignore', category=FutureWarning)
         import tensorflow as tf
-        # sess = tf.compat.v1.Session()
-        # K = tf.keras.backend
         if tf.test.is_gpu_available():
             print(UI.TimeStamp(), bcolors.OKGREEN+"GPU has been allocated..." +bcolors.ENDC)
         else:
