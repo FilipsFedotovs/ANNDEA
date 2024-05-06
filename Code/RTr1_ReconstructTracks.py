@@ -137,26 +137,28 @@ elif os.path.isfile(Model_Meta_Path):
 else:
        print(UI.TimeStamp(),bcolors.FAIL+'Fail! No existing model meta files have been found, exiting now'+bcolors.ENDC)
        exit()
-exit()
+
 ########################################     Phase 1 - Create compact source file    #########################################
-print(UF.TimeStamp(),bcolors.BOLD+'Preparation 2/3:'+bcolors.ENDC+' Preparing the source data...')
+print(UI.TimeStamp(),bcolors.BOLD+'Preparation 2/3:'+bcolors.ENDC+' Preparing the source data...')
 required_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/RTr1_'+RecBatchID+'_hits.csv'
-if os.path.isfile(required_file_location)==False or Mode=='RESET':
-         print(UF.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
+if os.path.isfile(required_file_location)==False:
+         print(UI.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
          data=pd.read_csv(input_file_location,
                      header=0,
                      usecols=[PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty])[[PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty]]
          total_rows=len(data.axes[0])
          data[PM.Hit_ID] = data[PM.Hit_ID].astype(str)
-         print(UF.TimeStamp(),'The raw data has ',total_rows,' hits')
-         print(UF.TimeStamp(),'Removing unreconstructed hits...')
+         print(UI.TimeStamp(),'The raw data has ',total_rows,' hits')
+         print(UI.TimeStamp(),'Removing unreconstructed hits...')
+         print(data)
+         exit()
          data=data.dropna()
          final_rows=len(data.axes[0])
-         print(UF.TimeStamp(),'The cleaned data has ',final_rows,' hits')
+         print(UI.TimeStamp(),'The cleaned data has ',final_rows,' hits')
          try:
              data[PM.Hit_ID] = data[PM.Hit_ID].astype(int)
          except:
-             print(UF.TimeStamp(), bcolors.WARNING+"Hit ID is already in the string format, skipping the reformatting step..."+bcolors.ENDC)
+             print(UI.TimeStamp(), bcolors.WARNING+"Hit ID is already in the string format, skipping the reformatting step..."+bcolors.ENDC)
          data[PM.Hit_ID] = data[PM.Hit_ID].astype(str)
             
          if SliceData:
@@ -241,165 +243,25 @@ if Y_overlap==1:
 else:
     Ysteps=(math.ceil((y_max)/stepY)*(Y_overlap))-1
 
-#Defining handy functions to make the code little cleaner
-
-#The function bellow helps to monitor the HTCondor jobs and keep the submission flow
-def AutoPilot(wait_min, interval_min, max_interval_tolerance,program):
-     print(UF.TimeStamp(),'Going on an autopilot mode for ',wait_min, 'minutes while checking HTCondor every',interval_min,'min',bcolors.ENDC)
-     wait_sec=wait_min*60
-     interval_sec=interval_min*60
-     intervals=int(math.ceil(wait_sec/interval_sec))
-     for interval in range(1,intervals+1):
-         time.sleep(interval_sec)
-         print(UF.TimeStamp(),"Scheduled job checkup...") #Progress display
-         bad_pop=UF.CreateCondorJobs(program[1][0],
-                                    program[1][1],
-                                    program[1][2],
-                                    program[1][3],
-                                    program[1][4],
-                                    program[1][5],
-                                    program[1][6],
-                                    program[1][7],
-                                    program[1][8],
-                                    program[2],
-                                    program[3],
-                                    program[1][9],
-                                    False)
-         if len(bad_pop)>0:
-               print(UF.TimeStamp(),bcolors.WARNING+'Autopilot status update: There are still', len(bad_pop), 'HTCondor jobs remaining'+bcolors.ENDC)
-               if interval%max_interval_tolerance==0:
-                  for bp in bad_pop:
-                      UF.SubmitJobs2Condor(bp,program[5],RequestExtCPU,JobFlavour,ReqMemory)
-                  print(UF.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
-         else:
-              return True,False
-     return False,False
-#The function bellow helps to automate the submission process
-def StandardProcess(program,status,freshstart):
-        print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
-        print(UF.TimeStamp(),bcolors.BOLD+'Stage '+str(status)+':'+bcolors.ENDC+str(program[status][0]))
-        batch_sub=program[status][4]>1
-        bad_pop=UF.CreateCondorJobs(program[status][1][0],
-                                    program[status][1][1],
-                                    program[status][1][2],
-                                    program[status][1][3],
-                                    program[status][1][4],
-                                    program[status][1][5],
-                                    program[status][1][6],
-                                    program[status][1][7],
-                                    program[status][1][8],
-                                    program[status][2],
-                                    program[status][3],
-                                    program[status][1][9],
-                                    False)
-        if len(bad_pop)==0:
-             print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
-             return True,False
-
-
-        elif (program[status][4])==len(bad_pop):
-                 bad_pop=UF.CreateCondorJobs(program[status][1][0],
-                                    program[status][1][1],
-                                    program[status][1][2],
-                                    program[status][1][3],
-                                    program[status][1][4],
-                                    program[status][1][5],
-                                    program[status][1][6],
-                                    program[status][1][7],
-                                    program[status][1][8],
-                                    program[status][2],
-                                    program[status][3],
-                                    program[status][1][9],
-                                    batch_sub)
-                 print(UF.TimeStamp(),'Submitting jobs to HTCondor... ',bcolors.ENDC)
-                 _cnt=0
-                 for bp in bad_pop:
-                          if _cnt>SubGap:
-                              print(UF.TimeStamp(),'Pausing submissions for  ',str(int(SubPause/60)), 'minutes to relieve congestion...',bcolors.ENDC)
-                              time.sleep(SubPause)
-                              _cnt=0
-                          UF.SubmitJobs2Condor(bp,program[status][5],RequestExtCPU,JobFlavour,ReqMemory)
-                          _cnt+=bp[6]
-                 if program[status][5]:
-                    print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
-                    return True,False
-                 elif AutoPilot(600,time_int,Patience,program[status]):
-                        print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
-                        return True,False
-                 else:
-                        print(UF.TimeStamp(),bcolors.FAIL+'Stage '+str(status)+' is uncompleted...'+bcolors.ENDC)
-                        return False,False
-
-
-        elif len(bad_pop)>0:
-            if freshstart:
-                   print(UF.TimeStamp(),bcolors.WARNING+'Warning, there are still', len(bad_pop), 'HTCondor jobs remaining'+bcolors.ENDC)
-                   print(bcolors.BOLD+'If you would like to wait and exit please enter E'+bcolors.ENDC)
-                   print(bcolors.BOLD+'If you would like to wait please enter enter the maximum wait time in minutes'+bcolors.ENDC)
-                   print(bcolors.BOLD+'If you would like to resubmit please enter R'+bcolors.ENDC)
-                   UserAnswer=input(bcolors.BOLD+"Please, enter your option\n"+bcolors.ENDC)
-                   if UserAnswer=='E':
-                       print(UF.TimeStamp(),'OK, exiting now then')
-                       exit()
-                   if UserAnswer=='R':
-                      _cnt=0
-                      for bp in bad_pop:
-                           if _cnt>SubGap:
-                              print(UF.TimeStamp(),'Pausing submissions for  ',str(int(SubPause/60)), 'minutes to relieve congestion...',bcolors.ENDC)
-                              time.sleep(SubPause)
-                              _cnt=0
-                           UF.SubmitJobs2Condor(bp,program[status][5],RequestExtCPU,JobFlavour,ReqMemory)
-                           _cnt+=bp[6]
-                      print(UF.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
-                      if program[status][5]:
-                          print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
-                          return True,False
-                      elif AutoPilot(600,time_int,Patience,program[status]):
-                          print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+ 'has successfully completed'+bcolors.ENDC)
-                          return True,False
-                      else:
-                          print(UF.TimeStamp(),bcolors.FAIL+'Stage '+str(status)+' is uncompleted...'+bcolors.ENDC)
-                          return False,False
-                   else:
-                      if program[status][5]:
-                          print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
-                          return True,False
-                      elif AutoPilot(int(UserAnswer),time_int,Patience,program[status]):
-                          print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+ 'has successfully completed'+bcolors.ENDC)
-                          return True,False
-                      else:
-                          print(UF.TimeStamp(),bcolors.FAIL+'Stage '+str(status)+' is uncompleted...'+bcolors.ENDC)
-                          return False,False
-            else:
-                      _cnt=0
-                      for bp in bad_pop:
-                           if _cnt>SubGap:
-                              print(UF.TimeStamp(),'Pausing submissions for  ',str(int(SubPause/60)), 'minutes to relieve congestion...',bcolors.ENDC)
-                              time.sleep(SubPause)
-                              _cnt=0
-                           UF.SubmitJobs2Condor(bp,program[status][5],RequestExtCPU,JobFlavour,ReqMemory)
-                           _cnt+=bp[6]
-                      if program[status][5]:
-                           print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+' has successfully completed'+bcolors.ENDC)
-                           return True,False
-                      elif AutoPilot(600,time_int,Patience,program[status]):
-                           print(UF.TimeStamp(),bcolors.OKGREEN+'Stage '+str(status)+ 'has successfully completed'+bcolors.ENDC)
-                           return True,False
-                      else:
-                          print(UF.TimeStamp(),bcolors.FAIL+'Stage '+str(status)+' is uncompleted...'+bcolors.ENDC)
-                          return False,False
-
 #If we chose reset mode we do a full cleanup.
 # #Reconstructing a single brick can cause in gereation of 100s of thousands of files - need to make sure that we remove them.
+
 if Mode=='RESET':
-    print(UF.TimeStamp(),'Performing the cleanup... ',bcolors.ENDC)
-    HTCondorTag="SoftUsed == \"ANNDEA-RTr1a-"+RecBatchID+"\""
-    UF.RecCleanUp(AFS_DIR, EOS_DIR, 'RTr1_'+RecBatchID, ['RTr1a','RTr1b','RTr1c','RTr1d',RecBatchID+'_RTr_OUTPUT_CLEANED.csv'], HTCondorTag)
-    FreshStart=False
-if Mode=='CLEANUP':
-    Status=5
+    print(UI.ManageFolders(AFS_DIR, EOS_DIR, RecBatchID,'d',['RTr1a','RTr1b','RTr1c','RTr1d']))
+    print(UI.ManageFolders(AFS_DIR, EOS_DIR, RecBatchID,'c'))
+elif Mode=='CLEANUP':
+     print(UI.ManageFolders(AFS_DIR, EOS_DIR, RecBatchID,'d',['RTr1a','RTr1b','RTr1c','RTr1d']))
+     exit()
 else:
-    Status=int(args.ForceStatus)
+    print(UI.ManageFolders(AFS_DIR, EOS_DIR, RecBatchID,'c'))
+
+#The function bellow helps to automate the submission process
+UI.Msg('vanilla','Analysing the current script status...')
+Status=Meta.Status[-1]
+if ForceStatus!='N':
+    Status=int(ForceStatus)
+UI.Msg('vanilla','Current stage is '+str(Status)+'...')
+
 ################ Set the execution sequence for the script
 ###### Stage 0
 prog_entry=[]
