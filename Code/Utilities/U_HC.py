@@ -1,16 +1,10 @@
 ###This file contains the utility functions that are commonly used in ANNDEA packages
 
-import csv
-import sys
-import math
-import os
-import subprocess
-import datetime
-import numpy as np
-import copy
 
-import ast
-import shutil
+import math
+
+import numpy as np
+
 
 
 
@@ -118,16 +112,16 @@ class HitCluster:
            #Combining data 1 and 2
            _Tot_Hits=[]
            _hit_count=0
-           print(TimeStamp(),'Initial number of all possible hit combinations is:',len(_l_Hits)**2)
-           print(TimeStamp(),'Number of all possible hit combinations without self-permutations:',(len(_l_Hits)**2)-len(_l_Hits))
-           print(TimeStamp(),'Number of all possible hit  combinations with enforced one-directionality:',int(((len(_l_Hits)**2)-len(_l_Hits))/2))
+           print('Initial number of all possible hit combinations is:',len(_l_Hits)**2)
+           print('Number of all possible hit combinations without self-permutations:',(len(_l_Hits)**2)-len(_l_Hits))
+           print('Number of all possible hit  combinations with enforced one-directionality:',int(((len(_l_Hits)**2)-len(_l_Hits))/2))
            for l in _l_Hits:
                _hit_count+=1
-               print(TimeStamp(),'Edge generation progress is ',round(100*_hit_count/len(_l_Hits),2), '%',end="\r", flush=True)
+               print('Edge generation progress is ',round(100*_hit_count/len(_l_Hits),2), '%',end="\r", flush=True)
                for r in _r_Hits:
                   if HitCluster.JoinHits(l,r,cut_dt,cut_dr):
                       _Tot_Hits.append(l+r)
-           print(TimeStamp(),'Number of all  hit combinations passing fiducial cuts:',len(_Tot_Hits))
+           print('Number of all  hit combinations passing fiducial cuts:',len(_Tot_Hits))
            import pandas as pd
            _Tot_Hits=pd.DataFrame(_Tot_Hits, columns = ['l_HitID','l_x','l_y','l_z','l_tx','l_ty','r_HitID','r_x','r_y','r_z','r_tx','r_ty'])
            self.HitPairs=_Tot_Hits[['l_HitID','l_z','r_HitID','r_z']]
