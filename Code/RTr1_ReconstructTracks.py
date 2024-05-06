@@ -207,19 +207,21 @@ if os.path.isfile(required_file_location)==False:
          print(UI.TimeStamp(),'Distributing input files...')
          for i in range(Xsteps):
              for j in range(Ysteps):
-                 Y_ID=int(j)/Y_overlap
-                 X_ID=int(i)/X_overlap
-                 tdata=data.drop(data.index[data['x'] >= ((X_ID+1)*stepX)])  #Keeping the relevant z slice
-                 tdata.drop(tdata.index[tdata['x'] < (X_ID*stepX)], inplace = True)  #Keeping the relevant z slice
-                 tdata.drop(tdata.index[tdata['y'] >= ((Y_ID+1)*stepY)], inplace = True)  #Keeping the relevant z slice
-                 tdata.drop(tdata.index[tdata['y'] < (Y_ID*stepY)], inplace = True)  #Keeping the relevant z slice
                  required_tfile_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/RTr1_'+RecBatchID+'_'+str(i)+'_'+str(j)+'_hits.csv'
                  if os.path.isfile(required_tfile_location)==False:
+                     Y_ID=int(j)/Y_overlap
+                     X_ID=int(i)/X_overlap
+                     tdata=data.drop(data.index[data['x'] >= ((X_ID+1)*stepX)])  #Keeping the relevant z slice
+                     tdata.drop(tdata.index[tdata['x'] < (X_ID*stepX)], inplace = True)  #Keeping the relevant z slice
+                     tdata.drop(tdata.index[tdata['y'] >= ((Y_ID+1)*stepY)], inplace = True)  #Keeping the relevant z slice
+                     tdata.drop(tdata.index[tdata['y'] < (Y_ID*stepY)], inplace = True)  #Keeping the relevant z slice
                      tdata.to_csv(required_tfile_location,index=False)
                      print(UI.TimeStamp(), bcolors.OKGREEN+"The segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+required_tfile_location+bcolors.ENDC)
+
+
          data.to_csv(required_file_location,index=False)
          Meta=UI.TrainingSampleMeta(RecBatchID)
-         Meta.IniHitClusterMetaData(stepX,stepY,stepZ,cut_dt,cut_dr,0.05,0.1,z_offset,y_offset,x_offset, Xsteps, Zsteps,X_overlap,Y_overlap,Z_overlap)
+         Meta.IniHitClusterMetaData(stepX,stepY,stepZ,cut_dt,cut_dr,0.05,0.1,z_offset,y_offset,x_offset, Xsteps, Zsteps,X_overlap,Y_overlap,Z_overlap,Ysteps)
          Meta.UpdateStatus(0)
          print(UI.PickleOperations(RecOutputMeta,'w', Meta)[1])
          UI.Msg('completed','Stage 0 has successfully completed')
