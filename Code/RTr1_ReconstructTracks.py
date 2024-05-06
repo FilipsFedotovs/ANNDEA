@@ -384,7 +384,7 @@ while Status<len(Program):
         Bad_Tracks[RecBatchID+'_Track_ID'] = Bad_Tracks[RecBatchID+'_Track_ID'].astype(str)
         Bad_Tracks=pd.merge(Bad_Tracks,Bad_Tracks_Stats,how='inner',on = [RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID',PM.z])
 
-    
+
 
         Bad_Tracks.sort_values([RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID',PM.z],ascending=[0,0,1],inplace=True)
 
