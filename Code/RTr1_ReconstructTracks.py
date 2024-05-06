@@ -41,6 +41,22 @@ class bcolors:   #We use it for the interface
     ENDC = '\033[0m'
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
+#Loading Directory locations
+import csv
+csv_reader=open('../config',"r")
+config = list(csv.reader(csv_reader))
+for c in config:
+    if c[0]=='AFS_DIR':
+        AFS_DIR=c[1]
+    if c[0]=='EOS_DIR':
+        EOS_DIR=c[1]
+    if c[0]=='PY_DIR':
+        PY_DIR=c[1]
+csv_reader.close()
+import sys
+sys.path.insert(1, AFS_DIR+'/Code/Utilities/')
+import U_UI as UI #This is where we keep routine utility functions
+import Parameters as PM #This is where we keep framework global parameters
 
 UI.WelcomeMsg('Initialising ANNDEA Tracking module...','Filips Fedotovs (PhD student at UCL), Dinis Beleza (MSci student at UCL)','Please reach out to filips.fedotovs@cern.ch for any queries')
 #Setting the parser - this script is usually not run directly, but is used by a Master version Counterpart that passes the required arguments
@@ -89,22 +105,7 @@ Xmin,Xmax,Ymin,Ymax=float(args.Xmin),float(args.Xmax),float(args.Ymin),float(arg
 Z_overlap,Y_overlap,X_overlap=int(args.Z_overlap),int(args.Y_overlap),int(args.X_overlap)
 SliceData=max(Xmin,Xmax,Ymin,Ymax)>0 #We don't slice data if all values are set to zero simultaneousy (which is the default setting)
 
-#Loading Directory locations
-import csv
-csv_reader=open('../config',"r")
-config = list(csv.reader(csv_reader))
-for c in config:
-    if c[0]=='AFS_DIR':
-        AFS_DIR=c[1]
-    if c[0]=='EOS_DIR':
-        EOS_DIR=c[1]
-    if c[0]=='PY_DIR':
-        PY_DIR=c[1]
-csv_reader.close()
-import sys
-sys.path.insert(1, AFS_DIR+'/Code/Utilities/')
-import U_UI as UI #This is where we keep routine utility functions
-import Parameters as PM #This is where we keep framework global parameters
+
 
 #Establishing paths
 EOSsubDIR=EOS_DIR+'/'+'ANNDEA'
