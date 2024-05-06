@@ -319,8 +319,8 @@ while Status<len(Program):
 
     elif Status==3:
       #Non standard processes (that don't follow the general pattern) have been coded here
-        print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
-        print(UI.TimeStamp(),bcolors.BOLD+'Stage 3:'+bcolors.ENDC+' Using the results from previous steps to map merged trackIDs to the original reconstruction file')
+      print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
+      print(UI.TimeStamp(),bcolors.BOLD+'Stage 3:'+bcolors.ENDC+' Using the results from previous steps to map merged trackIDs to the original reconstruction file')
       try:
         #Read the output with hit- ANN Track map
         FirstFile=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/Temp_RTr1c_'+RecBatchID+'_0'+'/RTr1c_'+RecBatchID+'_hit_cluster_rec_x_set_0.csv'
