@@ -81,6 +81,7 @@ parser.add_argument('--Z_overlap',help="Enter the level of overlap in integer nu
 parser.add_argument('--Y_overlap',help="Enter the level of overlap in integer number between reconstruction blocks along y-axis. (In order to avoid segmentation this value should be more than 1)", default='2')
 parser.add_argument('--X_overlap',help="Enter the level of overlap in integer number between reconstruction blocks along x-axis. (In order to avoid segmentation this value should be more than 1)", default='2')
 parser.add_argument('--CheckPoint',help="Save cluster sets during individual cluster tracking.", default='N')
+parser.add_argument('--ForceStatus',help="Local submission?", default='N')
 parser.add_argument('--ReqMemory',help="How much memory?", default='2 GB')
 
 ######################################## Parsing argument values  #############################################################
@@ -92,6 +93,7 @@ Patience=int(args.Patience)
 SubPause=int(args.SubPause)*60
 TrackFitCut=ast.literal_eval(args.TrackFitCut)
 SubGap=int(args.SubGap)
+ForceStatus=args.ForceStatus
 LocalSub=(args.LocalSub=='Y')
 if LocalSub:
    time_int=0
@@ -205,18 +207,20 @@ if os.path.isfile(required_file_location)==False:
          else:
             Ysteps=(math.ceil((y_max)/stepY)*(Y_overlap))-1
          print(UI.TimeStamp(),'Distributing input files...')
-         for i in range(Xsteps):
-             for j in range(Ysteps):
-                 required_tfile_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/RTr1_'+RecBatchID+'_'+str(i)+'_'+str(j)+'_hits.csv'
-                 if os.path.isfile(required_tfile_location)==False:
-                     Y_ID=int(j)/Y_overlap
-                     X_ID=int(i)/X_overlap
-                     tdata=data.drop(data.index[data['x'] >= ((X_ID+1)*stepX)])  #Keeping the relevant z slice
-                     tdata.drop(tdata.index[tdata['x'] < (X_ID*stepX)], inplace = True)  #Keeping the relevant z slice
-                     tdata.drop(tdata.index[tdata['y'] >= ((Y_ID+1)*stepY)], inplace = True)  #Keeping the relevant z slice
-                     tdata.drop(tdata.index[tdata['y'] < (Y_ID*stepY)], inplace = True)  #Keeping the relevant z slice
-                     tdata.to_csv(required_tfile_location,index=False)
-                     print(UI.TimeStamp(), bcolors.OKGREEN+"The segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+required_tfile_location+bcolors.ENDC)
+         with alive_bar(Xsteps*Ysteps,force_tty=True, title='Distributing input files...') as bar:
+             for i in range(Xsteps):
+                 for j in range(Ysteps):
+                     required_tfile_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/RTr1_'+RecBatchID+'_'+str(i)+'_'+str(j)+'_hits.csv'
+                     if os.path.isfile(required_tfile_location)==False:
+                         Y_ID=int(j)/Y_overlap
+                         X_ID=int(i)/X_overlap
+                         tdata=data.drop(data.index[data['x'] >= ((X_ID+1)*stepX)])  #Keeping the relevant z slice
+                         tdata.drop(tdata.index[tdata['x'] < (X_ID*stepX)], inplace = True)  #Keeping the relevant z slice
+                         tdata.drop(tdata.index[tdata['y'] >= ((Y_ID+1)*stepY)], inplace = True)  #Keeping the relevant z slice
+                         tdata.drop(tdata.index[tdata['y'] < (Y_ID*stepY)], inplace = True)  #Keeping the relevant z slice
+                         tdata.to_csv(required_tfile_location,index=False)
+                         print(UI.TimeStamp(), bcolors.OKGREEN+"The segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+required_tfile_location+bcolors.ENDC)
+                     bar()
 
 
          data.to_csv(required_file_location,index=False)
@@ -226,47 +230,21 @@ if os.path.isfile(required_file_location)==False:
          print(UI.PickleOperations(RecOutputMeta,'w', Meta)[1])
          UI.Msg('completed','Stage 0 has successfully completed')
          print(UI.TimeStamp(), bcolors.OKGREEN+"The segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+required_file_location+bcolors.ENDC)
-exit()
+elif os.path.isfile(RecOutputMeta)==True:
+    print(UI.TimeStamp(),'Loading previously saved data from ',bcolors.OKBLUE+RecOutputMeta+bcolors.ENDC)
+    MetaInput=UI.PickleOperations(RecOutputMeta,'r', 'N/A')
+    Meta=MetaInput[0]
+Zsteps=Meta.Zsteps
+Ysteps=Meta.Ysteps
+Xsteps=Meta.Xsteps
+stepZ=Meta.stepZ
+stepY=Meta.stepY
+stepX=Meta.stepX
+cut_dt=Meta.cut_dt
+cut_dr=Meta.cut_dr
+
 # ########################################     Preset framework parameters    #########################################
-input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/RTr1_'+RecBatchID+'_hits.csv'
-print(UI.TimeStamp(),'Loading preselected data from ',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
-data=pd.read_csv(input_file_location,header=0,usecols=['z','x','y'])
-print(UI.TimeStamp(),'Analysing data... ',bcolors.ENDC)
-z_offset=data['z'].min()
-data['z']=data['z']-z_offset
-z_max=data['z'].max()
-if Z_overlap==1:
-    Zsteps=math.ceil((z_max)/stepZ)
-else:
-    Zsteps=(math.ceil((z_max)/stepZ)*(Z_overlap))-1
-y_offset=data['y'].min()
-x_offset=data['x'].min()
-data['x']=data['x']-x_offset
-data['y']=data['y']-y_offset
-x_max=data['x'].max()
-y_max=data['y'].max()
 
-Program=[]
-#Calculating the number of volumes that will be sent to HTCondor for reconstruction. Account for overlap if specified.
-if X_overlap==1:
-    Xsteps=math.ceil((x_max)/stepX)
-else:
-    Xsteps=(math.ceil((x_max)/stepX)*(X_overlap))-1
-
-if Y_overlap==1:
-    Ysteps=math.ceil((y_max)/stepY)
-else:
-    Ysteps=(math.ceil((y_max)/stepY)*(Y_overlap))-1
-
-#If we chose reset mode we do a full cleanup.
-# #Reconstructing a single brick can cause in gereation of 100s of thousands of files - need to make sure that we remove them.
-# elif os.path.isfile(RecOutputMeta)==True:
-#     print(UI.TimeStamp(),'Loading previously saved data from ',bcolors.OKBLUE+RecOutputMeta+bcolors.ENDC)
-#     MetaInput=UI.PickleOperations(RecOutputMeta,'r', 'N/A')
-#     Meta=MetaInput[0]
-
-
-#The function bellow helps to automate the submission process
 UI.Msg('vanilla','Analysing the current script status...')
 Status=Meta.Status[-1]
 if ForceStatus!='N':
@@ -274,6 +252,7 @@ if ForceStatus!='N':
 UI.Msg('vanilla','Current stage is '+str(Status)+'...')
 
 ################ Set the execution sequence for the script
+Program=[]
 ###### Stage 0
 prog_entry=[]
 job_sets=[]
