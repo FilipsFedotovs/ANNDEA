@@ -321,14 +321,13 @@ while Status<len(Program):
       #Non standard processes (that don't follow the general pattern) have been coded here
       print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
       print(UI.TimeStamp(),bcolors.BOLD+'Stage 3:'+bcolors.ENDC+' Using the results from previous steps to map merged trackIDs to the original reconstruction file')
-      exit()
       try:
             #Read the output with hit- ANN Track map
-            FirstFile=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RTr1c_'+RecBatchID+'_0'+'/RTr1c_'+RecBatchID+'_hit_cluster_rec_x_set_0.csv'
-            print(UF.TimeStamp(),'Loading the file ',bcolors.OKBLUE+FirstFile+bcolors.ENDC)
+            FirstFile=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/Temp_RTr1c_'+RecBatchID+'_0'+'/RTr1c_'+RecBatchID+'_hit_cluster_rec_x_set_0.csv'
+            print(UI.TimeStamp(),'Loading the file ',bcolors.OKBLUE+FirstFile+bcolors.ENDC)
             TrackMap=pd.read_csv(FirstFile,header=0)
             input_file_location=args.f
-            print(UF.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
+            print(UI.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
             #Reading the original file with Raw hits
             Data=pd.read_csv(input_file_location,header=0)
             Data[PM.Hit_ID] = Data[PM.Hit_ID].astype(str)
@@ -350,7 +349,7 @@ while Status<len(Program):
 
             #It was discovered that the output is not perfect: while the hit fidelity is achieved we don't have a full plate hit fidelity for a given track. It is still possible for a track to have multiple hits at one plate.
             #In order to fix it we need to apply some additional logic to those problematic tracks.
-            print(UF.TimeStamp(),'Identifying problematic tracks where there is more than one hit per plate...')
+            print(UI.TimeStamp(),'Identifying problematic tracks where there is more than one hit per plate...')
             Hit_Map=Data[[RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID',PM.x,PM.y,PM.z,PM.tx,PM.ty,PM.Hit_ID]] #Separating the hit map
             Data.drop([RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID'],axis=1,inplace=True) #Remove the ANNDEA tracking info from the main data
 
@@ -363,11 +362,11 @@ while Status<len(Program):
 
             Hit_Map_Stats=Hit_Map_Stats.groupby([RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID']).agg({PM.z:pd.Series.nunique,PM.Hit_ID: pd.Series.nunique}).reset_index() #Calculate the number fo unique plates and hits
             Ini_No_Tracks=len(Hit_Map_Stats)
-            print(UF.TimeStamp(),bcolors.WARNING+'The initial number of tracks is '+ str(Ini_No_Tracks)+bcolors.ENDC)
+            print(UI.TimeStamp(),bcolors.WARNING+'The initial number of tracks is '+ str(Ini_No_Tracks)+bcolors.ENDC)
             Hit_Map_Stats=Hit_Map_Stats.rename(columns={PM.z: "No_Plates",PM.Hit_ID:"No_Hits"}) #Renaming the columns so they don't interfere once we join it back to the hit map
             Hit_Map_Stats=Hit_Map_Stats[Hit_Map_Stats.No_Plates >= PM.MinHitsTrack]
             Prop_No_Tracks=len(Hit_Map_Stats)
-            print(UF.TimeStamp(),bcolors.WARNING+'After dropping single hit tracks, left '+ str(Prop_No_Tracks)+' tracks...'+bcolors.ENDC)
+            print(UI.TimeStamp(),bcolors.WARNING+'After dropping single hit tracks, left '+ str(Prop_No_Tracks)+' tracks...'+bcolors.ENDC)
             Hit_Map=pd.merge(Hit_Map,Hit_Map_Stats,how='inner',on = [RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID']) #Join back to the hit map
             Good_Tracks=Hit_Map[Hit_Map.No_Plates == Hit_Map.No_Hits] #For all good tracks the number of hits matches the number of plates, we won't touch them
             Good_Tracks=Good_Tracks[[RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID',PM.Hit_ID]] #Just strip off the information that we don't need anymore
@@ -389,7 +388,7 @@ while Status<len(Program):
 
             Bad_Tracks.sort_values([RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID',PM.z],ascending=[0,0,1],inplace=True)
 
-            Bad_Tracks_CP_File=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RTr1c_'+RecBatchID+'_0'+'/RTr1c_'+RecBatchID+'_Bad_Tracks_CP.csv'
+            Bad_Tracks_CP_File=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/Temp_RTr1c_'+RecBatchID+'_0'+'/RTr1c_'+RecBatchID+'_Bad_Tracks_CP.csv'
             if os.path.isfile(Bad_Tracks_CP_File)==False or Mode=='RESET':
 
                 Bad_Tracks_Head=Bad_Tracks[[RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID']]
@@ -484,10 +483,10 @@ while Status<len(Program):
                 #Once we get coefficients for all tracks we convert them back to Pandas dataframe and join back to the data
                 Bad_Tracks_Head=pd.DataFrame(Bad_Tracks_Head, columns = [RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID','ax','t1x','t2x','ay','t1y','t2y'])
 
-                print(UF.TimeStamp(),'Saving the checkpoint file ',bcolors.OKBLUE+Bad_Tracks_CP_File+bcolors.ENDC)
+                print(UI.TimeStamp(),'Saving the checkpoint file ',bcolors.OKBLUE+Bad_Tracks_CP_File+bcolors.ENDC)
                 Bad_Tracks_Head.to_csv(Bad_Tracks_CP_File,index=False)
             else:
-               print(UF.TimeStamp(),'Loading the checkpoint file ',bcolors.OKBLUE+Bad_Tracks_CP_File+bcolors.ENDC)
+               print(UI.TimeStamp(),'Loading the checkpoint file ',bcolors.OKBLUE+Bad_Tracks_CP_File+bcolors.ENDC)
                Bad_Tracks_Head=pd.read_csv(Bad_Tracks_CP_File,header=0)
                Bad_Tracks_Head=Bad_Tracks_Head[Bad_Tracks_Head.ax != '[]']
                Bad_Tracks_Head['ax'] = Bad_Tracks_Head['ax'].astype(float)
@@ -497,18 +496,18 @@ while Status<len(Program):
                Bad_Tracks_Head['t1y'] = Bad_Tracks_Head['t1y'].astype(float)
                Bad_Tracks_Head['t2y'] = Bad_Tracks_Head['t2y'].astype(float)
 
-            print(UF.TimeStamp(),'Removing problematic hits...')
+            print(UI.TimeStamp(),'Removing problematic hits...')
             Bad_Tracks=pd.merge(Bad_Tracks,Bad_Tracks_Head,how='inner',on = [RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID'])
 
 
 
-            print(UF.TimeStamp(),'Calculating x and y coordinates of the fitted line for all plates in the track...')
+            print(UI.TimeStamp(),'Calculating x and y coordinates of the fitted line for all plates in the track...')
             #Calculating x and y coordinates of the fitted line for all plates in the track
             Bad_Tracks['new_x']=Bad_Tracks['ax']+(Bad_Tracks[PM.z]*Bad_Tracks['t1x'])+((Bad_Tracks[PM.z]**2)*Bad_Tracks['t2x'])
             Bad_Tracks['new_y']=Bad_Tracks['ay']+(Bad_Tracks[PM.z]*Bad_Tracks['t1y'])+((Bad_Tracks[PM.z]**2)*Bad_Tracks['t2y'])
 
             #Calculating how far hits deviate from the fit polynomial
-            print(UF.TimeStamp(),'Calculating how far hits deviate from the fit polynomial...')
+            print(UI.TimeStamp(),'Calculating how far hits deviate from the fit polynomial...')
             Bad_Tracks['d_x']=Bad_Tracks[PM.x]-Bad_Tracks['new_x']
             Bad_Tracks['d_y']=Bad_Tracks[PM.y]-Bad_Tracks['new_y']
 
@@ -518,7 +517,7 @@ while Status<len(Program):
             Bad_Tracks=Bad_Tracks[[RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID',PM.z,PM.Hit_ID,'d_r']]
 
             #Sort the tracks and their hits by Track ID, Plate and distance to the perfect line
-            print(UF.TimeStamp(),'Sorting the tracks and their hits by Track ID, Plate and distance to the perfect line...')
+            print(UI.TimeStamp(),'Sorting the tracks and their hits by Track ID, Plate and distance to the perfect line...')
             Bad_Tracks.sort_values([RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID',PM.z,'d_r'],ascending=[0,0,1,1],inplace=True)
 
             #If there are two hits per plate we will keep the one which is closer to the line
@@ -526,10 +525,10 @@ while Status<len(Program):
             Bad_Tracks=Bad_Tracks[[RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID',PM.Hit_ID]]
             Good_Tracks=pd.concat([Good_Tracks,Bad_Tracks]) #Combine all ANNDEA tracks together
             Data=pd.merge(Data,Good_Tracks,how='left', on=[PM.Hit_ID]) #Re-map corrected ANNDEA Tracks back to the main data
-            output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_RTr_OUTPUT_CLEANED.csv' #Final output. We can use this file for further operations
+            output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'.csv' #Final output. We can use this file for further operations
             Data.to_csv(output_file_location,index=False)
-            print(UF.TimeStamp(), bcolors.OKGREEN+"The tracked data has been written to"+bcolors.ENDC, bcolors.OKBLUE+output_file_location+bcolors.ENDC)
-            print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 4 has successfully completed'+bcolors.ENDC)
+            print(UI.TimeStamp(), bcolors.OKGREEN+"The tracked data has been written to"+bcolors.ENDC, bcolors.OKBLUE+output_file_location+bcolors.ENDC)
+            print(UI.TimeStamp(),bcolors.OKGREEN+'Stage 4 has successfully completed'+bcolors.ENDC)
             Status=4
       except Exception as e:
           print(UI.TimeStamp(),bcolors.FAIL+'Stage 4 is uncompleted due to: '+str(e)+bcolors.ENDC)
