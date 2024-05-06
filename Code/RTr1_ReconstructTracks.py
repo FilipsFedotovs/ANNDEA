@@ -499,9 +499,10 @@ while Status<len(Program):
         print(UI.TimeStamp(),'Removing problematic hits...')
         print(Bad_Tracks)
         print(Bad_Tracks_Head)
-        exit()
-        Bad_Tracks=pd.merge(Bad_Tracks,Bad_Tracks_Head,how='inner',on = [RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID'])
 
+        Bad_Tracks=pd.merge(Bad_Tracks,Bad_Tracks_Head,how='inner',on = [str(RecBatchID)+'_Brick_ID',str(RecBatchID)+'_Track_ID'])
+        print(Bad_Tracks)
+        exit()
 
 
         print(UI.TimeStamp(),'Calculating x and y coordinates of the fitted line for all plates in the track...')
