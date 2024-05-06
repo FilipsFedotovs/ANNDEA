@@ -79,6 +79,7 @@ pfx=args.pfx
 
 import U_UI as UI #This is where we keep routine utility functions
 import U_HC as HC_l
+import U_ML as ML
 #This function combines two segment object. Example: Segment 1 is [[a, _ ,b ,_ ,_ ][0.9,0.0,0.9,0.0,0.0]];  Segment 2 is [[a, _ ,c ,_ ,_ ][0.9,0.0,0.8,0.0,0.0]]; Segment 3 is [[_, d ,b ,_ ,_ ][0.0,0.8,0.8,0.0,0.0]]
 #In order to combine segments we have to have at least one common hit and no clashes. Segment 1 and 2 have a common hit a, but their third plates clash. Segment 1 can be combined with segment 3 which yields: [[a, d ,b ,_ ,_ ][0.8,0.0,1.7,0.0,0.0]]
 #Please note that if combination occurs then the hit weights combine together too
@@ -186,7 +187,7 @@ for k in range(0,Z_ID_Max):
                                 Acceptance=ModelMeta.TrainSessionsData[-1][-1][3]
                                 device = torch.device('cpu')
                                 #In PyTorch we don't save the actual model like in Tensorflow. We just save the weights, so we must regenerate the model again. The recipe is in the Model Meta file
-                                model = UI.GenerateModel(ModelMeta).to(device)
+                                model = ML.GenerateModel(ModelMeta).to(device)
                                 model.load_state_dict(torch.load(Model_Path))
                                 model.eval() #In Pytorch this function sets the model into the evaluation mode.
                                 torch_import=False
