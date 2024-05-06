@@ -497,6 +497,10 @@ while Status<len(Program):
            Bad_Tracks_Head['t2y'] = Bad_Tracks_Head['t2y'].astype(float)
 
         print(UI.TimeStamp(),'Removing problematic hits...')
+        Bad_Tracks_Head[str(RecBatchID)+'_Brick_ID'] = Bad_Tracks_Head[str(RecBatchID)+'_Brick_ID'].astype(str)
+        Bad_Tracks_Head[str(RecBatchID)+'_Track_ID'] = Bad_Tracks_Head[str(RecBatchID)+'_Track_ID'].astype(str)
+        Bad_Tracks[str(RecBatchID)+'_Brick_ID'] = Bad_Tracks[str(RecBatchID)+'_Brick_ID'].astype(str)
+        Bad_Tracks[str(RecBatchID)+'_Track_ID'] = Bad_Tracks[str(RecBatchID)+'_Track_ID'].astype(str)
         print(Bad_Tracks)
         print(Bad_Tracks_Head)
 
