@@ -56,7 +56,7 @@ sfx=args.sfx
 pfx=args.pfx
 ##############################################################################################################################
 ######################################### Starting the program ################################################################
-print(UF.TimeStamp(), bcolors.OKGREEN+"Modules Have been imported successfully..."+bcolors.ENDC)
+print(UI.TimeStamp(), bcolors.OKGREEN+"Modules Have been imported successfully..."+bcolors.ENDC)
 def zero_divide(a, b):
     if (b==0): return 0
     return a/b
