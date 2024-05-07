@@ -178,10 +178,10 @@ def main(self):
           if len(el)==2:
              OutputSize=el[1]
         records=[]
-        print('Params:',len(TrainSamples),NTrainBatches,OutputSize,TrainParams[1])
+        SampleSize=len(TrainSamples)
         for epoch in range(0, TrainParams[2]):
             CP1=datetime.datetime.now()
-            train_loss, itr=ML.CNNtrain(model, TrainSamples, NTrainBatches,OutputSize,TrainParams[1]),len(TrainSamples)
+            train_loss, itr=ML.CNNtrain(model, TrainSamples, NTrainBatches,OutputSize,TrainParams[1]),SampleSize
             CP2=datetime.datetime.now()
             print('Train time lapse ', CP2-CP1)
             val_loss=ML.CNNvalidate(model, ValSamples, NValBatches,OutputSize,TrainParams[1])
