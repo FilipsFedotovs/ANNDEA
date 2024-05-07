@@ -991,7 +991,7 @@ def CNNtrain(model, Sample, Batches,num_classes, BatchSize):
         Subsample=[]
         for s in range(min(BatchSize,len(Sample))):
             Subsample.append(Sample.pop(0))
-        BatchImages=LoadRenderImages(Subsample,1,4,num_classes)
+        BatchImages=LoadRenderImages(Subsample,1,min(BatchSize,len(Sample)),num_classes)
         t=model.train_on_batch(BatchImages[0],BatchImages[1])
         loss_accumulative+=t[0].item()
         acc_accumulative+=t[1].item()
@@ -1032,7 +1032,7 @@ def CNNvalidate(model, Sample, Batches,num_classes, BatchSize):
         Subsample=[]
         for s in range(min(BatchSize,len(Sample))):
             Subsample.append(Sample.pop(0))
-        BatchImages=LoadRenderImages(Sample,1,4,num_classes)
+        BatchImages=LoadRenderImages(Sample,1,min(BatchSize,len(Sample)),num_classes)
         v=model.test_on_batch(BatchImages[0],BatchImages[1])
         loss_accumulative+=v[0].item()
         acc_accumulative+=v[1].item()
