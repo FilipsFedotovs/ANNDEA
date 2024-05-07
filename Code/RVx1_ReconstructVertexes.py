@@ -735,6 +735,43 @@ while Status<len(Program):
         print(UI.TimeStamp(), "Loading the fit track seeds from the file",bcolors.OKBLUE+input_file_location+bcolors.ENDC)
         base_data=UI.PickleOperations(input_file_location,'r','N/A')[0]
         original_data_seeds=len(base_data)
+        if CalibrateAcceptance:
+            print(UF.TimeStamp(),'Calibrating the acceptance...')
+            eval_data_file=EOS_DIR+'/ANNDEA/Data/TEST_SET/EUTr1b_'+RecBatchID+'_SEED_TRUTH_COMBINATIONS.csv'
+            eval_data=pd.read_csv(eval_data_file,header=0,usecols=['Segment_1','Segment_2'])
+            eval_data["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(eval_data['Segment_1'], eval_data['Segment_2'])]
+            eval_data.drop(['Segment_1'],axis=1,inplace=True)
+            eval_data.drop(['Segment_2'],axis=1,inplace=True)
+            eval_data['True']=1
+            csv_out=[]
+            for Tr in base_data:
+                  csv_out.append([Tr.Header[0],Tr.Header[1],Tr.Fit])
+            rec_data = pd.DataFrame(csv_out, columns = ['Segment_1','Segment_2','Fit'])
+            rec_data["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(rec_data['Segment_1'], rec_data['Segment_2'])]
+            rec_data.drop(['Segment_1'],axis=1,inplace=True)
+            rec_data.drop(['Segment_2'],axis=1,inplace=True)
+            combined_data=pd.merge(rec_data,eval_data,how='left',on='Seed_ID')
+            combined_data=combined_data.fillna(0)
+            combined_data.drop(['Seed_ID'],axis=1,inplace=True)
+            print(combined_data)
+            TP = combined_data['True'].sum()
+            P = combined_data['True'].count()
+            Min_Acceptance=round(combined_data['Fit'].min(),2)
+            FP=P-TP
+            Ini_Precision=TP/P
+            F1=(2*(Ini_Precision))/(Ini_Precision+1.0)
+            iterations=int((1.0-Min_Acceptance)/0.01)
+            for i in range(1,iterations):
+                cut_off=Min_Acceptance+(i*0.01)
+                print('Cutoff at:',cut_off)
+                cut_data=combined_data.drop(combined_data.index[combined_data['Fit'] < cut_off])
+                tp = cut_data['True'].sum()
+                p=cut_data['True'].count()
+                precision=tp/p
+                recall=tp/TP
+                f1=(2*(precision*recall))/(precision+recall)
+                print('Cutoff at:',cut_off,'; Precision:', precision, '; Recall:', recall, '; F1:', f1)
+            exit()
         no_iter = int(math.ceil(float(original_data_seeds / float(PM.MaxSeedsPerVxPool))))
         prog_entry=[]
         Program_Dummy=[]
