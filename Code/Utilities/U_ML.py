@@ -989,9 +989,10 @@ def CNNtrain(model, Sample, Batches,num_classes, BatchSize):
     for ib in range(Batches):
 # Calling psutil.cpu_precent() for 4 seconds
         Subsample=[]
-        for s in range(min(BatchSize,len(Sample))):
+        SampleSize=len(Sample)
+        for s in range(min(BatchSize,SampleSize)):
             Subsample.append(Sample.pop(0))
-        BatchImages=LoadRenderImages(Subsample,1,min(BatchSize,len(SubSample)),num_classes)
+        BatchImages=LoadRenderImages(Subsample,1,min(BatchSize,len(Subsample)),num_classes)
         t=model.train_on_batch(BatchImages[0],BatchImages[1])
         loss_accumulative+=t[0].item()
         acc_accumulative+=t[1].item()
@@ -1030,7 +1031,8 @@ def CNNvalidate(model, Sample, Batches,num_classes, BatchSize):
     acc_accumulative = 0
     for ib in range(Batches):
         Subsample=[]
-        for s in range(min(BatchSize,len(Sample))):
+        SampleSize=len(Sample)  
+        for s in range(min(BatchSize,SampleSize)):
             Subsample.append(Sample.pop(0))
         BatchImages=LoadRenderImages(Sample,1,min(BatchSize,len(Subsample)),num_classes)
         v=model.test_on_batch(BatchImages[0],BatchImages[1])
