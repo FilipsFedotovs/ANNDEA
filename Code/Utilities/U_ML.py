@@ -1034,7 +1034,7 @@ def CNNvalidate(model, Sample, Batches,num_classes, BatchSize):
         SampleSize=len(Sample)  
         for s in range(min(BatchSize,SampleSize)):
             Subsample.append(Sample.pop(0))
-        BatchImages=LoadRenderImages(SubSample,1,BatchSize,num_classes)
+        BatchImages=LoadRenderImages(Subsample,1,BatchSize,num_classes)
         v=model.test_on_batch(BatchImages[0],BatchImages[1])
         loss_accumulative+=v[0].item()
         acc_accumulative+=v[1].item()
