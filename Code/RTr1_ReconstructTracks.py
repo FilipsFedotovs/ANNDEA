@@ -325,7 +325,6 @@ while Status<len(Program):
         #Read the output with hit- ANN Track map
         FirstFile=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/Temp_RTr1c_'+RecBatchID+'_0'+'/RTr1c_'+RecBatchID+'_hit_cluster_rec_x_set_0.csv'
         print(UI.TimeStamp(),'Loading the file ',bcolors.OKBLUE+FirstFile+bcolors.ENDC)
-        exit()
         TrackMap=pd.read_csv(FirstFile,header=0)
         input_file_location=args.f
         print(UI.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
