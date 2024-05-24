@@ -697,6 +697,8 @@ while Status<len(Program):
             eval_data.drop(['Segment_1'],axis=1,inplace=True)
             eval_data.drop(['Segment_2'],axis=1,inplace=True)
             eval_data['True']=1
+            print(base_data)
+            exit()
             csv_out=[]
             for Tr in base_data:
                   csv_out.append([Tr.Header[0],Tr.Header[1],Tr.Fit])
