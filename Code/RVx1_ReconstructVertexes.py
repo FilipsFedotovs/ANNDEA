@@ -689,6 +689,7 @@ while Status<len(Program):
         base_data['Seed_Link_Fit'] = base_data.apply(PM.Seed_Bond_Fit_Acceptance,axis=1)
         base_data['Seed_Index'] = base_data.index
         base_data.drop(base_data.index[base_data['Seed_Link_Fit'] < LinkAcceptance],inplace=True)  # Dropping the seeds that don't pass the link fit threshold
+        base_data.drop(base_data.index[base_data['Seed_CNN_Fit'] < Acceptance],inplace=True)  # Dropping the seeds that don't pass the link fit threshold
         if CalibrateAcceptance:
             print(UI.TimeStamp(),'Calibrating the acceptance...')
             eval_data_file=EOS_DIR+'/ANNDEA/Data/TEST_SET/'+RecBatchID+'/EVx1b_'+RecBatchID+'_SEED_TRUTH_COMBINATIONS.csv'
@@ -725,7 +726,7 @@ while Status<len(Program):
                 f1=(2*(precision*recall))/(precision+recall)
                 print('Cutoff at:',cut_off,'; Precision:', precision, '; Recall:', recall, '; Overall recall:', o_recall, '; F1:', f1)
             exit()
-        base_data.drop(base_data.index[base_data['Seed_CNN_Fit'] < Acceptance],inplace=True)  # Dropping the seeds that don't pass the link fit threshold
+
         
         Records_After_Compression=len(base_data)
         if args.Log=='Y':
