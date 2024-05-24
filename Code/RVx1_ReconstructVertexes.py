@@ -698,19 +698,16 @@ while Status<len(Program):
             eval_data.drop(['Segment_2'],axis=1,inplace=True)
             eval_data['True']=1
             base_data=base_data[['Track_1','Track_2','Seed_CNN_Fit']]
-            print(base_data)
             base_data["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(base_data['Track_1'], base_data['Track_2'])]
-            base_data.drop(['Segment_1'],axis=1,inplace=True)
-            base_data.drop(['Segment_2'],axis=1,inplace=True)
-            print(base_data)
-            exit()
-            combined_data=pd.merge(rec_data,eval_data,how='left',on='Seed_ID')
+            base_data.drop(['Track_1'],axis=1,inplace=True)
+            base_data.drop(['Track_2'],axis=1,inplace=True)
+            combined_data=pd.merge(base_data,eval_data,how='left',on='Seed_ID')
             combined_data=combined_data.fillna(0)
             combined_data.drop(['Seed_ID'],axis=1,inplace=True)
             print(combined_data)
             TP = combined_data['True'].sum()
             P = combined_data['True'].count()
-            Min_Acceptance=round(combined_data['Fit'].min(),2)
+            Min_Acceptance=round(combined_data['Seed_CNN_Fit'].min(),2)
             FP=P-TP
             Ini_Precision=TP/P
             F1=(2*(Ini_Precision))/(Ini_Precision+1.0)
@@ -718,7 +715,7 @@ while Status<len(Program):
             for i in range(1,iterations):
                 cut_off=Min_Acceptance+(i*0.01)
                 print('Cutoff at:',cut_off)
-                cut_data=combined_data.drop(combined_data.index[combined_data['Fit'] < cut_off])
+                cut_data=combined_data.drop(combined_data.index[combined_data['Seed_CNN_Fit'] < cut_off])
                 tp = cut_data['True'].sum()
                 p=cut_data['True'].count()
                 precision=tp/p
