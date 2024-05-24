@@ -721,7 +721,7 @@ while Status<len(Program):
                 precision=tp/p
                 recall=tp/TP
                 o_recall=tp/OP
-                f1=(2*(precision*recall))/(precision+recall)
+                f1=(2*(precision*o_recall))/(precision+o_recall)
                 print('Cutoff at:',cut_off,'; Precision:', round(precision,3), '; Recall:', round(recall,3), '; Overall recall:', round(o_recall,3), '; F1:', round(f1,3))
             exit()
 
