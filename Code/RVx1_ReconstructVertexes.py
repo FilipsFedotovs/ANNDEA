@@ -697,6 +697,7 @@ while Status<len(Program):
             eval_data.drop(['Segment_1'],axis=1,inplace=True)
             eval_data.drop(['Segment_2'],axis=1,inplace=True)
             eval_data['True']=1
+            OP=len(eval_data)
             base_data=base_data[['Track_1','Track_2','Seed_CNN_Fit']]
             base_data["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(base_data['Track_1'], base_data['Track_2'])]
             base_data.drop(['Track_1'],axis=1,inplace=True)
@@ -720,8 +721,9 @@ while Status<len(Program):
                 p=cut_data['True'].count()
                 precision=tp/p
                 recall=tp/TP
+                o_recall=tp/OP
                 f1=(2*(precision*recall))/(precision+recall)
-                print('Cutoff at:',cut_off,'; Precision:', precision, '; Recall:', recall, '; F1:', f1)
+                print('Cutoff at:',cut_off,'; Precision:', precision, '; Recall:', recall, '; Overall recall:', o_recall, '; F1:', f1)
             exit()
         base_data.drop(base_data.index[base_data['Seed_CNN_Fit'] < Acceptance],inplace=True)  # Dropping the seeds that don't pass the link fit threshold
         
