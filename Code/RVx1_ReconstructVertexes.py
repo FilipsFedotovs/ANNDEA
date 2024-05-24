@@ -691,7 +691,7 @@ while Status<len(Program):
         base_data.drop(base_data.index[base_data['Seed_Link_Fit'] < LinkAcceptance],inplace=True)  # Dropping the seeds that don't pass the link fit threshold
         if CalibrateAcceptance:
             print(UI.TimeStamp(),'Calibrating the acceptance...')
-            eval_data_file=EOS_DIR+'/ANNDEA/Data/TEST_SET/EUTr1b_'+RecBatchID+'_SEED_TRUTH_COMBINATIONS.csv'
+            eval_data_file=EOS_DIR+'/ANNDEA/Data/TEST_SET/'+RecBatchID+'/EVx1b_'+RecBatchID+'_SEED_TRUTH_COMBINATIONS.csv'
             eval_data=pd.read_csv(eval_data_file,header=0,usecols=['Segment_1','Segment_2'])
             eval_data["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(eval_data['Segment_1'], eval_data['Segment_2'])]
             eval_data.drop(['Segment_1'],axis=1,inplace=True)
@@ -700,11 +700,13 @@ while Status<len(Program):
             csv_out=[]
             for Tr in base_data:
                   csv_out.append([Tr.Header[0],Tr.Header[1],Tr.Fit])
-            exit()
+
             rec_data = pd.DataFrame(csv_out, columns = ['Segment_1','Segment_2','Fit'])
             rec_data["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(rec_data['Segment_1'], rec_data['Segment_2'])]
             rec_data.drop(['Segment_1'],axis=1,inplace=True)
             rec_data.drop(['Segment_2'],axis=1,inplace=True)
+            print(rec_data)
+            exit()
             combined_data=pd.merge(rec_data,eval_data,how='left',on='Seed_ID')
             combined_data=combined_data.fillna(0)
             combined_data.drop(['Seed_ID'],axis=1,inplace=True)
