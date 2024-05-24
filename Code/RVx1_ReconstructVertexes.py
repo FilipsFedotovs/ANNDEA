@@ -706,7 +706,6 @@ while Status<len(Program):
             combined_data=pd.merge(base_data,eval_data,how='left',on='Seed_ID')
             combined_data=combined_data.fillna(0)
             combined_data.drop(['Seed_ID'],axis=1,inplace=True)
-            print(combined_data)
             TP = combined_data['True'].sum()
             P = combined_data['True'].count()
             Min_Acceptance=round(combined_data['Seed_CNN_Fit'].min(),2)
@@ -724,7 +723,7 @@ while Status<len(Program):
                 recall=tp/TP
                 o_recall=tp/OP
                 f1=(2*(precision*recall))/(precision+recall)
-                print('Cutoff at:',cut_off,'; Precision:', precision, '; Recall:', recall, '; Overall recall:', o_recall, '; F1:', f1)
+                print('Cutoff at:',cut_off,'; Precision:', round(precision,3), '; Recall:', round(recall,3), '; Overall recall:', round(o_recall,3), '; F1:', round(f1,3))
             exit()
 
         
