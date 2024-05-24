@@ -697,17 +697,12 @@ while Status<len(Program):
             eval_data.drop(['Segment_1'],axis=1,inplace=True)
             eval_data.drop(['Segment_2'],axis=1,inplace=True)
             eval_data['True']=1
+            base_data=base_data[['Track_1','Track_2','Seed_CNN_Fit']]
             print(base_data)
-            exit()
-            csv_out=[]
-            for Tr in base_data:
-                  csv_out.append([Tr.Header[0],Tr.Header[1],Tr.Fit])
-
-            rec_data = pd.DataFrame(csv_out, columns = ['Segment_1','Segment_2','Fit'])
-            rec_data["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(rec_data['Segment_1'], rec_data['Segment_2'])]
-            rec_data.drop(['Segment_1'],axis=1,inplace=True)
-            rec_data.drop(['Segment_2'],axis=1,inplace=True)
-            print(rec_data)
+            base_data["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(base_data['Track_1'], base_data['Track_2'])]
+            base_data.drop(['Segment_1'],axis=1,inplace=True)
+            base_data.drop(['Segment_2'],axis=1,inplace=True)
+            print(base_data)
             exit()
             combined_data=pd.merge(rec_data,eval_data,how='left',on='Seed_ID')
             combined_data=combined_data.fillna(0)
