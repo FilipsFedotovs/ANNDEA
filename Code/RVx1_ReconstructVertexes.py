@@ -553,9 +553,14 @@ while Status<len(Program):
                         result=pd.concat([result,new_result])
 
         Records=len(result)
-        result["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(result['Segment_1'], result['Segment_2'])]
-        result.drop_duplicates(subset="Seed_ID",keep='first',inplace=True)
         result.drop(result.index[result['Segment_1'] == result['Segment_2']], inplace = True)
+        print(result)
+        result["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(result['Segment_1'], result['Segment_2'])]
+        print(result)
+        result.drop_duplicates(subset="Seed_ID",keep='first',inplace=True)
+        print(result)
+        exit()
+
         result.drop(["Seed_ID"],axis=1,inplace=True)
         Records_After_Compression=len(result)
         if Records>0:
