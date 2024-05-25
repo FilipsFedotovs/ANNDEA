@@ -402,7 +402,7 @@ if Log and (os.path.isfile(required_eval_file_location)==False):
         data=data.drop(['track_len'],axis=1)
     final_rows=len(data.axes[0])
     print(UI.TimeStamp(),'After removing tracks with specific lengths we have',final_rows,' hits left')
-
+    print(data)
     compress_data=data.drop([PM.x,PM.y,PM.z,PM.tx,PM.ty],axis=1)
     compress_data['MC_Mother_No']= compress_data['MC_Vertex_ID']
     compress_data=compress_data.groupby(by=['Rec_Seg_ID','MC_Vertex_ID'])['MC_Mother_No'].count().reset_index()
@@ -554,12 +554,8 @@ while Status<len(Program):
 
         Records=len(result)
         result.drop(result.index[result['Segment_1'] == result['Segment_2']], inplace = True)
-        print(result)
         result["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(result['Segment_1'], result['Segment_2'])]
-        print(result)
         result.drop_duplicates(subset="Seed_ID",keep='first',inplace=True)
-        print(result)
-        exit()
 
         result.drop(["Seed_ID"],axis=1,inplace=True)
         Records_After_Compression=len(result)
