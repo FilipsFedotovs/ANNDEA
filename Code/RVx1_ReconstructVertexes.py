@@ -332,6 +332,7 @@ if Log and (os.path.isfile(required_eval_file_location)==False):
     print(UI.TimeStamp(),'The cleaned data has ',final_rows,' hits')
     data[PM.MC_Event_ID] = data[PM.MC_Event_ID].astype(str)
     data[PM.MC_VX_ID] = data[PM.MC_VX_ID].astype(str)
+
     data[BrickID] = data[BrickID].astype(str)
     data[TrackID] = data[TrackID].astype(str)
     data['Rec_Seg_ID'] = data[TrackID] + '-' + data[BrickID]
@@ -402,8 +403,6 @@ if Log and (os.path.isfile(required_eval_file_location)==False):
         data=data.drop(['track_len'],axis=1)
     final_rows=len(data.axes[0])
     print(UI.TimeStamp(),'After removing tracks with specific lengths we have',final_rows,' hits left')
-    print(data)
-    exit()
     compress_data=data.drop([PM.x,PM.y,PM.z,PM.tx,PM.ty],axis=1)
     compress_data['MC_Mother_No']= compress_data['MC_Vertex_ID']
     compress_data=compress_data.groupby(by=['Rec_Seg_ID','MC_Vertex_ID'])['MC_Mother_No'].count().reset_index()
