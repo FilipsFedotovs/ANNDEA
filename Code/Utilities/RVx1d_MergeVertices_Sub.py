@@ -47,10 +47,7 @@ if PY_DIR!='': #Temp solution
     sys.path.append('/usr/lib/python3.9/site-packages')
 sys.path.append(AFS_DIR+'/Code/Utilities')
 import U_UI as UF #This is where we keep routine utility functions
-import pandas as pd #We use Panda for a routine data processing
-import math #We use it for data manipulation
-import gc  #Helps to clear memory
-import numpy as np
+
 #Specifying the full path to input/output files
 input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+BatchID+'/RVx1c_'+BatchID+'_Link_Fit_Seeds.pkl'
 output_file_location=EOS_DIR+p+'/Temp_'+pfx+'_'+BatchID+'_'+str(0)+'/'+pfx+'_'+BatchID+'_'+o+'_'+str(i)+sfx
@@ -77,7 +74,7 @@ while SeedCounterContinue:
         if SubjectSeed.InjectSeed(ObjectSeed):
            print(1,SeedCounter,len(base_data),temp,SubjectSeed.Header,ObjectSeed.Header)
            base_data.pop(base_data.index(ObjectSeed))
-           print(2,SeedCounter,len(base_data),temp,SubjectSeed.Header,ObjectSeed.Header)
+           print(2,SeedCounter,len(base_data),temp,SubjectSeed.Header,ObjectSeed.Header,base_data[SeedCounter+1].header, base_data[1].header,base_data[0].header)
            x=input()
     SeedCounter+=1
 print(str(InitialDataLength), "2-track vertices were merged into", str(len(base_data)), 'vertices with higher multiplicity...')
