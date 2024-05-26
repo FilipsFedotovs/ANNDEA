@@ -77,7 +77,7 @@ while SeedCounterContinue:
         if SubjectSeed.InjectSeed(ObjectSeed):
            base_data.pop(base_data.index(ObjectSeed))
            print(2,SeedCounter,len(base_data),SubjectSeed.Header,ObjectSeed.Header)
-    x=input()
+        x=input()
     SeedCounter+=1
 print(str(InitialDataLength), "2-track vertices were merged into", str(len(base_data)), 'vertices with higher multiplicity...')
 print(UF.PickleOperations(output_file_location,'w', base_data)[1])
