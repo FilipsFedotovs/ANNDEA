@@ -778,7 +778,7 @@ while Status<len(Program):
         for b in base_data:
             if b.Header[0]=='58862.0' or b.Header[0]=='68496.0':
                 print(b.Header)
-             if b.Header[1]=='58862.0' or b.Header[1]=='68496.0':
+            if b.Header[1]=='58862.0' or b.Header[1]=='68496.0':
                 print(b.Header)
         exit()
         #no_iter = int(math.ceil(float(original_data_seeds / float(PM.MaxSeedsPerVxPool))))
