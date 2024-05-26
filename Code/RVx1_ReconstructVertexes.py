@@ -765,6 +765,7 @@ while Status<len(Program):
         for b in object_data:
             if b.Header[0]=='58862.0-31' and b.Header[1]=='68496.0-31':
                 print(b.Header)
+        print(object_data[26471])
         exit()
         selected_objects=[]
         for nd in range(len(base_data)):
