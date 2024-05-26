@@ -776,9 +776,9 @@ while Status<len(Program):
         base_data=UI.PickleOperations(input_file_location,'r','N/A')[0]
         original_data_seeds=len(base_data)
         for b in base_data:
-            if b.Header[0]=='58862.0' or b.Header[0]=='68496.0':
+            if b.Header[0]=='58862.0-31' or b.Header[0]=='68496.0-31':
                 print(b.Header)
-            if b.Header[1]=='58862.0' or b.Header[1]=='68496.0':
+            if b.Header[1]=='58862.0-31' or b.Header[1]=='68496.0-31':
                 print(b.Header)
         exit()
         #no_iter = int(math.ceil(float(original_data_seeds / float(PM.MaxSeedsPerVxPool))))
