@@ -775,7 +775,12 @@ while Status<len(Program):
         print(UI.TimeStamp(), "Loading the fit track seeds from the file",bcolors.OKBLUE+input_file_location+bcolors.ENDC)
         base_data=UI.PickleOperations(input_file_location,'r','N/A')[0]
         original_data_seeds=len(base_data)
-        
+        for b in base_data:
+            if b.Header[0]=='58862.0' or b.Header[0]=='68496.0':
+                print(b.Header)
+             if b.Header[1]=='58862.0' or b.Header[1]=='68496.0':
+                print(b.Header)
+        exit()
         #no_iter = int(math.ceil(float(original_data_seeds / float(PM.MaxSeedsPerVxPool))))
         no_iter=1
         prog_entry=[]
