@@ -756,6 +756,8 @@ while Status<len(Program):
         new_data=[]
         for b in base_data:
             new_data.append(b[6])
+            if b[0]=='58862.0-31':
+                print(b)
         base_data=new_data
         del new_data
         print(UI.TimeStamp(), 'Loading seed object data from ', bcolors.OKBLUE + input_file_location + bcolors.ENDC)
