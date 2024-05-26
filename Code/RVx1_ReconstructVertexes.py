@@ -761,6 +761,12 @@ while Status<len(Program):
         del new_data
         print(UI.TimeStamp(), 'Loading seed object data from ', bcolors.OKBLUE + input_file_location + bcolors.ENDC)
         object_data = UI.PickleOperations(input_file_location,'r','N/A')[0]
+        for b in object_data:
+            if b.Header[0]=='58862.0-31' or b.Header[0]=='68496.0-31':
+                print(b.Header)
+            if b.Header[1]=='58862.0-31' or b.Header[1]=='68496.0-31':
+                print(b.Header)
+        exit()
         selected_objects=[]
         for nd in range(len(base_data)):
             selected_objects.append(object_data[base_data[nd]])
