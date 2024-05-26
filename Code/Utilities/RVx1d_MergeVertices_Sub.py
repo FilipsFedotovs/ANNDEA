@@ -81,9 +81,5 @@ for i in range(20):
     print(str(InitialDataLength), "2-track vertices were merged into", str(len(base_data)), 'vertices with higher multiplicity...')
 
 
-
-
-
-exit()
 print(UF.PickleOperations(output_file_location,'w', base_data)[1])
 print(UF.TimeStamp(), "Saving the results into the file",output_file_location)
