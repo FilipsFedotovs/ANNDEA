@@ -94,12 +94,34 @@ while SeedCounterContinue:
     for ObjectSeed in base_data[SeedCounter+1:]:
         temp=SubjectSeed.Header,ObjectSeed.Header
         if SubjectSeed.InjectSeed(ObjectSeed):
-           print(1,SeedCounter,len(base_data),temp,SubjectSeed.Header,ObjectSeed.Header)
+           # print(1,SeedCounter,len(base_data),SubjectSeed.Header,ObjectSeed.Header)
            base_data.pop(base_data.index(ObjectSeed))
-           print(2,SeedCounter,len(base_data),base_data[SeedCounter+1].Header,base_data[SeedCounter].Header)
-           x=input()
+           # print(2,SeedCounter,len(base_data),base_data[SeedCounter+1].Header,base_data[SeedCounter].Header)
+           # x=input()
     SeedCounter+=1
 print(str(InitialDataLength), "2-track vertices were merged into", str(len(base_data)), 'vertices with higher multiplicity...')
+
+InitialDataLength=len(base_data)
+SeedCounter=0
+SeedCounterContinue=True
+while SeedCounterContinue:
+    if SeedCounter>=len(base_data):
+       SeedCounterContinue=False
+       break
+    #progress=round(float(SeedCounter)/float(len(base_data))*100,0)
+    #print(UF.TimeStamp(),'progress is ',progress,' %', end="\r", flush=True) #Progress display
+    SubjectSeed=base_data[SeedCounter]
+
+    for ObjectSeed in base_data[SeedCounter+1:]:
+        temp=SubjectSeed.Header,ObjectSeed.Header
+        if SubjectSeed.InjectSeed(ObjectSeed):
+           # print(1,SeedCounter,len(base_data),SubjectSeed.Header,ObjectSeed.Header)
+           base_data.pop(base_data.index(ObjectSeed))
+           # print(2,SeedCounter,len(base_data),base_data[SeedCounter+1].Header,base_data[SeedCounter].Header)
+           # x=input()
+    SeedCounter+=1
+print(str(InitialDataLength), "2-track vertices were merged into", str(len(base_data)), 'vertices with higher multiplicity...')
+
 exit()
 print(UF.PickleOperations(output_file_location,'w', base_data)[1])
 print(UF.TimeStamp(), "Saving the results into the file",output_file_location)
