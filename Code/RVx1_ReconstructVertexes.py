@@ -805,25 +805,25 @@ while Status<len(Program):
                     NewData=UI.PickleOperations(required_file_location,'r','N/A')[0]
                     VertexPool+=NewData
               print(UI.TimeStamp(), 'As a result of the previous operation',str(original_data_seeds),'seeds were merged into',str(len(VertexPool)),'vertices...')
-              exit()
-              # comp_ratio = round((float(len(VertexPool)) / float(original_data_seeds)) * 100, 2)
-              # print(UI.TimeStamp(), 'The compression ratio is',comp_ratio, '%...')
-              # print(UI.TimeStamp(), 'Ok starting the final merging of the remained vertices')
-              # InitialDataLength=len(VertexPool)
-              # SeedCounter=0
-              # SeedCounterContinue=True
-              # while SeedCounterContinue:
-              #     if SeedCounter==len(VertexPool):
-              #                     SeedCounterContinue=False
-              #                     break
-              #     progress=round((float(SeedCounter)/float(len(VertexPool)))*100,0)
-              #     print(UI.TimeStamp(),'progress is ',progress,' %', end="\r", flush=True) #Progress display
-              #     SubjectSeed=VertexPool[SeedCounter]
-              #     for ObjectSeed in VertexPool[SeedCounter+1:]:
-              #                 if SubjectSeed.InjectSeed(ObjectSeed):
-              #                             VertexPool.pop(VertexPool.index(ObjectSeed))
-              #     SeedCounter+=1
-              # print(str(InitialDataLength), "vertices from different files were merged into", str(len(VertexPool)), 'vertices with higher multiplicity...')
+
+              comp_ratio = round((float(len(VertexPool)) / float(original_data_seeds)) * 100, 2)
+              print(UI.TimeStamp(), 'The compression ratio is',comp_ratio, '%...')
+              print(UI.TimeStamp(), 'Ok starting the final merging of the remained vertices')
+              InitialDataLength=len(VertexPool)
+              SeedCounter=0
+              SeedCounterContinue=True
+              while SeedCounterContinue:
+                  if SeedCounter==len(VertexPool):
+                                  SeedCounterContinue=False
+                                  break
+                  progress=round((float(SeedCounter)/float(len(VertexPool)))*100,0)
+                  print(UI.TimeStamp(),'progress is ',progress,' %', end="\r", flush=True) #Progress display
+                  SubjectSeed=VertexPool[SeedCounter]
+                  for ObjectSeed in VertexPool[SeedCounter+1:]:
+                              if SubjectSeed.InjectSeed(ObjectSeed):
+                                          VertexPool.pop(VertexPool.index(ObjectSeed))
+                  SeedCounter+=1
+              print(str(InitialDataLength), "vertices from different files were merged into", str(len(VertexPool)), 'vertices with higher multiplicity...')
               for v in range(0,len(VertexPool)):
                     VertexPool[v].AssignANNVxUID(v)
               csv_out=[]
