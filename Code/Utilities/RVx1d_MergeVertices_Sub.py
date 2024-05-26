@@ -75,6 +75,7 @@ while SeedCounterContinue:
     for ObjectSeed in base_data[SeedCounter+1:]:
         temp=SubjectSeed.Header,ObjectSeed.Header
         if SubjectSeed.InjectSeed(ObjectSeed):
+           print(1,SeedCounter,len(base_data),temp,SubjectSeed.Header,ObjectSeed.Header)
            base_data.pop(base_data.index(ObjectSeed))
            print(2,SeedCounter,len(base_data),temp,SubjectSeed.Header,ObjectSeed.Header)
            x=input()
