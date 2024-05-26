@@ -691,6 +691,7 @@ while Status<len(Program):
         base_data['Seed_Index'] = base_data.index
         base_data.drop(base_data.index[base_data['Seed_Link_Fit'] < LinkAcceptance],inplace=True)  # Dropping the seeds that don't pass the link fit threshold
         base_data.drop(base_data.index[base_data['Seed_CNN_Fit'] < Acceptance],inplace=True)  # Dropping the seeds that don't pass the link fit threshold
+        print(base_data)
         if CalibrateAcceptance:
             print(UI.TimeStamp(),'Calibrating the acceptance...')
             eval_data_file=EOS_DIR+'/ANNDEA/Data/TEST_SET/'+RecBatchID+'/EVx1b_'+RecBatchID+'_SEED_TRUTH_COMBINATIONS.csv'
