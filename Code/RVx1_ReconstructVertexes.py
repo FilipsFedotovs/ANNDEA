@@ -756,6 +756,8 @@ while Status<len(Program):
         for b in base_data:
             new_data.append(b[6])
         base_data=new_data
+        print(base_data)
+        exit()
         del new_data
         print(UI.TimeStamp(), 'Loading seed object data from ', bcolors.OKBLUE + input_file_location + bcolors.ENDC)
         object_data = UI.PickleOperations(input_file_location,'r','N/A')[0]
