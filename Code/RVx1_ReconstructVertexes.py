@@ -805,6 +805,7 @@ while Status<len(Program):
                     NewData=UI.PickleOperations(required_file_location,'r','N/A')[0]
                     VertexPool+=NewData
               print(UI.TimeStamp(), 'As a result of the previous operation',str(original_data_seeds),'seeds were merged into',str(len(VertexPool)),'vertices...')
+              exit()
               # comp_ratio = round((float(len(VertexPool)) / float(original_data_seeds)) * 100, 2)
               # print(UI.TimeStamp(), 'The compression ratio is',comp_ratio, '%...')
               # print(UI.TimeStamp(), 'Ok starting the final merging of the remained vertices')

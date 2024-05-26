@@ -68,12 +68,16 @@ while SeedCounterContinue:
     if SeedCounter>=len(base_data):
        SeedCounterContinue=False
        break
-    progress=round(float(SeedCounter)/float(len(base_data))*100,0)
-    print(UF.TimeStamp(),'progress is ',progress,' %', end="\r", flush=True) #Progress display
+    #progress=round(float(SeedCounter)/float(len(base_data))*100,0)
+    #print(UF.TimeStamp(),'progress is ',progress,' %', end="\r", flush=True) #Progress display
     SubjectSeed=base_data[SeedCounter]
+
     for ObjectSeed in base_data[SeedCounter+1:]:
+        print(SeedCounter,len(base_data),SubjectSeed.Header,ObjectSeed.Header)
         if SubjectSeed.InjectSeed(ObjectSeed):
            base_data.pop(base_data.index(ObjectSeed))
+           print(SeedCounter,len(base_data),SubjectSeed.Header,ObjectSeed.Header)
+    x=input()
     SeedCounter+=1
 print(str(InitialDataLength), "2-track vertices were merged into", str(len(base_data)), 'vertices with higher multiplicity...')
 print(UF.PickleOperations(output_file_location,'w', base_data)[1])
