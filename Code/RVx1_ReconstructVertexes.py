@@ -688,10 +688,10 @@ while Status<len(Program):
                          Records=len(base_data)
         print(UI.TimeStamp(),'The pre-analysed reconstructed set contains', Records, '2-track link-fitted seeds',bcolors.ENDC)
         base_data['Seed_Link_Fit'] = base_data.apply(PM.Seed_Bond_Fit_Acceptance,axis=1)
-        base_data['Seed_Index'] = base_data.index
         base_data.drop(base_data.index[base_data['Seed_Link_Fit'] < LinkAcceptance],inplace=True)  # Dropping the seeds that don't pass the link fit threshold
         base_data.drop(base_data.index[base_data['Seed_CNN_Fit'] < Acceptance],inplace=True)  # Dropping the seeds that don't pass the link fit threshold
         print(base_data)
+        exit()
         if CalibrateAcceptance:
             print(UI.TimeStamp(),'Calibrating the acceptance...')
             eval_data_file=EOS_DIR+'/ANNDEA/Data/TEST_SET/'+RecBatchID+'/EVx1b_'+RecBatchID+'_SEED_TRUTH_COMBINATIONS.csv'
@@ -765,7 +765,7 @@ while Status<len(Program):
         for b in object_data:
             if b.Header[0]=='58862.0-31' and b.Header[1]=='68496.0-31':
                 print(b.Header)
-        print(object_data[26471].Header)
+        print(object_data[26471].Header) #Fix the problem
         exit()
         selected_objects=[]
         for nd in range(len(base_data)):
