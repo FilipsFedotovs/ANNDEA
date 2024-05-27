@@ -752,25 +752,22 @@ while Status<len(Program):
         new_data=[]
         for b in base_data:
             new_data.append([b[0],b[1]])
-            if b[0]=='58862.0-31':
-                print(b)
-
         base_data=new_data
         del new_data
-        print(base_data)
-        exit()
         print(UI.TimeStamp(), 'Loading seed object data from ', bcolors.OKBLUE + input_file_location + bcolors.ENDC)
         object_data = UI.PickleOperations(input_file_location,'r','N/A')[0]
-        for b in object_data:
-            if b.Header[0]=='58862.0-31' and b.Header[1]=='68496.0-31':
-                print(b.Header)
-        print(object_data[26471].Header) #Fix the problem
-        exit()
         selected_objects=[]
-        for nd in range(len(base_data)):
-            selected_objects.append(object_data[base_data[nd]])
-            progress = round((float(nd) / float(len(base_data))) * 100, 1)
+        counter=0
+        for bd in base_data:
+            for od in object_data:
+                if bd[0]==od.Header[0] and bd[1]==od.Header[1]:
+                    print(bd)
+                    exit()
+            counter+=1
+            #selected_objects.append(object_data[base_data[nd]])
+            progress = round((float(counter) / float(len(base_data))) * 100, 1)
             print(UI.TimeStamp(), 'Refining the seed objects, progress is ', progress, ' %', end="\r", flush=True)  # Progress display
+        exit()
         del object_data
         del base_data
         output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/RVx1c_'+RecBatchID+'_Link_Fit_Seeds.pkl'
