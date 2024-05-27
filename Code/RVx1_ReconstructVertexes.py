@@ -760,7 +760,7 @@ while Status<len(Program):
         counter=0
         for bd in base_data:
             for od in range(len(object_data)):
-                if bd[0]==object_data[od].Header[0] and object_data[od][1]==od.Header[1]:
+                if bd[0]==object_data[od].Header[0] and bd[1]==object_data[od].Header[1]:
                     selected_objects.append(object_data.pop(od))
                     print(bd,selected_objects[0].Header)
                     exit()
