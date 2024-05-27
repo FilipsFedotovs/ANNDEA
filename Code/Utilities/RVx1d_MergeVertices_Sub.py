@@ -58,7 +58,8 @@ print(UF.TimeStamp(), "Loading is successful, there are total of "+str(len(base_
 base_data=base_data[(i*MaxPoolSeeds):min(((i+1)*MaxPoolSeeds),len(base_data))]
 print(UF.TimeStamp(), "Out of these only "+str(len(base_data))+" vertexed seeds will be considered here...")
 print(UF.TimeStamp(), "Initiating the seed merging...")
-for i in range(20):
+ContinueMerging=True
+while ContinueMerging:
     InitialDataLength=len(base_data)
     SeedCounter=0
     SeedCounterContinue=True
@@ -66,19 +67,15 @@ for i in range(20):
         if SeedCounter>=len(base_data):
            SeedCounterContinue=False
            break
-        #progress=round(float(SeedCounter)/float(len(base_data))*100,0)
-        #print(UF.TimeStamp(),'progress is ',progress,' %', end="\r", flush=True) #Progress display
         SubjectSeed=base_data[SeedCounter]
-
         for ObjectSeed in base_data[SeedCounter+1:]:
             temp=SubjectSeed.Header,ObjectSeed.Header
             if SubjectSeed.InjectSeed(ObjectSeed):
-    #           print(1,SeedCounter,len(base_data),temp,SubjectSeed.Header,ObjectSeed.Header)
                base_data.pop(base_data.index(ObjectSeed))
-               # print(2,SeedCounter,len(base_data),base_data[SeedCounter+1].Header,base_data[SeedCounter].Header)
-               # x=input()
         SeedCounter+=1
     print(str(InitialDataLength), "2-track vertices were merged into", str(len(base_data)), 'vertices with higher multiplicity...')
+    ContinueMerging=InitialDataLength!=len(base_data)
+
 
 
 print(UF.PickleOperations(output_file_location,'w', base_data)[1])

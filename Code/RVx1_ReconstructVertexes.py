@@ -742,7 +742,7 @@ while Status<len(Program):
              rec.drop(['Track_1'],axis=1,inplace=True)
              rec.drop(['Track_2'],axis=1,inplace=True)
              rec_eval=pd.merge(eval_data, rec, how="inner", on=['Seed_ID'])
-             rec.to_csv('sd_test.csv')
+             #rec.to_csv('sd_test.csv')
              eval_no=len(rec_eval)
              rec_no=(len(rec)-len(rec_eval))
              UI.LogOperations(EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv', 'a', [[5,'Link Analysis',rec_no,eval_no,eval_no/(rec_no+eval_no),eval_no/len(eval_data)]])
@@ -777,12 +777,6 @@ while Status<len(Program):
         print(UI.TimeStamp(), "Loading the fit track seeds from the file",bcolors.OKBLUE+input_file_location+bcolors.ENDC)
         base_data=UI.PickleOperations(input_file_location,'r','N/A')[0]
         original_data_seeds=len(base_data)
-        for b in base_data:
-            if b.Header[0]=='58862.0-31' or b.Header[0]=='68496.0-31':
-                print(b.Header)
-            if b.Header[1]=='58862.0-31' or b.Header[1]=='68496.0-31':
-                print(b.Header)
-        exit()
         #no_iter = int(math.ceil(float(original_data_seeds / float(PM.MaxSeedsPerVxPool))))
         no_iter=1
         prog_entry=[]
@@ -817,21 +811,24 @@ while Status<len(Program):
               comp_ratio = round((float(len(VertexPool)) / float(original_data_seeds)) * 100, 2)
               print(UI.TimeStamp(), 'The compression ratio is',comp_ratio, '%...')
               print(UI.TimeStamp(), 'Ok starting the final merging of the remained vertices')
-              InitialDataLength=len(VertexPool)
-              SeedCounter=0
-              SeedCounterContinue=True
-              while SeedCounterContinue:
-                  if SeedCounter==len(VertexPool):
-                                  SeedCounterContinue=False
-                                  break
-                  progress=round((float(SeedCounter)/float(len(VertexPool)))*100,0)
-                  print(UI.TimeStamp(),'progress is ',progress,' %', end="\r", flush=True) #Progress display
-                  SubjectSeed=VertexPool[SeedCounter]
-                  for ObjectSeed in VertexPool[SeedCounter+1:]:
-                              if SubjectSeed.InjectSeed(ObjectSeed):
-                                          VertexPool.pop(VertexPool.index(ObjectSeed))
-                  SeedCounter+=1
-              print(str(InitialDataLength), "vertices from different files were merged into", str(len(VertexPool)), 'vertices with higher multiplicity...')
+              ContinueMerging=True
+              while ContinueMerging:
+                  InitialDataLength=len(VertexPool)
+                  SeedCounter=0
+                  SeedCounterContinue=True
+                  while SeedCounterContinue:
+                      if SeedCounter==len(VertexPool):
+                                      SeedCounterContinue=False
+                                      break
+                      progress=round((float(SeedCounter)/float(len(VertexPool)))*100,0)
+                      print(UI.TimeStamp(),'progress is ',progress,' %', end="\r", flush=True) #Progress display
+                      SubjectSeed=VertexPool[SeedCounter]
+                      for ObjectSeed in VertexPool[SeedCounter+1:]:
+                                  if SubjectSeed.InjectSeed(ObjectSeed):
+                                              VertexPool.pop(VertexPool.index(ObjectSeed))
+                      SeedCounter+=1
+                  print(str(InitialDataLength), "vertices from different files were merged into", str(len(VertexPool)), 'vertices with higher multiplicity...')
+                  ContinueMerging=InitialDataLength!=len(VertexPool)
               for v in range(0,len(VertexPool)):
                     VertexPool[v].AssignANNVxUID(v)
               csv_out=[]
@@ -869,7 +866,7 @@ while Status<len(Program):
                     rec.drop(['Track_2'],axis=1,inplace=True)
                     rec.drop_duplicates(subset=['Seed_ID'], keep='first', inplace=True)
                     rec_eval=pd.merge(eval_data, rec, how="inner", on=['Seed_ID'])
-                    rec.to_csv('vx_test.csv')
+                    #rec.to_csv('vx_test.csv')
                     eval_no=len(rec_eval)
                     rec_no=(len(rec)-len(rec_eval))
                     UI.LogOperations(EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv', 'a', [[6,'Vertex Merging',rec_no,eval_no,eval_no/(rec_no+eval_no),eval_no/len(eval_data)]])
