@@ -767,6 +767,10 @@ while Status<len(Program):
             progress = round((float(counter) / float(len(base_data))) * 100, 1)
             print(UI.TimeStamp(), 'Refining the seed objects, progress is ', progress, ' %', end="\r", flush=True)  # Progress display
         print(len(base_data), len(object_data), len(selected_objects))
+        print(base_data[333], selected_objects[333].Header)
+        print(base_data[1000], selected_objects[1000].Header)
+        print(base_data[666], selected_objects[666].Header)
+        print(base_data[13], selected_objects[13].Header)
         exit()
         del object_data
         del base_data
