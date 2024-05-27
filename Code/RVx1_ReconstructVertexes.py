@@ -761,12 +761,11 @@ while Status<len(Program):
         for bd in base_data:
             for od in object_data:
                 if bd[0]==od.Header[0] and bd[1]==od.Header[1]:
-                    print(bd)
-                    exit()
+                    selected_objects.append(od)
             counter+=1
-            #selected_objects.append(object_data[base_data[nd]])
             progress = round((float(counter) / float(len(base_data))) * 100, 1)
             print(UI.TimeStamp(), 'Refining the seed objects, progress is ', progress, ' %', end="\r", flush=True)  # Progress display
+        print(len(base_data), len(object_data), len(selected_objects))
         exit()
         del object_data
         del base_data
