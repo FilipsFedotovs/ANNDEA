@@ -153,8 +153,7 @@ if os.path.isfile(required_file_location)==False:
         data=pd.read_csv(initial_input_file_location,
                     header=0,
                     usecols=[TrackID,BrickID,PM.x,PM.y,PM.z,PM.tx,PM.ty])
-        data[BrickID] = data[BrickID].astype(str)
-        data[TrackID] = data[TrackID].astype(str)    
+        
         if BrickID=='':
             data[BrickID]='D'
         total_rows=len(data.axes[0])
@@ -163,7 +162,8 @@ if os.path.isfile(required_file_location)==False:
         data=data.dropna()
         final_rows=len(data.axes[0])
         print(UI.TimeStamp(),'The cleaned data has ',final_rows,' hits')
-        
+        data[BrickID] = data[BrickID].astype(str)
+        data[TrackID] = data[TrackID].astype(str)    
 
         data['Rec_Seg_ID'] = data[TrackID] + '-' + data[BrickID]
         data=data.drop([TrackID],axis=1)
@@ -898,6 +898,8 @@ while Status<len(Program):
                 initial_data=pd.read_csv(initial_input_file_location,header=0)
                 initial_data[BrickID] = initial_data[BrickID].astype(str)
                 initial_data[TrackID] = initial_data[TrackID].astype(str)
+                if BrickID=='':
+                    initial_data[BrickID]='D'
                 
                 initial_data['Old_Track_ID'] = initial_data[TrackID] + '-' + initial_data[BrickID]
 
