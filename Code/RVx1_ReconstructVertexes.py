@@ -150,9 +150,14 @@ if os.path.isfile(required_file_location)==False:
            MaxSeeds=PM.MaxSeedsPerVxPool
            MinHitsTrack=Meta.MinHitsTrack
         print(UI.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+initial_input_file_location+bcolors.ENDC)
-        data=pd.read_csv(initial_input_file_location,
+        if BrickID=='':    
+            data=pd.read_csv(initial_input_file_location,
                     header=0,
-                    usecols=[TrackID,BrickID,PM.x,PM.y,PM.z,PM.tx,PM.ty])
+                    usecols=[TrackID,PM.x,PM.y,PM.z,PM.tx,PM.ty])
+        else:
+            data=pd.read_csv(initial_input_file_location,
+                    header=0,
+                    usecols=[BrickID,TrackID,PM.x,PM.y,PM.z,PM.tx,PM.ty])
         
         if BrickID=='':
             data[BrickID]='D'
