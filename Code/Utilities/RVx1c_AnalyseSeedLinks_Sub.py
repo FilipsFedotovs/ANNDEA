@@ -61,7 +61,10 @@ base_data_list=[]
 for b in base_data:
    base_data_mini_list = [b.Header[0],b.Header[1],b.Fit]
    base_data_list.append(base_data_mini_list)
+del base_data
 data = pd.DataFrame(base_data_list,columns=['Track_1','Track_2','Seed_CNN_Fit'])
+print(data)
+exit()
 
 SeedStart=i*MaxSegments
 SeedEnd=min(len(data),(i+1)*MaxSegments)
