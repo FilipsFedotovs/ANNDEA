@@ -967,8 +967,9 @@ while Status<len(Program):
                                                   for attr in dir(new_data[0]):
                                                     print("obj.%s = %r" % (attr, getattr(new_data[0], attr)))
                                                   print(psutil.Process(os.getpid()).memory_info().rss / 1024 ** 2)
-                                                  exit()
+                                                  
                                                   print(UI.TimeStamp(),'Set',str(i)+'_'+str(j), 'contains', len(new_data), 'seeds')
+                                                  x=input()  
                                                   if base_data == None:
                                                         base_data = new_data
                                                   else:
