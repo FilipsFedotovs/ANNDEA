@@ -75,6 +75,7 @@ parser.add_argument('--ExcludeClassValues',help="What class values to use?", def
 parser.add_argument('--ForceStatus',help="Local submission?", default='N')
 parser.add_argument('--HTCondorLog',help="Local submission?", default=False,type=bool)
 parser.add_argument('--ExpressMode',help="Run with 'True' for heavy data loads ", default=False,type=bool)
+parser.add_argument('--MaxLinkSeeds',help="Number of seeds to merge for LinkSeeds?", default='-666')
 ######################################## Parsing argument values  #############################################################
 args = parser.parse_args()
 Mode=args.Mode.upper()
@@ -109,6 +110,7 @@ ExcludeClassValues=ast.literal_eval(args.ExcludeClassValues)
 Xmin,Xmax,Ymin,Ymax=float(args.Xmin),float(args.Xmax),float(args.Ymin),float(args.Ymax)
 SliceData=max(Xmin,Xmax,Ymin,Ymax)>0 #We don't slice data if all values are set to zero simultaneousy (which is the default setting)
 ExpressMode=args.ExpressMode
+MaxLinkSeeds=int(args.MaxLinkSeeds)
 if Mode=='RESET':
     print(UI.ManageFolders(AFS_DIR, EOS_DIR, RecBatchID,'d',['EVx1a','RVx1a','RVx1b','RVx1c']))
     print(UI.ManageFolders(AFS_DIR, EOS_DIR, RecBatchID,'c'))
@@ -661,6 +663,8 @@ while Status<len(Program):
         base_data=UI.PickleOperations(input_file_location,'r','N/A')[0]
         print(UI.TimeStamp(), bcolors.OKGREEN+"Loading is successful, there are "+str(len(base_data))+" fit seeds..."+bcolors.ENDC)
         prog_entry=[]
+        if MaxLinkSeeds>0:
+            MaxSeeds=MaxLinkSeeds
         N_Jobs=math.ceil(len(base_data)/MaxSeeds)
         Program_Dummy=[]
         prog_entry.append(' Sending vertexes to the HTCondor, so vertex can be subject to link analysis...')
