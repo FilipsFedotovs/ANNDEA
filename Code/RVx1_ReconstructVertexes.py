@@ -962,6 +962,8 @@ while Status<len(Program):
                                                   bar()
                                                   new_data=UI.PickleOperations(required_output_file_location,'r','N/A')[0]
                                                   print(sys.getsizeof(new_data))
+                                                  for attr in dir(new_data[0]):
+                                                    print("obj.%s = %r" % (attr, getattr(new_data[0], attr)))
                                                   exit()
                                                   print(UI.TimeStamp(),'Set',str(i)+'_'+str(j), 'contains', len(new_data), 'seeds')
                                                   if base_data == None:
