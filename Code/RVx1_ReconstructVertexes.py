@@ -961,12 +961,12 @@ while Status<len(Program):
                                     for j in range(JobSet[i]):
                                                   required_output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/Temp_RVx1'+ModelName[md]+'_'+RecBatchID+'_'+str(i)+'/RVx1'+ModelName[md]+'_'+RecBatchID+'_RefinedSeeds_'+str(i)+'_'+str(j)+'.pkl'
                                                   bar()
-                                                  import os, psutil
+                                                  #import os, psutil
                                                   new_data=UI.PickleOperations(required_output_file_location,'r','N/A')[0]
                                                   if ExpressMode:
                                                       for nd in new_data:
                                                           nd.StripSeed()
-                                                  print(psutil.Process(os.getpid()).memory_info().rss / 1024 ** 2)
+                                                  #print(psutil.Process(os.getpid()).memory_info().rss / 1024 ** 2)
                                                   print(UI.TimeStamp(),'Set',str(i)+'_'+str(j), 'contains', len(new_data), 'seeds')
                                                   if base_data == None:
                                                         base_data = new_data
