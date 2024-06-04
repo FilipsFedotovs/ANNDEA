@@ -964,7 +964,7 @@ while Status<len(Program):
                                                   print(sys.getsizeof(new_data[0]))
                                                   for attr in dir(new_data[0]):
                                                     print("obj.%s = %r" % (attr, getattr(new_data[0], attr)))
-                                                  print(sys.getsizeof(new_data[0]))
+                                                  print(new_data[0].__sizeof__())
                                                   print(int(sys.getsizeof(new_data))/len(new_data))
                                                   exit()
                                                   print(UI.TimeStamp(),'Set',str(i)+'_'+str(j), 'contains', len(new_data), 'seeds')
