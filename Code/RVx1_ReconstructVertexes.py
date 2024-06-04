@@ -74,6 +74,7 @@ parser.add_argument('--ExcludeClassNames',help="What class headers to use?", def
 parser.add_argument('--ExcludeClassValues',help="What class values to use?", default="[[]]")
 parser.add_argument('--ForceStatus',help="Local submission?", default='N')
 parser.add_argument('--HTCondorLog',help="Local submission?", default=False,type=bool)
+parser.add_argument('--ExpressMode',help="Run with 'True' for heavy data loads ", default=False,type=bool)
 ######################################## Parsing argument values  #############################################################
 args = parser.parse_args()
 Mode=args.Mode.upper()
@@ -107,7 +108,7 @@ ExcludeClassNames=ast.literal_eval(args.ExcludeClassNames)
 ExcludeClassValues=ast.literal_eval(args.ExcludeClassValues)
 Xmin,Xmax,Ymin,Ymax=float(args.Xmin),float(args.Xmax),float(args.Ymin),float(args.Ymax)
 SliceData=max(Xmin,Xmax,Ymin,Ymax)>0 #We don't slice data if all values are set to zero simultaneousy (which is the default setting)
-
+ExpressMode=args.ExpressMode
 if Mode=='RESET':
     print(UI.ManageFolders(AFS_DIR, EOS_DIR, RecBatchID,'d',['EVx1a','RVx1a','RVx1b','RVx1c']))
     print(UI.ManageFolders(AFS_DIR, EOS_DIR, RecBatchID,'c'))
@@ -963,14 +964,17 @@ while Status<len(Program):
                                                   import os, psutil
                                                   print(psutil.Process(os.getpid()).memory_info().rss / 1024 ** 2)
                                                   new_data=UI.PickleOperations(required_output_file_location,'r','N/A')[0]
+                                                  if ExpressMode:
+                                                      for nd in new_data:
+                                                          nd.StripSeed()
+                                                  # print(psutil.Process(os.getpid()).memory_info().rss / 1024 ** 2)
+                                                  # for attr in dir(new_data[0]):
+                                                  #   print("obj.%s = %r" % (attr, getattr(new_data[0], attr)))
+                                                  # new_data[0].StripSeed()
+                                                  # for attr in dir(new_data[0]):
+                                                  #   print("obj.%s = %r" % (attr, getattr(new_data[0], attr)))
                                                   print(psutil.Process(os.getpid()).memory_info().rss / 1024 ** 2)
-                                                  for attr in dir(new_data[0]):
-                                                    print("obj.%s = %r" % (attr, getattr(new_data[0], attr)))
-                                                  new_data[0].StripSeed()
-                                                  for attr in dir(new_data[0]):
-                                                    print("obj.%s = %r" % (attr, getattr(new_data[0], attr)))
-                                                  print(psutil.Process(os.getpid()).memory_info().rss / 1024 ** 2)
-                                                  exit()
+
                                                   print(UI.TimeStamp(),'Set',str(i)+'_'+str(j), 'contains', len(new_data), 'seeds')
                                                   x=input()  
                                                   if base_data == None:
