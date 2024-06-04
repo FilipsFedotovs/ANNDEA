@@ -961,9 +961,11 @@ while Status<len(Program):
                                                   required_output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/Temp_RVx1'+ModelName[md]+'_'+RecBatchID+'_'+str(i)+'/RVx1'+ModelName[md]+'_'+RecBatchID+'_RefinedSeeds_'+str(i)+'_'+str(j)+'.pkl'
                                                   bar()
                                                   new_data=UI.PickleOperations(required_output_file_location,'r','N/A')[0]
-                                                  print(sys.getsizeof(new_data))
+                                                  print(sys.getsizeof(new_data[0]))
                                                   for attr in dir(new_data[0]):
                                                     print("obj.%s = %r" % (attr, getattr(new_data[0], attr)))
+                                                  print(sys.getsizeof(new_data[0]))
+                                                  print(sys.getsizeof(new_data))
                                                   exit()
                                                   print(UI.TimeStamp(),'Set',str(i)+'_'+str(j), 'contains', len(new_data), 'seeds')
                                                   if base_data == None:
