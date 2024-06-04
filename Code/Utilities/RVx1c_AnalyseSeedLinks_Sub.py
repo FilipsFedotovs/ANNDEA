@@ -48,9 +48,6 @@ if PY_DIR!='': #Temp solution
 sys.path.append(AFS_DIR+'/Code/Utilities')
 import U_UI as UF #This is where we keep routine utility functions
 import pandas as pd #We use Panda for a routine data processing
-import math #We use it for data manipulation
-import gc  #Helps to clear memory
-import numpy as np
 #Specifying the full path to input/output files
 input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+BatchID+'/RVx1c_'+BatchID+'_Fit_Seeds.pkl'
 output_file_location=EOS_DIR+p+'/Temp_'+pfx+'_'+BatchID+'_'+str(0)+'/'+pfx+'_'+BatchID+'_'+o+'_'+str(i)+sfx
@@ -89,7 +86,7 @@ del data_l
 del data_r
 data=data.values.tolist()
 seeds=seeds.values.tolist()
-print(len(seeds))
+
 for rows in seeds:
     for i in range(4):
        rows.append([])
@@ -126,7 +123,6 @@ for seed in seeds:
         seed.append(OrthogonalSets)
         seed.append(LinkStrength)
         seed.append(UnlinkStrength)
-        print(seed)
 Header=[['Track_1','Track_2','Seed_CNN_Fit', 'Links', 'AntiLinks', 'Link_Strength', 'AntiLink_Strenth']]
 UF.LogOperations(output_file_location,'w', Header)
 UF.LogOperations(output_file_location,'a', seeds)
