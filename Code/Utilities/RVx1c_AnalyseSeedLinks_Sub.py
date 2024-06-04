@@ -63,8 +63,6 @@ for b in base_data:
    base_data_list.append(base_data_mini_list)
 del base_data
 data = pd.DataFrame(base_data_list,columns=['Track_1','Track_2','Seed_CNN_Fit'])
-print(data)
-exit()
 
 SeedStart=i*MaxSegments
 SeedEnd=min(len(data),(i+1)*MaxSegments)
@@ -91,6 +89,7 @@ del data_l
 del data_r
 data=data.values.tolist()
 seeds=seeds.values.tolist()
+print(len(seeds))
 for rows in seeds:
     for i in range(4):
        rows.append([])
@@ -127,6 +126,7 @@ for seed in seeds:
         seed.append(OrthogonalSets)
         seed.append(LinkStrength)
         seed.append(UnlinkStrength)
+        print(seed)
 Header=[['Track_1','Track_2','Seed_CNN_Fit', 'Links', 'AntiLinks', 'Link_Strength', 'AntiLink_Strenth']]
 UF.LogOperations(output_file_location,'w', Header)
 UF.LogOperations(output_file_location,'a', seeds)
