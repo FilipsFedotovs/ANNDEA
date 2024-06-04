@@ -968,8 +968,8 @@ while Status<len(Program):
                                                       for nd in new_data:
                                                           nd.StripSeed()
                                                   # print(psutil.Process(os.getpid()).memory_info().rss / 1024 ** 2)
-                                                  # for attr in dir(new_data[0]):
-                                                  #   print("obj.%s = %r" % (attr, getattr(new_data[0], attr)))
+                                                  for attr in dir(new_data[0]):
+                                                    print("obj.%s = %r" % (attr, getattr(new_data[0], attr)))
                                                   # new_data[0].StripSeed()
                                                   # for attr in dir(new_data[0]):
                                                   #   print("obj.%s = %r" % (attr, getattr(new_data[0], attr)))
