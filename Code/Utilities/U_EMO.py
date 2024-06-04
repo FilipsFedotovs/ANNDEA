@@ -785,6 +785,30 @@ class EMO:
              if Mmeta.ClassValues[0][0]=='Reg':
                 self.ClassHeaders=Mmeta.ClassHeaders
 
+      def StripSeed(self): #Remove attributes to make seed lighter and use less memory
+              if hasattr(self,'angle'):
+                  delattr(self,'angle')
+              if hasattr(self,'DOCA'):
+                  delattr(self,'DOCA')
+              if hasattr(self,'V_Tr'):
+                  delattr(self,'V_Tr')
+              if hasattr(self,'Tr_Tr'):
+                  delattr(self,'Tr_Tr')
+              if hasattr(self,'Hits'):
+                  delattr(self,'Hits')
+              if hasattr(self,'FIT'):
+                  delattr(self,'FIT')
+              if hasattr(self,'Vx'):
+                  delattr(self,'Vx')
+              if hasattr(self,'Vy'):
+                  delattr(self,'Vy')
+              if hasattr(self,'Vz'):
+                  delattr(self,'Vz')
+              if hasattr(self,'LongestTrackInd'):
+                  delattr(self,'LongestTrackInd')
+              if hasattr(self,'Partition'):
+                  delattr(self,'Partition')
+
       def InjectSeed(self,OtherSeed):
           __overlap=False
           for t1 in self.Header:
@@ -869,11 +893,7 @@ class EMO:
                   delattr(self,'V_Tr')
               if hasattr(self,'Tr_Tr'):
                   delattr(self,'Tr_Tr')
-
-
-
               return True
-
           else:
               return __overlap
       def InjectTrackSeed(self,OtherSeed):

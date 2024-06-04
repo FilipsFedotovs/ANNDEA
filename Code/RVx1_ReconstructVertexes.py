@@ -963,11 +963,14 @@ while Status<len(Program):
                                                   import os, psutil
                                                   print(psutil.Process(os.getpid()).memory_info().rss / 1024 ** 2)
                                                   new_data=UI.PickleOperations(required_output_file_location,'r','N/A')[0]
-
+                                                  print(psutil.Process(os.getpid()).memory_info().rss / 1024 ** 2)
+                                                  for attr in dir(new_data[0]):
+                                                    print("obj.%s = %r" % (attr, getattr(new_data[0], attr)))
+                                                  new_data[0].StripSeed()
                                                   for attr in dir(new_data[0]):
                                                     print("obj.%s = %r" % (attr, getattr(new_data[0], attr)))
                                                   print(psutil.Process(os.getpid()).memory_info().rss / 1024 ** 2)
-                                                  
+                                                  exit()
                                                   print(UI.TimeStamp(),'Set',str(i)+'_'+str(j), 'contains', len(new_data), 'seeds')
                                                   x=input()  
                                                   if base_data == None:

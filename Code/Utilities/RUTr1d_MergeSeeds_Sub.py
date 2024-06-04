@@ -94,23 +94,26 @@ if i==0:
     print(UI.PickleOperations(output_file_location,'w', base_data)[1])
 else:
     print(UI.TimeStamp(), "Initiating the  track merging...")
-    InitialDataLength=len(base_data)
-    SeedCounter=0
-    SeedCounterContinue=True
-    while SeedCounterContinue:
-             if SeedCounter==len(base_data):
-                               SeedCounterContinue=False
-                               break
-             SubjectSeed=base_data[SeedCounter]
-             for ObjectSeed in base_data[SeedCounter+1:]:
-                      if MaxSLG>=0:
-                        if SubjectSeed.InjectDistantTrackSeed(ObjectSeed):
-                            base_data.pop(base_data.index(ObjectSeed))
-                      else:
-                        if SubjectSeed.InjectTrackSeed(ObjectSeed):
-                            base_data.pop(base_data.index(ObjectSeed))
-             SeedCounter+=1
-             print(SeedCounter)
-    print(str(InitialDataLength), "segment pairs from different files were merged into", str(len(base_data)), 'tracks...')
+    ContinueMerging=True
+    while ContinueMerging:
+        InitialDataLength=len(base_data)
+        SeedCounter=0
+        SeedCounterContinue=True
+        while SeedCounterContinue:
+                 if SeedCounter==len(base_data):
+                                   SeedCounterContinue=False
+                                   break
+                 SubjectSeed=base_data[SeedCounter]
+                 for ObjectSeed in base_data[SeedCounter+1:]:
+                          if MaxSLG>=0:
+                            if SubjectSeed.InjectDistantTrackSeed(ObjectSeed):
+                                base_data.pop(base_data.index(ObjectSeed))
+                          else:
+                            if SubjectSeed.InjectTrackSeed(ObjectSeed):
+                                base_data.pop(base_data.index(ObjectSeed))
+                 SeedCounter+=1
+
+        print(str(InitialDataLength), "segment pairs from different files were merged into", str(len(base_data)), 'tracks...')
+        ContinueMerging=InitialDataLength!=len(base_data)
     print(UI.PickleOperations(output_file_location,'w', base_data)[1])
 
