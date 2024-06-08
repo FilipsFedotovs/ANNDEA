@@ -669,8 +669,8 @@ while Status<len(Program):
         Program_Dummy=[]
         prog_entry.append(' Sending vertexes to the HTCondor, so vertex can be subject to link analysis...')
         prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/'+RecBatchID+'/','AnalyseSeedLinks','RVx1c','.csv',RecBatchID,N_Jobs,'RVx1c_AnalyseSeedLinks_Sub.py'])
-        prog_entry.append([" --MaxSegments "])
-        prog_entry.append([MaxSeeds])
+        prog_entry.append([" --MaxSegments ", " --Acceptance "])
+        prog_entry.append([MaxSeeds, Acceptance])
         prog_entry.append(N_Jobs)
         prog_entry.append(LocalSub)
         prog_entry.append('N/A')
