@@ -23,6 +23,7 @@ parser.add_argument('--AFS',help="AFS directory location", default='.')
 parser.add_argument('--BatchID',help="Give this training sample batch an ID", default='SHIP_UR_v1')
 parser.add_argument('--MaxSegments',help="A maximum number of track combinations that will be used in a particular HTCondor job for this script", default='20000')
 parser.add_argument('--PY',help="Python libraries directory location", default='.')
+parser.add_argument('--Acceptance',help="Callibrate acceptancet", default='0.5')
 
 ######################################## Set variables  #############################################################
 args = parser.parse_args()
@@ -34,6 +35,7 @@ pfx=args.pfx
 BatchID=args.BatchID
 ########################################     Preset framework parameters    #########################################
 MaxSegments=int(args.MaxSegments)
+Acceptance=float(args.Acceptance)
 #Loading Directory locations
 EOS_DIR=args.EOS
 AFS_DIR=args.AFS
@@ -84,7 +86,10 @@ del seeds_2
 del seed_list
 del data_l
 del data_r
+
 print(data)
+print(seeds)
+seeds.drop(seeds.index[seeds['Seed_CNN_Fit'] < Acceptance],inplace=True)  # Dropping the seeds that don't pass the link fit threshold
 print(seeds)
 exit()
 data=data.values.tolist()
