@@ -86,12 +86,7 @@ del seeds_2
 del seed_list
 del data_l
 del data_r
-
-print(data)
-print(seeds)
 seeds.drop(seeds.index[seeds['Seed_CNN_Fit'] < Acceptance],inplace=True)  # Dropping the seeds that don't pass the link fit threshold
-print(seeds)
-exit()
 data=data.values.tolist()
 
 seeds=seeds.values.tolist()
