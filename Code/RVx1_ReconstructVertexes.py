@@ -682,6 +682,8 @@ while Status<len(Program):
         Program_Dummy.append(prog_entry)
         print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry))
         Result=UI.StandardProcess(Program_Dummy,Status,SubGap,SubPause,RequestExtCPU,JobFlavour,ReqMemory,time_int,Patience)
+        print(Result)
+        exit()
         if Result:
             print(UI.TimeStamp(),bcolors.OKGREEN+'All HTCondor Seed Creation jobs have finished'+bcolors.ENDC)
             print(UI.TimeStamp(),'Collating the results...')
