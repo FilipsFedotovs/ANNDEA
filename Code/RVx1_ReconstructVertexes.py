@@ -659,7 +659,7 @@ while Status<len(Program):
         UI.UpdateStatus(Status+1,Meta,RecOutputMeta)
     elif Program[Status]=='Custom - LinkAnalysis':
         input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/RVx1c_'+RecBatchID+'_Fit_Seeds.pkl'
-        print(UI.TimeStamp(), "Loading the fit track seeds from the file",bcolors.OKBLUE+input_file_location+bcolors.ENDC)
+        print(UI.TimeStamp(), "Loading the fit vertex seeds from the file",bcolors.OKBLUE+input_file_location+bcolors.ENDC)
         base_data=UI.PickleOperations(input_file_location,'r','N/A')[0]
         print(UI.TimeStamp(), bcolors.OKGREEN+"Loading is successful, there are "+str(len(base_data))+" fit seeds..."+bcolors.ENDC)
         prog_entry=[]
@@ -667,7 +667,7 @@ while Status<len(Program):
             MaxSeeds=MaxLinkSeeds
         N_Jobs=math.ceil(len(base_data)/MaxSeeds)
         Program_Dummy=[]
-        prog_entry.append(' Sending vertexes to the HTCondor, so vertex can be subject to link analysis...')
+        prog_entry.append(' Sending vertex seeds to the HTCondor, so they can be subjected to link analysis...')
         prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/'+RecBatchID+'/','AnalyseSeedLinks','RVx1c','.csv',RecBatchID,N_Jobs,'RVx1c_AnalyseSeedLinks_Sub.py'])
         prog_entry.append([" --MaxSegments ", " --Acceptance "])
         prog_entry.append([MaxSeeds, Acceptance])
@@ -700,11 +700,10 @@ while Status<len(Program):
                          base_data = pd.concat(frames,ignore_index=True)
                          Records=len(base_data)
         print(UI.TimeStamp(),'The pre-analysed reconstructed set contains', Records, '2-track link-fitted seeds',bcolors.ENDC)
+        base_data.drop(base_data.index[base_data['Seed_CNN_Fit'] < Acceptance],inplace=True)  # Dropping the seeds that don't pass the link fit threshold
         base_data['Seed_Link_Fit'] = base_data.apply(PM.Seed_Bond_Fit_Acceptance,axis=1)
         base_data.drop(base_data.index[base_data['Seed_Link_Fit'] < LinkAcceptance],inplace=True)  # Dropping the seeds that don't pass the link fit threshold
-        base_data.drop(base_data.index[base_data['Seed_CNN_Fit'] < Acceptance],inplace=True)  # Dropping the seeds that don't pass the link fit threshold
-        print(base_data)
-        print(UI.TimeStamp(),'The post-analysed reconstructed set contains', Records, '2-track link-fitted seeds',bcolors.ENDC)
+        Records_After_Compression=len(base_data)
         if CalibrateAcceptance:
             print(UI.TimeStamp(),'Calibrating the acceptance...')
             eval_data_file=EOS_DIR+'/ANNDEA/Data/TEST_SET/'+RecBatchID+'/EVx1b_'+RecBatchID+'_SEED_TRUTH_COMBINATIONS.csv'
@@ -739,8 +738,6 @@ while Status<len(Program):
                 f1=(2*(precision*o_recall))/(precision+o_recall)
                 print('Cutoff at:',cut_off,'; Precision:', round(precision,3), '; Recall:', round(recall,3), '; Overall recall:', round(o_recall,3), '; F1:', round(f1,3))
             exit()
-
-
         print(UI.TimeStamp(),'The post-analysed reconstructed set contains', Records_After_Compression, '2-track link-fitted seeds',bcolors.ENDC)
         if args.Log=='Y':
           #try:
@@ -769,8 +766,11 @@ while Status<len(Program):
         base_data=new_data
         del new_data
         print(UI.TimeStamp(), 'Loading seed object data from ', bcolors.OKBLUE + input_file_location + bcolors.ENDC)
-        exit()
+
         object_data = UI.PickleOperations(input_file_location,'r','N/A')[0]
+        print(len(object_data))
+        object_data = [obj for obj in object_data if obj.Fit >=Acceptance]
+        print(len(object_data))
         selected_objects=[]
         counter=0
         for bd in base_data:
@@ -786,6 +786,7 @@ while Status<len(Program):
         output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/RVx1c_'+RecBatchID+'_Link_Fit_Seeds.pkl'
         print(UI.PickleOperations(output_file_location,'w',selected_objects)[0])
         print(UI.TimeStamp(), bcolors.OKGREEN + str(len(selected_objects))+" seed objects are saved in" + bcolors.ENDC,bcolors.OKBLUE + output_file_location + bcolors.ENDC)
+        exit()
         UI.UpdateStatus(Status+1,Meta,RecOutputMeta)
     elif Program[Status]=='Custom - PerformMerging':
         input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/RVx1c_'+RecBatchID+'_Link_Fit_Seeds.pkl'
