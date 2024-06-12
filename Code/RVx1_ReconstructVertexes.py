@@ -703,7 +703,7 @@ while Status<len(Program):
         base_data['Seed_Link_Fit'] = base_data.apply(PM.Seed_Bond_Fit_Acceptance,axis=1)
         base_data.drop(base_data.index[base_data['Seed_Link_Fit'] < LinkAcceptance],inplace=True)  # Dropping the seeds that don't pass the link fit threshold
         base_data.drop(base_data.index[base_data['Seed_CNN_Fit'] < Acceptance],inplace=True)  # Dropping the seeds that don't pass the link fit threshold
-
+        print(base_data)
         print(UI.TimeStamp(),'The post-analysed reconstructed set contains', Records, '2-track link-fitted seeds',bcolors.ENDC)
         if CalibrateAcceptance:
             print(UI.TimeStamp(),'Calibrating the acceptance...')
