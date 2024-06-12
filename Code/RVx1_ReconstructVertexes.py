@@ -682,9 +682,7 @@ while Status<len(Program):
         Program_Dummy.append(prog_entry)
         print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry))
         Result=UI.StandardProcess(Program_Dummy,Status,SubGap,SubPause,RequestExtCPU,JobFlavour,ReqMemory,time_int,Patience)
-        print(Result)
-        exit()
-        if Result:
+        if Result[0]:
             print(UI.TimeStamp(),bcolors.OKGREEN+'All HTCondor Seed Creation jobs have finished'+bcolors.ENDC)
             print(UI.TimeStamp(),'Collating the results...')
             for f in range(N_Jobs):
@@ -702,6 +700,8 @@ while Status<len(Program):
                          base_data = pd.concat(frames,ignore_index=True)
                          Records=len(base_data)
         print(UI.TimeStamp(),'The pre-analysed reconstructed set contains', Records, '2-track link-fitted seeds',bcolors.ENDC)
+        print(base_data)
+        exit()
         base_data['Seed_Link_Fit'] = base_data.apply(PM.Seed_Bond_Fit_Acceptance,axis=1)
         base_data.drop(base_data.index[base_data['Seed_Link_Fit'] < LinkAcceptance],inplace=True)  # Dropping the seeds that don't pass the link fit threshold
         base_data.drop(base_data.index[base_data['Seed_CNN_Fit'] < Acceptance],inplace=True)  # Dropping the seeds that don't pass the link fit threshold
@@ -811,7 +811,7 @@ while Status<len(Program):
         Program_Dummy.append(prog_entry)
         print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry))
         Result=UI.StandardProcess(Program_Dummy,Status,SubGap,SubPause,RequestExtCPU,JobFlavour,ReqMemory,time_int,Patience)
-        if Result:
+        if Result[0]:
               print(UI.TimeStamp(), bcolors.OKGREEN + 'All HTCondor Seed Creation jobs have finished' + bcolors.ENDC)
               print(UI.TimeStamp(), 'Collating the results...')
               VertexPool=[]
