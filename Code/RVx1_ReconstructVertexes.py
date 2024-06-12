@@ -700,11 +700,11 @@ while Status<len(Program):
                          base_data = pd.concat(frames,ignore_index=True)
                          Records=len(base_data)
         print(UI.TimeStamp(),'The pre-analysed reconstructed set contains', Records, '2-track link-fitted seeds',bcolors.ENDC)
-        print(base_data)
-        exit()
         base_data['Seed_Link_Fit'] = base_data.apply(PM.Seed_Bond_Fit_Acceptance,axis=1)
         base_data.drop(base_data.index[base_data['Seed_Link_Fit'] < LinkAcceptance],inplace=True)  # Dropping the seeds that don't pass the link fit threshold
         base_data.drop(base_data.index[base_data['Seed_CNN_Fit'] < Acceptance],inplace=True)  # Dropping the seeds that don't pass the link fit threshold
+
+        print(UI.TimeStamp(),'The post-analysed reconstructed set contains', Records, '2-track link-fitted seeds',bcolors.ENDC)
         if CalibrateAcceptance:
             print(UI.TimeStamp(),'Calibrating the acceptance...')
             eval_data_file=EOS_DIR+'/ANNDEA/Data/TEST_SET/'+RecBatchID+'/EVx1b_'+RecBatchID+'_SEED_TRUTH_COMBINATIONS.csv'
@@ -740,8 +740,8 @@ while Status<len(Program):
                 print('Cutoff at:',cut_off,'; Precision:', round(precision,3), '; Recall:', round(recall,3), '; Overall recall:', round(o_recall,3), '; F1:', round(f1,3))
             exit()
 
-        
-        Records_After_Compression=len(base_data)
+
+        print(UI.TimeStamp(),'The post-analysed reconstructed set contains', Records_After_Compression, '2-track link-fitted seeds',bcolors.ENDC)
         if args.Log=='Y':
           #try:
              print(UI.TimeStamp(),'Initiating the logging...')
@@ -757,7 +757,6 @@ while Status<len(Program):
              rec.drop(['Track_1'],axis=1,inplace=True)
              rec.drop(['Track_2'],axis=1,inplace=True)
              rec_eval=pd.merge(eval_data, rec, how="inner", on=['Seed_ID'])
-             #rec.to_csv('sd_test.csv')
              eval_no=len(rec_eval)
              rec_no=(len(rec)-len(rec_eval))
              UI.LogOperations(EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_REC_LOG.csv', 'a', [[5,'Link Analysis',rec_no,eval_no,eval_no/(rec_no+eval_no),eval_no/len(eval_data)]])
@@ -770,6 +769,7 @@ while Status<len(Program):
         base_data=new_data
         del new_data
         print(UI.TimeStamp(), 'Loading seed object data from ', bcolors.OKBLUE + input_file_location + bcolors.ENDC)
+        exit()
         object_data = UI.PickleOperations(input_file_location,'r','N/A')[0]
         selected_objects=[]
         counter=0
