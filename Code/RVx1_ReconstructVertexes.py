@@ -766,11 +766,8 @@ while Status<len(Program):
         base_data=new_data
         del new_data
         print(UI.TimeStamp(), 'Loading seed object data from ', bcolors.OKBLUE + input_file_location + bcolors.ENDC)
-
         object_data = UI.PickleOperations(input_file_location,'r','N/A')[0]
-        print(len(object_data))
         object_data = [obj for obj in object_data if obj.Fit >=Acceptance]
-        print(len(object_data))
         selected_objects=[]
         counter=0
         for bd in base_data:
@@ -786,7 +783,6 @@ while Status<len(Program):
         output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/RVx1c_'+RecBatchID+'_Link_Fit_Seeds.pkl'
         print(UI.PickleOperations(output_file_location,'w',selected_objects)[0])
         print(UI.TimeStamp(), bcolors.OKGREEN + str(len(selected_objects))+" seed objects are saved in" + bcolors.ENDC,bcolors.OKBLUE + output_file_location + bcolors.ENDC)
-        exit()
         UI.UpdateStatus(Status+1,Meta,RecOutputMeta)
     elif Program[Status]=='Custom - PerformMerging':
         input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/RVx1c_'+RecBatchID+'_Link_Fit_Seeds.pkl'
@@ -794,6 +790,8 @@ while Status<len(Program):
         base_data=UI.PickleOperations(input_file_location,'r','N/A')[0]
         original_data_seeds=len(base_data)
         no_iter = int(math.ceil(float(original_data_seeds / float(PM.MaxSeedsPerVxPool))))
+        print(no_iter)
+        exit()
         #no_iter=1
         prog_entry=[]
         Program_Dummy=[]
