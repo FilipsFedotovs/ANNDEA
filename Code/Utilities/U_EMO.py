@@ -828,7 +828,7 @@ class EMO:
                   self.Header.append(OtherSeed.Header[t2])
                   if hasattr(self,'Hits') and hasattr(OtherSeed,'Hits'):
                           self.Hits.append(OtherSeed.Hits[t2])
-              if ExpressMode==False:
+                if ExpressMode==False:
                   if hasattr(self,'Label') and hasattr(OtherSeed,'Label'):
                              self.Label=(self.Label and OtherSeed.Label)
                   if hasattr(self,'FIT') and hasattr(OtherSeed,'FIT'):
