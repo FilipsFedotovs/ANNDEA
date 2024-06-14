@@ -790,7 +790,7 @@ while Status<len(Program):
         base_data=UI.PickleOperations(input_file_location,'r','N/A')[0]
         original_data_seeds=len(base_data)
         no_iter = int(math.ceil(float(original_data_seeds / float(PM.MaxSeedsPerVxPool))))
-        print(no_iter)
+        print(original_data_seeds)
         exit()
         #no_iter=1
         prog_entry=[]
