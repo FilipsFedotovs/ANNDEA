@@ -23,7 +23,7 @@ parser.add_argument('--AFS',help="AFS directory location", default='.')
 parser.add_argument('--BatchID',help="Give this training sample batch an ID", default='SHIP_UR_v1')
 parser.add_argument('--MaxPoolSeeds',help="How many seeds?", default='20000')
 parser.add_argument('--PY',help="Python libraries directory location", default='.')
-
+parser.add_argument('--ExpressMode',help="Work with lighter seeds", default='.',type=bool)
 ######################################## Set variables  #############################################################
 args = parser.parse_args()
 i=int(args.i)    #This is just used to name the output file
@@ -32,6 +32,7 @@ o=args.o
 sfx=args.sfx
 pfx=args.pfx
 BatchID=args.BatchID
+ExpressMode=args.ExpressMode
 ########################################     Preset framework parameters    #########################################
 MaxPoolSeeds=int(args.MaxPoolSeeds)
 #Loading Directory locations
@@ -70,7 +71,7 @@ while ContinueMerging:
         SubjectSeed=base_data[SeedCounter]
         for ObjectSeed in base_data[SeedCounter+1:]:
             temp=SubjectSeed.Header,ObjectSeed.Header
-            if SubjectSeed.InjectSeed(ObjectSeed):
+            if SubjectSeed.InjectSeed(ObjectSeed,ExpressMode):
                base_data.pop(base_data.index(ObjectSeed))
         SeedCounter+=1
     print(str(InitialDataLength), "2-track vertices were merged into", str(len(base_data)), 'vertices with higher multiplicity...')

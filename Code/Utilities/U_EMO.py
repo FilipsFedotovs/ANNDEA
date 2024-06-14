@@ -809,7 +809,7 @@ class EMO:
               if hasattr(self,'Partition'):
                   delattr(self,'Partition')
 
-      def InjectSeed(self,OtherSeed):
+      def InjectSeed(self,OtherSeed,ExpressMode=False):
           __overlap=False
           for t1 in self.Header:
               for t2 in OtherSeed.Header:
@@ -828,71 +828,72 @@ class EMO:
                   self.Header.append(OtherSeed.Header[t2])
                   if hasattr(self,'Hits') and hasattr(OtherSeed,'Hits'):
                           self.Hits.append(OtherSeed.Hits[t2])
-              if hasattr(self,'Label') and hasattr(OtherSeed,'Label'):
-                         self.Label=(self.Label and OtherSeed.Label)
-              if hasattr(self,'FIT') and hasattr(OtherSeed,'FIT'):
-                        self.FIT+=OtherSeed.FIT
-              elif hasattr(self,'FIT'):
-                       self.FIT.append(OtherSeed.Fit)
-              elif hasattr(OtherSeed,'FIT'):
-                       self.FIT=[self.Fit]
-                       self.FIT+=OtherSeed.FIT
-              else:
-                      self.FIT=[]
-                      self.FIT.append(self.Fit)
-                      self.FIT.append(OtherSeed.Fit)
-              if hasattr(self,'VX_x') and hasattr(OtherSeed,'VX_x'):
-                      self.VX_x+=OtherSeed.VX_x
-              elif hasattr(self,'VX_x'):
-                       self.VX_x.append(OtherSeed.Vx)
-              elif hasattr(OtherSeed,'VX_x'):
-                       self.VX_x=[self.Vx]
-                       self.VX_x+=OtherSeed.VX_x
-              else:
-                      self.VX_x=[]
-                      self.VX_x.append(self.Vx)
-                      self.VX_x.append(OtherSeed.Vx)
-                          
-              if hasattr(self,'VX_y') and hasattr(OtherSeed,'VX_y'):
-                      self.VX_y+=OtherSeed.VX_y
-              elif hasattr(self,'VX_y'):
-                       self.VX_y.append(OtherSeed.Vy)
-              elif hasattr(OtherSeed,'VX_y'):
-                       self.VX_y=[self.Vy]
-                       self.VX_y+=OtherSeed.VX_y
-              else:
-                      self.VX_y=[]
-                      self.VX_y.append(self.Vy)
-                      self.VX_y.append(OtherSeed.Vy)
-                  
-              if hasattr(self,'VX_z') and hasattr(OtherSeed,'VX_z'):
-                      self.VX_z+=OtherSeed.VX_z
-              elif hasattr(self,'VX_z'):
-                       self.VX_z.append(OtherSeed.Vz)
-              elif hasattr(OtherSeed,'VX_z'):
-                       self.VX_z=[self.Vz]
-                       self.VX_z+=OtherSeed.VX_z
-              else:
-                      self.VX_z=[]
-                      self.VX_z.append(self.Vz)
-                      self.VX_z.append(OtherSeed.Vz)
-              self.VX_z=list(set(self.VX_z))
-              self.VX_x=list(set(self.VX_x))
-              self.VX_y=list(set(self.VX_y))
-              self.FIT=list(set(self.FIT))
-              self.Partition=len(self.Header)
-              self.Fit=sum(self.FIT)/len(self.FIT)
-              self.Vx=sum(self.VX_x)/len(self.VX_x)
-              self.Vy=sum(self.VX_y)/len(self.VX_y)
-              self.Vz=sum(self.VX_z)/len(self.VX_z)
-              if hasattr(self,'angle'):
-                  delattr(self,'angle')
-              if hasattr(self,'DOCA'):
-                  delattr(self,'DOCA')
-              if hasattr(self,'V_Tr'):
-                  delattr(self,'V_Tr')
-              if hasattr(self,'Tr_Tr'):
-                  delattr(self,'Tr_Tr')
+              if ExpressMode==False:
+                  if hasattr(self,'Label') and hasattr(OtherSeed,'Label'):
+                             self.Label=(self.Label and OtherSeed.Label)
+                  if hasattr(self,'FIT') and hasattr(OtherSeed,'FIT'):
+                            self.FIT+=OtherSeed.FIT
+                  elif hasattr(self,'FIT'):
+                           self.FIT.append(OtherSeed.Fit)
+                  elif hasattr(OtherSeed,'FIT'):
+                           self.FIT=[self.Fit]
+                           self.FIT+=OtherSeed.FIT
+                  else:
+                          self.FIT=[]
+                          self.FIT.append(self.Fit)
+                          self.FIT.append(OtherSeed.Fit)
+                  if hasattr(self,'VX_x') and hasattr(OtherSeed,'VX_x'):
+                          self.VX_x+=OtherSeed.VX_x
+                  elif hasattr(self,'VX_x'):
+                           self.VX_x.append(OtherSeed.Vx)
+                  elif hasattr(OtherSeed,'VX_x'):
+                           self.VX_x=[self.Vx]
+                           self.VX_x+=OtherSeed.VX_x
+                  else:
+                          self.VX_x=[]
+                          self.VX_x.append(self.Vx)
+                          self.VX_x.append(OtherSeed.Vx)
+
+                  if hasattr(self,'VX_y') and hasattr(OtherSeed,'VX_y'):
+                          self.VX_y+=OtherSeed.VX_y
+                  elif hasattr(self,'VX_y'):
+                           self.VX_y.append(OtherSeed.Vy)
+                  elif hasattr(OtherSeed,'VX_y'):
+                           self.VX_y=[self.Vy]
+                           self.VX_y+=OtherSeed.VX_y
+                  else:
+                          self.VX_y=[]
+                          self.VX_y.append(self.Vy)
+                          self.VX_y.append(OtherSeed.Vy)
+
+                  if hasattr(self,'VX_z') and hasattr(OtherSeed,'VX_z'):
+                          self.VX_z+=OtherSeed.VX_z
+                  elif hasattr(self,'VX_z'):
+                           self.VX_z.append(OtherSeed.Vz)
+                  elif hasattr(OtherSeed,'VX_z'):
+                           self.VX_z=[self.Vz]
+                           self.VX_z+=OtherSeed.VX_z
+                  else:
+                          self.VX_z=[]
+                          self.VX_z.append(self.Vz)
+                          self.VX_z.append(OtherSeed.Vz)
+                  self.VX_z=list(set(self.VX_z))
+                  self.VX_x=list(set(self.VX_x))
+                  self.VX_y=list(set(self.VX_y))
+                  self.FIT=list(set(self.FIT))
+                  self.Partition=len(self.Header)
+                  self.Fit=sum(self.FIT)/len(self.FIT)
+                  self.Vx=sum(self.VX_x)/len(self.VX_x)
+                  self.Vy=sum(self.VX_y)/len(self.VX_y)
+                  self.Vz=sum(self.VX_z)/len(self.VX_z)
+                  if hasattr(self,'angle'):
+                      delattr(self,'angle')
+                  if hasattr(self,'DOCA'):
+                      delattr(self,'DOCA')
+                  if hasattr(self,'V_Tr'):
+                      delattr(self,'V_Tr')
+                  if hasattr(self,'Tr_Tr'):
+                      delattr(self,'Tr_Tr')
               return True
           else:
               return __overlap

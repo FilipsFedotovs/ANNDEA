@@ -795,8 +795,8 @@ while Status<len(Program):
         Program_Dummy=[]
         prog_entry.append('Sending vertices to HTCondor so they can be merged')
         prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/'+RecBatchID+'/','MergeVertices','RVx1d','.pkl',RecBatchID,no_iter,'RVx1d_MergeVertices_Sub.py'])
-        prog_entry.append([" --MaxPoolSeeds "])
-        prog_entry.append([PM.MaxSeedsPerVxPool])
+        prog_entry.append([" --MaxPoolSeeds "," --ExpressMode "])
+        prog_entry.append([PM.MaxSeedsPerVxPool,ExpressMode])
         prog_entry.append(no_iter)
         prog_entry.append(LocalSub)
         prog_entry.append('N/A')
