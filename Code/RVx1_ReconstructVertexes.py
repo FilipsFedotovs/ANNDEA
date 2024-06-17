@@ -968,9 +968,9 @@ while Status<len(Program):
                                                   new_data=UI.PickleOperations(required_output_file_location,'r','N/A')[0]
                                                   if ExpressMode:
                                                       for nd in new_data:
-                                                          print(nd.__dir__())
-                                                          exit()
                                                           nd.StripSeed()
+                                                          print(nd.__dict__())
+                                                          exit()
                                                   #print(psutil.Process(os.getpid()).memory_info().rss / 1024 ** 2)
                                                   print(UI.TimeStamp(),'Set',str(i)+'_'+str(j), 'contains', len(new_data), 'seeds')
                                                   if base_data == None:
