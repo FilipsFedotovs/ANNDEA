@@ -774,16 +774,28 @@ class EMO:
              if Mmeta.ClassValues[0][0]=='Reg':
                 self.ClassHeaders=Mmeta.ClassHeaders
              del __Image
-             del Resolution
-             del bX
-             del bY
-             del bZ
-             del H
-             del W
-             del L
-             del PrecedingTrackInd
-             del LagTrackInd
-             del TrackPrint
+             if hasattr(self,'__Image'):
+                  delattr(self,'__Image')
+             if hasattr(self,'Resolution'):
+                  delattr(self,'Resolution')
+             if hasattr(self,'bX'):
+                  delattr(self,'bX')
+             if hasattr(self,'bY'):
+                  delattr(self,'bY')
+             if hasattr(self,'bZ'):
+                  delattr(self,'bZ')
+             if hasattr(self,'H'):
+                  delattr(self,'H')
+             if hasattr(self,'W'):
+                  delattr(self,'W')
+             if hasattr(self,'L'):
+                  delattr(self,'L')
+             if hasattr(self,'PrecedingTrackInd'):
+                  delattr(self,'PrecedingTrackInd')
+             if hasattr(self,'LagTrackInd'):
+                  delattr(self,'LagTrackInd')
+             if hasattr(self,'TrackPrint'):
+                  delattr(self,'TrackPrint')
           elif Mmeta.ModelType=='GNN':
              EMO.PrepareSeedGraph(self,Mmeta)
              M.eval()
