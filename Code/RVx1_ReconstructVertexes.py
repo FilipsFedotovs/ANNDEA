@@ -969,8 +969,6 @@ while Status<len(Program):
                                                   if ExpressMode:
                                                       for nd in new_data:
                                                           nd.StripSeed()
-                                                          print(nd.__dict__)
-                                                          exit()
                                                   #print(psutil.Process(os.getpid()).memory_info().rss / 1024 ** 2)
                                                   print(UI.TimeStamp(),'Set',str(i)+'_'+str(j), 'contains', len(new_data), 'seeds')
                                                   if base_data == None:
