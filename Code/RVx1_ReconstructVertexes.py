@@ -913,13 +913,7 @@ while Status<len(Program):
                     initial_data[BrickID]='D'
                 
                 initial_data['Old_Track_ID'] = initial_data[TrackID] + '-' + initial_data[BrickID]
-
-                #new_combined_data=pd.merge(initial_data,map_data,how='left',on=['Old_Track_ID'])
-                new_combined_data=pd.merge(initial_data,map_data,how='inner',on=['Old_Track_ID'])
-
-                print(new_combined_data)
-                exit()
-
+                new_combined_data=pd.merge(initial_data,map_data,how='left',on=['Old_Track_ID'])
                 new_combined_data.drop(['Old_Track_ID'],axis=1,inplace=True)
                 new_combined_data=new_combined_data.rename(columns={'Temp_Vertex_Domain': RecBatchID+'_Brick_ID','Temp_Vertex_ID': RecBatchID+'_Vertex_ID'})
                 new_combined_data.to_csv(final_output_file_location,index=False)
