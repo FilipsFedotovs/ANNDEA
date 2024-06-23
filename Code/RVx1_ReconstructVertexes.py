@@ -914,7 +914,8 @@ while Status<len(Program):
                 
                 initial_data['Old_Track_ID'] = initial_data[TrackID] + '-' + initial_data[BrickID]
 
-                new_combined_data=pd.merge(initial_data,map_data,how='left',on=['Old_Track_ID'])
+                #new_combined_data=pd.merge(initial_data,map_data,how='left',on=['Old_Track_ID'])
+                new_combined_data=pd.merge(initial_data,map_data,how='inner',on=['Old_Track_ID'])
 
                 print(new_combined_data)
                 exit()
