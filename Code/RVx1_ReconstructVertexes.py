@@ -905,6 +905,9 @@ while Status<len(Program):
                 print(UI.PickleOperations(final_output_file_location_object,'w',Vertex_Object)[1])
 
                 initial_data=pd.read_csv(initial_input_file_location,header=0)
+                print(initial_data)
+                exit()
+
                 initial_data[BrickID] = initial_data[BrickID].astype(str)
                 initial_data[TrackID] = initial_data[TrackID].astype(str)
                 if BrickID=='':
