@@ -903,18 +903,20 @@ while Status<len(Program):
                 map_data=pd.read_csv(EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/RVx1e_'+RecBatchID+'_Union_Vertexes.csv',header=0)
                 Vertex_Object=UI.PickleOperations(EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/RVx1e_'+RecBatchID+'_Union_Vertexes.pkl','r', 'N/A')[0]
                 print(UI.PickleOperations(final_output_file_location_object,'w',Vertex_Object)[1])
-
                 initial_data=pd.read_csv(initial_input_file_location,header=0)
-                print(initial_data)
-                exit()
-
-                initial_data[BrickID] = initial_data[BrickID].astype(str)
+                if BrickID=='':
+                    initial_data[BrickID]='D'
+                else:
+                    initial_data[BrickID] = initial_data[BrickID].astype(str)
                 initial_data[TrackID] = initial_data[TrackID].astype(str)
                 if BrickID=='':
                     initial_data[BrickID]='D'
                 
                 initial_data['Old_Track_ID'] = initial_data[TrackID] + '-' + initial_data[BrickID]
 
+                print(initial_data['Old_Track_ID'])
+                exit()
+                
                 new_combined_data=pd.merge(initial_data,map_data,how='left',on=['Old_Track_ID'])
                 new_combined_data.drop(['Old_Track_ID'],axis=1,inplace=True)
                 new_combined_data=new_combined_data.rename(columns={'Temp_Vertex_Domain': RecBatchID+'_Brick_ID','Temp_Vertex_ID': RecBatchID+'_Vertex_ID'})
