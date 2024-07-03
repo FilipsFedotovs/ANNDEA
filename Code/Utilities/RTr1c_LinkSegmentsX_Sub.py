@@ -65,12 +65,13 @@ FirstFileName=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/Temp_RTr1b_'+RecBatch
 
 ZContractedTable=pd.read_csv(FirstFileName)  #First cluster is like a Pacman: it absorbes proceeding clusters and gets bigger
 print(ZContractedTable)
-exit()
 with alive_bar(X_ID_Max-1,force_tty=True, title='Merging cluster sets along x-axis..') as bar:
     for i in range(1,X_ID_Max):
         bar()
         SecondFileName=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/Temp_RTr1b_'+RecBatchID+'_'+str(0)+'/RTr1b_'+RecBatchID+'_hit_cluster_rec_y_set_'+str(i)+'.csv' #keep loading subsequent files along y-xis with reconstructed clusters that already have been merged along z and y-axis
         SecondFile=pd.read_csv(SecondFileName)
+        print(SecondFile)
+        x=input()
         SecondFileTable=SecondFile.rename(columns={"Master_Segment_ID":"Segment_ID","Master_z":"z" }) #Initally the following clusters are downgraded from the master status
         FileClean=pd.merge(ZContractedTable.drop_duplicates(subset=["Master_Segment_ID","HitID",'Master_z'],keep='first'),SecondFileTable,how='inner', on=['HitID']) #Join segments based on the common hits
         FileClean["Segment_No_z"]= FileClean["Segment_ID"]
