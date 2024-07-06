@@ -73,35 +73,35 @@ with alive_bar(X_ID_Max-1,force_tty=True, title='Merging cluster sets along x-ax
         SecondFile=pd.read_csv(SecondFileName)
         SecondFile.drop_duplicates(subset=['HitID', 'Master_z', 'Master_Segment_ID', 'Segment_No', 'Segment_No_Tot'],keep='first',inplace=True)
         SecondFile["HitID"] = SecondFile["HitID"].astype(str)
-        print('--------------Part 1------------------')
-        filtered_df = SecondFile[SecondFile['Master_Segment_ID'].isin(['ANNDEA_B41_ExclEM_Debug_19.5_18.5_1.6666666666666667-2','ANNDEA_B41_ExclEM_Debug_20.0_18.0_2.0-1'])]
-        print(filtered_df)
-        filtered_df = ZContractedTable[ZContractedTable['Master_Segment_ID'].isin(['ANNDEA_B41_ExclEM_Debug_19.5_18.5_1.6666666666666667-2','ANNDEA_B41_ExclEM_Debug_20.0_18.0_2.0-1'])]
-        print(filtered_df)
-
-        print('--------------Part 2------------------')
+        # print('--------------Part 1------------------')
+        # filtered_df = SecondFile[SecondFile['Master_Segment_ID'].isin(['ANNDEA_B41_ExclEM_Debug_19.5_18.5_1.6666666666666667-2','ANNDEA_B41_ExclEM_Debug_20.0_18.0_2.0-1'])]
+        # print(filtered_df)
+        #filtered_df = ZContractedTable[ZContractedTable['Master_Segment_ID'].isin(['ANNDEA_B41_ExclEM_Debug_19.5_18.5_1.6666666666666667-2','ANNDEA_B41_ExclEM_Debug_20.0_18.0_2.0-1'])]
+        # print(filtered_df)
+        #
+        # print('--------------Part 2------------------')
         SecondFileTable=SecondFile.rename(columns={"Master_Segment_ID":"Segment_ID","Master_z":"z" }) #Initally the following clusters are downgraded from the master status
-        filtered_df = SecondFileTable[SecondFileTable['Segment_ID'].isin(['ANNDEA_B41_ExclEM_Debug_19.5_18.5_1.6666666666666667-2','ANNDEA_B41_ExclEM_Debug_20.0_18.0_2.0-1'])]
-        print(filtered_df)
-
-        print('--------------Part 3------------------')
+        # filtered_df = SecondFileTable[SecondFileTable['Segment_ID'].isin(['ANNDEA_B41_ExclEM_Debug_19.5_18.5_1.6666666666666667-2','ANNDEA_B41_ExclEM_Debug_20.0_18.0_2.0-1'])]
+        # print(filtered_df)
+        #
+        # print('--------------Part 3------------------')
         # test=ZContractedTable.drop_duplicates(subset=["Master_Segment_ID","HitID",'Master_z'])
         # filtered_df = test[test['Master_Segment_ID'].isin(['ANNDEA_B41_ExclEM_Debug_19.5_18.5_1.6666666666666667-2','ANNDEA_B41_ExclEM_Debug_20.0_18.0_2.0-1'])]
         # print(filtered_df)
         # SecondFileTable["HitID"] = SecondFileTable["HitID"].astype(str)
         # ZContractedTable["HitID"] = ZContractedTable["HitID"].astype(str)
         FileClean=pd.merge(ZContractedTable.drop_duplicates(subset=["Master_Segment_ID","HitID",'Master_z'],keep='first'),SecondFileTable,how='inner', on=['HitID']) #Join segments based on the common hits
-        filtered_df = FileClean[FileClean["Master_Segment_ID"].isin(['ANNDEA_B41_ExclEM_Debug_19.5_18.5_1.6666666666666667-2','ANNDEA_B41_ExclEM_Debug_20.0_18.0_2.0-1'])]
-        print(filtered_df)
-        #print(FileClean)
+        # filtered_df = FileClean[FileClean["Master_Segment_ID"].isin(['ANNDEA_B41_ExclEM_Debug_19.5_18.5_1.6666666666666667-2','ANNDEA_B41_ExclEM_Debug_20.0_18.0_2.0-1'])]
+        # print(filtered_df)
+        # #print(FileClean)
 
-        print('--------------Part 4------------------')
+        # print('--------------Part 4------------------')
 
         FileClean["Segment_No_z"]= FileClean["Segment_ID"]
         FileClean=FileClean.groupby(by=["Master_Segment_ID","Segment_ID","Segment_No_x","Segment_No_y","Segment_No_Tot_x","Segment_No_Tot_y"])["Segment_No_z"].count().reset_index()
         filtered_df = FileClean[FileClean["Master_Segment_ID"].isin(['ANNDEA_B41_ExclEM_Debug_19.5_18.5_1.6666666666666667-2','ANNDEA_B41_ExclEM_Debug_20.0_18.0_2.0-1'])]
-        print(filtered_df)
-        print('--------------Part 5------------------')
+        # print(filtered_df)
+        # print('--------------Part 5------------------')
         FileCleanTot=FileClean.groupby(by=["Master_Segment_ID"])["Segment_No_z"].sum().reset_index()
         FileCleanTot.rename(columns={"Segment_No_z":"Segment_No_Tot_z"},inplace=True)
         FileClean=pd.merge(FileClean,FileCleanTot,how='inner', on=["Master_Segment_ID"])
@@ -134,12 +134,12 @@ with alive_bar(X_ID_Max-1,force_tty=True, title='Merging cluster sets along x-ax
         ZContractedTable=ZContractedTable.drop(['Segment_No','Segment_No_Tot'],axis=1)
         ZContractedTable=pd.merge(ZContractedTable,ZContractedTable_r,how='inner', on=["Master_Segment_ID"])
 
-        print('--------------Part xx------------------')
+        # print('--------------Part xx------------------')
         ZContractedTable.drop_duplicates(subset=['HitID', 'Master_z', 'Master_Segment_ID', 'Segment_No', 'Segment_No_Tot'],keep='first',inplace=True)
         ZContractedTable["HitID"] = ZContractedTable["HitID"].astype(str)
-        filtered_df = ZContractedTable[ZContractedTable['Master_Segment_ID'].isin(['ANNDEA_B41_ExclEM_Debug_19.5_18.5_1.6666666666666667-2','ANNDEA_B41_ExclEM_Debug_20.0_18.0_2.0-1'])]
-        print(filtered_df)
-        x=input()
+        # filtered_df = ZContractedTable[ZContractedTable['Master_Segment_ID'].isin(['ANNDEA_B41_ExclEM_Debug_19.5_18.5_1.6666666666666667-2','ANNDEA_B41_ExclEM_Debug_20.0_18.0_2.0-1'])]
+        # print(filtered_df)
+        # x=input()
 
 ZContractedTable['Fit']=ZContractedTable['Segment_No']/ZContractedTable['Segment_No_Tot']
 ZContractedTable['Fit'] = ZContractedTable['Fit'].fillna(1.0)

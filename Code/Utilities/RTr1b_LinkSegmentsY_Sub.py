@@ -65,9 +65,13 @@ FirstFileName=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/Temp_'+'RTr1a'+'_'+Re
 ZContractedTable=pd.read_csv(FirstFileName) #First cluster is like a Pacman: it absorbes proceeding clusters and gets bigger
 ZContractedTable["Segment_No"]=0
 ZContractedTable["Segment_No_Tot"]=0
+ZContractedTable.drop_duplicates(subset=['HitID', 'Master_z', 'Master_Segment_ID', 'Segment_No', 'Segment_No_Tot'],keep='first',inplace=True)
+ZContractedTable["HitID"] = ZContractedTable["HitID"].astype(str)
 for i in range(1,Y_ID_Max):
     SecondFileName=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/Temp_'+'RTr1a'+'_'+RecBatchID+'_'+str(X_ID)+'/RTr1a_'+RecBatchID+'_hit_cluster_rec_set_'+str(X_ID)+'_' +str(i)+'.csv' #keep loading subsequent files along y-xis with reconstructed clusters that already have been merged along z-axis
     SecondFile=pd.read_csv(SecondFileName)
+    SecondFile.drop_duplicates(subset=['HitID', 'Master_z', 'Master_Segment_ID', 'Segment_No', 'Segment_No_Tot'],keep='first',inplace=True)
+    SecondFile["HitID"] = SecondFile["HitID"].astype(str)
     SecondFileTable=SecondFile.rename(columns={"Master_Segment_ID":"Segment_ID","Master_z":"z" }) #Initally the following clusters are downgraded from the master status
     FileClean=pd.merge(ZContractedTable.drop_duplicates(subset=["Master_Segment_ID","HitID",'Master_z'],keep='first'),SecondFileTable,how='inner', on=['HitID']) #Join segments based on the common hits
     FileClean["Segment_No"]= FileClean["Segment_ID"]
@@ -89,6 +93,8 @@ for i in range(1,Y_ID_Max):
     ZContractedTable_r=ZContractedTable_r.groupby(['Master_Segment_ID']).agg({'Segment_No':'sum','Segment_No_Tot':'sum'}).reset_index()
     ZContractedTable=ZContractedTable.drop(['Segment_No','Segment_No_Tot'],axis=1)
     ZContractedTable=pd.merge(ZContractedTable,ZContractedTable_r,how='inner', on=["Master_Segment_ID"])
+    ZContractedTable.drop_duplicates(subset=['HitID', 'Master_z', 'Master_Segment_ID', 'Segment_No', 'Segment_No_Tot'],keep='first',inplace=True)
+    ZContractedTable["HitID"] = ZContractedTable["HitID"].astype(str)
 ZContractedTable=ZContractedTable.sort_values(["Master_Segment_ID",'Master_z'],ascending=[1,1])
 output_file_location=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(0)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(X_ID)+sfx
 ZContractedTable.to_csv(output_file_location,index=False)

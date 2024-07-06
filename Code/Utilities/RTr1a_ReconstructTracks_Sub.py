@@ -404,8 +404,12 @@ if CheckPoint:
 if len(z_clusters_results)>0:
     print(UI.TimeStamp(),'Merging all clusters along z-axis...')
     ZContractedTable=z_clusters_results[0].rename(columns={"Segment_ID": "Master_Segment_ID","z": "Master_z" }) #First cluster is like a Pacman: it absorbs proceeding clusters and gets bigger
+    ZContractedTable.drop_duplicates(subset=['HitID', 'Master_z', 'Master_Segment_ID', 'Segment_No', 'Segment_No_Tot'],keep='first',inplace=True)
+    ZContractedTable["HitID"] = ZContractedTable["HitID"].astype(str)
     for i in range(1,len(z_clusters_results)):
         SecondFileTable=z_clusters_results[i]
+        SecondFileTable.drop_duplicates(subset=['HitID', 'Master_z', 'Master_Segment_ID', 'Segment_No', 'Segment_No_Tot'],keep='first',inplace=True)
+        SecondFileTable["HitID"] = SecondFileTable["HitID"].astype(str)
         FileClean=pd.merge(ZContractedTable,SecondFileTable,how='inner', on=['HitID']) #Join segments based on the common hits
         FileClean["Segment_No"]= FileClean["Segment_ID"]
         FileClean=FileClean.groupby(by=["Master_Segment_ID","Segment_ID"])["Segment_No"].count().reset_index() #If multiple segments share hit with the master segment we decide the best one by a level of the overlap
@@ -418,6 +422,8 @@ if len(z_clusters_results)>0:
         FileClean=FileClean.drop(['Segment_ID'],axis=1)
         ZContractedTable=pd.concat([ZContractedTable,FileClean]) #Absorbing proceeding cluster
         ZContractedTable.drop_duplicates(subset=["Master_Segment_ID","HitID",'Master_z'],keep='first',inplace=True)
+        ZContractedTable.drop_duplicates(subset=['HitID', 'Master_z', 'Master_Segment_ID', 'Segment_No', 'Segment_No_Tot'],keep='first',inplace=True)
+        ZContractedTable["HitID"] = ZContractedTable["HitID"].astype(str)
     ZContractedTable=ZContractedTable.sort_values(["Master_Segment_ID",'Master_z'],ascending=[1,1])
 else: #If Cluster tracking yielded no segments we just create an empty array for consistency
      print(UI.TimeStamp(),'No suitable hit pairs in the cluster set, just writing the empty one...')
