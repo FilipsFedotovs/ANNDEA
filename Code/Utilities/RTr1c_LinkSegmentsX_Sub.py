@@ -83,11 +83,13 @@ with alive_bar(X_ID_Max-1,force_tty=True, title='Merging cluster sets along x-ax
         print('--------------Part 3------------------')
         print(ZContractedTable.dtypes)
         print(SecondFileTable.dtypes)
-        print(ZContractedTable.drop_duplicates(subset=["Master_Segment_ID","HitID",'Master_z']))
+        test=ZContractedTable.drop_duplicates(subset=["Master_Segment_ID","HitID",'Master_z'])
+        filtered_df = test[test['Master_Segment_ID'].isin(['ANNDEA_B41_ExclEM_Debug_19.5_18.5_1.6666666666666667-2','ANNDEA_B41_ExclEM_Debug_20.0_18.0_2.0-1'])]
+        print(filtered_df)
         FileClean=pd.merge(ZContractedTable.drop_duplicates(subset=["Master_Segment_ID","HitID",'Master_z'],keep='first'),SecondFileTable,how='inner', on=['HitID']) #Join segments based on the common hits
         filtered_df = FileClean[FileClean["Master_Segment_ID"].isin(['ANNDEA_B41_ExclEM_Debug_19.5_18.5_1.6666666666666667-2','ANNDEA_B41_ExclEM_Debug_20.0_18.0_2.0-1'])]
         print(filtered_df)
-        print(FileClean)
+        #print(FileClean)
 
         print('--------------Part 4------------------')
         x=input()
