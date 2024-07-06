@@ -63,14 +63,14 @@ def zero_divide(a, b):
 #Load the first file (on the y-axis) with reconstructed clusters that already have been merged along z-axis
 FirstFileName=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/Temp_RTr1b_'+RecBatchID+'_'+str(0)+'/RTr1b_'+RecBatchID+'_hit_cluster_rec_y_set_' +str(0)+'.csv'
 
-ZContractedTable=pd.read_csv(FirstFileName)  #First cluster is like a Pacman: it absorbes proceeding clusters and gets bigger
-print(ZContractedTable)
-print(ZContractedTable.drop_duplicates())
+ZContractedTable=pd.read_csv.drop_duplicates(subset=['HitID', 'Master_z', 'Master_Segment_ID', 'Segment_No', 'Segment_No_Tot'])  #First cluster is like a Pacman: it absorbes proceeding clusters and gets bigger
+ZContractedTable["HitID"] = ZContractedTable["HitID"].astype(str)
 with alive_bar(X_ID_Max-1,force_tty=True, title='Merging cluster sets along x-axis..') as bar:
     for i in range(1,X_ID_Max):
         bar()
         SecondFileName=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/Temp_RTr1b_'+RecBatchID+'_'+str(0)+'/RTr1b_'+RecBatchID+'_hit_cluster_rec_y_set_'+str(i)+'.csv' #keep loading subsequent files along y-xis with reconstructed clusters that already have been merged along z and y-axis
-        SecondFile=pd.read_csv(SecondFileName)
+        SecondFile=pd.read_csv(SecondFileName).drop_duplicates(subset=['HitID', 'Master_z', 'Master_Segment_ID', 'Segment_No', 'Segment_No_Tot'])
+        SecondFile["HitID"] = SecondFile["HitID"].astype(str)
         print('--------------Part 1------------------')
         filtered_df = SecondFile[SecondFile['Master_Segment_ID'].isin(['ANNDEA_B41_ExclEM_Debug_19.5_18.5_1.6666666666666667-2','ANNDEA_B41_ExclEM_Debug_20.0_18.0_2.0-1'])]
         print(filtered_df)
@@ -83,13 +83,11 @@ with alive_bar(X_ID_Max-1,force_tty=True, title='Merging cluster sets along x-ax
         print(filtered_df)
 
         print('--------------Part 3------------------')
-        print(ZContractedTable.dtypes)
-        print(SecondFileTable.dtypes)
-        test=ZContractedTable.drop_duplicates(subset=["Master_Segment_ID","HitID",'Master_z'])
-        filtered_df = test[test['Master_Segment_ID'].isin(['ANNDEA_B41_ExclEM_Debug_19.5_18.5_1.6666666666666667-2','ANNDEA_B41_ExclEM_Debug_20.0_18.0_2.0-1'])]
-        print(filtered_df)
-        SecondFileTable["HitID"] = SecondFileTable["HitID"].astype(str)
-        ZContractedTable["HitID"] = ZContractedTable["HitID"].astype(str)
+        # test=ZContractedTable.drop_duplicates(subset=["Master_Segment_ID","HitID",'Master_z'])
+        # filtered_df = test[test['Master_Segment_ID'].isin(['ANNDEA_B41_ExclEM_Debug_19.5_18.5_1.6666666666666667-2','ANNDEA_B41_ExclEM_Debug_20.0_18.0_2.0-1'])]
+        # print(filtered_df)
+        # SecondFileTable["HitID"] = SecondFileTable["HitID"].astype(str)
+        # ZContractedTable["HitID"] = ZContractedTable["HitID"].astype(str)
         FileClean=pd.merge(ZContractedTable.drop_duplicates(subset=["Master_Segment_ID","HitID",'Master_z'],keep='first'),SecondFileTable,how='inner', on=['HitID']) #Join segments based on the common hits
         filtered_df = FileClean[FileClean["Master_Segment_ID"].isin(['ANNDEA_B41_ExclEM_Debug_19.5_18.5_1.6666666666666667-2','ANNDEA_B41_ExclEM_Debug_20.0_18.0_2.0-1'])]
         print(filtered_df)
