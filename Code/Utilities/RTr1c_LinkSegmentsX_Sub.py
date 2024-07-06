@@ -101,7 +101,6 @@ with alive_bar(X_ID_Max-1,force_tty=True, title='Merging cluster sets along x-ax
         FileClean=FileClean.groupby(by=["Master_Segment_ID","Segment_ID","Segment_No_x","Segment_No_y","Segment_No_Tot_x","Segment_No_Tot_y"])["Segment_No_z"].count().reset_index()
         filtered_df = FileClean[FileClean["Master_Segment_ID"].isin(['ANNDEA_B41_ExclEM_Debug_19.5_18.5_1.6666666666666667-2','ANNDEA_B41_ExclEM_Debug_20.0_18.0_2.0-1'])]
         print(filtered_df)
-        x=input()
         print('--------------Part 5------------------')
         FileCleanTot=FileClean.groupby(by=["Master_Segment_ID"])["Segment_No_z"].sum().reset_index()
         FileCleanTot.rename(columns={"Segment_No_z":"Segment_No_Tot_z"},inplace=True)
@@ -134,6 +133,12 @@ with alive_bar(X_ID_Max-1,force_tty=True, title='Merging cluster sets along x-ax
         ZContractedTable_r=ZContractedTable_r.groupby(['Master_Segment_ID']).agg({'Segment_No':'sum','Segment_No_Tot':'sum'}).reset_index()
         ZContractedTable=ZContractedTable.drop(['Segment_No','Segment_No_Tot'],axis=1)
         ZContractedTable=pd.merge(ZContractedTable,ZContractedTable_r,how='inner', on=["Master_Segment_ID"])
+
+        print('--------------Part xx------------------')
+        filtered_df = ZContractedTable[ZContractedTable['Master_Segment_ID'].isin(['ANNDEA_B41_ExclEM_Debug_19.5_18.5_1.6666666666666667-2','ANNDEA_B41_ExclEM_Debug_20.0_18.0_2.0-1'])]
+        print(filtered_df)
+        x=input()
+
 ZContractedTable['Fit']=ZContractedTable['Segment_No']/ZContractedTable['Segment_No_Tot']
 ZContractedTable['Fit'] = ZContractedTable['Fit'].fillna(1.0)
 
