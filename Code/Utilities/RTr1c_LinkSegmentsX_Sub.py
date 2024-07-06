@@ -63,7 +63,7 @@ def zero_divide(a, b):
 #Load the first file (on the y-axis) with reconstructed clusters that already have been merged along z-axis
 FirstFileName=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/Temp_RTr1b_'+RecBatchID+'_'+str(0)+'/RTr1b_'+RecBatchID+'_hit_cluster_rec_y_set_' +str(0)+'.csv'
 
-ZContractedTable=pd.read_csv  #First cluster is like a Pacman: it absorbes proceeding clusters and gets bigger
+ZContractedTable=pd.read_csv(FirstFileName)  #First cluster is like a Pacman: it absorbes proceeding clusters and gets bigger
 ZContractedTable.drop_duplicates(subset=['HitID', 'Master_z', 'Master_Segment_ID', 'Segment_No', 'Segment_No_Tot'],keep='first',inplace=True)
 ZContractedTable["HitID"] = ZContractedTable["HitID"].astype(str)
 with alive_bar(X_ID_Max-1,force_tty=True, title='Merging cluster sets along x-axis..') as bar:
