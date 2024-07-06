@@ -96,10 +96,13 @@ with alive_bar(X_ID_Max-1,force_tty=True, title='Merging cluster sets along x-ax
         #print(FileClean)
 
         print('--------------Part 4------------------')
-        x=input()
+
         FileClean["Segment_No_z"]= FileClean["Segment_ID"]
         FileClean=FileClean.groupby(by=["Master_Segment_ID","Segment_ID","Segment_No_x","Segment_No_y","Segment_No_Tot_x","Segment_No_Tot_y"])["Segment_No_z"].count().reset_index()
-
+        filtered_df = FileClean[FileClean["Master_Segment_ID"].isin(['ANNDEA_B41_ExclEM_Debug_19.5_18.5_1.6666666666666667-2','ANNDEA_B41_ExclEM_Debug_20.0_18.0_2.0-1'])]
+        print(filtered_df)
+        x=input()
+        print('--------------Part 5------------------')
         FileCleanTot=FileClean.groupby(by=["Master_Segment_ID"])["Segment_No_z"].sum().reset_index()
         FileCleanTot.rename(columns={"Segment_No_z":"Segment_No_Tot_z"},inplace=True)
         FileClean=pd.merge(FileClean,FileCleanTot,how='inner', on=["Master_Segment_ID"])
@@ -108,6 +111,7 @@ with alive_bar(X_ID_Max-1,force_tty=True, title='Merging cluster sets along x-ax
         FileClean=FileClean.drop(['Segment_No_x','Segment_No_y','Segment_No_z',"Segment_No_Tot_x","Segment_No_Tot_y","Segment_No_Tot_z"],axis=1)
         FileClean=FileClean.sort_values(["Master_Segment_ID","Segment_No"],ascending=[1,0])
         FileClean.drop_duplicates(subset=["Master_Segment_ID"],keep='first',inplace=True)  #Keep the best matching segment
+
 
 
         FileClean=pd.merge(FileClean,SecondFileTable,how='right', on=['Segment_ID'])
