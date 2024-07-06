@@ -69,15 +69,27 @@ with alive_bar(X_ID_Max-1,force_tty=True, title='Merging cluster sets along x-ax
         bar()
         SecondFileName=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/Temp_RTr1b_'+RecBatchID+'_'+str(0)+'/RTr1b_'+RecBatchID+'_hit_cluster_rec_y_set_'+str(i)+'.csv' #keep loading subsequent files along y-xis with reconstructed clusters that already have been merged along z and y-axis
         SecondFile=pd.read_csv(SecondFileName)
+        print('--------------Part 1------------------')
         filtered_df = SecondFile[SecondFile['Master_Segment_ID'].isin(['ANNDEA_B41_ExclEM_Debug_19.5_18.5_1.6666666666666667-2','ANNDEA_B41_ExclEM_Debug_20.0_18.0_2.0-1'])]
         print(filtered_df)
         filtered_df = ZContractedTable[ZContractedTable['Master_Segment_ID'].isin(['ANNDEA_B41_ExclEM_Debug_19.5_18.5_1.6666666666666667-2','ANNDEA_B41_ExclEM_Debug_20.0_18.0_2.0-1'])]
         print(filtered_df)
-        x=input()
+
+        print('--------------Part 2------------------')
         SecondFileTable=SecondFile.rename(columns={"Master_Segment_ID":"Segment_ID","Master_z":"z" }) #Initally the following clusters are downgraded from the master status
+        filtered_df = SecondFile[SecondFile['Segment_ID'].isin(['ANNDEA_B41_ExclEM_Debug_19.5_18.5_1.6666666666666667-2','ANNDEA_B41_ExclEM_Debug_20.0_18.0_2.0-1'])]
+        print(filtered_df)
+
+        print('--------------Part 3------------------')
         FileClean=pd.merge(ZContractedTable.drop_duplicates(subset=["Master_Segment_ID","HitID",'Master_z'],keep='first'),SecondFileTable,how='inner', on=['HitID']) #Join segments based on the common hits
+        filtered_df = FileClean[FileClean["Master_Segment_ID"].isin(['ANNDEA_B41_ExclEM_Debug_19.5_18.5_1.6666666666666667-2','ANNDEA_B41_ExclEM_Debug_20.0_18.0_2.0-1'])]
+        print(filtered_df)
+
+        print('--------------Part 3------------------')
+        x=input()
         FileClean["Segment_No_z"]= FileClean["Segment_ID"]
         FileClean=FileClean.groupby(by=["Master_Segment_ID","Segment_ID","Segment_No_x","Segment_No_y","Segment_No_Tot_x","Segment_No_Tot_y"])["Segment_No_z"].count().reset_index()
+
         FileCleanTot=FileClean.groupby(by=["Master_Segment_ID"])["Segment_No_z"].sum().reset_index()
         FileCleanTot.rename(columns={"Segment_No_z":"Segment_No_Tot_z"},inplace=True)
         FileClean=pd.merge(FileClean,FileCleanTot,how='inner', on=["Master_Segment_ID"])
