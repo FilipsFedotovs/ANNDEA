@@ -501,8 +501,7 @@ while Status<len(Program):
         Bad_Tracks_Head[str(RecBatchID)+'_Track_ID'] = Bad_Tracks_Head[str(RecBatchID)+'_Track_ID'].astype(str)
         Bad_Tracks[str(RecBatchID)+'_Brick_ID'] = Bad_Tracks[str(RecBatchID)+'_Brick_ID'].astype(str)
         Bad_Tracks[str(RecBatchID)+'_Track_ID'] = Bad_Tracks[str(RecBatchID)+'_Track_ID'].astype(str)
-        print(Bad_Tracks)
-        print(Bad_Tracks_Head)
+
 
         Bad_Tracks=pd.merge(Bad_Tracks,Bad_Tracks_Head,how='inner',on = [str(RecBatchID)+'_Brick_ID',str(RecBatchID)+'_Track_ID'])
 

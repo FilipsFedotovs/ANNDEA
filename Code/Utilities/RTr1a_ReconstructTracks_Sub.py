@@ -404,7 +404,7 @@ if CheckPoint:
 if len(z_clusters_results)>0:
     print(UI.TimeStamp(),'Merging all clusters along z-axis...')
     ZContractedTable=z_clusters_results[0].rename(columns={"Segment_ID": "Master_Segment_ID","z": "Master_z" }) #First cluster is like a Pacman: it absorbs proceeding clusters and gets bigger
-    ZContractedTable.drop_duplicates(subset=['HitID', 'Master_z', 'Master_Segment_ID', 'Segment_No', 'Segment_No_Tot'],keep='first',inplace=True)
+    ZContractedTable.drop_duplicates(subset=['HitID', 'Master_z', 'Master_Segment_ID'],keep='first',inplace=True)
     ZContractedTable["HitID"] = ZContractedTable["HitID"].astype(str)
     for i in range(1,len(z_clusters_results)):
         SecondFileTable=z_clusters_results[i]
