@@ -408,7 +408,9 @@ if len(z_clusters_results)>0:
     ZContractedTable["HitID"] = ZContractedTable["HitID"].astype(str)
     for i in range(1,len(z_clusters_results)):
         SecondFileTable=z_clusters_results[i]
+        print(SecondFileTable)
         SecondFileTable.drop_duplicates(subset=['HitID', 'Master_z', 'Master_Segment_ID', 'Segment_No', 'Segment_No_Tot'],keep='first',inplace=True)
+        
         SecondFileTable["HitID"] = SecondFileTable["HitID"].astype(str)
         FileClean=pd.merge(ZContractedTable,SecondFileTable,how='inner', on=['HitID']) #Join segments based on the common hits
         FileClean["Segment_No"]= FileClean["Segment_ID"]
