@@ -123,14 +123,14 @@ class HitCluster:
            T1=datetime.datetime.now()
            print(len(_l_Hits))
            for l in range(0,len(_l_Hits)-1):
-               print(l,_l_Hits[l],_l_Hits[l+1])
-               print(HitCluster.JoinHits(_l_Hits[l],_l_Hits[l+1],cut_dt,cut_dr))
-               x=input()
+               # print(l,_l_Hits[l],_l_Hits[l+1])
+               # print(HitCluster.JoinHits(_l_Hits[l],_l_Hits[l+1],cut_dt,cut_dr))
+               # x=input()
                #_hit_count+=1
                #print('Edge generation progress is ',round(100*_hit_count/len(_l_Hits),2), '%',end="\r", flush=True) #Keep only for debugging as it slows down the algo
-               #for r in _r_Hits:
-               #if HitCluster.JoinHits(_l_Hits[l],_l_Hits[l+1],cut_dt,cut_dr):
-                      #_Tot_Hits.append(_l_Hits[l]+_l_Hits[l+1])
+               for r in range(l+1,len(_l_Hits)):
+                   if HitCluster.JoinHits(_l_Hits[l],_l_Hits[l+1],cut_dt,cut_dr):
+                          _Tot_Hits.append(_l_Hits[l]+_l_Hits[l+1])
            #print(datetime.datetime.now()-T1)
 
            print('Number of all  hit combinations passing fiducial cuts:',len(_Tot_Hits))
@@ -189,17 +189,17 @@ class HitCluster:
               return False
           else:
               _dtx=abs(_H1[4]-_H2[4])
-              print('dtx',_H1[4],_H2[4],_dtx,_cdt)
+              #print('dtx',_H1[4],_H2[4],_dtx,_cdt)
               if _dtx>=_cdt:
                   return False
               else:
                   _dty=abs(_H1[5]-_H2[5])
-                  print('dty',_H1[5],_H2[5],_dty,_cdt)
+                  #print('dty',_H1[5],_H2[5],_dty,_cdt)
                   if _dty>=_cdt:
                       return False
                   else:
                       _d_x = abs(_H2[1]-(_H1[1]+(_H1[4]*(_H2[3]-_H1[3]))))
-                      print('d_x',_H1[3],_H2[3],_d_x,_cdr)
+                      #print('d_x',_H1[3],_H2[3],_d_x,_cdr)
                       if _d_x>=_cdr:
                          return False
                       else:
