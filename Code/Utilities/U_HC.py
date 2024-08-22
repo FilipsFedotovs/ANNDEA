@@ -110,8 +110,7 @@ class HitCluster:
 
            _l_Hits=self.ClusterHits
 
-           _l_Hits= sorted(_l_Hits, key=lambda x: x[3], reverse=True) #Sorting by z
-           print(_l_Hits)
+           _l_Hits= sorted(_l_Hits, key=lambda x: x[3]) #Sorting by z
            #_r_Hits=self.ClusterHits
            #Combining data 1 and 2
            _Tot_Hits=[]
@@ -124,14 +123,15 @@ class HitCluster:
            T1=datetime.datetime.now()
            print(len(_l_Hits))
            for l in range(0,len(_l_Hits)-1):
-               #print(l,_l_Hits[l],_r_Hits[l+1])
-               #x=input()
+               print(l,_l_Hits[l],_l_Hits[l+1])
+               print(HitCluster.JoinHits(_l_Hits[l],_l_Hits[l+1],cut_dt,cut_dr))
+               x=input()
                #_hit_count+=1
                #print('Edge generation progress is ',round(100*_hit_count/len(_l_Hits),2), '%',end="\r", flush=True) #Keep only for debugging as it slows down the algo
                #for r in _r_Hits:
-               if HitCluster.JoinHits(_l_Hits[l],_l_Hits[l+1],cut_dt,cut_dr):
-                      _Tot_Hits.append(_l_Hits[l]+_l_Hits[l+1])
-           print(datetime.datetime.now()-T1)
+               #if HitCluster.JoinHits(_l_Hits[l],_l_Hits[l+1],cut_dt,cut_dr):
+                      #_Tot_Hits.append(_l_Hits[l]+_l_Hits[l+1])
+           #print(datetime.datetime.now()-T1)
 
            print('Number of all  hit combinations passing fiducial cuts:',len(_Tot_Hits))
            exit()
@@ -189,6 +189,7 @@ class HitCluster:
           #    return False
           #else:
               _dtx=abs(_H1[4]-_H2[4])
+              print('dtx',_H1[4],_H2[4],_dtx,_cdt)
               if _dtx>=_cdt:
                   return False
               else:
