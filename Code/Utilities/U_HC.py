@@ -107,35 +107,25 @@ class HitCluster:
                return False
       def GenerateEdges(self, cut_dt, cut_dr): #Decorate hit information
            #New workaround: instead of a painful Pandas outer join a loop over list is perfromed
-
-           _l_Hits=self.ClusterHits
-
-           _l_Hits= sorted(_l_Hits, key=lambda x: x[3], reverse=True) #Sorting by z
-           #_r_Hits=self.ClusterHits
-           #Combining data 1 and 2
+           _Hits=self.ClusterHits
+           _Hits= sorted(_Hits, key=lambda x: x[3], reverse=True) #Sorting by z
            _Tot_Hits=[]
-           #_hit_count=0
-           print('Initial number of all possible hit combinations is:',len(_l_Hits)**2)
-           print('Number of all possible hit combinations without self-permutations:',(len(_l_Hits)**2)-len(_l_Hits))
-           print('Number of all possible hit  combinations with enforced one-directionality:',int(((len(_l_Hits)**2)-len(_l_Hits))/2))
+           print('Initial number of all possible hit combinations is:',len(_Hits)**2)
+           print('Number of all possible hit combinations without self-permutations:',(len(_Hits)**2)-len(_Hits))
+           print('Number of all possible hit  combinations with enforced one-directionality:',int(((len(_Hits)**2)-len(_Hits))/2))
 
-           import datetime
-           #T1=datetime.datetime.now()
-           #print(len(_l_Hits))
-           for l in range(0,len(_l_Hits)-1):
-               # print(l,_l_Hits[l],_l_Hits[l+1])
-               # print(HitCluster.JoinHits(_l_Hits[l],_l_Hits[l+1],cut_dt,cut_dr))
-               # x=input()
-               #_hit_count+=1
-               #print('Edge generation progress is ',round(100*_hit_count/len(_l_Hits),2), '%',end="\r", flush=True) #Keep only for debugging as it slows down the algo
-               for r in range(l+1,len(_l_Hits)):
-                   if HitCluster.JoinHits(_l_Hits[l],_l_Hits[r],cut_dt,cut_dr):
-                          _Tot_Hits.append(_l_Hits[l]+_l_Hits[r])
-           #print(datetime.datetime.now()-T1)
+
+           for l in range(0,len(_Hits)-1):
+               for r in range(l+1,len(_Hits)):
+                   if HitCluster.JoinHits(_Hits[l],_Hits[r],cut_dt,cut_dr):
+                          _Tot_Hits.append(_Hits[l]+_Hits[r])
+
 
            print('Number of all  hit combinations passing fiducial cuts:',len(_Tot_Hits))
 
            #######Next####
+           import datetime
+           T1=datetime.datetime.now()
            import pandas as pd
            _Tot_Hits=pd.DataFrame(_Tot_Hits, columns = ['l_HitID','l_x','l_y','l_z','l_tx','l_ty','r_HitID','r_x','r_y','r_z','r_tx','r_ty'])
            self.HitPairs=_Tot_Hits[['l_HitID','l_z','r_HitID','r_z']]
@@ -157,6 +147,8 @@ class HitCluster:
            _Tot_Hits=_Tot_Hits[['l_HitID','r_HitID','label','d_l','d_t','d_z','d_tx','d_ty']]
 
            _Tot_Hits=_Tot_Hits.values.tolist()
+           print(datetime.datetime.now()-T1)
+           exit()
            if len(_Tot_Hits)>0:
                import torch
                from torch_geometric.data import Data
@@ -184,27 +176,18 @@ class HitCluster:
           return [_Top,_Bottom]
 
       def JoinHits(_H1,_H2, _cdt, _cdr):
-          # if _H1[0]==_H2[0]:
-          #    return False
-          if _H1[3]==_H2[3]:
+          if _H1[3]==_H2[3]: #Ensuring hit combinations are on different plates
               return False
           else:
-              #_dtx=abs(_H1[4]-_H2[4])
-              #print('dtx',_H1[4],_H2[4],_dtx,_cdt)
               if abs(_H1[4]-_H2[4])>=_cdt:
                   return False
               else:
-                  #_dty=abs(_H1[5]-_H2[5])
-                  #print('dty',_H1[5],_H2[5],_dty,_cdt)
                   if abs(_H1[5]-_H2[5])>=_cdt:
                       return False
                   else:
-                      #_d_x = abs(_H2[1]-(_H1[1]+(_H1[4]*(_H2[3]-_H1[3]))))
-                      #print('d_x',_H1[3],_H2[3],_d_x,_cdr)
                       if abs(_H2[1]-(_H1[1]+(_H1[4]*(_H2[3]-_H1[3]))))>=_cdr:
                          return False
                       else:
-                          #_d_y = abs(_H2[2]-(_H1[2]+(_H1[5]*(_H2[3]-_H1[3]))))
                           if abs(_H2[2]-(_H1[2]+(_H1[5]*(_H2[3]-_H1[3]))))>=_cdr:
                              return False
           return True
