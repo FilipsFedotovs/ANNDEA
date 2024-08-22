@@ -188,23 +188,23 @@ class HitCluster:
           if _H1[3]==_H2[3]:
               return False
           else:
-              _dtx=abs(_H1[4]-_H2[4])
+              #_dtx=abs(_H1[4]-_H2[4])
               #print('dtx',_H1[4],_H2[4],_dtx,_cdt)
-              if _dtx>=_cdt:
+              if abs(_H1[4]-_H2[4])>=_cdt:
                   return False
               else:
-                  _dty=abs(_H1[5]-_H2[5])
+                  #_dty=abs(_H1[5]-_H2[5])
                   #print('dty',_H1[5],_H2[5],_dty,_cdt)
-                  if _dty>=_cdt:
+                  if abs(_H1[5]-_H2[5])>=_cdt:
                       return False
                   else:
-                      _d_x = abs(_H2[1]-(_H1[1]+(_H1[4]*(_H2[3]-_H1[3]))))
+                      #_d_x = abs(_H2[1]-(_H1[1]+(_H1[4]*(_H2[3]-_H1[3]))))
                       #print('d_x',_H1[3],_H2[3],_d_x,_cdr)
-                      if _d_x>=_cdr:
+                      if abs(_H2[1]-(_H1[1]+(_H1[4]*(_H2[3]-_H1[3]))))>=_cdr:
                          return False
                       else:
-                          _d_y = abs(_H2[2]-(_H1[2]+(_H1[5]*(_H2[3]-_H1[3]))))
-                          if _d_y>=_cdr:
+                          #_d_y = abs(_H2[2]-(_H1[2]+(_H1[5]*(_H2[3]-_H1[3]))))
+                          if abs(_H2[2]-(_H1[2]+(_H1[5]*(_H2[3]-_H1[3]))))>=_cdr:
                              return False
           return True
       def GenerateEdgeAttributes(_input):
