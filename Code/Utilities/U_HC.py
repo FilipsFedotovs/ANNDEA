@@ -127,14 +127,15 @@ class HitCluster:
            import datetime
            T1=datetime.datetime.now()
            # import pandas as pd
-           # _Tot_Hits=pd.DataFrame(_Tot_Hits, columns = ['l_HitID','l_x','l_y','l_z','l_tx','l_ty','r_HitID','r_x','r_y','r_z','r_tx','r_ty'])
+           _Tot_Hits_b=pd.DataFrame(_Tot_Hits, columns = ['l_HitID','l_x','l_y','l_z','l_tx','l_ty','r_HitID','r_x','r_y','r_z','r_tx','r_ty'])
            # self.HitPairs=_Tot_Hits[['l_HitID','l_z','r_HitID','r_z']]
            print(_Tot_Hits[0])
            print(_Tot_Hits[44])
            _Tot_Hits = [divmod(x[1], self.Step[2]) for x in _Tot_Hits]
            print(_Tot_Hits[0])
            print(_Tot_Hits[44])
-           # _Tot_Hits['l_x']=_Tot_Hits['l_x']/self.Step[2]
+           _Tot_Hits_b['l_x']=_Tot_Hits['l_x']/self.Step[2]
+           print(_Tot_Hits_b)
            # _Tot_Hits['l_y']=_Tot_Hits['l_y']/self.Step[2]
            # _Tot_Hits['l_z']=_Tot_Hits['l_z']/self.Step[2]
            # _Tot_Hits['r_x']=_Tot_Hits['r_x']/self.Step[2]
