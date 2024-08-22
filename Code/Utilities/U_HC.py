@@ -121,8 +121,8 @@ class HitCluster:
            T1=datetime.datetime.now()
            print(len(_l_Hits))
            for l in range(0,len(_l_Hits)-1):
-               print(l,_l_Hits[l],_r_Hits[l+1])
-               x=input()
+               #print(l,_l_Hits[l],_r_Hits[l+1])
+               #x=input()
                #_hit_count+=1
                #print('Edge generation progress is ',round(100*_hit_count/len(_l_Hits),2), '%',end="\r", flush=True) #Keep only for debugging as it slows down the algo
                #for r in _r_Hits:
@@ -180,11 +180,11 @@ class HitCluster:
           return [_Top,_Bottom]
 
       def JoinHits(_H1,_H2, _cdt, _cdr):
-          if _H1[0]==_H2[0]:
-              return False
-          elif _H1[3]<=_H2[3]:
-              return False
-          else:
+          #if _H1[0]==_H2[0]:
+          #    return False
+          #elif _H1[3]<=_H2[3]:
+          #    return False
+          #else:
               _dtx=abs(_H1[4]-_H2[4])
               if _dtx>=_cdt:
                   return False
@@ -200,7 +200,7 @@ class HitCluster:
                           _d_y = abs(_H2[2]-(_H1[2]+(_H1[5]*(_H2[3]-_H1[3]))))
                           if _d_y>=_cdr:
                              return False
-          return True
+              return True
       def GenerateEdgeAttributes(_input):
           _EdgeAttr=[]
           for ip in _input:
