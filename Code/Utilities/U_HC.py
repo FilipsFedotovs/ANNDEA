@@ -120,8 +120,8 @@ class HitCluster:
            print('Number of all possible hit  combinations with enforced one-directionality:',int(((len(_l_Hits)**2)-len(_l_Hits))/2))
 
            import datetime
-           T1=datetime.datetime.now()
-           print(len(_l_Hits))
+           #T1=datetime.datetime.now()
+           #print(len(_l_Hits))
            for l in range(0,len(_l_Hits)-1):
                # print(l,_l_Hits[l],_l_Hits[l+1])
                # print(HitCluster.JoinHits(_l_Hits[l],_l_Hits[l+1],cut_dt,cut_dr))
@@ -131,7 +131,7 @@ class HitCluster:
                for r in range(l+1,len(_l_Hits)):
                    if HitCluster.JoinHits(_l_Hits[l],_l_Hits[r],cut_dt,cut_dr):
                           _Tot_Hits.append(_l_Hits[l]+_l_Hits[r])
-           print(datetime.datetime.now()-T1)
+           #print(datetime.datetime.now()-T1)
 
            print('Number of all  hit combinations passing fiducial cuts:',len(_Tot_Hits))
 
