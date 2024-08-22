@@ -107,6 +107,7 @@ class HitCluster:
                return False
       def GenerateEdges(self, cut_dt, cut_dr): #Decorate hit information
            #New workaround: instead of a painful Pandas outer join a loop over list is perfromed
+           import timeit #Debugging timing issues
            _l_Hits=self.ClusterHits
            _r_Hits=self.ClusterHits
            #Combining data 1 and 2
