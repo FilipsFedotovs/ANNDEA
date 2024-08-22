@@ -129,8 +129,8 @@ class HitCluster:
                #_hit_count+=1
                #print('Edge generation progress is ',round(100*_hit_count/len(_l_Hits),2), '%',end="\r", flush=True) #Keep only for debugging as it slows down the algo
                for r in range(l+1,len(_l_Hits)):
-                   if HitCluster.JoinHits(_l_Hits[l],_l_Hits[l+1],cut_dt,cut_dr):
-                          _Tot_Hits.append(_l_Hits[l]+_l_Hits[l+1])
+                   if HitCluster.JoinHits(_l_Hits[l],_l_Hits[r],cut_dt,cut_dr):
+                          _Tot_Hits.append(_l_Hits[l]+_l_Hits[r])
            #print(datetime.datetime.now()-T1)
 
            print('Number of all  hit combinations passing fiducial cuts:',len(_Tot_Hits))
