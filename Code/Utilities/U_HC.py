@@ -194,6 +194,7 @@ class HitCluster:
                   return False
               else:
                   _dty=abs(_H1[5]-_H2[5])
+                  print('dty',_H1[5],_H2[5],_dty,_cdt)
                   if _dty>=_cdt:
                       return False
                   else:
