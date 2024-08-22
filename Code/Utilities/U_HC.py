@@ -117,15 +117,15 @@ class HitCluster:
            print('Number of all possible hit combinations without self-permutations:',(len(_l_Hits)**2)-len(_l_Hits))
            print('Number of all possible hit  combinations with enforced one-directionality:',int(((len(_l_Hits)**2)-len(_l_Hits))/2))
            #exit()
-           from U_UI import TimeStamp as ts
-           T1=ts()
+           import datetime
+           T1=datetime.datetime.now()
            for l in _l_Hits:
                _hit_count+=1
                print('Edge generation progress is ',round(100*_hit_count/len(_l_Hits),2), '%',end="\r", flush=True)
                for r in _r_Hits:
                   if HitCluster.JoinHits(l,r,cut_dt,cut_dr):
                       _Tot_Hits.append(l+r)
-           print(ts()-T1)
+           print(datetime.datetime.now()-T1)
 
            print('Number of all  hit combinations passing fiducial cuts:',len(_Tot_Hits))
            exit()
