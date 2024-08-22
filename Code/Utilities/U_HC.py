@@ -109,6 +109,10 @@ class HitCluster:
            #New workaround: instead of a painful Pandas outer join a loop over list is perfromed
 
            _l_Hits=self.ClusterHits
+           print(_l_Hits)
+           sorted_list= sorted(_l_Hits, key=lambda x: x[3])
+           print(sorted_list)
+           exit()
            #_r_Hits=self.ClusterHits
            #Combining data 1 and 2
            _Tot_Hits=[]
