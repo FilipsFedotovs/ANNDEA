@@ -134,7 +134,7 @@ class HitCluster:
            _Tot_Hits = [divmod(x[1], self.Step[2]) for x in _Tot_Hits]
            print(_Tot_Hits[0])
            print(_Tot_Hits[44])
-           _Tot_Hits_b['l_x']=_Tot_Hits['l_x']/self.Step[2]
+           _Tot_Hits_b['l_x']=_Tot_Hits_b['l_x']/self.Step[2]
            print(_Tot_Hits_b)
            # _Tot_Hits['l_y']=_Tot_Hits['l_y']/self.Step[2]
            # _Tot_Hits['l_z']=_Tot_Hits['l_z']/self.Step[2]
