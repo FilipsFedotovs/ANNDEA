@@ -107,7 +107,7 @@ class HitCluster:
                return False
       def GenerateEdges(self, cut_dt, cut_dr): #Decorate hit information
            #New workaround: instead of a painful Pandas outer join a loop over list is perfromed
-           import timeit #Debugging timing issues
+
            _l_Hits=self.ClusterHits
            _r_Hits=self.ClusterHits
            #Combining data 1 and 2
@@ -117,13 +117,18 @@ class HitCluster:
            print('Number of all possible hit combinations without self-permutations:',(len(_l_Hits)**2)-len(_l_Hits))
            print('Number of all possible hit  combinations with enforced one-directionality:',int(((len(_l_Hits)**2)-len(_l_Hits))/2))
            #exit()
+           from U_UI import TimeStamp as ts
+           T1=ts()
            for l in _l_Hits:
                _hit_count+=1
                print('Edge generation progress is ',round(100*_hit_count/len(_l_Hits),2), '%',end="\r", flush=True)
                for r in _r_Hits:
                   if HitCluster.JoinHits(l,r,cut_dt,cut_dr):
                       _Tot_Hits.append(l+r)
+           print(ts()-T1)
+
            print('Number of all  hit combinations passing fiducial cuts:',len(_Tot_Hits))
+           exit()
            import pandas as pd
            _Tot_Hits=pd.DataFrame(_Tot_Hits, columns = ['l_HitID','l_x','l_y','l_z','l_tx','l_ty','r_HitID','r_x','r_y','r_z','r_tx','r_ty'])
            self.HitPairs=_Tot_Hits[['l_HitID','l_z','r_HitID','r_z']]
