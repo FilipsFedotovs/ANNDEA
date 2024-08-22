@@ -185,9 +185,9 @@ class HitCluster:
       def JoinHits(_H1,_H2, _cdt, _cdr):
           #if _H1[0]==_H2[0]:
           #    return False
-          #elif _H1[3]<=_H2[3]:
-          #    return False
-          #else:
+          if _H1[3]==_H2[3]:
+              return False
+          else:
               _dtx=abs(_H1[4]-_H2[4])
               print('dtx',_H1[4],_H2[4],_dtx,_cdt)
               if _dtx>=_cdt:
@@ -206,7 +206,7 @@ class HitCluster:
                           _d_y = abs(_H2[2]-(_H1[2]+(_H1[5]*(_H2[3]-_H1[3]))))
                           if _d_y>=_cdr:
                              return False
-              return True
+          return True
       def GenerateEdgeAttributes(_input):
           _EdgeAttr=[]
           for ip in _input:
