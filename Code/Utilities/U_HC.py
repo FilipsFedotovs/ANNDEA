@@ -131,7 +131,7 @@ class HitCluster:
                for r in range(l+1,len(_l_Hits)):
                    if HitCluster.JoinHits(_l_Hits[l],_l_Hits[r],cut_dt,cut_dr):
                           _Tot_Hits.append(_l_Hits[l]+_l_Hits[r])
-           #print(datetime.datetime.now()-T1)
+           print(datetime.datetime.now()-T1)
 
            print('Number of all  hit combinations passing fiducial cuts:',len(_Tot_Hits))
            exit()
