@@ -111,7 +111,7 @@ class HitCluster:
            _l_Hits=self.ClusterHits
 
            _l_Hits= sorted(_l_Hits, key=lambda x: x[3], reverse=True) #Sorting by z
-
+           print(_l_Hits)
            #_r_Hits=self.ClusterHits
            #Combining data 1 and 2
            _Tot_Hits=[]
