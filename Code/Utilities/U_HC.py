@@ -183,9 +183,9 @@ class HitCluster:
           return [_Top,_Bottom]
 
       def JoinHits(_H1,_H2, _cdt, _cdr):
-          if _H1[0]==_H2[0]:
-             return False
-          elif _H1[3]==_H2[3]:
+          # if _H1[0]==_H2[0]:
+          #    return False
+          if _H1[3]==_H2[3]:
               return False
           else:
               _dtx=abs(_H1[4]-_H2[4])
