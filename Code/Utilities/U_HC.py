@@ -119,7 +119,10 @@ class HitCluster:
 
            import datetime
            T1=datetime.datetime.now()
-           for l in range(len(_l_Hits)-1):
+           print(len(_l_Hits))
+           for l in range(0,len(_l_Hits)-1):
+               print(l,_l_Hits[l],_r_Hits[l+1])
+               x=input()
                #_hit_count+=1
                #print('Edge generation progress is ',round(100*_hit_count/len(_l_Hits),2), '%',end="\r", flush=True) #Keep only for debugging as it slows down the algo
                #for r in _r_Hits:
