@@ -134,7 +134,8 @@ class HitCluster:
            print(datetime.datetime.now()-T1)
 
            print('Number of all  hit combinations passing fiducial cuts:',len(_Tot_Hits))
-           exit()
+
+           #######Next####
            import pandas as pd
            _Tot_Hits=pd.DataFrame(_Tot_Hits, columns = ['l_HitID','l_x','l_y','l_z','l_tx','l_ty','r_HitID','r_x','r_y','r_z','r_tx','r_ty'])
            self.HitPairs=_Tot_Hits[['l_HitID','l_z','r_HitID','r_z']]
