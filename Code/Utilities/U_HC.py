@@ -140,12 +140,8 @@ class HitCluster:
 
                TH.append(abs(TH[4]-TH[10]))
                TH.append(abs(TH[5]-TH[11]))
-               print(TH)
                del TH[1:6]
-               print(TH)
                del TH[2:7]
-               print(TH)
-               exit()
            print(_Tot_Hits[0])
            _Tot_Hits_b['l_x']=_Tot_Hits_b['l_x']/self.Step[2]
            _Tot_Hits_b['l_y']=_Tot_Hits_b['l_y']/self.Step[2]
