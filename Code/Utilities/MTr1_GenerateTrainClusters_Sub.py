@@ -47,7 +47,7 @@ import argparse
 import pandas as pd #We use Panda for a routine data processing
 import math #We use it for data manipulation
 import random
-exit()
+
 Z_overlap,Y_overlap,X_overlap=int(args.Z_overlap),int(args.Y_overlap),int(args.X_overlap)
 
 Z_ID=int(args.Z_ID)/Z_overlap #Renormalising the index of the cluster along z-axis
