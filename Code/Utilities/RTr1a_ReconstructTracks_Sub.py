@@ -352,18 +352,31 @@ for k in range(0,Z_ID_Max):
                                         print(_Tot_Hits_Predator[2])
                                         print(_Tot_Hits_Predator[3])
                                         print('-------------')
-                                        exit()
+
                                         #converting the list objects into Pandas dataframe
                                         for c in range(column_no):
                                             columns.append(str(c))
                                         columns+=['average_link_strength','RES','STD','MRES']
                                         _Tot_Hits_Predator=pd.DataFrame(_Tot_Hits_Predator, columns = columns)
                                         _Tot_Hits_Predator=_Tot_Hits_Predator.drop(_Tot_Hits_Predator.index[(_Tot_Hits_Predator['RES'] > TrackFitCutRes) | (_Tot_Hits_Predator['STD'] > TrackFitCutSTD) | (_Tot_Hits_Predator['MRES'] > TrackFitCutMRes)]) #Remove tracks with a bad fit
+
                                         KeepTracking=len(_Tot_Hits_Predator)>0
                                         _Tot_Hits_Predator.sort_values(by = ['average_link_strength'], ascending=[False],inplace=True) #Keep all the best hit combinations at the top
                                         _Tot_Hits_Predator=_Tot_Hits_Predator.drop(['average_link_strength','RES','STD','MRES'],axis=1) #We don't need the segment fit anymore
+                                        print(_Tot_Hits_Predator[0])
+                                        print(_Tot_Hits_Predator[1])
+                                        print(_Tot_Hits_Predator[2])
+                                        print(_Tot_Hits_Predator[3])
+                                        print('-------------')
                                         for c in range(column_no):
                                             _Tot_Hits_Predator.drop_duplicates(subset=[str(c)], keep='first', inplace=True) #Iterating over hits, make sure that they belong to the best-fit track
+                                        print(_Tot_Hits_Predator)
+                                        print(_Tot_Hits_Predator[0])
+                                        print(_Tot_Hits_Predator[1])
+                                        print(_Tot_Hits_Predator[2])
+                                        print(_Tot_Hits_Predator[3])
+                                        print('-------------')
+                                        exit()
                                         _Tot_Hits_Predator=_Tot_Hits_Predator.values.tolist()
                                         for seg in range(len(_Tot_Hits_Predator)):
                                             _Tot_Hits_Predator[seg]=[s for s in _Tot_Hits_Predator[seg] if ('H' in s)==False] #Remove holes from the track representation
