@@ -196,9 +196,9 @@ for k in range(0,Z_ID_Max):
                             for edge in range(len(HC.edges)):
                                 combined_weight_list.append(HC.edges[edge]+w[edge]) #Join the Hit Pair classification back to the hit pairs
                             combined_weight_list=pd.DataFrame(combined_weight_list, columns = ['l_HitID','r_HitID','link_strength'])
-                            print(_Tot_Hits)
+                            _HitPairs=pd.dataframe(HC.HitPairs, columns=['l_HitID','l_z','r_HitID','r_z'])
                             print(HC.HitPairs)
-                            _Tot_Hits=pd.merge(HC.HitPairs, combined_weight_list, how="inner", on=['l_HitID','r_HitID'])
+                            _Tot_Hits=pd.merge(_HitPairs, combined_weight_list, how="inner", on=['l_HitID','r_HitID'])
                             print(_Tot_Hits)
                             exit()
                             _Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['link_strength'] <= Acceptance], inplace = True) #Remove all hit pairs that fail GNN classification
