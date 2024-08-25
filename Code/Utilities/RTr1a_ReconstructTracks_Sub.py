@@ -255,7 +255,7 @@ for k in range(0,Z_ID_Max):
                         _intital_size=len(_Tot_Hits)
                         KeepTracking=True
                         while len(_Tot_Hits)>0 and KeepTracking:
-                                        _Tot_Hits_PCopy=copy.deepcopy(_Tot_Hits)[:10]
+                                        _Tot_Hits_PCopy=copy.deepcopy(_Tot_Hits)
                                         _Tot_Hits_Predator=[]
                                         #Bellow we build all possible hit combinations that can occur in the data
                                         print(UI.TimeStamp(),'Building all possible track combinations...')
@@ -275,10 +275,10 @@ for k in range(0,Z_ID_Max):
                                                    #print(Predator)
                                                    #x=input()
                                             _Tot_Hits_Predator.append(Predator)
-                                        print(_Tot_Hits_Predator[0])
-                                        print(_Tot_Hits_Predator[1])
-                                        print(_Tot_Hits_Predator[2])
-                                        print(_Tot_Hits_Predator[3])
+                                        # print(_Tot_Hits_Predator[0])
+                                        # print(_Tot_Hits_Predator[1])
+                                        # print(_Tot_Hits_Predator[2])
+                                        # print(_Tot_Hits_Predator[3])
 
 
 
@@ -288,26 +288,26 @@ for k in range(0,Z_ID_Max):
                                         #We calculate the average value of the segment weight
                                         for s in _Tot_Hits_Predator:
                                             s=s[0].append(mean(s.pop(1)))
-                                        print(_Tot_Hits_Predator[0])
-                                        print(_Tot_Hits_Predator[1])
-                                        print(_Tot_Hits_Predator[2])
-                                        print(_Tot_Hits_Predator[3])
-                                        print('-------------')
+                                        # print(_Tot_Hits_Predator[0])
+                                        # print(_Tot_Hits_Predator[1])
+                                        # print(_Tot_Hits_Predator[2])
+                                        # print(_Tot_Hits_Predator[3])
+                                        # print('-------------')
                                         _Tot_Hits_Predator = [item for l in _Tot_Hits_Predator for item in l]
-                                        print(_Tot_Hits_Predator[0])
-                                        print(_Tot_Hits_Predator[1])
-                                        print(_Tot_Hits_Predator[2])
-                                        print(_Tot_Hits_Predator[3])
-                                        print('-------------')
+                                        # print(_Tot_Hits_Predator[0])
+                                        # print(_Tot_Hits_Predator[1])
+                                        # print(_Tot_Hits_Predator[2])
+                                        # print(_Tot_Hits_Predator[3])
+                                        # print('-------------')
                                         for s in range(len(_Tot_Hits_Predator)):
                                             for h in range(len(_Tot_Hits_Predator[s])):
                                                 if _Tot_Hits_Predator[s][h] =='_':
                                                     _Tot_Hits_Predator[s][h]='H_'+str(s) #Giving holes a unique name to avoid problems later
-                                        print(_Tot_Hits_Predator[0])
-                                        print(_Tot_Hits_Predator[1])
-                                        print(_Tot_Hits_Predator[2])
-                                        print(_Tot_Hits_Predator[3])
-                                        print('-------------')
+                                        # print(_Tot_Hits_Predator[0])
+                                        # print(_Tot_Hits_Predator[1])
+                                        # print(_Tot_Hits_Predator[2])
+                                        # print(_Tot_Hits_Predator[3])
+                                        # print('-------------')
 
                                         column_no=len(_Tot_Hits_Predator[0])-1
                                         columns=[]
@@ -350,11 +350,11 @@ for k in range(0,Z_ID_Max):
                                                 STD=np.std(residual)
                                                 MRES=max(residual)
                                                 _Tot_Hits_Predator[_Tot_Hits_Predator.index(thp)]+=[RES,STD,MRES]
-                                        print(_Tot_Hits_Predator[0])
-                                        print(_Tot_Hits_Predator[1])
-                                        print(_Tot_Hits_Predator[2])
-                                        print(_Tot_Hits_Predator[3])
-                                        print('-------------')
+                                        # print(_Tot_Hits_Predator[0])
+                                        # print(_Tot_Hits_Predator[1])
+                                        # print(_Tot_Hits_Predator[2])
+                                        # print(_Tot_Hits_Predator[3])
+                                        # print('-------------')
 
                                         #converting the list objects into Pandas dataframe
                                         for c in range(column_no):
@@ -371,13 +371,13 @@ for k in range(0,Z_ID_Max):
                                         _Tot_Hits_Predator=_Tot_Hits_Predator.drop(['average_link_strength'],axis=1) #We don't need the segment fit anymore
                                         if Residual_Cut==False:
                                             _Tot_Hits_Predator=_Tot_Hits_Predator.drop(['RES','STD','MRES'],axis=1) #We don't need the segment fit anymore
-                                        print(_Tot_Hits_Predator)
-                                        print('-------------')
+                                        # print(_Tot_Hits_Predator)
+                                        # print('-------------')
                                         for c in range(column_no):
                                             _Tot_Hits_Predator.drop_duplicates(subset=[str(c)], keep='first', inplace=True) #Iterating over hits, make sure that they belong to the best-fit track
-                                        print(_Tot_Hits_Predator)
-                                        print('-------------')
-                                        exit()
+                                        # print(_Tot_Hits_Predator)
+                                        # print('-------------')
+                                        # exit()
                                         _Tot_Hits_Predator=_Tot_Hits_Predator.values.tolist()
                                         for seg in range(len(_Tot_Hits_Predator)):
                                             _Tot_Hits_Predator[seg]=[s for s in _Tot_Hits_Predator[seg] if ('H' in s)==False] #Remove holes from the track representation
