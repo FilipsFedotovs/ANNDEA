@@ -323,7 +323,7 @@ for k in range(0,Z_ID_Max):
                                             _Tot_Hits_Predator.drop_duplicates(subset=[str(c)], keep='first', inplace=True) #Iterating over hits, make sure that they belong to the best-fit track
                                         print(_Tot_Hits_Predator)
                                         print('-------------')
-                                        exit()
+
                                         _Tot_Hits_Predator=_Tot_Hits_Predator.values.tolist()
 
 
@@ -368,7 +368,7 @@ for k in range(0,Z_ID_Max):
                                         print(_Tot_Hits_Predator[2])
                                         print(_Tot_Hits_Predator[3])
                                         print('-------------')
-
+                                        exit()
                                         #converting the list objects into Pandas dataframe
                                         for c in range(column_no):
                                             columns.append(str(c))
