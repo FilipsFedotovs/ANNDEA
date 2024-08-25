@@ -292,9 +292,13 @@ for k in range(0,Z_ID_Max):
                                         print(_Tot_Hits_Predator[1])
                                         print(_Tot_Hits_Predator[2])
                                         print(_Tot_Hits_Predator[3])
-                                        exit()
+                                        print('-------------')
                                         _Tot_Hits_Predator = [item for l in _Tot_Hits_Predator for item in l]
-
+                                        print(_Tot_Hits_Predator[0])
+                                        print(_Tot_Hits_Predator[1])
+                                        print(_Tot_Hits_Predator[2])
+                                        print(_Tot_Hits_Predator[3])
+                                        exit()
                                         for s in range(len(_Tot_Hits_Predator)):
                                             for h in range(len(_Tot_Hits_Predator[s])):
                                                 if _Tot_Hits_Predator[s][h] =='_':
