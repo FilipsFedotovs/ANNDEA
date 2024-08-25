@@ -136,8 +136,6 @@ class HitCluster:
                TH.append((math.sqrt(((TH[8]-TH[2])**2) + ((TH[7]-TH[1])**2) + ((TH[9]-TH[3])**2))))
                TH.append(math.sqrt(((TH[8]-TH[2])**2) + ((TH[7]-TH[1])**2)))
                TH.append(abs(TH[9]-TH[3]))
-               TH.append(abs(TH[9]-TH[3]))
-
                TH.append(abs(TH[4]-TH[10]))
                TH.append(abs(TH[5]-TH[11]))
                del TH[1:6]
