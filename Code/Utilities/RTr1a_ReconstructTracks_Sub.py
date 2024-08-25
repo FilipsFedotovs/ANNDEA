@@ -260,19 +260,22 @@ for k in range(0,Z_ID_Max):
                                         #Bellow we build all possible hit combinations that can occur in the data
                                         print(UI.TimeStamp(),'Building all possible track combinations...')
                                         print(_Tot_Hits_PCopy)
-                                        exit()
                                         #import datetime
                                         #T1=datetime.datetime.now()
                                         for prd in range(len(_Tot_Hits_PCopy)):
                                             #print(UI.TimeStamp(),'Progress is ',round(100*prd/len(_Tot_Hits_PCopy),2), '%',end="\r", flush=True)
                                             Predator=_Tot_Hits_PCopy[prd]
 
-                                            for pry in range(prd, len(_Tot_Hits_PCopy)):
+                                            for pry in range(len(_Tot_Hits_PCopy)):
                                                    #This function combines two segment object. Example: Segment 1 is [[a, _ ,b ,_ ,_ ][0.9,0.0,0.9,0.0,0.0]];  Segment 2 is [[a, _ ,c ,_ ,_ ][0.9,0.0,0.8,0.0,0.0]]; Segment 3 is [[_, d ,b ,_ ,_ ][0.0,0.8,0.8,0.0,0.0]]
                                                    #In order to combine segments we have to have at least one common hit and no clashes. Segment 1 and 2 have a common hit a, but their third plates clash. Segment 1 can be combined with segment 3 which yields: [[a, d ,b ,_ ,_ ][0.8,0.0,1.7,0.0,0.0]]
                                                    #Please note that if combination occurs then the hit weights combine together too
                                                    Predator=InjectHit(Predator,_Tot_Hits_PCopy[pry],False)[0]
+                                                   print(Predator)
+                                                   x=input()
                                             _Tot_Hits_Predator.append(Predator)
+                                        print(_Tot_Hits_Predator)
+                                        exit()
 
                                         #print(datetime.datetime.now()-T1)
                                         #print(len(_Tot_Hits_Predator))
