@@ -148,7 +148,7 @@ class HitCluster:
            _Tot_Hits_b['r_x']=_Tot_Hits_b['r_x']/self.Step[2]
            _Tot_Hits_b['r_y']=_Tot_Hits_b['r_y']/self.Step[2]
            _Tot_Hits_b['r_z']=_Tot_Hits_b['r_z']/self.Step[2]
-
+           _Tot_Hits_b['label']='N/A'
            _Tot_Hits_b['d_l'] = (np.sqrt(((_Tot_Hits_b['r_y']-_Tot_Hits_b['l_y'])**2) + ((_Tot_Hits_b['r_x']-_Tot_Hits_b['l_x'])**2) + ((_Tot_Hits_b['r_z']-_Tot_Hits_b['l_z'])**2)))
            _Tot_Hits_b['d_t'] = np.sqrt(((_Tot_Hits_b['r_y']-_Tot_Hits_b['l_y'])**2) + ((_Tot_Hits_b['r_x']-_Tot_Hits_b['l_x'])**2))
            _Tot_Hits_b['d_z'] = (_Tot_Hits_b['r_z']-_Tot_Hits_b['l_z']).abs()
