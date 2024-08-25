@@ -105,10 +105,17 @@ testRatio=PM.testRatio #Usually about 5%
 valRatio=PM.valRatio #Usually about 10%
 TrainSampleOutputMeta=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/'+TrainSampleID+'_info.pkl' #For each training sample batch we create an individual meta file.
 destination_output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/'+TrainSampleID+'_TTr_OUTPUT_1.pkl' #The desired output
-
+if Mode=='RESET':
+    print(UI.ManageFolders(AFS_DIR, EOS_DIR, TrainSampleID,'d',['MTr1a']))
+    print(UI.ManageFolders(AFS_DIR, EOS_DIR, TrainSampleID,'c'))
+elif Mode=='CLEANUP':
+     print(UI.ManageFolders(AFS_DIR, EOS_DIR, TrainSampleID,'d',['MTr1a']))
+     exit()
+else:
+    print(UI.ManageFolders(AFS_DIR, EOS_DIR, TrainSampleID,'c'))
 exit()
 
-if os.path.isfile(destination_output_file_location) and Mode!='RESET': #If we have it, we don't have to start from the scratch.
+if os.path.isfile(destination_output_file_location): #If we have it, we don't have to start from the scratch.
     TrainSampleInputMeta=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_info.pkl'
     print(UF.TimeStamp(),'Loading the data file ',bcolors.OKBLUE+TrainSampleInputMeta+bcolors.ENDC)
     MetaInput=UF.PickleOperations(TrainSampleInputMeta,'r', 'N/A') #Reading the meta file
