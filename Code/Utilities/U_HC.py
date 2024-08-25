@@ -131,17 +131,18 @@ class HitCluster:
            # self.HitPairs=_Tot_Hits[['l_HitID','l_z','r_HitID','r_z']]
            print(_Tot_Hits[0])
            print(_Tot_Hits[44])
-           for TH in _Tot_Hits:TH[1:4]=TH[1:4]/ self.Step[2]
+           for TH in _Tot_Hits:
+               for i in range(1,7):TH[i]=TH[i]/ self.Step[2]
            #_Tot_Hits =  [x[1] / self.Step[2] for x in _Tot_Hits]
            print(_Tot_Hits[0])
            print(_Tot_Hits[44])
            _Tot_Hits_b['l_x']=_Tot_Hits_b['l_x']/self.Step[2]
+           _Tot_Hits_b['l_y']=_Tot_Hits_b['l_y']/self.Step[2]
+           _Tot_Hits_b['l_z']=_Tot_Hits_b['l_z']/self.Step[2]
+           _Tot_Hits_b['r_x']=_Tot_Hits_b['r_x']/self.Step[2]
+           _Tot_Hits_b['r_y']=_Tot_Hits_b['r_y']/self.Step[2]
+           _Tot_Hits_b['r_z']=_Tot_Hits_b['r_z']/self.Step[2]
            print(_Tot_Hits_b)
-           # _Tot_Hits['l_y']=_Tot_Hits['l_y']/self.Step[2]
-           # _Tot_Hits['l_z']=_Tot_Hits['l_z']/self.Step[2]
-           # _Tot_Hits['r_x']=_Tot_Hits['r_x']/self.Step[2]
-           # _Tot_Hits['r_y']=_Tot_Hits['r_y']/self.Step[2]
-           # _Tot_Hits['r_z']=_Tot_Hits['r_z']/self.Step[2]
            # _Tot_Hits['label']='N/A'
            # _Tot_Hits['d_l'] = (np.sqrt(((_Tot_Hits['r_y']-_Tot_Hits['l_y'])**2) + ((_Tot_Hits['r_x']-_Tot_Hits['l_x'])**2) + ((_Tot_Hits['r_z']-_Tot_Hits['l_z'])**2)))
            # _Tot_Hits['d_t'] = np.sqrt(((_Tot_Hits['r_y']-_Tot_Hits['l_y'])**2) + ((_Tot_Hits['r_x']-_Tot_Hits['l_x'])**2))
