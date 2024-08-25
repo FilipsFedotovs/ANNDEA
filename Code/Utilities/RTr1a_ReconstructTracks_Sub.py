@@ -298,12 +298,17 @@ for k in range(0,Z_ID_Max):
                                         print(_Tot_Hits_Predator[1])
                                         print(_Tot_Hits_Predator[2])
                                         print(_Tot_Hits_Predator[3])
-                                        exit()
+                                        print('-------------')
                                         for s in range(len(_Tot_Hits_Predator)):
                                             for h in range(len(_Tot_Hits_Predator[s])):
                                                 if _Tot_Hits_Predator[s][h] =='_':
                                                     _Tot_Hits_Predator[s][h]='H_'+str(s) #Giving holes a unique name to avoid problems later
-
+                                        print(_Tot_Hits_Predator[0])
+                                        print(_Tot_Hits_Predator[1])
+                                        print(_Tot_Hits_Predator[2])
+                                        print(_Tot_Hits_Predator[3])
+                                        print('-------------')
+                                        exit()
                                         column_no=len(_Tot_Hits_Predator[0])-1
                                         columns=[]
                                         print(UI.TimeStamp(),'Applying physical assumptions...')
