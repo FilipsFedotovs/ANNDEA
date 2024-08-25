@@ -113,68 +113,159 @@ elif Mode=='CLEANUP':
      exit()
 else:
     print(UI.ManageFolders(AFS_DIR, EOS_DIR, TrainSampleID,'c'))
-exit()
 
-if os.path.isfile(destination_output_file_location): #If we have it, we don't have to start from the scratch.
-    TrainSampleInputMeta=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_info.pkl'
-    print(UF.TimeStamp(),'Loading the data file ',bcolors.OKBLUE+TrainSampleInputMeta+bcolors.ENDC)
-    MetaInput=UF.PickleOperations(TrainSampleInputMeta,'r', 'N/A') #Reading the meta file
-    print(MetaInput[1])
-    Meta=MetaInput[0]
-    TrainSamples=[]
-    ValSamples=[]
-    TestSamples=[]
-#            for i in range(1,Meta.no_sets+1):
-    for i in range(1,Meta.no_sets+1):
-        flocation=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TTr_OUTPUT_'+str(i)+'.pkl' #Looking for constituent input file
-        print(UF.TimeStamp(),'Loading data from ',bcolors.OKBLUE+flocation+bcolors.ENDC)
-        TrainClusters=UF.PickleOperations(flocation,'r', 'N/A') #Loading the file
-        TrainClusters=TrainClusters[0] #Reading the actual data bit
-        TrainFraction=int(math.floor(len(TrainClusters)*(1.0-(Meta.testRatio+Meta.valRatio)))) #Calculating the size of the training sample pool
-        ValFraction=int(math.ceil(len(TrainClusters)*Meta.valRatio)) #Calculating the size of the validation sample pool
-        for smpl in range(0,TrainFraction):
-                   if TrainClusters[smpl].ClusterGraph.num_edges>0 and Sampling>=random.random(): #Not all generated graphs will contain edges: we can discard them + we apply sampling
-                     TrainSamples.append(TrainClusters[smpl].ClusterGraph) #If Graph has edges and passes sampling then we add to the output
-        for smpl in range(TrainFraction,TrainFraction+ValFraction):
-                   if TrainClusters[smpl].ClusterGraph.num_edges>0 and Sampling>=random.random():
-                     ValSamples.append(TrainClusters[smpl].ClusterGraph)
-        for smpl in range(TrainFraction+ValFraction,len(TrainClusters)):
-                   if TrainClusters[smpl].ClusterGraph.num_edges>0 and Sampling>=random.random():
-                     TestSamples.append(TrainClusters[smpl].ClusterGraph)
-    #Write the final output
-    output_train_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/'+TrainSampleID+'_TRAIN_SAMPLES'+'.pkl'
-    print(UF.PickleOperations(output_train_file_location,'w', TrainSamples)[1])
-    output_val_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/'+TrainSampleID+'_VAL_SAMPLES'+'.pkl'
-    print(UF.PickleOperations(output_val_file_location,'w', ValSamples)[1])
-    output_test_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/'+TrainSampleID+'_TEST_SAMPLES'+'.pkl'
-    print(UF.PickleOperations(output_test_file_location,'w', TestSamples)[1])
-    print(UF.TimeStamp(), bcolors.OKGREEN+"Train data has been re-generated successfully..."+bcolors.ENDC)
-    exit()
+#
+# if os.path.isfile(required_file_location)==False:
+#          print(UI.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
+#          data=pd.read_csv(input_file_location,
+#                      header=0,
+#                      usecols=[PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty])[[PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty]]
+#          total_rows=len(data.axes[0])
+#          data[PM.Hit_ID] = data[PM.Hit_ID].astype(str)
+#          print(UI.TimeStamp(),'The raw data has ',total_rows,' hits')
+#          print(UI.TimeStamp(),'Removing unreconstructed hits...')
+#          data=data.dropna()
+#          final_rows=len(data.axes[0])
+#          print(UI.TimeStamp(),'The cleaned data has ',final_rows,' hits')
+#          try:
+#              data[PM.Hit_ID] = data[PM.Hit_ID].astype(int)
+#          except:
+#              print(UI.TimeStamp(), bcolors.WARNING+"Hit ID is already in the string format, skipping the reformatting step..."+bcolors.ENDC)
+#          data[PM.Hit_ID] = data[PM.Hit_ID].astype(str)
+#
+#          if SliceData:
+#               print(UI.TimeStamp(),'Slicing the data...')
+#               data=data.drop(data.index[(data[PM.x] > Xmax) | (data[PM.x] < Xmin) | (data[PM.y] > Ymax) | (data[PM.y] < Ymin)])
+#               final_rows=len(data.axes[0])
+#               print(UI.TimeStamp(),'The sliced data has ',final_rows,' hits')
+#          data=data.rename(columns={PM.x: "x"})
+#          data=data.rename(columns={PM.y: "y"})
+#          data=data.rename(columns={PM.z: "z"})
+#          data=data.rename(columns={PM.tx: "tx"})
+#          data=data.rename(columns={PM.ty: "ty"})
+#          data=data.rename(columns={PM.Hit_ID: "Hit_ID"})
+#          print(UI.TimeStamp(),'Analysing data... ',bcolors.ENDC)
+#          z_offset=data['z'].min()
+#          data['z']=data['z']-z_offset
+#          z_max=data['z'].max()
+#          if Z_overlap==1:
+#             Zsteps=math.ceil((z_max)/stepZ)
+#          else:
+#             Zsteps=(math.ceil((z_max)/stepZ)*(Z_overlap))-1
+#          y_offset=data['y'].min()
+#          x_offset=data['x'].min()
+#          data['x']=data['x']-x_offset
+#          data['y']=data['y']-y_offset
+#          x_max=data['x'].max()
+#          y_max=data['y'].max()
+#
+#         #Calculating the number of volumes that will be sent to HTCondor for reconstruction. Account for overlap if specified.
+#          if X_overlap==1:
+#             Xsteps=math.ceil((x_max)/stepX)
+#          else:
+#             Xsteps=(math.ceil((x_max)/stepX)*(X_overlap))-1
+#
+#          if Y_overlap==1:
+#             Ysteps=math.ceil((y_max)/stepY)
+#          else:
+#             Ysteps=(math.ceil((y_max)/stepY)*(Y_overlap))-1
+#          print(UI.TimeStamp(),'Distributing input files...')
+#          with alive_bar(Xsteps*Ysteps,force_tty=True, title='Distributing input files...') as bar:
+#              for i in range(Xsteps):
+#                  for j in range(Ysteps):
+#                      required_tfile_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/RTr1_'+RecBatchID+'_'+str(i)+'_'+str(j)+'_hits.csv'
+#                      if os.path.isfile(required_tfile_location)==False:
+#                          Y_ID=int(j)/Y_overlap
+#                          X_ID=int(i)/X_overlap
+#                          tdata=data.drop(data.index[data['x'] >= ((X_ID+1)*stepX)])  #Keeping the relevant z slice
+#                          tdata.drop(tdata.index[tdata['x'] < (X_ID*stepX)], inplace = True)  #Keeping the relevant z slice
+#                          tdata.drop(tdata.index[tdata['y'] >= ((Y_ID+1)*stepY)], inplace = True)  #Keeping the relevant z slice
+#                          tdata.drop(tdata.index[tdata['y'] < (Y_ID*stepY)], inplace = True)  #Keeping the relevant z slice
+#                          tdata.to_csv(required_tfile_location,index=False)
+#                          #print(UI.TimeStamp(), bcolors.OKGREEN+"The segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+required_tfile_location+bcolors.ENDC)
+#                      bar()
+#
+#
+#          data.to_csv(required_file_location,index=False)
+#          Meta=UI.TrainingSampleMeta(RecBatchID)
+#          Meta.IniHitClusterMetaData(stepX,stepY,stepZ,cut_dt,cut_dr,0.05,0.1,z_offset,y_offset,x_offset, Xsteps, Zsteps,X_overlap,Y_overlap,Z_overlap,Ysteps)
+#          Meta.UpdateStatus(0)
+#          print(UI.PickleOperations(RecOutputMeta,'w', Meta)[1])
+#          UI.Msg('completed','Stage 0 has successfully completed')
+#          print(UI.TimeStamp(), bcolors.OKGREEN+"The segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+required_file_location+bcolors.ENDC)
+# elif os.path.isfile(RecOutputMeta)==True:
+#     print(UI.TimeStamp(),'Loading previously saved data from ',bcolors.OKBLUE+RecOutputMeta+bcolors.ENDC)
+#     MetaInput=UI.PickleOperations(RecOutputMeta,'r', 'N/A')
+#     Meta=MetaInput[0]
+# Zsteps=Meta.Zsteps
+# Ysteps=Meta.Ysteps
+# Xsteps=Meta.Xsteps
+# stepZ=Meta.stepZ
+# stepY=Meta.stepY
+# stepX=Meta.stepX
+# cut_dt=Meta.cut_dt
+# cut_dr=Meta.cut_dr
+
+
+# if os.path.isfile(destination_output_file_location)==False: #If we have it, we don't have to start from the scratch.
+#     print(UI.TimeStamp(),'Loading the data file ',bcolors.OKBLUE+TrainSampleOutputMeta+bcolors.ENDC)
+#     MetaInput=UI.PickleOperations(TrainSampleOutputMeta,'r', 'N/A') #Reading the meta file
+#     print(MetaInput[1])
+#     Meta=MetaInput[0]
+#     TrainSamples=[]
+#     ValSamples=[]
+#     TestSamples=[]
+# #            for i in range(1,Meta.no_sets+1):
+#     for i in range(1,Meta.no_sets+1):
+#         flocation=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TTr_OUTPUT_'+str(i)+'.pkl' #Looking for constituent input file
+#         print(UF.TimeStamp(),'Loading data from ',bcolors.OKBLUE+flocation+bcolors.ENDC)
+#         TrainClusters=UF.PickleOperations(flocation,'r', 'N/A') #Loading the file
+#         TrainClusters=TrainClusters[0] #Reading the actual data bit
+#         TrainFraction=int(math.floor(len(TrainClusters)*(1.0-(Meta.testRatio+Meta.valRatio)))) #Calculating the size of the training sample pool
+#         ValFraction=int(math.ceil(len(TrainClusters)*Meta.valRatio)) #Calculating the size of the validation sample pool
+#         for smpl in range(0,TrainFraction):
+#                    if TrainClusters[smpl].ClusterGraph.num_edges>0 and Sampling>=random.random(): #Not all generated graphs will contain edges: we can discard them + we apply sampling
+#                      TrainSamples.append(TrainClusters[smpl].ClusterGraph) #If Graph has edges and passes sampling then we add to the output
+#         for smpl in range(TrainFraction,TrainFraction+ValFraction):
+#                    if TrainClusters[smpl].ClusterGraph.num_edges>0 and Sampling>=random.random():
+#                      ValSamples.append(TrainClusters[smpl].ClusterGraph)
+#         for smpl in range(TrainFraction+ValFraction,len(TrainClusters)):
+#                    if TrainClusters[smpl].ClusterGraph.num_edges>0 and Sampling>=random.random():
+#                      TestSamples.append(TrainClusters[smpl].ClusterGraph)
+#     #Write the final output
+#     output_train_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/'+TrainSampleID+'_TRAIN_SAMPLES'+'.pkl'
+#     print(UF.PickleOperations(output_train_file_location,'w', TrainSamples)[1])
+#     output_val_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/'+TrainSampleID+'_VAL_SAMPLES'+'.pkl'
+#     print(UF.PickleOperations(output_val_file_location,'w', ValSamples)[1])
+#     output_test_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/'+TrainSampleID+'_TEST_SAMPLES'+'.pkl'
+#     print(UF.PickleOperations(output_test_file_location,'w', TestSamples)[1])
+#     print(UF.TimeStamp(), bcolors.OKGREEN+"Train data has been re-generated successfully..."+bcolors.ENDC)
+#     exit()
 
 
 ########################################     Phase 1 - Create compact source file    #########################################
 print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
-print(UF.TimeStamp(),bcolors.BOLD+'Stage 0:'+bcolors.ENDC+' Taking the file that has been supplied and creating the compact copies for the training set generation...')
+print(UI.TimeStamp(),bcolors.BOLD+'Stage 0:'+bcolors.ENDC+' Taking the file that has been supplied and creating the compact copies for the training set generation...')
 output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/MTr1_'+TrainSampleID+'_hits.csv' #This is the compact data file that contains only relevant columns and rows
-if os.path.isfile(output_file_location)==False or Mode=='RESET':
-        print(UF.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
+if os.path.isfile(output_file_location)==False:
+        print(UI.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
         data=pd.read_csv(input_file_location,
                     header=0,
                     usecols=[PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty])[[PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty]]
         total_rows=len(data.axes[0])
         data[PM.Hit_ID] = data[PM.Hit_ID].astype(str) #We try to keep HIT ids as strings
-        print(UF.TimeStamp(),'The raw data has ',total_rows,' hits')
-        print(UF.TimeStamp(),'Removing unreconstructed hits...')
+        print(UI.TimeStamp(),'The raw data has ',total_rows,' hits')
+        print(UI.TimeStamp(),'Removing unreconstructed hits...')
         data=data.dropna() #Removing nulls (not really applicable for this module but I put it just in case)
         final_rows=len(data.axes[0])
-        print(UF.TimeStamp(),'The cleaned data has ',final_rows,' hits')
+        print(UI.TimeStamp(),'The cleaned data has ',final_rows,' hits')
         data[PM.Hit_ID] = data[PM.Hit_ID].astype(int)
         data[PM.Hit_ID] = data[PM.Hit_ID].astype(str) #Why I am doing this twice? Need to investigate
         if SliceData: #Keeping only the relevant slice. Only works if we set at least one parameter (Xmin for instance) to non-zero
-             print(UF.TimeStamp(),'Slicing the data...')
+             print(UI.TimeStamp(),'Slicing the data...')
              data=data.drop(data.index[(data[PM.x] > Xmax) | (data[PM.x] < Xmin) | (data[PM.y] > Ymax) | (data[PM.y] < Ymin)])
              final_rows=len(data.axes[0])
-             print(UF.TimeStamp(),'The sliced data has ',final_rows,' hits')
+             print(UI.TimeStamp(),'The sliced data has ',final_rows,' hits')
         data=data.rename(columns={PM.x: "x"})
         data=data.rename(columns={PM.y: "y"})
         data=data.rename(columns={PM.z: "z"})
@@ -182,8 +273,9 @@ if os.path.isfile(output_file_location)==False or Mode=='RESET':
         data=data.rename(columns={PM.ty: "ty"})
         data=data.rename(columns={PM.Hit_ID: "Hit_ID"})
         data.to_csv(output_file_location,index=False)
-        print(UF.TimeStamp(), bcolors.OKGREEN+"The segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+output_file_location+bcolors.ENDC)
+        print(UI.TimeStamp(), bcolors.OKGREEN+"The segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+output_file_location+bcolors.ENDC)
 
+exit()
 
 ###################### Phase 2 - Eval Data ######################################################
 output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/ETr1_'+TrainSampleID+'_hits.csv' #This is similar to one above but also contains MC data
