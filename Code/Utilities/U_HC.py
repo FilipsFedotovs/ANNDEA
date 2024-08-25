@@ -120,13 +120,7 @@ class HitCluster:
                    if HitCluster.JoinHits(_Hits[l],_Hits[r],cut_dt,cut_dr):
                           _Tot_Hits.append(_Hits[l]+_Hits[r])
 
-
            print('Number of all  hit combinations passing fiducial cuts:',len(_Tot_Hits))
-
-           #######Next####
-           #import datetime
-           #T1=datetime.datetime.now()
-           import pandas as pd
            self.HitPairs=[]
            for TH in _Tot_Hits:
                self.HitPairs.append([TH[0],TH[3], TH[6],TH[9]])
@@ -141,31 +135,6 @@ class HitCluster:
                TH.append(abs(TH[5]-TH[11]))
                del TH[1:6]
                del TH[2:7]
-           # print(_Tot_Hits[0])
-           # _Tot_Hits_b['l_x']=_Tot_Hits_b['l_x']/self.Step[2]
-           # _Tot_Hits_b['l_y']=_Tot_Hits_b['l_y']/self.Step[2]
-           # _Tot_Hits_b['l_z']=_Tot_Hits_b['l_z']/self.Step[2]
-           # _Tot_Hits_b['r_x']=_Tot_Hits_b['r_x']/self.Step[2]
-           # _Tot_Hits_b['r_y']=_Tot_Hits_b['r_y']/self.Step[2]
-           # _Tot_Hits_b['r_z']=_Tot_Hits_b['r_z']/self.Step[2]
-           # _Tot_Hits_b['label']='N/A'
-           # _Tot_Hits_b['d_l'] = (np.sqrt(((_Tot_Hits_b['r_y']-_Tot_Hits_b['l_y'])**2) + ((_Tot_Hits_b['r_x']-_Tot_Hits_b['l_x'])**2) + ((_Tot_Hits_b['r_z']-_Tot_Hits_b['l_z'])**2)))
-           # _Tot_Hits_b['d_t'] = np.sqrt(((_Tot_Hits_b['r_y']-_Tot_Hits_b['l_y'])**2) + ((_Tot_Hits_b['r_x']-_Tot_Hits_b['l_x'])**2))
-           # _Tot_Hits_b['d_z'] = (_Tot_Hits_b['r_z']-_Tot_Hits_b['l_z']).abs()
-           #
-           # _Tot_Hits_b['d_tx'] = _Tot_Hits_b['l_tx']-_Tot_Hits_b['r_tx']
-           # _Tot_Hits_b['d_tx'] = _Tot_Hits_b['d_tx'].abs()
-           # _Tot_Hits_b['d_ty'] = _Tot_Hits_b['l_ty']-_Tot_Hits_b['r_ty']
-           # _Tot_Hits_b['d_ty'] = _Tot_Hits_b['d_ty'].abs()
-           #
-           #
-           #
-           # _Tot_Hits_b = _Tot_Hits_b.drop(['r_x','r_y','r_z','l_x','l_y','l_z'],axis=1)
-           # _Tot_Hits_b=_Tot_Hits_b[['l_HitID','r_HitID','label','d_l','d_t','d_z','d_tx','d_ty']]
-           #
-           # _Tot_Hits_b=_Tot_Hits_b.values.tolist()
-           # print(_Tot_Hits_b[0])
-           #print(datetime.datetime.now()-T1)
            if len(_Tot_Hits)>0:
                import torch
                from torch_geometric.data import Data
