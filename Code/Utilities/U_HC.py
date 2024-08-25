@@ -161,9 +161,9 @@ class HitCluster:
 
            _Tot_Hits_b = _Tot_Hits_b.drop(['r_x','r_y','r_z','l_x','l_y','l_z'],axis=1)
            _Tot_Hits_b=_Tot_Hits_b[['l_HitID','r_HitID','label','d_l','d_t','d_z','d_tx','d_ty']]
-           print(_Tot_Hits_b)
-           # _Tot_Hits=_Tot_Hits.values.tolist()
 
+           _Tot_Hits_b=_Tot_Hits_b.values.tolist()
+           print(_Tot_Hits_b[0]) 
            print(datetime.datetime.now()-T1)
            exit()
            if len(_Tot_Hits)>0:
