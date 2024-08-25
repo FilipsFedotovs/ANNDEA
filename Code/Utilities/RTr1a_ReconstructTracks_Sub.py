@@ -272,7 +272,10 @@ for k in range(0,Z_ID_Max):
                                                    Result=InjectHit(Predator,_Tot_Hits_PCopy[pry],False)
                                                    Predator=Result[0]
                                             _Tot_Hits_Predator.append(Predator)
+
                                         print(datetime.datetime.now()-T1)
+                                        print(len(_Tot_Hits_Predator))
+                                        print(_Tot_Hits_Predator)
                                         x=input()
                                         #We calculate the average value of the segment weight
                                         for s in _Tot_Hits_Predator:
