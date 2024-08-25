@@ -138,6 +138,10 @@ class HitCluster:
                TH.append((math.sqrt(((TH[8]-TH[2])**2) + ((TH[7]-TH[1])**2) + ((TH[9]-TH[3])**2))))
                TH.append(math.sqrt(((TH[8]-TH[2])**2) + ((TH[7]-TH[1])**2)))
                TH.append(abs(TH[9]-TH[3]))
+               TH.append(abs(TH[9]-TH[3]))
+
+               TH.append(abs(TH[4]-TH[7]))
+               TH.append(abs(TH[5]-TH[11]))
            print(_Tot_Hits[0])
            print(_Tot_Hits[1])
            print(_Tot_Hits[2])
@@ -152,12 +156,13 @@ class HitCluster:
            _Tot_Hits_b['d_t'] = np.sqrt(((_Tot_Hits_b['r_y']-_Tot_Hits_b['l_y'])**2) + ((_Tot_Hits_b['r_x']-_Tot_Hits_b['l_x'])**2))
            _Tot_Hits_b['d_z'] = (_Tot_Hits_b['r_z']-_Tot_Hits_b['l_z']).abs()
 
+           _Tot_Hits_b['d_tx'] = _Tot_Hits_b['l_tx']-_Tot_Hits_b['r_tx']
+           _Tot_Hits_b['d_tx'] = _Tot_Hits_b['d_tx'].abs()
+           _Tot_Hits_b['d_ty'] = _Tot_Hits_b['l_ty']-_Tot_Hits_b['r_ty']
+           _Tot_Hits_b['d_ty'] = _Tot_Hits_b['d_ty'].abs()
            print(_Tot_Hits_b)
 
-           # _Tot_Hits_b['d_tx'] = _Tot_Hits_b['l_tx']-_Tot_Hits_b['r_tx']
-           # _Tot_Hits_b['d_tx'] = _Tot_Hits_b['d_tx'].abs()
-           # _Tot_Hits_b['d_ty'] = _Tot_Hits_b['l_ty']-_Tot_Hits_b['r_ty']
-           # _Tot_Hits_b['d_ty'] = _Tot_Hits_b['d_ty'].abs()
+
            # _Tot_Hits = _Tot_Hits_b.drop(['r_x','r_y','r_z','l_x','l_y','l_z'],axis=1)
            # _Tot_Hits=_Tot_Hits_b[['l_HitID','r_HitID','label','d_l','d_t','d_z','d_tx','d_ty']]
            #
