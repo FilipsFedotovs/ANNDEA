@@ -131,7 +131,7 @@ class HitCluster:
            # self.HitPairs=_Tot_Hits[['l_HitID','l_z','r_HitID','r_z']]
            print(_Tot_Hits[0])
            print(_Tot_Hits[44])
-           for TH in _Tot_Hits:TH[1]=TH[1]/ self.Step[2]
+           for TH in _Tot_Hits:TH[1,2,3]=TH[1,2,3]/ self.Step[2]
            #_Tot_Hits =  [x[1] / self.Step[2] for x in _Tot_Hits]
            print(_Tot_Hits[0])
            print(_Tot_Hits[44])
