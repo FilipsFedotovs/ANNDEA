@@ -255,15 +255,15 @@ for k in range(0,Z_ID_Max):
                         _intital_size=len(_Tot_Hits)
                         KeepTracking=True
                         while len(_Tot_Hits)>0 and KeepTracking:
-                                        _Tot_Hits_PCopy=copy.deepcopy(_Tot_Hits)
+                                        _Tot_Hits_PCopy=copy.deepcopy(_Tot_Hits)[:10]
                                         _Tot_Hits_Predator=[]
                                         #Bellow we build all possible hit combinations that can occur in the data
                                         print(UI.TimeStamp(),'Building all possible track combinations...')
                                         #print(_Tot_Hits_PCopy)
                                         #import datetime
                                         #T1=datetime.datetime.now()
-                                        #for prd in range(len(_Tot_Hits_PCopy)):
-                                        for prd in range(4):
+                                        for prd in range(len(_Tot_Hits_PCopy)):
+                                        #for prd in range(4):
                                             #print(UI.TimeStamp(),'Progress is ',round(100*prd/len(_Tot_Hits_PCopy),2), '%',end="\r", flush=True)
                                             Predator=_Tot_Hits_PCopy[prd]
 
