@@ -347,7 +347,7 @@ for k in range(0,Z_ID_Max):
                                             STD=np.std(residual)
                                             MRES=max(residual)
                                             _Tot_Hits_Predator[_Tot_Hits_Predator.index(thp)]+=[RES,STD,MRES]
-                                                                                print(_Tot_Hits_Predator[0])
+                                        print(_Tot_Hits_Predator[0])
                                         print(_Tot_Hits_Predator[1])
                                         print(_Tot_Hits_Predator[2])
                                         print(_Tot_Hits_Predator[3])
