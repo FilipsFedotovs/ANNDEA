@@ -34,6 +34,7 @@ import time
 import ast
 import U_UI as UI #This is where we keep routine utility functions
 import Parameters as PM #This is where we keep framework global parameters
+from alive_progress import alive_bar
 class bcolors:   #We use it for the interface
     HEADER = '\033[95m'
     OKBLUE = '\033[94m'
@@ -101,6 +102,7 @@ stepY=PM.stepY #Size of the individual reconstruction volumes along the y-axis
 stepZ=PM.stepZ #Size of the individual reconstruction volumes along the z-axis
 cut_dt=PM.cut_dt #This cust help to discard hit pairs that are likely do not have a common mother track
 cut_dr=PM.cut_dr
+cut_dz=PM.cut_dz
 testRatio=PM.testRatio #Usually about 5%
 valRatio=PM.valRatio #Usually about 10%
 TrainSampleOutputMeta=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/'+TrainSampleID+'_info.pkl' #For each training sample batch we create an individual meta file.
@@ -335,15 +337,15 @@ if os.path.isfile(output_file_location)==False:
 print(UI.TimeStamp(),bcolors.OKGREEN+'Stage 0 has successfully completed'+bcolors.ENDC)
 ########################################     Preset framework parameters    #########################################
 
-exit()
+
 
 print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
-print(UF.TimeStamp(),bcolors.BOLD+'Stage 1:'+bcolors.ENDC+' Creating training sample meta data...')
+print(UI.TimeStamp(),bcolors.BOLD+'Stage 1:'+bcolors.ENDC+' Creating training sample meta data...')
 if os.path.isfile(TrainSampleOutputMeta)==False or Mode=='RESET': #A case of generating samples from scratch
     input_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/MTr1_'+TrainSampleID+'_hits.csv'
-    print(UF.TimeStamp(),'Loading preselected data from ',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
+    print(UI.TimeStamp(),'Loading preselected data from ',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
     data=pd.read_csv(input_file_location,header=0,usecols=['z','x','y'])
-    print(UF.TimeStamp(),'Analysing data... ',bcolors.ENDC)
+    print(UI.TimeStamp(),'Analysing data... ',bcolors.ENDC)
     z_offset=data['z'].min()
     data['z']=data['z']-z_offset #Reseting the coordinate origin to zero for this data set
     z_max=data['z'].max()
@@ -351,18 +353,44 @@ if os.path.isfile(TrainSampleOutputMeta)==False or Mode=='RESET': #A case of gen
     x_offset=data['x'].min()
     data['x']=data['x']-x_offset #Reseting the coordinate origin to zero for this data set
     x_max=data['x'].max() #We need it to calculate how many clusters to create
-    if X_overlap==1:
-       Xsteps=math.ceil((x_max)/stepX) #No of clusters in x-direction
-    else:
-       Xsteps=(math.ceil((x_max)/stepX)*(X_overlap))-1 #This is the scenario where
-
     if Z_overlap==1:
-       Zsteps=math.ceil((z_max)/stepZ)
+            Zsteps=math.ceil((z_max)/stepZ)
     else:
-       Zsteps=(math.ceil((z_max)/stepZ)*(Z_overlap))-1
-    TrainDataMeta=UF.TrainingSampleMeta(TrainSampleID)
+            Zsteps=(math.ceil((z_max)/stepZ)*(Z_overlap))-1
+    if X_overlap==1:
+            Xsteps=math.ceil((x_max)/stepX)
+    else:
+            Xsteps=(math.ceil((x_max)/stepX)*(X_overlap))-1
+    print(UI.TimeStamp(),'Distributing hit files...')
+    print(UI.TimeStamp(),'Loading preselected data from ',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
+    data=pd.read_csv(input_file_location,header=0)
+    with alive_bar(Xsteps,force_tty=True, title='Distributing hit files...') as bar:
+             for i in range(Xsteps):
+                     required_tfile_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/MTr1_'+TrainSampleID+'_'+str(i)+'_hits.csv'
+                     if os.path.isfile(required_tfile_location)==False:
+                         X_ID=int(i)/X_overlap
+                         tdata=data.drop(data.index[data['x'] >= ((X_ID+1)*stepX)])  #Keeping the relevant z slice
+                         tdata.drop(tdata.index[tdata['x'] < (X_ID*stepX)], inplace = True)  #Keeping the relevant z slice
+                         tdata.to_csv(required_tfile_location,index=False)
+                         #print(UI.TimeStamp(), bcolors.OKGREEN+"The segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+required_tfile_location+bcolors.ENDC)
+                     bar()
+    print(UI.TimeStamp(),'Distributing eval files...')
+    input_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/ETr1_'+TrainSampleID+'_hits.csv' #This is similar to one above but also contains MC data
+    data=pd.read_csv(input_file_location,header=0)
+    with alive_bar(Xsteps,force_tty=True, title='Distributing hit files...') as bar:
+             for i in range(Xsteps):
+                     required_tfile_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/ETr1_'+TrainSampleID+'_'+str(i)+'_hits.csv'
+                     if os.path.isfile(required_tfile_location)==False:
+                         X_ID=int(i)/X_overlap
+                         tdata=data.drop(data.index[data['x'] >= ((X_ID+1)*stepX)])  #Keeping the relevant z slice
+                         tdata.drop(tdata.index[tdata['x'] < (X_ID*stepX)], inplace = True)  #Keeping the relevant z slice
+                         tdata.to_csv(required_tfile_location,index=False)
+                         #print(UI.TimeStamp(), bcolors.OKGREEN+"The segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+required_tfile_location+bcolors.ENDC)
+                     bar()
+    TrainDataMeta=UI.TrainingSampleMeta(TrainSampleID)
+    exit()
     TrainDataMeta.IniHitClusterMetaData(stepX,stepY,stepZ,cut_dt,cut_dr,testRatio,valRatio,z_offset,y_offset,x_offset, Xsteps, Zsteps,X_overlap, Y_overlap, Z_overlap)
-    print(UF.PickleOperations(TrainSampleOutputMeta,'w', TrainDataMeta)[1])
+    print(UI.PickleOperations(TrainSampleOutputMeta,'w', TrainDataMeta)[1])
 
 elif os.path.isfile(TrainSampleOutputMeta)==True:
     print(UF.TimeStamp(),'Loading previously saved data from ',bcolors.OKBLUE+TrainSampleOutputMeta+bcolors.ENDC)
