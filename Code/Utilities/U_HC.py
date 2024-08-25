@@ -127,8 +127,9 @@ class HitCluster:
            #import datetime
            #T1=datetime.datetime.now()
            import pandas as pd
-           _Tot_Hits_b=pd.DataFrame(_Tot_Hits, columns = ['l_HitID','l_x','l_y','l_z','l_tx','l_ty','r_HitID','r_x','r_y','r_z','r_tx','r_ty'])
-           self.HitPairs=_Tot_Hits_b[['l_HitID','l_z','r_HitID','r_z']]
+           self.HitPairs=[]
+           for TH in _Tot_Hits:
+               self.HitPairs.append([TH[0],TH[3], TH[6],TH[9]])
            for TH in _Tot_Hits:
                for i in range(1,4):TH[i]=TH[i]/self.Step[2]
                for i in range(7,10):TH[i]=TH[i]/self.Step[2]
