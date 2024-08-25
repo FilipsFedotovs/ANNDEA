@@ -132,7 +132,8 @@ class HitCluster:
            print(_Tot_Hits[0])
            print(_Tot_Hits[44])
            for TH in _Tot_Hits:
-               for i in range(1,7):TH[i]=TH[i]/ self.Step[2]
+               for i in range(1,4):TH[i]=TH[i]/self.Step[2]
+               for i in range(7,10):TH[i]=TH[i]/self.Step[2]
            #_Tot_Hits =  [x[1] / self.Step[2] for x in _Tot_Hits]
            print(_Tot_Hits[0])
            print(_Tot_Hits[44])
