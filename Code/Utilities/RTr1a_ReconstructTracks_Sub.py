@@ -259,7 +259,7 @@ for k in range(0,Z_ID_Max):
                                         _Tot_Hits_Predator=[]
                                         #Bellow we build all possible hit combinations that can occur in the data
                                         print(UI.TimeStamp(),'Building all possible track combinations...')
-                                        print(_Tot_Hits_PCopy)
+                                        #print(_Tot_Hits_PCopy)
                                         #import datetime
                                         #T1=datetime.datetime.now()
                                         #for prd in range(len(_Tot_Hits_PCopy)):
