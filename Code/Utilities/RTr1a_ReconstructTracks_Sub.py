@@ -263,7 +263,7 @@ for k in range(0,Z_ID_Max):
                                         #import datetime
                                         #T1=datetime.datetime.now()
                                         #for prd in range(len(_Tot_Hits_PCopy)):
-                                        for prd in range(3):
+                                        for prd in range(4):
                                             #print(UI.TimeStamp(),'Progress is ',round(100*prd/len(_Tot_Hits_PCopy),2), '%',end="\r", flush=True)
                                             Predator=_Tot_Hits_PCopy[prd]
 
@@ -277,6 +277,7 @@ for k in range(0,Z_ID_Max):
                                             _Tot_Hits_Predator.append(Predator)
                                         print(_Tot_Hits_Predator[0])
                                         print(_Tot_Hits_Predator[1])
+                                        print(_Tot_Hits_Predator[2])
                                         print(_Tot_Hits_Predator[3])
 
                                         exit()
