@@ -134,9 +134,11 @@ class HitCluster:
            for TH in _Tot_Hits:
                for i in range(1,4):TH[i]=TH[i]/self.Step[2]
                for i in range(7,10):TH[i]=TH[i]/self.Step[2]
+               TH.append('N/A')
                TH.append((math.sqrt(((TH[8]-TH[2])**2) + ((TH[7]-TH[1])**2) + ((TH[9]-TH[3])**2))))
+               TH.append(math.sqrt(((TH[8]-TH[2])**2) + ((TH[7]-TH[1])**2)))
            print(_Tot_Hits[0])
-           print(_Tot_Hits[2])
+           print(_Tot_Hits[1])
            print(_Tot_Hits[3])
            _Tot_Hits_b['l_x']=_Tot_Hits_b['l_x']/self.Step[2]
            _Tot_Hits_b['l_y']=_Tot_Hits_b['l_y']/self.Step[2]
@@ -146,7 +148,7 @@ class HitCluster:
            _Tot_Hits_b['r_z']=_Tot_Hits_b['r_z']/self.Step[2]
 
            _Tot_Hits_b['d_l'] = (np.sqrt(((_Tot_Hits_b['r_y']-_Tot_Hits_b['l_y'])**2) + ((_Tot_Hits_b['r_x']-_Tot_Hits_b['l_x'])**2) + ((_Tot_Hits_b['r_z']-_Tot_Hits_b['l_z'])**2)))
-           # _Tot_Hits_b['d_t'] = np.sqrt(((_Tot_Hits_b['r_y']-_Tot_Hits_b['l_y'])**2) + ((_Tot_Hits_b['r_x']-_Tot_Hits_b['l_x'])**2))
+           _Tot_Hits_b['d_t'] = np.sqrt(((_Tot_Hits_b['r_y']-_Tot_Hits_b['l_y'])**2) + ((_Tot_Hits_b['r_x']-_Tot_Hits_b['l_x'])**2))
            # _Tot_Hits_b['d_z'] = (_Tot_Hits_b['r_z']-_Tot_Hits_b['l_z']).abs()
 
            print(_Tot_Hits_b)
