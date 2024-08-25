@@ -308,9 +308,25 @@ for k in range(0,Z_ID_Max):
                                         print(_Tot_Hits_Predator[2])
                                         print(_Tot_Hits_Predator[3])
                                         print('-------------')
-
                                         column_no=len(_Tot_Hits_Predator[0])-1
                                         columns=[]
+                                        for c in range(column_no):
+                                            columns.append(str(c))
+                                        columns+=['average_link_strength']
+                                        _Tot_Hits_Predator=pd.DataFrame(_Tot_Hits_Predator, columns = columns)
+                                        KeepTracking=len(_Tot_Hits_Predator)>0
+                                        _Tot_Hits_Predator.sort_values(by = ['average_link_strength'], ascending=[False],inplace=True) #Keep all the best hit combinations at the top
+                                        _Tot_Hits_Predator=_Tot_Hits_Predator.drop(['average_link_strength'],axis=1) #We don't need the segment fit anymore
+                                        print(_Tot_Hits_Predator)
+                                        print('-------------')
+                                        for c in range(column_no):
+                                            _Tot_Hits_Predator.drop_duplicates(subset=[str(c)], keep='first', inplace=True) #Iterating over hits, make sure that they belong to the best-fit track
+                                        print(_Tot_Hits_Predator)
+                                        print('-------------')
+                                        exit()
+                                        _Tot_Hits_Predator=_Tot_Hits_Predator.values.tolist()
+
+
                                         print(UI.TimeStamp(),'Applying physical assumptions...')
                                         #Here we making sure that the tracks satisfy minimum fit requirements
                                         q_itr=0
