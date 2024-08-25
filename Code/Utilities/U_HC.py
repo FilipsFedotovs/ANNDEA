@@ -138,7 +138,7 @@ class HitCluster:
                TH.append(abs(TH[9]-TH[3]))
                TH.append(abs(TH[9]-TH[3]))
 
-               TH.append(abs(TH[4]-TH[7]))
+               TH.append(abs(TH[4]-TH[10]))
                TH.append(abs(TH[5]-TH[11]))
            print(_Tot_Hits[0])
            print(_Tot_Hits[1])
