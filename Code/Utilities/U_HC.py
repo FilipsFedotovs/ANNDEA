@@ -163,7 +163,7 @@ class HitCluster:
            # _Tot_Hits_b=_Tot_Hits_b[['l_HitID','r_HitID','label','d_l','d_t','d_z','d_tx','d_ty']]
            #
            # _Tot_Hits_b=_Tot_Hits_b.values.tolist()
-           print(_Tot_Hits_b[0])
+           # print(_Tot_Hits_b[0])
            print(datetime.datetime.now()-T1)
            exit()
            if len(_Tot_Hits)>0:
