@@ -275,7 +275,6 @@ for k in range(0,Z_ID_Max):
 
                                         print(datetime.datetime.now()-T1)
                                         print(len(_Tot_Hits_Predator))
-                                        print(_Tot_Hits_Predator)
                                         x=input()
                                         #We calculate the average value of the segment weight
                                         for s in _Tot_Hits_Predator:
