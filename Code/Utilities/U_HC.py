@@ -140,9 +140,8 @@ class HitCluster:
 
                TH.append(abs(TH[4]-TH[10]))
                TH.append(abs(TH[5]-TH[11]))
+               del TH[1:4]
            print(_Tot_Hits[0])
-           print(_Tot_Hits[1])
-           print(_Tot_Hits[2])
            _Tot_Hits_b['l_x']=_Tot_Hits_b['l_x']/self.Step[2]
            _Tot_Hits_b['l_y']=_Tot_Hits_b['l_y']/self.Step[2]
            _Tot_Hits_b['l_z']=_Tot_Hits_b['l_z']/self.Step[2]
@@ -158,12 +157,12 @@ class HitCluster:
            _Tot_Hits_b['d_tx'] = _Tot_Hits_b['d_tx'].abs()
            _Tot_Hits_b['d_ty'] = _Tot_Hits_b['l_ty']-_Tot_Hits_b['r_ty']
            _Tot_Hits_b['d_ty'] = _Tot_Hits_b['d_ty'].abs()
+
+
+
+           _Tot_Hits_b = _Tot_Hits_b.drop(['r_x','r_y','r_z','l_x','l_y','l_z'],axis=1)
+           _Tot_Hits_b=_Tot_Hits_b[['l_HitID','r_HitID','label','d_l','d_t','d_z','d_tx','d_ty']]
            print(_Tot_Hits_b)
-
-
-           # _Tot_Hits = _Tot_Hits_b.drop(['r_x','r_y','r_z','l_x','l_y','l_z'],axis=1)
-           # _Tot_Hits=_Tot_Hits_b[['l_HitID','r_HitID','label','d_l','d_t','d_z','d_tx','d_ty']]
-           #
            # _Tot_Hits=_Tot_Hits.values.tolist()
 
            print(datetime.datetime.now()-T1)
