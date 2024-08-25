@@ -280,7 +280,7 @@ for k in range(0,Z_ID_Max):
                                         print(_Tot_Hits_Predator[2])
                                         print(_Tot_Hits_Predator[3])
 
-                                        exit()
+
 
                                         #print(datetime.datetime.now()-T1)
                                         #print(len(_Tot_Hits_Predator))
@@ -288,7 +288,13 @@ for k in range(0,Z_ID_Max):
                                         #We calculate the average value of the segment weight
                                         for s in _Tot_Hits_Predator:
                                             s=s[0].append(mean(s.pop(1)))
+                                        print(_Tot_Hits_Predator[0])
+                                        print(_Tot_Hits_Predator[1])
+                                        print(_Tot_Hits_Predator[2])
+                                        print(_Tot_Hits_Predator[3])
+                                        exit()
                                         _Tot_Hits_Predator = [item for l in _Tot_Hits_Predator for item in l]
+
                                         for s in range(len(_Tot_Hits_Predator)):
                                             for h in range(len(_Tot_Hits_Predator[s])):
                                                 if _Tot_Hits_Predator[s][h] =='_':
