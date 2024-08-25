@@ -35,11 +35,11 @@ AFS_DIR=args.AFS
 import sys
 if PY_DIR!='': #Temp solution
     sys.path=['',PY_DIR]
-    sys.path.append('/usr/lib64/python36.zip')
-    sys.path.append('/usr/lib64/python3.6')
-    sys.path.append('/usr/lib64/python3.6/lib-dynload')
-    sys.path.append('/usr/lib64/python3.6/site-packages')
-    sys.path.append('/usr/lib/python3.6/site-packages')
+    sys.path.append('/usr/lib64/python39.zip')
+    sys.path.append('/usr/lib64/python3.9')
+    sys.path.append('/usr/lib64/python3.9/lib-dynload')
+    sys.path.append('/usr/lib64/python3.9/site-packages')
+    sys.path.append('/usr/lib/python3.9/site-packages')
 sys.path.append(AFS_DIR+'/Code/Utilities')
 sys.path.insert(1, AFS_DIR+'/Code/Utilities/')
 ########################################    Import libraries    #############################################
@@ -47,6 +47,7 @@ import argparse
 import pandas as pd #We use Panda for a routine data processing
 import math #We use it for data manipulation
 import random
+exit()
 Z_overlap,Y_overlap,X_overlap=int(args.Z_overlap),int(args.Y_overlap),int(args.X_overlap)
 
 Z_ID=int(args.Z_ID)/Z_overlap #Renormalising the index of the cluster along z-axis
@@ -69,7 +70,7 @@ test_ratio=float(args.testRatio)
 #Loading Directory locations
 
 TrainSampleID=args.TrainSampleID
-import UtilityFunctions as UF #This is where we keep routine utility functions
+import U_UI as UF #This is where we keep routine utility functions
 
 #Specifying the full path to input/output files
 input_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MTr1_'+TrainSampleID+'_hits.csv'
