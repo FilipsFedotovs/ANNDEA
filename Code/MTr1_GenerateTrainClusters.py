@@ -275,13 +275,12 @@ if os.path.isfile(output_file_location)==False:
         data.to_csv(output_file_location,index=False)
         print(UI.TimeStamp(), bcolors.OKGREEN+"The segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+output_file_location+bcolors.ENDC)
 
-exit()
 
 ###################### Phase 2 - Eval Data ######################################################
 output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/ETr1_'+TrainSampleID+'_hits.csv' #This is similar to one above but also contains MC data
-if os.path.isfile(output_file_location)==False or Mode=='RESET':
-    print(UF.TimeStamp(),'Creating Evaluation file...')
-    print(UF.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
+if os.path.isfile(output_file_location)==False:
+    print(UI.TimeStamp(),'Creating Evaluation file...')
+    print(UI.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
     data=pd.read_csv(input_file_location,
                 header=0,
                 usecols=ColumnsToImport+ExtraColumns)[ColumnsToImport+ExtraColumns]
@@ -294,11 +293,11 @@ if os.path.isfile(output_file_location)==False or Mode=='RESET':
     else:
             data['Exclude']=''
     total_rows=len(data.axes[0])
-    print(UF.TimeStamp(),'The raw data has ',total_rows,' hits')
-    print(UF.TimeStamp(),'Removing unreconstructed hits...')
+    print(UI.TimeStamp(),'The raw data has ',total_rows,' hits')
+    print(UI.TimeStamp(),'Removing unreconstructed hits...')
     data=data.dropna() #Unlikely to have in the hit data but keeping here just in case to prevent potential problems downstream
     final_rows=len(data.axes[0])
-    print(UF.TimeStamp(),'The cleaned data has ',final_rows,' hits')
+    print(UI.TimeStamp(),'The cleaned data has ',final_rows,' hits')
     data[PM.MC_Event_ID] = data[PM.MC_Event_ID].astype(str)
     data[PM.MC_Track_ID] = data[PM.MC_Track_ID].astype(str)
     data[PM.Hit_ID] = data[PM.Hit_ID].astype(str)
@@ -309,12 +308,12 @@ if os.path.isfile(output_file_location)==False or Mode=='RESET':
     for c in ExtraColumns:
         data=data.drop([c],axis=1)
     if SliceData:
-         print(UF.TimeStamp(),'Slicing the data...')
+         print(UI.TimeStamp(),'Slicing the data...')
          data=data.drop(data.index[(data[PM.x] > Xmax) | (data[PM.x] < Xmin) | (data[PM.y] > Ymax) | (data[PM.y] < Ymin)])
          final_rows=len(data.axes[0])
-         print(UF.TimeStamp(),'The sliced data has ',final_rows,' hits')
+         print(UI.TimeStamp(),'The sliced data has ',final_rows,' hits')
     #Even if particle leaves one hit it is still assigned MC Track ID - we cannot reconstruct these so we discard them so performance metrics are not skewed
-    print(UF.TimeStamp(),'Removing tracks which have less than',PM.MinHitsTrack,'hits...')
+    print(UI.TimeStamp(),'Removing tracks which have less than',PM.MinHitsTrack,'hits...')
     track_no_data=data.groupby(['MC_Mother_Track_ID'],as_index=False).count()
     track_no_data=track_no_data.drop([PM.y,PM.z,PM.tx,PM.ty,PM.Hit_ID],axis=1)
     track_no_data=track_no_data.rename(columns={PM.x: "MC_Track_No"})
@@ -323,7 +322,7 @@ if os.path.isfile(output_file_location)==False or Mode=='RESET':
     new_combined_data = new_combined_data.drop(["MC_Track_No"],axis=1)
     new_combined_data=new_combined_data.sort_values(['MC_Mother_Track_ID',PM.z],ascending=[1,1])
     grand_final_rows=len(new_combined_data.axes[0])
-    print(UF.TimeStamp(),'The cleaned data has ',grand_final_rows,' hits')
+    print(UI.TimeStamp(),'The cleaned data has ',grand_final_rows,' hits')
     new_combined_data=new_combined_data.rename(columns={PM.x: "x"})
     new_combined_data=new_combined_data.rename(columns={PM.y: "y"})
     new_combined_data=new_combined_data.rename(columns={PM.z: "z"})
@@ -332,9 +331,11 @@ if os.path.isfile(output_file_location)==False or Mode=='RESET':
     new_combined_data=new_combined_data.rename(columns={PM.Hit_ID: "Hit_ID"})
     new_combined_data.to_csv(output_file_location,index=False)
     print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
-    print(UF.TimeStamp(), bcolors.OKGREEN+"The track segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+output_file_location+bcolors.ENDC)
-print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 0 has successfully completed'+bcolors.ENDC)
+    print(UI.TimeStamp(), bcolors.OKGREEN+"The track segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+output_file_location+bcolors.ENDC)
+print(UI.TimeStamp(),bcolors.OKGREEN+'Stage 0 has successfully completed'+bcolors.ENDC)
 ########################################     Preset framework parameters    #########################################
+
+exit()
 
 print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
 print(UF.TimeStamp(),bcolors.BOLD+'Stage 1:'+bcolors.ENDC+' Creating training sample meta data...')
