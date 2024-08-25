@@ -124,48 +124,47 @@ class HitCluster:
            print('Number of all  hit combinations passing fiducial cuts:',len(_Tot_Hits))
 
            #######Next####
-           import datetime
-           T1=datetime.datetime.now()
-           import pandas as pd
-           _Tot_Hits_b=pd.DataFrame(_Tot_Hits, columns = ['l_HitID','l_x','l_y','l_z','l_tx','l_ty','r_HitID','r_x','r_y','r_z','r_tx','r_ty'])
+           #import datetime
+           #T1=datetime.datetime.now()
+           #import pandas as pd
+           #_Tot_Hits_b=pd.DataFrame(_Tot_Hits, columns = ['l_HitID','l_x','l_y','l_z','l_tx','l_ty','r_HitID','r_x','r_y','r_z','r_tx','r_ty'])
            # self.HitPairs=_Tot_Hits[['l_HitID','l_z','r_HitID','r_z']]
-           # for TH in _Tot_Hits:
-           #     for i in range(1,4):TH[i]=TH[i]/self.Step[2]
-           #     for i in range(7,10):TH[i]=TH[i]/self.Step[2]
-           #     TH.append('N/A')
-           #     TH.append((math.sqrt(((TH[8]-TH[2])**2) + ((TH[7]-TH[1])**2) + ((TH[9]-TH[3])**2))))
-           #     TH.append(math.sqrt(((TH[8]-TH[2])**2) + ((TH[7]-TH[1])**2)))
-           #     TH.append(abs(TH[9]-TH[3]))
-           #     TH.append(abs(TH[4]-TH[10]))
-           #     TH.append(abs(TH[5]-TH[11]))
-           #     del TH[1:6]
-           #     del TH[2:7]
-           # print(_Tot_Hits[0])
-           _Tot_Hits_b['l_x']=_Tot_Hits_b['l_x']/self.Step[2]
-           _Tot_Hits_b['l_y']=_Tot_Hits_b['l_y']/self.Step[2]
-           _Tot_Hits_b['l_z']=_Tot_Hits_b['l_z']/self.Step[2]
-           _Tot_Hits_b['r_x']=_Tot_Hits_b['r_x']/self.Step[2]
-           _Tot_Hits_b['r_y']=_Tot_Hits_b['r_y']/self.Step[2]
-           _Tot_Hits_b['r_z']=_Tot_Hits_b['r_z']/self.Step[2]
-           _Tot_Hits_b['label']='N/A'
-           _Tot_Hits_b['d_l'] = (np.sqrt(((_Tot_Hits_b['r_y']-_Tot_Hits_b['l_y'])**2) + ((_Tot_Hits_b['r_x']-_Tot_Hits_b['l_x'])**2) + ((_Tot_Hits_b['r_z']-_Tot_Hits_b['l_z'])**2)))
-           _Tot_Hits_b['d_t'] = np.sqrt(((_Tot_Hits_b['r_y']-_Tot_Hits_b['l_y'])**2) + ((_Tot_Hits_b['r_x']-_Tot_Hits_b['l_x'])**2))
-           _Tot_Hits_b['d_z'] = (_Tot_Hits_b['r_z']-_Tot_Hits_b['l_z']).abs()
-
-           _Tot_Hits_b['d_tx'] = _Tot_Hits_b['l_tx']-_Tot_Hits_b['r_tx']
-           _Tot_Hits_b['d_tx'] = _Tot_Hits_b['d_tx'].abs()
-           _Tot_Hits_b['d_ty'] = _Tot_Hits_b['l_ty']-_Tot_Hits_b['r_ty']
-           _Tot_Hits_b['d_ty'] = _Tot_Hits_b['d_ty'].abs()
-
-
-
-           _Tot_Hits_b = _Tot_Hits_b.drop(['r_x','r_y','r_z','l_x','l_y','l_z'],axis=1)
-           _Tot_Hits_b=_Tot_Hits_b[['l_HitID','r_HitID','label','d_l','d_t','d_z','d_tx','d_ty']]
-
-           _Tot_Hits_b=_Tot_Hits_b.values.tolist()
-           print(_Tot_Hits_b[0])
-           print(datetime.datetime.now()-T1)
-           exit()
+           for TH in _Tot_Hits:
+               for i in range(1,4):TH[i]=TH[i]/self.Step[2]
+               for i in range(7,10):TH[i]=TH[i]/self.Step[2]
+               TH.append('N/A')
+               TH.append((math.sqrt(((TH[8]-TH[2])**2) + ((TH[7]-TH[1])**2) + ((TH[9]-TH[3])**2))))
+               TH.append(math.sqrt(((TH[8]-TH[2])**2) + ((TH[7]-TH[1])**2)))
+               TH.append(abs(TH[9]-TH[3]))
+               TH.append(abs(TH[4]-TH[10]))
+               TH.append(abs(TH[5]-TH[11]))
+               del TH[1:6]
+               del TH[2:7]
+           print(_Tot_Hits[0])
+           # _Tot_Hits_b['l_x']=_Tot_Hits_b['l_x']/self.Step[2]
+           # _Tot_Hits_b['l_y']=_Tot_Hits_b['l_y']/self.Step[2]
+           # _Tot_Hits_b['l_z']=_Tot_Hits_b['l_z']/self.Step[2]
+           # _Tot_Hits_b['r_x']=_Tot_Hits_b['r_x']/self.Step[2]
+           # _Tot_Hits_b['r_y']=_Tot_Hits_b['r_y']/self.Step[2]
+           # _Tot_Hits_b['r_z']=_Tot_Hits_b['r_z']/self.Step[2]
+           # _Tot_Hits_b['label']='N/A'
+           # _Tot_Hits_b['d_l'] = (np.sqrt(((_Tot_Hits_b['r_y']-_Tot_Hits_b['l_y'])**2) + ((_Tot_Hits_b['r_x']-_Tot_Hits_b['l_x'])**2) + ((_Tot_Hits_b['r_z']-_Tot_Hits_b['l_z'])**2)))
+           # _Tot_Hits_b['d_t'] = np.sqrt(((_Tot_Hits_b['r_y']-_Tot_Hits_b['l_y'])**2) + ((_Tot_Hits_b['r_x']-_Tot_Hits_b['l_x'])**2))
+           # _Tot_Hits_b['d_z'] = (_Tot_Hits_b['r_z']-_Tot_Hits_b['l_z']).abs()
+           #
+           # _Tot_Hits_b['d_tx'] = _Tot_Hits_b['l_tx']-_Tot_Hits_b['r_tx']
+           # _Tot_Hits_b['d_tx'] = _Tot_Hits_b['d_tx'].abs()
+           # _Tot_Hits_b['d_ty'] = _Tot_Hits_b['l_ty']-_Tot_Hits_b['r_ty']
+           # _Tot_Hits_b['d_ty'] = _Tot_Hits_b['d_ty'].abs()
+           #
+           #
+           #
+           # _Tot_Hits_b = _Tot_Hits_b.drop(['r_x','r_y','r_z','l_x','l_y','l_z'],axis=1)
+           # _Tot_Hits_b=_Tot_Hits_b[['l_HitID','r_HitID','label','d_l','d_t','d_z','d_tx','d_ty']]
+           #
+           # _Tot_Hits_b=_Tot_Hits_b.values.tolist()
+           # print(_Tot_Hits_b[0])
+           #print(datetime.datetime.now()-T1)
            if len(_Tot_Hits)>0:
                import torch
                from torch_geometric.data import Data
