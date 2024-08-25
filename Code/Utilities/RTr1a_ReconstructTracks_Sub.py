@@ -256,9 +256,12 @@ for k in range(0,Z_ID_Max):
                         KeepTracking=True
                         while len(_Tot_Hits)>0 and KeepTracking:
                                         _Tot_Hits_PCopy=copy.deepcopy(_Tot_Hits)
+                                        print(_Tot_Hits_PCopy)
                                         _Tot_Hits_Predator=[]
                                         #Bellow we build all possible hit combinations that can occur in the data
                                         print(UI.TimeStamp(),'Building all possible track combinations...')
+                                        #import datetime
+                                        T1=datetime.datetime.now()
                                         for prd in range(len(_Tot_Hits_PCopy)):
                                             print(UI.TimeStamp(),'Progress is ',round(100*prd/len(_Tot_Hits_PCopy),2), '%',end="\r", flush=True)
                                             Predator=_Tot_Hits_PCopy[prd]
@@ -270,6 +273,8 @@ for k in range(0,Z_ID_Max):
                                                    Result=InjectHit(Predator,_Tot_Hits_PCopy[pry],False)
                                                    Predator=Result[0]
                                             _Tot_Hits_Predator.append(Predator)
+                                        print(datetime.datetime.now()-T1)
+                                        x=input()
                                         #We calculate the average value of the segment weight
                                         for s in _Tot_Hits_Predator:
                                             s=s[0].append(mean(s.pop(1)))
