@@ -112,13 +112,12 @@ class HitCluster:
            print('Initial number of all possible hit combinations is:',len(_Hits)**2)
            print('Number of all possible hit combinations without self-permutations:',(len(_Hits)**2)-len(_Hits))
            print('Number of all possible hit  combinations with enforced one-directionality:',int(((len(_Hits)**2)-len(_Hits))/2))
-           exit() 
 
            for l in range(0,len(_Hits)-1):
                for r in range(l+1,len(_Hits)):
-                   if HitCluster.JoinHits(_Hits[l],_Hits[r],cut_dt,cut_dr):
+                   if HitCluster.JoinHits(_Hits[l],_Hits[r],cut_dt,cut_dr,cut_dz):
                           _Tot_Hits.append(_Hits[l]+_Hits[r])
-
+           exit()
            print('Number of all  hit combinations passing fiducial cuts:',len(_Tot_Hits))
            self.HitPairs=[]
            for TH in _Tot_Hits:
@@ -164,6 +163,8 @@ class HitCluster:
           if _H1[3]==_H2[3]: #Ensuring hit combinations are on different plates
               return False
           else:
+              print(_H1[3],_H2[3])
+              exit()
               if abs(_H1[4]-_H2[4])>=_cdt:
                   return False
               else:
