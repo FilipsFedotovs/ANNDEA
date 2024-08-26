@@ -59,12 +59,13 @@ class TrainingSampleMeta:
         return (self.TrainDataID) == (other.TrainDataID)
       def __hash__(self):
         return hash(self.TrainDataID)
-      def IniHitClusterMetaData(self,stepX,stepY,stepZ,cut_dt,cut_dr,testRatio,valRatio,z_offset,y_offset,x_offset, Xsteps, Zsteps,X_overlap,Y_overlap,Z_overlap,Ysteps=0):
+      def IniHitClusterMetaData(self,stepX,stepY,stepZ,cut_dt,cut_dr,cut_dz,testRatio,valRatio,z_offset,y_offset,x_offset, Xsteps, Zsteps,X_overlap,Y_overlap,Z_overlap,Ysteps=0):
           self.stepX=stepX
           self.stepY=stepY
           self.stepZ=stepZ
           self.cut_dt=cut_dt
           self.cut_dr=cut_dr
+          self.cut_dz=cut_dz
           self.testRatio=testRatio
           self.valRatio=valRatio
           self.z_offset=z_offset

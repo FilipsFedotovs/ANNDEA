@@ -388,20 +388,20 @@ if os.path.isfile(TrainSampleOutputMeta)==False or Mode=='RESET': #A case of gen
                          #print(UI.TimeStamp(), bcolors.OKGREEN+"The segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+required_tfile_location+bcolors.ENDC)
                      bar()
     TrainDataMeta=UI.TrainingSampleMeta(TrainSampleID)
-    exit()
-    TrainDataMeta.IniHitClusterMetaData(stepX,stepY,stepZ,cut_dt,cut_dr,testRatio,valRatio,z_offset,y_offset,x_offset, Xsteps, Zsteps,X_overlap, Y_overlap, Z_overlap)
+    TrainDataMeta.IniHitClusterMetaData(stepX, stepY, stepZ, cut_dt, cut_dr, cut_dz, testRatio, valRatio, z_offset, y_offset, x_offset, Xsteps, Zsteps,X_overlap, Y_overlap, Z_overlap)
     print(UI.PickleOperations(TrainSampleOutputMeta,'w', TrainDataMeta)[1])
 
 elif os.path.isfile(TrainSampleOutputMeta)==True:
-    print(UF.TimeStamp(),'Loading previously saved data from ',bcolors.OKBLUE+TrainSampleOutputMeta+bcolors.ENDC)
+    print(UI.TimeStamp(),'Loading previously saved data from ',bcolors.OKBLUE+TrainSampleOutputMeta+bcolors.ENDC)
     #Loading parameters from the Meta file if exists.
-    MetaInput=UF.PickleOperations(TrainSampleOutputMeta,'r', 'N/A')
+    MetaInput=UI.PickleOperations(TrainSampleOutputMeta,'r', 'N/A')
     Meta=MetaInput[0]
     stepX=Meta.stepX
     stepY=Meta.stepY
     stepZ=Meta.stepZ
     cut_dt=Meta.cut_dt
     cut_dr=Meta.cut_dr
+    cut_dz=Meta.cut_dz
     testRatio=Meta.testRatio
     valRatio=Meta.valRatio
     stepX=stepX
@@ -413,7 +413,9 @@ elif os.path.isfile(TrainSampleOutputMeta)==True:
     Y_overlap=Meta.Y_overlap
     X_overlap=Meta.X_overlap
     Z_overlap=Meta.Z_overlap
-print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 1 has successfully completed'+bcolors.ENDC)
+print(UI.TimeStamp(),bcolors.OKGREEN+'Stage 1 has successfully completed'+bcolors.ENDC)
+
+exit()
 #The function bellow manages HTCondor jobs - so we don't have to do manually
 def AutoPilot(wait_min, interval_min, max_interval_tolerance):
     print(UF.TimeStamp(),'Going on an autopilot mode for ',wait_min, 'minutes while checking HTCondor every',interval_min,'min',bcolors.ENDC)

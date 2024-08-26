@@ -105,8 +105,8 @@ class HitCluster:
                return True
            else:
                return False
-      def GenerateEdges(self, cut_dt, cut_dr): #Decorate hit information
-           #New workaround: instead of a painful Pandas outer join a loop over list is perfromed
+      def GenerateEdges(self, cut_dt, cut_dr, cut_dz, MCHits): #Decorate hit information
+           #New workaround: instead of a painful Pandas outer join a loop over list is performed
            _Hits=self.ClusterHits
            _Hits= sorted(_Hits, key=lambda x: x[3], reverse=True) #Sorting by z
            _Tot_Hits=[]
@@ -161,7 +161,7 @@ class HitCluster:
               _Bottom.append(_ClusterID.index(ip[1]))
           return [_Top,_Bottom]
 
-      def JoinHits(_H1,_H2, _cdt, _cdr):
+      def JoinHits(_H1, _H2, _cdt, _cdr, _cdz):
           if _H1[3]==_H2[3]: #Ensuring hit combinations are on different plates
               return False
           else:
