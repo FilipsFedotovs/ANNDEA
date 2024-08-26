@@ -115,10 +115,7 @@ print(UF.TimeStamp(),'Creating clusters... ')
 HC=HC.HitCluster([X_ID,Y_ID, 1],[stepX,stepY, stepZ]) #Initialise HitCluster instance
 print(HC.Step)
 HC.LoadClusterHits(data_list) #Decorate hot cluster with hit detailed data
-print(HC.ClusterHits[10])
-print(HC.RawClusterGraph[10])
-exit()
-GraphStatus = HC.GenerateTrainData(MCdata_list,cut_dt, cut_dr) #Creating Hit Cluster graph (using PyTorch Graph calss). We add Labels too sicnce it is Train data
+GraphStatus = HC.GenerateEdges(cut_dt, cut_dr, cut_dz, MCdata_list) #Creating Hit Cluster graph (using PyTorch Graph calss). We add Labels too sicnce it is Train data
 #There are nodes + graph is generated. Add it to the container
 
 random.shuffle(LoadedClusters) #Random shuffle so
