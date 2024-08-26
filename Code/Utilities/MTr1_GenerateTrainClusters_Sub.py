@@ -8,8 +8,8 @@ import argparse
 
 #Setting the parser - this script is usually not run directly, but is used by a Master version Counterpart that passes the required arguments
 parser = argparse.ArgumentParser(description='select cut parameters')
-parser.add_argument('--X_ID',help="Enter X id", default='0')
-parser.add_argument('--Y_ID',help="Enter Y id", default='0')
+parser.add_argument('--i',help="Enter X id", default='0')
+parser.add_argument('--j',help="Enter Y id", default='0')
 parser.add_argument('--stepX',help="Enter X step size", default='0')
 parser.add_argument('--stepY',help="Enter Y step size", default='0')
 parser.add_argument('--EOS',help="EOS directory location", default='.')
@@ -22,7 +22,7 @@ parser.add_argument('--testRatio',help="Fraction of test edges", default='0.05')
 parser.add_argument('--cut_dt',help="Cut on angle difference", default='1.0')
 parser.add_argument('--cut_dr',help="Cut on angle difference", default='4000')
 parser.add_argument('--cut_dz',help="Cut on a distance across z-axis", default='4000')
-parser.add_argument('--TrainSampleID',help="Give name to this train sample", default='SHIP_TrainSample_v1')
+parser.add_argument('--BatchID',help="Give name to this train sample", default='SHIP_TrainSample_v1')
 
 parser.add_argument('--Y_overlap',help="Enter the level of overlap in integer number between reconstruction blocks along y-axis.", default='1')
 parser.add_argument('--X_overlap',help="Enter the level of overlap in integer number between reconstruction blocks along x-axis.", default='1')
