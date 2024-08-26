@@ -114,8 +114,9 @@ print(UF.TimeStamp(),'Creating clusters... ')
 
 HC=HC.HitCluster([X_ID,Y_ID, 1],[stepX,stepY, stepZ]) #Initialise HitCluster instance
 print(HC.Step)
-exit()
 HC.LoadClusterHits(data_list) #Decorate hot cluster with hit detailed data
+print(HC.ClusterHits)
+exit()
 GraphStatus = HC.GenerateTrainData(MCdata_list,cut_dt, cut_dr) #Creating Hit Cluster graph (using PyTorch Graph calss). We add Labels too sicnce it is Train data
 #There are nodes + graph is generated. Add it to the container
 
