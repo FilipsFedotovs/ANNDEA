@@ -225,7 +225,7 @@ print(UI.TimeStamp(),bcolors.BOLD+'Stage 1:'+bcolors.ENDC+' Creating training sa
 if os.path.isfile(TrainSampleOutputMeta)==False: #A case of generating samples from scratch
     input_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/MTr1_'+TrainSampleID+'_hits.csv'
     print(UI.TimeStamp(),'Loading preselected data from ',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
-    data=pd.read_csv(input_file_location,header=0,usecols=['x','y'])
+    data=pd.read_csv(input_file_location,header=0,usecols=['x','y','z'])
     print(UI.TimeStamp(),'Analysing data... ',bcolors.ENDC)
     y_offset=data['y'].min()
     x_offset=data['x'].min()
