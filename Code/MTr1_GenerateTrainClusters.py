@@ -238,7 +238,6 @@ if os.path.isfile(TrainSampleOutputMeta)==False: #A case of generating samples f
     data['x']=data['x']-x_offset #Reseting the coordinate origin to zero for this data set
     x_max=data['x'].max() #We need it to calculate how many clusters to create
     y_max=data['y'].max()
-    print(x_max,y_max,z_max)
     if Z_overlap==1:
             Zsteps=math.ceil((z_max)/stepZ)
     else:
@@ -288,6 +287,7 @@ if os.path.isfile(TrainSampleOutputMeta)==False: #A case of generating samples f
     TrainDataMeta=UI.TrainingSampleMeta(TrainSampleID)
     TrainDataMeta.IniHitClusterMetaData(stepX, stepY, stepZ, cut_dt, cut_dr, cut_dz, testRatio, valRatio, z_offset, y_offset, x_offset, Xsteps, Ysteps, Zsteps,X_overlap, Y_overlap, Z_overlap)
     TrainDataMeta.UpdateStatus(1)
+    Meta=TrainDataMeta
     print(UI.PickleOperations(TrainSampleOutputMeta,'w', TrainDataMeta)[1])
 
 elif os.path.isfile(TrainSampleOutputMeta)==True:
