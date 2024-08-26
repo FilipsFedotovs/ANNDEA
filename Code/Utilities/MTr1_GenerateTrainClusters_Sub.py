@@ -51,24 +51,18 @@ if PY_DIR!='': #Temp solution
 sys.path.append(AFS_DIR+'/Code/Utilities')
 sys.path.insert(1, AFS_DIR+'/Code/Utilities/')
 ########################################    Import libraries    #############################################
-import argparse
 import pandas as pd #We use Panda for a routine data processing
 import math #We use it for data manipulation
 import random
-print('Wip')
-exit()
 Y_overlap,X_overlap=int(args.Y_overlap),int(args.X_overlap)
 
 
-X_ID=int(args.X_ID)/X_overlap #Renormalising the index of the cluster along x-axis
+X_ID=int(args.i)/X_overlap #Renormalising the index of the cluster along x-axis
 
-Z_ID_n=int(args.Z_ID) #This is for the file output names
-X_ID_n=int(args.X_ID)
+X_ID_n=int(args.i)
 
 stepX=float(args.stepX) #The size of the cluster along x-direction
-stepZ=float(args.stepZ)  #The size of the cluster along z-direction
 stepY=float(args.stepY) #The size of the cluster along y-direction
-z_offset=float(args.zOffset)
 y_offset=float(args.yOffset)
 x_offset=float(args.xOffset)
 cut_dt=float(args.cut_dt) #Simple geometric cuts that help reduce number of hit combinations within the cluster for classification
@@ -79,14 +73,26 @@ test_ratio=float(args.testRatio)
 
 #Loading Directory locations
 
-TrainSampleID=args.TrainSampleID
+TrainSampleID=args.BatchID
 import U_UI as UF #This is where we keep routine utility functions
 
 #Specifying the full path to input/output files
 input_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MTr1_'+TrainSampleID+'_hits.csv'
+input_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/MTr1_'+TrainSampleID+'_'+args.i+'_'+args.j+'_hits.csv'
 print(UF.TimeStamp(), "Modules Have been imported successfully...")
 print(UF.TimeStamp(),'Loading pre-selected data from ',input_file_location)
 
+
+#Load the file with Hit detailed information
+data=pd.read_csv(input_file_location,header=0,usecols=["Hit_ID","x","y","z","tx","ty"])[["Hit_ID","x","y","z","tx","ty"]]
+data["x"] = pd.to_numeric(data["x"],downcast='float')
+data["y"] = pd.to_numeric(data["y"],downcast='float')
+data["z"] = pd.to_numeric(data["z"],downcast='float')
+data["Hit_ID"] = data["Hit_ID"].astype(str)
+print(UF.TimeStamp(),'Preparing data... ')
+
+print(data)
+exit()
 data=pd.read_csv(input_file_location,header=0,
             usecols=["Hit_ID","x","y","z","tx","ty"])
 
