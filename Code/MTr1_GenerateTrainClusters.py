@@ -311,6 +311,8 @@ Program=[]
 ###### Stage 0
 prog_entry=[]
 job_sets=[]
+print(Xsteps)
+print(Ysteps)
 for i in range(0,Xsteps):
     for j in range(0,Ysteps):
                 job_sets.append(Ysteps)
