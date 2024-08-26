@@ -273,6 +273,7 @@ if os.path.isfile(TrainSampleOutputMeta)==False: #A case of generating samples f
                      bar()
     TrainDataMeta=UI.TrainingSampleMeta(TrainSampleID)
     TrainDataMeta.IniHitClusterMetaData(stepX, stepY, stepZ, cut_dt, cut_dr, cut_dz, testRatio, valRatio, z_offset, y_offset, x_offset, Xsteps, Zsteps,X_overlap, Y_overlap, Z_overlap)
+    TrainDataMeta.UpdateStatus(1)
     print(UI.PickleOperations(TrainSampleOutputMeta,'w', TrainDataMeta)[1])
 
 elif os.path.isfile(TrainSampleOutputMeta)==True:
