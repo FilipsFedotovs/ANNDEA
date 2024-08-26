@@ -12,6 +12,7 @@ parser.add_argument('--i',help="Enter X id", default='0')
 parser.add_argument('--j',help="Enter Y id", default='0')
 parser.add_argument('--stepX',help="Enter X step size", default='0')
 parser.add_argument('--stepY',help="Enter Y step size", default='0')
+parser.add_argument('--stepZ',help="Enter Z step size", default='0')
 parser.add_argument('--EOS',help="EOS directory location", default='.')
 parser.add_argument('--AFS',help="AFS directory location", default='.')
 parser.add_argument('--zOffset',help="Data offset on z", default='0.0')
@@ -67,6 +68,7 @@ Y_ID_n=int(args.j)
 
 stepX=float(args.stepX) #The size of the cluster along x-direction
 stepY=float(args.stepY) #The size of the cluster along y-direction
+stepZ=float(args.stepZ) #The size of the cluster along z-direction (for normalisation)
 y_offset=float(args.yOffset)
 x_offset=float(args.xOffset)
 cut_dt=float(args.cut_dt) #Simple geometric cuts that help reduce number of hit combinations within the cluster for classification
@@ -79,6 +81,7 @@ test_ratio=float(args.testRatio)
 
 TrainSampleID=args.BatchID
 import U_UI as UF #This is where we keep routine utility functions
+import U_HC as HC #This is where we keep routine utility functions
 
 #Specifying the full path to input/output files
 input_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/MTr1_'+TrainSampleID+'_'+args.i+'_'+args.j+'_hits.csv'
@@ -103,21 +106,19 @@ MCdata=pd.read_csv(input_file_location,header=0,usecols=["Hit_ID",'MC_Mother_Tra
 MCdata["Hit_ID"] = data["Hit_ID"].astype(str)
 print(MCdata)
 MCdata_list=MCdata.values.tolist()
-exit()
+
 
 print(UF.TimeStamp(),'Creating clusters... ')
 
 
-LoadedClusters=[]
-for j in range(0,Ysteps): #Iterating over clusters indexes on y-axis
-        progress=round((float(j)/float(Ysteps))*100,2)
-        print(UF.TimeStamp(),"progress is ",progress,' %') #Progress display
-        HC=UF.HitCluster([X_ID,(j/Y_overlap),Z_ID],[stepX,stepY,stepZ]) #Initialise HitCluster instance
-        HC.LoadClusterHits(data_list) #Decorate hot cluster with hit detailed data
-        GraphStatus = HC.GenerateTrainData(MCdata_list,cut_dt, cut_dr) #Creating Hit Cluster graph (using PyTorch Graph calss). We add Labels too sicnce it is Train data
-        #There are nodes + graph is generated. Add it to the container
-        if GraphStatus:
-            LoadedClusters.append(HC)
+
+HC=HC.HitCluster([X_ID,Y_ID, 1],[stepX,stepY, stepZ]) #Initialise HitCluster instance
+print(HC.Step)
+exit()
+HC.LoadClusterHits(data_list) #Decorate hot cluster with hit detailed data
+GraphStatus = HC.GenerateTrainData(MCdata_list,cut_dt, cut_dr) #Creating Hit Cluster graph (using PyTorch Graph calss). We add Labels too sicnce it is Train data
+#There are nodes + graph is generated. Add it to the container
+
 random.shuffle(LoadedClusters) #Random shuffle so
 #output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MTr1a_'+TrainSampleID+'_SelectedTrainClusters_'+str(Z_ID_n)+'_' +str(X_ID_n)+'.pkl'
 output_file_location=EOS_DIR+p+'/Temp_'+pfx+'_'+TrainSampleID+'_'+str(X_ID_n)+'/'+pfx+'_'+TrainSampleID+'_'+o+'_'+str(X_ID_n)+'_'+str(X_ID_n)+sfx

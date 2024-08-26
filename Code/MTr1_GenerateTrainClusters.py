@@ -229,9 +229,11 @@ if os.path.isfile(TrainSampleOutputMeta)==False: #A case of generating samples f
     print(UI.TimeStamp(),'Analysing data... ',bcolors.ENDC)
     y_offset=data['y'].min()
     x_offset=data['x'].min()
+    z_offset=data['z'].min()
     data['x']=data['x']-x_offset #Reseting the coordinate origin to zero for this data set
     x_max=data['x'].max() #We need it to calculate how many clusters to create
     y_max=data['y'].max()
+    data['z']=data['z']-z_offset #Reseting the coordinate origin to zero for this data set
     if X_overlap==1:
             Xsteps=math.ceil((x_max)/stepX)
     else:
@@ -240,6 +242,7 @@ if os.path.isfile(TrainSampleOutputMeta)==False: #A case of generating samples f
             Ysteps=math.ceil((y_max)/stepY)
     else:
             Ysteps=(math.ceil((y_max)/stepY)*(Y_overlap))-1
+    stepZ=data['y'].max()
     print(UI.TimeStamp(),'Distributing hit files...')
     print(UI.TimeStamp(),'Loading preselected data from ',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
     data=pd.read_csv(input_file_location,header=0)
@@ -275,7 +278,7 @@ if os.path.isfile(TrainSampleOutputMeta)==False: #A case of generating samples f
                          #print(UI.TimeStamp(), bcolors.OKGREEN+"The segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+required_tfile_location+bcolors.ENDC)
                      bar()
     TrainDataMeta=UI.TrainingSampleMeta(TrainSampleID)
-    TrainDataMeta.IniHitClusterMetaData(stepX, stepY, cut_dt, cut_dr, cut_dz, testRatio, valRatio, y_offset, x_offset, Xsteps, Ysteps,X_overlap, Y_overlap)
+    TrainDataMeta.IniHitClusterMetaData(stepX, stepY, stepZ, cut_dt, cut_dr, cut_dz, testRatio, valRatio, y_offset, x_offset, Xsteps, Ysteps,X_overlap, Y_overlap)
     TrainDataMeta.UpdateStatus(1)
     Meta=TrainDataMeta
     print(UI.PickleOperations(TrainSampleOutputMeta,'w', TrainDataMeta)[1])
@@ -287,6 +290,7 @@ elif os.path.isfile(TrainSampleOutputMeta)==True:
     Meta=MetaInput[0]
     stepX=Meta.stepX
     stepY=Meta.stepY
+    stepZ=Meta.stepZ
     cut_dt=Meta.cut_dt
     cut_dr=Meta.cut_dr
     cut_dz=Meta.cut_dz
@@ -315,8 +319,8 @@ for i in range(0,Xsteps):
             job_sets.append(Ysteps)
 prog_entry.append(' Sending hit cluster to the HTCondor, so the model assigns weights between hits')
 prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/','SelectedTrainClusters','MTr1','.csv',TrainSampleID,job_sets,'MTr1_GenerateTrainClusters_Sub.py'])
-prog_entry.append([' --stepY ', ' --stepX ', ' --cut_dt ', ' --cut_dr ', ' --cut_dz ',' --Y_overlap ',' --X_overlap '])
-prog_entry.append([stepY,stepX, cut_dt,cut_dr,cut_dz, Y_overlap,X_overlap])
+prog_entry.append([' --stepY ', ' --stepX ', ' --stepZ ', ' --cut_dt ', ' --cut_dr ', ' --cut_dz ',' --Y_overlap ',' --X_overlap '])
+prog_entry.append([stepY, stepX, stepZ, cut_dt,cut_dr,cut_dz, Y_overlap,X_overlap])
 prog_entry.append(Xsteps*Ysteps)
 prog_entry.append(LocalSub)
 prog_entry.append('N/A')
