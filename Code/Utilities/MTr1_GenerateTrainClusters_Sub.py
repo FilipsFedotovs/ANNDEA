@@ -61,6 +61,10 @@ X_ID=int(args.i)/X_overlap #Renormalising the index of the cluster along x-axis
 
 X_ID_n=int(args.i)
 
+Y_ID=int(args.j)/Y_overlap #Renormalising the index of the cluster along x-axis
+
+Y_ID_n=int(args.j)
+
 stepX=float(args.stepX) #The size of the cluster along x-direction
 stepY=float(args.stepY) #The size of the cluster along y-direction
 y_offset=float(args.yOffset)
@@ -77,12 +81,9 @@ TrainSampleID=args.BatchID
 import U_UI as UF #This is where we keep routine utility functions
 
 #Specifying the full path to input/output files
-input_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MTr1_'+TrainSampleID+'_hits.csv'
 input_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/MTr1_'+TrainSampleID+'_'+args.i+'_'+args.j+'_hits.csv'
 print(UF.TimeStamp(), "Modules Have been imported successfully...")
 print(UF.TimeStamp(),'Loading pre-selected data from ',input_file_location)
-
-
 #Load the file with Hit detailed information
 data=pd.read_csv(input_file_location,header=0,usecols=["Hit_ID","x","y","z","tx","ty"])[["Hit_ID","x","y","z","tx","ty"]]
 data["x"] = pd.to_numeric(data["x"],downcast='float')
@@ -92,52 +93,20 @@ data["Hit_ID"] = data["Hit_ID"].astype(str)
 print(UF.TimeStamp(),'Preparing data... ')
 
 print(data)
+data_list=data.values.tolist()
+#Specifying the full path to input/output files
+input_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/ETr1_'+TrainSampleID+'_'+args.i+'_'+args.j+'_hits.csv'
+print(UF.TimeStamp(), "Modules Have been imported successfully...")
+print(UF.TimeStamp(),'Loading pre-selected data from ',input_file_location)
+#Load the file with Hit detailed information
+MCdata=pd.read_csv(input_file_location,header=0,usecols=["Hit_ID",'MC_Mother_Track_ID'])[["Hit_ID",'MC_Mother_Track_ID']]
+MCdata["Hit_ID"] = data["Hit_ID"].astype(str)
+print(MCdata)
+MCdata_list=MCdata.values.tolist()
 exit()
-data=pd.read_csv(input_file_location,header=0,
-            usecols=["Hit_ID","x","y","z","tx","ty"])
 
-data["x"] = pd.to_numeric(data["x"],downcast='float')
-data["y"] = pd.to_numeric(data["y"],downcast='float')
-data["z"] = pd.to_numeric(data["z"],downcast='float')
-data['x']=data['x']-x_offset
-data['y']=data['y']-y_offset
-data["Hit_ID"] = data["Hit_ID"].astype(str)
-data['z']=data['z']-z_offset
-x_max=data['x'].max()
-y_max=data['y'].max()
 print(UF.TimeStamp(),'Creating clusters... ')
 
-data.drop(data.index[data['z'] >= ((Z_ID+1)*stepZ)], inplace = True)  #Keeping the relevant z slice
-data.drop(data.index[data['z'] < (Z_ID*stepZ)], inplace = True)  #Keeping the relevant z slice
-
-data.drop(data.index[data['x'] >= ((X_ID+1)*stepX)], inplace = True)  #Keeping the relevant x slice
-data.drop(data.index[data['x'] < (X_ID*stepX)], inplace = True)  #Keeping the relevant x slice
-data_list=data.values.tolist()
-
-if Y_overlap==1:
-    Ysteps=math.ceil((y_max)/stepY)
-else:
-    Ysteps=(math.ceil((y_max)/stepY)*(Y_overlap))-1
-
-
-
-input_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/ETr1_'+TrainSampleID+'_hits.csv'
-MCdata=pd.read_csv(input_file_location,header=0,
-                            usecols=["Hit_ID","x","y","z","tx","ty",'MC_Mother_Track_ID'])
-MCdata["x"] = pd.to_numeric(MCdata["x"],downcast='float')
-MCdata["y"] = pd.to_numeric(MCdata["y"],downcast='float')
-MCdata["z"] = pd.to_numeric(MCdata["z"],downcast='float')
-MCdata["Hit_ID"] = MCdata["Hit_ID"].astype(str)
-MCdata['z']=MCdata['z']-z_offset
-MCdata['x']=MCdata['x']-x_offset
-MCdata['y']=MCdata['y']-y_offset
-MCdata.drop(MCdata.index[MCdata['z'] >= ((Z_ID+1)*stepZ)], inplace = True)  #Keeping the relevant z slice - reduce CPU
-MCdata.drop(MCdata.index[MCdata['z'] < (Z_ID*stepZ)], inplace = True)  #Keeping the relevant z slice
-MCdata.drop(MCdata.index[MCdata['x'] >= ((X_ID+1)*stepX)], inplace = True)  #Keeping the relevant x slice
-MCdata.drop(MCdata.index[MCdata['x'] < (X_ID*stepX)], inplace = True)  #Keeping the relevant x slice
-
-
-MCdata_list=MCdata.values.tolist()
 
 LoadedClusters=[]
 for j in range(0,Ysteps): #Iterating over clusters indexes on y-axis
