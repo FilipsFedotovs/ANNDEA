@@ -231,6 +231,7 @@ if os.path.isfile(TrainSampleOutputMeta)==False: #A case of generating samples f
     x_offset=data['x'].min()
     z_offset=data['z'].min()
     data['x']=data['x']-x_offset #Reseting the coordinate origin to zero for this data set
+    data['y']=data['y']-y_offset #Reseting the coordinate origin to zero for this data set
     x_max=data['x'].max() #We need it to calculate how many clusters to create
     y_max=data['y'].max()
     data['z']=data['z']-z_offset #Reseting the coordinate origin to zero for this data set
@@ -242,7 +243,7 @@ if os.path.isfile(TrainSampleOutputMeta)==False: #A case of generating samples f
             Ysteps=math.ceil((y_max)/stepY)
     else:
             Ysteps=(math.ceil((y_max)/stepY)*(Y_overlap))-1
-    stepZ=data['y'].max()
+    stepZ=data['z'].max()
     print(UI.TimeStamp(),'Distributing hit files...')
     print(UI.TimeStamp(),'Loading preselected data from ',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
     data=pd.read_csv(input_file_location,header=0)
