@@ -237,6 +237,8 @@ if os.path.isfile(TrainSampleOutputMeta)==False: #A case of generating samples f
     x_offset=data['x'].min()
     data['x']=data['x']-x_offset #Reseting the coordinate origin to zero for this data set
     x_max=data['x'].max() #We need it to calculate how many clusters to create
+    y_max=data['y'].max()
+    print(x_max,y_max,z_max)
     if Z_overlap==1:
             Zsteps=math.ceil((z_max)/stepZ)
     else:
@@ -245,16 +247,24 @@ if os.path.isfile(TrainSampleOutputMeta)==False: #A case of generating samples f
             Xsteps=math.ceil((x_max)/stepX)
     else:
             Xsteps=(math.ceil((x_max)/stepX)*(X_overlap))-1
+    if Y_overlap==1:
+            Ysteps=math.ceil((y_max)/stepY)
+    else:
+            Ysteps=(math.ceil((y_max)/stepY)*(Y_overlap))-1
     print(UI.TimeStamp(),'Distributing hit files...')
     print(UI.TimeStamp(),'Loading preselected data from ',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
     data=pd.read_csv(input_file_location,header=0)
     with alive_bar(Xsteps,force_tty=True, title='Distributing hit files...') as bar:
              for i in range(Xsteps):
-                     required_tfile_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/MTr1_'+TrainSampleID+'_'+str(i)+'_hits.csv'
+                 for j in range(Ysteps):
+                     required_tfile_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/MTr1_'+TrainSampleID+'_'+str(i)+'_'+str(j)+'_hits.csv'
                      if os.path.isfile(required_tfile_location)==False:
                          X_ID=int(i)/X_overlap
+                         Y_ID=int(j)/Y_overlap
                          tdata=data.drop(data.index[data['x'] >= ((X_ID+1)*stepX)])  #Keeping the relevant z slice
                          tdata.drop(tdata.index[tdata['x'] < (X_ID*stepX)], inplace = True)  #Keeping the relevant z slice
+                         tdata.drop(tdata.index[tdata['y'] >= ((Y_ID+1)*stepY)], inplace = True)  #Keeping the relevant z slice
+                         tdata.drop(tdata.index[tdata['y'] < (Y_ID*stepY)], inplace = True)  #Keeping the relevant z slice
                          tdata.to_csv(required_tfile_location,index=False)
                          #print(UI.TimeStamp(), bcolors.OKGREEN+"The segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+required_tfile_location+bcolors.ENDC)
                      bar()
@@ -263,16 +273,20 @@ if os.path.isfile(TrainSampleOutputMeta)==False: #A case of generating samples f
     data=pd.read_csv(input_file_location,header=0)
     with alive_bar(Xsteps,force_tty=True, title='Distributing hit files...') as bar:
              for i in range(Xsteps):
-                     required_tfile_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/ETr1_'+TrainSampleID+'_'+str(i)+'_hits.csv'
+                 for j in range(Ysteps):
+                     required_tfile_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/ETr1_'+TrainSampleID+'_'+str(i)+'_'+str(j)+'_hits.csv'
                      if os.path.isfile(required_tfile_location)==False:
                          X_ID=int(i)/X_overlap
+                         Y_ID=int(j)/Y_overlap
                          tdata=data.drop(data.index[data['x'] >= ((X_ID+1)*stepX)])  #Keeping the relevant z slice
                          tdata.drop(tdata.index[tdata['x'] < (X_ID*stepX)], inplace = True)  #Keeping the relevant z slice
+                         tdata.drop(tdata.index[tdata['y'] >= ((Y_ID+1)*stepY)], inplace = True)  #Keeping the relevant z slice
+                         tdata.drop(tdata.index[tdata['y'] < (Y_ID*stepY)], inplace = True)  #Keeping the relevant z slice
                          tdata.to_csv(required_tfile_location,index=False)
                          #print(UI.TimeStamp(), bcolors.OKGREEN+"The segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+required_tfile_location+bcolors.ENDC)
                      bar()
     TrainDataMeta=UI.TrainingSampleMeta(TrainSampleID)
-    TrainDataMeta.IniHitClusterMetaData(stepX, stepY, stepZ, cut_dt, cut_dr, cut_dz, testRatio, valRatio, z_offset, y_offset, x_offset, Xsteps, Zsteps,X_overlap, Y_overlap, Z_overlap)
+    TrainDataMeta.IniHitClusterMetaData(stepX, stepY, stepZ, cut_dt, cut_dr, cut_dz, testRatio, valRatio, z_offset, y_offset, x_offset, Xsteps, Ysteps, Zsteps,X_overlap, Y_overlap, Z_overlap)
     TrainDataMeta.UpdateStatus(1)
     print(UI.PickleOperations(TrainSampleOutputMeta,'w', TrainDataMeta)[1])
 
@@ -289,11 +303,11 @@ elif os.path.isfile(TrainSampleOutputMeta)==True:
     cut_dz=Meta.cut_dz
     testRatio=Meta.testRatio
     valRatio=Meta.valRatio
-    stepX=stepX
     z_offset=Meta.z_offset
     y_offset=Meta.y_offset
     x_offset=Meta.x_offset
     Xsteps=Meta.Xsteps
+    Ysteps=Meta.Ysteps
     Zsteps=Meta.Zsteps
     Y_overlap=Meta.Y_overlap
     X_overlap=Meta.X_overlap
@@ -307,7 +321,7 @@ Status=Meta.Status[-1]
 if ForceStatus!='N':
     Status=int(ForceStatus)
 UI.Msg('vanilla','Current stage is '+str(Status)+'...')
-
+exit()
 ################ Set the execution sequence for the script
 Program=[]
 ###### Stage 0

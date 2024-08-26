@@ -27,11 +27,19 @@ parser.add_argument('--Z_overlap',help="Enter the level of overlap in integer nu
 parser.add_argument('--Y_overlap',help="Enter the level of overlap in integer number between reconstruction blocks along y-axis.", default='1')
 parser.add_argument('--X_overlap',help="Enter the level of overlap in integer number between reconstruction blocks along x-axis.", default='1')
 parser.add_argument('--PY',help="Python libraries directory location", default='.')
+parser.add_argument('--p',help="Path to the output file", default='')
+parser.add_argument('--o',help="Path to the output file name", default='')
+parser.add_argument('--pfx',help="Path to the output file name", default='')
+parser.add_argument('--sfx',help="Path to the output file name", default='')
 ######################################## Set variables  #############################################################
 args = parser.parse_args()
 PY_DIR=args.PY
 EOS_DIR=args.EOS
 AFS_DIR=args.AFS
+p=args.p
+o=args.o
+sfx=args.sfx
+pfx=args.pfx
 import sys
 if PY_DIR!='': #Temp solution
     sys.path=['',PY_DIR]
@@ -65,6 +73,7 @@ y_offset=float(args.yOffset)
 x_offset=float(args.xOffset)
 cut_dt=float(args.cut_dt) #Simple geometric cuts that help reduce number of hit combinations within the cluster for classification
 cut_dr=float(args.cut_dr) #Simple geometric cuts that help reduce number of hit combinations within the cluster for classification
+cut_dz=float(args.cut_dz) #Simple geometric cuts that help reduce number of hit combinations within the cluster for classification
 val_ratio=float(args.valRatio)
 test_ratio=float(args.testRatio)
 
@@ -135,7 +144,8 @@ for j in range(0,Ysteps): #Iterating over clusters indexes on y-axis
         if GraphStatus:
             LoadedClusters.append(HC)
 random.shuffle(LoadedClusters) #Random shuffle so
-output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MTr1a_'+TrainSampleID+'_SelectedTrainClusters_'+str(Z_ID_n)+'_' +str(X_ID_n)+'.pkl'
+#output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MTr1a_'+TrainSampleID+'_SelectedTrainClusters_'+str(Z_ID_n)+'_' +str(X_ID_n)+'.pkl'
+output_file_location=EOS_DIR+p+'/Temp_'+pfx+'_'+TrainSampleID+'_'+str(X_ID_n)+'/'+pfx+'_'+TrainSampleID+'_'+o+'_'+str(X_ID_n)+'_'+str(X_ID_n)+sfx
 UF.PickleOperations(output_file_location,'w', LoadedClusters) #Write the output
 #End of the script
 

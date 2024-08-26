@@ -208,7 +208,7 @@ if os.path.isfile(required_file_location)==False:
             Ysteps=math.ceil((y_max)/stepY)
          else:
             Ysteps=(math.ceil((y_max)/stepY)*(Y_overlap))-1
-         print(Zsteps,Ysteps)
+
          print(UI.TimeStamp(),'Distributing input files...')
          with alive_bar(Xsteps*Ysteps,force_tty=True, title='Distributing input files...') as bar:
              for i in range(Xsteps):
