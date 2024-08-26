@@ -117,8 +117,9 @@ class HitCluster:
                for r in range(l+1,len(_Hits)):
                    if HitCluster.JoinHits(_Hits[l],_Hits[r],cut_dt,cut_dr,cut_dz):
                           _Tot_Hits.append(_Hits[l]+_Hits[r])
-           exit()
+
            print('Number of all  hit combinations passing fiducial cuts:',len(_Tot_Hits))
+           exit()
            self.HitPairs=[]
            for TH in _Tot_Hits:
                self.HitPairs.append([TH[0],TH[3], TH[6],TH[9]])
@@ -161,6 +162,8 @@ class HitCluster:
 
       def JoinHits(_H1, _H2, _cdt, _cdr, _cdz):
           if _H1[3]==_H2[3]: #Ensuring hit combinations are on different plates
+              return False
+          elif abs(_H1[3]-_H2[3])>=_cdz:
               return False
           else:
               print(_H1[3],_H2[3])
