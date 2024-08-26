@@ -315,7 +315,7 @@ for i in range(0,Xsteps):
             job_sets.append(Ysteps)
 prog_entry.append(' Sending hit cluster to the HTCondor, so the model assigns weights between hits')
 prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/','SelectedTrainClusters','MTr1','.csv',TrainSampleID,job_sets,'MTr1_GenerateTrainClusters_Sub.py'])
-prog_entry.append([' --stepY ', ' --stepX ', ' --cut_dt ', ' --cut_dr ', ' ----cut_dz ',' --Y_overlap ',' --X_overlap '])
+prog_entry.append([' --stepY ', ' --stepX ', ' --cut_dt ', ' --cut_dr ', ' --cut_dz ',' --Y_overlap ',' --X_overlap '])
 prog_entry.append([stepY,stepX, cut_dt,cut_dr,cut_dz, Y_overlap,X_overlap])
 prog_entry.append(Xsteps*Ysteps)
 prog_entry.append(LocalSub)
