@@ -166,8 +166,6 @@ class HitCluster:
           elif abs(_H1[3]-_H2[3])>=_cdz:
               return False
           else:
-              print(_H1[3],_H2[3])
-              exit()
               if abs(_H1[4]-_H2[4])>=_cdt:
                   return False
               else:
