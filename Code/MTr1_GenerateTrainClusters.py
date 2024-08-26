@@ -254,7 +254,7 @@ if os.path.isfile(TrainSampleOutputMeta)==False: #A case of generating samples f
     print(UI.TimeStamp(),'Distributing hit files...')
     print(UI.TimeStamp(),'Loading preselected data from ',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
     data=pd.read_csv(input_file_location,header=0)
-    with alive_bar(Xsteps,force_tty=True, title='Distributing hit files...') as bar:
+    with alive_bar(Xsteps*Ysteps,force_tty=True, title='Distributing hit files...') as bar:
              for i in range(Xsteps):
                  for j in range(Ysteps):
                      required_tfile_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/MTr1_'+TrainSampleID+'_'+str(i)+'_'+str(j)+'_hits.csv'
@@ -271,7 +271,7 @@ if os.path.isfile(TrainSampleOutputMeta)==False: #A case of generating samples f
     print(UI.TimeStamp(),'Distributing eval files...')
     input_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/ETr1_'+TrainSampleID+'_hits.csv' #This is similar to one above but also contains MC data
     data=pd.read_csv(input_file_location,header=0)
-    with alive_bar(Xsteps,force_tty=True, title='Distributing hit files...') as bar:
+    with alive_bar(Xsteps*Ysteps,force_tty=True, title='Distributing hit files...') as bar:
              for i in range(Xsteps):
                  for j in range(Ysteps):
                      required_tfile_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/ETr1_'+TrainSampleID+'_'+str(i)+'_'+str(j)+'_hits.csv'
