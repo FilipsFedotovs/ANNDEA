@@ -62,7 +62,6 @@ parser.add_argument('--ExcludeClassValues',help="What class values to use?", def
 parser.add_argument('--SubPause',help="How long to wait in minutes after submitting 10000 jobs?", default='60')
 parser.add_argument('--SubGap',help="How long to wait in minutes after submitting 10000 jobs?", default='10000')
 #The bellow are not important for the training smaples but if you want to augment the training data set above 1
-parser.add_argument('--Z_overlap',help="Enter the level of overlap in integer number between reconstruction blocks along z-axis.", default='1')
 parser.add_argument('--Y_overlap',help="Enter the level of overlap in integer number between reconstruction blocks along y-axis.", default='1')
 parser.add_argument('--X_overlap',help="Enter the level of overlap in integer number between reconstruction blocks along x-axis.", default='1')
 parser.add_argument('--ReqMemory',help="How uch memory to request?", default='2 GB')
@@ -87,7 +86,7 @@ input_file_location=args.f
 SubPause=int(args.SubPause)*60
 SubGap=int(args.SubGap)
 Xmin,Xmax,Ymin,Ymax=float(args.Xmin),float(args.Xmax),float(args.Ymin),float(args.Ymax)
-Z_overlap,Y_overlap,X_overlap=int(args.Z_overlap),int(args.Y_overlap),int(args.X_overlap)
+Y_overlap,X_overlap=int(args.Y_overlap),int(args.X_overlap)
 SliceData=max(Xmin,Xmax,Ymin,Ymax)>0
 if LocalSub:
    time_int=0
@@ -112,7 +111,6 @@ for i in range(len(ExcludeClassNames)):
 
 stepX=PM.stepX #Size of the individual reconstruction volumes along the x-axis
 stepY=PM.stepY #Size of the individual reconstruction volumes along the y-axis
-stepZ=PM.stepZ #Size of the individual reconstruction volumes along the z-axis
 cut_dt=PM.cut_dt #This cust help to discard hit pairs that are likely do not have a common mother track
 cut_dr=PM.cut_dr
 cut_dz=PM.cut_dz
@@ -218,7 +216,6 @@ if os.path.isfile(output_file_location)==False:
     new_combined_data.to_csv(output_file_location,index=False)
     print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
     print(UI.TimeStamp(), bcolors.OKGREEN+"The track segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+output_file_location+bcolors.ENDC)
-print(UI.TimeStamp(),bcolors.OKGREEN+'Stage 0 has successfully completed'+bcolors.ENDC)
 ########################################     Preset framework parameters    #########################################
 
 
@@ -228,20 +225,13 @@ print(UI.TimeStamp(),bcolors.BOLD+'Stage 1:'+bcolors.ENDC+' Creating training sa
 if os.path.isfile(TrainSampleOutputMeta)==False: #A case of generating samples from scratch
     input_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/MTr1_'+TrainSampleID+'_hits.csv'
     print(UI.TimeStamp(),'Loading preselected data from ',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
-    data=pd.read_csv(input_file_location,header=0,usecols=['z','x','y'])
+    data=pd.read_csv(input_file_location,header=0,usecols=['x','y'])
     print(UI.TimeStamp(),'Analysing data... ',bcolors.ENDC)
-    z_offset=data['z'].min()
-    data['z']=data['z']-z_offset #Reseting the coordinate origin to zero for this data set
-    z_max=data['z'].max()
     y_offset=data['y'].min()
     x_offset=data['x'].min()
     data['x']=data['x']-x_offset #Reseting the coordinate origin to zero for this data set
     x_max=data['x'].max() #We need it to calculate how many clusters to create
     y_max=data['y'].max()
-    if Z_overlap==1:
-            Zsteps=math.ceil((z_max)/stepZ)
-    else:
-            Zsteps=(math.ceil((z_max)/stepZ)*(Z_overlap))-1
     if X_overlap==1:
             Xsteps=math.ceil((x_max)/stepX)
     else:
@@ -285,7 +275,7 @@ if os.path.isfile(TrainSampleOutputMeta)==False: #A case of generating samples f
                          #print(UI.TimeStamp(), bcolors.OKGREEN+"The segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+required_tfile_location+bcolors.ENDC)
                      bar()
     TrainDataMeta=UI.TrainingSampleMeta(TrainSampleID)
-    TrainDataMeta.IniHitClusterMetaData(stepX, stepY, stepZ, cut_dt, cut_dr, cut_dz, testRatio, valRatio, z_offset, y_offset, x_offset, Xsteps, Ysteps, Zsteps,X_overlap, Y_overlap, Z_overlap)
+    TrainDataMeta.IniHitClusterMetaData(stepX, stepY, cut_dt, cut_dr, cut_dz, testRatio, valRatio, y_offset, x_offset, Xsteps, Ysteps,X_overlap, Y_overlap)
     TrainDataMeta.UpdateStatus(1)
     Meta=TrainDataMeta
     print(UI.PickleOperations(TrainSampleOutputMeta,'w', TrainDataMeta)[1])
@@ -297,22 +287,17 @@ elif os.path.isfile(TrainSampleOutputMeta)==True:
     Meta=MetaInput[0]
     stepX=Meta.stepX
     stepY=Meta.stepY
-    stepZ=Meta.stepZ
     cut_dt=Meta.cut_dt
     cut_dr=Meta.cut_dr
     cut_dz=Meta.cut_dz
     testRatio=Meta.testRatio
     valRatio=Meta.valRatio
-    z_offset=Meta.z_offset
     y_offset=Meta.y_offset
     x_offset=Meta.x_offset
     Xsteps=Meta.Xsteps
     Ysteps=Meta.Ysteps
-    Zsteps=Meta.Zsteps
     Y_overlap=Meta.Y_overlap
     X_overlap=Meta.X_overlap
-    Z_overlap=Meta.Z_overlap
-print(UI.TimeStamp(),bcolors.OKGREEN+'Stage 1 has successfully completed'+bcolors.ENDC)
 
 # ########################################     Preset framework parameters    #########################################
 
@@ -328,12 +313,13 @@ Program=[]
 prog_entry=[]
 job_sets=[]
 for i in range(0,Xsteps):
-                job_sets.append(Zsteps)
+    for j in range(0,Ysteps):
+                job_sets.append(Ysteps)
 prog_entry.append(' Sending hit cluster to the HTCondor, so the model assigns weights between hits')
 prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/','SelectedTrainClusters','MTr1','.csv',TrainSampleID,job_sets,'MTr1_GenerateTrainClusters_Sub.py'])
-prog_entry.append([' --stepZ ', ' --stepY ', ' --stepX ', ' --cut_dt ', ' --cut_dr ', ' ----cut_dz ',' --Z_overlap ',' --Y_overlap ',' --X_overlap ', ' --Z_ID_Max '])
-prog_entry.append([stepZ,stepY,stepX, cut_dt,cut_dr,cut_dz, Z_overlap,Y_overlap,X_overlap, Zsteps])
-prog_entry.append(Xsteps*Zsteps)
+prog_entry.append([' --stepY ', ' --stepX ', ' --cut_dt ', ' --cut_dr ', ' ----cut_dz ',' --Y_overlap ',' --X_overlap '])
+prog_entry.append([stepY,stepX, cut_dt,cut_dr,cut_dz, Y_overlap,X_overlap])
+prog_entry.append(Xsteps*Ysteps)
 prog_entry.append(LocalSub)
 prog_entry.append('N/A')
 prog_entry.append(HTCondorLog)
