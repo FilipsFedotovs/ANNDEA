@@ -306,7 +306,6 @@ Status=Meta.Status[-1]
 if ForceStatus!='N':
     Status=int(ForceStatus)
 UI.Msg('vanilla','Current stage is '+str(Status)+'...')
-exit()
 ################ Set the execution sequence for the script
 Program=[]
 ###### Stage 0
