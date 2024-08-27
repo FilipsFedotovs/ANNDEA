@@ -132,7 +132,6 @@ class HitCluster:
                     x=input()
                else:
                 TH.append('N/A')
-               exit()
                TH.append((math.sqrt(((TH[8]-TH[2])**2) + ((TH[7]-TH[1])**2) + ((TH[9]-TH[3])**2))))
                TH.append(math.sqrt(((TH[8]-TH[2])**2) + ((TH[7]-TH[1])**2)))
                TH.append(abs(TH[9]-TH[3]))
