@@ -126,9 +126,7 @@ class HitCluster:
                for i in range(1,4):TH[i]=TH[i]/self.Step[2]
                for i in range(7,10):TH[i]=TH[i]/self.Step[2]
                if len(MCHits)>0:
-                print(TH)
-                print(MCHits)
-                exit()
+                TH.append(HitCluster.LabelLinks(TH,MCHits))
                else:
                 TH.append('N/A')
                TH.append((math.sqrt(((TH[8]-TH[2])**2) + ((TH[7]-TH[1])**2) + ((TH[9]-TH[3])**2))))
