@@ -169,7 +169,7 @@ class HitCluster:
               if _hit[0]==h1[0]:
                  print(_hit[0])
                  for h2 in _MCHits:
-                     if (_hit[6]==h2[0]) and (_hit[0]!=_hit[6]):
+                     if _hit[6]==h2[0]:
                         print(h1[1],h2[1])
                         if h1[1]==h2[1]:
                             return int(h1[1].__contains__('--')==False)
