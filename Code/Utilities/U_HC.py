@@ -131,7 +131,6 @@ class HitCluster:
                     x=input()
                else:
                     TH.append('N/A')
-               exit()
                TH.append((math.sqrt(((TH[8]-TH[2])**2) + ((TH[7]-TH[1])**2) + ((TH[9]-TH[3])**2))))
                TH.append(math.sqrt(((TH[8]-TH[2])**2) + ((TH[7]-TH[1])**2)))
                TH.append(abs(TH[9]-TH[3]))
@@ -139,6 +138,7 @@ class HitCluster:
                TH.append(abs(TH[5]-TH[11]))
                del TH[1:6]
                del TH[2:7]
+           exit()
            if len(_Tot_Hits)>0:
                import torch
                from torch_geometric.data import Data
