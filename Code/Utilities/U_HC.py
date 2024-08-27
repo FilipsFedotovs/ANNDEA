@@ -167,8 +167,8 @@ class HitCluster:
           for h1 in _MCHits:
               if _hit[0]==h1[0]:
                  for h2 in _MCHits:
-                     if
-          return [_Top,_Bottom]
+                     print('hello')
+          return 0
 
       def JoinHits(_H1, _H2, _cdt, _cdr, _cdz):
           if _H1[3]==_H2[3]: #Ensuring hit combinations are on different plates
