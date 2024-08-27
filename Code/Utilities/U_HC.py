@@ -119,7 +119,6 @@ class HitCluster:
                           _Tot_Hits.append(_Hits[l]+_Hits[r])
 
            print('Number of all  hit combinations passing fiducial cuts:',len(_Tot_Hits))
-           exit()
            self.HitPairs=[]
            for TH in _Tot_Hits:
                self.HitPairs.append([TH[0],TH[3], TH[6],TH[9]])
@@ -163,6 +162,12 @@ class HitCluster:
           for ip in _input:
               _Top.append(_ClusterID.index(ip[0]))
               _Bottom.append(_ClusterID.index(ip[1]))
+          return [_Top,_Bottom]
+      def LabelLinks(_hit,_MCHits):
+          for h1 in _MCHits:
+              if _hit[0]==h1[0]:
+                 for h2 in _MCHits:
+                     if
           return [_Top,_Bottom]
 
       def JoinHits(_H1, _H2, _cdt, _cdr, _cdz):
