@@ -177,9 +177,6 @@ class HitCluster:
                             return int(h1[1].__contains__('--')==False)
                         else:
                             return 0
-                     else:
-                         return 0
-                 return 0
           return 0
 
 
