@@ -165,10 +165,12 @@ class HitCluster:
               _Bottom.append(_ClusterID.index(ip[1]))
           return [_Top,_Bottom]
       def LabelLinks(_hit,_MCHits):
+          print(_MCHits)
           for h1 in _MCHits:
               if _hit[0]==h1[0]:
                  print(_hit[0])
                  for h2 in _MCHits:
+                     print(h2)
                      if _hit[6]==h2[0]:
                         print(h1[1],h2[1])
                         if h1[1]==h2[1]:
