@@ -126,7 +126,12 @@ class HitCluster:
            for TH in _Tot_Hits:
                for i in range(1,4):TH[i]=TH[i]/self.Step[2]
                for i in range(7,10):TH[i]=TH[i]/self.Step[2]
-               TH.append('N/A')
+               if len(MCHits)>0:
+                print(TH)
+                print(MCHits)
+                exit()
+               else:
+                TH.append('N/A')
                TH.append((math.sqrt(((TH[8]-TH[2])**2) + ((TH[7]-TH[1])**2) + ((TH[9]-TH[3])**2))))
                TH.append(math.sqrt(((TH[8]-TH[2])**2) + ((TH[7]-TH[1])**2)))
                TH.append(abs(TH[9]-TH[3]))
@@ -164,8 +169,6 @@ class HitCluster:
           if _H1[3]==_H2[3]: #Ensuring hit combinations are on different plates
               return False
           elif abs(_H1[3]-_H2[3])>=_cdz:
-              print(_H1,_H2)
-              exit()
               return False
           else:
               if abs(_H1[4]-_H2[4])>=_cdt:
