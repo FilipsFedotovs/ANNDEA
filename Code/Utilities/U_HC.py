@@ -164,6 +164,8 @@ class HitCluster:
           if _H1[3]==_H2[3]: #Ensuring hit combinations are on different plates
               return False
           elif abs(_H1[3]-_H2[3])>=_cdz:
+              print(_H1,_H2)
+              exit()
               return False
           else:
               if abs(_H1[4]-_H2[4])>=_cdt:
