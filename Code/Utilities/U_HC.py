@@ -127,6 +127,8 @@ class HitCluster:
                for i in range(7,10):TH[i]=TH[i]/self.Step[2]
                if len(MCHits)>0:
                 TH.append(HitCluster.LabelLinks(TH,MCHits))
+                print(TH)
+                x=input()
                else:
                 TH.append('N/A')
                TH.append((math.sqrt(((TH[8]-TH[2])**2) + ((TH[7]-TH[1])**2) + ((TH[9]-TH[3])**2))))
@@ -166,9 +168,16 @@ class HitCluster:
               if _hit[0]==h1[0]:
                  for h2 in _MCHits:
                      if (_hit[6]==h2[0]) and (_hit[0]!=_hit[6]):
-                        print(h1,h2)
-                        exit()
+                        if h1[1]==h2[1]:
+                            return int(h1[1].__contains__('--')==False)
+                        else:
+                            return 0
+                     else:
+                         return 0
+                 return 0
           return 0
+
+
 
       def JoinHits(_H1, _H2, _cdt, _cdr, _cdz):
           if _H1[3]==_H2[3]: #Ensuring hit combinations are on different plates
