@@ -136,7 +136,7 @@ class HitCluster:
                TH.append(abs(TH[5]-TH[11]))
                del TH[1:6]
                del TH[2:7]
-           print(TH[0])
+           print(_Tot_Hits[0])
            exit()
            if len(_Tot_Hits)>0:
                import torch
