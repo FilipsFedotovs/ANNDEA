@@ -95,7 +95,7 @@ data["z"] = pd.to_numeric(data["z"],downcast='float')
 data["Hit_ID"] = data["Hit_ID"].astype(str)
 print(UF.TimeStamp(),'Preparing data... ')
 
-print(data)
+
 data_list=data.values.tolist()
 #Specifying the full path to input/output files
 input_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/ETr1_'+TrainSampleID+'_'+args.i+'_'+args.j+'_hits.csv'
@@ -104,7 +104,7 @@ print(UF.TimeStamp(),'Loading pre-selected data from ',input_file_location)
 #Load the file with Hit detailed information
 MCdata=pd.read_csv(input_file_location,header=0,usecols=["Hit_ID",'MC_Mother_Track_ID'])[["Hit_ID",'MC_Mother_Track_ID']]
 MCdata["Hit_ID"] = data["Hit_ID"].astype(str)
-print(MCdata)
+
 MCdata_list=MCdata.values.tolist()
 
 
@@ -117,7 +117,7 @@ HC.LoadClusterHits(data_list) #Decorate hot cluster with hit detailed data
 GraphStatus = HC.GenerateEdges(cut_dt, cut_dr, cut_dz, MCdata_list) #Creating Hit Cluster graph (using PyTorch Graph calss). We add Labels too sicnce it is Train data
 #There are nodes + graph is generated. Add it to the container
 
-#output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MTr1a_'+TrainSampleID+'_SelectedTrainClusters_'+str(Z_ID_n)+'_' +str(X_ID_n)+'.pkl'
+
 output_file_location=EOS_DIR+p+'/Temp_'+pfx+'_'+TrainSampleID+'_'+str(X_ID_n)+'/'+pfx+'_'+TrainSampleID+'_'+o+'_'+str(X_ID_n)+'_'+str(Y_ID_n)+sfx
 UF.PickleOperations(output_file_location,'w', HC) #Write the output
 #End of the script
