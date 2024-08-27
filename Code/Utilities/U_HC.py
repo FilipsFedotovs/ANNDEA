@@ -127,8 +127,6 @@ class HitCluster:
                for i in range(7,10):TH[i]=TH[i]/self.Step[2]
                if len(MCHits)>0:
                     TH.append(HitCluster.LabelLinks(TH,MCHits))
-                    print(TH)
-                    x=input()
                else:
                     TH.append('N/A')
                TH.append((math.sqrt(((TH[8]-TH[2])**2) + ((TH[7]-TH[1])**2) + ((TH[9]-TH[3])**2))))
@@ -138,11 +136,13 @@ class HitCluster:
                TH.append(abs(TH[5]-TH[11]))
                del TH[1:6]
                del TH[2:7]
+           print(TH[0])
            exit()
            if len(_Tot_Hits)>0:
                import torch
                from torch_geometric.data import Data
                self.ClusterGraph=Data(x=torch.Tensor(self.RawClusterGraph), edge_index=None, y=None)
+               exit()
                self.ClusterGraph.edge_index=torch.tensor((HitCluster.GenerateLinks(_Tot_Hits,self.ClusterHitIDs)))
                self.ClusterGraph.edge_attr=torch.tensor((HitCluster.GenerateEdgeAttributes(_Tot_Hits)))
                self.edges=[]
@@ -170,7 +170,7 @@ class HitCluster:
                  for h2 in _MCHits:
                      if _hit[6]==h2[0]:
                         if h1[1]==h2[1]:
-                            return int(h1[1].__contains__('-')==False)
+                            return int(h1[1].__contains__('--')==False)
                         else:
                             return 0
           return 0
