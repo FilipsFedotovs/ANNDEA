@@ -126,7 +126,7 @@ class HitCluster:
                for i in range(1,4):TH[i]=TH[i]/self.Step[2]
                for i in range(7,10):TH[i]=TH[i]/self.Step[2]
                if len(MCHits)>0:
-                if TH[0]=='5996531' and TH[1]=='5996530':
+                if TH[0]=='5996531' and TH[6]=='5996530':
                     TH.append(HitCluster.LabelLinks(TH,MCHits))
                     print(TH)
                     x=input()
