@@ -126,12 +126,12 @@ class HitCluster:
                for i in range(1,4):TH[i]=TH[i]/self.Step[2]
                for i in range(7,10):TH[i]=TH[i]/self.Step[2]
                if len(MCHits)>0:
-                if TH[0]=='5996531' and TH[6]=='5996530':
                     print(TH)
                     TH.append(HitCluster.LabelLinks(TH,MCHits))
                     x=input()
                else:
-                TH.append('N/A')
+                    TH.append('N/A')
+               exit()
                TH.append((math.sqrt(((TH[8]-TH[2])**2) + ((TH[7]-TH[1])**2) + ((TH[9]-TH[3])**2))))
                TH.append(math.sqrt(((TH[8]-TH[2])**2) + ((TH[7]-TH[1])**2)))
                TH.append(abs(TH[9]-TH[3]))
@@ -165,14 +165,10 @@ class HitCluster:
               _Bottom.append(_ClusterID.index(ip[1]))
           return [_Top,_Bottom]
       def LabelLinks(_hit,_MCHits):
-          print(_MCHits)
           for h1 in _MCHits:
               if _hit[0]==h1[0]:
-                 print(_hit[0])
                  for h2 in _MCHits:
-                     print(h2)
                      if _hit[6]==h2[0]:
-                        print(h1[1],h2[1])
                         if h1[1]==h2[1]:
                             return int(h1[1].__contains__('--')==False)
                         else:
