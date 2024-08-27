@@ -136,15 +136,13 @@ class HitCluster:
                TH.append(abs(TH[5]-TH[11]))
                del TH[1:6]
                del TH[2:7]
-           print(_Tot_Hits[0])
-           exit()
            if len(_Tot_Hits)>0:
                import torch
                from torch_geometric.data import Data
                self.ClusterGraph=Data(x=torch.Tensor(self.RawClusterGraph), edge_index=None, y=None)
-               exit()
                self.ClusterGraph.edge_index=torch.tensor((HitCluster.GenerateLinks(_Tot_Hits,self.ClusterHitIDs)))
                self.ClusterGraph.edge_attr=torch.tensor((HitCluster.GenerateEdgeAttributes(_Tot_Hits)))
+               self.ClusterGraph.y=torch.tensor((HitCluster.GenerateEdgeLabels(_Tot_Hits)))
                self.edges=[]
                for r in _Tot_Hits:
                    self.edges.append(r[:2])
