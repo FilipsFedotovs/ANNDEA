@@ -362,42 +362,25 @@ while Status<len(Program):
                             TrainingSample=UI.PickleOperations(source_output_file_location,'r', 'N/A')[0]
                             if hasattr(TrainingSample,'ClusterGraph'):
                                 if Sampling>=random.random():
-                                    Samples.append(TrainingSample)
+                                    Samples.append(TrainingSample.ClusterGraph)
                             bar()
-
-            print(len(Samples))
+            random.shuffle(Samples)
+            TrainSamples=[]
+            ValSamples=[]
+            TestSamples=[]
+            TrainFraction=int(math.floor(len(Samples)*(1.0-(Meta.testRatio+Meta.valRatio))))
+            ValFraction=int(math.ceil(len(Samples)*Meta.valRatio))
+            print(TrainFraction,ValFraction)
             exit()
-            # print(UF.TimeStamp(),'Loading previously saved data from ',bcolors.OKBLUE+TrainSampleOutputMeta+bcolors.ENDC)
-            # MetaInput=UF.PickleOperations(TrainSampleOutputMeta,'r', 'N/A')
-            # MetaInput[0].UpdateHitClusterMetaData(SampleCount,NodeFeatures,EdgeFeatures,count)
-            # print(UF.PickleOperations(TrainSampleOutputMeta,'w', MetaInput[0])[1])
-            # HTCondorTag="SoftUsed == \"ANNDEA-MTr-"+TrainSampleID+"\""
-            # UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MTr1_'+TrainSampleID, ['MTr1a_'+TrainSampleID,'ETr1_'+TrainSampleID,'MTr1_'+TrainSampleID], HTCondorTag) #If successful we delete all temp files created by the process
-            # print(UF.TimeStamp(),bcolors.OKGREEN+'Training samples are ready for the model creation/training'+bcolors.ENDC)
-            # TrainSampleInputMeta=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/'+TrainSampleID+'_info.pkl'
-            # print(UF.TimeStamp(),'Loading the data file ',bcolors.OKBLUE+TrainSampleInputMeta+bcolors.ENDC)
-            # MetaInput=UF.PickleOperations(TrainSampleInputMeta,'r', 'N/A')
-            # print(MetaInput[1])
-            # Meta=MetaInput[0]
-            # TrainSamples=[]
-            # ValSamples=[]
-            # TestSamples=[]
-            # for i in range(1,Meta.no_sets+1):
-            #     flocation=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/'+TrainSampleID+'_TTr_OUTPUT_'+str(i)+'.pkl'
-            #     print(UF.TimeStamp(),'Loading data from ',bcolors.OKBLUE+flocation+bcolors.ENDC)
-            #     TrainClusters=UF.PickleOperations(flocation,'r', 'N/A')
-            #     TrainClusters=TrainClusters[0]
-            #     TrainFraction=int(math.floor(len(TrainClusters)*(1.0-(Meta.testRatio+Meta.valRatio))))
-            #     ValFraction=int(math.ceil(len(TrainClusters)*Meta.valRatio))
-            #     for smpl in range(0,TrainFraction):
-            #                if TrainClusters[smpl].ClusterGraph.num_edges>0 and Sampling>=random.random(): #Only graph clusters with edges are kept + sampled
-            #                  TrainSamples.append(TrainClusters[smpl].ClusterGraph)
-            #     for smpl in range(TrainFraction,TrainFraction+ValFraction):
-            #                if TrainClusters[smpl].ClusterGraph.num_edges>0 and Sampling>=random.random():
-            #                  ValSamples.append(TrainClusters[smpl].ClusterGraph)
-            #     for smpl in range(TrainFraction+ValFraction,len(TrainClusters)):
-            #                if TrainClusters[smpl].ClusterGraph.num_edges>0 and Sampling>=random.random():
-            #                  TestSamples.append(TrainClusters[smpl].ClusterGraph)
+            # for smpl in range(0,TrainFraction):
+            #            if TrainClusters[smpl].ClusterGraph.num_edges>0 and Sampling>=random.random(): #Only graph clusters with edges are kept + sampled
+            #              TrainSamples.append(TrainClusters[smpl].ClusterGraph)
+            # for smpl in range(TrainFraction,TrainFraction+ValFraction):
+            #            if TrainClusters[smpl].ClusterGraph.num_edges>0 and Sampling>=random.random():
+            #              ValSamples.append(TrainClusters[smpl].ClusterGraph)
+            # for smpl in range(TrainFraction+ValFraction,len(TrainClusters)):
+            #            if TrainClusters[smpl].ClusterGraph.num_edges>0 and Sampling>=random.random():
+            #              TestSamples.append(TrainClusters[smpl].ClusterGraph)
             # output_train_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/'+TrainSampleID+'_TRAIN_SAMPLES'+'.pkl'
             # print(UF.PickleOperations(output_train_file_location,'w', TrainSamples)[1])
             # output_val_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/'+TrainSampleID+'_VAL_SAMPLES'+'.pkl'
