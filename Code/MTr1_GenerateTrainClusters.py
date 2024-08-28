@@ -361,6 +361,7 @@ while Status<len(Program):
                             print(source_output_file_location.HitPairs)
                             TrainingSample=UI.PickleOperations(source_output_file_location,'r', 'N/A')[0]
                             print(TrainingSample.__dir__())
+                            print(TrainingSample.HitPairs)
                             exit()
                             bar()
             exit()
