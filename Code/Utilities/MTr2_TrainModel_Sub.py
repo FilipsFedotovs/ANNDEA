@@ -2,7 +2,27 @@
 #######################################  This simple script prepares data for CNN  #####################################
 
 
-
+#Loading Directory locations
+import csv
+csv_reader=open('../config',"r")
+config = list(csv.reader(csv_reader))
+for c in config:
+    if c[0]=='AFS_DIR':
+        AFS_DIR=c[1]
+    if c[0]=='EOS_DIR':
+        EOS_DIR=c[1]
+    if c[0]=='PY_DIR':
+        PY_DIR=c[1]
+csv_reader.close()
+import sys
+if PY_DIR!='': #Temp solution - the decision was made to move all libraries to EOS drive as AFS get locked during heavy HTCondor submission loads
+    sys.path=['',PY_DIR]
+    sys.path.append('/usr/lib64/python39.zip')
+    sys.path.append('/usr/lib64/python3.9')
+    sys.path.append('/usr/lib64/python3.9/lib-dynload')
+    sys.path.append('/usr/lib64/python3.9/site-packages')
+    sys.path.append('/usr/lib/python3.9/site-packages')
+sys.path.append(AFS_DIR+'/Code/Utilities')
 
 ########################################    Import libraries    ########################################################
 import argparse
@@ -50,9 +70,10 @@ TrainSampleID=args.TrainSampleID
 ##################################   Loading Directory locations   ##################################################
 AFS_DIR=args.AFS
 EOS_DIR=args.EOS
-import sys
-sys.path.insert(1, AFS_DIR+'/Code/Utilities/')
-import UtilityFunctions as UF
+
+
+import U_UI as UI
+import U_ML as ML
 #Load data configuration
 EOSsubDIR=EOS_DIR+'/'+'ANNDEA'
 EOSsubModelDIR=EOSsubDIR+'/'+'Models'
@@ -60,12 +81,8 @@ EOSsubModelDIR=EOSsubDIR+'/'+'Models'
 
 ##############################################################################################################################
 ######################################### Starting the program ################################################################
-print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
-print(bcolors.HEADER+"#########################  Initialising     ANNDEA   model creation module     #########################"+bcolors.ENDC)
-print(bcolors.HEADER+"#########################              Written by Filips Fedotovs              #########################"+bcolors.ENDC)
-print(bcolors.HEADER+"#########################                 PhD Student at UCL                   #########################"+bcolors.ENDC)
-print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
-print(UF.TimeStamp(), bcolors.OKGREEN+"Modules Have been imported successfully..."+bcolors.ENDC)
+
+print(UI.TimeStamp(), bcolors.OKGREEN+"Modules Have been imported successfully..."+bcolors.ENDC)
 
 #Ptotect from division by zero
 def zero_divide(a, b):
@@ -126,7 +143,7 @@ def validate(model, device, sample):
         try:
           loss = F.binary_cross_entropy(output, y, reduction='mean').item()
         except:
-            print('Erroneus data set: ',data.x, data.edge_index, data.edge_attr, 'skipping these samples...')
+            print('Erroneous data set: ',data.x, data.edge_index, data.edge_attr, 'skipping these samples...')
             continue
         diff, opt_thld, opt_acc = 100, 0, 0
         for thld in np.arange(0.01, 0.6, 0.01):
@@ -156,7 +173,7 @@ def test(model, device, sample, thld):
             try:
                 loss = F.binary_cross_entropy(output, y,reduction='mean')
             except:
-                print('Erroneus data set: ',data.x, data.edge_index, data.edge_attr, 'skipping these samples...')
+                print('Erroneous data set: ',data.x, data.edge_index, data.edge_attr, 'skipping these samples...')
                 continue
             accs.append(acc.item())
             losses.append(loss.item())
@@ -164,31 +181,31 @@ def test(model, device, sample, thld):
 
 
 output_train_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_SAMPLES'+'.pkl'
-TrainSamples=UF.PickleOperations(output_train_file_location,'r', 'N/A')[0]
+TrainSamples=UI.PickleOperations(output_train_file_location,'r', 'N/A')[0]
 output_val_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_SAMPLES'+'.pkl'
-ValSamples=UF.PickleOperations(output_val_file_location,'r', 'N/A')[0]
+ValSamples=UI.PickleOperations(output_val_file_location,'r', 'N/A')[0]
 output_test_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TEST_SAMPLES'+'.pkl'
-TestSamples=UF.PickleOperations(output_test_file_location,'r', 'N/A')[0]
+TestSamples=UI.PickleOperations(output_test_file_location,'r', 'N/A')[0]
 
 
 def main(self):
-    print(UF.TimeStamp(),'Starting the training process... ')
+    print(UI.TimeStamp(),'Starting the training process... ')
     State_Save_Path=EOSsubModelDIR+'/'+args.BatchID+'_State'
     Model_Meta_Path=EOSsubModelDIR+'/'+args.BatchID+'_Meta'
     Model_Path=EOSsubModelDIR+'/'+args.BatchID
-    ModelMeta=UF.PickleOperations(Model_Meta_Path, 'r', 'N/A')[0]
+    ModelMeta=UI.PickleOperations(Model_Meta_Path, 'r', 'N/A')[0]
     device = torch.device('cpu')
-    model = UF.GenerateModel(ModelMeta).to(device)
+    model = ML.GenerateModel(ModelMeta).to(device)
     optimizer = optim.Adam(model.parameters(), lr=TrainParams[0])
     scheduler = StepLR(optimizer, step_size=0.1,gamma=0.1)
-    print(UF.TimeStamp(),'Try to load the previously saved model/optimiser state files ')
+    print(UI.TimeStamp(),'Try to load the previously saved model/optimiser state files ')
     try:
            model.load_state_dict(torch.load(Model_Path))
            checkpoint = torch.load(State_Save_Path)
            optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
            scheduler.load_state_dict(checkpoint['scheduler'])
     except:
-           print(UF.TimeStamp(), bcolors.WARNING+"Model/state data files are missing, skipping this step..." +bcolors.ENDC)
+           print(UI.TimeStamp(), bcolors.WARNING+"Model/state data files are missing, skipping this step..." +bcolors.ENDC)
     records=[]
     TrainSampleSize=len(TrainSamples)
     fraction_size=math.ceil(TrainSampleSize/TrainParams[3])
@@ -200,7 +217,7 @@ def main(self):
          thld, val_loss,val_acc = validate(model, device, ValSamples)
          test_loss, test_acc = test(model, device,TestSamples, thld)
          scheduler.step()
-         print(UF.TimeStamp(),'Epoch ',epoch, ' is completed')
+         print(UI.TimeStamp(),'Epoch ',epoch, ' is completed')
          records.append([epoch,itr,train_loss,thld,val_loss,val_acc,test_loss,test_acc])
          torch.save({    'epoch': epoch,
                       'optimizer_state_dict': optimizer.state_dict(),
@@ -210,7 +227,7 @@ def main(self):
     Header=[['Epoch','# Samples','Train Loss','Optimal Threshold','Validation Loss','Validation Accuracy','Test Loss','Test Accuracy']]
     Header+=records
     ModelMeta.CompleteTrainingSession(Header)
-    print(UF.PickleOperations(Model_Meta_Path, 'w', ModelMeta)[1])
+    print(UI.PickleOperations(Model_Meta_Path, 'w', ModelMeta)[1])
     exit()
 if __name__ == '__main__':
      main(sys.argv[1:])
