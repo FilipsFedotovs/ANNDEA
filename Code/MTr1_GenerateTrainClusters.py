@@ -354,6 +354,12 @@ while Status<len(Program):
             SampleCount=0
             # NodeFeatures=PM.num_node_features
             # EdgeFeatures=PM.num_edge_features
+            for i in range(Xsteps):
+                    for j in range(Ysteps):
+                            source_output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/Temp_MTr1_'+TrainSampleID+'_'+str(i)+'/MTr1_'+TrainSampleID+'_SelectedTrainClusters_'+str(i)+'_'+str(j)+'.csv'
+                            if os.path.isfile(source_output_file_location):
+                                os.rename(source_output_file_location,EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/Temp_MTr1_'+TrainSampleID+'_'+str(i)+'/MTr1_'+TrainSampleID+'_SelectedTrainClusters_'+str(i)+'_'+str(j)+'.pkl')
+            exit()
             with alive_bar(Xsteps*Ysteps,force_tty=True, title='Distributing hit files...') as bar:
                 for i in range(Xsteps):
                     for j in range(Ysteps):
