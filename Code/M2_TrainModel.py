@@ -332,7 +332,12 @@ else:
               AutoPilot(int(UserAnswer),Wait)
      else:
                  print(UI.TimeStamp(),bcolors.WARNING+'Warning! No existing meta files have been found, starting everything from the scratch.'+bcolors.ENDC)
-                 Job=UI.CreateCondorJobs(AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/'+ModelName+'/','N/A','M2','N/A',ModelName,1,OptionHeader,OptionLine,'M2_TrainModel_Sub.py',False,"['','']", True, ModelType=='CNN')[0]
+                 if ModelType=='CNN':
+                    Job=UI.CreateCondorJobs(AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/','N/A','M2','N/A',ModelName,1,OptionHeader,OptionLine,'M2_TrainModel_Sub.py',False,"['','']", True, True)[0]
+                 elif ModelType=='GNN' and ModelArchitecture=='TCN':
+                    Job=UI.CreateCondorJobs(AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/','N/A','M2','N/A',ModelName,1,OptionHeader,OptionLine,'MTr2_TrainModel_Sub.py',False,"['','']", True, False)[0]
+                 else:
+                    Job=UI.CreateCondorJobs(AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/','N/A','M2','N/A',ModelName,1,OptionHeader,OptionLine,'M2_TrainModel_Sub.py',False,"['','']", True, False)[0]
                  HTCondorTag="SoftUsed == \"ANNDEA-M2-"+ModelName+"\""
                  TrainSampleInputMeta=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_info.pkl'
                  print(UI.TimeStamp(),'Loading the data file ',bcolors.OKBLUE+TrainSampleInputMeta+bcolors.ENDC)

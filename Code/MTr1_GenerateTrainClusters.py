@@ -351,7 +351,7 @@ while Status<len(Program):
             print(UI.TimeStamp(),bcolors.BOLD+'Stage 2:'+bcolors.ENDC+' Accumulating results from the previous step')
             SampleCount=0
             Samples=[]
-            with alive_bar(Xsteps*Ysteps,force_tty=True, title='Distributing hit files...') as bar:
+            with alive_bar(Xsteps*Ysteps,force_tty=True, title='Consolidating the output...') as bar:
                 for i in range(Xsteps):
                     for j in range(Ysteps):
                             source_output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/Temp_MTr1_'+TrainSampleID+'_'+str(i)+'/MTr1_'+TrainSampleID+'_SelectedTrainClusters_'+str(i)+'_'+str(j)+'.pkl'
