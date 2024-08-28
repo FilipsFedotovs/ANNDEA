@@ -362,7 +362,7 @@ while Status<len(Program):
                             bar()
             random.shuffle(Samples)
             Meta.num_node_features=Samples[0].num_node_features
-            print(Meta.num_node_features)
+            Meta.num_edge_features=Samples[0].num_edge_features
             print(UI.PickleOperations(TrainSampleOutputMeta,'w', Meta)[1])
             TrainSamples=[]
             ValSamples=[]
