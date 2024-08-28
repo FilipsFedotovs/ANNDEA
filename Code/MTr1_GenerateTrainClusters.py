@@ -116,7 +116,7 @@ cut_dr=PM.cut_dr
 cut_dz=PM.cut_dz
 testRatio=PM.testRatio #Usually about 5%
 valRatio=PM.valRatio #Usually about 10%
-TrainSampleOutputMeta=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/'+TrainSampleID+'_info.pkl' #For each training sample batch we create an individual meta file.
+TrainSampleOutputMeta=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_info.pkl' #For each training sample batch we create an individual meta file.
 destination_output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/'+TrainSampleID+'_TTr_OUTPUT_1.pkl' #The desired output
 if Mode=='RESET':
     print(UI.ManageFolders(AFS_DIR, EOS_DIR, TrainSampleID,'d',['MTr1a']))
@@ -361,9 +361,12 @@ while Status<len(Program):
                                     Samples.append(TrainingSample.ClusterGraph)
                             bar()
             random.shuffle(Samples)
+            Meta.num_node_features=Samples.num_node_features
+            print(UI.PickleOperations(TrainSampleOutputMeta,'w', Meta)[1])
             TrainSamples=[]
             ValSamples=[]
             TestSamples=[]
+
             TrainFraction=int(math.floor(len(Samples)*(1.0-(Meta.testRatio+Meta.valRatio))))
             ValFraction=int(math.ceil(len(Samples)*Meta.valRatio))
             for s in range(0,TrainFraction):
