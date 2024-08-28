@@ -359,15 +359,11 @@ while Status<len(Program):
                 for i in range(Xsteps):
                     for j in range(Ysteps):
                             source_output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/Temp_MTr1_'+TrainSampleID+'_'+str(i)+'/MTr1_'+TrainSampleID+'_SelectedTrainClusters_'+str(i)+'_'+str(j)+'.pkl'
-                            print(source_output_file_location)
                             TrainingSample=UI.PickleOperations(source_output_file_location,'r', 'N/A')[0]
                             if hasattr(TrainingSample,'ClusterGraph'):
                                 if Sampling>=random.random():
-                                    print(TrainingSample.__dir__())
-                                    print(len(TrainingSample.HitPairs))
                                     Samples.append(TrainingSample)
-                                    bar()
-                                    x=input()
+                            bar()
 
             print(len(Samples))
             exit()
