@@ -380,7 +380,9 @@ while Status<len(Program):
             print(UI.PickleOperations(output_test_file_location,'w', TestSamples)[1])
             print(UI.TimeStamp(), bcolors.OKGREEN+"Train data has been re-generated successfully..."+bcolors.ENDC)
             print(UI.TimeStamp(),bcolors.OKGREEN+'Please run MTr2_TrainModel.py after this to create/train a model'+bcolors.ENDC)
+            UI.UpdateStatus(Status+1,Meta,TrainSampleOutputMeta)
             print(bcolors.HEADER+"############################################# End of the program ################################################"+bcolors.ENDC)
+
         except Exception as e:
           print(UI.TimeStamp(),bcolors.FAIL+'Stage 2 is uncompleted due to: '+str(e)+bcolors.ENDC)
           Status=21
