@@ -352,6 +352,7 @@ while Status<len(Program):
             print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
             print(UI.TimeStamp(),bcolors.BOLD+'Stage 2:'+bcolors.ENDC+' Accumulating results from the previous step')
             SampleCount=0
+            Samples=[]
             # NodeFeatures=PM.num_node_features
             # EdgeFeatures=PM.num_edge_features
             with alive_bar(Xsteps*Ysteps,force_tty=True, title='Distributing hit files...') as bar:
@@ -360,11 +361,15 @@ while Status<len(Program):
                             source_output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/Temp_MTr1_'+TrainSampleID+'_'+str(i)+'/MTr1_'+TrainSampleID+'_SelectedTrainClusters_'+str(i)+'_'+str(j)+'.pkl'
                             print(source_output_file_location)
                             TrainingSample=UI.PickleOperations(source_output_file_location,'r', 'N/A')[0]
-                            print(TrainingSample.__dir__())
-                            print(len(TrainingSample.HitPairs))
-                            bar()
-                            x=input()
+                            if TrainingSample.hasattr('ClusterGraph'):
+                                if Sampling>=random.random():
+                                    print(TrainingSample.__dir__())
+                                    print(len(TrainingSample.HitPairs))
+                                    Samples.append(TrainingSample)
+                                    bar()
+                                    x=input()
 
+            print(len(Samples))
             exit()
             # print(UF.TimeStamp(),'Loading previously saved data from ',bcolors.OKBLUE+TrainSampleOutputMeta+bcolors.ENDC)
             # MetaInput=UF.PickleOperations(TrainSampleOutputMeta,'r', 'N/A')
