@@ -357,7 +357,8 @@ while Status<len(Program):
             with alive_bar(Xsteps*Ysteps,force_tty=True, title='Distributing hit files...') as bar:
                 for i in range(Xsteps):
                     for j in range(Ysteps):
-                            source_output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/MTr1a_'+TrainSampleID+'_SelectedTrainClusters_'+str(i)+'_'+str(j)+'.pkl'
+                            source_output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/Temp_MTr1_'+TrainSampleID+'_'+str(i)+'MTr1a_'+TrainSampleID+'_SelectedTrainClusters_'+str(i)+'_'+str(j)+'.pkl'
+                            print(source_output_file_location)
                             TrainingSample=UI.PickleOperations(source_output_file_location,'r', 'N/A')[0]
                             print(TrainingSample.__dir__())
                             exit()
