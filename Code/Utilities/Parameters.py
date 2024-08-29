@@ -24,7 +24,6 @@ valRatio=0.1
 ######Tracking Module - list of parameters that are specific to this module
 stepX=15000
 stepY=15000
-stepZ=80000
 cut_dt=0.2
 cut_dr=60
 cut_dz=3000
