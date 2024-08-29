@@ -141,10 +141,11 @@ torch_import=True
 cluster_output=[]
 import datetime
 Before=datetime.datetime.now()
-
+Status=0
 if CheckPoint:
-    # CheckPointFile=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(X_ID_n)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(X_ID_n)+'_'+str(Y_ID_n) +'_' +str(k)+'_CP'+sfx
-    # if os.path.isfile(CheckPointFile):
+    CheckPointFile1=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(X_ID_n)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(X_ID_n)+'_'+str(Y_ID_n) +'_'+'_CP_1.pkl'
+    if os.path.isfile(CheckPointFile1):
+        Status = 1
     #     ClusterData=pd.read_csv(CheckPointFile)
     #     LC_Label=ClusterData['HitID'].values[-1]
     #     LC_Value=ClusterData['z'].values[-1]
@@ -152,7 +153,7 @@ if CheckPoint:
     #     if LC_Label=='Control' and len(ClusterData)-1==LC_Value:
     #         print(UI.TimeStamp(),'Checkpoint file ',EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(X_ID_n)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(X_ID_n)+'_'+str(Y_ID_n) +'_' +str(k)+'_CP'+sfx, 'already exists, skipping this step....')
     #         continue
-    print('Wip')
+print(UI.TimeStamp(),'Current status is:', Status)
 temp_data_list=data.values.tolist()
 print(UI.TimeStamp(),'Creating the cluster', X_ID,Y_ID,1)
 HC=HC_l.HitCluster([X_ID,Y_ID,1],[stepX,stepY,stepZ]) #Initializing the cluster
@@ -161,8 +162,17 @@ HC.LoadClusterHits(temp_data_list) #Decorating the Clusters with Hit information
 if len(HC.RawClusterGraph)>1: #If we have at least 2 Hits in the cluster that can create
     print(UI.TimeStamp(),'Generating the edges...')
     print(UI.TimeStamp(),"Hit density of the Cluster",round(X_ID,1),round(Y_ID,1),1, "is  {} hits per cm\u00b3".format(round(len(HC.RawClusterGraph)/(stepX/10000*stepY/10000*stepZ/10000)),2))
-    GraphStatus = HC.GenerateEdges(cut_dt, cut_dr, cut_dz, [])
+    print(stepX/10000*stepY/10000*stepZ/10000)
+    if Status==0:
+        GraphStatus = HC.GenerateEdges(cut_dt, cut_dr, cut_dz, [])
+        if CheckPoint:
+            UI.PickleOperations(CheckPointFile1,'w',HC)
+    else:
+        HC = UI.PickleOperations(CheckPointFile1,'r','N/A')[0]
+        GraphStatus=True
     combined_weight_list=[]
+    print(HC.ClusterGraph.num_edges)
+    exit()
     if GraphStatus:
         if HC.ClusterGraph.num_edges>0: #We only bring torch and GNN if we have some edges to classify
                     print(UI.TimeStamp(),'Classifying the edges...')
