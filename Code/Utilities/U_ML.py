@@ -37,6 +37,7 @@ class ModelMeta:
               self.stepZ=DataMeta.stepZ
               self.cut_dt=DataMeta.cut_dt
               self.cut_dr=DataMeta.cut_dr
+              self.cut_dz=DataMeta.cut_dz
           else:
               if hasattr(DataMeta,'MaxSLG'):
                   self.MaxSLG=DataMeta.MaxSLG
