@@ -54,7 +54,6 @@ import numpy as np
 ######################################## Set variables  #############################################################
 Y_overlap=int(args.Y_overlap)
 X_overlap=int(args.X_overlap)
-Z_ID_Max=int(args.Z_ID_Max)
 Y_ID=int(args.j)/Y_overlap
 X_ID=int(args.i)/X_overlap
 Y_ID_n=int(args.j)
