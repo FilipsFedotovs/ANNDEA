@@ -359,7 +359,7 @@ if len(HC.RawClusterGraph)>1: #If we have at least 2 Hits in the cluster that ca
                         print('Here')
                         exit()
                     del HC
-                    continue
+
         else:
           if CheckPoint:
               Control=[['Control',0,'Control']]
