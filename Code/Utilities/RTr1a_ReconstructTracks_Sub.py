@@ -52,7 +52,6 @@ sys.path.append(AFS_DIR+'/Code/Utilities')
 import pandas as pd #We use Panda for a routine data processing
 import numpy as np
 ######################################## Set variables  #############################################################
-Z_overlap=int(args.Z_overlap)
 Y_overlap=int(args.Y_overlap)
 X_overlap=int(args.X_overlap)
 Z_ID_Max=int(args.Z_ID_Max)
