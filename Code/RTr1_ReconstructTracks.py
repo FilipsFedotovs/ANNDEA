@@ -77,7 +77,6 @@ parser.add_argument('--Xmin',help="This option restricts data to only those even
 parser.add_argument('--Xmax',help="This option restricts data to only those events that have tracks with hits x-coordinates that are below this value", default='0')
 parser.add_argument('--Ymin',help="This option restricts data to only those events that have tracks with hits y-coordinates that are above this value", default='0')
 parser.add_argument('--Ymax',help="This option restricts data to only those events that have tracks with hits y-coordinates that are below this value", default='0')
-parser.add_argument('--Z_overlap',help="Enter the level of overlap in integer number between reconstruction blocks along z-axis. (In order to avoid segmentation this value should be more than 1)", default='3')
 parser.add_argument('--Y_overlap',help="Enter the level of overlap in integer number between reconstruction blocks along y-axis. (In order to avoid segmentation this value should be more than 1)", default='2')
 parser.add_argument('--X_overlap',help="Enter the level of overlap in integer number between reconstruction blocks along x-axis. (In order to avoid segmentation this value should be more than 1)", default='2')
 parser.add_argument('--CheckPoint',help="Save cluster sets during individual cluster tracking.", default='N')
@@ -105,7 +104,7 @@ RequestExtCPU=int(args.RequestExtCPU)
 ReqMemory=args.ReqMemory
 input_file_location=args.f
 Xmin,Xmax,Ymin,Ymax=float(args.Xmin),float(args.Xmax),float(args.Ymin),float(args.Ymax)
-Z_overlap,Y_overlap,X_overlap=int(args.Z_overlap),int(args.Y_overlap),int(args.X_overlap)
+Y_overlap,X_overlap=int(args.Y_overlap),int(args.X_overlap)
 SliceData=max(Xmin,Xmax,Ymin,Ymax)>0 #We don't slice data if all values are set to zero simultaneousy (which is the default setting)
 
 if Mode=='RESET':
@@ -145,6 +144,7 @@ elif os.path.isfile(Model_Meta_Path):
        stepZ=Model_Meta.stepZ
        cut_dt=Model_Meta.cut_dt
        cut_dr=Model_Meta.cut_dr
+       cut_dz=Model_Meta.cut_dz
 else:
        print(UI.TimeStamp(),bcolors.FAIL+'Fail! No existing model meta files have been found, exiting now'+bcolors.ENDC)
        exit()
@@ -184,13 +184,6 @@ if os.path.isfile(required_file_location)==False:
          data=data.rename(columns={PM.ty: "ty"})
          data=data.rename(columns={PM.Hit_ID: "Hit_ID"})
          print(UI.TimeStamp(),'Analysing data... ',bcolors.ENDC)
-         z_offset=data['z'].min()
-         data['z']=data['z']-z_offset
-         z_max=data['z'].max()
-         if Z_overlap==1:
-            Zsteps=math.ceil((z_max)/stepZ)
-         else:
-            Zsteps=(math.ceil((z_max)/stepZ)*(Z_overlap))-1
          y_offset=data['y'].min()
          x_offset=data['x'].min()
          data['x']=data['x']-x_offset
@@ -228,7 +221,7 @@ if os.path.isfile(required_file_location)==False:
 
          data.to_csv(required_file_location,index=False)
          Meta=UI.TrainingSampleMeta(RecBatchID)
-         Meta.IniHitClusterMetaData(stepX,stepY,stepZ,cut_dt,cut_dr,0.05,0.1,z_offset,y_offset,x_offset, Xsteps, Zsteps,X_overlap,Y_overlap,Z_overlap,Ysteps)
+         Meta.IniHitClusterMetaData(stepX,stepY,stepZ,cut_dt,cut_dr,cut_dz,0.05,0.1,y_offset,x_offset, Xsteps,Ysteps,X_overlap,Y_overlap)
          Meta.UpdateStatus(0)
          print(UI.PickleOperations(RecOutputMeta,'w', Meta)[1])
          UI.Msg('completed','Stage 0 has successfully completed')
@@ -237,7 +230,6 @@ elif os.path.isfile(RecOutputMeta)==True:
     print(UI.TimeStamp(),'Loading previously saved data from ',bcolors.OKBLUE+RecOutputMeta+bcolors.ENDC)
     MetaInput=UI.PickleOperations(RecOutputMeta,'r', 'N/A')
     Meta=MetaInput[0]
-Zsteps=Meta.Zsteps
 Ysteps=Meta.Ysteps
 Xsteps=Meta.Xsteps
 stepZ=Meta.stepZ
@@ -245,6 +237,7 @@ stepY=Meta.stepY
 stepX=Meta.stepX
 cut_dt=Meta.cut_dt
 cut_dr=Meta.cut_dr
+cut_dz=Meta.cut_dz
 
 # ########################################     Preset framework parameters    #########################################
 

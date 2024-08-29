@@ -12,11 +12,9 @@ import os
 parser = argparse.ArgumentParser(description='select cut parameters')
 parser.add_argument('--i',help="Set number", default='1')
 parser.add_argument('--j',help="Subset number", default='1')
-parser.add_argument('--Z_ID_Max',help="SubSubset number", default='1')
 parser.add_argument('--TrackFitCutRes',help="Track Fit cut Residual", default=1000,type=int)
 parser.add_argument('--TrackFitCutSTD',help="Track Fit cut", default=10,type=int)
 parser.add_argument('--TrackFitCutMRes',help="Track Fit cut", default=200,type=int)
-parser.add_argument('--Z_overlap',help="Enter Z id", default='1')
 parser.add_argument('--Y_overlap',help="Enter Y id", default='1')
 parser.add_argument('--X_overlap',help="Enter X id", default='1')
 parser.add_argument('--stepX',help="Enter X step size", default='0')
@@ -27,6 +25,7 @@ parser.add_argument('--AFS',help="AFS directory location", default='.')
 parser.add_argument('--PY',help="Python libraries directory location", default='.')
 parser.add_argument('--cut_dt',help="Cut on angle difference", default='1.0')
 parser.add_argument('--cut_dr',help="Cut on angle difference", default='4000')
+parser.add_argument('--cut_dz',help="Cut on z difference", default='3000')
 parser.add_argument('--ModelName',help="Name of the model to use?", default='0')
 parser.add_argument('--BatchID',help="Give name to this train sample", default='')
 parser.add_argument('--p',help="Path to the output file", default='')
@@ -66,6 +65,7 @@ stepZ=float(args.stepZ)
 stepY=float(args.stepY)
 cut_dt=float(args.cut_dt)
 cut_dr=float(args.cut_dr)
+cut_dz=float(args.cut_dz)
 ModelName=args.ModelName
 CheckPoint=args.CheckPoint.upper()=='Y'
 RecBatchID=args.BatchID
@@ -131,7 +131,7 @@ output_file_location=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(X_ID_n)+'/'+p
 
 print(UI.TimeStamp(), "Modules Have been imported successfully...")
 print(UI.TimeStamp(),'Loading pre-selected data from ',input_file_location)
-
+exit()
 #Load the file with Hit detailed information
 data=pd.read_csv(input_file_location,header=0,usecols=["Hit_ID","x","y","z","tx","ty"])[["Hit_ID","x","y","z","tx","ty"]]
 data["x"] = pd.to_numeric(data["x"],downcast='float')
@@ -152,22 +152,19 @@ for k in range(0,Z_ID_Max):
             ClusterData=pd.read_csv(CheckPointFile)
             LC_Label=ClusterData['HitID'].values[-1]
             LC_Value=ClusterData['z'].values[-1]
-            
+
             if LC_Label=='Control' and len(ClusterData)-1==LC_Value:
                 print(UI.TimeStamp(),'Checkpoint file ',EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(X_ID_n)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(X_ID_n)+'_'+str(Y_ID_n) +'_' +str(k)+'_CP'+sfx, 'already exists, skipping this step....')
                 continue
-    Z_ID=int(k)/Z_overlap
-    temp_data=data.drop(data.index[data['z'] >= ((Z_ID+1)*stepZ)])  #Keeping the relevant z slice
-    temp_data=temp_data.drop(temp_data.index[temp_data['z'] < (Z_ID*stepZ)])  #Keeping the relevant z slice
-    temp_data_list=temp_data.values.tolist()
-    print(UI.TimeStamp(),'Creating the cluster', X_ID,Y_ID,Z_ID)
-    HC=HC_l.HitCluster([X_ID,Y_ID,Z_ID],[stepX,stepY,stepZ]) #Initializing the cluster
+    temp_data_list=data.values.tolist()
+    print(UI.TimeStamp(),'Creating the cluster', X_ID,Y_ID,1)
+    HC=HC_l.HitCluster([X_ID,Y_ID,1],[stepX,stepY,stepZ]) #Initializing the cluster
     print(UI.TimeStamp(),'Decorating the clusters')
     HC.LoadClusterHits(temp_data_list) #Decorating the Clusters with Hit information
     if len(HC.RawClusterGraph)>1: #If we have at least 2 Hits in the cluster that can create
         print(UI.TimeStamp(),'Generating the edges...')
-        print(UI.TimeStamp(),"Hit density of the Cluster",round(X_ID,1),round(Y_ID,1),round(Z_ID,1), "is  {} hits per cm\u00b3".format(round(len(HC.RawClusterGraph)/(0.6*0.6*1.2)),2))
-        GraphStatus = HC.GenerateEdges(cut_dt, cut_dr)
+        print(UI.TimeStamp(),"Hit density of the Cluster",round(X_ID,1),round(Y_ID,1),1, "is  {} hits per cm\u00b3".format(round(len(HC.RawClusterGraph)/(stepX/10000*stepY/10000*stepZ/10000)),2))
+        GraphStatus = HC.GenerateEdges(cut_dt, cut_dr, cut_dz, [])
         combined_weight_list=[]
         if GraphStatus:
             if HC.ClusterGraph.num_edges>0: #We only bring torch and GNN if we have some edges to classify
@@ -283,7 +280,6 @@ for k in range(0,Z_ID_Max):
                                             print(UI.TimeStamp(),'Applying physical assumptions...')
                                             #Here we making sure that the tracks satisfy minimum fit requirements
                                             for thp in _Tot_Hits_Predator:
-                                                q_itr+=1
                                                 fit_data_x=[]
                                                 fit_data_y=[]
                                                 fit_data_z=[]
@@ -344,7 +340,7 @@ for k in range(0,Z_ID_Max):
                                                     _itr+=1
                         #Transpose the rows
                         _track_list=[]
-                        _segment_id=RecBatchID+'_'+str(X_ID)+'_'+str(Y_ID)+'_'+str(Z_ID) #Each segment name will have a relevant prefix (since numeration is only unique within an isolated cluster)
+                        _segment_id=RecBatchID+'_'+str(X_ID)+'_'+str(Y_ID)+'_'+'1' #Each segment name will have a relevant prefix (since numeration is only unique within an isolated cluster)
                         _no_tracks=len(_Rec_Hits_Pool)
                         for t in range(len(_Rec_Hits_Pool)):
                                       for h in _Rec_Hits_Pool[t]:
@@ -366,7 +362,7 @@ for k in range(0,Z_ID_Max):
               if CheckPoint:
                   Control=[['Control',0,'Control']]
                   Control=pd.DataFrame(Control, columns = ['HitID','z','Segment_ID'])
-                  Control.to_csv(CheckPointFile,index=False)  
+                  Control.to_csv(CheckPointFile,index=False)
         else:
              if CheckPoint:
                   Control=[['Control',0,'Control']]
@@ -381,7 +377,8 @@ import gc
 gc.collect #Clean memory
 print('Final Time lapse', datetime.datetime.now()-Before)
 
-
+print(z_clusters_results)
+exit()
 if CheckPoint:
     print(UI.TimeStamp(),'Loading all saved check points...')
     z_clusters_results=[]
