@@ -209,18 +209,16 @@ if Status=='Initialisation': #Here we load the file from the scratch
 if Status=='Edge generation':
     print(UI.TimeStamp(),'Generating the edges...')
     print(UI.TimeStamp(),"Hit density of the Cluster",round(X_ID,1),round(Y_ID,1),1, "is  {} hits per cm\u00b3".format(round(len(HC.RawClusterGraph)/(stepX/10000*stepY/10000*stepZ/10000)),2))
-    print(stepX/10000*stepY/10000*stepZ/10000)
     GraphStatus = HC.GenerateEdges(cut_dt, cut_dr, cut_dz, [])
     if CheckPoint:
         print(UI.TimeStamp(),'Saving checkpoint 2...')
         UI.PickleOperations(CheckPointFile_Edge,'w',HC)
         GraphStatus=True
 
-    if HC.ClusterGraph.num_edges>0:
+    if GraphStatus:
         Status = 'ML analysis'
     else:
         Status = 'Skip tracking'
-
 
 if Status == 'ML analysis':
     print(UI.TimeStamp(),'Classifying the edges...')
