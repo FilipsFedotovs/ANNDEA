@@ -135,9 +135,10 @@ CheckPointFile_Tracking_TH=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(X_ID_n)
 CheckPointFile_Tracking_RP=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(X_ID_n)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(X_ID_n)+'_'+str(Y_ID_n) +'_'+'CP_Tracking_RP.csv'
 
 if os.path.isfile(CheckPointFile_Tracking_TH) and os.path.isfile(CheckPointFile_Tracking_RP):
+        UI.Msg('location','Loading checkpoint file ',CheckPointFile_Tracking_TH)
         _Tot_Hits = UI.LogOperations(CheckPointFile_Tracking_TH,'r','N/A')
+        UI.Msg('location','Loading checkpoint file ',CheckPointFile_Tracking_RP)
         _Rec_Hits_Pool = UI.LogOperations(CheckPointFile_Tracking_RP,'r','N/A')
-
         for i in range(len(_Tot_Hits)):
             for j in range(len(_Tot_Hits[i])):
                 _Tot_Hits[i][j]=ast.literal_eval(_Tot_Hits[i][j])
@@ -148,6 +149,7 @@ if os.path.isfile(CheckPointFile_Tracking_TH) and os.path.isfile(CheckPointFile_
                     _Tot_Hits[i][0][k]=str(_Tot_Hits[i][0][k])
         Status = 'Tracking continuation'
 elif os.path.isfile(CheckPointFile_Prep_1) and os.path.isfile(CheckPointFile_Prep_2):
+        UI.Msg('location','Loading checkpoint file ',CheckPointFile_Prep_1)
         _Tot_Hits = UI.LogOperations(CheckPointFile_Prep_1,'r','N/A')
         for i in range(len(_Tot_Hits)):
             for j in range(len(_Tot_Hits[i])):
@@ -157,15 +159,19 @@ elif os.path.isfile(CheckPointFile_Prep_1) and os.path.isfile(CheckPointFile_Pre
                     _Tot_Hits[i][0][k]=str(int(_Tot_Hits[i][0][k]))
                 if type(_Tot_Hits[i][0][k]) is int:
                     _Tot_Hits[i][0][k]=str(_Tot_Hits[i][0][k])
+        UI.Msg('location','Loading checkpoint file ',CheckPointFile_Prep_2)
         _z_map=pd.read_csv(CheckPointFile_Prep_2)
         Status = 'Tracking'
 elif os.path.isfile(CheckPointFile_ML):
+        UI.Msg('location','Loading checkpoint file ',CheckPointFile_ML)
         _Tot_Hits = pd.read_csv(CheckPointFile_ML)
         Status = 'Track preparation'
 elif os.path.isfile(CheckPointFile_Edge):
+        UI.Msg('location','Loading checkpoint file ',CheckPointFile_Edge)
         HC = UI.PickleOperations(CheckPointFile_Edge,'r','N/A')[0]
         Status = 'ML analysis'
 elif os.path.isfile(CheckPointFile_Ini):
+        UI.Msg('location','Loading checkpoint file ',CheckPointFile_Ini)
         HC=UI.PickleOperations(CheckPointFile_Ini,'r','N/A')[0]
         Status = 'Edge generation'
 
@@ -192,6 +198,7 @@ if Status=='Initialisation': #Here we load the file from the scratch
     HC.LoadClusterHits(temp_data_list) #Decorating the Clusters with Hit information
     torch_import=True
     if CheckPoint:
+             print(UI.TimeStamp(),'Saving checkpoint 1...')
              UI.PickleOperations(CheckPointFile_Ini,'w',HC)
     if len(HC.RawClusterGraph)>1:
         Status = 'Edge generation'
@@ -204,6 +211,7 @@ if Status=='Edge generation':
     print(stepX/10000*stepY/10000*stepZ/10000)
     GraphStatus = HC.GenerateEdges(cut_dt, cut_dr, cut_dz, [])
     if CheckPoint:
+        print(UI.TimeStamp(),'Saving checkpoint 2...')
         UI.PickleOperations(CheckPointFile_Edge,'w',HC)
         GraphStatus=True
 
@@ -246,6 +254,7 @@ if Status == 'ML analysis':
         _Tot_Hits['link_strength']=1.0
     print(UI.TimeStamp(),'Number of all  hit combinations passing GNN selection:',len(_Tot_Hits))
     if CheckPoint:
+             print(UI.TimeStamp(),'Saving checkpoint 3...')
              _Tot_Hits.to_csv(CheckPointFile_ML,index=False)
     Status='Track preparation'
 
@@ -297,6 +306,7 @@ if Status=='Track preparation':
                         _Temp_Tot_Hits.append(_Temp_Tot_Hit_El)
         _Tot_Hits=_Temp_Tot_Hits
         if CheckPoint:
+            print(UI.TimeStamp(),'Saving checkpoint 4...')
             UI.LogOperations(CheckPointFile_Prep_1,'w',_Tot_Hits)
             _z_map.to_csv(CheckPointFile_Prep_2,index=False)
         Status='Tracking'
@@ -396,6 +406,7 @@ if Status=='Tracking' or Status=='Tracking continuation':
                             else:
                                 _itr+=1
                     if CheckPoint:
+                        print(UI.TimeStamp(),'(Re-)Saving checkpoint 5...')
                         UI.LogOperations(CheckPointFile_Tracking_TH,'w',_Tot_Hits)
                         UI.LogOperations(CheckPointFile_Tracking_RP,'w',_Rec_Hits_Pool)
                     Status='Tracking continuation'
