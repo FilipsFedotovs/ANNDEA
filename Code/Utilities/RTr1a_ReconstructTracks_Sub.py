@@ -4,6 +4,7 @@
 import argparse
 import sys
 import copy
+import ast
 from statistics import mean
 import os
 
@@ -131,7 +132,7 @@ CheckPointFile_ML=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(X_ID_n)+'/'+pfx+
 CheckPointFile_Prep=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(X_ID_n)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(X_ID_n)+'_'+str(Y_ID_n) +'_'+'_CP_Prep.csv'
 
 if os.path.isfile(CheckPointFile_Prep):
-        _Tot_Hits = UI.LogOperations(CheckPointFile_Prep,'r','N/A')
+        _Tot_Hits = ast.literal_eval(UI.LogOperations(CheckPointFile_Prep,'r','N/A'))
         Status = 'Tracking'
 elif os.path.isfile(CheckPointFile_ML):
         _Tot_Hits = pd.read_csv(CheckPointFile_ML)
