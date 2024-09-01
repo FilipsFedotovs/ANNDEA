@@ -217,56 +217,57 @@ if Status == 'ML analysis':
     Status='Track preparation'
 
 if Status=='Track preparation':
-    print('Wip')
-    exit()
+        _Tot_Hits=_Tot_Hits[['r_HitID','l_HitID','r_z','l_z','link_strength']]
+        print(UI.TimeStamp(),'Preparing the weighted hits for tracking...')
+        #Bellow just some data prep before the tracking procedure
+        _Tot_Hits.sort_values(by = ['r_HitID', 'l_z','link_strength'], ascending=[True,True, False],inplace=True)
+        _Loc_Hits_r=_Tot_Hits[['r_z']].rename(columns={'r_z': 'z'})
+        _Loc_Hits_l=_Tot_Hits[['l_z']].rename(columns={'l_z': 'z'})
+        _Loc_Hits=pd.concat([_Loc_Hits_r,_Loc_Hits_l])
+        _Loc_Hits.sort_values(by = ['z'], ascending=[True],inplace=True)
+        _Loc_Hits.drop_duplicates(subset=['z'], keep='first', inplace=True)
+        _Loc_Hits=_Loc_Hits.reset_index(drop=True)
+        _Loc_Hits=_Loc_Hits.reset_index()
+        _z_map_r=_Tot_Hits[['r_HitID','r_z']].rename(columns={'r_z': 'z','r_HitID': 'HitID'})
+        _z_map_l=_Tot_Hits[['l_HitID','l_z']].rename(columns={'l_z': 'z','l_HitID': 'HitID'})
+        _z_map=pd.concat([_z_map_r,_z_map_l])
+        _z_map.drop_duplicates(subset=['HitID','z'], keep='first', inplace=True)
+        _Loc_Hits_r=_Loc_Hits.rename(columns={'index': 'r_index', 'z': 'r_z'})
+        _Loc_Hits_l=_Loc_Hits.rename(columns={'index': 'l_index', 'z': 'l_z'})
+        _Tot_Hits=pd.merge(_Tot_Hits,_Loc_Hits_r, how='inner', on=['r_z'])
+        _Tot_Hits=pd.merge(_Tot_Hits,_Loc_Hits_l, how='inner', on=['l_z'])
+        _Tot_Hits=_Tot_Hits[['r_HitID','l_HitID','r_index','l_index','link_strength']]
+        _Tot_Hits.sort_values(by = ['r_HitID', 'l_index','link_strength'], ascending=[True,True, False],inplace=True)
+        _Tot_Hits.drop_duplicates(subset=['r_HitID', 'l_index','link_strength'], keep='first', inplace=True)
+        _Tot_Hits.sort_values(by = ['l_HitID', 'r_index','link_strength'], ascending=[True,True, False],inplace=True)
+        _Tot_Hits.drop_duplicates(subset=['l_HitID', 'r_index','link_strength'], keep='first', inplace=True)
+        _Tot_Hits=_Tot_Hits.values.tolist()
+        _Temp_Tot_Hits=[]
 
-#                     _Tot_Hits=_Tot_Hits[['r_HitID','l_HitID','r_z','l_z','link_strength']]
-#                     print(UI.TimeStamp(),'Preparing the weighted hits for tracking...')
-#                     #Bellow just some data prep before the tracking procedure
-#                     _Tot_Hits.sort_values(by = ['r_HitID', 'l_z','link_strength'], ascending=[True,True, False],inplace=True)
-#                     _Loc_Hits_r=_Tot_Hits[['r_z']].rename(columns={'r_z': 'z'})
-#                     _Loc_Hits_l=_Tot_Hits[['l_z']].rename(columns={'l_z': 'z'})
-#                     _Loc_Hits=pd.concat([_Loc_Hits_r,_Loc_Hits_l])
-#                     _Loc_Hits.sort_values(by = ['z'], ascending=[True],inplace=True)
-#                     _Loc_Hits.drop_duplicates(subset=['z'], keep='first', inplace=True)
-#                     _Loc_Hits=_Loc_Hits.reset_index(drop=True)
-#                     _Loc_Hits=_Loc_Hits.reset_index()
-#                     _z_map_r=_Tot_Hits[['r_HitID','r_z']].rename(columns={'r_z': 'z','r_HitID': 'HitID'})
-#                     _z_map_l=_Tot_Hits[['l_HitID','l_z']].rename(columns={'l_z': 'z','l_HitID': 'HitID'})
-#                     _z_map=pd.concat([_z_map_r,_z_map_l])
-#                     _z_map.drop_duplicates(subset=['HitID','z'], keep='first', inplace=True)
-#                     _Loc_Hits_r=_Loc_Hits.rename(columns={'index': 'r_index', 'z': 'r_z'})
-#                     _Loc_Hits_l=_Loc_Hits.rename(columns={'index': 'l_index', 'z': 'l_z'})
-#                     _Tot_Hits=pd.merge(_Tot_Hits,_Loc_Hits_r, how='inner', on=['r_z'])
-#                     _Tot_Hits=pd.merge(_Tot_Hits,_Loc_Hits_l, how='inner', on=['l_z'])
-#                     _Tot_Hits=_Tot_Hits[['r_HitID','l_HitID','r_index','l_index','link_strength']]
-#                     _Tot_Hits.sort_values(by = ['r_HitID', 'l_index','link_strength'], ascending=[True,True, False],inplace=True)
-#                     _Tot_Hits.drop_duplicates(subset=['r_HitID', 'l_index','link_strength'], keep='first', inplace=True)
-#                     _Tot_Hits.sort_values(by = ['l_HitID', 'r_index','link_strength'], ascending=[True,True, False],inplace=True)
-#                     _Tot_Hits.drop_duplicates(subset=['l_HitID', 'r_index','link_strength'], keep='first', inplace=True)
-#                     print(UI.TimeStamp(),'Tracking the cluster...')
-#                     _Tot_Hits=_Tot_Hits.values.tolist()
-#                     _Temp_Tot_Hits=[]
-#
-#                     #Bellow we build the track segment structure object that is made of two arrays:
-#                     #First array contains a list of hits arranged in z-order
-#                     #Second array contains the weights assighned to the hit combination
-#
-#                     #Example if we have a cluster with 5 plates and a hit pair a and b at first and third plate and the weight is 0.9 then the object will look like [[a, _ ,b ,_ ,_ ][0.9,0.0,0.9,0.0,0.0]]. '_' represents a missing hit at a plate
-#                     for el in _Tot_Hits:
-#                                     _Temp_Tot_Hit_El = [[],[]]
-#                                     for pos in range(len(_Loc_Hits)):
-#                                         if pos==el[2]:
-#                                             _Temp_Tot_Hit_El[0].append(el[0])
-#                                             _Temp_Tot_Hit_El[1].append(el[4])
-#                                         elif pos==el[3]:
-#                                             _Temp_Tot_Hit_El[0].append(el[1])
-#                                             _Temp_Tot_Hit_El[1].append(el[4])
-#                                         else:
-#                                             _Temp_Tot_Hit_El[0].append('_')
-#                                             _Temp_Tot_Hit_El[1].append(0.0)
-#                                     _Temp_Tot_Hits.append(_Temp_Tot_Hit_El)
-#                     _Tot_Hits=_Temp_Tot_Hits
+        #Bellow we build the track segment structure object that is made of two arrays:
+        #First array contains a list of hits arranged in z-order
+        #Second array contains the weights assighned to the hit combination
+
+        #Example if we have a cluster with 5 plates and a hit pair a and b at first and third plate and the weight is 0.9 then the object will look like [[a, _ ,b ,_ ,_ ][0.9,0.0,0.9,0.0,0.0]]. '_' represents a missing hit at a plate
+        for el in _Tot_Hits:
+                        _Temp_Tot_Hit_El = [[],[]]
+                        for pos in range(len(_Loc_Hits)):
+                            if pos==el[2]:
+                                _Temp_Tot_Hit_El[0].append(el[0])
+                                _Temp_Tot_Hit_El[1].append(el[4])
+                            elif pos==el[3]:
+                                _Temp_Tot_Hit_El[0].append(el[1])
+                                _Temp_Tot_Hit_El[1].append(el[4])
+                            else:
+                                _Temp_Tot_Hit_El[0].append('_')
+                                _Temp_Tot_Hit_El[1].append(0.0)
+                        _Temp_Tot_Hits.append(_Temp_Tot_Hit_El)
+        _Tot_Hits=_Temp_Tot_Hits
+        print(_Tot_Hits)
+        exit()
+
+
+#print(UI.TimeStamp(),'Tracking the cluster...')
 #                     _Rec_Hits_Pool=[]
 #                     _intital_size=len(_Tot_Hits)
 #                     KeepTracking=True
