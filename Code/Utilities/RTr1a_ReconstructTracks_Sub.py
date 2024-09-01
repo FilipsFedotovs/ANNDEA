@@ -139,6 +139,8 @@ if os.path.isfile(CheckPointFile_Tracking_TH) and os.path.isfile(CheckPointFile_
         _Tot_Hits = UI.LogOperations(CheckPointFile_Tracking_TH,'r','N/A')
         UI.Msg('location','Loading checkpoint file ',CheckPointFile_Tracking_RP)
         _Rec_Hits_Pool = UI.LogOperations(CheckPointFile_Tracking_RP,'r','N/A')
+        UI.Msg('location','Loading checkpoint file ',CheckPointFile_Prep_2)
+        _z_map=pd.read_csv(CheckPointFile_Prep_2)
         for i in range(len(_Tot_Hits)):
             for j in range(len(_Tot_Hits[i])):
                 _Tot_Hits[i][j]=ast.literal_eval(_Tot_Hits[i][j])
