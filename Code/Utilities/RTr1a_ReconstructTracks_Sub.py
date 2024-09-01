@@ -126,13 +126,13 @@ def InjectHit(Predator,Prey, Soft):
 
 Status='Initialisation'
 
-CheckPointFile_Ini=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(X_ID_n)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(X_ID_n)+'_'+str(Y_ID_n) +'_'+'_CP_Ini.pkl'
-CheckPointFile_Edge=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(X_ID_n)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(X_ID_n)+'_'+str(Y_ID_n) +'_'+'_CP_Edge.pkl'
-CheckPointFile_ML=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(X_ID_n)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(X_ID_n)+'_'+str(Y_ID_n) +'_'+'_CP_ML.csv'
-CheckPointFile_Prep_1=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(X_ID_n)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(X_ID_n)+'_'+str(Y_ID_n) +'_'+'_CP_Prep_1.csv'
-CheckPointFile_Prep_2=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(X_ID_n)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(X_ID_n)+'_'+str(Y_ID_n) +'_'+'_CP_Prep_2.csv'
-CheckPointFile_Tracking_TH=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(X_ID_n)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(X_ID_n)+'_'+str(Y_ID_n) +'_'+'_CP_Tracking_TH.csv'
-CheckPointFile_Tracking_RP=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(X_ID_n)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(X_ID_n)+'_'+str(Y_ID_n) +'_'+'_CP_Tracking_RP.csv'
+CheckPointFile_Ini=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(X_ID_n)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(X_ID_n)+'_'+str(Y_ID_n) +'_'+'CP_Ini.pkl'
+CheckPointFile_Edge=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(X_ID_n)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(X_ID_n)+'_'+str(Y_ID_n) +'_'+'CP_Edge.pkl'
+CheckPointFile_ML=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(X_ID_n)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(X_ID_n)+'_'+str(Y_ID_n) +'_'+'CP_ML.csv'
+CheckPointFile_Prep_1=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(X_ID_n)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(X_ID_n)+'_'+str(Y_ID_n) +'_'+'CP_Prep_1.csv'
+CheckPointFile_Prep_2=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(X_ID_n)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(X_ID_n)+'_'+str(Y_ID_n) +'_'+'CP_Prep_2.csv'
+CheckPointFile_Tracking_TH=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(X_ID_n)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(X_ID_n)+'_'+str(Y_ID_n) +'_'+'CP_Tracking_TH.csv'
+CheckPointFile_Tracking_RP=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(X_ID_n)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(X_ID_n)+'_'+str(Y_ID_n) +'_'+'CP_Tracking_RP.csv'
 
 if os.path.isfile(CheckPointFile_Tracking_TH) and os.path.isfile(CheckPointFile_Tracking_RP):
         _Tot_Hits = UI.LogOperations(CheckPointFile_Tracking_TH,'r','N/A')
