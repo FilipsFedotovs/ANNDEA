@@ -65,7 +65,6 @@ FirstFileName=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/Temp_'+'RTr1a'+'_'+Re
 ZContractedTable=pd.read_csv(FirstFileName) #First cluster is like a Pacman: it absorbes proceeding clusters and gets bigger
 ZContractedTable["Segment_No"]=0
 ZContractedTable["Segment_No_Tot"]=0
-print(ZContractedTable)
 ZContractedTable.drop_duplicates(subset=['HitID', 'Master_z', 'Master_Segment_ID'],keep='first',inplace=True)
 ZContractedTable["HitID"] = ZContractedTable["HitID"].astype(str)
 for i in range(1,Y_ID_Max):
