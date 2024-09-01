@@ -423,7 +423,7 @@ if Status=='Tracking' or Status=='Tracking continuation':
     print(_z_map)
     print(_Rec_Hits_Pool.dtypes)
     print(_z_map.dtypes)
-    exit()
+    _z_map['HitID']=_z_map['HitID'].astype(str)
     _Rec_Hits_Pool=pd.merge(_z_map, _Rec_Hits_Pool, how="right", on=['HitID'])
     print(UI.TimeStamp(),_no_tracks, 'track segments have been reconstructed in this cluster set ...')
 
