@@ -150,18 +150,10 @@ if os.path.isfile(CheckPointFile_Prep):
             for j in range(len(_Tot_Hits[i])):
                 _Tot_Hits[i][j]=ast.literal_eval(_Tot_Hits[i][j])
             for k in range(len(_Tot_Hits[i][0])):
- #              if _Tot_Hits[i][0][k]
                 if type(_Tot_Hits[i][0][k]) is float:
                     _Tot_Hits[i][0][k]=str(int(_Tot_Hits[i][0][k]))
                 if type(_Tot_Hits[i][0][k]) is int:
                     _Tot_Hits[i][0][k]=str(_Tot_Hits[i][0][k])
-                print(_Tot_Hits[i][0][k])
-                print(type(_Tot_Hits[i][0][k]))
-                print(_Tot_Hits[i])
-                x=input()
-                    #_Tot_Hits[i][j][k]=ast.literal_eval(_Tot_Hits[i][j])
-        print(_Tot_Hits)
-        exit()
         Status = 'Tracking'
 elif os.path.isfile(CheckPointFile_ML):
         _Tot_Hits = pd.read_csv(CheckPointFile_ML)
