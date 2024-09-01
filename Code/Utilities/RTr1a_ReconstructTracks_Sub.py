@@ -128,8 +128,12 @@ Status='Initialisation'
 CheckPointFile_Ini=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(X_ID_n)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(X_ID_n)+'_'+str(Y_ID_n) +'_'+'_CP_Ini.pkl'
 CheckPointFile_Edge=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(X_ID_n)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(X_ID_n)+'_'+str(Y_ID_n) +'_'+'_CP_Edge.pkl'
 CheckPointFile_ML=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(X_ID_n)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(X_ID_n)+'_'+str(Y_ID_n) +'_'+'_CP_ML.csv'
+CheckPointFile_Prep=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(X_ID_n)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(X_ID_n)+'_'+str(Y_ID_n) +'_'+'_CP_Prep.csv'
 
-if os.path.isfile(CheckPointFile_ML):
+if os.path.isfile(CheckPointFile_Prep):
+        _Tot_Hits = UI.LogOperations(CheckPointFile_Prep,'r','N/A')
+        Status = 'Tracking'
+elif os.path.isfile(CheckPointFile_ML):
         _Tot_Hits = pd.read_csv(CheckPointFile_ML)
         Status = 'Track preparation'
 elif os.path.isfile(CheckPointFile_Edge):
@@ -266,11 +270,16 @@ if Status=='Track preparation':
                                 _Temp_Tot_Hit_El[1].append(0.0)
                         _Temp_Tot_Hits.append(_Temp_Tot_Hit_El)
         _Tot_Hits=_Temp_Tot_Hits
-        print(_Tot_Hits[0])
-        exit()
+        if CheckPoint:
+            UI.LogOperations(CheckPointFile_Prep,'w',_Tot_Hits)
+        Status='Tracking'
 
+if Status=='Tracking':
+    print(UI.TimeStamp(),'Tracking the cluster...')
+    print(_Tot_Hits[0])
+    exit()
 
-#print(UI.TimeStamp(),'Tracking the cluster...')
+#
 #                     _Rec_Hits_Pool=[]
 #                     _intital_size=len(_Tot_Hits)
 #                     KeepTracking=True
