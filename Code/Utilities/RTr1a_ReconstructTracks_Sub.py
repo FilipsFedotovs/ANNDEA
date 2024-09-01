@@ -141,7 +141,7 @@ if os.path.isfile(CheckPointFile_Tracking_TH) and os.path.isfile(CheckPointFile_
             for j in range(len(_Tot_Hits[i])):
                 _Tot_Hits[i][j]=ast.literal_eval(_Tot_Hits[i][j])
         print(_Tot_Hits[0:3])
-        _Rec_Hits_Pool[0:3]
+        print(_Rec_Hits_Pool[0:3])
         exit()
         Status = 'Tracking continuation'
 if os.path.isfile(CheckPointFile_Prep):
