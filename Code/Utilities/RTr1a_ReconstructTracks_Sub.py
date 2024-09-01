@@ -391,7 +391,7 @@ if Status=='Tracking' or Status=='Tracking continuation':
                                 _itr+=1
                     if CheckPoint:
                         UI.LogOperations(CheckPointFile_Tracking_TH,'w',_Tot_Hits)
-                        UI.LogOperations(CheckPointFile_Tracking_TH,'w',_Rec_Hits_Pool)
+                        UI.LogOperations(CheckPointFile_Tracking_RP,'w',_Rec_Hits_Pool)
                     Status='Tracking continuation'
     #Transpose the rows
     _track_list=[]
