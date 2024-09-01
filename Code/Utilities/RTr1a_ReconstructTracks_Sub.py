@@ -133,9 +133,9 @@ CheckPointFile_Prep=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(X_ID_n)+'/'+pf
 
 if os.path.isfile(CheckPointFile_Prep):
         _Tot_Hits = UI.LogOperations(CheckPointFile_Prep,'r','N/A')
-        for i in _Tot_Hits:
-            for j in i:
-                i=ast.literal_eval(j)
+        for i in range(len(_Tot_Hits)):
+            for j in range(len(_Tot_Hits[i])):
+                _Tot_Hits[i][j]=ast.literal_eval(_Tot_Hits[i][j])
         Status = 'Tracking'
 elif os.path.isfile(CheckPointFile_ML):
         _Tot_Hits = pd.read_csv(CheckPointFile_ML)
