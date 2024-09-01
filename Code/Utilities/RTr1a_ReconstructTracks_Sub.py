@@ -129,7 +129,10 @@ CheckPointFile_Ini=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(X_ID_n)+'/'+pfx
 CheckPointFile_Edge=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(X_ID_n)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(X_ID_n)+'_'+str(Y_ID_n) +'_'+'_CP_Edge.pkl'
 CheckPointFile_ML=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(X_ID_n)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(X_ID_n)+'_'+str(Y_ID_n) +'_'+'_CP_ML.csv'
 
-if os.path.isfile(CheckPointFile_Edge):
+if os.path.isfile(CheckPointFile_ML):
+        _Tot_Hits = pd.read_csv(CheckPointFile_ML)
+        Status = 'Track preparation'
+elif os.path.isfile(CheckPointFile_Edge):
         HC = UI.PickleOperations(CheckPointFile_Edge,'r','N/A')[0]
         Status = 'ML analysis'
 elif os.path.isfile(CheckPointFile_Ini):
@@ -263,7 +266,7 @@ if Status=='Track preparation':
                                 _Temp_Tot_Hit_El[1].append(0.0)
                         _Temp_Tot_Hits.append(_Temp_Tot_Hit_El)
         _Tot_Hits=_Temp_Tot_Hits
-        print(_Tot_Hits)
+        print(_Tot_Hits[0])
         exit()
 
 
