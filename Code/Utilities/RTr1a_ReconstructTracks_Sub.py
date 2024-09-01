@@ -278,6 +278,7 @@ if Status=='Track preparation':
 if Status=='Tracking':
     print(UI.TimeStamp(),'Tracking the cluster...')
     print(_Tot_Hits[0][0])
+    print(_Tot_Hits[0][0][0])
     print(_Tot_Hits[0][1])
     print(_Tot_Hits[1][0])
     print(_Tot_Hits[1][1])
