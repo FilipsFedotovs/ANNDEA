@@ -149,6 +149,8 @@ if os.path.isfile(CheckPointFile_Prep):
         for i in range(len(_Tot_Hits)):
             for j in range(len(_Tot_Hits[i])):
                 _Tot_Hits[i][j]=ast.literal_eval(_Tot_Hits[i][j])
+        print(_Tot_Hits)
+        exit()
         Status = 'Tracking'
 elif os.path.isfile(CheckPointFile_ML):
         _Tot_Hits = pd.read_csv(CheckPointFile_ML)
