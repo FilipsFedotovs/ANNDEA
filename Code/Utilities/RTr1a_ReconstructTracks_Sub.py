@@ -420,6 +420,8 @@ if Status=='Tracking' or Status=='Tracking continuation':
     _Rec_Hits_Pool=pd.DataFrame(_track_list, columns = ['Segment_ID','HitID'])
     _z_map['HitID']=_z_map['HitID'].astype(str)
     _Rec_Hits_Pool=pd.merge(_z_map, _Rec_Hits_Pool, how="right", on=['HitID'])
+    _Rec_Hits_Pool=_Rec_Hits_Pool.rename(columns={"z": "Master_z" })
+    _Rec_Hits_Pool=_Rec_Hits_Pool.rename(columns={"Segment_ID": "Master_Segment_ID" })
     print(UI.TimeStamp(),_no_tracks, 'track segments have been reconstructed in this cluster set ...')
 
 #If Cluster tracking yielded no segments we just create an empty array for consistency
