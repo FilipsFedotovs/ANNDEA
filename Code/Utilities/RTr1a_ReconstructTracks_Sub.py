@@ -147,7 +147,7 @@ if os.path.isfile(CheckPointFile_Tracking_TH) and os.path.isfile(CheckPointFile_
                 if type(_Tot_Hits[i][0][k]) is int:
                     _Tot_Hits[i][0][k]=str(_Tot_Hits[i][0][k])
         Status = 'Tracking continuation'
-if os.path.isfile(CheckPointFile_Prep_1) and os.path.isfile(CheckPointFile_Prep_2):
+elif os.path.isfile(CheckPointFile_Prep_1) and os.path.isfile(CheckPointFile_Prep_2):
         _Tot_Hits = UI.LogOperations(CheckPointFile_Prep_1,'r','N/A')
         for i in range(len(_Tot_Hits)):
             for j in range(len(_Tot_Hits[i])):
