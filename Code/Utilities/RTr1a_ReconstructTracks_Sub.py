@@ -173,7 +173,7 @@ if Status=='Edge generation':
     if CheckPoint:
         UI.PickleOperations(CheckPointFile_Edge,'w',HC)
         GraphStatus=True
-    combined_weight_list=[]
+
     if HC.ClusterGraph.num_edges>0:
         Status = 'ML analysis'
     else:
@@ -201,6 +201,7 @@ if Status == 'ML analysis':
         model.eval() #In Pytorch this function sets the model into the evaluation mode.
         w = model(HC.ClusterGraph.x, HC.ClusterGraph.edge_index, HC.ClusterGraph.edge_attr) #Here we use the model to assign the weights between Hit edges
         w=w.tolist()
+        combined_weight_list=[]
         for edge in range(len(HC.edges)):
             combined_weight_list.append(HC.edges[edge]+w[edge]) #Join the Hit Pair classification back to the hit pairs
         combined_weight_list=pd.DataFrame(combined_weight_list, columns = ['l_HitID','r_HitID','link_strength'])
@@ -213,7 +214,7 @@ if Status == 'ML analysis':
     print(UI.TimeStamp(),'Number of all  hit combinations passing GNN selection:',len(_Tot_Hits))
     if CheckPoint:
              _Tot_Hits.to_csv(CheckPointFile_ML,index=False)
-    Status='Track preparatio'
+    Status='Track preparation'
 
 if Status=='Track preparation':
     print('Wip')
