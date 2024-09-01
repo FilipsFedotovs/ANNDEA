@@ -129,7 +129,8 @@ Status='Initialisation'
 CheckPointFile_Ini=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(X_ID_n)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(X_ID_n)+'_'+str(Y_ID_n) +'_'+'_CP_Ini.pkl'
 CheckPointFile_Edge=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(X_ID_n)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(X_ID_n)+'_'+str(Y_ID_n) +'_'+'_CP_Edge.pkl'
 CheckPointFile_ML=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(X_ID_n)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(X_ID_n)+'_'+str(Y_ID_n) +'_'+'_CP_ML.csv'
-CheckPointFile_Prep=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(X_ID_n)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(X_ID_n)+'_'+str(Y_ID_n) +'_'+'_CP_Prep.csv'
+CheckPointFile_Prep_1=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(X_ID_n)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(X_ID_n)+'_'+str(Y_ID_n) +'_'+'_CP_Prep_1.csv'
+CheckPointFile_Prep_2=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(X_ID_n)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(X_ID_n)+'_'+str(Y_ID_n) +'_'+'_CP_Prep_2.csv'
 CheckPointFile_Tracking_TH=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(X_ID_n)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(X_ID_n)+'_'+str(Y_ID_n) +'_'+'_CP_Tracking_TH.csv'
 CheckPointFile_Tracking_RP=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(X_ID_n)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(X_ID_n)+'_'+str(Y_ID_n) +'_'+'_CP_Tracking_RP.csv'
 
@@ -140,12 +141,9 @@ if os.path.isfile(CheckPointFile_Tracking_TH) and os.path.isfile(CheckPointFile_
         for i in range(len(_Tot_Hits)):
             for j in range(len(_Tot_Hits[i])):
                 _Tot_Hits[i][j]=ast.literal_eval(_Tot_Hits[i][j])
-        print(_Tot_Hits[0:3])
-        print(_Rec_Hits_Pool[0:3])
-        exit()
         Status = 'Tracking continuation'
-if os.path.isfile(CheckPointFile_Prep):
-        _Tot_Hits = UI.LogOperations(CheckPointFile_Prep,'r','N/A')
+if os.path.isfile(CheckPointFile_Prep_1) and os.path.isfile(CheckPointFile_Prep_2):
+        _Tot_Hits = UI.LogOperations(CheckPointFile_Prep_1,'r','N/A')
         for i in range(len(_Tot_Hits)):
             for j in range(len(_Tot_Hits[i])):
                 _Tot_Hits[i][j]=ast.literal_eval(_Tot_Hits[i][j])
@@ -154,6 +152,7 @@ if os.path.isfile(CheckPointFile_Prep):
                     _Tot_Hits[i][0][k]=str(int(_Tot_Hits[i][0][k]))
                 if type(_Tot_Hits[i][0][k]) is int:
                     _Tot_Hits[i][0][k]=str(_Tot_Hits[i][0][k])
+        _z_map=pd.read_csv(CheckPointFile_Prep_2)
         Status = 'Tracking'
 elif os.path.isfile(CheckPointFile_ML):
         _Tot_Hits = pd.read_csv(CheckPointFile_ML)
@@ -293,12 +292,13 @@ if Status=='Track preparation':
                         _Temp_Tot_Hits.append(_Temp_Tot_Hit_El)
         _Tot_Hits=_Temp_Tot_Hits
         if CheckPoint:
-            UI.LogOperations(CheckPointFile_Prep,'w',_Tot_Hits)
+            UI.LogOperations(CheckPointFile_Prep_1,'w',_Tot_Hits)
         Status='Tracking'
 
 if Status=='Tracking' or Status=='Tracking continuation':
     print(UI.TimeStamp(),'Tracking the cluster...')
-    _Rec_Hits_Pool=[]
+    if Status=='Tracking':
+        _Rec_Hits_Pool=[]
     _intital_size=len(_Tot_Hits)
     KeepTracking=True
     while len(_Tot_Hits)>0 and KeepTracking:
@@ -403,6 +403,7 @@ if Status=='Tracking' or Status=='Tracking continuation':
     _Rec_Hits_Pool=pd.DataFrame(_track_list, columns = ['Segment_ID','HitID'])
     _Rec_Hits_Pool=pd.merge(_z_map, _Rec_Hits_Pool, how="right", on=['HitID'])
     print(UI.TimeStamp(),_no_tracks, 'track segments have been reconstructed in this cluster set ...')
+    print(_Rec_Hits_Pool)
     exit()
     # exit()
     #
