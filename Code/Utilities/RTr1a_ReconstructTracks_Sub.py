@@ -149,6 +149,10 @@ if os.path.isfile(CheckPointFile_Prep):
         for i in range(len(_Tot_Hits)):
             for j in range(len(_Tot_Hits[i])):
                 _Tot_Hits[i][j]=ast.literal_eval(_Tot_Hits[i][j])
+            for k in range(len(_Tot_Hits[i][0])):
+                print(_Tot_Hits[i][j][k])
+                exit()
+                _Tot_Hits[i][j][k]=ast.literal_eval(_Tot_Hits[i][j])
         print(_Tot_Hits)
         exit()
         Status = 'Tracking'
