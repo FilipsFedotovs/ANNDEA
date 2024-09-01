@@ -298,6 +298,7 @@ if Status=='Track preparation':
         _Tot_Hits=_Temp_Tot_Hits
         if CheckPoint:
             UI.LogOperations(CheckPointFile_Prep_1,'w',_Tot_Hits)
+            _z_map.to_csv(CheckPointFile_Prep_2,index=False)
         Status='Tracking'
 
 if Status=='Tracking' or Status=='Tracking continuation':
