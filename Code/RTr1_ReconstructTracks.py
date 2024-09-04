@@ -186,8 +186,10 @@ if os.path.isfile(required_file_location)==False:
          print(UI.TimeStamp(),'Analysing data... ',bcolors.ENDC)
          y_offset=data['y'].min()
          x_offset=data['x'].min()
+         z_offset=data['z'].min()
          data['x']=data['x']-x_offset
          data['y']=data['y']-y_offset
+         data['z']=data['z']-z_offset
          x_max=data['x'].max()
          y_max=data['y'].max()
     

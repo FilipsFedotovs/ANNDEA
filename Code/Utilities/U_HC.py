@@ -63,12 +63,6 @@ class HitCluster:
                TH.append(abs(TH[5]-TH[11]))
                del TH[1:6]
                del TH[2:7]
-           # print(_Tot_Hits[0])
-           # _TrueSeeds=[x for x in _Tot_Hits if x[2]==1]
-           # print(_TrueSeeds[0])
-           # print(len(_Tot_Hits))
-           # print(len(_TrueSeeds))
-           # exit()
            if len(_Tot_Hits)>0:
                import torch
                from torch_geometric.data import Data
