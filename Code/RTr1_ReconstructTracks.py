@@ -77,6 +77,7 @@ parser.add_argument('--Xmin',help="This option restricts data to only those even
 parser.add_argument('--Xmax',help="This option restricts data to only those events that have tracks with hits x-coordinates that are below this value", default='0')
 parser.add_argument('--Ymin',help="This option restricts data to only those events that have tracks with hits y-coordinates that are above this value", default='0')
 parser.add_argument('--Ymax',help="This option restricts data to only those events that have tracks with hits y-coordinates that are below this value", default='0')
+parser.add_argument('--Z_overlap',help="Enter the level of overlap in integer number between reconstruction blocks along z-axis. (In order to avoid segmentation this value should be more than 1)", default='3')
 parser.add_argument('--Y_overlap',help="Enter the level of overlap in integer number between reconstruction blocks along y-axis. (In order to avoid segmentation this value should be more than 1)", default='2')
 parser.add_argument('--X_overlap',help="Enter the level of overlap in integer number between reconstruction blocks along x-axis. (In order to avoid segmentation this value should be more than 1)", default='2')
 parser.add_argument('--CheckPoint',help="Save cluster sets during individual cluster tracking.", default='N')
@@ -104,7 +105,7 @@ RequestExtCPU=int(args.RequestExtCPU)
 ReqMemory=args.ReqMemory
 input_file_location=args.f
 Xmin,Xmax,Ymin,Ymax=float(args.Xmin),float(args.Xmax),float(args.Ymin),float(args.Ymax)
-Y_overlap,X_overlap=int(args.Y_overlap),int(args.X_overlap)
+Z_overlap,Y_overlap,X_overlap=int(args.Z_overlap),int(args.Y_overlap),int(args.X_overlap)
 SliceData=max(Xmin,Xmax,Ymin,Ymax)>0 #We don't slice data if all values are set to zero simultaneousy (which is the default setting)
 
 if Mode=='RESET':
@@ -144,7 +145,6 @@ elif os.path.isfile(Model_Meta_Path):
        stepZ=Model_Meta.stepZ
        cut_dt=Model_Meta.cut_dt
        cut_dr=Model_Meta.cut_dr
-       cut_dz=Model_Meta.cut_dz
 else:
        print(UI.TimeStamp(),bcolors.FAIL+'Fail! No existing model meta files have been found, exiting now'+bcolors.ENDC)
        exit()
@@ -153,7 +153,6 @@ else:
 print(UI.TimeStamp(),bcolors.BOLD+'Preparation 2/3:'+bcolors.ENDC+' Preparing the source data...')
 required_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/RTr1_'+RecBatchID+'_hits.csv'
 RecOutputMeta=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/'+RecBatchID+'_info.pkl'
-
 if os.path.isfile(required_file_location)==False:
          print(UI.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
          data=pd.read_csv(input_file_location,
@@ -184,12 +183,17 @@ if os.path.isfile(required_file_location)==False:
          data=data.rename(columns={PM.ty: "ty"})
          data=data.rename(columns={PM.Hit_ID: "Hit_ID"})
          print(UI.TimeStamp(),'Analysing data... ',bcolors.ENDC)
+         z_offset=data['z'].min()
+         data['z']=data['z']-z_offset
+         z_max=data['z'].max()
+         if Z_overlap==1:
+            Zsteps=math.ceil((z_max)/stepZ)
+         else:
+            Zsteps=(math.ceil((z_max)/stepZ)*(Z_overlap))-1
          y_offset=data['y'].min()
          x_offset=data['x'].min()
-         z_offset=data['z'].min()
          data['x']=data['x']-x_offset
          data['y']=data['y']-y_offset
-         data['z']=data['z']-z_offset
          x_max=data['x'].max()
          y_max=data['y'].max()
     
@@ -203,19 +207,22 @@ if os.path.isfile(required_file_location)==False:
             Ysteps=math.ceil((y_max)/stepY)
          else:
             Ysteps=(math.ceil((y_max)/stepY)*(Y_overlap))-1
-
          print(UI.TimeStamp(),'Distributing input files...')
          with alive_bar(Xsteps*Ysteps,force_tty=True, title='Distributing input files...') as bar:
              for i in range(Xsteps):
                  for j in range(Ysteps):
-                     required_tfile_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/RTr1_'+RecBatchID+'_'+str(i)+'_'+str(j)+'_hits.csv'
+                     for k in range(Zsteps):
+                     required_tfile_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/RTr1_'+RecBatchID+'_'+str(i)+'_'+str(j)+'_'+str(k)+'_hits.csv'
                      if os.path.isfile(required_tfile_location)==False:
                          Y_ID=int(j)/Y_overlap
                          X_ID=int(i)/X_overlap
+                         Z_ID=int(k)/Z_overlap
                          tdata=data.drop(data.index[data['x'] >= ((X_ID+1)*stepX)])  #Keeping the relevant z slice
                          tdata.drop(tdata.index[tdata['x'] < (X_ID*stepX)], inplace = True)  #Keeping the relevant z slice
                          tdata.drop(tdata.index[tdata['y'] >= ((Y_ID+1)*stepY)], inplace = True)  #Keeping the relevant z slice
                          tdata.drop(tdata.index[tdata['y'] < (Y_ID*stepY)], inplace = True)  #Keeping the relevant z slice
+                         tdata.drop(tdata.index[tdata['z'] >= ((Z_ID+1)*stepZ)], inplace = True)  #Keeping the relevant z slice
+                         tdata.drop(tdata.index[tdata['z'] < (Z_ID*stepZ)], inplace = True)  #Keeping the relevant z slice
                          tdata.to_csv(required_tfile_location,index=False)
                          #print(UI.TimeStamp(), bcolors.OKGREEN+"The segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+required_tfile_location+bcolors.ENDC)
                      bar()
@@ -223,7 +230,7 @@ if os.path.isfile(required_file_location)==False:
 
          data.to_csv(required_file_location,index=False)
          Meta=UI.TrainingSampleMeta(RecBatchID)
-         Meta.IniHitClusterMetaData(stepX,stepY,stepZ,cut_dt,cut_dr,cut_dz,0.05,0.1,y_offset,x_offset, Xsteps,Ysteps,X_overlap,Y_overlap)
+         Meta.IniHitClusterMetaData(stepX,stepY,stepZ,cut_dt,cut_dr,stepZ,0.05,0.1,y_offset,x_offset, Xsteps,Ysteps,X_overlap,Y_overlap,Zsteps,Z_overlap)
          Meta.UpdateStatus(0)
          print(UI.PickleOperations(RecOutputMeta,'w', Meta)[1])
          UI.Msg('completed','Stage 0 has successfully completed')
@@ -232,6 +239,7 @@ elif os.path.isfile(RecOutputMeta)==True:
     print(UI.TimeStamp(),'Loading previously saved data from ',bcolors.OKBLUE+RecOutputMeta+bcolors.ENDC)
     MetaInput=UI.PickleOperations(RecOutputMeta,'r', 'N/A')
     Meta=MetaInput[0]
+Zsteps=Meta.Zsteps
 Ysteps=Meta.Ysteps
 Xsteps=Meta.Xsteps
 stepZ=Meta.stepZ
@@ -255,12 +263,15 @@ Program=[]
 prog_entry=[]
 job_sets=[]
 for i in range(0,Xsteps):
-                job_sets.append(Ysteps)
+                job_set=[]
+                for j in range(0,Ysteps):
+                    job_set.append(Zsteps)
+                job_sets.append(job_set)
 prog_entry.append(' Sending hit cluster to the HTCondor, so the model assigns weights between hits')
 prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/'+RecBatchID+'/','hit_cluster_rec_set','RTr1a','.csv',RecBatchID,job_sets,'RTr1a_ReconstructTracks_Sub.py'])
-prog_entry.append([' --stepZ ', ' --stepY ', ' --stepX ', ' --cut_dt ', ' --cut_dr ',' --cut_dz ', ' --ModelName ',' --Y_overlap ',' --X_overlap ', ' --CheckPoint ', ' --TrackFitCutRes ',' --TrackFitCutSTD ',' --TrackFitCutMRes '])
-prog_entry.append([stepZ,stepY,stepX, cut_dt,cut_dr,cut_dz, ModelName,Y_overlap,X_overlap, args.CheckPoint]+TrackFitCut)
-prog_entry.append(Xsteps*Ysteps)
+prog_entry.append([' --stepZ ', ' --stepY ', ' --stepX ', ' --cut_dt ', ' --cut_dr ',' --cut_dz ', ' --ModelName ',' --Z_overlap ',' --Y_overlap ',' --X_overlap ', ' --TrackFitCutRes ',' --TrackFitCutSTD ',' --TrackFitCutMRes '])
+prog_entry.append([stepZ,stepY,stepX, cut_dt,cut_dr,cut_dz, ModelName,Z_overlap,Y_overlap,X_overlap, args.CheckPoint]+TrackFitCut)
+prog_entry.append(Xsteps*Ysteps*Zsteps)
 prog_entry.append(LocalSub)
 prog_entry.append('N/A')
 prog_entry.append(HTCondorLog)
@@ -268,35 +279,35 @@ prog_entry.append(False)
 Program.append(prog_entry)
 print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry))
 
-###### Stage 1
-prog_entry=[]
-job_sets=Xsteps
-prog_entry.append(' Sending hit cluster to the HTCondor, so the reconstructed clusters can be merged along y-axis')
-prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/'+RecBatchID+'/','hit_cluster_rec_y_set','RTr1b','.csv',RecBatchID,job_sets,'RTr1b_LinkSegmentsY_Sub.py'])
-prog_entry.append([' --Y_ID_Max ', ' --i '])
-prog_entry.append([Ysteps,Xsteps])
-prog_entry.append(Xsteps)
-prog_entry.append(LocalSub)
-prog_entry.append('N/A')
-prog_entry.append(HTCondorLog)
-prog_entry.append(False)
-Program.append(prog_entry)
-print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry))
-
-###### Stage 2
-prog_entry=[]
-job_sets=1
-prog_entry.append(' Sending hit cluster to the HTCondor, so the reconstructed clusters can be merged along x-axis')
-prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/'+RecBatchID+'/','hit_cluster_rec_x_set','RTr1c','.csv',RecBatchID,job_sets,'RTr1c_LinkSegmentsX_Sub.py'])
-prog_entry.append([' --X_ID_Max '])
-prog_entry.append([Xsteps])
-prog_entry.append(1)
-prog_entry.append(True) #This part we can execute locally, no need for HTCondor
-prog_entry.append('N/A')
-prog_entry.append(HTCondorLog)
-prog_entry.append(False)
-Program.append(prog_entry)
-print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry))
+# ###### Stage 1
+# prog_entry=[]
+# job_sets=Xsteps
+# prog_entry.append(' Sending hit cluster to the HTCondor, so the reconstructed clusters can be merged along y-axis')
+# prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/'+RecBatchID+'/','hit_cluster_rec_y_set','RTr1b','.csv',RecBatchID,job_sets,'RTr1b_LinkSegmentsY_Sub.py'])
+# prog_entry.append([' --Y_ID_Max ', ' --i '])
+# prog_entry.append([Ysteps,Xsteps])
+# prog_entry.append(Xsteps)
+# prog_entry.append(LocalSub)
+# prog_entry.append('N/A')
+# prog_entry.append(HTCondorLog)
+# prog_entry.append(False)
+# Program.append(prog_entry)
+# print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry))
+#
+# ###### Stage 2
+# prog_entry=[]
+# job_sets=1
+# prog_entry.append(' Sending hit cluster to the HTCondor, so the reconstructed clusters can be merged along x-axis')
+# prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/'+RecBatchID+'/','hit_cluster_rec_x_set','RTr1c','.csv',RecBatchID,job_sets,'RTr1c_LinkSegmentsX_Sub.py'])
+# prog_entry.append([' --X_ID_Max '])
+# prog_entry.append([Xsteps])
+# prog_entry.append(1)
+# prog_entry.append(True) #This part we can execute locally, no need for HTCondor
+# prog_entry.append('N/A')
+# prog_entry.append(HTCondorLog)
+# prog_entry.append(False)
+# Program.append(prog_entry)
+# print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry))
 
 ###### Stage 3
 Program.append('Custom')
