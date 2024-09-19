@@ -278,8 +278,7 @@ prog_entry.append(False)
 Program.append(prog_entry)
 print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry))
 
-print(prog_entry)
-exit()
+
 
 # ###### Stage 1
 # prog_entry=[]
@@ -312,7 +311,7 @@ exit()
 # print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry))
 
 ###### Stage 3
-Program.append('Custom')
+#Program.append('Custom')
 
 
 print(UI.TimeStamp(),'There are '+str(len(Program)+1)+' stages (0-'+str(len(Program)+1)+') of this script',bcolors.ENDC)
@@ -320,7 +319,10 @@ print(UI.TimeStamp(),'Current stage has a code',Status,bcolors.ENDC)
 while Status<len(Program):
     if Program[Status]!='Custom':
         #Standard process here
+
        Result=UI.StandardProcess(Program,Status,SubGap,SubPause,RequestExtCPU,JobFlavour,ReqMemory,time_int,Patience)
+       print(Result)
+       exit()
        if Result[0]:
             UI.UpdateStatus(Status+1,Meta,RecOutputMeta)
        else:
