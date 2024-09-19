@@ -152,6 +152,8 @@ def CalculateNJobs(JobSet):
                         return 1,JobSet
             elif type(JobSet[0]) is int:
                         return 2,np.sum(JobSet)
+            elif type(JobSet[0][0]) is int:
+                        return 3,np.sum(JobSet)
             return 0,0
 def CreateCondorJobs(AFS,EOS,PY,path,o,pfx,sfx,ID,loop_params,OptionHeader,OptionLine,Sub_File,batch_sub=False,PlaceHolder='N/A', Log=False, GPU=False):
     if batch_sub==False:
