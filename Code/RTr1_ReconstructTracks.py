@@ -269,7 +269,7 @@ for i in range(0,Xsteps):
 prog_entry.append(' Sending hit cluster to the HTCondor, so the model assigns weights between hits')
 prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/'+RecBatchID+'/','hit_cluster_rec_set','RTr1a','.csv',RecBatchID,job_sets,'RTr1a_ReconstructTracks_Sub.py'])
 prog_entry.append([' --stepZ ', ' --stepY ', ' --stepX ', ' --cut_dt ', ' --cut_dr ',' --cut_dz ', ' --ModelName ',' --Z_overlap ',' --Y_overlap ',' --X_overlap ', ' --TrackFitCutRes ',' --TrackFitCutSTD ',' --TrackFitCutMRes '])
-prog_entry.append([stepZ,stepY,stepX, cut_dt,cut_dr,cut_dz, ModelName,Z_overlap,Y_overlap,X_overlap, args.CheckPoint]+TrackFitCut)
+prog_entry.append([stepZ,stepY,stepX, cut_dt,cut_dr,cut_dz, ModelName,Z_overlap,Y_overlap,X_overlap]+TrackFitCut)
 prog_entry.append(Xsteps*Ysteps*Zsteps)
 prog_entry.append(LocalSub)
 prog_entry.append('N/A')
