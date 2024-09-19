@@ -80,7 +80,6 @@ parser.add_argument('--Ymax',help="This option restricts data to only those even
 parser.add_argument('--Z_overlap',help="Enter the level of overlap in integer number between reconstruction blocks along z-axis. (In order to avoid segmentation this value should be more than 1)", default='3')
 parser.add_argument('--Y_overlap',help="Enter the level of overlap in integer number between reconstruction blocks along y-axis. (In order to avoid segmentation this value should be more than 1)", default='2')
 parser.add_argument('--X_overlap',help="Enter the level of overlap in integer number between reconstruction blocks along x-axis. (In order to avoid segmentation this value should be more than 1)", default='2')
-parser.add_argument('--CheckPoint',help="Save cluster sets during individual cluster tracking.", default='N')
 parser.add_argument('--ReqMemory',help="How much memory?", default='2 GB')
 parser.add_argument('--HTCondorLog',help="Local submission?", default=False,type=bool)
 
@@ -208,24 +207,24 @@ if os.path.isfile(required_file_location)==False:
          else:
             Ysteps=(math.ceil((y_max)/stepY)*(Y_overlap))-1
          print(UI.TimeStamp(),'Distributing input files...')
-         with alive_bar(Xsteps*Ysteps,force_tty=True, title='Distributing input files...') as bar:
+         with alive_bar(Xsteps*Ysteps*Zsteps,force_tty=True, title='Distributing input files...') as bar:
              for i in range(Xsteps):
                  for j in range(Ysteps):
                      for k in range(Zsteps):
-                     required_tfile_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/RTr1_'+RecBatchID+'_'+str(i)+'_'+str(j)+'_'+str(k)+'_hits.csv'
-                     if os.path.isfile(required_tfile_location)==False:
-                         Y_ID=int(j)/Y_overlap
-                         X_ID=int(i)/X_overlap
-                         Z_ID=int(k)/Z_overlap
-                         tdata=data.drop(data.index[data['x'] >= ((X_ID+1)*stepX)])  #Keeping the relevant z slice
-                         tdata.drop(tdata.index[tdata['x'] < (X_ID*stepX)], inplace = True)  #Keeping the relevant z slice
-                         tdata.drop(tdata.index[tdata['y'] >= ((Y_ID+1)*stepY)], inplace = True)  #Keeping the relevant z slice
-                         tdata.drop(tdata.index[tdata['y'] < (Y_ID*stepY)], inplace = True)  #Keeping the relevant z slice
-                         tdata.drop(tdata.index[tdata['z'] >= ((Z_ID+1)*stepZ)], inplace = True)  #Keeping the relevant z slice
-                         tdata.drop(tdata.index[tdata['z'] < (Z_ID*stepZ)], inplace = True)  #Keeping the relevant z slice
-                         tdata.to_csv(required_tfile_location,index=False)
-                         #print(UI.TimeStamp(), bcolors.OKGREEN+"The segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+required_tfile_location+bcolors.ENDC)
-                     bar()
+                         required_tfile_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/RTr1_'+RecBatchID+'_'+str(i)+'_'+str(j)+'_'+str(k)+'_hits.csv'
+                         if os.path.isfile(required_tfile_location)==False:
+                             Y_ID=int(j)/Y_overlap
+                             X_ID=int(i)/X_overlap
+                             Z_ID=int(k)/Z_overlap
+                             tdata=data.drop(data.index[data['x'] >= ((X_ID+1)*stepX)])  #Keeping the relevant z slice
+                             tdata.drop(tdata.index[tdata['x'] < (X_ID*stepX)], inplace = True)  #Keeping the relevant z slice
+                             tdata.drop(tdata.index[tdata['y'] >= ((Y_ID+1)*stepY)], inplace = True)  #Keeping the relevant z slice
+                             tdata.drop(tdata.index[tdata['y'] < (Y_ID*stepY)], inplace = True)  #Keeping the relevant z slice
+                             tdata.drop(tdata.index[tdata['z'] >= ((Z_ID+1)*stepZ)], inplace = True)  #Keeping the relevant z slice
+                             tdata.drop(tdata.index[tdata['z'] < (Z_ID*stepZ)], inplace = True)  #Keeping the relevant z slice
+                             tdata.to_csv(required_tfile_location,index=False)
+                             #print(UI.TimeStamp(), bcolors.OKGREEN+"The segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+required_tfile_location+bcolors.ENDC)
+                         bar()
 
 
          data.to_csv(required_file_location,index=False)
