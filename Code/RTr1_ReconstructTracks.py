@@ -278,6 +278,9 @@ prog_entry.append(False)
 Program.append(prog_entry)
 print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry))
 
+print(prog_entry)
+exit()
+
 # ###### Stage 1
 # prog_entry=[]
 # job_sets=Xsteps
