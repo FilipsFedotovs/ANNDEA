@@ -266,6 +266,7 @@ for i in range(0,Xsteps):
                 for j in range(0,Ysteps):
                     job_set.append(Zsteps)
                 job_sets.append(job_set)
+print()
 prog_entry.append(' Sending hit cluster to the HTCondor, so the model assigns weights between hits')
 prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/'+RecBatchID+'/','hit_cluster_rec_set','RTr1a','.csv',RecBatchID,job_sets,'RTr1a_ReconstructTracks_Sub.py'])
 prog_entry.append([' --stepZ ', ' --stepY ', ' --stepX ', ' --cut_dt ', ' --cut_dr ',' --cut_dz ', ' --ModelName ',' --Z_overlap ',' --Y_overlap ',' --X_overlap ', ' --TrackFitCutRes ',' --TrackFitCutSTD ',' --TrackFitCutMRes '])
