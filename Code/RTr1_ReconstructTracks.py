@@ -324,8 +324,6 @@ while Status<len(Program):
         #Standard process here
 
        Result=UI.StandardProcess(Program,Status,SubGap,SubPause,RequestExtCPU,JobFlavour,ReqMemory,time_int,Patience)
-       print(Result)
-       exit()
        if Result[0]:
             UI.UpdateStatus(Status+1,Meta,RecOutputMeta)
        else:
