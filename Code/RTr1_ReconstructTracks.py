@@ -297,23 +297,38 @@ prog_entry.append(HTCondorLog)
 prog_entry.append(False)
 Program.append(prog_entry)
 print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry))
-#
-# ###### Stage 2
-# prog_entry=[]
-# job_sets=1
-# prog_entry.append(' Sending hit cluster to the HTCondor, so the reconstructed clusters can be merged along x-axis')
-# prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/'+RecBatchID+'/','hit_cluster_rec_x_set','RTr1c','.csv',RecBatchID,job_sets,'RTr1c_LinkSegmentsX_Sub.py'])
-# prog_entry.append([' --X_ID_Max '])
-# prog_entry.append([Xsteps])
-# prog_entry.append(1)
-# prog_entry.append(True) #This part we can execute locally, no need for HTCondor
-# prog_entry.append('N/A')
-# prog_entry.append(HTCondorLog)
-# prog_entry.append(False)
-# Program.append(prog_entry)
-# print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry))
+
+###### Stage 2
+prog_entry=[]
+job_sets=Xsteps
+prog_entry.append(' Sending hit cluster to the HTCondor, so the reconstructed clusters can be merged along y-axis')
+prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/'+RecBatchID+'/','hit_cluster_rec_y_set','RTr1c','.csv',RecBatchID,job_sets,'RTr1c_LinkSegmentsY_Sub.py'])
+prog_entry.append([' --Y_ID_Max ', ' --i '])
+prog_entry.append([Ysteps,Xsteps])
+prog_entry.append(Xsteps)
+prog_entry.append(LocalSub)
+prog_entry.append('N/A')
+prog_entry.append(HTCondorLog)
+prog_entry.append(False)
+Program.append(prog_entry)
+print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry))
 
 ###### Stage 3
+prog_entry=[]
+job_sets=1
+prog_entry.append(' Sending hit cluster to the HTCondor, so the reconstructed clusters can be merged along x-axis')
+prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/'+RecBatchID+'/','hit_cluster_rec_x_set','RTr1d','.csv',RecBatchID,job_sets,'RTr1d_LinkSegmentsX_Sub.py'])
+prog_entry.append([' --X_ID_Max '])
+prog_entry.append([Xsteps])
+prog_entry.append(1)
+prog_entry.append(True) #This part we can execute locally, no need for HTCondor
+prog_entry.append('N/A')
+prog_entry.append(HTCondorLog)
+prog_entry.append(False)
+Program.append(prog_entry)
+print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry))
+
+###### Stage 4
 #Program.append('Custom')
 
 
@@ -330,7 +345,7 @@ while Status<len(Program):
              Status=20
              break
 
-    elif Status==3:
+    elif Status==4:
       #Non standard processes (that don't follow the general pattern) have been coded here
       print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
       print(UI.TimeStamp(),bcolors.BOLD+'Stage 3:'+bcolors.ENDC+' Using the results from previous steps to map merged trackIDs to the original reconstruction file')
