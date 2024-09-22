@@ -398,7 +398,6 @@ if Status=='Tracking' or Status=='Tracking continuation':
                     _Tot_Hits_Predator=_Tot_Hits_Predator.values.tolist()
 
                     for seg in range(len(_Tot_Hits_Predator)):
-                        print(_Tot_Hits_Predator[seg])
                         _Tot_Hits_Predator[seg]=[s for s in _Tot_Hits_Predator[seg] if ('H' in s)==False] #Remove holes from the track representation
                     _Rec_Hits_Pool+=_Tot_Hits_Predator
                     for seg in _Tot_Hits_Predator:
