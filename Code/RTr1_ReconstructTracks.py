@@ -286,9 +286,6 @@ prog_entry=[]
 job_sets=[]
 for i in range(0,Xsteps):
                 job_sets.append(Ysteps)
-print(Xsteps)
-print(job_sets)
-exit()
 prog_entry.append(' Sending hit cluster to the HTCondor, so the reconstructed clusters can be merged along z-axis')
 prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/'+RecBatchID+'/','hit_cluster_rec_z_set','RTr1b','.csv',RecBatchID,job_sets,'RTr1b_LinkSegmentsZ_Sub.py'])
 prog_entry.append([' --Z_ID_Max ', ' --i ',' --j '])

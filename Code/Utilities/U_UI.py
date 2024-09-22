@@ -159,6 +159,8 @@ def CreateCondorJobs(AFS,EOS,PY,path,o,pfx,sfx,ID,loop_params,OptionHeader,Optio
     if batch_sub==False:
         from alive_progress import alive_bar
         bad_pop=[]
+        print(loop_params)
+        x=input()
         TotJobs=CalculateNJobs(loop_params)[1]
         nest_lvl=CalculateNJobs(loop_params)[0]
         OH=OptionHeader+[' --EOS '," --AFS ", " --PY ", " --BatchID "]
@@ -210,6 +212,8 @@ def CreateCondorJobs(AFS,EOS,PY,path,o,pfx,sfx,ID,loop_params,OptionHeader,Optio
         from alive_progress import alive_bar
         bad_pop=[]
         TotJobs=0
+        print(loop_params)
+        x=input()
         TotJobs=CalculateNJobs(loop_params)[1]
         nest_lvl=CalculateNJobs(loop_params)[0]
         OH=OptionHeader+[' --EOS '," --AFS ", " --PY ", " --BatchID "]
