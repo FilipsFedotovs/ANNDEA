@@ -530,8 +530,9 @@ if Status=='Tracking' or Status=='Tracking continuation':
                     Status='Tracking continuation'
     #Transpose the rows
     _track_list=[]
-    _segment_id=RecBatchID+'_'+str(X_ID)+'_'+str(Y_ID)+'_'+'1' #Each segment name will have a relevant prefix (since numeration is only unique within an isolated cluster)
+    _segment_id=RecBatchID+'_'+str(X_ID)+'_'+str(Y_ID)+'_'+str(Z_ID) #Each segment name will have a relevant prefix (since numeration is only unique within an isolated cluster)
     _no_tracks=len(_Rec_Hits_Pool)
+    print(_Rec_Hits_Pool)
     for t in range(len(_Rec_Hits_Pool)):
                   for h in _Rec_Hits_Pool[t]:
                          _track_list.append([_segment_id+'-'+str(t+1),h])
