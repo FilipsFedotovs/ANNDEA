@@ -222,7 +222,44 @@ if Status=='Edge generation':
         Status = 'ML analysis'
     else:
         Status = 'Skip tracking'
-x=input()
+
+if Status == 'ML analysis':
+    print(UI.TimeStamp(),'Classifying the edges...')
+    if args.ModelName!='blank':
+        print(UI.TimeStamp(),'Preparing the model')
+        import torch
+        EOSsubDIR=EOS_DIR+'/'+'ANNDEA'
+        EOSsubModelDIR=EOSsubDIR+'/'+'Models'
+        #Load the model meta file
+        Model_Meta_Path=EOSsubModelDIR+'/'+args.ModelName+'_Meta'
+        #Specify the model path
+        Model_Path=EOSsubModelDIR+'/'+args.ModelName
+        ModelMeta=UI.PickleOperations(Model_Meta_Path, 'r', 'N/A')[0]
+        #Meta file contatins training session stats. They also record the optimal acceptance.
+        Acceptance=ModelMeta.TrainSessionsData[-1][-1][3]
+        device = torch.device('cpu')
+        #In PyTorch we don't save the actual model like in Tensorflow. We just save the weights, so we must regenerate the model again. The recipe is in the Model Meta file
+        model = ML.GenerateModel(ModelMeta).to(device)
+        model.load_state_dict(torch.load(Model_Path))
+        model.eval() #In Pytorch this function sets the model into the evaluation mode.
+        w = model(HC.ClusterGraph.x, HC.ClusterGraph.edge_index, HC.ClusterGraph.edge_attr) #Here we use the model to assign the weights between Hit edges
+        w=w.tolist()
+        combined_weight_list=[]
+        for edge in range(len(HC.edges)):
+            combined_weight_list.append(HC.edges[edge]+w[edge]) #Join the Hit Pair classification back to the hit pairs
+        combined_weight_list=pd.DataFrame(combined_weight_list, columns = ['l_HitID','r_HitID','link_strength'])
+        _HitPairs=pd.DataFrame(HC.HitPairs, columns=['l_HitID','l_z','r_HitID','r_z'])
+        _Tot_Hits=pd.merge(_HitPairs, combined_weight_list, how="inner", on=['l_HitID','r_HitID'])
+        _Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['link_strength'] <= Acceptance], inplace = True) #Remove all hit pairs that fail GNN classification
+    else:
+        _Tot_Hits=HC.HitPairs
+        _Tot_Hits['link_strength']=1.0
+    print(UI.TimeStamp(),'Number of all  hit combinations passing GNN selection:',len(_Tot_Hits))
+    if CheckPoint:
+             print(UI.TimeStamp(),'Saving checkpoint 3...')
+             _Tot_Hits.to_csv(CheckPointFile_ML,index=False)
+    Status='Track preparation'
+exit()
 # input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/RTr1_'+RecBatchID+'_'+args.i+'_'+args.j+'_hits.csv'
 # output_file_location=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(X_ID_n)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(X_ID_n)+'_'+str(Y_ID_n)+sfx
 #
