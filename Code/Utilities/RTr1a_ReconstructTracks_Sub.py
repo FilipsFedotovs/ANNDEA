@@ -12,7 +12,7 @@ import os
 parser = argparse.ArgumentParser(description='select cut parameters')
 parser.add_argument('--i',help="Set number", default='1')
 parser.add_argument('--j',help="Subset number", default='1')
-parser.add_argument('--Z_ID_Max',help="SubSubset number", default='1')
+parser.add_argument('--k',help="SubSubset number", default='1')
 parser.add_argument('--TrackFitCutRes',help="Track Fit cut Residual", default=1000,type=int)
 parser.add_argument('--TrackFitCutSTD',help="Track Fit cut", default=10,type=int)
 parser.add_argument('--TrackFitCutMRes',help="Track Fit cut", default=200,type=int)
@@ -27,6 +27,7 @@ parser.add_argument('--AFS',help="AFS directory location", default='.')
 parser.add_argument('--PY',help="Python libraries directory location", default='.')
 parser.add_argument('--cut_dt',help="Cut on angle difference", default='1.0')
 parser.add_argument('--cut_dr',help="Cut on angle difference", default='4000')
+parser.add_argument('--cut_dz',help="Cut on z difference", default='3000')
 parser.add_argument('--ModelName',help="Name of the model to use?", default='0')
 parser.add_argument('--BatchID',help="Give name to this train sample", default='')
 parser.add_argument('--p',help="Path to the output file", default='')
@@ -56,11 +57,12 @@ import numpy as np
 Z_overlap=int(args.Z_overlap)
 Y_overlap=int(args.Y_overlap)
 X_overlap=int(args.X_overlap)
-Z_ID_Max=int(args.Z_ID_Max)
+Z_ID=int(args.k)/Z_overlap
 Y_ID=int(args.j)/Y_overlap
 X_ID=int(args.i)/X_overlap
 Y_ID_n=int(args.j)
 X_ID_n=int(args.i)
+Z_ID_n=int(args.k)
 stepX=float(args.stepX)
 stepZ=float(args.stepZ)
 stepY=float(args.stepY)
@@ -123,6 +125,15 @@ def InjectHit(Predator,Prey, Soft):
                   if el1==el2:
                      return True
              return False
+
+Status='Initialisation'
+CheckPointFile_Ini=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(X_ID_n)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(X_ID_n)+'_'+str(Y_ID_n) +'_'+'CP_Ini.pkl'
+CheckPointFile_Edge=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(X_ID_n)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(X_ID_n)+'_'+str(Y_ID_n) +'_'+'CP_Edge.pkl'
+CheckPointFile_ML=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(X_ID_n)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(X_ID_n)+'_'+str(Y_ID_n) +'_'+'CP_ML.csv'
+CheckPointFile_Prep_1=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(X_ID_n)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(X_ID_n)+'_'+str(Y_ID_n) +'_'+'CP_Prep_1.csv'
+CheckPointFile_Prep_2=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(X_ID_n)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(X_ID_n)+'_'+str(Y_ID_n) +'_'+'CP_Prep_2.csv'
+CheckPointFile_Tracking_TH=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(X_ID_n)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(X_ID_n)+'_'+str(Y_ID_n) +'_'+'CP_Tracking_TH.csv'
+CheckPointFile_Tracking_RP=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(X_ID_n)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(X_ID_n)+'_'+str(Y_ID_n) +'_'+'CP_Tracking_RP.csv'
 
 #Specifying the full path to input/output files
 

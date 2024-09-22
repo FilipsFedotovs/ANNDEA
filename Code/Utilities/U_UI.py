@@ -528,7 +528,8 @@ def ManageTempFolders(spi):
        _tot=spi[1][8]
    else:
        _tot=len(spi[1][8])
-
+   print(spi[1][8])
+   x=input()
    if type(spi[1][8]) is int:
        try:
           os.mkdir(spi[1][1]+spi[1][3]+'Temp_'+spi[1][5]+'_'+spi[1][7]+'_'+str(0))
