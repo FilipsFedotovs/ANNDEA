@@ -69,6 +69,7 @@ stepZ=float(args.stepZ)
 stepY=float(args.stepY)
 cut_dt=float(args.cut_dt)
 cut_dr=float(args.cut_dr)
+cut_dz=float(args.cut_dz)
 ModelName=args.ModelName
 CheckPoint=args.CheckPoint.upper()=='Y'
 RecBatchID=args.BatchID
@@ -189,8 +190,6 @@ if Status=='Initialisation': #Here we load the file from the scratch
     print(UI.TimeStamp(),'Loading pre-selected data from ',input_file_location)
     #Load the file with Hit detailed information
     data=pd.read_csv(input_file_location,header=0,usecols=["Hit_ID","x","y","z","tx","ty"])[["Hit_ID","x","y","z","tx","ty"]]
-    print(data)
-    x=input()
     data["x"] = pd.to_numeric(data["x"],downcast='float')
     data["y"] = pd.to_numeric(data["y"],downcast='float')
     data["z"] = pd.to_numeric(data["z"],downcast='float')
@@ -212,6 +211,18 @@ if Status=='Initialisation': #Here we load the file from the scratch
     else:
         Status = 'Skip tracking'
 
+if Status=='Edge generation':
+    print(UI.TimeStamp(),'Generating the edges...')
+    print(UI.TimeStamp(),"Hit density of the Cluster",round(X_ID,1),round(Y_ID,1),1, "is  {} hits per cm\u00b3".format(round(len(HC.RawClusterGraph)/(stepX/10000*stepY/10000*stepZ/10000)),2))
+    GraphStatus = HC.GenerateEdges(cut_dt, cut_dr, cut_dz, [])
+    if CheckPoint and GraphStatus:
+        print(UI.TimeStamp(),'Saving checkpoint 2...')
+        UI.PickleOperations(CheckPointFile_Edge,'w',HC)
+    if GraphStatus:
+        Status = 'ML analysis'
+    else:
+        Status = 'Skip tracking'
+x=input()
 # input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/RTr1_'+RecBatchID+'_'+args.i+'_'+args.j+'_hits.csv'
 # output_file_location=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(X_ID_n)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(X_ID_n)+'_'+str(Y_ID_n)+sfx
 #
