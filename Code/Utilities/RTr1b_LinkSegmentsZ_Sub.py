@@ -92,7 +92,7 @@ ZContractedTable=ZContractedTable.sort_values(["Master_Segment_ID",'Master_z'],a
 # else: #If Cluster tracking yielded no segments we just create an empty array for consistency
 #      print(UI.TimeStamp(),'No suitable hit pairs in the cluster set, just writing the empty one...')
 #      ZContractedTable=pd.DataFrame([], columns = ['HitID','Master_z','Master_Segment_ID'])
-output_file_location=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(X_ID)+'_'+str(Y_ID)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(X_ID)+'_'+str(Y_ID)+sfx
+output_file_location=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(X_ID)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(X_ID)+'_'+str(Y_ID)+sfx
 print(UI.TimeStamp(),'Writing the output...')
 ZContractedTable.to_csv(output_file_location,index=False) #Write the final result
 print(UI.TimeStamp(),'Output is written to ',output_file_location)
