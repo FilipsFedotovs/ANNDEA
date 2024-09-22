@@ -159,14 +159,8 @@ def CreateCondorJobs(AFS,EOS,PY,path,o,pfx,sfx,ID,loop_params,OptionHeader,Optio
     if batch_sub==False:
         from alive_progress import alive_bar
         bad_pop=[]
-        print(loop_params)
-        print(CalculateNJobs(loop_params))
-
-
         TotJobs=CalculateNJobs(loop_params)[1]
         nest_lvl=CalculateNJobs(loop_params)[0]
-        print(TotJobs,nest_lvl,'quack')
-        x=input()
         OH=OptionHeader+[' --EOS '," --AFS ", " --PY ", " --BatchID "]
         OL=OptionLine+[EOS, AFS, PY, ID]
         TotJobs=int(TotJobs)
@@ -186,6 +180,7 @@ def CreateCondorJobs(AFS,EOS,PY,path,o,pfx,sfx,ID,loop_params,OptionHeader,Optio
              if nest_lvl==2:
                  for i in range(len(loop_params)):
                      for j in range(loop_params[i]):
+
                                required_output_file_location=EOS+'/'+path+'/Temp_'+pfx+'_'+ID+'_'+str(i)+'/'+pfx+'_'+ID+'_'+o+'_'+str(i)+'_'+str(j)+sfx
                                bar.text = f'-> Checking whether the file : {required_output_file_location}, exists...'
                                bar()
@@ -195,9 +190,6 @@ def CreateCondorJobs(AFS,EOS,PY,path,o,pfx,sfx,ID,loop_params,OptionHeader,Optio
                                ScriptName = AFS + '/Code/Utilities/'+Sub_File
                                if os.path.isfile(required_output_file_location)!=True:
                                   bad_pop.append([OH+[' --i ', ' --j ', ' --p ', ' --o ',' --pfx ', ' --sfx '], OL+[i, j, path,o, pfx, sfx], SHName, SUBName, MSGName, ScriptName, 1, 'ANNDEA-'+pfx+'-'+ID, Log,GPU])
-                               ScriptName = AFS + '/Code/Utilities/'+Sub_File
-                               if os.path.isfile(required_output_file_location)!=True:
-                                  bad_pop.append([OH+[' --i ', ' --p ', ' --o ',' --pfx ', ' --sfx '], OL+[i, path,o, pfx, sfx], SHName, SUBName, MSGName, ScriptName, 1, 'ANNDEA-'+pfx+'-'+ID, Log,GPU])
              if nest_lvl==3:
                  for i in range(len(loop_params)):
                      for j in range(len(loop_params[i])):
@@ -216,10 +208,6 @@ def CreateCondorJobs(AFS,EOS,PY,path,o,pfx,sfx,ID,loop_params,OptionHeader,Optio
         from alive_progress import alive_bar
         bad_pop=[]
         TotJobs=0
-        print(loop_params)
-        print(CalculateNJobs(loop_params))
-        print(TotJobs,nest_lvl)
-        x=input()
         TotJobs=CalculateNJobs(loop_params)[1]
         nest_lvl=CalculateNJobs(loop_params)[0]
         OH=OptionHeader+[' --EOS '," --AFS ", " --PY ", " --BatchID "]
