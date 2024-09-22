@@ -161,6 +161,7 @@ def CreateCondorJobs(AFS,EOS,PY,path,o,pfx,sfx,ID,loop_params,OptionHeader,Optio
         bad_pop=[]
         print(loop_params)
         print(CalculateNJobs(loop_params))
+        print(TotJobs,nest_lvl,'quack')
         x=input()
         TotJobs=CalculateNJobs(loop_params)[1]
         nest_lvl=CalculateNJobs(loop_params)[0]
@@ -215,6 +216,7 @@ def CreateCondorJobs(AFS,EOS,PY,path,o,pfx,sfx,ID,loop_params,OptionHeader,Optio
         TotJobs=0
         print(loop_params)
         print(CalculateNJobs(loop_params))
+        print(TotJobs,nest_lvl)
         x=input()
         TotJobs=CalculateNJobs(loop_params)[1]
         nest_lvl=CalculateNJobs(loop_params)[0]
