@@ -329,7 +329,7 @@ Program.append(prog_entry)
 print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry))
 
 ###### Stage 4
-#Program.append('Custom')
+Program.append('Custom')
 
 
 print(UI.TimeStamp(),'There are '+str(len(Program)+1)+' stages (0-'+str(len(Program)+1)+') of this script',bcolors.ENDC)
