@@ -281,20 +281,22 @@ print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry))
 
 
 
-# ###### Stage 1
-# prog_entry=[]
-# job_sets=Xsteps
-# prog_entry.append(' Sending hit cluster to the HTCondor, so the reconstructed clusters can be merged along y-axis')
-# prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/'+RecBatchID+'/','hit_cluster_rec_y_set','RTr1b','.csv',RecBatchID,job_sets,'RTr1b_LinkSegmentsY_Sub.py'])
-# prog_entry.append([' --Y_ID_Max ', ' --i '])
-# prog_entry.append([Ysteps,Xsteps])
-# prog_entry.append(Xsteps)
-# prog_entry.append(LocalSub)
-# prog_entry.append('N/A')
-# prog_entry.append(HTCondorLog)
-# prog_entry.append(False)
-# Program.append(prog_entry)
-# print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry))
+###### Stage 1
+prog_entry=[]
+job_sets=[]
+for i in range(0,Xsteps):
+                job_sets.append(Ysteps)
+prog_entry.append(' Sending hit cluster to the HTCondor, so the reconstructed clusters can be merged along z-axis')
+prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/'+RecBatchID+'/','hit_cluster_rec_z_set','RTr1b','.csv',RecBatchID,job_sets,'RTr1b_LinkSegmentsZ_Sub.py'])
+prog_entry.append([' --Z_ID_Max ', ' --i ',' --j '])
+prog_entry.append([Zsteps,Xsteps,Ysteps])
+prog_entry.append(Xsteps*Ysteps)
+prog_entry.append(LocalSub)
+prog_entry.append('N/A')
+prog_entry.append(HTCondorLog)
+prog_entry.append(False)
+Program.append(prog_entry)
+print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry))
 #
 # ###### Stage 2
 # prog_entry=[]
