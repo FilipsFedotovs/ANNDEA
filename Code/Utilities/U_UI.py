@@ -161,10 +161,12 @@ def CreateCondorJobs(AFS,EOS,PY,path,o,pfx,sfx,ID,loop_params,OptionHeader,Optio
         bad_pop=[]
         print(loop_params)
         print(CalculateNJobs(loop_params))
-        print(TotJobs,nest_lvl,'quack')
-        x=input()
+
+
         TotJobs=CalculateNJobs(loop_params)[1]
         nest_lvl=CalculateNJobs(loop_params)[0]
+        print(TotJobs,nest_lvl,'quack')
+        x=input()
         OH=OptionHeader+[' --EOS '," --AFS ", " --PY ", " --BatchID "]
         OL=OptionLine+[EOS, AFS, PY, ID]
         TotJobs=int(TotJobs)
