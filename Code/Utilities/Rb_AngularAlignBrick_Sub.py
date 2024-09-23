@@ -53,11 +53,11 @@ AFS_DIR=args.AFS
 PY_DIR=args.PY
 if PY_DIR!='': #Temp solution
     sys.path=['',PY_DIR]
-    sys.path.append('/usr/lib64/python36.zip')
-    sys.path.append('/usr/lib64/python3.6')
-    sys.path.append('/usr/lib64/python3.6/lib-dynload')
-    sys.path.append('/usr/lib64/python3.6/site-packages')
-    sys.path.append('/usr/lib/python3.6/site-packages')
+    sys.path.append('/usr/lib64/python39.zip')
+    sys.path.append('/usr/lib64/python3.9')
+    sys.path.append('/usr/lib64/python3.9/lib-dynload')
+    sys.path.append('/usr/lib64/python3.9/site-packages')
+    sys.path.append('/usr/lib/python3.9/site-packages')
 sys.path.append(AFS_DIR+'/Code/Utilities')
 import U_UI as UI
 import U_Alignment as UA
@@ -79,8 +79,8 @@ def AlignPlateAngle(PlateZ,dtx,dty,input_data):
     return temp_data
 
 #Specifying the full path to input/output files
-input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/R_'+BatchID+'_HITS_'+str(j)+'_'+str(k)+'.csv'
-output_file_location=EOS_DIR+p+'/Temp_'+pfx+'_'+BatchID+'_'+str(i)+'/'+pfx+'_'+BatchID+'_'+o+'_'+str(i)+'_'+str(j)+'_'+str(k)+sfx
+input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+BatchID+'/R_'+BatchID+'_HITS_'+str(j)+'_'+str(k)+'.csv'
+output_file_location=EOS_DIR+p+'/Temp_'+pfx+'_'+BatchID+'_'+str(i)+'_'+str(j)+'/'+pfx+'_'+BatchID+'_'+o+'_'+str(i)+'_'+str(j)+'_'+str(k)+sfx
 print(UI.TimeStamp(), "Modules Have been imported successfully...")
 print(UI.TimeStamp(),'Loading pre-selected data from ',input_file_location)
 data=pd.read_csv(input_file_location,header=0,
