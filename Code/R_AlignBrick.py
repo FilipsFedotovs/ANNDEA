@@ -238,7 +238,7 @@ for c in range(Cycle):
     if Mode=='RESET' and c==0:
             print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry,'Delete'))
         #Setting up folders for the output. The reconstruction of just one brick can easily generate >100k of files. Keeping all that blob in one directory can cause problems on lxplus.
-    print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry,'Create'))
+    print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry))
     Program.append(prog_entry)
     Program.append('Custom: Spatial Cycle '+str(c))
 for c in range(Cycle):
