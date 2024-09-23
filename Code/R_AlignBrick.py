@@ -86,6 +86,17 @@ ReqMemory=args.ReqMemory
 Patience=int(args.Patience)
 initial_input_file_location=args.f
 FreshStart=True
+
+if Mode=='RESET':
+    print(UI.ManageFolders(AFS_DIR, EOS_DIR, RecBatchID,'d',['Ra','Rb']))
+    print(UI.ManageFolders(AFS_DIR, EOS_DIR, RecBatchID,'c'))
+elif Mode=='CLEANUP':
+     print(UI.ManageFolders(AFS_DIR, EOS_DIR, RecBatchID,'d',['Ra','Rb']))
+     exit()
+else:
+    print(UI.ManageFolders(AFS_DIR, EOS_DIR, RecBatchID,'c'))
+
+exit()
 #Establishing paths
 EOSsubDIR=EOS_DIR+'/'+'ANNDEA'
 EOSsubModelDIR=EOSsubDIR+'/'+'Models'
@@ -356,7 +367,6 @@ while Status<len(Program):
         result=result[['Type','Plate_ID','j','k','dx','dy']]
         required_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/R_'+RecBatchID+'_HITS.csv'
         data=pd.read_csv(required_file_location,header=0)
-
         data['j']=(data['x']-Min_x)/Size
         data['k']=(data['y']-Min_y)/Size
         data['j']=data['j'].apply(np.floor)
