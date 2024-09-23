@@ -275,7 +275,7 @@ while Status<len(Program):
         for i in range(0,len(JobSets)): #//Temporarily measure to save space || Update 13/08/23 - I have commented it out as it creates more problems than solves it
             for j in range(len(JobSets[i])):
                 for k in range(JobSets[i][j]):
-                  result_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/Temp_Ra'+'_'+RecBatchID+'_'+str(i)+'/Ra_'+RecBatchID+'_SpatialAlignmentResult_'+Program[Status][22:]+'_'+str(i)+'_'+str(j)+'_'+str(k)+'.csv'
+                  result_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/Temp_Ra'+'_'+RecBatchID+'_'+str(i)+'_'+str(j)+'/Ra_'+RecBatchID+'_SpatialAlignmentResult_'+Program[Status][22:]+'_'+str(i)+'_'+str(j)+'_'+str(k)+'.csv'
                   res=UI.LogOperations(result_file_location,'r','N/A')
                   if len(res)>0:
                     result.append(res[0])
