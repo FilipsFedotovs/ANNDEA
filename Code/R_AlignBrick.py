@@ -96,16 +96,15 @@ elif Mode=='CLEANUP':
 else:
     print(UI.ManageFolders(AFS_DIR, EOS_DIR, RecBatchID,'c'))
 
-exit()
 #Establishing paths
 EOSsubDIR=EOS_DIR+'/'+'ANNDEA'
 EOSsubModelDIR=EOSsubDIR+'/'+'Models'
-RecOutputMeta=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_info.pkl'
-required_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/R_'+RecBatchID+'_HITS.csv'
+RecOutputMeta=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/'+RecBatchID+'_info.pkl'
+required_file_location=EOS_DIR+'/ANNDEA/Data/'+RecBatchID+'/REC_SET/R_'+RecBatchID+'_HITS.csv'
 
 ########################################     Phase 1 - Create compact source file    #########################################
 UI.Msg('status','Stage 0:',' Preparing the source data...')
-if os.path.isfile(required_file_location)==False or Mode=='RESET':
+if os.path.isfile(required_file_location)==False:
         UI.Msg('location','Loading raw data from',initial_input_file_location)
         if BrickID=='':
             ColUse=[TrackID,PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty]
@@ -210,27 +209,15 @@ Min_y=Meta.FiducialVolume[2]
 Max_y=Meta.FiducialVolume[3]
 #The function bellow helps to monitor the HTCondor jobs and keep the submission flow
 
-if Mode=='RESET':
-    UI.Msg('vanilla','Performing the cleanup... ')
-    FreshStart=False
-    UI.UpdateStatus(0,Meta,RecOutputMeta)
-    Status=0
-else:
-    UI.Msg('vanilla','Analysing the current script status...')
-    Status=Meta.Status[-1]
+UI.Msg('vanilla','Analysing the current script status...')
+Status=Meta.Status[-1]
 
 UI.Msg('status','Current status is',Status)
 ################ Set the execution sequence for the script
 Program=[]
 
-# UpdateStatus(0)
-# Status=0
-
-if Mode=='CLEANUP':
-    UI.UpdateStatus(19,Meta,RecOutputMeta)
-    Status=19
-
-# ###### Stage 2
+print(JobSets)
+exit()
 
 TotJobs=0
 
