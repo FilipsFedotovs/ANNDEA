@@ -287,7 +287,7 @@ while Status<len(Program):
         else:
             log_result.to_csv(EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/'+RecBatchID+'_REC_LOG.csv',mode="a",index=False,header=False)
         result=result[['Type','Plate_ID','j','k','dx','dy']]
-        required_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/R_'+RecBatchID+'_HITS.csv'
+        required_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/R_'+RecBatchID+'_HITS.csv'
         data=pd.read_csv(required_file_location,header=0)
 
         data['j']=(data['x']-Min_x)/Size
