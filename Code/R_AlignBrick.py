@@ -168,7 +168,7 @@ if os.path.isfile(required_file_location)==False:
         y_no=int(math.ceil((Max_y-Min_y)/Size))
         for j in range(x_no):
             for k in range(y_no):
-                required_temp_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/R_'+RecBatchID+'_HITS_'+str(j)+'_'+str(k)+'.csv'
+                required_temp_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/R_'+RecBatchID+'_HITS_'+str(j)+'_'+str(k)+'.csv'
                 x_min_cut=Min_x+(Size*j)
                 x_max_cut=Min_x+(Size*(j+1))
                 y_min_cut=Min_y+(Size*k)
@@ -263,7 +263,7 @@ Program.append('Custom: Final')
 while Status<len(Program):
     if Program[Status][:6]!='Custom':
         #Standard process here
-        Result=UI.StandardProcess(Program,Status,SubGap,SubPause,RequestExtCPU,JobFlavour,ReqMemory,time_int,Patience,Meta,RecOutputMeta)
+        Result=UI.StandardProcess(Program,Status,SubGap,SubPause,RequestExtCPU,JobFlavour,ReqMemory,time_int,Patience)
         if Result[0]:
              FreshStart=Result[1]
         else:
