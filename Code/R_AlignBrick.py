@@ -100,7 +100,7 @@ else:
 EOSsubDIR=EOS_DIR+'/'+'ANNDEA'
 EOSsubModelDIR=EOSsubDIR+'/'+'Models'
 RecOutputMeta=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/'+RecBatchID+'_info.pkl'
-required_file_location=EOS_DIR+'/ANNDEA/Data/'+RecBatchID+'/REC_SET/R_'+RecBatchID+'_HITS.csv'
+required_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/R_'+RecBatchID+'_HITS.csv'
 
 ########################################     Phase 1 - Create compact source file    #########################################
 UI.Msg('status','Stage 0:',' Preparing the source data...')
