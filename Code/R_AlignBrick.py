@@ -236,7 +236,7 @@ for c in range(Cycle):
     prog_entry.append(False)
 
     if Mode=='RESET' and c==0:
-            print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry,'Delete'))
+            print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry))
         #Setting up folders for the output. The reconstruction of just one brick can easily generate >100k of files. Keeping all that blob in one directory can cause problems on lxplus.
     print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry))
     Program.append(prog_entry)
@@ -253,9 +253,9 @@ for c in range(Cycle):
     prog_entry.append(False)
     prog_entry.append(False)
     if Mode=='RESET' and c==0:
-            print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry,'Delete'))
+            print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry))
         #Setting up folders for the output. The reconstruction of just one brick can easily generate >100k of files. Keeping all that blob in one directory can cause problems on lxplus.
-    print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry,'Create'))
+    print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry))
     Program.append(prog_entry)
     Program.append('Custom: Angular Cycle '+str(c))
 Program.append('Custom: Final')
@@ -275,7 +275,7 @@ while Status<len(Program):
         for i in range(0,len(JobSets)): #//Temporarily measure to save space || Update 13/08/23 - I have commented it out as it creates more problems than solves it
             for j in range(len(JobSets[i])):
                 for k in range(JobSets[i][j]):
-                  result_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_Ra'+'_'+RecBatchID+'_'+str(i)+'/Ra_'+RecBatchID+'_SpatialAlignmentResult_'+Program[Status][22:]+'_'+str(i)+'_'+str(j)+'_'+str(k)+'.csv'
+                  result_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/Temp_Ra'+'_'+RecBatchID+'_'+str(i)+'/Ra_'+RecBatchID+'_SpatialAlignmentResult_'+Program[Status][22:]+'_'+str(i)+'_'+str(j)+'_'+str(k)+'.csv'
                   res=UI.LogOperations(result_file_location,'r','N/A')
                   if len(res)>0:
                     result.append(res[0])
@@ -316,7 +316,7 @@ while Status<len(Program):
         y_no=int(math.ceil((Max_y-Min_y)/Size))
         for j in range(x_no):
             for k in range(y_no):
-                required_temp_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/R_'+RecBatchID+'_HITS_'+str(j)+'_'+str(k)+'.csv'
+                required_temp_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/R_'+RecBatchID+'_HITS_'+str(j)+'_'+str(k)+'.csv'
                 x_min_cut=Min_x+(Size*j)
                 x_max_cut=Min_x+(Size*(j+1))
                 y_min_cut=Min_y+(Size*k)
@@ -338,7 +338,7 @@ while Status<len(Program):
         for i in range(0,len(JobSets)): #//Temporarily measure to save space || Update 13/08/23 - I have commented it out as it creates more problems than solves it
             for j in range(len(JobSets[i])):
                 for k in range(JobSets[i][j]):
-                  result_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_Rb'+'_'+RecBatchID+'_'+str(i)+'/Rb_'+RecBatchID+'_AngularAlignmentResult_'+Program[Status][22:]+'_'+str(i)+'_'+str(j)+'_'+str(k)+'.csv'
+                  result_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/Temp_Rb'+'_'+RecBatchID+'_'+str(i)+'/Rb_'+RecBatchID+'_AngularAlignmentResult_'+Program[Status][22:]+'_'+str(i)+'_'+str(j)+'_'+str(k)+'.csv'
                   res=UI.LogOperations(result_file_location,'r','N/A')
                   if len(res)>0:
                     result.append(res[0])
@@ -375,7 +375,7 @@ while Status<len(Program):
         y_no=int(math.ceil((Max_y-Min_y)/Size))
         for j in range(x_no):
             for k in range(y_no):
-                required_temp_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/R_'+RecBatchID+'_HITS_'+str(j)+'_'+str(k)+'.csv'
+                required_temp_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/R_'+RecBatchID+'_HITS_'+str(j)+'_'+str(k)+'.csv'
                 x_min_cut=Min_x+(Size*j)
                 x_max_cut=Min_x+(Size*(j+1))
                 y_min_cut=Min_y+(Size*k)
