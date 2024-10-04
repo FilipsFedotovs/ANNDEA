@@ -158,6 +158,7 @@ def CP_CleanUp(prog,status):
     sfx=prog[status][1][6]
     rec_batch_id=prog[status][1][7]
     tot_jobs=UI.CalculateNJobs(jobs)[1]
+    jobs_del=0
     with alive_bar(int(tot_jobs),force_tty=True, title='Deleting the unnecessary temp files...') as bar:
         for i in range(len(jobs)):
             for j in range(len(jobs[i])):
@@ -177,10 +178,8 @@ def CP_CleanUp(prog,status):
                             if os.path.isfile(f):
                                 UI.Msg('location','Deleting:',f)
                                 os.remove(f)
-
-
-
-    return output_file_location
+                                jobs_del+=1
+    return jobs_del
 
 ########################################     Phase 1 - Create compact source file    #########################################
 print(UI.TimeStamp(),bcolors.BOLD+'Preparation 2/3:'+bcolors.ENDC+' Preparing the source data...')
@@ -371,7 +370,7 @@ while Status<len(Program):
     if Program[Status]!='Custom':
         #Standard process here
        if Status==0:
-           print(CP_CleanUp(Program, Status))
+           print(str(CP_CleanUp(Program, Status)),'deleted...')
        Result=UI.StandardProcess(Program,Status,SubGap,SubPause,RequestExtCPU,JobFlavour,ReqMemory,time_int,Patience)
 
        if Result[0]:
