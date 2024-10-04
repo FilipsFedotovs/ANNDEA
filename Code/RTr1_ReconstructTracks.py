@@ -158,28 +158,28 @@ def CP_CleanUp(prog,status):
     sfx=prog[status][1][6]
     rec_batch_id=prog[status][1][7]
     print(prog[status][1])
-    TotJobs=UI.CalculateNJobs(jobs)[1]
-    print(TotJobs)
-    exit()
-    #with alive_bar(Xsteps*Ysteps*Zsteps,force_tty=True, title='Distributing input files...') as bar:
-    for i in range(len(jobs)):
-        for j in range(len(jobs[i])):
-            for k in range(jobs[i][j]):
-               output_file_location=eos+p+'Temp_'+pfx+'_'+rec_batch_id+'_'+str(i)+'_'+str(j)+'/'+pfx+'_'+rec_batch_id+'_'+o+'_'+str(i)+'_'+str(j)+'_'+str(k)+sfx
-               if os.path.isfile(output_file_location):
-                    CheckPointFile_Ini=eos+p+'/Temp_'+pfx+'_'+rec_batch_id+'_'+str(i)+'_'+str(j)+'/'+pfx+'_'+rec_batch_id+'_'+o+'_'+str(i)+'_'+str(j)+'_'+str(k) +'_CP_Ini.pkl'
-                    CheckPointFile_Edge=eos+p+'/Temp_'+pfx+'_'+rec_batch_id+'_'+str(i)+'_'+str(j)+'/'+pfx+'_'+rec_batch_id+'_'+o+'_'+str(i)+'_'+str(j) +'_'+str(k) +'_CP_Edge.pkl'
-                    CheckPointFile_ML=eos+p+'/Temp_'+pfx+'_'+rec_batch_id+'_'+str(i)+'_'+str(j)+'/'+pfx+'_'+rec_batch_id+'_'+o+'_'+str(i)+'_'+str(j)+'_'+str(k) + '_CP_ML.csv'
-                    CheckPointFile_Prep_1=eos+p+'/Temp_'+pfx+'_'+rec_batch_id+'_'+str(i)+'_'+str(j)+'/'+pfx+'_'+rec_batch_id+'_'+o+'_'+str(i)+'_'+str(j) +'_'+str(k) +'_CP_Prep_1.csv'
-                    CheckPointFile_Prep_2=eos+p+'/Temp_'+pfx+'_'+rec_batch_id+'_'+str(i)+'_'+str(j)+'/'+pfx+'_'+rec_batch_id+'_'+o+'_'+str(i)+'_'+str(j) +'_'+str(k) +'_CP_Prep_2.csv'
-                    CheckPointFile_Tracking_TH=eos+p+'/Temp_'+pfx+'_'+rec_batch_id+'_'+str(i)+'_'+str(j)+'/'+pfx+'_'+rec_batch_id+'_'+o+'_'+str(i)+'_'+str(j)+'_'+str(k) +'_CP_Tracking_TH.csv'
-                    CheckPointFile_Tracking_RP=eos+p+'/Temp_'+pfx+'_'+rec_batch_id+'_'+str(i)+'_'+str(j)+'/'+pfx+'_'+rec_batch_id+'_'+o+'_'+str(i)+'_'+str(j)+'_'+str(k) +'_CP_Tracking_RP.csv'
-                    files_to_delete=[CheckPointFile_Ini,CheckPointFile_Edge,CheckPointFile_ML,CheckPointFile_Prep_1,CheckPointFile_Prep_2,CheckPointFile_Tracking_TH,CheckPointFile_Tracking_RP]
-                    for f in files_to_delete:
-                        if os.path.isfile(f):
-                            os.remove(f)
-                            print(os.path.isfile(f))
-                            exit()
+    tot_jobs=UI.CalculateNJobs(jobs)[1]
+    with alive_bar(tot_jobs,force_tty=True, title='Cleaning up the unnecessary temp files...') as bar:
+        for i in range(len(jobs)):
+            for j in range(len(jobs[i])):
+                for k in range(jobs[i][j]):
+                   bar()
+                   output_file_location=eos+p+'Temp_'+pfx+'_'+rec_batch_id+'_'+str(i)+'_'+str(j)+'/'+pfx+'_'+rec_batch_id+'_'+o+'_'+str(i)+'_'+str(j)+'_'+str(k)+sfx
+                   if os.path.isfile(output_file_location):
+                        CheckPointFile_Ini=eos+p+'/Temp_'+pfx+'_'+rec_batch_id+'_'+str(i)+'_'+str(j)+'/'+pfx+'_'+rec_batch_id+'_'+o+'_'+str(i)+'_'+str(j)+'_'+str(k) +'_CP_Ini.pkl'
+                        CheckPointFile_Edge=eos+p+'/Temp_'+pfx+'_'+rec_batch_id+'_'+str(i)+'_'+str(j)+'/'+pfx+'_'+rec_batch_id+'_'+o+'_'+str(i)+'_'+str(j) +'_'+str(k) +'_CP_Edge.pkl'
+                        CheckPointFile_ML=eos+p+'/Temp_'+pfx+'_'+rec_batch_id+'_'+str(i)+'_'+str(j)+'/'+pfx+'_'+rec_batch_id+'_'+o+'_'+str(i)+'_'+str(j)+'_'+str(k) + '_CP_ML.csv'
+                        CheckPointFile_Prep_1=eos+p+'/Temp_'+pfx+'_'+rec_batch_id+'_'+str(i)+'_'+str(j)+'/'+pfx+'_'+rec_batch_id+'_'+o+'_'+str(i)+'_'+str(j) +'_'+str(k) +'_CP_Prep_1.csv'
+                        CheckPointFile_Prep_2=eos+p+'/Temp_'+pfx+'_'+rec_batch_id+'_'+str(i)+'_'+str(j)+'/'+pfx+'_'+rec_batch_id+'_'+o+'_'+str(i)+'_'+str(j) +'_'+str(k) +'_CP_Prep_2.csv'
+                        CheckPointFile_Tracking_TH=eos+p+'/Temp_'+pfx+'_'+rec_batch_id+'_'+str(i)+'_'+str(j)+'/'+pfx+'_'+rec_batch_id+'_'+o+'_'+str(i)+'_'+str(j)+'_'+str(k) +'_CP_Tracking_TH.csv'
+                        CheckPointFile_Tracking_RP=eos+p+'/Temp_'+pfx+'_'+rec_batch_id+'_'+str(i)+'_'+str(j)+'/'+pfx+'_'+rec_batch_id+'_'+o+'_'+str(i)+'_'+str(j)+'_'+str(k) +'_CP_Tracking_RP.csv'
+                        files_to_delete=[CheckPointFile_Ini,CheckPointFile_Edge,CheckPointFile_ML,CheckPointFile_Prep_1,CheckPointFile_Prep_2,CheckPointFile_Tracking_TH,CheckPointFile_Tracking_RP]
+                        for f in files_to_delete:
+                            if os.path.isfile(f):
+                                UI.Msg('location','Deleting:',f)
+                                os.remove(f)
+
+
 
     return output_file_location
 
