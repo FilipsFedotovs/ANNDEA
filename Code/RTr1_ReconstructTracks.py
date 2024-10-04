@@ -173,7 +173,8 @@ def CP_CleanUp(prog,status):
                     files_to_delete=[CheckPointFile_Ini,CheckPointFile_Edge,CheckPointFile_ML,CheckPointFile_Prep_1,CheckPointFile_Prep_2,CheckPointFile_Tracking_TH,CheckPointFile_Tracking_RP]
                     for f in files_to_delete:
                         if os.path.isfile(f):
-                            print(f)
+                            os.remove(f)
+                            print(os.path.isfile(f))
                             exit()
 
     return output_file_location
