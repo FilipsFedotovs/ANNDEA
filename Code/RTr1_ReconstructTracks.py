@@ -150,7 +150,7 @@ else:
        exit()
 
 def CP_CleanUp(prog,status):
-    return prog[status][1]
+    return prog[status][1][8]
 
 ########################################     Phase 1 - Create compact source file    #########################################
 print(UI.TimeStamp(),bcolors.BOLD+'Preparation 2/3:'+bcolors.ENDC+' Preparing the source data...')
