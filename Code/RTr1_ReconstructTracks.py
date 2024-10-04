@@ -157,7 +157,6 @@ def CP_CleanUp(prog,status):
     pfx=prog[status][1][5]
     sfx=prog[status][1][6]
     rec_batch_id=prog[status][1][7]
-    print(prog[status][1])
     tot_jobs=UI.CalculateNJobs(jobs)[1]
     with alive_bar(int(tot_jobs),force_tty=True, title='Deleting the unnecessary temp files...') as bar:
         for i in range(len(jobs)):
@@ -373,9 +372,6 @@ while Status<len(Program):
         #Standard process here
        if Status==0:
            print(CP_CleanUp(Program, Status))
-
-
-           exit()
        Result=UI.StandardProcess(Program,Status,SubGap,SubPause,RequestExtCPU,JobFlavour,ReqMemory,time_int,Patience)
 
        if Result[0]:
