@@ -340,10 +340,10 @@ print(UI.TimeStamp(),'Current stage has a code',Status,bcolors.ENDC)
 while Status<len(Program):
     if Program[Status]!='Custom':
         #Standard process here
-
-       Result=UI.StandardProcess(Program,Status,SubGap,SubPause,RequestExtCPU,JobFlavour,ReqMemory,time_int,Patience)
        print(CP_CleanUp(Program))
        exit()
+       Result=UI.StandardProcess(Program,Status,SubGap,SubPause,RequestExtCPU,JobFlavour,ReqMemory,time_int,Patience)
+       
        if Result[0]:
             UI.UpdateStatus(Status+1,Meta,RecOutputMeta)
        else:
