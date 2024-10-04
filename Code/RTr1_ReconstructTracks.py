@@ -151,11 +151,11 @@ else:
 
 def CP_CleanUp(prog,status):
     jobs=prog[status][1][8]
-    #rec_batch_id=RecBatchID
     eos=prog[status][1][1]
     p=prog[status][1][3]
     pfx=prog[status][1][5]
-    output_file_location=eos+p+'Temp_'+pfx+'_'#+RecBatchID+'_'+str(X_ID_n)+'_'+str(Y_ID_n)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(X_ID_n)+'_'+str(Y_ID_n)+'_'+str(Z_ID_n)+sfx
+    rec_batch_id=prog[status][1][7]
+    output_file_location=eos+p+'Temp_'+pfx+'_'+rec_batch_id+'_'#+str(X_ID_n)+'_'+str(Y_ID_n)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(X_ID_n)+'_'+str(Y_ID_n)+'_'+str(Z_ID_n)+sfx
     return output_file_location
 
 ########################################     Phase 1 - Create compact source file    #########################################
