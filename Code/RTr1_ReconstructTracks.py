@@ -370,7 +370,7 @@ while Status<len(Program):
     if Program[Status]!='Custom':
         #Standard process here
        if Status==0:
-           print(str(CP_CleanUp(Program, Status)),'deleted...')
+           print(str(CP_CleanUp(Program, Status)),'temp files deleted...')
        Result=UI.StandardProcess(Program,Status,SubGap,SubPause,RequestExtCPU,JobFlavour,ReqMemory,time_int,Patience)
 
        if Result[0]:
