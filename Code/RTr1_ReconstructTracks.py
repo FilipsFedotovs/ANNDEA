@@ -153,13 +153,14 @@ def CP_CleanUp(prog,status):
     jobs=prog[status][1][8]
     eos=prog[status][1][1]
     p=prog[status][1][3]
+    o=prog[status][1][4]
     pfx=prog[status][1][5]
     rec_batch_id=prog[status][1][7]
     print(prog[status][1])
     for i in range(len(jobs)):
         for j in range(len(jobs[i])):
             for k in range(jobs[i][j]):
-               output_file_location=eos+p+'Temp_'+pfx+'_'+rec_batch_id+'_'+str(i)+'_'+str(j)+'/'+pfx+'_'+rec_batch_id+'_'#+o+'_'+str(X_ID_n)+'_'+str(Y_ID_n)+'_'+str(Z_ID_n)+sfx
+               output_file_location=eos+p+'Temp_'+pfx+'_'+rec_batch_id+'_'+str(i)+'_'+str(j)+'/'+pfx+'_'+rec_batch_id+'_'+o+'_'+str(i)+'_'+str(j)+'_'+str(k)#+sfx
                print(output_file_location)
                exit()
     return output_file_location
