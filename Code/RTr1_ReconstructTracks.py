@@ -154,7 +154,7 @@ def CP_CleanUp(prog,status):
     #rec_batch_id=RecBatchID
     eos=prog[status][1][1]
     output_file_location=eos#+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(X_ID_n)+'_'+str(Y_ID_n)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(X_ID_n)+'_'+str(Y_ID_n)+'_'+str(Z_ID_n)+sfx
-    return jobs, eos,
+    return output_file_location
 
 ########################################     Phase 1 - Create compact source file    #########################################
 print(UI.TimeStamp(),bcolors.BOLD+'Preparation 2/3:'+bcolors.ENDC+' Preparing the source data...')
