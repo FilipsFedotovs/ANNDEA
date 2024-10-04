@@ -149,8 +149,8 @@ else:
        print(UI.TimeStamp(),bcolors.FAIL+'Fail! No existing model meta files have been found, exiting now'+bcolors.ENDC)
        exit()
 
-def CP_CleanUp(prog):
-    return prog
+def CP_CleanUp(prog,status):
+    return prog[status]
 
 ########################################     Phase 1 - Create compact source file    #########################################
 print(UI.TimeStamp(),bcolors.BOLD+'Preparation 2/3:'+bcolors.ENDC+' Preparing the source data...')
@@ -340,10 +340,10 @@ print(UI.TimeStamp(),'Current stage has a code',Status,bcolors.ENDC)
 while Status<len(Program):
     if Program[Status]!='Custom':
         #Standard process here
-       print(CP_CleanUp(Program))
+       print(CP_CleanUp(Program, Status))
        exit()
        Result=UI.StandardProcess(Program,Status,SubGap,SubPause,RequestExtCPU,JobFlavour,ReqMemory,time_int,Patience)
-       
+
        if Result[0]:
             UI.UpdateStatus(Status+1,Meta,RecOutputMeta)
        else:
