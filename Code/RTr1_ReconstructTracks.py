@@ -150,7 +150,7 @@ else:
        exit()
 
 def CP_CleanUp(prog,status):
-    return prog[status][1][8]
+    return prog[status][1][7], prog[status][1][8]
 
 ########################################     Phase 1 - Create compact source file    #########################################
 print(UI.TimeStamp(),bcolors.BOLD+'Preparation 2/3:'+bcolors.ENDC+' Preparing the source data...')
@@ -342,6 +342,8 @@ while Status<len(Program):
         #Standard process here
        if Status==0:
            print(CP_CleanUp(Program, Status))
+
+
            exit()
        Result=UI.StandardProcess(Program,Status,SubGap,SubPause,RequestExtCPU,JobFlavour,ReqMemory,time_int,Patience)
 
