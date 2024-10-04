@@ -162,8 +162,9 @@ def CP_CleanUp(prog,status):
         for j in range(len(jobs[i])):
             for k in range(jobs[i][j]):
                output_file_location=eos+p+'Temp_'+pfx+'_'+rec_batch_id+'_'+str(i)+'_'+str(j)+'/'+pfx+'_'+rec_batch_id+'_'+o+'_'+str(i)+'_'+str(j)+'_'+str(k)+sfx
-               print(os.path.isfile(output_file_location))
-               exit()
+               if os.path.isfile(output_file_location):
+                   print(output_file_location)
+                   exit()
     return output_file_location
 
 ########################################     Phase 1 - Create compact source file    #########################################
