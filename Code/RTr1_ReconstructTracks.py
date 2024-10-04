@@ -158,6 +158,10 @@ def CP_CleanUp(prog,status):
     sfx=prog[status][1][6]
     rec_batch_id=prog[status][1][7]
     print(prog[status][1])
+    TotJobs=UI.CalculateNJobs(jobs)[1]
+    print(TotJobs)
+    exit()
+    #with alive_bar(Xsteps*Ysteps*Zsteps,force_tty=True, title='Distributing input files...') as bar:
     for i in range(len(jobs)):
         for j in range(len(jobs[i])):
             for k in range(jobs[i][j]):
