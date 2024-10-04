@@ -149,6 +149,9 @@ else:
        print(UI.TimeStamp(),bcolors.FAIL+'Fail! No existing model meta files have been found, exiting now'+bcolors.ENDC)
        exit()
 
+def CP_CleanUp(prog):
+    return prog
+
 ########################################     Phase 1 - Create compact source file    #########################################
 print(UI.TimeStamp(),bcolors.BOLD+'Preparation 2/3:'+bcolors.ENDC+' Preparing the source data...')
 required_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/RTr1_'+RecBatchID+'_hits.csv'
@@ -339,6 +342,8 @@ while Status<len(Program):
         #Standard process here
 
        Result=UI.StandardProcess(Program,Status,SubGap,SubPause,RequestExtCPU,JobFlavour,ReqMemory,time_int,Patience)
+       print(CP_CleanUp(Program))
+       exit()
        if Result[0]:
             UI.UpdateStatus(Status+1,Meta,RecOutputMeta)
        else:
@@ -418,7 +423,6 @@ while Status<len(Program):
 
         Bad_Tracks_CP_File=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/Temp_RTr1c_'+RecBatchID+'_0'+'/RTr1c_'+RecBatchID+'_Bad_Tracks_CP.csv'
         if os.path.isfile(Bad_Tracks_CP_File)==False or Mode=='RESET':
-
             Bad_Tracks_Head=Bad_Tracks[[RecBatchID+'_Brick_ID',RecBatchID+'_Track_ID']]
             Bad_Tracks_Head.drop_duplicates(inplace=True)
             Bad_Tracks_List=Bad_Tracks.values.tolist() #I find it is much easier to deal with tracks in list format when it comes to fitting
