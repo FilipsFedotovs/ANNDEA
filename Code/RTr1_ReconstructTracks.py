@@ -155,6 +155,7 @@ def CP_CleanUp(prog,status):
     p=prog[status][1][3]
     pfx=prog[status][1][5]
     rec_batch_id=prog[status][1][7]
+    print(prog[status][1])
     for i in range(len(jobs)):
         for j in range(len(jobs[i])):
             for k in range(jobs[i][j]):
