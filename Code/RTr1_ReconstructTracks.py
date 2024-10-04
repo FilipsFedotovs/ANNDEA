@@ -159,7 +159,7 @@ def CP_CleanUp(prog,status):
     rec_batch_id=prog[status][1][7]
     print(prog[status][1])
     tot_jobs=UI.CalculateNJobs(jobs)[1]
-    with alive_bar(tot_jobs,force_tty=True, title='Cleaning up the unnecessary temp files...') as bar:
+    with alive_bar(int(tot_jobs),force_tty=True, title='Deleting the unnecessary temp files...') as bar:
         for i in range(len(jobs)):
             for j in range(len(jobs[i])):
                 for k in range(jobs[i][j]):
