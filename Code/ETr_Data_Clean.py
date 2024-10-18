@@ -75,8 +75,8 @@ Min_z=data[PM.z].min()
 Max_z=data[PM.z].max()
 UI.Msg('vanilla','The snapshot of the data is printed below:')
 print(data)
-def Density(data):
-    UI.Msg('vanilla','Calculating density...')
+def Density(data,msg):
+    UI.Msg('vanilla',msg)
     data_agg=data[[PM.Hit_ID,PM.x,PM.y,PM.z]]
     data_agg[PM.x]=data_agg[PM.x]-Min_x
     data_agg[PM.y]=data_agg[PM.y]-Min_y
@@ -93,7 +93,7 @@ def Density(data):
     UI.Msg('result','Maximum hits per cluster: ',data_agg[PM.Hit_ID].max(),' hits')
     return 1
 
-Density(data)
+Density(data,'Calculating the intitial density of the data')
 exit()
 
         # if BrickID=='':
