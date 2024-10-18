@@ -80,6 +80,9 @@ data_agg=data[[PM.Hit_ID,PM.x,PM.y,PM.z]]
 data_agg[PM.x]=data_agg[PM.x]-Min_x
 data_agg[PM.y]=data_agg[PM.y]-Min_y
 data_agg[PM.z]=data_agg[PM.z]-Min_z
+data_agg['X']=data_agg[PM.x]/PM.stepX
+data_agg['Y']=data_agg[PM.y]/PM.stepY
+data_agg['Z']=data_agg[PM.z]/PM.stepZ
 print(data_agg)
 exit()
         # if BrickID=='':
