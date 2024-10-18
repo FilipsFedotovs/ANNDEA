@@ -83,6 +83,9 @@ data_agg[PM.z]=data_agg[PM.z]-Min_z
 data_agg['X']=data_agg[PM.x]/PM.stepX
 data_agg['Y']=data_agg[PM.y]/PM.stepY
 data_agg['Z']=data_agg[PM.z]/PM.stepZ
+data_agg['X']=data_agg['X'].apply(np.ceil)
+data_agg['Y']=data_agg['Y'].apply(np.ceil)
+data_agg['Z']=data_agg['Z'].apply(np.ceil)
 print(data_agg)
 exit()
         # if BrickID=='':
