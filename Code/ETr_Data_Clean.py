@@ -75,20 +75,27 @@ Min_z=data[PM.z].min()
 Max_z=data[PM.z].max()
 UI.Msg('vanilla','The snapshot of the data is printed below:')
 print(data)
-UI.Msg('vanilla','Calculating density...')
-data_agg=data[[PM.Hit_ID,PM.x,PM.y,PM.z]]
-data_agg[PM.x]=data_agg[PM.x]-Min_x
-data_agg[PM.y]=data_agg[PM.y]-Min_y
-data_agg[PM.z]=data_agg[PM.z]-Min_z
-data_agg[PM.x]=data_agg[PM.x]/PM.stepX
-data_agg[PM.y]=data_agg[PM.y]/PM.stepY
-data_agg[PM.z]=data_agg[PM.z]/PM.stepZ
-data_agg[PM.x]=data_agg[PM.x].apply(np.ceil)
-data_agg[PM.y]=data_agg[PM.y].apply(np.ceil)
-data_agg[PM.z]=data_agg[PM.z].apply(np.ceil)
-data_agg=data_agg.groupby([PM.x,PM.y,PM.z],as_index=False).nunique()
-print(data_agg[PM.Hit_ID].min(),data_agg[PM.Hit_ID].mean(), data_agg[PM.Hit_ID].max())
+def Density(data):
+    UI.Msg('vanilla','Calculating density...')
+    data_agg=data[[PM.Hit_ID,PM.x,PM.y,PM.z]]
+    data_agg[PM.x]=data_agg[PM.x]-Min_x
+    data_agg[PM.y]=data_agg[PM.y]-Min_y
+    data_agg[PM.z]=data_agg[PM.z]-Min_z
+    data_agg[PM.x]=data_agg[PM.x]/PM.stepX
+    data_agg[PM.y]=data_agg[PM.y]/PM.stepY
+    data_agg[PM.z]=data_agg[PM.z]/PM.stepZ
+    data_agg[PM.x]=data_agg[PM.x].apply(np.ceil)
+    data_agg[PM.y]=data_agg[PM.y].apply(np.ceil)
+    data_agg[PM.z]=data_agg[PM.z].apply(np.ceil)
+    data_agg=data_agg.groupby([PM.x,PM.y,PM.z],as_index=False).nunique()
+    UI.Msg('result','Minimum hits per cluster: ',data_agg[PM.Hit_ID].min(),' hits')
+    UI.Msg('result','Average hits per cluster: ',data_agg[PM.Hit_ID].mean(),' hits')
+    UI.Msg('result','Maximum hits per cluster: ',data_agg[PM.Hit_ID].max(),' hits')
+    return 1
+
+Density(data)
 exit()
+
         # if BrickID=='':
         #     data[BrickID]='D'
         # total_rows=len(data.axes[0])
