@@ -71,7 +71,13 @@ Min_x=data[PM.x].min()
 Max_x=data[PM.x].max()
 Min_y=data[PM.y].min()
 Max_y=data[PM.y].max()
+Min_z=data[PM.z].min()
+Max_z=data[PM.z].max()
+UI.Msg('vanilla','The snapshot of the data is printed below:')
 print(data)
+UI.Msg('vanilla','Calculating density...')
+data_agg=data[[PM.Hit_ID,PM.x,PM.y,PM.z]]
+print(data_agg)
 exit()
         # if BrickID=='':
         #     data[BrickID]='D'
