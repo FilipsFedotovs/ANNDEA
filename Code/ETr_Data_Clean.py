@@ -100,7 +100,7 @@ print('-------------------------------------------------------------')
 
 
 if BrickID=='':
-    data[BrickID]='D'
+    data['BrickID']='D'
 UI.Msg('vanilla','Removing unreconstructed hits...')
 track_data=data.dropna()
 print(track_data)
