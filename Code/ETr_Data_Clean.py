@@ -93,15 +93,18 @@ def Density(data,msg):
     UI.Msg('result','Maximum hits per cluster: ',data_agg[PM.Hit_ID].max(),' hits')
     return 1
 
+print('-------------------------------------------------------------')
 Density(data,'Calculating the intitial density of the data')
-exit()
+print('-------------------------------------------------------------')
 
-        # if BrickID=='':
-        #     data[BrickID]='D'
-        # total_rows=len(data.axes[0])
-        # UI.Msg('result','The raw data has',total_rows,'hits')
-        # UI.Msg('vanilla','Removing unreconstructed hits...')
-        # data=data.dropna()
+
+
+if BrickID=='':
+    data[BrickID]='D'
+UI.Msg('vanilla','Removing unreconstructed hits...')
+track_data=data.dropna()
+print(track_data)
+exit()
         # final_rows=len(data.axes[0])
         # UI.Msg('result','The cleaned data has',final_rows,'hits')
         # data[BrickID] = data[BrickID].astype(str)
