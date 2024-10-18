@@ -86,6 +86,7 @@ data_agg[PM.z]=data_agg[PM.z]/PM.stepZ
 data_agg[PM.x]=data_agg[PM.x].apply(np.ceil)
 data_agg[PM.y]=data_agg[PM.y].apply(np.ceil)
 data_agg[PM.z]=data_agg[PM.z].apply(np.ceil)
+data_agg=data_agg.groupby([PM.x,PM.y,PM.z]).agg({PM.Hit_ID: ["nunique"]})
 print(data_agg)
 exit()
         # if BrickID=='':
