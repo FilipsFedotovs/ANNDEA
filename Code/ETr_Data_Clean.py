@@ -87,7 +87,7 @@ data_agg[PM.x]=data_agg[PM.x].apply(np.ceil)
 data_agg[PM.y]=data_agg[PM.y].apply(np.ceil)
 data_agg[PM.z]=data_agg[PM.z].apply(np.ceil)
 data_agg=data_agg.groupby([PM.x,PM.y,PM.z],as_index=False).nunique()
-print(data_agg)
+print(data_agg[PM.Hit_ID].min,data_agg[PM.Hit_ID].mean, data_agg[PM.Hit_ID].max)
 exit()
         # if BrickID=='':
         #     data[BrickID]='D'
