@@ -46,7 +46,6 @@ parser.add_argument('--o',help="Give this training sample batch an ID", default=
 parser.add_argument('--f',help="Please enter the full path to the file with track reconstruction", default='/afs/cern.ch/work/f/ffedship/public/SHIP/Source_Data/SHIP_Emulsion_Rec_Raw_UR.csv')
 parser.add_argument('--Size',help="Split the cross section of the brick in the squares with the size being a length of such a square.", default='0')
 parser.add_argument('--MinHits',help="What is the minimum number of hits per track?", default=50,type=int)
-parser.add_argument('--MinHits',help="What is the minimum number of hits per track?", default=50,type=int)
 ######################################## Parsing argument values  #############################################################
 args = parser.parse_args()
 Mode=args.Mode.upper()
