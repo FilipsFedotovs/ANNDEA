@@ -117,9 +117,19 @@ track_data=pd.merge(min_track_data, max_track_data,how='inner',on=[TrackID])
 print(track_data)
 track_data['Plate_Length']=track_data['Max_Plate_ID']-track_data['Min_Plate_ID']+1
 track_data=track_data[track_data.Plate_Length > MaxLen]
-track_data=track_data.drop(['Min_Plate_ID','Max_Plate_ID'],axis=1)
+track_data=track_data.drop(['Min_Plate_ID','Max_Plate_ID','Plate_Length'],axis=1)
+KLT_data=pd.merge(data,track_data,how='inner',on=[TrackID])
+print(KLT_data)
 
-print(track_data)
+print('-------------------------------------------------------------')
+Density(KLT_data,'Calculating the density of the data with long tracks only')
+print('-------------------------------------------------------------')
+
+track_data['ELT_Flag']=True
+ELT_data=pd.merge(data,track_data,how='left',on=[TrackID])
+ELT_data=track_data[ELT_data.ELT_Flag != True]
+print(ELT_data)
+
 exit()
         # final_rows=len(data.axes[0])
         # UI.Msg('result','The cleaned data has',final_rows,'hits')
