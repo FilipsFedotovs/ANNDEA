@@ -44,12 +44,12 @@ parser.add_argument('--Mode', help='Script will continue from the last checkpoin
 parser.add_argument('--o',help="Give this training sample batch an ID", default='SHIP_UR_v1')
 parser.add_argument('--f',help="Please enter the full path to the file with track reconstruction", default='/afs/cern.ch/work/f/ffedship/public/SHIP/Source_Data/SHIP_Emulsion_Rec_Raw_UR.csv')
 parser.add_argument('--Size',help="Split the cross section of the brick in the squares with the size being a length of such a square.", default='0')
-parser.add_argument('--MinHits',help="What is the minimum number of hits per track?", default=50,type=int)
+parser.add_argument('--MaxLen',help="What is the minimum number of hits per track?", default=50,type=int)
 ######################################## Parsing argument values  #############################################################
 args = parser.parse_args()
 Mode=args.Mode.upper()
 TrackID=args.TrackID
-MinHits=int(args.MinHits)
+MaxLen=int(args.MinHits)
 Size=int(args.Size)
 initial_input_file_location=args.f
 output_file_location=args.f
@@ -115,7 +115,10 @@ min_track_data=track_data.groupby([TrackID],as_index=False)['Min_Plate_ID'].min(
 max_track_data=track_data.groupby([TrackID],as_index=False)['Max_Plate_ID'].max()
 track_data=pd.merge(min_track_data, max_track_data,how='inner',on=[TrackID])
 print(track_data)
-track_data['Plate_Length']=track_data['Max_Plate_ID']-track_data['Min_Plate_ID']
+track_data['Plate_Length']=track_data['Max_Plate_ID']-track_data['Min_Plate_ID']+1
+track_data=track_data[track_data.Plate_Length > MaxLen]
+track_data=track_data.drop(['Min_Plate_ID','Max_Plate_ID'],axis=1)
+
 print(track_data)
 exit()
         # final_rows=len(data.axes[0])
