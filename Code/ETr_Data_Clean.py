@@ -127,7 +127,7 @@ print('-------------------------------------------------------------')
 
 track_data['ELT_Flag']=True
 ELT_data=pd.merge(data,track_data,how='left',on=[TrackID])
-ELT_data=track_data[ELT_data.ELT_Flag != True]
+ELT_data=ELT_data[ELT_data.ELT_Flag != True]
 print(ELT_data)
 
 exit()
