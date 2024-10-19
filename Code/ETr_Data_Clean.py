@@ -128,11 +128,14 @@ ELT_data=pd.merge(data,track_data,how='left',on=[TrackID])
 ELT_data=ELT_data[ELT_data.ELT_Flag != True]
 
 print('-------------------------------------------------------------')
-Density(KLT_data,'Calculating the density of the data without long tracks')
+Density(KLT_data,'Calculating the density of the data with long tracks only')
 print('-------------------------------------------------------------')
 
-KLT_data=KLT_data.drop(['ELT_Flag'],axis=1)
-print(KLT_data)
+print('-------------------------------------------------------------')
+Density(ELT_data,'Calculating the density of the data without long tracks...')
+print('-------------------------------------------------------------')
+ELT_data=ELT_data.drop(['ELT_Flag'],axis=1)
+print(ELT_data)
 exit()
         # final_rows=len(data.axes[0])
         # UI.Msg('result','The cleaned data has',final_rows,'hits')
