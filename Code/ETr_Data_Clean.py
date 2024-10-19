@@ -39,8 +39,7 @@ UI.WelcomeMsg('Initialising emulsion data clean module...','Filips Fedotovs (PhD
 
 #Setting the parser - this script is usually not run directly, but is used by a Master version Counterpart that passes the required arguments
 parser = argparse.ArgumentParser(description='This script prepares training data for training the tracking model')
-parser.add_argument('--TrackID',help="What track name is used?", default='ANN_Track_ID')
-parser.add_argument('--BrickID',help="What brick ID name is used?", default='ANN_Brick_ID')
+parser.add_argument('--TrackID',help="What track name is used?", default='FEDRA_Track_ID')
 parser.add_argument('--Mode', help='Script will continue from the last checkpoint, unless you want to start from the scratch, then type "Reset"',default='')
 parser.add_argument('--o',help="Give this training sample batch an ID", default='SHIP_UR_v1')
 parser.add_argument('--f',help="Please enter the full path to the file with track reconstruction", default='/afs/cern.ch/work/f/ffedship/public/SHIP/Source_Data/SHIP_Emulsion_Rec_Raw_UR.csv')
@@ -50,7 +49,6 @@ parser.add_argument('--MinHits',help="What is the minimum number of hits per tra
 args = parser.parse_args()
 Mode=args.Mode.upper()
 TrackID=args.TrackID
-BrickID=args.BrickID
 MinHits=int(args.MinHits)
 Size=int(args.Size)
 initial_input_file_location=args.f
@@ -60,10 +58,8 @@ output_file_location=args.f
 UI.Msg('status','Stage 0:',' Preparing the source data...')
 
 UI.Msg('location','Loading raw data from',initial_input_file_location)
-if BrickID=='':
-    ColUse=[TrackID,PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty]
-else:
-    ColUse=[TrackID,BrickID,PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty]
+ColUse=[TrackID,PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty]
+
 data=pd.read_csv(initial_input_file_location,
             header=0,
             usecols=ColUse)
@@ -99,11 +95,11 @@ print('-------------------------------------------------------------')
 
 
 
-if BrickID=='':
-    data['BrickID']='D'
+
 UI.Msg('vanilla','Removing unreconstructed hits...')
 track_data=data.dropna()
-print(track_data)
+rank_track_data=track_data[[PM.z]].drop_duplicates()
+print(rank_track_data)
 exit()
         # final_rows=len(data.axes[0])
         # UI.Msg('result','The cleaned data has',final_rows,'hits')
