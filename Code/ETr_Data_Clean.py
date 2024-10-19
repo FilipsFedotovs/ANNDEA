@@ -53,9 +53,9 @@ MaxLen=int(args.MaxLen)
 Size=int(args.Size)
 initial_input_file_location=args.f
 
-output_file_location=initial_input_file_location[:-4]
-print(output_file_location)
-exit()
+output_file_location_KLT=initial_input_file_location[:-4]+'_'+args.o+'_KLT.csv'
+output_file_location_ELT=initial_input_file_location[:-4]+'_'+args.o+'_ELT.csv'
+
 
 ########################################     Phase 1 - Create compact source file    #########################################
 UI.Msg('status','Stage 0:',' Preparing the source data...')
@@ -135,6 +135,14 @@ print('-------------------------------------------------------------')
 Density(ELT_data,'Calculating the density of the data without long tracks...')
 print('-------------------------------------------------------------')
 ELT_data=ELT_data.drop(['ELT_Flag'],axis=1)
+
+x=input('Would you like to save the files? Press y')
+if x=='y':
+    KLT_data.to_csv(output_file_location_KLT)
+    UI.Msg('location', 'The data with long tracks only is written to:',output_file_location_KLT)
+
+    ELT_data.to_csv(output_file_location_ELT)
+    UI.Msg('location', 'The data without long tracks is written to:',output_file_location_ELT)
 
 exit()
 
