@@ -98,7 +98,7 @@ def Density(data,msg):
     return 1
 
 print('-------------------------------------------------------------')
-Density(data,'Calculating the intitial density of the data')
+Density(data,'Calculating the initial density of the data')
 print('-------------------------------------------------------------')
 
 
@@ -112,6 +112,7 @@ track_data=pd.merge(track_data,rank_track_data,how='left', on=[PM.z])
 track_data['Min_Plate_ID']=track_data['Plate_ID']
 track_data['Max_Plate_ID']=track_data['Plate_ID']
 track_data=track_data.groupby([TrackID],as_index=False).agg({'Min_Plate_ID': ["min"], "Max_Plate_ID": ["max"]})
+track_data['Plate_Length']=track_data['Max_Plate_ID']-track_data['Min_Plate_ID']
 print(track_data)
 exit()
         # final_rows=len(data.axes[0])
