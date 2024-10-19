@@ -111,7 +111,9 @@ rank_track_data['Plate_ID']=rank_track_data[PM.z].rank().astype('int')
 track_data=pd.merge(track_data,rank_track_data,how='left', on=[PM.z])
 track_data['Min_Plate_ID']=track_data['Plate_ID']
 track_data['Max_Plate_ID']=track_data['Plate_ID']
-track_data=track_data.groupby([TrackID],as_index=False)['Min_Plate_ID'].min()
+min_track_data=track_data.groupby([TrackID],as_index=False)['Min_Plate_ID'].min()
+max_track_data=track_data.groupby([TrackID],as_index=False)['Max_Plate_ID'].max()
+track_data=pd.merge(min_track_data, max_track_data,how='inner',on=[TrackID])
 print(track_data)
 track_data['Plate_Length']=track_data['Max_Plate_ID']-track_data['Min_Plate_ID']
 print(track_data)
