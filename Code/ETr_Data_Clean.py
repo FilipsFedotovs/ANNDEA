@@ -85,7 +85,7 @@ def Density(data,msg):
     data_agg[PM.y]=data_agg[PM.y].apply(np.ceil)
     data_agg[PM.z]=data_agg[PM.z].apply(np.ceil)
     data_agg=data_agg.groupby([PM.x,PM.y,PM.z],as_index=False).nunique()
-    UI.Msg('result','Minimum hits per cluster: ',data_agg[PM.Hit_ID].min(),' hits')
+    UI.Msg('result','Minimum hits per cluster: ',int(data_agg[PM.Hit_ID].min()),' hits')
     UI.Msg('result','Minimum hits per cubic cm: ',data_agg[PM.Hit_ID].min()/(Volume),' hits')
     print('-------------------------------')
     UI.Msg('result','Average hits per cluster: ',data_agg[PM.Hit_ID].mean(),' hits')
