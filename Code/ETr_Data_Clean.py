@@ -1,5 +1,5 @@
-#This script aligns the brick based on the reconstructed volumene tracks
-#Tracking Module of the ANNDEA package
+#This script removes long tracks from the data
+#Optional Module of the ANNDEA package
 #Made by Filips Fedotovs
 
 ########################################    Import libraries    #############################################
@@ -24,15 +24,10 @@ if PY_DIR!='': #Temp solution - the decision was made to move all libraries to E
     sys.path.append('/usr/lib/python3.9/site-packages')
 sys.path.append(AFS_DIR+'/Code/Utilities')
 import U_UI as UI
-import U_Alignment as UA
 import Parameters as PM #This is where we keep framework global parameters
 import pandas as pd #We use Panda for a routine data processing
 pd.options.mode.chained_assignment = None #Silence annoying warnings
-import math #We use it for data manipulation
 import numpy as np
-import os
-import time
-from alive_progress import alive_bar
 import argparse
 
 UI.WelcomeMsg('Initialising emulsion data clean module...','Filips Fedotovs (PhD student at UCL)', 'Please reach out to filips.fedotovs@cern.ch for any queries')
@@ -58,8 +53,6 @@ output_file_location_ELT=initial_input_file_location[:-4]+'_'+args.o+'_ELT.csv'
 
 
 ########################################     Phase 1 - Create compact source file    #########################################
-UI.Msg('status','Stage 0:',' Preparing the source data...')
-
 UI.Msg('location','Loading raw data from',initial_input_file_location)
 ColUse=[TrackID,PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty]
 
@@ -101,10 +94,6 @@ print('-------------------------------------------------------------')
 Density(data,'Calculating the initial density of the data')
 print('-------------------------------------------------------------')
 
-
-
-
-UI.Msg('vanilla','Removing unreconstructed hits...')
 track_data=data.dropna()
 rank_track_data=track_data[[PM.z]].drop_duplicates()
 rank_track_data['Plate_ID']=rank_track_data[PM.z].rank().astype('int')
@@ -118,9 +107,9 @@ track_data['Plate_Length']=track_data['Max_Plate_ID']-track_data['Min_Plate_ID']
 track_data=track_data[track_data.Plate_Length > MaxLen]
 track_data=track_data.drop(['Min_Plate_ID','Max_Plate_ID','Plate_Length'],axis=1)
 KLT_data=pd.merge(data,track_data,how='inner',on=[TrackID])
-
+print(KLT_data)
 print('-------------------------------------------------------------')
-Density(KLT_data,'Calculating the density of the data with long tracks only')
+Density(KLT_data,'Calculating the density of the data with long tracks only...')
 print('-------------------------------------------------------------')
 
 track_data['ELT_Flag']=True
@@ -128,15 +117,15 @@ ELT_data=pd.merge(data,track_data,how='left',on=[TrackID])
 ELT_data=ELT_data[ELT_data.ELT_Flag != True]
 
 print('-------------------------------------------------------------')
-Density(KLT_data,'Calculating the density of the data with long tracks only')
+Density(KLT_data,'Calculating the density of the data with long tracks only..')
 print('-------------------------------------------------------------')
-
+print(ELT_data)
 print('-------------------------------------------------------------')
 Density(ELT_data,'Calculating the density of the data without long tracks...')
 print('-------------------------------------------------------------')
 ELT_data=ELT_data.drop(['ELT_Flag'],axis=1)
 
-x=input('Would you like to save the files? Press y')
+x=input('Would you like to save the files? (Press y):')
 if x=='y':
     KLT_data.to_csv(output_file_location_KLT)
     UI.Msg('location', 'The data with long tracks only is written to:',output_file_location_KLT)
