@@ -86,13 +86,13 @@ def Density(data,msg):
     data_agg[PM.z]=data_agg[PM.z].apply(np.ceil)
     data_agg=data_agg.groupby([PM.x,PM.y,PM.z],as_index=False).nunique()
     UI.Msg('result','Minimum hits per cluster: ',int(data_agg[PM.Hit_ID].min()),' hits')
-    UI.Msg('result','Minimum hits per cubic cm: ',data_agg[PM.Hit_ID].min()/(Volume),' hits')
+    UI.Msg('result','Minimum hits per cubic cm: ',int(data_agg[PM.Hit_ID].min()/(Volume)),' hits')
     print('-------------------------------')
-    UI.Msg('result','Average hits per cluster: ',data_agg[PM.Hit_ID].mean(),' hits')
-    UI.Msg('result','Average hits per cubic cm: ',data_agg[PM.Hit_ID].mean()/Volume,' hits')
+    UI.Msg('result','Average hits per cluster: ',int(data_agg[PM.Hit_ID].mean()),' hits')
+    UI.Msg('result','Average hits per cubic cm: ',int(data_agg[PM.Hit_ID].mean()/Volume),' hits')
     print('-------------------------------')
-    UI.Msg('result','Maximum hits per cluster: ',data_agg[PM.Hit_ID].max(),' hits')
-    UI.Msg('result','Maximum hits per cubic cm: ',data_agg[PM.Hit_ID].max()/Volume,' hits')
+    UI.Msg('result','Maximum hits per cluster: ',int(data_agg[PM.Hit_ID].max()),' hits')
+    UI.Msg('result','Maximum hits per cubic cm: ',int(data_agg[PM.Hit_ID].max()/Volume),' hits')
     print('-------------------------------')
 
     return 1
