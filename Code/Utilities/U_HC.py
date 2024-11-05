@@ -51,6 +51,7 @@ class HitCluster:
                    acc_edg=0
                    if job_iter==l+1:
                       end_pos=n_e
+                      break
                    else:
                       start_pos=n_e
 
