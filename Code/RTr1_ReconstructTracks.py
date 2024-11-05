@@ -313,7 +313,7 @@ for i in range(0,Xsteps):
                 acc_edg=0
                 for n_e in range(start_node,n_edg+1):
                     acc_edg+=n_edg-n_e
-                    print()
+                    print(acc_edg)
                     if acc_edg>=PM.MaxEdgesPerJob:
                         tot_edges-=acc_edg
                         job_iter+=1
