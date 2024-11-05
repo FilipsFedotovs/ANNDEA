@@ -57,13 +57,16 @@ class HitCluster:
 
            print(l,MaxEdges)
            print(start_pos,end_pos)
-           exit()
+           test_counter=0
            for l in range(start_pos,min(end_pos,len(_Hits)-1)):
                for r in range(l+1,len(_Hits)):
+                   test_counter+=1
                    if HitCluster.JoinHits(_Hits[l],_Hits[r],cut_dt,cut_dr,cut_dz):
                           _Tot_Hits.append(_Hits[l]+_Hits[r])
 
            print('Number of all  hit combinations passing fiducial cuts:',len(_Tot_Hits))
+           print(test_counter)
+           exit()
            self.HitPairs=[]
            for TH in _Tot_Hits:
                self.HitPairs.append([TH[0],TH[3], TH[6],TH[9]])
