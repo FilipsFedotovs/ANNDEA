@@ -306,7 +306,6 @@ with alive_bar(Xsteps*Ysteps*Zsteps,force_tty=True, title='Estimating number of 
                 tfile_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/RTr1_'+RecBatchID+'_'+str(i)+'_'+str(j)+'_'+str(k)+'_clusters.pkl'
                 HC=UI.PickleOperations(tfile_location,'r','N/A')[0]
                 n_edg=len(HC.RawClusterGraph)
-                tot_edges=(n_edg**2-n_edg)/2
                 job_iter=0
                 acc_edg=0
                 for n_e in range(1,n_edg+1):
