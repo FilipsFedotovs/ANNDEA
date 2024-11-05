@@ -301,8 +301,8 @@ job_sets=[]
 for i in range(0,Xsteps):
     for j in range(0,Ysteps):
         for k in range(0,Zsteps):
-            required_tfile_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/RTr1_'+RecBatchID+'_'+str(i)+'_'+str(j)+'_'+str(k)+'_clusters.pkl'
-            HC=UI.PickleOperations(input_file_location,'r','N/A')[0]
+            tfile_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/RTr1_'+RecBatchID+'_'+str(i)+'_'+str(j)+'_'+str(k)+'_clusters.pkl'
+            HC=UI.PickleOperations(tfile_location,'r','N/A')[0]
             print(HC.RawClusterGraph)
             exit()
 #                 job_set=[]
