@@ -29,7 +29,6 @@ pd.options.mode.chained_assignment = None #Silence annoying warnings
 import math #We use it for data manipulation
 import numpy as np
 import os
-import time
 from alive_progress import alive_bar
 import argparse
 class bcolors:   #We use it for the interface
@@ -57,7 +56,7 @@ import sys
 sys.path.insert(1, AFS_DIR+'/Code/Utilities/')
 import U_UI as UI #This is where we keep routine utility functions
 import Parameters as PM #This is where we keep framework global parameters
-
+import U_HC as HC_l
 UI.WelcomeMsg('Initialising ANNDEA Tracking module...','Filips Fedotovs (PhD student at UCL), Dinis Beleza (MSci student at UCL)','Please reach out to filips.fedotovs@cern.ch for any queries')
 #Setting the parser - this script is usually not run directly, but is used by a Master version Counterpart that passes the required arguments
 parser = argparse.ArgumentParser(description='This script prepares training data for training the tracking model')
@@ -244,7 +243,7 @@ if os.path.isfile(required_file_location)==False:
              for i in range(Xsteps):
                  for j in range(Ysteps):
                      for k in range(Zsteps):
-                         required_tfile_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/RTr1_'+RecBatchID+'_'+str(i)+'_'+str(j)+'_'+str(k)+'_hits.csv'
+                         required_tfile_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/RTr1_'+RecBatchID+'_'+str(i)+'_'+str(j)+'_'+str(k)+'_clusters.pkl'
                          if os.path.isfile(required_tfile_location)==False:
                              Y_ID=int(j)/Y_overlap
                              X_ID=int(i)/X_overlap
@@ -256,8 +255,13 @@ if os.path.isfile(required_file_location)==False:
                              tdata.drop(tdata.index[tdata['z'] >= ((Z_ID+1)*stepZ)], inplace = True)  #Keeping the relevant z slice
                              tdata.drop(tdata.index[tdata['z'] < (Z_ID*stepZ)], inplace = True)  #Keeping the relevant z slice
                              print(tdata)
-                             exit()
-                             tdata.to_csv(required_tfile_location,index=False)
+                             tdata_list=tdata.values.tolist()
+                             print(UI.TimeStamp(),'Creating the cluster', X_ID,Y_ID,Z_ID)
+                             HC=HC_l.HitCluster([X_ID,Y_ID,Z_ID],[stepX,stepY,stepZ]) #Initializing the cluster
+                             print(UI.TimeStamp(),'Decorating the cluster')
+                             HC.LoadClusterHits(tdata_list) #Decorating the Clusters with Hit information
+                             UI.PickleOperations(required_tfile_location,'w',HC)
+                             #tdata.to_csv(required_tfile_location,index=False)
                              #print(UI.TimeStamp(), bcolors.OKGREEN+"The segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+required_tfile_location+bcolors.ENDC)
                          bar()
 
