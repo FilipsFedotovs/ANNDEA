@@ -305,19 +305,19 @@ for i in range(0,Xsteps):
             tfile_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/RTr1_'+RecBatchID+'_'+str(i)+'_'+str(j)+'_'+str(k)+'_clusters.pkl'
             HC=UI.PickleOperations(tfile_location,'r','N/A')[0]
             n_edg=len(HC.RawClusterGraph)
-            print(n_edg)
             tot_edges=math.ceil((n_edg**2-n_edg)/2)
             job_iter=0
-            start_node=1
-            while tot_edges>0:
-                acc_edg=0
-                for n_e in range(start_node,n_edg+1):
+            for n_e in range(start_node,n_edg+1):
                     acc_edg+=n_edg-n_e
                     tot_edges-=acc_edg
                     if acc_edg>=PM.MaxEdgesPerJob:
                         job_iter+=1
                         acc_edg=0
                         start_node=n_e+1
+                    if tot_edges<=0:
+                        if acc_edg>0:
+                           job_iter+=1
+                        break
                     print(n_e,acc_edg,tot_edges,job_iter,start_node)
                     x=input()
             print(n_e,acc_edg,tot_edges,job_iter,start_node)
