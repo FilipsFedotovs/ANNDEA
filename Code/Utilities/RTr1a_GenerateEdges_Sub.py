@@ -60,7 +60,7 @@ import U_UI as UI #This is where we keep routine utility functions
 # import U_ML as ML
 
 input_file_location=EOS_DIR+p+'/RTr1_'+RecBatchID+'_'+str(args.i)+'_'+str(args.j)+'_'+str(args.k)+'_clusters.pkl'
-HC=UI.PickleOperations(input_file_location,'r','')
+HC=UI.PickleOperations(input_file_location,'r','')[0]
 print(HC.RawClusterGraph)
 exit()
 if len(HC.RawClusterGraph)<=1:
