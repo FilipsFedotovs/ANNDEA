@@ -578,25 +578,25 @@ def ManageTempFolders(spi):
            except OSError as error:
               continue
    elif type(spi[1][8][0][0][0]) is int:
-       print('were here')
        for i in range(len(spi[1][8])):
          for j in range(len(spi[1][8][i])):
-           try:
-              os.mkdir(spi[1][1]+spi[1][3]+'Temp_'+spi[1][5]+'_'+spi[1][7]+'_'+str(i)+'_'+str(j))
-           except OSError as error:
-              continue
-           try:
-              os.mkdir(spi[1][0]+'/HTCondor/SUB/'+spi[1][7]+'/Temp_'+spi[1][5]+'_'+spi[1][7]+'_'+str(i)+'_'+str(j))
-           except OSError as error:
-              continue
-           try:
-              os.mkdir(spi[1][0]+'/HTCondor/SH/'+spi[1][7]+'/Temp_'+spi[1][5]+'_'+spi[1][7]+'_'+str(i)+'_'+str(j))
-           except OSError as error:
-              continue
-           try:
-              os.mkdir(spi[1][0]+'/HTCondor/MSG/'+spi[1][7]+'/Temp_'+spi[1][5]+'_'+spi[1][7]+'_'+str(i)+'_'+str(j))
-           except OSError as error:
-              continue
+             for k in range(len(spi[1][8][i][j])):
+               try:
+                  os.mkdir(spi[1][1]+spi[1][3]+'Temp_'+spi[1][5]+'_'+spi[1][7]+'_'+str(i)+'_'+str(j)+'_'+str(k))
+               except OSError as error:
+                  continue
+               try:
+                  os.mkdir(spi[1][0]+'/HTCondor/SUB/'+spi[1][7]+'/Temp_'+spi[1][5]+'_'+spi[1][7]+'_'+str(i)+'_'+str(j)+'_'+str(k))
+               except OSError as error:
+                  continue
+               try:
+                  os.mkdir(spi[1][0]+'/HTCondor/SH/'+spi[1][7]+'/Temp_'+spi[1][5]+'_'+spi[1][7]+'_'+str(i)+'_'+str(j)+'_'+str(k))
+               except OSError as error:
+                  continue
+               try:
+                  os.mkdir(spi[1][0]+'/HTCondor/MSG/'+spi[1][7]+'/Temp_'+spi[1][5]+'_'+spi[1][7]+'_'+str(i)+'_'+str(j)+'_'+str(k))
+               except OSError as error:
+                  continue
    return 'Temporary folders have been created'
 
 
