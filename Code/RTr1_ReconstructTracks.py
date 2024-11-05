@@ -298,12 +298,16 @@ Program=[]
 ###### Stage 0
 prog_entry=[]
 job_sets=[]
+counter=0
 for i in range(0,Xsteps):
     for j in range(0,Ysteps):
         for k in range(0,Zsteps):
             tfile_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/RTr1_'+RecBatchID+'_'+str(i)+'_'+str(j)+'_'+str(k)+'_clusters.pkl'
             HC=UI.PickleOperations(tfile_location,'r','N/A')[0]
-            print(HC.RawClusterGraph)
+            n_edg=len(HC.RawClusterGraph)
+            print(n_edg)
+            tot_jobs=(n_edg**2-n_edg)/2
+            print(tot_jobs)
             exit()
 #                 job_set=[]
 #                 for j in range(0,Ysteps):
