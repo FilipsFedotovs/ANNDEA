@@ -325,6 +325,7 @@ for i in range(0,Xsteps):
                         break
                     print(n_e,acc_edg,tot_edges,job_iter,start_node)
                     x=input()
+            print(n_e,acc_edg,tot_edges,job_iter,start_node)
             exit()
 #                 job_set=[]
 #                 for j in range(0,Ysteps):
