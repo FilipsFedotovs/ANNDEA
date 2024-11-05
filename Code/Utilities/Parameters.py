@@ -29,6 +29,7 @@ cut_dt=0.2
 cut_dr=60
 cut_dz=3000
 MaxSeedsPerVxPool=20000
+MaxEdgesPerJob=5
 testRatio=0.05
 MaxValSampleSize=50000
 num_node_features=5
