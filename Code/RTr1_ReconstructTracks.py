@@ -307,7 +307,7 @@ for i in range(0,Xsteps):
             n_edg=len(HC.RawClusterGraph)
             tot_edges=math.ceil((n_edg**2-n_edg)/2)
             job_iter=0
-            for n_e in range(start_node,n_edg+1):
+            for n_e in range(1,n_edg+1):
                     acc_edg+=n_edg-n_e
                     tot_edges-=acc_edg
                     if acc_edg>=PM.MaxEdgesPerJob:
