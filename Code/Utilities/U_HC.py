@@ -66,7 +66,7 @@ class HitCluster:
                           _Tot_Hits.append(_Hits[l]+_Hits[r])
 
            print('Number of all  hit combinations passing fiducial cuts:',len(_Tot_Hits))
-           print(test_counter)
+           print(_Tot_Hits)
            exit()
            self.HitPairs=[]
            for TH in _Tot_Hits:
