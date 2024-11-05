@@ -313,14 +313,11 @@ for i in range(0,Xsteps):
             acc_edg=0
             for n_e in range(1,n_edg+1):
                     acc_edg+=n_edg-n_e
-                    tot_edges-=acc_edg
                     if acc_edg>=PM.MaxEdgesPerJob:
                         job_iter+=1
                         acc_edg=0
-                    if tot_edges<=0:
-                        if acc_edg>0:
-                           job_iter+=1
-                        break
+            if acc_edg>0:
+                 job_iter+=1
             counter+=job_iter
             job_sets[i][j].append([job_iter])
             print(job_sets)
