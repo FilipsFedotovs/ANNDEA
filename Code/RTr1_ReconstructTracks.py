@@ -332,7 +332,6 @@ print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry))
 
 Program.append('Custom')
 
-exit()
 # ###### Stage 0
 # prog_entry=[]
 # job_sets=[]
