@@ -299,34 +299,53 @@ Program=[]
 prog_entry=[]
 job_sets=[]
 counter=0
-for i in range(0,Xsteps):
-    job_sets.append([])
-    for j in range(0,Ysteps):
-        job_sets[i].append([])
-        for k in range(0,Zsteps):
-            tfile_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/RTr1_'+RecBatchID+'_'+str(i)+'_'+str(j)+'_'+str(k)+'_clusters.pkl'
-            HC=UI.PickleOperations(tfile_location,'r','N/A')[0]
-            n_edg=len(HC.RawClusterGraph)
-            tot_edges=(n_edg**2-n_edg)/2
-            print('TOt',tot_edges,n_edg)
-            job_iter=0
-            acc_edg=0
-            for n_e in range(1,n_edg+1):
-                    acc_edg+=n_edg-n_e
-                    if acc_edg>=PM.MaxEdgesPerJob:
-                        job_iter+=1
-                        acc_edg=0
-            if acc_edg>0:
-                 job_iter+=1
-            counter+=job_iter
-            job_sets[i][j].append([job_iter])
-            print(job_sets)
+with alive_bar(len(Xsteps*Ysteps*Zsteps),force_tty=True, title='Estimating number of jobs...') as bar:
+    for i in range(0,Xsteps):
+        job_sets.append([])
+        for j in range(0,Ysteps):
+            job_sets[i].append([])
+            for k in range(0,Zsteps):
+                bar()
+                tfile_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/RTr1_'+RecBatchID+'_'+str(i)+'_'+str(j)+'_'+str(k)+'_clusters.pkl'
+                HC=UI.PickleOperations(tfile_location,'r','N/A')[0]
+                n_edg=len(HC.RawClusterGraph)
+                tot_edges=(n_edg**2-n_edg)/2
+                job_iter=0
+                acc_edg=0
+                for n_e in range(1,n_edg+1):
+                        acc_edg+=n_edg-n_e
+                        if acc_edg>=PM.MaxEdgesPerJob:
+                            job_iter+=1
+                            acc_edg=0
+                if acc_edg>0:
+                     job_iter+=1
+                counter+=job_iter
+                job_sets[i][j].append(job_iter)
+prog_entry.append(' Sending hit cluster to the HTCondor, so the model assigns weights between hits')
+prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/'+RecBatchID+'/','hit_cluster_edges','RTr1a','.pkl',RecBatchID,job_sets,'RTr1a_GenerateEdges_Sub.py'])
+prog_entry.append([' --cut_dt ', ' --cut_dr ',' --cut_dz '])
+prog_entry.append([cut_dt,cut_dr,cut_dz])
+prog_entry.append(counter)
+prog_entry.append(LocalSub)
+prog_entry.append('N/A')
+prog_entry.append(HTCondorLog)
+prog_entry.append(False)
+Program.append(prog_entry)
+print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry))
+
+Program.append('Custom')
+
+exit()
+# ###### Stage 0
+# prog_entry=[]
+# job_sets=[]
+# for i in range(0,Xsteps):
 #                 job_set=[]
 #                 for j in range(0,Ysteps):
 #                     job_set.append(Zsteps)
 #                 job_sets.append(job_set)
 # prog_entry.append(' Sending hit cluster to the HTCondor, so the model assigns weights between hits')
-# prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/'+RecBatchID+'/','hit_cluster_rec_set','RTr1a','.csv',RecBatchID,job_sets,'RTr1a_ReconstructTracks_Sub.py'])
+# prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/'+RecBatchID+'/','hit_cluster_rec_set','RTr1b','.csv',RecBatchID,job_sets,'RTr1b_ReconstructTracks_Sub.py'])
 # prog_entry.append([' --stepZ ', ' --stepY ', ' --stepX ', ' --cut_dt ', ' --cut_dr ',' --cut_dz ', ' --ModelName ',' --Z_overlap ',' --Y_overlap ',' --X_overlap ', ' --CheckPoint ', ' --TrackFitCutRes ',' --TrackFitCutSTD ',' --TrackFitCutMRes '])
 # prog_entry.append([stepZ,stepY,stepX, cut_dt,cut_dr,cut_dz, ModelName,Z_overlap,Y_overlap,X_overlap,args.CheckPoint]+TrackFitCut)
 # prog_entry.append(Xsteps*Ysteps*Zsteps)
@@ -336,79 +355,58 @@ for i in range(0,Xsteps):
 # prog_entry.append(False)
 # Program.append(prog_entry)
 # print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry))
-
-exit()
-###### Stage 0
-prog_entry=[]
-job_sets=[]
-for i in range(0,Xsteps):
-                job_set=[]
-                for j in range(0,Ysteps):
-                    job_set.append(Zsteps)
-                job_sets.append(job_set)
-prog_entry.append(' Sending hit cluster to the HTCondor, so the model assigns weights between hits')
-prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/'+RecBatchID+'/','hit_cluster_rec_set','RTr1a','.csv',RecBatchID,job_sets,'RTr1a_ReconstructTracks_Sub.py'])
-prog_entry.append([' --stepZ ', ' --stepY ', ' --stepX ', ' --cut_dt ', ' --cut_dr ',' --cut_dz ', ' --ModelName ',' --Z_overlap ',' --Y_overlap ',' --X_overlap ', ' --CheckPoint ', ' --TrackFitCutRes ',' --TrackFitCutSTD ',' --TrackFitCutMRes '])
-prog_entry.append([stepZ,stepY,stepX, cut_dt,cut_dr,cut_dz, ModelName,Z_overlap,Y_overlap,X_overlap,args.CheckPoint]+TrackFitCut)
-prog_entry.append(Xsteps*Ysteps*Zsteps)
-prog_entry.append(LocalSub)
-prog_entry.append('N/A')
-prog_entry.append(HTCondorLog)
-prog_entry.append(False)
-Program.append(prog_entry)
-print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry))
-
-
-
-###### Stage 1
-prog_entry=[]
-job_sets=[]
-for i in range(0,Xsteps):
-                job_sets.append(Ysteps)
-prog_entry.append(' Sending hit cluster to the HTCondor, so the reconstructed clusters can be merged along z-axis')
-prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/'+RecBatchID+'/','hit_cluster_rec_z_set','RTr1b','.csv',RecBatchID,job_sets,'RTr1b_LinkSegmentsZ_Sub.py'])
-prog_entry.append([' --Z_ID_Max ', ' --i ',' --j '])
-prog_entry.append([Zsteps,Xsteps,Ysteps])
-prog_entry.append(Xsteps*Ysteps)
-prog_entry.append(LocalSub)
-prog_entry.append('N/A')
-prog_entry.append(HTCondorLog)
-prog_entry.append(False)
-Program.append(prog_entry)
-print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry))
-
-###### Stage 2
-prog_entry=[]
-job_sets=Xsteps
-prog_entry.append(' Sending hit cluster to the HTCondor, so the reconstructed clusters can be merged along y-axis')
-prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/'+RecBatchID+'/','hit_cluster_rec_y_set','RTr1c','.csv',RecBatchID,job_sets,'RTr1c_LinkSegmentsY_Sub.py'])
-prog_entry.append([' --Y_ID_Max ', ' --i '])
-prog_entry.append([Ysteps,Xsteps])
-prog_entry.append(Xsteps)
-prog_entry.append(LocalSub)
-prog_entry.append('N/A')
-prog_entry.append(HTCondorLog)
-prog_entry.append(False)
-Program.append(prog_entry)
-print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry))
-
-###### Stage 3
-prog_entry=[]
-job_sets=1
-prog_entry.append(' Sending hit cluster to the HTCondor, so the reconstructed clusters can be merged along x-axis')
-prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/'+RecBatchID+'/','hit_cluster_rec_x_set','RTr1d','.csv',RecBatchID,job_sets,'RTr1d_LinkSegmentsX_Sub.py'])
-prog_entry.append([' --X_ID_Max '])
-prog_entry.append([Xsteps])
-prog_entry.append(1)
-prog_entry.append(True) #This part we can execute locally, no need for HTCondor
-prog_entry.append('N/A')
-prog_entry.append(HTCondorLog)
-prog_entry.append(False)
-Program.append(prog_entry)
-print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry))
-
-###### Stage 4
-Program.append('Custom')
+#
+#
+#
+# ###### Stage 1
+# prog_entry=[]
+# job_sets=[]
+# for i in range(0,Xsteps):
+#                 job_sets.append(Ysteps)
+# prog_entry.append(' Sending hit cluster to the HTCondor, so the reconstructed clusters can be merged along z-axis')
+# prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/'+RecBatchID+'/','hit_cluster_rec_z_set','RTr1b','.csv',RecBatchID,job_sets,'RTr1c_LinkSegmentsZ_Sub.py'])
+# prog_entry.append([' --Z_ID_Max ', ' --i ',' --j '])
+# prog_entry.append([Zsteps,Xsteps,Ysteps])
+# prog_entry.append(Xsteps*Ysteps)
+# prog_entry.append(LocalSub)
+# prog_entry.append('N/A')
+# prog_entry.append(HTCondorLog)
+# prog_entry.append(False)
+# Program.append(prog_entry)
+# print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry))
+#
+# ###### Stage 2
+# prog_entry=[]
+# job_sets=Xsteps
+# prog_entry.append(' Sending hit cluster to the HTCondor, so the reconstructed clusters can be merged along y-axis')
+# prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/'+RecBatchID+'/','hit_cluster_rec_y_set','RTr1c','.csv',RecBatchID,job_sets,'RTr1d_LinkSegmentsY_Sub.py'])
+# prog_entry.append([' --Y_ID_Max ', ' --i '])
+# prog_entry.append([Ysteps,Xsteps])
+# prog_entry.append(Xsteps)
+# prog_entry.append(LocalSub)
+# prog_entry.append('N/A')
+# prog_entry.append(HTCondorLog)
+# prog_entry.append(False)
+# Program.append(prog_entry)
+# print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry))
+#
+# ###### Stage 3
+# prog_entry=[]
+# job_sets=1
+# prog_entry.append(' Sending hit cluster to the HTCondor, so the reconstructed clusters can be merged along x-axis')
+# prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/'+RecBatchID+'/','hit_cluster_rec_x_set','RTr1e','.csv',RecBatchID,job_sets,'RTr1d_LinkSegmentsX_Sub.py'])
+# prog_entry.append([' --X_ID_Max '])
+# prog_entry.append([Xsteps])
+# prog_entry.append(1)
+# prog_entry.append(True) #This part we can execute locally, no need for HTCondor
+# prog_entry.append('N/A')
+# prog_entry.append(HTCondorLog)
+# prog_entry.append(False)
+# Program.append(prog_entry)
+# print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry))
+#
+# ###### Stage 4
+# Program.append('Custom')
 
 
 print(UI.TimeStamp(),'There are '+str(len(Program)+1)+' stages (0-'+str(len(Program)+1)+') of this script',bcolors.ENDC)
@@ -416,7 +414,7 @@ print(UI.TimeStamp(),'Current stage has a code',Status,bcolors.ENDC)
 while Status<len(Program):
     if Program[Status]!='Custom':
         #Standard process here
-       if Status==0:
+       if Status==2:
            print(str(CP_CleanUp(Program, Status)),'temp files deleted...')
        Result=UI.StandardProcess(Program,Status,SubGap,SubPause,RequestExtCPU,JobFlavour,ReqMemory,time_int,Patience)
 
@@ -426,6 +424,9 @@ while Status<len(Program):
              Status=20
              break
 
+    elif Status==1:
+        print('Wip')
+        exit()
     elif Status==4:
       #Non standard processes (that don't follow the general pattern) have been coded here
       print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
