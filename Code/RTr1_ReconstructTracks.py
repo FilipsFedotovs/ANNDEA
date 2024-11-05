@@ -299,7 +299,7 @@ Program=[]
 prog_entry=[]
 job_sets=[]
 counter=0
-with alive_bar(len(Xsteps*Ysteps*Zsteps),force_tty=True, title='Estimating number of jobs...') as bar:
+with alive_bar(Xsteps*Ysteps*Zsteps,force_tty=True, title='Estimating number of jobs...') as bar:
     for i in range(0,Xsteps):
         job_sets.append([])
         for j in range(0,Ysteps):
