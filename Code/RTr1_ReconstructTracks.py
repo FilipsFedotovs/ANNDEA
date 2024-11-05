@@ -227,7 +227,6 @@ if os.path.isfile(required_file_location)==False:
          data['y']=data['y']-y_offset
          x_max=data['x'].max()
          y_max=data['y'].max()
-    
         #Calculating the number of volumes that will be sent to HTCondor for reconstruction. Account for overlap if specified.
          if X_overlap==1:
             Xsteps=math.ceil((x_max)/stepX)
@@ -261,8 +260,6 @@ if os.path.isfile(required_file_location)==False:
                              HC.LoadClusterHits(tdata_list) #Decorating the Clusters with Hit information
                              UI.PickleOperations(required_tfile_location,'w',HC)
                          bar()
-
-
          data.to_csv(required_file_location,index=False)
          Meta=UI.TrainingSampleMeta(RecBatchID)
          Meta.IniHitClusterMetaData(stepX,stepY,stepZ,cut_dt,cut_dr,stepZ,0.05,0.1,y_offset,x_offset,Xsteps,Ysteps,X_overlap,Y_overlap,Zsteps,Z_overlap)
