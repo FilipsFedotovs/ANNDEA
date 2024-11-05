@@ -107,7 +107,6 @@ track_data['Plate_Length']=track_data['Max_Plate_ID']-track_data['Min_Plate_ID']
 track_data=track_data[track_data.Plate_Length > MaxLen]
 track_data=track_data.drop(['Min_Plate_ID','Max_Plate_ID','Plate_Length'],axis=1)
 KLT_data=pd.merge(data,track_data,how='inner',on=[TrackID])
-print(KLT_data)
 print('-------------------------------------------------------------')
 Density(KLT_data,'Calculating the density of the data with long tracks only...')
 print('-------------------------------------------------------------')
@@ -119,7 +118,6 @@ ELT_data=ELT_data[ELT_data.ELT_Flag != True]
 print('-------------------------------------------------------------')
 Density(KLT_data,'Calculating the density of the data with long tracks only..')
 print('-------------------------------------------------------------')
-print(ELT_data)
 print('-------------------------------------------------------------')
 Density(ELT_data,'Calculating the density of the data without long tracks...')
 print('-------------------------------------------------------------')
