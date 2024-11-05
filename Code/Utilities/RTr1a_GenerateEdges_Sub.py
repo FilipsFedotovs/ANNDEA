@@ -21,6 +21,7 @@ parser.add_argument('--PY',help="Python libraries directory location", default='
 parser.add_argument('--cut_dt',help="Cut on angle difference", default='1.0')
 parser.add_argument('--cut_dr',help="Cut on angle difference", default='4000')
 parser.add_argument('--cut_dz',help="Cut on z difference", default='3000')
+parser.add_argument('--MaxEdgesPerJob',help="Max edges per job", default='0')
 parser.add_argument('--BatchID',help="Give name to this train sample", default='')
 parser.add_argument('--p',help="Path to the output file", default='')
 parser.add_argument('--o',help="Path to the output file name", default='')
@@ -55,16 +56,15 @@ sfx=args.sfx
 pfx=args.pfx
 
 import U_UI as UI #This is where we keep routine utility functions
-import U_HC as HC_l
-import U_ML as ML
-#This function combines two segment object. Example: Segment 1 is [[a, _ ,b ,_ ,_ ][0.9,0.0,0.9,0.0,0.0]];  Segment 2 is [[a, _ ,c ,_ ,_ ][0.9,0.0,0.8,0.0,0.0]]; Segment 3 is [[_, d ,b ,_ ,_ ][0.0,0.8,0.8,0.0,0.0]]
-#In order to combine segments we have to have at least one common hit and no clashes. Segment 1 and 2 have a common hit a, but their third plates clash. Segment 1 can be combined with segment 3 which yields: [[a, d ,b ,_ ,_ ][0.8,0.0,1.7,0.0,0.0]]
-#Please note that if combination occurs then the hit weights combine together too
-#
-#
-# UI.PickleOperations(input_file_location,'r',HC)
-# if len(HC.RawClusterGraph)<=1:
-#     Status = 'Skip tracking'
+# import U_HC as HC_l
+# import U_ML as ML
+
+input_file_location=EOS_DIR+p+'/'+RecBatchID+'/RTr1_'+RecBatchID+'_'+str(args.i)+'_'+str(args.j)+'_'+str(args.k)+'_clusters.pkl'
+HC=UI.PickleOperations(input_file_location,'r','')
+print(HC.RawClusterGraph)
+exit()
+if len(HC.RawClusterGraph)<=1:
+    Status = 'Skip tracking'
 #
 # if Status=='Edge generation':
 #     print(UI.TimeStamp(),'Generating the edges...')
