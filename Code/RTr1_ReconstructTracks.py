@@ -308,7 +308,7 @@ for i in range(0,Xsteps):
             HC=UI.PickleOperations(tfile_location,'r','N/A')[0]
             n_edg=len(HC.RawClusterGraph)
             tot_edges=(n_edg**2-n_edg)/2
-            print('TOt',tot_edges)
+            print('TOt',tot_edges,n_edg)
             job_iter=0
             acc_edg=0
             for n_e in range(1,n_edg+1):
@@ -321,6 +321,7 @@ for i in range(0,Xsteps):
                         if acc_edg>0:
                            job_iter+=1
                         break
+            counter+=job_iter
             job_sets[i][j].append([job_iter])
             print(job_sets)
 #                 job_set=[]
