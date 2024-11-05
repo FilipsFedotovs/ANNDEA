@@ -61,7 +61,7 @@ HC=UI.PickleOperations(input_file_location,'r','')[0]
 print(HC.RawClusterGraph)
 print(UI.TimeStamp(),'Generating the edges...')
 #print(UI.TimeStamp(),"Hit density of the Cluster",round(X_ID,1),round(Y_ID,1),1, "is  {} hits per cm\u00b3".format(round(len(HC.RawClusterGraph)/(stepX/10000*stepY/10000*stepZ/10000)),2))
-GraphStatus = HC.GenerateEdges(cut_dt, cut_dr, cut_dz, [], l, MaxEdgesPerJob)
+GraphStatus = HC.GenerateEdges(cut_dt, cut_dr, cut_dz, [], int(l), MaxEdgesPerJob)
 exit()
 print(GraphStatus)
 print(HC.RawEdgeGaph)
