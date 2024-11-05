@@ -254,21 +254,18 @@ if os.path.isfile(required_file_location)==False:
                              tdata.drop(tdata.index[tdata['y'] < (Y_ID*stepY)], inplace = True)  #Keeping the relevant z slice
                              tdata.drop(tdata.index[tdata['z'] >= ((Z_ID+1)*stepZ)], inplace = True)  #Keeping the relevant z slice
                              tdata.drop(tdata.index[tdata['z'] < (Z_ID*stepZ)], inplace = True)  #Keeping the relevant z slice
-                             print(tdata)
                              tdata_list=tdata.values.tolist()
                              print(UI.TimeStamp(),'Creating the cluster', X_ID,Y_ID,Z_ID)
                              HC=HC_l.HitCluster([X_ID,Y_ID,Z_ID],[stepX,stepY,stepZ]) #Initializing the cluster
                              print(UI.TimeStamp(),'Decorating the cluster')
                              HC.LoadClusterHits(tdata_list) #Decorating the Clusters with Hit information
                              UI.PickleOperations(required_tfile_location,'w',HC)
-                             #tdata.to_csv(required_tfile_location,index=False)
-                             #print(UI.TimeStamp(), bcolors.OKGREEN+"The segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+required_tfile_location+bcolors.ENDC)
                          bar()
 
 
          data.to_csv(required_file_location,index=False)
          Meta=UI.TrainingSampleMeta(RecBatchID)
-         Meta.IniHitClusterMetaData(stepX,stepY,stepZ,cut_dt,cut_dr,stepZ,0.05,0.1,y_offset,x_offset, Xsteps,Ysteps,X_overlap,Y_overlap,Zsteps,Z_overlap)
+         Meta.IniHitClusterMetaData(stepX,stepY,stepZ,cut_dt,cut_dr,stepZ,0.05,0.1,y_offset,x_offset,Xsteps,Ysteps,X_overlap,Y_overlap,Zsteps,Z_overlap)
          Meta.UpdateStatus(0)
          print(UI.PickleOperations(RecOutputMeta,'w', Meta)[1])
          UI.Msg('completed','Stage 0 has successfully completed')
@@ -297,6 +294,34 @@ UI.Msg('vanilla','Current stage is '+str(Status)+'...')
 
 ################ Set the execution sequence for the script
 Program=[]
+
+###### Stage 0
+prog_entry=[]
+job_sets=[]
+for i in range(0,Xsteps):
+    for j in range(0,Ysteps):
+        for j in range(0,Zsteps):
+            required_tfile_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/RTr1_'+RecBatchID+'_'+str(i)+'_'+str(j)+'_'+str(k)+'_clusters.pkl'
+            HC=UI.PickleOperations(input_file_location,'r','N/A')[0]
+            print(HC.RawClusterGraph)
+            exit()
+#                 job_set=[]
+#                 for j in range(0,Ysteps):
+#                     job_set.append(Zsteps)
+#                 job_sets.append(job_set)
+# prog_entry.append(' Sending hit cluster to the HTCondor, so the model assigns weights between hits')
+# prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/'+RecBatchID+'/','hit_cluster_rec_set','RTr1a','.csv',RecBatchID,job_sets,'RTr1a_ReconstructTracks_Sub.py'])
+# prog_entry.append([' --stepZ ', ' --stepY ', ' --stepX ', ' --cut_dt ', ' --cut_dr ',' --cut_dz ', ' --ModelName ',' --Z_overlap ',' --Y_overlap ',' --X_overlap ', ' --CheckPoint ', ' --TrackFitCutRes ',' --TrackFitCutSTD ',' --TrackFitCutMRes '])
+# prog_entry.append([stepZ,stepY,stepX, cut_dt,cut_dr,cut_dz, ModelName,Z_overlap,Y_overlap,X_overlap,args.CheckPoint]+TrackFitCut)
+# prog_entry.append(Xsteps*Ysteps*Zsteps)
+# prog_entry.append(LocalSub)
+# prog_entry.append('N/A')
+# prog_entry.append(HTCondorLog)
+# prog_entry.append(False)
+# Program.append(prog_entry)
+# print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry))
+
+
 ###### Stage 0
 prog_entry=[]
 job_sets=[]
