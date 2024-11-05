@@ -198,15 +198,16 @@ def CreateCondorJobs(AFS,EOS,PY,path,o,pfx,sfx,ID,loop_params,OptionHeader,Optio
                  for i in range(len(loop_params)):
                      for j in range(len(loop_params[i])):
                          for k in range(loop_params[i][j]):
-                               required_output_file_location=EOS+'/'+path+'/Temp_'+pfx+'_'+ID+'_'+str(i)+'_'+str(j)+'/'+pfx+'_'+ID+'_'+o+'_'+str(i)+'_'+str(j)+'_'+str(k)+sfx
+                             for l in range(loop_params[i][j][k]):
+                               required_output_file_location=EOS+'/'+path+'/Temp_'+pfx+'_'+ID+'_'+str(i)+'_'+str(j)+'/'+pfx+'_'+ID+'_'+o+'_'+str(i)+'_'+str(j)+'_'+str(k)+'_'+str(l)+sfx
                                bar.text = f'-> Checking whether the file : {required_output_file_location}, exists...'
                                bar()
-                               SHName = AFS + '/HTCondor/SH/'+ID+'/Temp_'+pfx+'_'+ID+'_'+str(i)+'_'+str(j)+'/SH_'+pfx+'_'+ ID+'_' + str(i) + '_' + str(j) + '_'+str(k)+ '.sh'
-                               SUBName = AFS + '/HTCondor/SUB/'+ID+'/Temp_'+pfx+'_'+ID+'_'+str(i)+'_'+str(j)+'/SUB_'+pfx+'_'+ ID+'_' + str(i) + '_' + str(j) + '_'+str(k)+ '.sub'
-                               MSGName = AFS + '/HTCondor/MSG/'+ID+'/Temp_'+pfx+'_'+ID+'_'+str(i)+'_'+str(j)+'/MSG_'+pfx+'_'+ ID+'_' + str(i) + '_' + str(j) + '_'+str(k)
+                               SHName = AFS + '/HTCondor/SH/'+ID+'/Temp_'+pfx+'_'+ID+'_'+str(i)+'_'+str(j)+'/SH_'+pfx+'_'+ ID+'_' + str(i) + '_' + str(j) + '_'+str(k)+'_'+str(l)+ '.sh'
+                               SUBName = AFS + '/HTCondor/SUB/'+ID+'/Temp_'+pfx+'_'+ID+'_'+str(i)+'_'+str(j)+'/SUB_'+pfx+'_'+ ID+'_' + str(i) + '_' + str(j) + '_'+str(k)+ '_'+str(l)+'.sub'
+                               MSGName = AFS + '/HTCondor/MSG/'+ID+'/Temp_'+pfx+'_'+ID+'_'+str(i)+'_'+str(j)+'/MSG_'+pfx+'_'+ ID+'_' + str(i) + '_' + str(j) + '_'+str(k) +'_'+str(l)
                                ScriptName = AFS + '/Code/Utilities/'+Sub_File
                                if os.path.isfile(required_output_file_location)!=True:
-                                  bad_pop.append([OH+[' --i ', ' --j ', ' --k ', ' --p ', ' --o ',' --pfx ', ' --sfx '], OL+[i, j, k, path,o, pfx, sfx], SHName, SUBName, MSGName, ScriptName, 1, 'ANNDEA-'+pfx+'-'+ID, Log,GPU])
+                                  bad_pop.append([OH+[' --i ', ' --j ', ' --k ', ' --l ', ' --p ', ' --o ',' --pfx ', ' --sfx '], OL+[i, j, k,l, path,o, pfx, sfx], SHName, SUBName, MSGName, ScriptName, 1, 'ANNDEA-'+pfx+'-'+ID, Log,GPU])
         return(bad_pop)
     else:
         from alive_progress import alive_bar
@@ -214,12 +215,21 @@ def CreateCondorJobs(AFS,EOS,PY,path,o,pfx,sfx,ID,loop_params,OptionHeader,Optio
         TotJobs=0
         TotJobs=CalculateNJobs(loop_params)[1]
         nest_lvl=CalculateNJobs(loop_params)[0]
-        print(nest_lvl,TotJobs)
-        exit()
         OH=OptionHeader+[' --EOS '," --AFS ", " --PY ", " --BatchID "]
         OL=OptionLine+[EOS, AFS, PY, ID]
         TotJobs=int(TotJobs)
         with alive_bar(TotJobs,force_tty=True, title='Checking the results from HTCondor') as bar:
+             if nest_lvl==4:
+                 for i in range(len(loop_params)):
+                     for j in range(len(loop_params[i])):
+                         for k in range(len(loop_params[i][j])):
+                               bar.text = f'-> Preparing batch submission...'
+                               bar()
+                               SHName = AFS + '/HTCondor/SH/'+ID+'/Temp_'+pfx+'_'+ID+'_'+str(i)+'_'+str(j)+'_'+str(k)+'/SH_'+pfx+'_'+ ID+'_' + str(i) + '_'+str(j)+ '_'+str(k)+'.sh'
+                               SUBName = AFS + '/HTCondor/SUB/'+ID+'/Temp_'+pfx+'_'+ID+'_'+str(i)+'_'+str(j)+'_'+str(k)+'/SUB_'+pfx+'_'+ ID+'_' + str(i) + '_'+str(j)+ '_'+str(k)+'.sub'
+                               MSGName = AFS + '/HTCondor/MSG/'+ID+'/Temp_'+pfx+'_'+ID+'_'+str(i)+'_'+str(j)+'_'+str(k)+'/MSG_'+pfx+'_'+ ID+'_' + str(i) + '_'+str(j) + '_'+str(k)
+                               ScriptName = AFS + '/Code/Utilities/'+Sub_File
+                               bad_pop.append([OH+[' --i ', ' --j ',' --k ', ' --l ', ' --p ', ' --o ',' --pfx ', ' --sfx '], OL+[i,j,k,'$1', path,o, pfx, sfx], SHName, SUBName, MSGName, ScriptName, loop_params[i][j][k], 'ANNDEA-'+pfx+'-'+ID, Log,GPU])
              if nest_lvl==3:
                  for i in range(len(loop_params)):
                      for j in range(len(loop_params[i])):
