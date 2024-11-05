@@ -314,14 +314,13 @@ for i in range(0,Xsteps):
                     if acc_edg>=PM.MaxEdgesPerJob:
                         job_iter+=1
                         acc_edg=0
-                        start_node=n_e+1
                     if tot_edges<=0:
                         if acc_edg>0:
                            job_iter+=1
                         break
-                    print(n_e,acc_edg,tot_edges,job_iter,start_node)
+                    print(n_e,acc_edg,tot_edges,job_iter)
                     x=input()
-            print(n_e,acc_edg,tot_edges,job_iter,start_node)
+            print(n_e,acc_edg,tot_edges,job_iter)
             exit()
 #                 job_set=[]
 #                 for j in range(0,Ysteps):
