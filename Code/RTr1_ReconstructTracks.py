@@ -304,12 +304,11 @@ for i in range(0,Xsteps):
     for j in range(0,Ysteps):
         job_sets[i].append([])
         for k in range(0,Zsteps):
-            job_sets[i][j].append([])
-            print(job_sets)
             tfile_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/RTr1_'+RecBatchID+'_'+str(i)+'_'+str(j)+'_'+str(k)+'_clusters.pkl'
             HC=UI.PickleOperations(tfile_location,'r','N/A')[0]
             n_edg=len(HC.RawClusterGraph)
-            tot_edges=math.ceil((n_edg**2-n_edg)/2)
+            tot_edges=(n_edg**2-n_edg)/2
+            print('TOt',tot_edges)
             job_iter=0
             acc_edg=0
             for n_e in range(1,n_edg+1):
@@ -322,10 +321,8 @@ for i in range(0,Xsteps):
                         if acc_edg>0:
                            job_iter+=1
                         break
-                    print(n_e,acc_edg,tot_edges,job_iter)
-                    x=input()
-            print(n_e,acc_edg,tot_edges,job_iter)
-            exit()
+            job_sets[i][j].append([job_iter])
+            print(job_sets)
 #                 job_set=[]
 #                 for j in range(0,Ysteps):
 #                     job_set.append(Zsteps)
@@ -342,7 +339,7 @@ for i in range(0,Xsteps):
 # Program.append(prog_entry)
 # print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry))
 
-
+exit()
 ###### Stage 0
 prog_entry=[]
 job_sets=[]
