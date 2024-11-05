@@ -209,7 +209,7 @@ def CreateCondorJobs(AFS,EOS,PY,path,o,pfx,sfx,ID,loop_params,OptionHeader,Optio
              if nest_lvl==4:
                  for i in range(len(loop_params)):
                      for j in range(len(loop_params[i])):
-                         for k in range(loop_params[i][j]):
+                         for k in range(len(loop_params[i][j])):
                              for l in range(loop_params[i][j][k]):
                                required_output_file_location=EOS+'/'+path+'/Temp_'+pfx+'_'+ID+'_'+str(i)+'_'+str(j)+'_'+str(k)+'/'+pfx+'_'+ID+'_'+o+'_'+str(i)+'_'+str(j)+'_'+str(k)+'_'+str(l)+sfx
                                bar.text = f'-> Checking whether the file : {required_output_file_location}, exists...'
