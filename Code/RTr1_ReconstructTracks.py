@@ -322,6 +322,7 @@ for i in range(0,Xsteps):
                     else:
                         job_iter+=1
                         tot_edges-=acc_edg
+                        break
                     print(n_e,acc_edg,tot_edges,job_iter,start_node)
                     x=input()
             exit()
