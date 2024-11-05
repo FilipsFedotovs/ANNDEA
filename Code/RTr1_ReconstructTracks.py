@@ -306,19 +306,20 @@ for i in range(0,Xsteps):
             HC=UI.PickleOperations(tfile_location,'r','N/A')[0]
             n_edg=len(HC.RawClusterGraph)
             print(n_edg)
-            tot_jobs=math.ceil(((n_edg**2-n_edg)/2)/PM.MaxEdgesPerJob)
+            tot_edges=math.ceil((n_edg**2-n_edg)/2)
             job_iter=0
             start_node=1
-            while tot_jobs>0:
+            while tot_edges>0:
                 acc_edg=0
                 for n_e in range(start_node,n_edg+1):
                     acc_edg+=n_edg-n_e
+                    print()
                     if acc_edg>=PM.MaxEdgesPerJob:
-                        tot_jobs-=acc_edg
+                        tot_edges-=acc_edg
                         job_iter+=1
                         acc_edg=0
                         start_node=n_e+1
-                    print(n_e,acc_edg,tot_jobs,job_iter,start_node)
+                    print(n_e,acc_edg,tot_edges,job_iter,start_node)
                     x=input()
             exit()
 #                 job_set=[]
