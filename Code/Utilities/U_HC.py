@@ -43,7 +43,7 @@ class HitCluster:
            job_iter=0
            acc_edg=0
            start_pos=0
-           end_pos=0
+           end_pos=n_edg
            for n_e in range(1,n_edg+1):
                acc_edg+=n_edg-n_e
                if acc_edg>=MaxEdges:
@@ -54,6 +54,7 @@ class HitCluster:
                       break
                    else:
                       start_pos=n_e
+
 
            print(l,MaxEdges)
            print(start_pos,end_pos)
