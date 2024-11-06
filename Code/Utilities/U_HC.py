@@ -39,21 +39,25 @@ class HitCluster:
            print('Initial number of all possible hit combinations is:',len(_Hits)**2)
            print('Number of all possible hit combinations without self-permutations:',(len(_Hits)**2)-len(_Hits))
            print('Number of all possible hit  combinations with enforced one-directionality:',int(((len(_Hits)**2)-len(_Hits))/2))
-           n_edg=len(self.RawClusterGraph)
-           job_iter=0
-           acc_edg=0
-           start_pos=0
-           end_pos=n_edg
-           for n_e in range(1,n_edg+1):
-               acc_edg+=n_edg-n_e
-               if acc_edg>=MaxEdges:
-                   job_iter+=1
-                   acc_edg=0
-                   if job_iter==l+1:
-                      end_pos=n_e
-                      break
-                   else:
-                      start_pos=n_e
+           if l>-1 and MaxEdges>-1:
+               n_edg=len(self.RawClusterGraph)
+               job_iter=0
+               acc_edg=0
+               start_pos=0
+               end_pos=n_edg
+               for n_e in range(1,n_edg+1):
+                   acc_edg+=n_edg-n_e
+                   if acc_edg>=MaxEdges:
+                       job_iter+=1
+                       acc_edg=0
+                       if job_iter==l+1:
+                          end_pos=n_e
+                          break
+                       else:
+                          start_pos=n_e
+           else:
+               start_pos=0
+               end_pos=len(_Hits)-1
            for l in range(start_pos,min(end_pos,len(_Hits)-1)):
                for r in range(l+1,len(_Hits)):
                    if HitCluster.JoinHits(_Hits[l],_Hits[r],cut_dt,cut_dr,cut_dz):
@@ -78,8 +82,6 @@ class HitCluster:
                del TH[1:6]
                del TH[2:7]
            self.RawEdgeGraph=_Tot_Hits
-           print(self.RawEdgeGraph)
-           exit()
            return True
       def GenerateEdgGraph(self, cut_dt, cut_dr, cut_dz, MCHits): #Decorate hit information
            #New workaround: instead of a painful Pandas outer join a loop over list is performed
