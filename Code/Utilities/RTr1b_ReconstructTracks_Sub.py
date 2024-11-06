@@ -153,7 +153,7 @@ elif os.path.isfile(CheckPointFile_Edge):
 
 torch_import=True
 input_file_location=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(i)+'_'+str(j)+'/RTr1a_'+RecBatchID+'_hit_cluster_edges_'+str(i)+'_'+str(j)+'_'+str(k)+'.pkl'
-if os.path.isfile(input_file_location):
+if os.path.isfile(input_file_location) and Status=='Edge graph generation':
     HC=UI.PickleOperations(input_file_location,'r',' ')[0]
 else:
     Status = 'Skip tracking'
@@ -165,8 +165,6 @@ if len(HC.RawEdgeGraph)<1:
 if Status=='Edge graph generation':
     print(UI.TimeStamp(),'Generating the edges...')
     GraphStatus = HC.GenerateEdgeGraph([])
-    print(HC.ClusterGraph)
-    exit()
     if CheckPoint and GraphStatus:
         print(UI.TimeStamp(),'Saving checkpoint 2...')
         UI.PickleOperations(CheckPointFile_Edge,'w',HC)
