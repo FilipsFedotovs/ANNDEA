@@ -108,10 +108,10 @@ Z_overlap,Y_overlap,X_overlap=int(args.Z_overlap),int(args.Y_overlap),int(args.X
 SliceData=max(Xmin,Xmax,Ymin,Ymax)>0 #We don't slice data if all values are set to zero simultaneousy (which is the default setting)
 
 if Mode=='RESET':
-    print(UI.ManageFolders(AFS_DIR, EOS_DIR, RecBatchID,'d',['RTr1a','RTr1b','RTr1c','RTr1d']))
+    print(UI.ManageFolders(AFS_DIR, EOS_DIR, RecBatchID,'d',['RTr1a','RTr1b','RTr1c','RTr1d','RTr1e']))
     print(UI.ManageFolders(AFS_DIR, EOS_DIR, RecBatchID,'c'))
 elif Mode=='CLEANUP':
-     print(UI.ManageFolders(AFS_DIR, EOS_DIR, RecBatchID,'d',['RTr1a','RTr1b','RTr1c','RTr1d']))
+     print(UI.ManageFolders(AFS_DIR, EOS_DIR, RecBatchID,'d',['RTr1a','RTr1b','RTr1c','RTr1d','RTr1e']))
      exit()
 else:
     print(UI.ManageFolders(AFS_DIR, EOS_DIR, RecBatchID,'c'))
@@ -424,7 +424,6 @@ while Status<len(Program):
     elif Status==1:
         print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
         print(UI.TimeStamp(),bcolors.BOLD+'Stage 1:'+bcolors.ENDC+' Consolidating the edge generation files from the previous step...')
-        print(Program[0][1][8])
         with alive_bar(Program[0][4],force_tty=True, title='Consolidation progress...') as bar:
             for i in range(len(Program[0][1][8])):
                 for j in range(len(Program[0][1][8][i])):
@@ -451,7 +450,7 @@ while Status<len(Program):
       print(UI.TimeStamp(),bcolors.BOLD+'Stage 3:'+bcolors.ENDC+' Using the results from previous steps to map merged trackIDs to the original reconstruction file')
       try:
         #Read the output with hit- ANN Track map
-        FirstFile=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/Temp_RTr1d_'+RecBatchID+'_0'+'/RTr1d_'+RecBatchID+'_hit_cluster_rec_x_set_0.csv'
+        FirstFile=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/Temp_RTr1e_'+RecBatchID+'_0'+'/RTr1e_'+RecBatchID+'_hit_cluster_rec_x_set_0.csv'
         print(UI.TimeStamp(),'Loading the file ',bcolors.OKBLUE+FirstFile+bcolors.ENDC)
         TrackMap=pd.read_csv(FirstFile,header=0)
         input_file_location=args.f
