@@ -83,53 +83,19 @@ class HitCluster:
                del TH[2:7]
            self.RawEdgeGraph=_Tot_Hits
            return True
-      def GenerateEdgGraph(self, cut_dt, cut_dr, cut_dz, MCHits): #Decorate hit information
-           #New workaround: instead of a painful Pandas outer join a loop over list is performed
-           _Hits=self.ClusterHits
-           _Hits= sorted(_Hits, key=lambda x: x[3], reverse=True) #Sorting by z
-           _Tot_Hits=[]
-           print('Initial number of all possible hit combinations is:',len(_Hits)**2)
-           print('Number of all possible hit combinations without self-permutations:',(len(_Hits)**2)-len(_Hits))
-           print('Number of all possible hit  combinations with enforced one-directionality:',int(((len(_Hits)**2)-len(_Hits))/2))
-
-           for l in range(0,len(_Hits)-1):
-               for r in range(l+1,len(_Hits)):
-                   if HitCluster.JoinHits(_Hits[l],_Hits[r],cut_dt,cut_dr,cut_dz):
-                          _Tot_Hits.append(_Hits[l]+_Hits[r])
-
-           print('Number of all  hit combinations passing fiducial cuts:',len(_Tot_Hits))
-           self.HitPairs=[]
-           for TH in _Tot_Hits:
-               self.HitPairs.append([TH[0],TH[3], TH[6],TH[9]])
-           for TH in _Tot_Hits:
-               for i in range(1,4):TH[i]=TH[i]/self.Step[2]
-               for i in range(7,10):TH[i]=TH[i]/self.Step[2]
-               if len(MCHits)>0:
-                    TH.append(HitCluster.LabelLinks(TH,MCHits))
-               else:
-                    TH.append('N/A')
-               TH.append((math.sqrt(((TH[8]-TH[2])**2) + ((TH[7]-TH[1])**2) + ((TH[9]-TH[3])**2))))
-               TH.append(math.sqrt(((TH[8]-TH[2])**2) + ((TH[7]-TH[1])**2)))
-               TH.append(abs(TH[9]-TH[3]))
-               TH.append(abs(TH[4]-TH[10]))
-               TH.append(abs(TH[5]-TH[11]))
-               del TH[1:6]
-               del TH[2:7]
-           if len(_Tot_Hits)>0:
-               import torch
-               from torch_geometric.data import Data
-               self.ClusterGraph=Data(x=torch.Tensor(self.RawClusterGraph), edge_index=None, y=None)
-               self.ClusterGraph.edge_index=torch.tensor((HitCluster.GenerateLinks(_Tot_Hits,self.ClusterHitIDs)))
-               self.ClusterGraph.edge_attr=torch.tensor((HitCluster.GenerateEdgeAttributes(_Tot_Hits)))
-               if len(MCHits)>0:
-                self.ClusterGraph.y=torch.tensor((HitCluster.GenerateEdgeLabels(_Tot_Hits)))
-               self.edges=[]
-               for r in _Tot_Hits:
-                   self.edges.append(r[:2])
-               if len(self.ClusterGraph.edge_attr)>0:
-                   return True
-               else:
-                   return False
+      def GenerateEdgGraph(self, MCHits): #Decorate hit information
+           import torch
+           from torch_geometric.data import Data
+           self.ClusterGraph=Data(x=torch.Tensor(self.RawClusterGraph), edge_index=None, y=None)
+           self.ClusterGraph.edge_index=torch.tensor((HitCluster.GenerateLinks(self.RawEdgeGraph,self.ClusterHitIDs)))
+           self.ClusterGraph.edge_attr=torch.tensor((HitCluster.GenerateEdgeAttributes(self.RawEdgeGraph)))
+           if len(MCHits)>0:
+            self.ClusterGraph.y=torch.tensor((HitCluster.GenerateEdgeLabels(self.RawEdgeGraph)))
+           self.edges=[]
+           for r in self.RawEdgeGraph:
+               self.edges.append(r[:2])
+           if len(self.ClusterGraph.edge_attr)>0:
+               return True
            else:
                return False
 

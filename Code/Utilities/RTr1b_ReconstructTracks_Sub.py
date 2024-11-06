@@ -102,7 +102,7 @@ def InjectHit(Predator,Prey, Soft):
                      return True
              return False
 
-Status='Edge generation'
+Status='Edge graph generation'
 CheckPointFile_Edge=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(i)+'_'+str(j)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(i)+'_'+str(j) +'_'+str(k) +'_CP_EdgeGraph.pkl'
 CheckPointFile_ML=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(i)+'_'+str(j)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(i)+'_'+str(j)+'_'+str(k) + '_CP_ML.csv'
 CheckPointFile_Prep_1=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(i)+'_'+str(j)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(i)+'_'+str(j) +'_'+str(k) +'_CP_Prep_1.csv'
@@ -153,20 +153,24 @@ elif os.path.isfile(CheckPointFile_Edge):
 
 torch_import=True
 input_file_location=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(i)+'_'+str(j)+'/RTr1a_'+RecBatchID+'_hit_cluster_edges_'+str(i)+'_'+str(j)+'_'+str(k)+'.pkl'
-HC=UI.PickleOperations(input_file_location,'r',' ')[0]
-print(HC.RawClusterGraph)
-exit()
+if os.path.isfile(input_file_location):
+    HC=UI.PickleOperations(input_file_location,'r',' ')[0]
+else:
+    Status = 'Skip tracking'
 if len(HC.RawClusterGraph)<=1:
+    Status = 'Skip tracking'
+if len(HC.RawEdgeGraph)<1:
     Status = 'Skip tracking'
 
 if Status=='Edge graph generation':
     print(UI.TimeStamp(),'Generating the edges...')
-    GraphStatus = HC.GenerateEdges(cut_dt, cut_dr, cut_dz, [])
+    GraphStatus = HC.GenerateEdgGraph([])
     if CheckPoint and GraphStatus:
         print(UI.TimeStamp(),'Saving checkpoint 2...')
         UI.PickleOperations(CheckPointFile_Edge,'w',HC)
     if GraphStatus:
         Status = 'ML analysis'
+        exit()
     else:
         Status = 'Skip tracking'
 
@@ -376,7 +380,7 @@ if Status=='Tracking' or Status=='Tracking continuation':
 if Status=='Skip tracking':
     _Rec_Hits_Pool=pd.DataFrame([], columns = ['HitID','Master_z','Master_Segment_ID'])
 
-output_file_location=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(X_ID_n)+'_'+str(Y_ID_n)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(X_ID_n)+'_'+str(Y_ID_n)+'_'+str(Z_ID_n)+sfx
+output_file_location=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(i)+'_'+str(j)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(i)+'_'+str(j)+'_'+str(k)+sfx
 print(UI.TimeStamp(),'Writing the output...')
 _Rec_Hits_Pool.to_csv(output_file_location,index=False) #Write the final result
 print(UI.TimeStamp(),'Output is written to ',output_file_location)
