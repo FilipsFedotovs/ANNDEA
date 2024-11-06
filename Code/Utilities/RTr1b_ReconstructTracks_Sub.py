@@ -53,7 +53,7 @@ TrackFitCutRes=args.TrackFitCutRes
 TrackFitCutSTD=args.TrackFitCutSTD
 TrackFitCutMRes=args.TrackFitCutMRes
 p,o,sfx,pfx=args.p,args.o,args.sfx,args.pfx
-i,j,k,l=args.i,args.j,args.k,args.l
+i,j,k=args.i,args.j,args.k
 
 import U_UI as UI #This is where we keep routine utility functions
 import U_HC as HC_l
