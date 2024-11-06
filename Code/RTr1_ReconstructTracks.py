@@ -427,7 +427,7 @@ while Status<len(Program):
             for i in range(len(Program[0][1][8])):
                 for j in range(len(Program[0][1][8][i])):
                     for k in range(len(Program[0][1][8][i][j])):
-                        master_file=EOS_DIR+Program[2][1][3]+'/Temp_'+Program[2][1][5]+'_'+RecBatchID+'_'+str(i)+'_'+str(j)+'_'+str(k)+'/'+Program[2][1][5]+'_'+RecBatchID+'_'+Program[2][1][4]+'_'+str(i)+'_'+str(j)+'_'+str(k)+'_0.pkl'
+                        master_file=EOS_DIR+Program[0][1][3]+'/Temp_'+Program[0][1][5]+'_'+RecBatchID+'_'+str(i)+'_'+str(j)+'_'+str(k)+'/'+Program[0][1][5]+'_'+RecBatchID+'_'+Program[0][1][4]+'_'+str(i)+'_'+str(j)+'_'+str(k)+'_0.pkl'
                         master_data=UI.PickleOperations(master_file,'r','')[0]
                         mater_edges=master_data.RawEdgeGraph
                         print(mater_edges)
