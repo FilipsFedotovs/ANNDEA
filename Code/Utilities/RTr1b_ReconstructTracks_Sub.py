@@ -170,7 +170,6 @@ if Status=='Edge graph generation':
         UI.PickleOperations(CheckPointFile_Edge,'w',HC)
     if GraphStatus:
         Status = 'ML analysis'
-        exit()
     else:
         Status = 'Skip tracking'
 
@@ -263,6 +262,7 @@ if Status=='Track preparation':
             UI.LogOperations(CheckPointFile_Prep_1,'w',_Tot_Hits)
             _z_map.to_csv(CheckPointFile_Prep_2,index=False)
         Status='Tracking'
+        exit()
 
 if Status=='Tracking' or Status=='Tracking continuation':
     print(UI.TimeStamp(),'Tracking the cluster...')
