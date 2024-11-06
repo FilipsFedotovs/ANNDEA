@@ -17,18 +17,9 @@ parser.add_argument('--k',help="SubSubset number", default='1')
 parser.add_argument('--TrackFitCutRes',help="Track Fit cut Residual", default=1000,type=int)
 parser.add_argument('--TrackFitCutSTD',help="Track Fit cut", default=10,type=int)
 parser.add_argument('--TrackFitCutMRes',help="Track Fit cut", default=200,type=int)
-parser.add_argument('--Z_overlap',help="Enter Z id", default='1')
-parser.add_argument('--Y_overlap',help="Enter Y id", default='1')
-parser.add_argument('--X_overlap',help="Enter X id", default='1')
-parser.add_argument('--stepX',help="Enter X step size", default='0')
-parser.add_argument('--stepY',help="Enter Y step size", default='0')
-parser.add_argument('--stepZ',help="Enter Z step size", default='0')
 parser.add_argument('--EOS',help="EOS directory location", default='.')
 parser.add_argument('--AFS',help="AFS directory location", default='.')
 parser.add_argument('--PY',help="Python libraries directory location", default='.')
-parser.add_argument('--cut_dt',help="Cut on angle difference", default='1.0')
-parser.add_argument('--cut_dr',help="Cut on angle difference", default='4000')
-parser.add_argument('--cut_dz',help="Cut on z difference", default='3000')
 parser.add_argument('--ModelName',help="Name of the model to use?", default='0')
 parser.add_argument('--BatchID',help="Give name to this train sample", default='')
 parser.add_argument('--p',help="Path to the output file", default='')
@@ -36,7 +27,7 @@ parser.add_argument('--o',help="Path to the output file name", default='')
 parser.add_argument('--pfx',help="Path to the output file name", default='')
 parser.add_argument('--sfx',help="Path to the output file name", default='')
 parser.add_argument('--CheckPoint',help="Save cluster sets during individual cluster tracking.", default='N')
-exit()
+
 #Working out where are the Py libraries
 args = parser.parse_args()
 #Loading Directory locations
@@ -55,31 +46,14 @@ sys.path.append(AFS_DIR+'/Code/Utilities')
 import pandas as pd #We use Panda for a routine data processing
 import numpy as np
 ######################################## Set variables  #############################################################
-Z_overlap=int(args.Z_overlap)
-Y_overlap=int(args.Y_overlap)
-X_overlap=int(args.X_overlap)
-Z_ID=int(args.k)/Z_overlap
-Y_ID=int(args.j)/Y_overlap
-X_ID=int(args.i)/X_overlap
-Y_ID_n=int(args.j)
-X_ID_n=int(args.i)
-Z_ID_n=int(args.k)
-stepX=float(args.stepX)
-stepZ=float(args.stepZ)
-stepY=float(args.stepY)
-cut_dt=float(args.cut_dt)
-cut_dr=float(args.cut_dr)
-cut_dz=float(args.cut_dz)
 ModelName=args.ModelName
 CheckPoint=args.CheckPoint.upper()=='Y'
 RecBatchID=args.BatchID
 TrackFitCutRes=args.TrackFitCutRes
 TrackFitCutSTD=args.TrackFitCutSTD
 TrackFitCutMRes=args.TrackFitCutMRes
-p=args.p
-o=args.o
-sfx=args.sfx
-pfx=args.pfx
+p,o,sfx,pfx=args.p,args.o,args.sfx,args.pfx
+i,j,k,l=args.i,args.j,args.k,args.l
 
 import U_UI as UI #This is where we keep routine utility functions
 import U_HC as HC_l
@@ -129,12 +103,12 @@ def InjectHit(Predator,Prey, Soft):
              return False
 
 Status='Edge generation'
-CheckPointFile_Edge=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(X_ID_n)+'_'+str(Y_ID_n)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(X_ID_n)+'_'+str(Y_ID_n) +'_'+str(Z_ID_n) +'_CP_Edge.pkl'
-CheckPointFile_ML=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(X_ID_n)+'_'+str(Y_ID_n)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(X_ID_n)+'_'+str(Y_ID_n)+'_'+str(Z_ID_n) + '_CP_ML.csv'
-CheckPointFile_Prep_1=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(X_ID_n)+'_'+str(Y_ID_n)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(X_ID_n)+'_'+str(Y_ID_n) +'_'+str(Z_ID_n) +'_CP_Prep_1.csv'
-CheckPointFile_Prep_2=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(X_ID_n)+'_'+str(Y_ID_n)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(X_ID_n)+'_'+str(Y_ID_n) +'_'+str(Z_ID_n) +'_CP_Prep_2.csv'
-CheckPointFile_Tracking_TH=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(X_ID_n)+'_'+str(Y_ID_n)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(X_ID_n)+'_'+str(Y_ID_n)+'_'+str(Z_ID_n) +'_CP_Tracking_TH.csv'
-CheckPointFile_Tracking_RP=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(X_ID_n)+'_'+str(Y_ID_n)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(X_ID_n)+'_'+str(Y_ID_n)+'_'+str(Z_ID_n) +'_CP_Tracking_RP.csv'
+CheckPointFile_Edge=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(i)+'_'+str(j)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(i)+'_'+str(j) +'_'+str(k) +'_CP_EdgeGraph.pkl'
+CheckPointFile_ML=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(i)+'_'+str(j)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(i)+'_'+str(j)+'_'+str(k) + '_CP_ML.csv'
+CheckPointFile_Prep_1=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(i)+'_'+str(j)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(i)+'_'+str(j) +'_'+str(k) +'_CP_Prep_1.csv'
+CheckPointFile_Prep_2=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(i)+'_'+str(j)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(i)+'_'+str(j) +'_'+str(k) +'_CP_Prep_2.csv'
+CheckPointFile_Tracking_TH=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(i)+'_'+str(j)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(i)+'_'+str(j)+'_'+str(k) +'_CP_Tracking_TH.csv'
+CheckPointFile_Tracking_RP=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(i)+'_'+str(j)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(i)+'_'+str(j)+'_'+str(k) +'_CP_Tracking_RP.csv'
 
 if os.path.isfile(CheckPointFile_Tracking_TH) and os.path.isfile(CheckPointFile_Tracking_RP):
         UI.Msg('location','Loading checkpoint file ',CheckPointFile_Tracking_TH)
@@ -178,14 +152,15 @@ elif os.path.isfile(CheckPointFile_Edge):
 #Specifying the full path to input/output files
 
 torch_import=True
-input_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/RTr1_'+RecBatchID+'_'+args.i+'_'+args.j+'_'+args.k+'_hits.csv'
-UI.PickleOperations(input_file_location,'r',HC)
+input_file_location=EOS_DIR+p+'/Temp_'+sfx+'_'+RecBatchID+'_'+str(i)+'_'+str(j)+'/RTr1a_'+RecBatchID+'_hit_cluster_edges_'+str(i)+'_'+str(j)+'_'+str(k)+'.pkl'
+HC=UI.PickleOperations(input_file_location,'r',' ')[0]
+print(HC.RawClusterGraph)
+exit()
 if len(HC.RawClusterGraph)<=1:
     Status = 'Skip tracking'
 
-if Status=='Edge generation':
+if Status=='Edge graph generation':
     print(UI.TimeStamp(),'Generating the edges...')
-    print(UI.TimeStamp(),"Hit density of the Cluster",round(X_ID,1),round(Y_ID,1),1, "is  {} hits per cm\u00b3".format(round(len(HC.RawClusterGraph)/(stepX/10000*stepY/10000*stepZ/10000)),2))
     GraphStatus = HC.GenerateEdges(cut_dt, cut_dr, cut_dz, [])
     if CheckPoint and GraphStatus:
         print(UI.TimeStamp(),'Saving checkpoint 2...')
