@@ -164,7 +164,9 @@ if len(HC.RawEdgeGraph)<1:
 
 if Status=='Edge graph generation':
     print(UI.TimeStamp(),'Generating the edges...')
-    GraphStatus = HC.GenerateEdgGraph([])
+    GraphStatus = HC.GenerateEdgeGraph([])
+    print(HC.ClusterGraph)
+    exit()
     if CheckPoint and GraphStatus:
         print(UI.TimeStamp(),'Saving checkpoint 2...')
         UI.PickleOperations(CheckPointFile_Edge,'w',HC)

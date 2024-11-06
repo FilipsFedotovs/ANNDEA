@@ -83,7 +83,7 @@ class HitCluster:
                del TH[2:7]
            self.RawEdgeGraph=_Tot_Hits
            return True
-      def GenerateEdgGraph(self, MCHits): #Decorate hit information
+      def GenerateEdgeGraph(self, MCHits): #Decorate hit information
            import torch
            from torch_geometric.data import Data
            self.ClusterGraph=Data(x=torch.Tensor(self.RawClusterGraph), edge_index=None, y=None)
