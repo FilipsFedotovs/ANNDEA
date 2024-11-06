@@ -291,7 +291,6 @@ UI.Msg('vanilla','Current stage is '+str(Status)+'...')
 
 ################ Set the execution sequence for the script
 Program=[]
-
 ###### Stage 0
 prog_entry=[]
 job_sets=[]
@@ -409,10 +408,9 @@ print(UI.TimeStamp(),'Current stage has a code',Status,bcolors.ENDC)
 while Status<len(Program):
     if Program[Status]!='Custom':
         #Standard process here
-       if Status==2:
-           print(str(CP_CleanUp(Program, Status)),'temp files deleted...')
+       # if Status==2:
+       #     print(str(CP_CleanUp(Program, Status)),'temp files deleted...')
        Result=UI.StandardProcess(Program,Status,SubGap,SubPause,RequestExtCPU,JobFlavour,ReqMemory,time_int,Patience)
-
        if Result[0]:
             UI.UpdateStatus(Status+1,Meta,RecOutputMeta)
        else:
@@ -420,7 +418,9 @@ while Status<len(Program):
              break
 
     elif Status==1:
-        print('Wip')
+        print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
+        print(UI.TimeStamp(),bcolors.BOLD+'Stage 1:'+bcolors.ENDC+' Consolidating the edge generation files from the previous step...')
+        print(Program[0][1][8])
         exit()
     elif Status==4:
       #Non standard processes (that don't follow the general pattern) have been coded here
