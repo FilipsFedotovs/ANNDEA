@@ -17,9 +17,9 @@ parser.add_argument('--k',help="SubSubset number", default='1')
 # parser.add_argument('--TrackFitCutRes',help="Track Fit cut Residual", default=1000,type=int)
 # parser.add_argument('--TrackFitCutSTD',help="Track Fit cut", default=10,type=int)
 # parser.add_argument('--TrackFitCutMRes',help="Track Fit cut", default=200,type=int)
-parser.add_argument('--stepX',help="Enter X step size", default='0')
-parser.add_argument('--stepY',help="Enter Y step size", default='0')
-parser.add_argument('--stepZ',help="Enter Z step size", default='0')
+# parser.add_argument('--stepX',help="Enter X step size", default='0')
+# parser.add_argument('--stepY',help="Enter Y step size", default='0')
+# parser.add_argument('--stepZ',help="Enter Z step size", default='0')
 parser.add_argument('--EOS',help="EOS directory location", default='.')
 parser.add_argument('--AFS',help="AFS directory location", default='.')
 parser.add_argument('--PY',help="Python libraries directory location", default='.')
@@ -57,7 +57,7 @@ RecBatchID=args.BatchID
 # TrackFitCutMRes=args.TrackFitCutMRes
 p,o,sfx,pfx=args.p,args.o,args.sfx,args.pfx
 i,j,k=args.i,args.j,args.k
-stepX,stepY,stepZ=float(args.stepX),float(args.stepY),float(args.stepZ)
+#stepX,stepY,stepZ=float(args.stepX),float(args.stepY),float(args.stepZ)
 import U_UI as UI #This is where we keep routine utility functions
 import U_ML as ML
 #This function combines two segment object. Example: Segment 1 is [[a, _ ,b ,_ ,_ ][0.9,0.0,0.9,0.0,0.0]];  Segment 2 is [[a, _ ,c ,_ ,_ ][0.9,0.0,0.8,0.0,0.0]]; Segment 3 is [[_, d ,b ,_ ,_ ][0.0,0.8,0.8,0.0,0.0]]
@@ -335,7 +335,7 @@ if Status=='Tracking' or Status=='Tracking continuation':
                     columns+=['average_link_strength']
                     # if Residual_Cut==False:
                     #     columns+=['RES','STD','MRES']
-                    # _Tot_Hits_Predator=pd.DataFrame(_Tot_Hits_Predator, columns = columns)
+                    _Tot_Hits_Predator=pd.DataFrame(_Tot_Hits_Predator, columns = columns)
                     # if Residual_Cut==False:
                     #     _Tot_Hits_Predator=_Tot_Hits_Predator.drop(_Tot_Hits_Predator.index[(_Tot_Hits_Predator['RES'] > TrackFitCutRes) | (_Tot_Hits_Predator['STD'] > TrackFitCutSTD) | (_Tot_Hits_Predator['MRES'] > TrackFitCutMRes)]) #Remove tracks with a bad fit
 
