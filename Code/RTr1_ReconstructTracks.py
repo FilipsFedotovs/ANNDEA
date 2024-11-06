@@ -429,9 +429,13 @@ while Status<len(Program):
                     for k in range(len(Program[0][1][8][i][j])):
                         master_file=EOS_DIR+Program[0][1][3]+'/Temp_'+Program[0][1][5]+'_'+RecBatchID+'_'+str(i)+'_'+str(j)+'_'+str(k)+'/'+Program[0][1][5]+'_'+RecBatchID+'_'+Program[0][1][4]+'_'+str(i)+'_'+str(j)+'_'+str(k)+'_0.pkl'
                         master_data=UI.PickleOperations(master_file,'r','')[0]
-                        mater_edges=master_data.RawEdgeGraph
-                        print(mater_edges)
                         bar()
+                        for l in range(1,Program[0][1][8][i][j][k]):
+                            slave_file=EOS_DIR+Program[0][1][3]+'/Temp_'+Program[0][1][5]+'_'+RecBatchID+'_'+str(i)+'_'+str(j)+'_'+str(k)+'/'+Program[0][1][5]+'_'+RecBatchID+'_'+Program[0][1][4]+'_'+str(i)+'_'+str(j)+'_'+str(k)+'_'+str(l)+'.pkl'
+                            slave_data=UI.PickleOperations(slave_file,'r','')[0]
+                            master_data.RawEdgeGraph+=slave_data.RawEdgeGraph
+                            print(master_data.RawEdgeGraph)
+                            x=input()
                         exit()
     elif Status==4:
       #Non standard processes (that don't follow the general pattern) have been coded here
