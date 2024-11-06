@@ -437,7 +437,8 @@ while Status<len(Program):
                             bar()
                         output_file=EOS_DIR+Program[2][1][3]+'/Temp_'+Program[2][1][5]+'_'+RecBatchID+'_'+str(i)+'_'+str(j)+'/'+Program[0][1][5]+'_'+RecBatchID+'_'+Program[0][1][4]+'_'+str(i)+'_'+str(j)+'_'+str(k)+'.pkl'
                         print(UI.PickleOperations(output_file,'w',master_data)[1])
-                        exit()
+        UI.Msg('success',"The hit cluster files were successfully consolidated.")
+        UI.UpdateStatus(Status+1,Meta,RecOutputMeta)
     elif Status==4:
       #Non standard processes (that don't follow the general pattern) have been coded here
       print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
