@@ -436,7 +436,7 @@ while Status<len(Program):
                             master_data.RawEdgeGraph+=slave_data.RawEdgeGraph
                             bar()
                         output_file=EOS_DIR+Program[2][1][3]+'/Temp_'+Program[2][1][5]+'_'+RecBatchID+'_'+str(i)+'_'+str(j)+'/'+Program[0][1][5]+'_'+RecBatchID+'_'+Program[0][1][4]+'_'+str(i)+'_'+str(j)+'_'+str(k)+'.pkl'
-                        print(UI.PickleOperations(output_file,'w',master_data))
+                        print(UI.PickleOperations(output_file,'w',master_data)[1])
                         exit()
     elif Status==4:
       #Non standard processes (that don't follow the general pattern) have been coded here

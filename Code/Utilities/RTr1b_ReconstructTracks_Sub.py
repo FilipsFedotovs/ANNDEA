@@ -36,7 +36,7 @@ parser.add_argument('--o',help="Path to the output file name", default='')
 parser.add_argument('--pfx',help="Path to the output file name", default='')
 parser.add_argument('--sfx',help="Path to the output file name", default='')
 parser.add_argument('--CheckPoint',help="Save cluster sets during individual cluster tracking.", default='N')
-
+exit()
 #Working out where are the Py libraries
 args = parser.parse_args()
 #Loading Directory locations
