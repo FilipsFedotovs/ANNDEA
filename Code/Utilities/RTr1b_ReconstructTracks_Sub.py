@@ -157,12 +157,11 @@ torch_import=True
 input_file_location=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(i)+'_'+str(j)+'/RTr1a_'+RecBatchID+'_hit_cluster_edges_'+str(i)+'_'+str(j)+'_'+str(k)+'.pkl'
 if os.path.isfile(input_file_location) and Status=='Edge graph generation':
     HC=UI.PickleOperations(input_file_location,'r',' ')[0]
+    if len(HC.RawClusterGraph)<=1 or len(HC.RawEdgeGraph)<1:
+        Status = 'Skip tracking'
 else:
     Status = 'Skip tracking'
-if len(HC.RawClusterGraph)<=1:
-    Status = 'Skip tracking'
-if len(HC.RawEdgeGraph)<1:
-    Status = 'Skip tracking'
+
 
 if Status=='Edge graph generation':
     print(UI.TimeStamp(),'Generating the edges...')
