@@ -68,7 +68,7 @@ parser.add_argument('--SubGap',help="How long to wait in minutes after submittin
 parser.add_argument('--RecBatchID',help="Give this reconstruction batch an ID", default='Test_Batch')
 parser.add_argument('--LocalSub',help="Local submission?", default='N')
 parser.add_argument('--CheckPoint',help="Save cluster sets during individual cluster tracking.", default='N')
-parser.add_argument('--TrackFitCut',help="Track Fit cut Residual", default="['1000','10','200']")
+# parser.add_argument('--TrackFitCut',help="Track Fit cut Residual", default="['1000','10','200']")
 parser.add_argument('--ForceStatus',help="Would you like the program run from specific status number? (Only for advance users)", default='0')
 parser.add_argument('--RequestExtCPU',help="Would you like to request extra CPUs?", default=1)
 parser.add_argument('--JobFlavour',help="Specifying the length of the HTCondor job walltime. Currently at 'workday' which is 8 hours.", default='workday')
@@ -90,7 +90,7 @@ ModelName=args.ModelName
 RecBatchID=args.RecBatchID
 Patience=int(args.Patience)
 SubPause=int(args.SubPause)*60
-TrackFitCut=ast.literal_eval(args.TrackFitCut)
+#TrackFitCut=ast.literal_eval(args.TrackFitCut)
 SubGap=int(args.SubGap)
 HTCondorLog=args.HTCondorLog
 ForceStatus=args.ForceStatus
@@ -341,8 +341,8 @@ for i in range(0,Xsteps):
                 job_sets.append(job_set)
 prog_entry.append(' Sending hit cluster to the HTCondor, so the model assigns weights between hits')
 prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/'+RecBatchID+'/','hit_cluster_rec_set','RTr1b','.csv',RecBatchID,job_sets,'RTr1b_ReconstructTracks_Sub.py'])
-prog_entry.append([' --stepZ ', ' --stepY ', ' --stepX ', ' --ModelName ',' --Z_overlap ',' --Y_overlap ',' --X_overlap ', ' --CheckPoint ', ' --TrackFitCutRes ',' --TrackFitCutSTD ',' --TrackFitCutMRes '])
-prog_entry.append([stepZ,stepY,stepX, ModelName,Z_overlap,Y_overlap,X_overlap,args.CheckPoint]+TrackFitCut)
+prog_entry.append([' --stepZ ', ' --stepY ', ' --stepX ', ' --ModelName ', ' --CheckPoint ']) #, ' --TrackFitCutRes ',' --TrackFitCutSTD ',' --TrackFitCutMRes '])
+prog_entry.append([stepZ,stepY,stepX,ModelName,args.CheckPoint])#+TrackFitCut)
 prog_entry.append(Xsteps*Ysteps*Zsteps)
 prog_entry.append(LocalSub)
 prog_entry.append('N/A')
