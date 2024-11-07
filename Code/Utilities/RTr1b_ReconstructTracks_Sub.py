@@ -163,6 +163,7 @@ else:
     Status = 'Skip tracking'
 
 print(len(HC.RawEdgeGraph))
+print(HC.RawEdgeGraph[1237])
 
 if Status=='Edge graph generation':
     print(UI.TimeStamp(),'Generating the edges...')
