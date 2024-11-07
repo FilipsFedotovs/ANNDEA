@@ -162,10 +162,6 @@ if os.path.isfile(input_file_location) and Status=='Edge graph generation':
 else:
     Status = 'Skip tracking'
 
-print(len(HC.RawEdgeGraph))
-print(HC.RawEdgeGraph[1237])
-print(HC.RawEdgeGraph[4378])
-
 if Status=='Edge graph generation':
     print(UI.TimeStamp(),'Generating the edges...')
     GraphStatus = HC.GenerateEdgeGraph([])
