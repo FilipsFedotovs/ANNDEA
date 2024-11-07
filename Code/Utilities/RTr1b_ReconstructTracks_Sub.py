@@ -162,6 +162,7 @@ if os.path.isfile(input_file_location) and Status=='Edge graph generation':
 else:
     Status = 'Skip tracking'
 
+print(len(HC.RawClusterGraph))
 
 if Status=='Edge graph generation':
     print(UI.TimeStamp(),'Generating the edges...')
