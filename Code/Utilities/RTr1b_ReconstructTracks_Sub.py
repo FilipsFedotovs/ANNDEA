@@ -164,6 +164,7 @@ else:
 
 print(len(HC.RawEdgeGraph))
 print(HC.RawEdgeGraph[1237])
+print(HC.RawEdgeGraph[4378])
 
 if Status=='Edge graph generation':
     print(UI.TimeStamp(),'Generating the edges...')
