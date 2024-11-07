@@ -431,15 +431,12 @@ while Status<len(Program):
                         if Program[0][1][8][i][j][k]>0:
                             master_file=EOS_DIR+Program[0][1][3]+'/Temp_'+Program[0][1][5]+'_'+RecBatchID+'_'+str(i)+'_'+str(j)+'_'+str(k)+'/'+Program[0][1][5]+'_'+RecBatchID+'_'+Program[0][1][4]+'_'+str(i)+'_'+str(j)+'_'+str(k)+'_0.pkl'
                             master_data=UI.PickleOperations(master_file,'r','')[0]
-                            print(len(master_data.RawEdgeGraph))
                             bar()
                             for l in range(1,Program[0][1][8][i][j][k]):
                                 slave_file=EOS_DIR+Program[0][1][3]+'/Temp_'+Program[0][1][5]+'_'+RecBatchID+'_'+str(i)+'_'+str(j)+'_'+str(k)+'/'+Program[0][1][5]+'_'+RecBatchID+'_'+Program[0][1][4]+'_'+str(i)+'_'+str(j)+'_'+str(k)+'_'+str(l)+'.pkl'
                                 slave_data=UI.PickleOperations(slave_file,'r','')[0]
                                 master_data.RawEdgeGraph+=slave_data.RawEdgeGraph
-                                print(len(master_data.RawEdgeGraph))
-                                x=input()
-
+                                master_data.HitPairs+=slave_data.HitPairs
                                 bar()
                             output_file=EOS_DIR+Program[2][1][3]+'/Temp_'+Program[2][1][5]+'_'+RecBatchID+'_'+str(i)+'_'+str(j)+'/'+Program[0][1][5]+'_'+RecBatchID+'_'+Program[0][1][4]+'_'+str(i)+'_'+str(j)+'_'+str(k)+'.pkl'
                             print(UI.PickleOperations(output_file,'w',master_data)[1])
