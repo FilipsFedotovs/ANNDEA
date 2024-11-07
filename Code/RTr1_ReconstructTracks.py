@@ -68,8 +68,9 @@ parser.add_argument('--SubGap',help="How long to wait in minutes after submittin
 parser.add_argument('--RecBatchID',help="Give this reconstruction batch an ID", default='Test_Batch')
 parser.add_argument('--LocalSub',help="Local submission?", default='N')
 parser.add_argument('--CheckPoint',help="Save cluster sets during individual cluster tracking.", default='N')
+parser.add_argument('--CalibrateEdgeGen',help="Optimise the mximum edge per job parameter", default='N')
 # parser.add_argument('--TrackFitCut',help="Track Fit cut Residual", default="['1000','10','200']")
-parser.add_argument('--ForceStatus',help="Would you like the program run from specific status number? (Only for advance users)", default='0')
+parser.add_argument('--ForceStatus',help="Would you like the program run from specific status number? (Only for advance users)", default='N')
 parser.add_argument('--RequestExtCPU',help="Would you like to request extra CPUs?", default=1)
 parser.add_argument('--JobFlavour',help="Specifying the length of the HTCondor job walltime. Currently at 'workday' which is 8 hours.", default='workday')
 parser.add_argument('--f',help="Please enter the full path to the file with track reconstruction", default='/eos/experiment/ship/ANNDEA/Data/SND_Emulsion_FEDRA_Raw_B31.csv')
@@ -95,6 +96,7 @@ SubGap=int(args.SubGap)
 HTCondorLog=args.HTCondorLog
 ForceStatus=args.ForceStatus
 LocalSub=(args.LocalSub=='Y')
+CalibrateEdgeGen=(args.CalibrateEdgeGen=='Y')
 if LocalSub:
    time_int=0
 else:
@@ -316,6 +318,11 @@ with alive_bar(Xsteps*Ysteps*Zsteps,force_tty=True, title='Estimating number of 
                      job_iter+=1
                 counter+=job_iter
                 job_sets[i][j].append(job_iter)
+if CalibrateEdgeGen:
+    print(job_sets)
+    x=input('Continue(y/n)?')
+    if x!='y':
+        exit()
 prog_entry.append(' Sending hit cluster to the HTCondor, so the model assigns weights between hits')
 prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/'+RecBatchID+'/','hit_cluster_edges','RTr1a','.pkl',RecBatchID,job_sets,'RTr1a_GenerateEdges_Sub.py'])
 prog_entry.append([' --cut_dt ', ' --cut_dr ',' --cut_dz ',' --MaxEdgesPerJob '])

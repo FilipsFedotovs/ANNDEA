@@ -47,7 +47,6 @@ if PY_DIR!='': #Temp solution
     sys.path.append('/usr/lib/python3.9/site-packages')
 sys.path.append(AFS_DIR+'/Code/Utilities')
 import pandas as pd #We use Panda for a routine data processing
-import numpy as np
 ######################################## Set variables  #############################################################
 ModelName=args.ModelName
 CheckPoint=args.CheckPoint.upper()=='Y'
@@ -328,6 +327,7 @@ if Status=='Tracking' or Status=='Tracking continuation':
                     #         STD=np.std(residual)
                     #         MRES=max(residual)
                     #         _Tot_Hits_Predator[_Tot_Hits_Predator.index(thp)]+=[RES,STD,MRES]
+
                     #converting the list objects into Pandas dataframe
                     for c in range(column_no):
                         columns.append(str(c))
