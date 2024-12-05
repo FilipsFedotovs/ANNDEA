@@ -324,7 +324,7 @@ if CalibrateEdgeGen:
     if x!='y':
         exit()
 prog_entry.append(' Sending hit cluster to the HTCondor, so the model assigns weights between hits')
-prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/'+RecBatchID+'/','hit_cluster_edges','RTr1a','.pkl',RecBatchID,job_sets,'RTr1a_GenerateEdges_Sub.py'])
+prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/'+RecBatchID+'/','Raw_Edge_Graph','RTr1a','.csv',RecBatchID,job_sets,'RTr1a_GenerateEdges_Sub.py'])
 prog_entry.append([' --cut_dt ', ' --cut_dr ',' --cut_dz ',' --MaxEdgesPerJob '])
 prog_entry.append([cut_dt,cut_dr,cut_dz,str(PM.MaxEdgesPerJob)])
 prog_entry.append(counter)
