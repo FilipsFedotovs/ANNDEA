@@ -53,7 +53,7 @@ UI.LogOperations(output_file_location_1,"w", HC.RawEdgeGraph)
 UI.LogOperations(output_file_location_2,"w", HC.HitPairs)
 print(UI.TimeStamp(),'Output is written to ',output_file_location_1)
 print(UI.TimeStamp(),'Output is written to ',output_file_location_2)
-if l==0:
+if l=='0':
     output_file_location_3=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(i)+'_'+str(j)+'_'+str(k)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(i)+'_'+str(j)+'_'+str(k)+'pkl'
     UI.PickleOperations(output_file_location_3,'w',HC)
     print(UI.TimeStamp(),'Output is written to ',output_file_location_3)
