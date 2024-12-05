@@ -447,15 +447,11 @@ while Status<len(Program):
                                 for r in slave_data_1:
                                     for c in range(3,8):
                                         r[c]=float(r[c])
-                                #['27658305', '27658467', 'N/A', '0.21917466259306687', '0.0018721498356021925', '0.21916666666666662', '0.0224141806', '0.011612831']
                                 for r in slave_data_2:
                                     r[1]=float(r[1])
                                     r[3]=float(r[3])
-                                print(slave_data_1)
-                                print(slave_data_2)
-                                exit()
-                                master_data.RawEdgeGraph+=slave_data.RawEdgeGraph
-                                master_data.HitPairs+=slave_data.HitPairs
+                                master_data.RawEdgeGraph+=slave_data_1
+                                master_data.HitPairs+=slave_data_2
                                 bar()
                             output_file=EOS_DIR+Program[2][1][3]+'/Temp_'+Program[2][1][5]+'_'+RecBatchID+'_'+str(i)+'_'+str(j)+'/'+Program[0][1][5]+'_'+RecBatchID+'_'+Program[0][1][4]+'_'+str(i)+'_'+str(j)+'_'+str(k)+'.pkl'
                             print(UI.PickleOperations(output_file,'w',master_data)[1])
