@@ -59,7 +59,7 @@ class HitCluster:
                start_pos=0
                end_pos=len(_Hits)-1
            for l in range(start_pos,min(end_pos,len(_Hits)-1)):
-               for r in range(l+1,len(_Hits)):
+               for r in range(l+1,len(_Hits)HitPairs):
                    if HitCluster.JoinHits(_Hits[l],_Hits[r],cut_dt,cut_dr,cut_dz):
                           _Tot_Hits.append(_Hits[l]+_Hits[r])
 
