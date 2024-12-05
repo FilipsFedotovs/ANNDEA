@@ -441,7 +441,7 @@ while Status<len(Program):
                             bar()
                             for l in range(1,Program[0][1][8][i][j][k]):
                                 slave_file_1=EOS_DIR+Program[0][1][3]+'/Temp_'+Program[0][1][5]+'_'+RecBatchID+'_'+str(i)+'_'+str(j)+'_'+str(k)+'/'+Program[0][1][5]+'_'+RecBatchID+'_'+Program[0][1][4]+'_'+str(i)+'_'+str(j)+'_'+str(k)+'_'+str(l)+'.csv'
-                                slave_file_2=EOS_DIR+Program[0][1][3]+'/Temp_'+Program[0][1][5]+'_'+RecBatchID+'_'+str(i)+'_'+str(j)+'_'+str(k)+'/'+Program[0][1][5]+'_HitPairs_'+Program[0][1][4]+'_'+str(i)+'_'+str(j)+'_'+str(k)+'_'+str(l)+'.csv'
+                                slave_file_2=EOS_DIR+Program[0][1][3]+'/Temp_'+Program[0][1][5]+'_'+RecBatchID+'_'+str(i)+'_'+str(j)+'_'+str(k)+'/'+Program[0][1][5]+'_'+RecBatchID+'_HitPairs_'+str(i)+'_'+str(j)+'_'+str(k)+'_'+str(l)+'.csv'
                                 slave_data_1=UI.LogOperations(slave_file_1,'r','')
                                 slave_data_2=UI.LogOperations(slave_file_2,'r','')
                                 print(slave_data_1)
