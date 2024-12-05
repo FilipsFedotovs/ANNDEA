@@ -153,7 +153,7 @@ elif os.path.isfile(CheckPointFile_Edge):
 #Specifying the full path to input/output files
 
 torch_import=True
-input_file_location=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(i)+'_'+str(j)+'/RTr1a_'+RecBatchID+'_'+o+'_'+str(i)+'_'+str(j)+'_'+str(k)+'.pkl'
+input_file_location=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(i)+'_'+str(j)+'/RTr1a_'+RecBatchID+'_RawEdgeGraph_'+str(i)+'_'+str(j)+'_'+str(k)+'.pkl'
 if os.path.isfile(input_file_location) and Status=='Edge graph generation':
     HC=UI.PickleOperations(input_file_location,'r',' ')[0]
     if len(HC.RawClusterGraph)<=1 or len(HC.RawEdgeGraph)<1:
