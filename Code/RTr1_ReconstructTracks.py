@@ -436,12 +436,17 @@ while Status<len(Program):
                 for j in range(len(Program[0][1][8][i])):
                     for k in range(len(Program[0][1][8][i][j])):
                         if Program[0][1][8][i][j][k]>0:
-                            master_file=EOS_DIR+Program[0][1][3]+'/Temp_'+Program[0][1][5]+'_'+RecBatchID+'_'+str(i)+'_'+str(j)+'_'+str(k)+'/'+Program[0][1][5]+'_'+RecBatchID+'_'+Program[0][1][4]+'_'+str(i)+'_'+str(j)+'_'+str(k)+'_0.pkl'
+                            master_file=EOS_DIR+Program[0][1][3]+'/Temp_'+Program[0][1][5]+'_'+RecBatchID+'_'+str(i)+'_'+str(j)+'_'+str(k)+'/'+Program[0][1][5]+'_'+RecBatchID+'_'+Program[0][1][4]+'_'+str(i)+'_'+str(j)+'_'+str(k)+'.pkl'
                             master_data=UI.PickleOperations(master_file,'r','')[0]
                             bar()
                             for l in range(1,Program[0][1][8][i][j][k]):
-                                slave_file=EOS_DIR+Program[0][1][3]+'/Temp_'+Program[0][1][5]+'_'+RecBatchID+'_'+str(i)+'_'+str(j)+'_'+str(k)+'/'+Program[0][1][5]+'_'+RecBatchID+'_'+Program[0][1][4]+'_'+str(i)+'_'+str(j)+'_'+str(k)+'_'+str(l)+'.pkl'
-                                slave_data=UI.PickleOperations(slave_file,'r','')[0]
+                                slave_file_1=EOS_DIR+Program[0][1][3]+'/Temp_'+Program[0][1][5]+'_'+RecBatchID+'_'+str(i)+'_'+str(j)+'_'+str(k)+'/'+Program[0][1][5]+'_'+RecBatchID+'_'+Program[0][1][4]+'_'+str(i)+'_'+str(j)+'_'+str(k)+'_'+str(l)+'.csv'
+                                slave_file_2=EOS_DIR+Program[0][1][3]+'/Temp_'+Program[0][1][5]+'_'+RecBatchID+'_'+str(i)+'_'+str(j)+'_'+str(k)+'/'+Program[0][1][5]+'_HitPairs_'+Program[0][1][4]+'_'+str(i)+'_'+str(j)+'_'+str(k)+'_'+str(l)+'.csv'
+                                slave_data_1=UI.LogOperations(slave_file_1,'r','')
+                                slave_data_2=UI.LogOperations(slave_file_2,'r','')
+                                print(slave_data_1)
+                                print(slave_data_2)
+                                exit()
                                 master_data.RawEdgeGraph+=slave_data.RawEdgeGraph
                                 master_data.HitPairs+=slave_data.HitPairs
                                 bar()
