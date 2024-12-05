@@ -444,16 +444,12 @@ while Status<len(Program):
                                 slave_file_2=EOS_DIR+Program[0][1][3]+'/Temp_'+Program[0][1][5]+'_'+RecBatchID+'_'+str(i)+'_'+str(j)+'_'+str(k)+'/'+Program[0][1][5]+'_'+RecBatchID+'_HitPairs_'+str(i)+'_'+str(j)+'_'+str(k)+'_'+str(l)+'.csv'
                                 slave_data_1=UI.LogOperations(slave_file_1,'r','')
                                 slave_data_2=UI.LogOperations(slave_file_2,'r','')
-
                                 for r in slave_data_1:
                                     for c in range(3,8):
                                         r[c]=float(r[c])
                                 for r in slave_data_2:
                                     r[1]=float(r[1])
                                     r[3]=float(r[3])
-                                print(master_data.RawEdgeGraph)
-                                print(slave_data_1)
-                                exit()
                                 master_data.RawEdgeGraph+=slave_data_1
                                 master_data.HitPairs+=slave_data_2
                                 bar()
