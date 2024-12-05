@@ -451,8 +451,8 @@ while Status<len(Program):
                                 for r in slave_data_2:
                                     r[1]=float(r[1])
                                     r[3]=float(r[3])
-                                print(master_data.HitPairs)
-                                print(slave_data_2)
+                                print(master_data.RawEdgeGraph)
+                                print(slave_data_1)
                                 exit()
                                 master_data.RawEdgeGraph+=slave_data_1
                                 master_data.HitPairs+=slave_data_2
