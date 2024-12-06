@@ -324,7 +324,7 @@ if CalibrateEdgeGen:
     if x!='y':
         exit()
 prog_entry.append(' Sending hit cluster to the HTCondor, so the model assigns weights between hits')
-prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/'+RecBatchID+'/','RawEdgeGraph','RTr1a','.csv',RecBatchID,job_sets,'RTr1a_GenerateEdges_Sub.py'])
+prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/'+RecBatchID+'/','hit_cluster_edges','RTr1a','.pkl',RecBatchID,job_sets,'RTr1a_GenerateEdges_Sub.py'])
 prog_entry.append([' --cut_dt ', ' --cut_dr ',' --cut_dz ',' --MaxEdgesPerJob '])
 prog_entry.append([cut_dt,cut_dr,cut_dz,str(PM.MaxEdgesPerJob)])
 prog_entry.append(counter)
@@ -436,22 +436,14 @@ while Status<len(Program):
                 for j in range(len(Program[0][1][8][i])):
                     for k in range(len(Program[0][1][8][i][j])):
                         if Program[0][1][8][i][j][k]>0:
-                            master_file=EOS_DIR+Program[0][1][3]+'/Temp_'+Program[0][1][5]+'_'+RecBatchID+'_'+str(i)+'_'+str(j)+'_'+str(k)+'/'+Program[0][1][5]+'_'+RecBatchID+'_'+Program[0][1][4]+'_'+str(i)+'_'+str(j)+'_'+str(k)+'.pkl'
+                            master_file=EOS_DIR+Program[0][1][3]+'/Temp_'+Program[0][1][5]+'_'+RecBatchID+'_'+str(i)+'_'+str(j)+'_'+str(k)+'/'+Program[0][1][5]+'_'+RecBatchID+'_'+Program[0][1][4]+'_'+str(i)+'_'+str(j)+'_'+str(k)+'_0.pkl'
                             master_data=UI.PickleOperations(master_file,'r','')[0]
                             bar()
                             for l in range(1,Program[0][1][8][i][j][k]):
-                                slave_file_1=EOS_DIR+Program[0][1][3]+'/Temp_'+Program[0][1][5]+'_'+RecBatchID+'_'+str(i)+'_'+str(j)+'_'+str(k)+'/'+Program[0][1][5]+'_'+RecBatchID+'_'+Program[0][1][4]+'_'+str(i)+'_'+str(j)+'_'+str(k)+'_'+str(l)+'.csv'
-                                slave_file_2=EOS_DIR+Program[0][1][3]+'/Temp_'+Program[0][1][5]+'_'+RecBatchID+'_'+str(i)+'_'+str(j)+'_'+str(k)+'/'+Program[0][1][5]+'_'+RecBatchID+'_HitPairs_'+str(i)+'_'+str(j)+'_'+str(k)+'_'+str(l)+'.csv'
-                                slave_data_1=UI.LogOperations(slave_file_1,'r','')
-                                slave_data_2=UI.LogOperations(slave_file_2,'r','')
-                                for r in slave_data_1:
-                                    for c in range(3,8):
-                                        r[c]=float(r[c])
-                                for r in slave_data_2:
-                                    r[1]=float(r[1])
-                                    r[3]=float(r[3])
-                                master_data.RawEdgeGraph+=slave_data_1
-                                master_data.HitPairs+=slave_data_2
+                                slave_file=EOS_DIR+Program[0][1][3]+'/Temp_'+Program[0][1][5]+'_'+RecBatchID+'_'+str(i)+'_'+str(j)+'_'+str(k)+'/'+Program[0][1][5]+'_'+RecBatchID+'_'+Program[0][1][4]+'_'+str(i)+'_'+str(j)+'_'+str(k)+'_'+str(l)+'.pkl'
+                                slave_data=UI.PickleOperations(slave_file,'r','')[0]
+                                master_data.RawEdgeGraph+=slave_data.RawEdgeGraph
+                                master_data.HitPairs+=slave_data.HitPairs
                                 bar()
                             output_file=EOS_DIR+Program[2][1][3]+'/Temp_'+Program[2][1][5]+'_'+RecBatchID+'_'+str(i)+'_'+str(j)+'/'+Program[0][1][5]+'_'+RecBatchID+'_'+Program[0][1][4]+'_'+str(i)+'_'+str(j)+'_'+str(k)+'.pkl'
                             print(UI.PickleOperations(output_file,'w',master_data)[1])
