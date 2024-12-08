@@ -423,9 +423,6 @@ print(UI.TimeStamp(),'There are '+str(len(Program)+1)+' stages (0-'+str(len(Prog
 print(UI.TimeStamp(),'Current stage has a code',Status,bcolors.ENDC)
 while Status<len(Program):
     if Program[Status]!='Custom':
-        #Standard process here
-       # if Status==2:
-       #     print(str(CP_CleanUp(Program, Status)),'temp files deleted...')
        Result=UI.StandardProcess(Program,Status,SubGap,SubPause,RequestExtCPU,JobFlavour,ReqMemory,time_int,Patience,FixedPosition)
        if Result[0]:
             UI.UpdateStatus(Status+1,Meta,RecOutputMeta)
