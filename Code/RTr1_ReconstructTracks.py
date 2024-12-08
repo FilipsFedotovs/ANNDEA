@@ -69,7 +69,6 @@ parser.add_argument('--RecBatchID',help="Give this reconstruction batch an ID", 
 parser.add_argument('--LocalSub',help="Local submission?", default='N')
 parser.add_argument('--CheckPoint',help="Save cluster sets during individual cluster tracking.", default='N')
 parser.add_argument('--CalibrateEdgeGen',help="Optimise the maximum edge per job parameter", default='N')
-# parser.add_argument('--TrackFitCut',help="Track Fit cut Residual", default="['1000','10','200']")
 parser.add_argument('--ForceStatus',help="Would you like the program run from specific status number? (Only for advance users)", default='N')
 parser.add_argument('--RequestExtCPU',help="Would you like to request extra CPUs?", default=1)
 parser.add_argument('--JobFlavour',help="Specifying the length of the HTCondor job walltime. Currently at 'workday' which is 8 hours.", default='workday')
@@ -475,8 +474,12 @@ while Status<len(Program):
         UI.Msg('success',"The hit cluster files were successfully consolidated.")
         UI.UpdateStatus(Status+1,Meta,RecOutputMeta)
     elif Status==3:
-        print('Wip')
-
+        with alive_bar(Ysteps*Zsteps,force_tty=True, title='Deleting the files that are not needed anymore...') as bar:
+            for j in range(Ysteps):
+                for k in range(Zsteps):
+                         del_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RTr1a_'+RecBatchID+'_'+str(FixedPosition)+'_'+str(j)+'/RTr1a_'+RecBatchID+'_hit_cluster_edges_'+str(FixedPosition)+'_'+str(j)+'_'+str(k)+'.pkl'
+                         if os.path.isfile(del_file_location):
+                             os.remove(del_file_location)
         exit()
     elif Status==6:
       #Non standard processes (that don't follow the general pattern) have been coded here
