@@ -480,6 +480,7 @@ while Status<len(Program):
                          del_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RTr1a_'+RecBatchID+'_'+str(FixedPosition)+'_'+str(j)+'/RTr1a_'+RecBatchID+'_hit_cluster_edges_'+str(FixedPosition)+'_'+str(j)+'_'+str(k)+'.pkl'
                          if os.path.isfile(del_file_location):
                              os.remove(del_file_location)
+                         bar()
         exit()
     elif Status==6:
       #Non standard processes (that don't follow the general pattern) have been coded here
