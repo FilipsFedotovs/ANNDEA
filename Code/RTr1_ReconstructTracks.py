@@ -474,17 +474,17 @@ while Status<len(Program):
         UI.Msg('success',"The hit cluster files were successfully consolidated.")
         UI.UpdateStatus(Status+1,Meta,RecOutputMeta)
     elif Status==3:
-        with alive_bar(Ysteps*Zsteps,force_tty=True, title='Deleting the files that are not needed anymore...') as bar:
-            for i in range(len(Program[0][1][8])):
+        i=FixedPosition
+        with alive_bar(Ysteps*Zsteps*Program[0][1][8][i][j][k],force_tty=True, title='Deleting the files that are not needed anymore...') as bar:
                     for j in range(len(Program[0][1][8][i])):
                         for k in range(len(Program[0][1][8][i][j])):
                             for l in range(Program[0][1][8][i][j][k]):
                                     del_file_location_1=EOS_DIR+Program[0][1][3]+'/Temp_RTr1a_'+RecBatchID+'_'+str(i)+'_'+str(j)+'_'+str(k)+'/RTr1a_'+RecBatchID+'_hit_cluster_edges_'+str(i)+'_'+str(j)+'_'+str(k)+'_'+str(l)+'.pkl'
+                                    del_file_location_2=EOS_DIR+Program[0][1][3]+'/Temp_RTr1b_'+RecBatchID+'_'+str(i)+'_'+str(j)+'/RTr1a_'+RecBatchID+'_hit_cluster_edges_'+str(i)+'_'+str(j)+'_'+str(k)+'.pkl'
                                     if os.path.isfile(del_file_location_1):
                                          os.remove(del_file_location_1)
-                         # del_file_location_2=EOS_DIR+'/ANNDEA/Data/REC_SET/Temp_RTr1b_'+RecBatchID+'_'+str(FixedPosition)+'_'+str(j)+'/RTr1a_'+RecBatchID+'_hit_cluster_edges_'+str(FixedPosition)+'_'+str(j)+'_'+str(k)+'.pkl'
-                         # if os.path.isfile(del_file_location_2):
-                         #     os.remove(del_file_location_2)
+                                    if os.path.isfile(del_file_location_2):
+                                         os.remove(del_file_location_2)
                                     bar()
         exit()
     elif Status==6:
