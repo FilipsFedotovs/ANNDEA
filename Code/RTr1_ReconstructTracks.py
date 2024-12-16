@@ -138,6 +138,7 @@ if args.ModelName=='blank':
    stepZ=PM.stepZ
    cut_dt=PM.cut_dt
    cut_dr=PM.cut_dr
+   cut_dz=PM.cut_dz
 elif os.path.isfile(Model_Meta_Path):
        Model_Meta_Raw=UI.PickleOperations(Model_Meta_Path, 'r', 'N/A')
        print(Model_Meta_Raw[1])
@@ -147,6 +148,7 @@ elif os.path.isfile(Model_Meta_Path):
        stepZ=Model_Meta.stepZ
        cut_dt=Model_Meta.cut_dt
        cut_dr=Model_Meta.cut_dr
+       cut_dz=Model_Meta.cut_dz
 else:
        print(UI.TimeStamp(),bcolors.FAIL+'Fail! No existing model meta files have been found, exiting now'+bcolors.ENDC)
        exit()
