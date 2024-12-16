@@ -107,10 +107,7 @@ MCdata["Hit_ID"] = data["Hit_ID"].astype(str)
 
 MCdata_list=MCdata.values.tolist()
 
-
 print(UF.TimeStamp(),'Creating clusters... ')
-
-
 
 HC=HC.HitCluster([X_ID,Y_ID, 1],[stepX,stepY, stepZ]) #Initialise HitCluster instance
 HC.LoadClusterHits(data_list) #Decorate hot cluster with hit detailed data

@@ -265,7 +265,7 @@ if os.path.isfile(required_file_location)==False:
                          bar()
          data.to_csv(required_file_location,index=False)
          Meta=UI.TrainingSampleMeta(RecBatchID)
-         Meta.IniHitClusterMetaData(stepX,stepY,stepZ,cut_dt,cut_dr,stepZ,0.05,0.1,y_offset,x_offset,Xsteps,Ysteps,X_overlap,Y_overlap,Zsteps,Z_overlap)
+         Meta.IniHitClusterMetaData(stepX,stepY,stepZ,cut_dt,cut_dr,cut_dz,0.05,0.1,y_offset,x_offset,Xsteps,Ysteps,X_overlap,Y_overlap,Zsteps,Z_overlap)
          Meta.UpdateStatus(0)
          print(UI.PickleOperations(RecOutputMeta,'w', Meta)[1])
          UI.Msg('completed','Stage 0 has successfully completed')
