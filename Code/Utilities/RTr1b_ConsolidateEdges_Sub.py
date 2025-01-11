@@ -42,6 +42,8 @@ i,j,k=args.i,args.j,args.k
 import U_UI as UI #This is where we keep routine utility functions
 master_file=EOS_DIR+p+'/Temp_RTr1a_'+RecBatchID+'_'+str(i)+'_'+str(j)+'_'+str(k)+'/RTr1a_'+RecBatchID+'_hit_cluster_edges_'+str(i)+'_'+str(j)+'_'+str(k)+'_0.pkl'
 master_data=UI.PickleOperations(master_file,'r','')[0]
+print(Program[i][j][k])
+exit()
 for l in range(1,Program[i][j][k]):
     slave_file=EOS_DIR+p+'/Temp_RTr1a_'+RecBatchID+'_'+str(i)+'_'+str(j)+'_'+str(k)+'/RTr1a_'+RecBatchID+'_hit_cluster_edges_'+str(i)+'_'+str(j)+'_'+str(k)+'_'+str(l)+'.pkl'
     slave_data=UI.PickleOperations(slave_file,'r','')[0]
