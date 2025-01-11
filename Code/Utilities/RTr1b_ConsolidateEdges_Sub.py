@@ -3,6 +3,8 @@
 ########################################    Import essential libriries    #############################################
 import argparse
 import sys
+import ast
+
 #Setting the parser - this script is usually not run directly, but is used by a Master version Counterpart that passes the required arguments
 parser = argparse.ArgumentParser(description='select cut parameters')
 parser.add_argument('--i',help="Set number", default='1')
@@ -34,10 +36,11 @@ sys.path.append(AFS_DIR+'/Code/Utilities')
 ######################################## Set variables  #############################################################
 p,o,sfx,pfx=args.p,args.o,args.sfx,args.pfx
 RecBatchID=args.BatchID
-print('We are here')
+GraphProgram=ast.literal_eval(args.GraphProgram)
+print(GraphProgram)
 x=input()
 exit()
-GraphProgram=int(args.MaxEdgesPerJob)
+
 i,j,k=args.i,args.j,args.k
 import U_UI as UI #This is where we keep routine utility functions
 
