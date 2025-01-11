@@ -37,6 +37,8 @@ sys.path.append(AFS_DIR+'/Code/Utilities')
 p,o,sfx,pfx=args.p,args.o,args.sfx,args.pfx
 RecBatchID=args.BatchID
 Program=ast.literal_eval(args.GraphProgram)
+print(Program)
+exit()
 
 i,j,k=args.i,args.j,args.k
 import U_UI as UI #This is where we keep routine utility functions
