@@ -36,17 +36,16 @@ sys.path.append(AFS_DIR+'/Code/Utilities')
 ######################################## Set variables  #############################################################
 p,o,sfx,pfx=args.p,args.o,args.sfx,args.pfx
 RecBatchID=args.BatchID
-GraphProgram=ast.literal_eval(args.GraphProgram)
-print(GraphProgram)
-x=input()
-exit()
+Program=ast.literal_eval(args.GraphProgram)
 
 i,j,k=args.i,args.j,args.k
 import U_UI as UI #This is where we keep routine utility functions
 
 
-master_file=EOS_DIR+Program[0][1][3]+'/Temp_'+Program[0][1][5]+'_'+RecBatchID+'_'+str(i)+'_'+str(j)+'_'+str(k)+'/'+Program[0][1][5]+'_'+RecBatchID+'_'+Program[0][1][4]+'_'+str(i)+'_'+str(j)+'_'+str(k)+'_0.pkl'
+master_file=EOS_DIR+Program[3]+'/Temp_RTr1a_'+RecBatchID+'_'+str(i)+'_'+str(j)+'_'+str(k)+'/RTr1a_'+RecBatchID+'_hit_cluster_edges_'+str(i)+'_'+str(j)+'_'+str(k)+'_0.pkl'
+print(master_file)
 master_data=UI.PickleOperations(master_file,'r','')[0]
+x=input()
 for l in range(1,Program[0][1][8][i][j][k]):
     slave_file=EOS_DIR+Program[0][1][3]+'/Temp_'+Program[0][1][5]+'_'+RecBatchID+'_'+str(i)+'_'+str(j)+'_'+str(k)+'/'+Program[0][1][5]+'_'+RecBatchID+'_'+Program[0][1][4]+'_'+str(i)+'_'+str(j)+'_'+str(k)+'_'+str(l)+'.pkl'
     slave_data=UI.PickleOperations(slave_file,'r','')[0]
