@@ -42,12 +42,12 @@ i,j,k=args.i,args.j,args.k
 import U_UI as UI #This is where we keep routine utility functions
 
 
-master_file=EOS_DIR+Program[3]+'/Temp_RTr1a_'+RecBatchID+'_'+str(i)+'_'+str(j)+'_'+str(k)+'/RTr1a_'+RecBatchID+'_hit_cluster_edges_'+str(i)+'_'+str(j)+'_'+str(k)+'_0.pkl'
+master_file=EOS_DIR+p+'/Temp_RTr1a_'+RecBatchID+'_'+str(i)+'_'+str(j)+'_'+str(k)+'/RTr1a_'+RecBatchID+'_hit_cluster_edges_'+str(i)+'_'+str(j)+'_'+str(k)+'_0.pkl'
 print(master_file)
 master_data=UI.PickleOperations(master_file,'r','')[0]
 x=input()
 for l in range(1,Program[0][1][8][i][j][k]):
-    slave_file=EOS_DIR+Program[0][1][3]+'/Temp_'+Program[0][1][5]+'_'+RecBatchID+'_'+str(i)+'_'+str(j)+'_'+str(k)+'/'+Program[0][1][5]+'_'+RecBatchID+'_'+Program[0][1][4]+'_'+str(i)+'_'+str(j)+'_'+str(k)+'_'+str(l)+'.pkl'
+    slave_file=EOS_DIR+p+'/Temp_'+Program[0][1][5]+'_'+RecBatchID+'_'+str(i)+'_'+str(j)+'_'+str(k)+'/'+Program[0][1][5]+'_'+RecBatchID+'_'+Program[0][1][4]+'_'+str(i)+'_'+str(j)+'_'+str(k)+'_'+str(l)+'.pkl'
     slave_data=UI.PickleOperations(slave_file,'r','')[0]
     master_data.RawEdgeGraph+=slave_data.RawEdgeGraph
     master_data.HitPairs+=slave_data.HitPairs
