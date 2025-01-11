@@ -50,7 +50,7 @@ for l in range(1,Program[int(i)][int(j)][int(k)]):
     master_data.RawEdgeGraph+=slave_data.RawEdgeGraph
     master_data.HitPairs+=slave_data.HitPairs
 print(UI.TimeStamp(),'Writing the output...')
-output_file_location=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(i)+'_'+str(j)+'_'+str(k)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(i)+'_'+str(j)+'_'+str(k)+'.sfx'
+output_file_location=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(i)+'_'+str(j)+'_'+str(k)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(i)+'_'+str(j)+'_'+str(k)+'.pkl'
 print(UI.PickleOperations(output_file_location,'w',master_data)[1])
 exit()
 
