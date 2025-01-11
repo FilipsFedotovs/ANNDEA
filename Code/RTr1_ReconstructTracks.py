@@ -299,8 +299,6 @@ UI.Msg('vanilla','Current stage is '+str(Status)+'...')
 ################ Set the execution sequence for the script
 Program=[]
 ###### Stage 0
-prog_entry=[]
-
 if hasattr(Meta, 'job_sets')==hasattr(Meta, 'n_graph_jobs')==False:
     graph_job_set=[]
     n_graph_jobs=0
@@ -332,18 +330,15 @@ else:
     graph_job_set=Meta.graph_job_set
     n_graph_jobs=Meta.n_graph_jobs
 
-
-print(graph_job_set)
-print(n_graph_jobs)
-exit()
-
+    
 if CalibrateEdgeGen:
     print(job_sets)
     x=input('Continue(y/n)?')
     if x!='y':
         exit()
 
-prog_entry.append(' Sending hit cluster to the HTCondor, so the model assigns weights between hits')
+prog_entry=[]
+prog_entry.append(' Sending hit cluster to the HTCondor, so the graph seed can be generated')
 prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/'+RecBatchID+'/','hit_cluster_edges','RTr1a','.pkl',RecBatchID,graph_job_set,'RTr1a_GenerateEdges_Sub.py'])
 prog_entry.append([' --cut_dt ', ' --cut_dr ',' --cut_dz ',' --MaxEdgesPerJob '])
 prog_entry.append([cut_dt,cut_dr,cut_dz,str(PM.MaxEdgesPerJob)])
@@ -355,8 +350,18 @@ prog_entry.append(False)
 Program.append(prog_entry)
 print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry))
 
-###### Stage 1
-Program.append('Custom')
+prog_entry=[]
+prog_entry.append(' Sending hit cluster to the HTCondor, so the graph seed can be consolidated')
+prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/'+RecBatchID+'/','hit_cluster_edges','RTr1b','.pkl',RecBatchID,graph_job_set,'RTr1b_ConsolidateEdges_Sub.py'])
+prog_entry.append([' --GraphProgram '])
+prog_entry.append([Program[0][1]])
+prog_entry.append(Xsteps*Ysteps*Zsteps)
+prog_entry.append(LocalSub)
+prog_entry.append('N/A')
+prog_entry.append(HTCondorLog)
+prog_entry.append(False)
+Program.append(prog_entry)
+print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry))
 
 ###### Stage 2
 prog_entry=[]
@@ -367,7 +372,7 @@ for i in range(0,Xsteps):
                     job_set.append(Zsteps)
                 job_sets.append(job_set)
 prog_entry.append(' Sending hit cluster to the HTCondor, so the model assigns weights between hits')
-prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/'+RecBatchID+'/','hit_cluster_rec_set','RTr1b','.csv',RecBatchID,job_sets,'RTr1b_ReconstructTracks_Sub.py'])
+prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/'+RecBatchID+'/','hit_cluster_rec_set','RTr1c','.csv',RecBatchID,job_sets,'RTr1c_ReconstructTracks_Sub.py'])
 #prog_entry.append([' --stepZ ', ' --stepY ', ' --stepX ', ' --ModelName ', ' --CheckPoint ', ' --TrackFitCutRes ',' --TrackFitCutSTD ',' --TrackFitCutMRes '])
 prog_entry.append([' --ModelName ', ' --CheckPoint '])
 #prog_entry.append([stepZ,stepY,stepX,ModelName,args.CheckPoint]+TrackFitCut)
@@ -389,7 +394,7 @@ if FixedPosition<0:
     for i in range(0,Xsteps):
                     job_sets.append(Ysteps)
     prog_entry.append(' Sending hit cluster to the HTCondor, so the reconstructed clusters can be merged along z-axis')
-    prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/'+RecBatchID+'/','hit_cluster_rec_z_set','RTr1c','.csv',RecBatchID,job_sets,'RTr1c_LinkSegmentsZ_Sub.py'])
+    prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/'+RecBatchID+'/','hit_cluster_rec_z_set','RTr1d','.csv',RecBatchID,job_sets,'RTr1d_LinkSegmentsZ_Sub.py'])
     prog_entry.append([' --Z_ID_Max ', ' --i ',' --j '])
     prog_entry.append([Zsteps,Xsteps,Ysteps])
     prog_entry.append(Xsteps*Ysteps)
@@ -404,7 +409,7 @@ if FixedPosition<0:
     prog_entry=[]
     job_sets=Xsteps
     prog_entry.append(' Sending hit cluster to the HTCondor, so the reconstructed clusters can be merged along y-axis')
-    prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/'+RecBatchID+'/','hit_cluster_rec_y_set','RTr1d','.csv',RecBatchID,job_sets,'RTr1d_LinkSegmentsY_Sub.py'])
+    prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/'+RecBatchID+'/','hit_cluster_rec_y_set','RTr1e','.csv',RecBatchID,job_sets,'RTr1e_LinkSegmentsY_Sub.py'])
     prog_entry.append([' --Y_ID_Max ', ' --i '])
     prog_entry.append([Ysteps,Xsteps])
     prog_entry.append(Xsteps)
@@ -419,7 +424,7 @@ if FixedPosition<0:
     prog_entry=[]
     job_sets=1
     prog_entry.append(' Sending hit cluster to the HTCondor, so the reconstructed clusters can be merged along x-axis')
-    prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/'+RecBatchID+'/','hit_cluster_rec_x_set','RTr1e','.csv',RecBatchID,job_sets,'RTr1e_LinkSegmentsX_Sub.py'])
+    prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/'+RecBatchID+'/','hit_cluster_rec_x_set','RTr1f','.csv',RecBatchID,job_sets,'RTr1f_LinkSegmentsX_Sub.py'])
     prog_entry.append([' --X_ID_Max '])
     prog_entry.append([Xsteps])
     prog_entry.append(1)
@@ -448,50 +453,50 @@ while Status<len(Program):
              Status=20
              break
 
-    elif Status==1:
-        print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
-        print(UI.TimeStamp(),bcolors.BOLD+'Stage 1:'+bcolors.ENDC+' Consolidating the edge generation files from the previous step...')
-        with alive_bar(Program[0][4],force_tty=True, title='Consolidation progress...') as bar:
-            if FixedPosition<0:
-                for i in range(len(Program[0][1][8])):
-                    for j in range(len(Program[0][1][8][i])):
-                        for k in range(len(Program[0][1][8][i][j])):
-                            if Program[0][1][8][i][j][k]>0:
-                                master_file=EOS_DIR+Program[0][1][3]+'/Temp_'+Program[0][1][5]+'_'+RecBatchID+'_'+str(i)+'_'+str(j)+'_'+str(k)+'/'+Program[0][1][5]+'_'+RecBatchID+'_'+Program[0][1][4]+'_'+str(i)+'_'+str(j)+'_'+str(k)+'_0.pkl'
-                                master_data=UI.PickleOperations(master_file,'r','')[0]
-                                bar()
-                                for l in range(1,Program[0][1][8][i][j][k]):
-                                    slave_file=EOS_DIR+Program[0][1][3]+'/Temp_'+Program[0][1][5]+'_'+RecBatchID+'_'+str(i)+'_'+str(j)+'_'+str(k)+'/'+Program[0][1][5]+'_'+RecBatchID+'_'+Program[0][1][4]+'_'+str(i)+'_'+str(j)+'_'+str(k)+'_'+str(l)+'.pkl'
-                                    slave_data=UI.PickleOperations(slave_file,'r','')[0]
-                                    master_data.RawEdgeGraph+=slave_data.RawEdgeGraph
-                                    master_data.HitPairs+=slave_data.HitPairs
-                                    bar()
-                                output_file=EOS_DIR+Program[2][1][3]+'/Temp_'+Program[2][1][5]+'_'+RecBatchID+'_'+str(i)+'_'+str(j)+'/'+Program[0][1][5]+'_'+RecBatchID+'_'+Program[0][1][4]+'_'+str(i)+'_'+str(j)+'_'+str(k)+'.pkl'
-                                print(UI.PickleOperations(output_file,'w',master_data)[1])
-                            else:
-                                bar()
-                                continue
-            else:
-                i=FixedPosition
-                for j in range(len(Program[0][1][8][i])):
-                    for k in range(len(Program[0][1][8][i][j])):
-                        if Program[0][1][8][i][j][k]>0:
-                            master_file=EOS_DIR+Program[0][1][3]+'/Temp_'+Program[0][1][5]+'_'+RecBatchID+'_'+str(i)+'_'+str(j)+'_'+str(k)+'/'+Program[0][1][5]+'_'+RecBatchID+'_'+Program[0][1][4]+'_'+str(i)+'_'+str(j)+'_'+str(k)+'_0.pkl'
-                            master_data=UI.PickleOperations(master_file,'r','')[0]
-                            bar()
-                            for l in range(1,Program[0][1][8][i][j][k]):
-                                slave_file=EOS_DIR+Program[0][1][3]+'/Temp_'+Program[0][1][5]+'_'+RecBatchID+'_'+str(i)+'_'+str(j)+'_'+str(k)+'/'+Program[0][1][5]+'_'+RecBatchID+'_'+Program[0][1][4]+'_'+str(i)+'_'+str(j)+'_'+str(k)+'_'+str(l)+'.pkl'
-                                slave_data=UI.PickleOperations(slave_file,'r','')[0]
-                                master_data.RawEdgeGraph+=slave_data.RawEdgeGraph
-                                master_data.HitPairs+=slave_data.HitPairs
-                                bar()
-                            output_file=EOS_DIR+Program[2][1][3]+'/Temp_'+Program[2][1][5]+'_'+RecBatchID+'_'+str(i)+'_'+str(j)+'/'+Program[0][1][5]+'_'+RecBatchID+'_'+Program[0][1][4]+'_'+str(i)+'_'+str(j)+'_'+str(k)+'.pkl'
-                            print(UI.PickleOperations(output_file,'w',master_data)[1])
-                        else:
-                            bar()
-                            continue
-        UI.Msg('success',"The hit cluster files were successfully consolidated.")
-        UI.UpdateStatus(Status+1,Meta,RecOutputMeta)
+    # elif Status==1:
+    #     print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
+    #     print(UI.TimeStamp(),bcolors.BOLD+'Stage 1:'+bcolors.ENDC+' Consolidating the edge generation files from the previous step...')
+    #     with alive_bar(Program[0][4],force_tty=True, title='Consolidation progress...') as bar:
+    #         if FixedPosition<0:
+    #             for i in range(len(Program[0][1][8])):
+    #                 for j in range(len(Program[0][1][8][i])):
+    #                     for k in range(len(Program[0][1][8][i][j])):
+    #                         if Program[0][1][8][i][j][k]>0:
+    #                             master_file=EOS_DIR+Program[0][1][3]+'/Temp_'+Program[0][1][5]+'_'+RecBatchID+'_'+str(i)+'_'+str(j)+'_'+str(k)+'/'+Program[0][1][5]+'_'+RecBatchID+'_'+Program[0][1][4]+'_'+str(i)+'_'+str(j)+'_'+str(k)+'_0.pkl'
+    #                             master_data=UI.PickleOperations(master_file,'r','')[0]
+    #                             bar()
+    #                             for l in range(1,Program[0][1][8][i][j][k]):
+    #                                 slave_file=EOS_DIR+Program[0][1][3]+'/Temp_'+Program[0][1][5]+'_'+RecBatchID+'_'+str(i)+'_'+str(j)+'_'+str(k)+'/'+Program[0][1][5]+'_'+RecBatchID+'_'+Program[0][1][4]+'_'+str(i)+'_'+str(j)+'_'+str(k)+'_'+str(l)+'.pkl'
+    #                                 slave_data=UI.PickleOperations(slave_file,'r','')[0]
+    #                                 master_data.RawEdgeGraph+=slave_data.RawEdgeGraph
+    #                                 master_data.HitPairs+=slave_data.HitPairs
+    #                                 bar()
+    #                             output_file=EOS_DIR+Program[2][1][3]+'/Temp_'+Program[2][1][5]+'_'+RecBatchID+'_'+str(i)+'_'+str(j)+'/'+Program[0][1][5]+'_'+RecBatchID+'_'+Program[0][1][4]+'_'+str(i)+'_'+str(j)+'_'+str(k)+'.pkl'
+    #                             print(UI.PickleOperations(output_file,'w',master_data)[1])
+    #                         else:
+    #                             bar()
+    #                             continue
+    #         else:
+    #             i=FixedPosition
+    #             for j in range(len(Program[0][1][8][i])):
+    #                 for k in range(len(Program[0][1][8][i][j])):
+    #                     if Program[0][1][8][i][j][k]>0:
+    #                         master_file=EOS_DIR+Program[0][1][3]+'/Temp_'+Program[0][1][5]+'_'+RecBatchID+'_'+str(i)+'_'+str(j)+'_'+str(k)+'/'+Program[0][1][5]+'_'+RecBatchID+'_'+Program[0][1][4]+'_'+str(i)+'_'+str(j)+'_'+str(k)+'_0.pkl'
+    #                         master_data=UI.PickleOperations(master_file,'r','')[0]
+    #                         bar()
+    #                         for l in range(1,Program[0][1][8][i][j][k]):
+    #                             slave_file=EOS_DIR+Program[0][1][3]+'/Temp_'+Program[0][1][5]+'_'+RecBatchID+'_'+str(i)+'_'+str(j)+'_'+str(k)+'/'+Program[0][1][5]+'_'+RecBatchID+'_'+Program[0][1][4]+'_'+str(i)+'_'+str(j)+'_'+str(k)+'_'+str(l)+'.pkl'
+    #                             slave_data=UI.PickleOperations(slave_file,'r','')[0]
+    #                             master_data.RawEdgeGraph+=slave_data.RawEdgeGraph
+    #                             master_data.HitPairs+=slave_data.HitPairs
+    #                             bar()
+    #                         output_file=EOS_DIR+Program[2][1][3]+'/Temp_'+Program[2][1][5]+'_'+RecBatchID+'_'+str(i)+'_'+str(j)+'/'+Program[0][1][5]+'_'+RecBatchID+'_'+Program[0][1][4]+'_'+str(i)+'_'+str(j)+'_'+str(k)+'.pkl'
+    #                         print(UI.PickleOperations(output_file,'w',master_data)[1])
+    #                     else:
+    #                         bar()
+    #                         continue
+    #     UI.Msg('success',"The hit cluster files were successfully consolidated.")
+    #     UI.UpdateStatus(Status+1,Meta,RecOutputMeta)
     elif Status==3:
         i=FixedPosition
         with alive_bar(Ysteps*Zsteps*Program[0][1][8][i][j][k],force_tty=True, title='Deleting the files that are not needed anymore...') as bar:
