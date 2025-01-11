@@ -35,6 +35,7 @@ sys.path.append(AFS_DIR+'/Code/Utilities')
 p,o,sfx,pfx=args.p,args.o,args.sfx,args.pfx
 RecBatchID=args.BatchID
 print('We are here')
+x=input()
 exit()
 GraphProgram=int(args.MaxEdgesPerJob)
 i,j,k=args.i,args.j,args.k
