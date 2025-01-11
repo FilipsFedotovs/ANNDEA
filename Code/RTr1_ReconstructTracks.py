@@ -330,7 +330,7 @@ else:
     graph_job_set=Meta.graph_job_set
     n_graph_jobs=Meta.n_graph_jobs
 
-    
+
 if CalibrateEdgeGen:
     print(job_sets)
     x=input('Continue(y/n)?')
@@ -352,7 +352,7 @@ print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry))
 
 prog_entry=[]
 prog_entry.append(' Sending hit cluster to the HTCondor, so the graph seed can be consolidated')
-prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/'+RecBatchID+'/','hit_cluster_edges','RTr1b','.pkl',RecBatchID,graph_job_set,'RTr1b_ConsolidateEdges_Sub.py'])
+prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/'+RecBatchID+'/','hit_cluster_edges_consolidated','RTr1b','.pkl',RecBatchID,graph_job_set,'RTr1b_ConsolidateEdges_Sub.py'])
 prog_entry.append([' --GraphProgram '])
 prog_entry.append([Program[0][1]])
 prog_entry.append(Xsteps*Ysteps*Zsteps)
