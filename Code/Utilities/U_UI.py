@@ -76,6 +76,10 @@ class TrainingSampleMeta:
           self.Y_overlap=Y_overlap
           self.Z_overlap=Z_overlap
           self.Zsteps=Zsteps
+      def UpdateHitClusterMetaData(self,job_set,job_counter):
+          self.job_set=job_set
+          self.job_counter=job_counter
+
       def IniTrackMetaData(self,ClassHeaders,ClassNames,ClassValues,MaxSegments,JobSets,MinHitsTrack):
           self.ClassHeaders=ClassHeaders
           self.ClassNames=ClassNames

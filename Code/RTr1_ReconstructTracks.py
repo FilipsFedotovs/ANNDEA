@@ -283,6 +283,10 @@ stepX=Meta.stepX
 cut_dt=Meta.cut_dt
 cut_dr=Meta.cut_dr
 cut_dz=Meta.cut_dz
+if hasattr(Meta, 'job_sets') and hasattr(Meta, 'n_graph_hobs'):
+    job_sets=Meta.job_sets
+    n_graph_hobs=Meta.n_graph_hobs
+
 
 # ########################################     Preset framework parameters    #########################################
 
@@ -296,39 +300,54 @@ UI.Msg('vanilla','Current stage is '+str(Status)+'...')
 Program=[]
 ###### Stage 0
 prog_entry=[]
-job_sets=[]
-counter=0
-with alive_bar(Xsteps*Ysteps*Zsteps,force_tty=True, title='Estimating number of jobs...') as bar:
-    for i in range(0,Xsteps):
-        job_sets.append([])
-        for j in range(0,Ysteps):
-            job_sets[i].append([])
-            for k in range(0,Zsteps):
-                bar()
-                tfile_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/RTr1_'+RecBatchID+'_'+str(i)+'_'+str(j)+'_'+str(k)+'_clusters.pkl'
-                HC=UI.PickleOperations(tfile_location,'r','N/A')[0]
-                n_edg=len(HC.RawClusterGraph)
-                job_iter=0
-                acc_edg=0
-                for n_e in range(1,n_edg+1):
-                        acc_edg+=n_edg-n_e
-                        if acc_edg>=PM.MaxEdgesPerJob:
-                            job_iter+=1
-                            acc_edg=0
-                if acc_edg>0:
-                     job_iter+=1
-                counter+=job_iter
-                job_sets[i][j].append(job_iter)
+
+if hasattr(Meta, 'job_sets')==hasattr(Meta, 'n_graph_jobs')==False:
+    graph_job_set=[]
+    n_graph_jobs=0
+    with alive_bar(Xsteps*Ysteps*Zsteps,force_tty=True, title='Estimating number of jobs...') as bar:
+        for i in range(0,Xsteps):
+            graph_job_set.append([])
+            for j in range(0,Ysteps):
+                graph_job_set[i].append([])
+                for k in range(0,Zsteps):
+                    bar()
+                    tfile_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/RTr1_'+RecBatchID+'_'+str(i)+'_'+str(j)+'_'+str(k)+'_clusters.pkl'
+                    HC=UI.PickleOperations(tfile_location,'r','N/A')[0]
+                    n_edg=len(HC.RawClusterGraph)
+                    job_iter=0
+                    acc_edg=0
+                    for n_e in range(1,n_edg+1):
+                            acc_edg+=n_edg-n_e
+                            if acc_edg>=PM.MaxEdgesPerJob:
+                                job_iter+=1
+                                acc_edg=0
+                    if acc_edg>0:
+                         job_iter+=1
+                    n_graph_jobs+=job_iter
+                    graph_job_set[i][j].append(job_iter)
+    Meta.graph_job_set=graph_job_set
+    Meta.n_graph_jobs=n_graph_jobs
+    UI.UpdateStatus(Status,Meta,RecOutputMeta)
+else:
+    graph_job_set=Meta.graph_job_set
+    n_graph_jobs=Meta.n_graph_jobs
+
+
+print(graph_job_set)
+print(n_graph_jobs)
+exit()
+
 if CalibrateEdgeGen:
     print(job_sets)
     x=input('Continue(y/n)?')
     if x!='y':
         exit()
+
 prog_entry.append(' Sending hit cluster to the HTCondor, so the model assigns weights between hits')
-prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/'+RecBatchID+'/','hit_cluster_edges','RTr1a','.pkl',RecBatchID,job_sets,'RTr1a_GenerateEdges_Sub.py'])
+prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/'+RecBatchID+'/','hit_cluster_edges','RTr1a','.pkl',RecBatchID,graph_job_set,'RTr1a_GenerateEdges_Sub.py'])
 prog_entry.append([' --cut_dt ', ' --cut_dr ',' --cut_dz ',' --MaxEdgesPerJob '])
 prog_entry.append([cut_dt,cut_dr,cut_dz,str(PM.MaxEdgesPerJob)])
-prog_entry.append(counter)
+prog_entry.append(n_graph_jobs)
 prog_entry.append(LocalSub)
 prog_entry.append('N/A')
 prog_entry.append(HTCondorLog)

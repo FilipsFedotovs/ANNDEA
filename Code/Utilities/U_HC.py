@@ -30,7 +30,6 @@ class HitCluster:
            self.ClusterSize=len(__ClusterHitsTemp)
            self.RawClusterGraph=__ClusterHitsTemp #Avoiding importing torch without a good reason (reduce load on the HTCOndor initiative)
            del __ClusterHitsTemp
-
       def GenerateEdges(self, cut_dt, cut_dr, cut_dz, MCHits, l=-1, MaxEdges=-1): #Decorate hit information
            #New workaround: instead of a painful Pandas outer join a loop over list is performed
            _Hits=self.ClusterHits
@@ -98,8 +97,6 @@ class HitCluster:
                return True
            else:
                return False
-
-
       @staticmethod
       def GenerateLinks(_input,_ClusterID):
           _Top=[]
@@ -118,9 +115,6 @@ class HitCluster:
                         else:
                             return 0
           return 0
-
-
-
       def JoinHits(_H1, _H2, _cdt, _cdr, _cdz):
           if _H1[3]==_H2[3]: #Ensuring hit combinations are on different plates
               return False

@@ -53,7 +53,6 @@ class ModelMeta:
                   self.MaxAngle=DataMeta.MaxAngle
               if hasattr(DataMeta,'MinHitsTrack'):
                   self.MinHitsTrack=DataMeta.MinHitsTrack
-
       def IniTrainingSession(self, TrainDataID, DateTime, TrainParameters):
           self.TrainSessionsDataID.append(TrainDataID)
           self.TrainSessionsDateTime.append(DateTime)
