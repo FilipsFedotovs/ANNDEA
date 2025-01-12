@@ -4,6 +4,7 @@
 import argparse
 import sys
 import ast
+import os
 
 #Setting the parser - this script is usually not run directly, but is used by a Master version Counterpart that passes the required arguments
 parser = argparse.ArgumentParser(description='select cut parameters')
@@ -37,18 +38,22 @@ sys.path.append(AFS_DIR+'/Code/Utilities')
 p,o,sfx,pfx=args.p,args.o,args.sfx,args.pfx
 RecBatchID=args.BatchID
 Program=ast.literal_eval(args.GraphProgram)
-
-
 i,j,k=args.i,args.j,args.k
-
 import U_UI as UI #This is where we keep routine utility functions
+
 master_file=EOS_DIR+p+'/Temp_RTr1a_'+RecBatchID+'_'+str(i)+'_'+str(j)+'_'+str(k)+'/RTr1a_'+RecBatchID+'_hit_cluster_edges_'+str(i)+'_'+str(j)+'_'+str(k)+'_0.pkl'
-master_data=UI.PickleOperations(master_file,'r','')[0]
-for l in range(1,Program[int(i)][int(j)][int(k)]):
-    slave_file=EOS_DIR+p+'/Temp_RTr1a_'+RecBatchID+'_'+str(i)+'_'+str(j)+'_'+str(k)+'/RTr1a_'+RecBatchID+'_hit_cluster_edges_'+str(i)+'_'+str(j)+'_'+str(k)+'_'+str(l)+'.pkl'
-    slave_data=UI.PickleOperations(slave_file,'r','')[0]
-    master_data.RawEdgeGraph+=slave_data.RawEdgeGraph
-    master_data.HitPairs+=slave_data.HitPairs
+if os.path.isfile(master_file):
+    master_data=UI.PickleOperations(master_file,'r','')[0]
+    for l in range(1,Program[int(i)][int(j)][int(k)]):
+        slave_file=EOS_DIR+p+'/Temp_RTr1a_'+RecBatchID+'_'+str(i)+'_'+str(j)+'_'+str(k)+'/RTr1a_'+RecBatchID+'_hit_cluster_edges_'+str(i)+'_'+str(j)+'_'+str(k)+'_'+str(l)+'.pkl'
+        slave_data=UI.PickleOperations(slave_file,'r','')[0]
+        master_data.RawEdgeGraph+=slave_data.RawEdgeGraph
+        master_data.HitPairs+=slave_data.HitPairs
+else:
+    master_file=EOS_DIR+p+'/RTr1_'+RecBatchID+'_'+str(i)+'_'+str(j)+'_'+str(k)+'_clusters.pkl'
+    master_data=UI.PickleOperations(master_file,'r','')[0]
+    master_data.HitPairs=[]
+    master_data.RawEdgeGraph=[]
 print(UI.TimeStamp(),'Writing the output...')
 output_file_location=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(i)+'_'+str(j)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(i)+'_'+str(j)+'_'+str(k)+'.pkl'
 print(UI.PickleOperations(output_file_location,'w',master_data)[1])
