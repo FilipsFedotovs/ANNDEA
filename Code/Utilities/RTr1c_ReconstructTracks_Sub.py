@@ -104,56 +104,54 @@ def InjectHit(Predator,Prey, Soft):
              return False
 
 Status='Edge graph generation'
-CheckPointFile_Edge=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(i)+'_'+str(j)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(i)+'_'+str(j) +'_'+str(k) +'_CP_EdgeGraph.pkl'
 CheckPointFile_ML=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(i)+'_'+str(j)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(i)+'_'+str(j)+'_'+str(k) + '_CP_ML.csv'
-CheckPointFile_Prep_1=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(i)+'_'+str(j)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(i)+'_'+str(j) +'_'+str(k) +'_CP_Prep_1.csv'
-CheckPointFile_Prep_2=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(i)+'_'+str(j)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(i)+'_'+str(j) +'_'+str(k) +'_CP_Prep_2.csv'
-CheckPointFile_Tracking_TH=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(i)+'_'+str(j)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(i)+'_'+str(j)+'_'+str(k) +'_CP_Tracking_TH.csv'
-CheckPointFile_Tracking_RP=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(i)+'_'+str(j)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(i)+'_'+str(j)+'_'+str(k) +'_CP_Tracking_RP.csv'
+# CheckPointFile_Prep_1=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(i)+'_'+str(j)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(i)+'_'+str(j) +'_'+str(k) +'_CP_Prep_1.csv'
+# CheckPointFile_Prep_2=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(i)+'_'+str(j)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(i)+'_'+str(j) +'_'+str(k) +'_CP_Prep_2.csv'
+# CheckPointFile_Tracking_TH=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(i)+'_'+str(j)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(i)+'_'+str(j)+'_'+str(k) +'_CP_Tracking_TH.csv'
+# CheckPointFile_Tracking_RP=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(i)+'_'+str(j)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(i)+'_'+str(j)+'_'+str(k) +'_CP_Tracking_RP.csv'
 
-if os.path.isfile(CheckPointFile_Tracking_TH) and os.path.isfile(CheckPointFile_Tracking_RP):
-        UI.Msg('location','Loading checkpoint file ',CheckPointFile_Tracking_TH)
-        _Tot_Hits = UI.LogOperations(CheckPointFile_Tracking_TH,'r','N/A')
-        UI.Msg('location','Loading checkpoint file ',CheckPointFile_Tracking_RP)
-        _Rec_Hits_Pool = UI.LogOperations(CheckPointFile_Tracking_RP,'r','N/A')
-        UI.Msg('location','Loading checkpoint file ',CheckPointFile_Prep_2)
-        _z_map=pd.read_csv(CheckPointFile_Prep_2)
-        for i in range(len(_Tot_Hits)):
-            for j in range(len(_Tot_Hits[i])):
-                _Tot_Hits[i][j]=ast.literal_eval(_Tot_Hits[i][j])
-            for k in range(len(_Tot_Hits[i][0])):
-                if type(_Tot_Hits[i][0][k]) is float:
-                    _Tot_Hits[i][0][k]=str(int(_Tot_Hits[i][0][k]))
-                if type(_Tot_Hits[i][0][k]) is int:
-                    _Tot_Hits[i][0][k]=str(_Tot_Hits[i][0][k])
-        Status = 'Tracking continuation'
-elif os.path.isfile(CheckPointFile_Prep_1) and os.path.isfile(CheckPointFile_Prep_2):
-        UI.Msg('location','Loading checkpoint file ',CheckPointFile_Prep_1)
-        _Tot_Hits = UI.LogOperations(CheckPointFile_Prep_1,'r','N/A')
-        for i in range(len(_Tot_Hits)):
-            for j in range(len(_Tot_Hits[i])):
-                _Tot_Hits[i][j]=ast.literal_eval(_Tot_Hits[i][j])
-            for k in range(len(_Tot_Hits[i][0])):
-                if type(_Tot_Hits[i][0][k]) is float:
-                    _Tot_Hits[i][0][k]=str(int(_Tot_Hits[i][0][k]))
-                if type(_Tot_Hits[i][0][k]) is int:
-                    _Tot_Hits[i][0][k]=str(_Tot_Hits[i][0][k])
-        UI.Msg('location','Loading checkpoint file ',CheckPointFile_Prep_2)
-        _z_map=pd.read_csv(CheckPointFile_Prep_2)
-        Status = 'Tracking'
-elif os.path.isfile(CheckPointFile_ML):
+# if os.path.isfile(CheckPointFile_Tracking_TH) and os.path.isfile(CheckPointFile_Tracking_RP):
+#         UI.Msg('location','Loading checkpoint file ',CheckPointFile_Tracking_TH)
+#         _Tot_Hits = UI.LogOperations(CheckPointFile_Tracking_TH,'r','N/A')
+#         UI.Msg('location','Loading checkpoint file ',CheckPointFile_Tracking_RP)
+#         _Rec_Hits_Pool = UI.LogOperations(CheckPointFile_Tracking_RP,'r','N/A')
+#         UI.Msg('location','Loading checkpoint file ',CheckPointFile_Prep_2)
+#         _z_map=pd.read_csv(CheckPointFile_Prep_2)
+#         for i in range(len(_Tot_Hits)):
+#             for j in range(len(_Tot_Hits[i])):
+#                 _Tot_Hits[i][j]=ast.literal_eval(_Tot_Hits[i][j])
+#             for k in range(len(_Tot_Hits[i][0])):
+#                 if type(_Tot_Hits[i][0][k]) is float:
+#                     _Tot_Hits[i][0][k]=str(int(_Tot_Hits[i][0][k]))
+#                 if type(_Tot_Hits[i][0][k]) is int:
+#                     _Tot_Hits[i][0][k]=str(_Tot_Hits[i][0][k])
+#         Status = 'Tracking continuation'
+# elif os.path.isfile(CheckPointFile_Prep_1) and os.path.isfile(CheckPointFile_Prep_2):
+#         UI.Msg('location','Loading checkpoint file ',CheckPointFile_Prep_1)
+#         _Tot_Hits = UI.LogOperations(CheckPointFile_Prep_1,'r','N/A')
+#         for i in range(len(_Tot_Hits)):
+#             for j in range(len(_Tot_Hits[i])):
+#                 _Tot_Hits[i][j]=ast.literal_eval(_Tot_Hits[i][j])
+#             for k in range(len(_Tot_Hits[i][0])):
+#                 if type(_Tot_Hits[i][0][k]) is float:
+#                     _Tot_Hits[i][0][k]=str(int(_Tot_Hits[i][0][k]))
+#                 if type(_Tot_Hits[i][0][k]) is int:
+#                     _Tot_Hits[i][0][k]=str(_Tot_Hits[i][0][k])
+#         UI.Msg('location','Loading checkpoint file ',CheckPointFile_Prep_2)
+#         _z_map=pd.read_csv(CheckPointFile_Prep_2)
+#         Status = 'Tracking'
+if os.path.isfile(CheckPointFile_ML):
         UI.Msg('location','Loading checkpoint file ',CheckPointFile_ML)
         _Tot_Hits = pd.read_csv(CheckPointFile_ML)
-        Status = 'Track preparation'
-elif os.path.isfile(CheckPointFile_Edge):
-        UI.Msg('location','Loading checkpoint file ',CheckPointFile_Edge)
-        HC = UI.PickleOperations(CheckPointFile_Edge,'r','N/A')[0]
-        Status = 'ML analysis'
+        Status = 'Tracking'
 
 #Specifying the full path to input/output files
 
 torch_import=True
-input_file_location=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(i)+'_'+str(j)+'/RTr1a_'+RecBatchID+'_hit_cluster_edges_'+str(i)+'_'+str(j)+'_'+str(k)+'.pkl'
+input_file_location=EOS_DIR+p+'/Temp_RTr1b_'+RecBatchID+'_'+str(i)+'_'+str(j)+'/RTr1b_'+RecBatchID+'_hit_cluster_edges_consolidated_'+str(i)+'_'+str(j)+'_'+str(k)+'.pkl'
+print(input_file_location)
+print(os.path.isfile(input_file_location))
+exit()
 if os.path.isfile(input_file_location) and Status=='Edge graph generation':
     HC=UI.PickleOperations(input_file_location,'r',' ')[0]
     if len(HC.RawClusterGraph)<=1 or len(HC.RawEdgeGraph)<1:
