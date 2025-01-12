@@ -504,6 +504,8 @@ while Status<len(Program):
     #     UI.Msg('success',"The hit cluster files were successfully consolidated.")
     #     UI.UpdateStatus(Status+1,Meta,RecOutputMeta)
     elif Status==3:
+        print('We are here')
+        exit()
         i=FixedPosition
         with alive_bar(Ysteps*Zsteps*Program[0][1][8][i][j][k],force_tty=True, title='Deleting the files that are not needed anymore...') as bar:
                     for j in range(len(Program[0][1][8][i])):

@@ -197,7 +197,7 @@ if Status == 'ML analysis':
         _Tot_Hits['link_strength']=1.0
     print(UI.TimeStamp(),'Number of all  hit combinations passing GNN selection:',len(_Tot_Hits))
     if CheckPoint:
-             print(UI.TimeStamp(),'Saving checkpoint 3...')
+             print(UI.TimeStamp(),'Saving the checkpoint...')
              _Tot_Hits.to_csv(CheckPointFile_ML,index=False)
     Status='Track preparation'
 
