@@ -61,14 +61,14 @@ def zero_divide(a, b):
     return a/b
 
 #Load the first file (on the y-axis) with reconstructed clusters that already have been merged along z-axis
-FirstFileName=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/Temp_'+'RTr1c'+'_'+RecBatchID+'_'+str(X_ID)+'/RTr1c_'+RecBatchID+'_hit_cluster_rec_z_set_'+str(X_ID)+'_' +str(0)+'.csv'
+FirstFileName=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/Temp_'+'RTr1d'+'_'+RecBatchID+'_'+str(X_ID)+'/RTr1d_'+RecBatchID+'_hit_cluster_rec_z_set_'+str(X_ID)+'_' +str(0)+'.csv'
 ZContractedTable=pd.read_csv(FirstFileName) #First cluster is like a Pacman: it absorbes proceeding clusters and gets bigger
 ZContractedTable["Segment_No"]=0
 ZContractedTable["Segment_No_Tot"]=0
 ZContractedTable.drop_duplicates(subset=['HitID', 'Master_z', 'Master_Segment_ID'],keep='first',inplace=True)
 ZContractedTable["HitID"] = ZContractedTable["HitID"].astype(str)
 for i in range(1,Y_ID_Max):
-    SecondFileName=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/Temp_'+'RTr1c'+'_'+RecBatchID+'_'+str(X_ID)+'/RTr1c_'+RecBatchID+'_hit_cluster_rec_z_set_'+str(X_ID)+'_' +str(i)+'.csv' #keep loading subsequent files along y-xis with reconstructed clusters that already have been merged along z-axis
+    SecondFileName=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/Temp_'+'RTr1d'+'_'+RecBatchID+'_'+str(X_ID)+'/RTr1d_'+RecBatchID+'_hit_cluster_rec_z_set_'+str(X_ID)+'_' +str(i)+'.csv' #keep loading subsequent files along y-xis with reconstructed clusters that already have been merged along z-axis
     SecondFile=pd.read_csv(SecondFileName)
     SecondFile.drop_duplicates(subset=['HitID', 'Master_z', 'Master_Segment_ID'],keep='first',inplace=True)
     SecondFile["HitID"] = SecondFile["HitID"].astype(str)
