@@ -153,6 +153,11 @@ if os.path.isfile(output_file_location)==False:
         data[PM.MC_Event_ID] = data[PM.MC_Event_ID].astype(str)
         data[PM.MC_Track_ID] = data[PM.MC_Track_ID].astype(str)
         data['MC_Mother_Track_ID'] = data[PM.MC_Event_ID] + '-'+ data['Exclude'] + data[PM.MC_Track_ID] #Track IDs are not unique and repeat for each event: crea
+        data=data.drop([PM.MC_Event_ID],axis=1)
+        data=data.drop([PM.MC_Track_ID],axis=1)
+        data=data.drop(['Exclude'],axis=1)
+        for c in ExtraColumns:
+            data=data.drop([c],axis=1)
         print(data)
         exit()
         # data[PM.Hit_ID] = data[PM.Hit_ID].astype(int)
