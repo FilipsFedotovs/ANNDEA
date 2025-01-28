@@ -230,25 +230,25 @@ if os.path.isfile(TrainSampleOutputMeta)==False: #A case of generating samples f
     Meta=TrainDataMeta
     print(UI.PickleOperations(TrainSampleOutputMeta,'w', TrainDataMeta)[1])
 exit()
-elif os.path.isfile(TrainSampleOutputMeta)==True:
-    print(UI.TimeStamp(),'Loading previously saved data from ',bcolors.OKBLUE+TrainSampleOutputMeta+bcolors.ENDC)
-    #Loading parameters from the Meta file if exists.
-    MetaInput=UI.PickleOperations(TrainSampleOutputMeta,'r', 'N/A')
-    Meta=MetaInput[0]
-    stepX=Meta.stepX
-    stepY=Meta.stepY
-    stepZ=Meta.stepZ
-    cut_dt=Meta.cut_dt
-    cut_dr=Meta.cut_dr
-    cut_dz=Meta.cut_dz
-    testRatio=Meta.testRatio
-    valRatio=Meta.valRatio
-    y_offset=Meta.y_offset
-    x_offset=Meta.x_offset
-    Xsteps=Meta.Xsteps
-    Ysteps=Meta.Ysteps
-    Y_overlap=Meta.Y_overlap
-    X_overlap=Meta.X_overlap
+# elif os.path.isfile(TrainSampleOutputMeta)==True:
+#     print(UI.TimeStamp(),'Loading previously saved data from ',bcolors.OKBLUE+TrainSampleOutputMeta+bcolors.ENDC)
+#     #Loading parameters from the Meta file if exists.
+#     MetaInput=UI.PickleOperations(TrainSampleOutputMeta,'r', 'N/A')
+#     Meta=MetaInput[0]
+#     stepX=Meta.stepX
+#     stepY=Meta.stepY
+#     stepZ=Meta.stepZ
+#     cut_dt=Meta.cut_dt
+#     cut_dr=Meta.cut_dr
+#     cut_dz=Meta.cut_dz
+#     testRatio=Meta.testRatio
+#     valRatio=Meta.valRatio
+#     y_offset=Meta.y_offset
+#     x_offset=Meta.x_offset
+#     Xsteps=Meta.Xsteps
+#     Ysteps=Meta.Ysteps
+#     Y_overlap=Meta.Y_overlap
+#     X_overlap=Meta.X_overlap
 
 # ########################################     Preset framework parameters    #########################################
 
