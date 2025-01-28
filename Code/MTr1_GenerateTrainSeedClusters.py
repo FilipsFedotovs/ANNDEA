@@ -158,10 +158,6 @@ if os.path.isfile(output_file_location)==False:
         data=data.drop(['Exclude'],axis=1)
         for c in ExtraColumns:
             data=data.drop([c],axis=1)
-        print(data)
-        exit()
-        # data[PM.Hit_ID] = data[PM.Hit_ID].astype(int)
-        # data[PM.Hit_ID] = data[PM.Hit_ID].astype(str) #Why I am doing this twice? Need to investigate
         if SliceData: #Keeping only the relevant slice. Only works if we set at least one parameter (Xmin for instance) to non-zero
              print(UI.TimeStamp(),'Slicing the data...')
              data=data.drop(data.index[(data[PM.x] > Xmax) | (data[PM.x] < Xmin) | (data[PM.y] > Ymax) | (data[PM.y] < Ymin)])
@@ -176,67 +172,6 @@ if os.path.isfile(output_file_location)==False:
         data.to_csv(output_file_location,index=False)
         print(UI.TimeStamp(), bcolors.OKGREEN+"The segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+output_file_location+bcolors.ENDC)
 
-exit()
-###################### Phase 2 - Eval Data ######################################################
-output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/ETr1_'+TrainSampleID+'_hits.csv' #This is similar to one above but also contains MC data
-if os.path.isfile(output_file_location)==False:
-    print(UI.TimeStamp(),'Creating Evaluation file...')
-    print(UI.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
-    data=pd.read_csv(input_file_location,
-                header=0,
-                usecols=ColumnsToImport+ExtraColumns)[ColumnsToImport+ExtraColumns]
-
-    if len(ExtraColumns)>0:
-            for c in ExtraColumns:
-                data[c] = data[c].astype(str)
-            data=pd.merge(data,BanDF,how='left',on=ExtraColumns)
-            data=data.fillna('')
-    else:
-            data['Exclude']=''
-    total_rows=len(data.axes[0])
-    print(UI.TimeStamp(),'The raw data has ',total_rows,' hits')
-    print(UI.TimeStamp(),'Removing unreconstructed hits...')
-    data=data.dropna() #Unlikely to have in the hit data but keeping here just in case to prevent potential problems downstream
-    final_rows=len(data.axes[0])
-    print(UI.TimeStamp(),'The cleaned data has ',final_rows,' hits')
-    data[PM.MC_Event_ID] = data[PM.MC_Event_ID].astype(str)
-    data[PM.MC_Track_ID] = data[PM.MC_Track_ID].astype(str)
-    data[PM.Hit_ID] = data[PM.Hit_ID].astype(str)
-    data['MC_Mother_Track_ID'] = data[PM.MC_Event_ID] + '-'+ data['Exclude'] + data[PM.MC_Track_ID] #Track IDs are not unique and repeat for each event: crea
-    data=data.drop([PM.MC_Event_ID],axis=1)
-    data=data.drop([PM.MC_Track_ID],axis=1)
-    data=data.drop(['Exclude'],axis=1)
-    for c in ExtraColumns:
-        data=data.drop([c],axis=1)
-    if SliceData:
-         print(UI.TimeStamp(),'Slicing the data...')
-         data=data.drop(data.index[(data[PM.x] > Xmax) | (data[PM.x] < Xmin) | (data[PM.y] > Ymax) | (data[PM.y] < Ymin)])
-         final_rows=len(data.axes[0])
-         print(UI.TimeStamp(),'The sliced data has ',final_rows,' hits')
-    #Even if particle leaves one hit it is still assigned MC Track ID - we cannot reconstruct these so we discard them so performance metrics are not skewed
-    print(UI.TimeStamp(),'Removing tracks which have less than',PM.MinHitsTrack,'hits...')
-    track_no_data=data.groupby(['MC_Mother_Track_ID'],as_index=False).count()
-    track_no_data=track_no_data.drop([PM.y,PM.z,PM.tx,PM.ty,PM.Hit_ID],axis=1)
-    track_no_data=track_no_data.rename(columns={PM.x: "MC_Track_No"})
-    new_combined_data=pd.merge(data, track_no_data, how="left", on=['MC_Mother_Track_ID'])
-    new_combined_data = new_combined_data[new_combined_data.MC_Track_No >= PM.MinHitsTrack]  #We are only interested in MC Tracks that have a certain number of hits
-    new_combined_data = new_combined_data.drop(["MC_Track_No"],axis=1)
-    new_combined_data=new_combined_data.sort_values(['MC_Mother_Track_ID',PM.z],ascending=[1,1])
-    grand_final_rows=len(new_combined_data.axes[0])
-    print(UI.TimeStamp(),'The cleaned data has ',grand_final_rows,' hits')
-    new_combined_data=new_combined_data.rename(columns={PM.x: "x"})
-    new_combined_data=new_combined_data.rename(columns={PM.y: "y"})
-    new_combined_data=new_combined_data.rename(columns={PM.z: "z"})
-    new_combined_data=new_combined_data.rename(columns={PM.tx: "tx"})
-    new_combined_data=new_combined_data.rename(columns={PM.ty: "ty"})
-    new_combined_data=new_combined_data.rename(columns={PM.Hit_ID: "Hit_ID"})
-    new_combined_data.to_csv(output_file_location,index=False)
-    print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
-    print(UI.TimeStamp(), bcolors.OKGREEN+"The track segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+output_file_location+bcolors.ENDC)
-########################################     Preset framework parameters    #########################################
-
-
-
 print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
 print(UI.TimeStamp(),bcolors.BOLD+'Stage 1:'+bcolors.ENDC+' Creating training sample meta data...')
 if os.path.isfile(TrainSampleOutputMeta)==False: #A case of generating samples from scratch
@@ -249,58 +184,52 @@ if os.path.isfile(TrainSampleOutputMeta)==False: #A case of generating samples f
     z_offset=data['z'].min()
     data['x']=data['x']-x_offset #Reseting the coordinate origin to zero for this data set
     data['y']=data['y']-y_offset #Reseting the coordinate origin to zero for this data set
+    data['z']=data['z']-z_offset #Reseting the coordinate origin to zero for this data set
     x_max=data['x'].max() #We need it to calculate how many clusters to create
     y_max=data['y'].max()
-    data['z']=data['z']-z_offset #Reseting the coordinate origin to zero for this data set
-    if X_overlap==1:
+    z_max=data['z'].max()
+    if Xoverlap==1:
             Xsteps=math.ceil((x_max)/stepX)
     else:
-            Xsteps=(math.ceil((x_max)/stepX)*(X_overlap))-1
-    if Y_overlap==1:
+            Xsteps=(math.ceil((x_max)/stepX)*(Xoverlap))-1
+    if Yoverlap==1:
             Ysteps=math.ceil((y_max)/stepY)
     else:
-            Ysteps=(math.ceil((y_max)/stepY)*(Y_overlap))-1
-    stepZ=data['z'].max()
+            Ysteps=(math.ceil((y_max)/stepY)*(Yoverlap))-1
+    if Zoverlap==1:
+       Zsteps=math.ceil((z_max)/stepZ)
+    else:
+       Zsteps=(math.ceil((z_max)/stepZ)*(Zoverlap))-1
+
     print(UI.TimeStamp(),'Distributing hit files...')
     print(UI.TimeStamp(),'Loading preselected data from ',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
     data=pd.read_csv(input_file_location,header=0)
+    print(data)
     with alive_bar(Xsteps*Ysteps,force_tty=True, title='Distributing hit files...') as bar:
              for i in range(Xsteps):
                  for j in range(Ysteps):
-                     required_tfile_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/MTr1_'+TrainSampleID+'_'+str(i)+'_'+str(j)+'_hits.csv'
-                     if os.path.isfile(required_tfile_location)==False:
-                         X_ID=int(i)/X_overlap
-                         Y_ID=int(j)/Y_overlap
-                         tdata=data.drop(data.index[data['x'] >= ((X_ID+1)*stepX)])  #Keeping the relevant z slice
-                         tdata.drop(tdata.index[tdata['x'] < (X_ID*stepX)], inplace = True)  #Keeping the relevant z slice
-                         tdata.drop(tdata.index[tdata['y'] >= ((Y_ID+1)*stepY)], inplace = True)  #Keeping the relevant z slice
-                         tdata.drop(tdata.index[tdata['y'] < (Y_ID*stepY)], inplace = True)  #Keeping the relevant z slice
-                         tdata.to_csv(required_tfile_location,index=False)
+                     for k in range(Zsteps):
+                         required_tfile_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/MTr1_'+TrainSampleID+'_'+str(i)+'_'+str(j)+'_'+str(k)+'_hits.csv'
+                         if os.path.isfile(required_tfile_location)==False:
+                             X_ID=int(i)/Xoverlap
+                             Y_ID=int(j)/Yoverlap
+                             Z_ID=int(k)/Yoverlap
+                             tdata=data.drop(data.index[data['x'] >= ((X_ID+1)*stepX)])  #Keeping the relevant z slice
+                             tdata.drop(tdata.index[tdata['x'] < (X_ID*stepX)], inplace = True)  #Keeping the relevant z slice
+                             tdata.drop(tdata.index[tdata['y'] >= ((Y_ID+1)*stepY)], inplace = True)  #Keeping the relevant z slice
+                             tdata.drop(tdata.index[tdata['y'] < (Y_ID*stepY)], inplace = True)  #Keeping the relevant z slice
+                             tdata.drop(tdata.index[tdata['z'] >= ((Z_ID+1)*stepZ)], inplace = True)  #Keeping the relevant z slice
+                             tdata.drop(tdata.index[tdata['z'] < (Z_ID*stepZ)], inplace = True)  #Keeping the relevant z slice
+                             tdata.to_csv(required_tfile_location,index=False)
                          #print(UI.TimeStamp(), bcolors.OKGREEN+"The segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+required_tfile_location+bcolors.ENDC)
                      bar()
-    print(UI.TimeStamp(),'Distributing eval files...')
-    input_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/ETr1_'+TrainSampleID+'_hits.csv' #This is similar to one above but also contains MC data
-    data=pd.read_csv(input_file_location,header=0)
-    with alive_bar(Xsteps*Ysteps,force_tty=True, title='Distributing hit files...') as bar:
-             for i in range(Xsteps):
-                 for j in range(Ysteps):
-                     required_tfile_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/ETr1_'+TrainSampleID+'_'+str(i)+'_'+str(j)+'_hits.csv'
-                     if os.path.isfile(required_tfile_location)==False:
-                         X_ID=int(i)/X_overlap
-                         Y_ID=int(j)/Y_overlap
-                         tdata=data.drop(data.index[data['x'] >= ((X_ID+1)*stepX)])  #Keeping the relevant z slice
-                         tdata.drop(tdata.index[tdata['x'] < (X_ID*stepX)], inplace = True)  #Keeping the relevant z slice
-                         tdata.drop(tdata.index[tdata['y'] >= ((Y_ID+1)*stepY)], inplace = True)  #Keeping the relevant z slice
-                         tdata.drop(tdata.index[tdata['y'] < (Y_ID*stepY)], inplace = True)  #Keeping the relevant z slice
-                         tdata.to_csv(required_tfile_location,index=False)
-                         #print(UI.TimeStamp(), bcolors.OKGREEN+"The segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+required_tfile_location+bcolors.ENDC)
-                     bar()
+    exit()
     TrainDataMeta=UI.TrainingSampleMeta(TrainSampleID)
-    TrainDataMeta.IniHitClusterMetaData(stepX, stepY, stepZ, cut_dt, cut_dr, cut_dz, testRatio, valRatio, y_offset, x_offset, Xsteps, Ysteps,X_overlap, Y_overlap)
+    TrainDataMeta.IniHitClusterMetaData(stepX, stepY, stepZ, cut_dt, cut_dr, cut_dz, testRatio, valRatio, y_offset, x_offset, Xsteps, Ysteps,Xoverlap, Yoverlap, Zsteps, Zoverlap)
     TrainDataMeta.UpdateStatus(1)
     Meta=TrainDataMeta
     print(UI.PickleOperations(TrainSampleOutputMeta,'w', TrainDataMeta)[1])
-
+exit()
 elif os.path.isfile(TrainSampleOutputMeta)==True:
     print(UI.TimeStamp(),'Loading previously saved data from ',bcolors.OKBLUE+TrainSampleOutputMeta+bcolors.ENDC)
     #Loading parameters from the Meta file if exists.
