@@ -127,7 +127,6 @@ elif Mode=='CLEANUP':
 else:
     print(UI.ManageFolders(AFS_DIR, EOS_DIR, TrainSampleID,'c'))
 
-exit()
 ########################################     Phase 1 - Create compact source file    #########################################
 print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
 print(UI.TimeStamp(),bcolors.BOLD+'Stage 0:'+bcolors.ENDC+' Taking the file that has been supplied and creating the compact copies for the training set generation...')
@@ -136,7 +135,9 @@ if os.path.isfile(output_file_location)==False:
         print(UI.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
         data=pd.read_csv(input_file_location,
                     header=0,
-                    usecols=[PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty])[[PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty]]
+                    usecols=ColumnsToImport+ExtraColumns)[ColumnsToImport+ExtraColumns]
+        print(data)
+        exit()
         total_rows=len(data.axes[0])
         data[PM.Hit_ID] = data[PM.Hit_ID].astype(str) #We try to keep HIT ids as strings
         print(UI.TimeStamp(),'The raw data has ',total_rows,' hits')
@@ -160,7 +161,7 @@ if os.path.isfile(output_file_location)==False:
         data.to_csv(output_file_location,index=False)
         print(UI.TimeStamp(), bcolors.OKGREEN+"The segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+output_file_location+bcolors.ENDC)
 
-
+exit()
 ###################### Phase 2 - Eval Data ######################################################
 output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/ETr1_'+TrainSampleID+'_hits.csv' #This is similar to one above but also contains MC data
 if os.path.isfile(output_file_location)==False:
