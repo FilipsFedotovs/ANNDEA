@@ -136,8 +136,7 @@ if os.path.isfile(output_file_location)==False:
         data=pd.read_csv(input_file_location,
                     header=0,
                     usecols=ColumnsToImport+ExtraColumns)[ColumnsToImport+ExtraColumns]
-        print(data)
-        exit()
+
         total_rows=len(data.axes[0])
         data[PM.Hit_ID] = data[PM.Hit_ID].astype(str) #We try to keep HIT ids as strings
         print(UI.TimeStamp(),'The raw data has ',total_rows,' hits')
@@ -145,8 +144,12 @@ if os.path.isfile(output_file_location)==False:
         data=data.dropna() #Removing nulls (not really applicable for this module but I put it just in case)
         final_rows=len(data.axes[0])
         print(UI.TimeStamp(),'The cleaned data has ',final_rows,' hits')
-        data[PM.Hit_ID] = data[PM.Hit_ID].astype(int)
-        data[PM.Hit_ID] = data[PM.Hit_ID].astype(str) #Why I am doing this twice? Need to investigate
+        data[PM.MC_Event_ID] = data[PM.MC_Event_ID].astype(str)
+        data[PM.MC_Track_ID] = data[PM.MC_Track_ID].astype(str)
+        print(data)
+        exit()
+        # data[PM.Hit_ID] = data[PM.Hit_ID].astype(int)
+        # data[PM.Hit_ID] = data[PM.Hit_ID].astype(str) #Why I am doing this twice? Need to investigate
         if SliceData: #Keeping only the relevant slice. Only works if we set at least one parameter (Xmin for instance) to non-zero
              print(UI.TimeStamp(),'Slicing the data...')
              data=data.drop(data.index[(data[PM.x] > Xmax) | (data[PM.x] < Xmin) | (data[PM.y] > Ymax) | (data[PM.y] < Ymin)])
