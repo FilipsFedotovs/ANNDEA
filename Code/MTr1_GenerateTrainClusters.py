@@ -103,6 +103,7 @@ stepY=PM.stepY #Size of the individual reconstruction volumes along the y-axis
 stepZ=PM.stepZ #Size of the individual reconstruction volumes along the z-axis
 cut_dt=PM.cut_dt #This cust help to discard hit pairs that are likely do not have a common mother track
 cut_dr=PM.cut_dr
+cut_dz=PM.cut_dz
 testRatio=PM.testRatio #Usually about 5%
 valRatio=PM.valRatio #Usually about 10%
 TrainSampleOutputMeta=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_info.pkl' #For each training sample batch we create an individual meta file.

@@ -205,7 +205,7 @@ if os.path.isfile(TrainSampleOutputMeta)==False: #A case of generating samples f
     print(UI.TimeStamp(),'Loading preselected data from ',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
     data=pd.read_csv(input_file_location,header=0)
     print(data)
-    with alive_bar(Xsteps*Ysteps,force_tty=True, title='Distributing hit files...') as bar:
+    with alive_bar(Xsteps*Ysteps*Zsteps,force_tty=True, title='Distributing hit files...') as bar:
              for i in range(Xsteps):
                  for j in range(Ysteps):
                      for k in range(Zsteps):
