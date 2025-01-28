@@ -136,7 +136,13 @@ if os.path.isfile(output_file_location)==False:
         data=pd.read_csv(input_file_location,
                     header=0,
                     usecols=ColumnsToImport+ExtraColumns)[ColumnsToImport+ExtraColumns]
-
+        if len(ExtraColumns)>0:
+            for c in ExtraColumns:
+                data[c] = data[c].astype(str)
+            data=pd.merge(data,BanDF,how='left',on=ExtraColumns)
+            data=data.fillna('')
+        else:
+            data['Exclude']=''
         total_rows=len(data.axes[0])
         data[PM.Hit_ID] = data[PM.Hit_ID].astype(str) #We try to keep HIT ids as strings
         print(UI.TimeStamp(),'The raw data has ',total_rows,' hits')
@@ -146,6 +152,7 @@ if os.path.isfile(output_file_location)==False:
         print(UI.TimeStamp(),'The cleaned data has ',final_rows,' hits')
         data[PM.MC_Event_ID] = data[PM.MC_Event_ID].astype(str)
         data[PM.MC_Track_ID] = data[PM.MC_Track_ID].astype(str)
+        data['MC_Mother_Track_ID'] = data[PM.MC_Event_ID] + '-'+ data['Exclude'] + data[PM.MC_Track_ID] #Track IDs are not unique and repeat for each event: crea
         print(data)
         exit()
         # data[PM.Hit_ID] = data[PM.Hit_ID].astype(int)
