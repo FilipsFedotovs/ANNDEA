@@ -222,7 +222,7 @@ if os.path.isfile(TrainSampleOutputMeta)==False: #A case of generating samples f
                              tdata.drop(tdata.index[tdata['z'] < (Z_ID*stepZ)], inplace = True)  #Keeping the relevant z slice
                              tdata.to_csv(required_tfile_location,index=False)
                          #print(UI.TimeStamp(), bcolors.OKGREEN+"The segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+required_tfile_location+bcolors.ENDC)
-                     bar()
+                         bar()
     exit()
     TrainDataMeta=UI.TrainingSampleMeta(TrainSampleID)
     TrainDataMeta.IniHitClusterMetaData(stepX, stepY, stepZ, cut_dt, cut_dr, cut_dz, testRatio, valRatio, y_offset, x_offset, Xsteps, Ysteps,Xoverlap, Yoverlap, Zsteps, Zoverlap)
