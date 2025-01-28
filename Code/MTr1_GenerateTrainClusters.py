@@ -67,7 +67,7 @@ parser.add_argument('--ExcludeClassValues',help="What class values to use?", def
 parser.add_argument('--Z_overlap',help="Enter the level of overlap in integer number between reconstruction blocks along z-axis.", default='1')
 parser.add_argument('--Y_overlap',help="Enter the level of overlap in integer number between reconstruction blocks along y-axis.", default='1')
 parser.add_argument('--X_overlap',help="Enter the level of overlap in integer number between reconstruction blocks along x-axis.", default='1')
-parser.add_argument('--ReqMemory',help="How uch memory to request?", default='2 GB')
+parser.add_argument('--ReqMemory',help="How much memory to request?", default='2 GB')
 parser.add_argument('--RequestExtCPU',help="Would you like to request extra CPUs?", default=1)
 parser.add_argument('--JobFlavour',help="Specifying the length of the HTCondor job walltime. Currently at 'workday' which is 8 hours.", default='workday')
 ######################################## Set variables  #############################################################
@@ -95,11 +95,8 @@ for i in range(len(ExcludeClassNames)):
         df=pd.DataFrame(ExcludeClassValues[i], columns=[ExcludeClassNames[i]])
         df['Exclude']='-'
         BanDF=pd.merge(BanDF,df,how='inner',on=['Exclude'])
-
         if (ExcludeClassNames[i] in ExtraColumns)==False:
                 ExtraColumns.append(ExcludeClassNames[i])
-
-
 
 stepX=PM.stepX #Size of the individual reconstruction volumes along the x-axis
 stepY=PM.stepY #Size of the individual reconstruction volumes along the y-axis

@@ -45,7 +45,7 @@ class bcolors:   #We use it for the interface
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
 
-UI.WelcomeMsg('Initialising ANNDEA Tracking training sample generation module...','Filips Fedotovs (PhD student at UCL)','Please reach out to filips.fedotovs@cern.ch for any queries')
+UI.WelcomeMsg('Initialising ANNDEA Tracking Module: training seed sample generation module...','Filips Fedotovs (PhD student at UCL)','Please reach out to filips.fedotovs@cern.ch for any queries')
 
 parser = argparse.ArgumentParser(description='This script prepares training data for training the tracking model')
 parser.add_argument('--Mode', help='Script will continue from the last checkpoint, unless you want to start from the scratch, then type "Reset"',default='')
@@ -64,6 +64,7 @@ parser.add_argument('--SubGap',help="How long to wait in minutes after submittin
 #The bellow are not important for the training smaples but if you want to augment the training data set above 1
 parser.add_argument('--Y_overlap',help="Enter the level of overlap in integer number between reconstruction blocks along y-axis.", default='1')
 parser.add_argument('--X_overlap',help="Enter the level of overlap in integer number between reconstruction blocks along x-axis.", default='1')
+parser.add_argument('--Z_overlap',help="Enter the level of overlap in integer number between reconstruction blocks along z-axis.", default='1')
 parser.add_argument('--ReqMemory',help="How uch memory to request?", default='2 GB')
 parser.add_argument('--RequestExtCPU',help="Would you like to request extra CPUs?", default=1)
 parser.add_argument('--JobFlavour',help="Specifying the length of the HTCondor job walltime. Currently at 'workday' which is 8 hours.", default='workday')
