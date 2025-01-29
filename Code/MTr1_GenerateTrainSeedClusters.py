@@ -169,7 +169,7 @@ if os.path.isfile(output_file_location)==False:
         data=data.rename(columns={PM.tx: "tx"})
         data=data.rename(columns={PM.ty: "ty"})
         data=data.rename(columns={PM.Hit_ID: "Hit_ID"})
-        data=data.rename(columns={PM.MC_Super_Track_ID: "MC_Track_ID"})
+        data=data.rename(columns={"MC_Super_Track_ID": "MC_Track_ID"})
         data.to_csv(output_file_location,index=False)
         print(UI.TimeStamp(), bcolors.OKGREEN+"The segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+output_file_location+bcolors.ENDC)
 
