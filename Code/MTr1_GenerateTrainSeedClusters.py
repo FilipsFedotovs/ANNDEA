@@ -152,7 +152,7 @@ if os.path.isfile(output_file_location)==False:
         print(UI.TimeStamp(),'The cleaned data has ',final_rows,' hits')
         data[PM.MC_Event_ID] = data[PM.MC_Event_ID].astype(str)
         data[PM.MC_Track_ID] = data[PM.MC_Track_ID].astype(str)
-        data['MC_Mother_Track_ID'] = data[PM.MC_Event_ID] + '-'+ data['Exclude'] + data[PM.MC_Track_ID] #Track IDs are not unique and repeat for each event: crea
+        data['MC_Super_Track_ID'] = data[PM.MC_Event_ID] + '-'+ data['Exclude'] + data[PM.MC_Track_ID] #Track IDs are not unique and repeat for each event: crea
         data=data.drop([PM.MC_Event_ID],axis=1)
         data=data.drop([PM.MC_Track_ID],axis=1)
         data=data.drop(['Exclude'],axis=1)
@@ -169,6 +169,7 @@ if os.path.isfile(output_file_location)==False:
         data=data.rename(columns={PM.tx: "tx"})
         data=data.rename(columns={PM.ty: "ty"})
         data=data.rename(columns={PM.Hit_ID: "Hit_ID"})
+        data=data.rename(columns={PM.MC_Super_Track_ID: "MC_Track_ID"})
         data.to_csv(output_file_location,index=False)
         print(UI.TimeStamp(), bcolors.OKGREEN+"The segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+output_file_location+bcolors.ENDC)
 

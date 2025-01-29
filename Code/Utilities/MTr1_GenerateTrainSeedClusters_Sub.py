@@ -33,14 +33,16 @@ parser.add_argument('--pfx',help="Path to the output file name", default='')
 parser.add_argument('--sfx',help="Path to the output file name", default='')
 ######################################## Set variables  #############################################################
 args = parser.parse_args()
+
 PY_DIR=args.PY
 EOS_DIR=args.EOS
 AFS_DIR=args.AFS
+
 p=args.p
 o=args.o
-
 sfx=args.sfx
 pfx=args.pfx
+
 import sys
 if PY_DIR!='': #Temp solution
     sys.path=['',PY_DIR]
@@ -51,47 +53,55 @@ if PY_DIR!='': #Temp solution
     sys.path.append('/usr/lib/python3.9/site-packages')
 sys.path.append(AFS_DIR+'/Code/Utilities')
 sys.path.insert(1, AFS_DIR+'/Code/Utilities/')
+
 ########################################    Import libraries    #############################################
 import pandas as pd #We use Panda for a routine data processing
 import ast
+
+
 jobs=ast.literal_eval(args.jobs)
-i=int(args.i)
-print(jobs[i])
-exit()
-Y_overlap,X_overlap=int(args.Y_overlap),int(args.X_overlap)
-X_ID=int(args.i)/X_overlap #Renormalising the index of the cluster along x-axis
-X_ID_n=int(args.i)
-Y_ID=int(args.j)/Y_overlap #Renormalising the index of the cluster along x-axis
-Y_ID_n=int(args.j)
+l=int(args.i)
+i,j,k=jobs[l][0],jobs[l][1],jobs[l][2]
+Yoverlap,Xoverlap,Zoverlap=int(args.Yoverlap),int(args.Xoverlap),int(args.Zoverlap)
+X_ID=int(i)/Xoverlap #Renormalising the index of the cluster along x-axis
+X_ID_n=int(i)
+Y_ID=int(j)/Yoverlap #Renormalising the index of the cluster along x-axis
+Y_ID_n=int(j)
+Z_ID=int(k)/Zoverlap #Renormalising the index of the cluster along x-axis
+Z_ID_n=int(k)
 
 stepX=float(args.stepX) #The size of the cluster along x-direction
 stepY=float(args.stepY) #The size of the cluster along y-direction
 stepZ=float(args.stepZ) #The size of the cluster along z-direction (for normalisation)
+
 y_offset=float(args.yOffset)
 x_offset=float(args.xOffset)
+
 cut_dt=float(args.cut_dt) #Simple geometric cuts that help reduce number of hit combinations within the cluster for classification
 cut_dr=float(args.cut_dr) #Simple geometric cuts that help reduce number of hit combinations within the cluster for classification
 cut_dz=float(args.cut_dz) #Simple geometric cuts that help reduce number of hit combinations within the cluster for classification
+
 val_ratio=float(args.valRatio)
 test_ratio=float(args.testRatio)
 
 #Loading Directory locations
-
 TrainSampleID=args.BatchID
 import U_UI as UF #This is where we keep routine utility functions
 import U_HC as HC #This is where we keep routine utility functions
 
 #Specifying the full path to input/output files
-input_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/MTr1_'+TrainSampleID+'_'+args.i+'_'+args.j+'_hits.csv'
+input_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/MTr1_'+TrainSampleID+'_'+str(i)+'_'+str(j)+'_'+str(k)+'_hits.csv'
 print(UF.TimeStamp(), "Modules Have been imported successfully...")
 print(UF.TimeStamp(),'Loading pre-selected data from ',input_file_location)
 #Load the file with Hit detailed information
-data=pd.read_csv(input_file_location,header=0,usecols=["Hit_ID","x","y","z","tx","ty"])[["Hit_ID","x","y","z","tx","ty"]]
+data=pd.read_csv(input_file_location,header=0,usecols=["Hit_ID","x","y","z","tx","ty","MC_Track_ID"])[["Hit_ID","x","y","z","tx","ty","MC_Track_ID"]]
 data["x"] = pd.to_numeric(data["x"],downcast='float')
 data["y"] = pd.to_numeric(data["y"],downcast='float')
 data["z"] = pd.to_numeric(data["z"],downcast='float')
 data["Hit_ID"] = data["Hit_ID"].astype(str)
 print(UF.TimeStamp(),'Preparing data... ')
+print(data)
+exit()
 
 
 data_list=data.values.tolist()
@@ -100,7 +110,7 @@ input_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/ETr1_'+Tra
 print(UF.TimeStamp(), "Modules Have been imported successfully...")
 print(UF.TimeStamp(),'Loading pre-selected data from ',input_file_location)
 #Load the file with Hit detailed information
-MCdata=pd.read_csv(input_file_location,header=0,usecols=["Hit_ID",'MC_Mother_Track_ID'])[["Hit_ID",'MC_Mother_Track_ID']]
+MCdata=pd.read_csv(input_file_location,header=0,usecols=["Hit_ID",'MC_Track_ID'])[["Hit_ID",'MC_Track_ID']]
 MCdata["Hit_ID"] = data["Hit_ID"].astype(str)
 
 MCdata_list=MCdata.values.tolist()
