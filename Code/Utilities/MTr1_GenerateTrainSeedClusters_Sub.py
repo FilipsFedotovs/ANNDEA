@@ -53,7 +53,8 @@ sys.path.append(AFS_DIR+'/Code/Utilities')
 sys.path.insert(1, AFS_DIR+'/Code/Utilities/')
 ########################################    Import libraries    #############################################
 import pandas as pd #We use Panda for a routine data processing
-jobs=args.jobs
+import ast
+jobs=ast.literal_eval(args.jobs)
 print(jobs)
 exit()
 Y_overlap,X_overlap=int(args.Y_overlap),int(args.X_overlap)
