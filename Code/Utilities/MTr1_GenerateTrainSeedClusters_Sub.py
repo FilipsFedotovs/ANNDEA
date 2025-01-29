@@ -25,6 +25,7 @@ parser.add_argument('--BatchID',help="Give name to this train sample", default='
 parser.add_argument('--Yoverlap',help="Enter the level of overlap in integer number between reconstruction blocks along y-axis.", default='1')
 parser.add_argument('--Xoverlap',help="Enter the level of overlap in integer number between reconstruction blocks along x-axis.", default='1')
 parser.add_argument('--Zoverlap',help="Enter the level of overlap in integer number between reconstruction blocks along z-axis.", default='1')
+parser.add_argument('--jobs',help="The list of jobs", default='')
 parser.add_argument('--PY',help="Python libraries directory location", default='.')
 parser.add_argument('--p',help="Path to the output file", default='')
 parser.add_argument('--o',help="Path to the output file name", default='')
@@ -37,6 +38,7 @@ EOS_DIR=args.EOS
 AFS_DIR=args.AFS
 p=args.p
 o=args.o
+
 sfx=args.sfx
 pfx=args.pfx
 import sys
@@ -51,8 +53,8 @@ sys.path.append(AFS_DIR+'/Code/Utilities')
 sys.path.insert(1, AFS_DIR+'/Code/Utilities/')
 ########################################    Import libraries    #############################################
 import pandas as pd #We use Panda for a routine data processing
-
-print('wip')
+jobs=args.jobs
+print(jobs)
 exit()
 Y_overlap,X_overlap=int(args.Y_overlap),int(args.X_overlap)
 X_ID=int(args.i)/X_overlap #Renormalising the index of the cluster along x-axis
