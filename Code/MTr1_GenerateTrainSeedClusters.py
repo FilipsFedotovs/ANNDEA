@@ -209,7 +209,7 @@ if os.path.isfile(TrainSampleOutputMeta)==False: #A case of generating samples f
     data=pd.read_csv(input_file_location,header=0)
     n_jobs=0
     jobs=[]
-    with alive_bar(n_jobs,force_tty=True, title='Sampling hit files...') as bar:
+    with alive_bar(Xsteps*Ysteps*Zsteps,force_tty=True, title='Sampling hit files...') as bar:
         for i in range(Xsteps):
             for j in range(Ysteps):
                      for k in range(Zsteps):
@@ -224,7 +224,7 @@ if os.path.isfile(TrainSampleOutputMeta)==False: #A case of generating samples f
                              tdata.drop(tdata.index[tdata['y'] < (Y_ID*stepY)], inplace = True)  #Keeping the relevant z slice
                              tdata.drop(tdata.index[tdata['z'] >= ((Z_ID+1)*stepZ)], inplace = True)  #Keeping the relevant z slice
                              tdata.drop(tdata.index[tdata['z'] < (Z_ID*stepZ)], inplace = True)  #Keeping the relevant z slice
-                             if len(tdata)>0:
+                             if len(tdata)>1:
                                  if Sampling>=random.random():
                                      tdata.to_csv(required_tfile_location,index=False)
                                      job_comb=[i, j, k]
