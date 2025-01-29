@@ -204,7 +204,7 @@ if os.path.isfile(TrainSampleOutputMeta)==False: #A case of generating samples f
     print(UI.TimeStamp(),'Distributing hit files...')
     print(UI.TimeStamp(),'Loading preselected data from ',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
     data=pd.read_csv(input_file_location,header=0)
-    job_count=0
+    n_jobs=0
     jobs=[]
     for i in range(Xsteps):
             for j in range(Ysteps):
@@ -212,8 +212,8 @@ if os.path.isfile(TrainSampleOutputMeta)==False: #A case of generating samples f
                          if Sampling>=random.random():
                             job_comb=[i, j, k]
                             jobs.append(job_comb)
-                            job_count+=1
-    with alive_bar(job_count,force_tty=True, title='Distributing hit files...') as bar:
+                            n_jobs+=1
+    with alive_bar(n_jobs,force_tty=True, title='Distributing hit files...') as bar:
              for l in jobs:
                          i,j,k=l[0],l[1],l[2]
                          required_tfile_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/MTr1_'+TrainSampleID+'_'+str(i)+'_'+str(j)+'_'+str(k)+'_hits.csv'
@@ -230,48 +230,32 @@ if os.path.isfile(TrainSampleOutputMeta)==False: #A case of generating samples f
                              tdata.to_csv(required_tfile_location,index=False)
                          bar()
     TrainDataMeta=UI.JobMeta(TrainSampleID)
-    TrainDataMeta.UpdateJobMeta(['stepX', 'stepY', 'stepZ', 'cut_dt', 'cut_dr', 'cut_dz', 'testRatio', 'valRatio', 'y_offset', 'x_offset', 'Xsteps', 'Ysteps','Xoverlap', 'Yoverlap', 'Zsteps', 'Zoverlap'],[stepX, stepY, stepZ, cut_dt, cut_dr, cut_dz, testRatio, valRatio, y_offset, x_offset, Xsteps, Ysteps,Xoverlap, Yoverlap, Zsteps, Zoverlap])
-    print(TrainDataMeta.Zoverlap)
-    exit()
-    # self.stepX=stepX
-    #       self.stepY=stepY
-    #       self.stepZ=stepZ
-    #       self.cut_dt=cut_dt
-    #       self.cut_dr=cut_dr
-    #       self.cut_dz=cut_dz
-    #       self.testRatio=testRatio
-    #       self.valRatio=valRatio
-    #       self.y_offset=y_offset
-    #       self.x_offset=x_offset
-    #       self.Xsteps=Xsteps
-    #       self.Ysteps=Ysteps
-    #       self.X_overlap=X_overlap
-    #       self.Y_overlap=Y_overlap
-    #       self.Z_overlap=Z_overlap
-    #       self.Zsteps=Zsteps
+    TrainDataMeta.UpdateJobMeta(['stepX', 'stepY', 'stepZ', 'cut_dt', 'cut_dr', 'cut_dz', 'testRatio', 'valRatio', 'y_offset', 'x_offset','Xoverlap', 'Yoverlap', 'Zoverlap'],[stepX, stepY, stepZ, cut_dt, cut_dr, cut_dz, testRatio, valRatio, y_offset, x_offset,Xoverlap, Yoverlap, Zoverlap])
+    TrainDataMeta.UpdateJobMeta(['jobs', 'n_jobs'],[jobs, n_jobs])
     TrainDataMeta.UpdateStatus(1)
     Meta=TrainDataMeta
     print(UI.PickleOperations(TrainSampleOutputMeta,'w', TrainDataMeta)[1])
-exit()
-# elif os.path.isfile(TrainSampleOutputMeta)==True:
-#     print(UI.TimeStamp(),'Loading previously saved data from ',bcolors.OKBLUE+TrainSampleOutputMeta+bcolors.ENDC)
-#     #Loading parameters from the Meta file if exists.
-#     MetaInput=UI.PickleOperations(TrainSampleOutputMeta,'r', 'N/A')
-#     Meta=MetaInput[0]
-#     stepX=Meta.stepX
-#     stepY=Meta.stepY
-#     stepZ=Meta.stepZ
-#     cut_dt=Meta.cut_dt
-#     cut_dr=Meta.cut_dr
-#     cut_dz=Meta.cut_dz
-#     testRatio=Meta.testRatio
-#     valRatio=Meta.valRatio
-#     y_offset=Meta.y_offset
-#     x_offset=Meta.x_offset
-#     Xsteps=Meta.Xsteps
-#     Ysteps=Meta.Ysteps
-#     Y_overlap=Meta.Y_overlap
-#     X_overlap=Meta.X_overlap
+elif os.path.isfile(TrainSampleOutputMeta)==True:
+    print(UI.TimeStamp(),'Loading previously saved data from ',bcolors.OKBLUE+TrainSampleOutputMeta+bcolors.ENDC)
+    #Loading parameters from the Meta file if exists.
+    MetaInput=UI.PickleOperations(TrainSampleOutputMeta,'r', 'N/A')
+    Meta=MetaInput[0]
+    stepX=Meta.stepX
+    stepY=Meta.stepY
+    stepZ=Meta.stepZ
+    cut_dt=Meta.cut_dt
+    cut_dr=Meta.cut_dr
+    cut_dz=Meta.cut_dz
+    testRatio=Meta.testRatio
+    valRatio=Meta.valRatio
+    y_offset=Meta.y_offset
+    x_offset=Meta.x_offset
+    Yoverlap=Meta.Yoverlap
+    Xoverlap=Meta.Xoverlap
+    Zoverlap=Meta.Zoverlap
+
+    jobs=Meta.jobs
+    n_jobs=Meta.n_jobs
 
 # ########################################     Preset framework parameters    #########################################
 
@@ -284,14 +268,11 @@ UI.Msg('vanilla','Current stage is '+str(Status)+'...')
 Program=[]
 ###### Stage 0
 prog_entry=[]
-job_sets=[]
-for i in range(0,Xsteps):
-            job_sets.append(Ysteps)
 prog_entry.append(' Sending hit cluster to the HTCondor, so the model assigns weights between hits')
-prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/','SelectedTrainClusters','MTr1','.pkl',TrainSampleID,job_sets,'MTr1_GenerateTrainClusters_Sub.py'])
-prog_entry.append([' --stepY ', ' --stepX ', ' --stepZ ', ' --cut_dt ', ' --cut_dr ', ' --cut_dz ',' --Y_overlap ',' --X_overlap '])
-prog_entry.append([stepY, stepX, stepZ, cut_dt,cut_dr,cut_dz, Y_overlap,X_overlap])
-prog_entry.append(Xsteps*Ysteps)
+prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/','SelectedTrainSeedClusters','MTr1','.pkl',TrainSampleID,n_jobs,'MTr1_GenerateTrainSeedClusters_Sub.py'])
+prog_entry.append([' --stepY ', ' --stepX ', ' --stepZ ', ' --cut_dt ', ' --cut_dr ', ' --cut_dz ',' --Y_overlap ',' --X_overlap ',' --Z_overlap '])
+prog_entry.append([stepY, stepX, stepZ, cut_dt,cut_dr,cut_dz, Yoverlap, Xoverlap, Zoverlap])
+prog_entry.append(n_jobs)
 prog_entry.append(LocalSub)
 prog_entry.append('N/A')
 prog_entry.append(HTCondorLog)
@@ -306,7 +287,7 @@ print(UI.TimeStamp(),'Current stage has a code',Status,bcolors.ENDC)
 while Status<len(Program):
     if Program[Status]!='Custom':
         #Standard process here
-       Result=UI.StandardProcess(Program,Status,SubGap,SubPause,RequestExtCPU,JobFlavour,ReqMemory,time_int,Patience)
+       Result=UI.StandardProcess(Program,Status,SubGap,SubPause,CPU,JobFlavour,Memory,time_int,Patience)
        if Result[0]:
             UI.UpdateStatus(Status+1,Meta,TrainSampleOutputMeta)
        else:
@@ -314,6 +295,7 @@ while Status<len(Program):
              break
 
     elif Status==1:
+        exit()
         try:
             #Non standard processes (that don't follow the general pattern) have been coded here
             print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
