@@ -55,7 +55,8 @@ sys.path.insert(1, AFS_DIR+'/Code/Utilities/')
 import pandas as pd #We use Panda for a routine data processing
 import ast
 jobs=ast.literal_eval(args.jobs)
-print(jobs)
+i=int(args.i)
+print(jobs[i])
 exit()
 Y_overlap,X_overlap=int(args.Y_overlap),int(args.X_overlap)
 X_ID=int(args.i)/X_overlap #Renormalising the index of the cluster along x-axis
