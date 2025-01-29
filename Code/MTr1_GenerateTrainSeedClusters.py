@@ -204,7 +204,6 @@ if os.path.isfile(TrainSampleOutputMeta)==False: #A case of generating samples f
     print(UI.TimeStamp(),'Distributing hit files...')
     print(UI.TimeStamp(),'Loading preselected data from ',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
     data=pd.read_csv(input_file_location,header=0)
-
     job_count=0
     jobs=[]
     for i in range(Xsteps):
@@ -214,13 +213,9 @@ if os.path.isfile(TrainSampleOutputMeta)==False: #A case of generating samples f
                             job_comb=[i, j, k]
                             jobs.append(job_comb)
                             job_count+=1
-    print(job_count)
-    print(jobs)
-    exit()
-    with alive_bar(Xsteps*Ysteps*Zsteps,force_tty=True, title='Distributing hit files...') as bar:
-             for i in range(Xsteps):
-                 for j in range(Ysteps):
-                     for k in range(Zsteps):
+    with alive_bar(job_count,force_tty=True, title='Distributing hit files...') as bar:
+             for l in jobs:
+                         i,j,k=l[0],l[1],l[2]
                          required_tfile_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/MTr1_'+TrainSampleID+'_'+str(i)+'_'+str(j)+'_'+str(k)+'_hits.csv'
                          if os.path.isfile(required_tfile_location)==False:
                              X_ID=int(i)/Xoverlap
@@ -233,11 +228,11 @@ if os.path.isfile(TrainSampleOutputMeta)==False: #A case of generating samples f
                              tdata.drop(tdata.index[tdata['z'] >= ((Z_ID+1)*stepZ)], inplace = True)  #Keeping the relevant z slice
                              tdata.drop(tdata.index[tdata['z'] < (Z_ID*stepZ)], inplace = True)  #Keeping the relevant z slice
                              tdata.to_csv(required_tfile_location,index=False)
-                         #print(UI.TimeStamp(), bcolors.OKGREEN+"The segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+required_tfile_location+bcolors.ENDC)
                          bar()
-    exit()
     TrainDataMeta=UI.JobMeta(TrainSampleID)
     TrainDataMeta.UpdateJobMeta(['stepX', 'stepY', 'stepZ', 'cut_dt', 'cut_dr', 'cut_dz', 'testRatio', 'valRatio', 'y_offset', 'x_offset', 'Xsteps', 'Ysteps','Xoverlap', 'Yoverlap', 'Zsteps', 'Zoverlap'],[stepX, stepY, stepZ, cut_dt, cut_dr, cut_dz, testRatio, valRatio, y_offset, x_offset, Xsteps, Ysteps,Xoverlap, Yoverlap, Zsteps, Zoverlap])
+    print(TrainDataMeta.Zoverlap)
+    exit()
     # self.stepX=stepX
     #       self.stepY=stepY
     #       self.stepZ=stepZ
