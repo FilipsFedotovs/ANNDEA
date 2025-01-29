@@ -270,7 +270,7 @@ Program=[]
 prog_entry=[]
 prog_entry.append(' Sending hit cluster to the HTCondor, so the model assigns weights between hits')
 prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/','SelectedTrainSeedClusters','MTr1','.pkl',TrainSampleID,n_jobs,'MTr1_GenerateTrainSeedClusters_Sub.py'])
-prog_entry.append([' --stepY ', ' --stepX ', ' --stepZ ', ' --cut_dt ', ' --cut_dr ', ' --cut_dz ',' --Y_overlap ',' --X_overlap ',' --Z_overlap '])
+prog_entry.append([' --stepY ', ' --stepX ', ' --stepZ ', ' --cut_dt ', ' --cut_dr ', ' --cut_dz ',' --Yoverlap ',' --Xoverlap ',' --Zoverlap '])
 prog_entry.append([stepY, stepX, stepZ, cut_dt,cut_dr,cut_dz, Yoverlap, Xoverlap, Zoverlap])
 prog_entry.append(n_jobs)
 prog_entry.append(LocalSub)
