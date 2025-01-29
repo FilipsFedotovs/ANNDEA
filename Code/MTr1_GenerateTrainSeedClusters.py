@@ -204,7 +204,19 @@ if os.path.isfile(TrainSampleOutputMeta)==False: #A case of generating samples f
     print(UI.TimeStamp(),'Distributing hit files...')
     print(UI.TimeStamp(),'Loading preselected data from ',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
     data=pd.read_csv(input_file_location,header=0)
-    print(data)
+
+    job_count=0
+    jobs=[]
+    for i in range(Xsteps):
+            for j in range(Ysteps):
+                     for k in range(Zsteps):
+                         if Sampling>=random.random():
+                            job_comb=[i, j, k]
+                            jobs.append(job_comb)
+                            job_count+=1
+    print(job_count)
+    print(jobs)
+    exit()
     with alive_bar(Xsteps*Ysteps*Zsteps,force_tty=True, title='Distributing hit files...') as bar:
              for i in range(Xsteps):
                  for j in range(Ysteps):
@@ -224,8 +236,24 @@ if os.path.isfile(TrainSampleOutputMeta)==False: #A case of generating samples f
                          #print(UI.TimeStamp(), bcolors.OKGREEN+"The segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+required_tfile_location+bcolors.ENDC)
                          bar()
     exit()
-    TrainDataMeta=UI.TrainingSampleMeta(TrainSampleID)
-    TrainDataMeta.IniHitClusterMetaData(stepX, stepY, stepZ, cut_dt, cut_dr, cut_dz, testRatio, valRatio, y_offset, x_offset, Xsteps, Ysteps,Xoverlap, Yoverlap, Zsteps, Zoverlap)
+    TrainDataMeta=UI.JobMeta(TrainSampleID)
+    TrainDataMeta.UpdateJobMeta(['stepX', 'stepY', 'stepZ', 'cut_dt', 'cut_dr', 'cut_dz', 'testRatio', 'valRatio', 'y_offset', 'x_offset', 'Xsteps', 'Ysteps','Xoverlap', 'Yoverlap', 'Zsteps', 'Zoverlap'],[stepX, stepY, stepZ, cut_dt, cut_dr, cut_dz, testRatio, valRatio, y_offset, x_offset, Xsteps, Ysteps,Xoverlap, Yoverlap, Zsteps, Zoverlap])
+    # self.stepX=stepX
+    #       self.stepY=stepY
+    #       self.stepZ=stepZ
+    #       self.cut_dt=cut_dt
+    #       self.cut_dr=cut_dr
+    #       self.cut_dz=cut_dz
+    #       self.testRatio=testRatio
+    #       self.valRatio=valRatio
+    #       self.y_offset=y_offset
+    #       self.x_offset=x_offset
+    #       self.Xsteps=Xsteps
+    #       self.Ysteps=Ysteps
+    #       self.X_overlap=X_overlap
+    #       self.Y_overlap=Y_overlap
+    #       self.Z_overlap=Z_overlap
+    #       self.Zsteps=Zsteps
     TrainDataMeta.UpdateStatus(1)
     Meta=TrainDataMeta
     print(UI.PickleOperations(TrainSampleOutputMeta,'w', TrainDataMeta)[1])

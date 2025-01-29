@@ -52,81 +52,68 @@ def WelcomeMsg(Title, Author, Contact):
     print(bc.HEADER+"########################################################################################################"+bc.ENDC)
     print('                                                                                                                                    ')
     print('                                                                                                                                    ')
-class TrainingSampleMeta:
-      def __init__(self,TrainDataID):
-          self.TrainDataID=TrainDataID
+class JobMeta:
+      def __init__(self,JobID):
+          self.JobID=JobID
       def __eq__(self, other):
-        return (self.TrainDataID) == (other.TrainDataID)
+        return (self.JobID) == (other.JobID)
       def __hash__(self):
-        return hash(self.TrainDataID)
-      def IniHitClusterMetaData(self,stepX,stepY,stepZ,cut_dt,cut_dr,cut_dz,testRatio,valRatio,y_offset,x_offset, Xsteps, Ysteps, X_overlap,Y_overlap,Zsteps=0,Z_overlap=0):
-          self.stepX=stepX
-          self.stepY=stepY
-          self.stepZ=stepZ
-          self.cut_dt=cut_dt
-          self.cut_dr=cut_dr
-          self.cut_dz=cut_dz
-          self.testRatio=testRatio
-          self.valRatio=valRatio
-          self.y_offset=y_offset
-          self.x_offset=x_offset
-          self.Xsteps=Xsteps
-          self.Ysteps=Ysteps
-          self.X_overlap=X_overlap
-          self.Y_overlap=Y_overlap
-          self.Z_overlap=Z_overlap
-          self.Zsteps=Zsteps
-      def UpdateHitClusterMetaData(self,job_set,job_counter):
-          self.job_set=job_set
-          self.job_counter=job_counter
-
-      def IniTrackMetaData(self,ClassHeaders,ClassNames,ClassValues,MaxSegments,JobSets,MinHitsTrack):
-          self.ClassHeaders=ClassHeaders
-          self.ClassNames=ClassNames
-          self.ClassValues=ClassValues
-          self.MaxSegments=MaxSegments
-          self.JobSets=JobSets
-          self.MinHitsTrack=MinHitsTrack
-      def IniTrackSeedMetaData(self,MaxSLG,MaxSTG,MaxDOCA,MaxAngle,JobSets,MaxSegments,VetoMotherTrack,MaxSeeds,MinHitsTrack
-                               ):
-          self.MaxSLG=MaxSLG
-          self.MaxSTG=MaxSTG
-          self.MaxDOCA=MaxDOCA
-          self.MaxAngle=MaxAngle
-          self.JobSets=JobSets
-          self.MaxSegments=MaxSegments
-          self.MaxSeeds=MaxSeeds
-          self.VetoMotherTrack=VetoMotherTrack
-          self.MinHitsTrack=MinHitsTrack
-      def IniBrickAlignMetaData(self,Size,ValMinHits,MinHits,SpatialOptBound,AngularOptBound,JobSets,Cycles,plates,FiducialVolume
-                               ):
-          self.Size=Size
-          self.MinHits=MinHits
-          self.ValMinHits=ValMinHits
-          self.SpatialOptBound=SpatialOptBound
-          self.AngularOptBound=AngularOptBound
-          self.Cycles=Cycles
-          self.JobSets=JobSets
-          self.plates=plates
-          self.FiducialVolume=FiducialVolume
-      def IniVertexSeedMetaData(self,MaxDST,MaxVXT,MaxDOCA,MaxAngle,JobSets,MaxSegments,MaxSeeds,MinHitsTrack,FiducialVolumeCut,ExcludeClassNames,ExcludeClassValues
-                               ):
-          self.MaxDST=MaxDST
-          self.MaxVXT=MaxVXT
-          self.MaxDOCA=MaxDOCA
-          self.MaxAngle=MaxAngle
-          self.JobSets=JobSets
-          self.MaxSegments=MaxSegments
-          self.MaxSeeds=MaxSeeds
-          self.ClassNames=ExcludeClassNames
-          self.ClassValues=ExcludeClassValues
-          self.MinHitsTrack=MinHitsTrack
-          self.FiducialVolumeCut = FiducialVolumeCut
-      def UpdateHitClusterMetaData(self,NoS,NoNF,NoEF,NoSets):
-          self.num_node_features=NoNF
-          self.num_edge_features=NoEF
-          self.tot_sample_size=NoS
-          self.no_sets=NoSets
+        return hash(self.JobID)
+      def UpdateJobMeta(self,n,p):
+          for i in range(len(n)):
+              setattr(self, n[i], p[i])
+      #
+      # def UpdateHitClusterMetaData(self,job_set,job_counter):
+      #     self.job_set=job_set
+      #     self.job_counter=job_counter
+      #
+      # def IniTrackMetaData(self,ClassHeaders,ClassNames,ClassValues,MaxSegments,JobSets,MinHitsTrack):
+      #     self.ClassHeaders=ClassHeaders
+      #     self.ClassNames=ClassNames
+      #     self.ClassValues=ClassValues
+      #     self.MaxSegments=MaxSegments
+      #     self.JobSets=JobSets
+      #     self.MinHitsTrack=MinHitsTrack
+      # def IniTrackSeedMetaData(self,MaxSLG,MaxSTG,MaxDOCA,MaxAngle,JobSets,MaxSegments,VetoMotherTrack,MaxSeeds,MinHitsTrack
+      #                          ):
+      #     self.MaxSLG=MaxSLG
+      #     self.MaxSTG=MaxSTG
+      #     self.MaxDOCA=MaxDOCA
+      #     self.MaxAngle=MaxAngle
+      #     self.JobSets=JobSets
+      #     self.MaxSegments=MaxSegments
+      #     self.MaxSeeds=MaxSeeds
+      #     self.VetoMotherTrack=VetoMotherTrack
+      #     self.MinHitsTrack=MinHitsTrack
+      # def IniBrickAlignMetaData(self,Size,ValMinHits,MinHits,SpatialOptBound,AngularOptBound,JobSets,Cycles,plates,FiducialVolume
+      #                          ):
+      #     self.Size=Size
+      #     self.MinHits=MinHits
+      #     self.ValMinHits=ValMinHits
+      #     self.SpatialOptBound=SpatialOptBound
+      #     self.AngularOptBound=AngularOptBound
+      #     self.Cycles=Cycles
+      #     self.JobSets=JobSets
+      #     self.plates=plates
+      #     self.FiducialVolume=FiducialVolume
+      # def IniVertexSeedMetaData(self,MaxDST,MaxVXT,MaxDOCA,MaxAngle,JobSets,MaxSegments,MaxSeeds,MinHitsTrack,FiducialVolumeCut,ExcludeClassNames,ExcludeClassValues
+      #                          ):
+      #     self.MaxDST=MaxDST
+      #     self.MaxVXT=MaxVXT
+      #     self.MaxDOCA=MaxDOCA
+      #     self.MaxAngle=MaxAngle
+      #     self.JobSets=JobSets
+      #     self.MaxSegments=MaxSegments
+      #     self.MaxSeeds=MaxSeeds
+      #     self.ClassNames=ExcludeClassNames
+      #     self.ClassValues=ExcludeClassValues
+      #     self.MinHitsTrack=MinHitsTrack
+      #     self.FiducialVolumeCut = FiducialVolumeCut
+      # def UpdateHitClusterMetaData(self,NoS,NoNF,NoEF,NoSets):
+      #     self.num_node_features=NoNF
+      #     self.num_edge_features=NoEF
+      #     self.tot_sample_size=NoS
+      #     self.no_sets=NoSets
       def UpdateStatus(self, status):
           if hasattr(self,'Status'):
             self.Status.append(status)
