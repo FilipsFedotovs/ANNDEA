@@ -209,16 +209,10 @@ if os.path.isfile(TrainSampleOutputMeta)==False: #A case of generating samples f
     data=pd.read_csv(input_file_location,header=0)
     n_jobs=0
     jobs=[]
-    for i in range(Xsteps):
+    with alive_bar(n_jobs,force_tty=True, title='Sampling hit files...') as bar:
+        for i in range(Xsteps):
             for j in range(Ysteps):
                      for k in range(Zsteps):
-                         if Sampling>=random.random():
-                            job_comb=[i, j, k]
-                            jobs.append(job_comb)
-                            n_jobs+=1
-    with alive_bar(n_jobs,force_tty=True, title='Distributing hit files...') as bar:
-             for l in jobs:
-                         i,j,k=l[0],l[1],l[2]
                          required_tfile_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/MTr1_'+TrainSampleID+'_'+str(i)+'_'+str(j)+'_'+str(k)+'_hits.csv'
                          if os.path.isfile(required_tfile_location)==False:
                              X_ID=int(i)/Xoverlap
@@ -230,8 +224,13 @@ if os.path.isfile(TrainSampleOutputMeta)==False: #A case of generating samples f
                              tdata.drop(tdata.index[tdata['y'] < (Y_ID*stepY)], inplace = True)  #Keeping the relevant z slice
                              tdata.drop(tdata.index[tdata['z'] >= ((Z_ID+1)*stepZ)], inplace = True)  #Keeping the relevant z slice
                              tdata.drop(tdata.index[tdata['z'] < (Z_ID*stepZ)], inplace = True)  #Keeping the relevant z slice
-                             tdata.to_csv(required_tfile_location,index=False)
-                             print(UI.TimeStamp(), bcolors.OKGREEN+"The hit data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+required_tfile_location+bcolors.ENDC)
+                             if len(tdata)>0:
+                                 if Sampling>=random.random():
+                                     tdata.to_csv(required_tfile_location,index=False)
+                                     job_comb=[i, j, k]
+                                     jobs.append(job_comb)
+                                     n_jobs+=1
+                                     print(UI.TimeStamp(), bcolors.OKGREEN+"The hit data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+required_tfile_location+bcolors.ENDC)
                          bar()
     TrainDataMeta=UI.JobMeta(TrainSampleID)
     TrainDataMeta.UpdateJobMeta(['stepX', 'stepY', 'stepZ', 'cut_dt', 'cut_dr', 'cut_dz', 'testRatio', 'valRatio', 'y_offset', 'x_offset','Xoverlap', 'Yoverlap', 'Zoverlap'],[stepX, stepY, stepZ, cut_dt, cut_dr, cut_dz, testRatio, valRatio, y_offset, x_offset,Xoverlap, Yoverlap, Zoverlap])
