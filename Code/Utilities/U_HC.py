@@ -48,6 +48,8 @@ class HitCluster:
                         _SeedFlowValuesTrue = [a + b for a, b in zip(_SeedFlowValuesTrue, FitSeed[2])]
                         #if FitSeed[0]:
                                #_Seeds.append(_Hits[l]+_Hits[r])
+               _SeedFlowValuesTrue[1]=_SeedFlowValuesTrue[2]*2
+               _SeedFlowValuesTrue[0]=_SeedFlowValuesTrue[1]+math.sqrt(_SeedFlowValuesTrue[1])
                print(_SeedFlowValuesAll)
                print(_SeedFlowValuesTrue)
                x=input()
