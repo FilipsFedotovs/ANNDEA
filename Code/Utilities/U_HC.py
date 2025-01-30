@@ -28,19 +28,19 @@ class HitCluster:
                           self.ClusterHitIDs.append(s[0])
                           self.ClusterHits.append(s)
            self.ClusterSize=len(__ClusterHitsTemp)
-           self.RawClusterGraph=__ClusterHitsTemp #Avoiding importing torch without a good reason (reduce load on the HTCOndor initiative)
+           self.RawClusterNodes=__ClusterHitsTemp #Avoiding importing torch without a good reason (reduce load on the HTCOndor initiative)
            del __ClusterHitsTemp
       def GenerateSeeds(self, cut_dt, cut_dr, cut_dz, l=-1, MaxEdges=-1): #Decorate hit information
            #New workaround: instead of a painful Pandas outer join a loop over list is performed
            _Hits=self.ClusterHits
-           print(self.ClusterHits)
-           print(self.RawClusterGraph)
-           x=input()
            _Hits= sorted(_Hits, key=lambda x: x[3], reverse=True) #Sorting by z
            _Seeds=[]
            _SeedFlowLabels=['All','Excluding self-permutations', 'Excluding duplicates','Excluding seeds on the same plate', 'Cut on dz', 'Cut on dtx', 'Cut on dty' , 'Cut on dr', 'MLP filter', 'GNN filter', 'Tracking process' ]
            _SeedFlowValuesAll=[len(_Hits)**2,(len(_Hits)**2)-len(_Hits), int(((len(_Hits)**2)-len(_Hits))/2), 0, 0, 0, 0, 0, 0, 0, 0]
-
+           #_sp,_ep=HitCluster.SplitJob(l,MaxEdges,self.ClusterSize)
+           print(self.self.ClusterSize)
+           print(HitCluster.SplitJob(2,10,self.ClusterSize))
+           x=input()
            # for l in range(start_pos,min(end_pos,len(_Hits)-1)):
            #     for r in range(l+1,len(_Hits)):
            #         if HitCluster.JoinHits(_Hits[l],_Hits[r],cut_dt,cut_dr,cut_dz):
@@ -147,14 +147,14 @@ class HitCluster:
                    if _acc_edg>=_MaxEdges:
                        _job_iter+=1
                        _acc_edg=0
-                       if job_iter==l+1:
-                          end_pos=n_e
+                       if _job_iter==_l+1:
+                          end_pos=_n_e
                           break
-                       else:
-                          start_pos=n_e
-           else:
-               start_pos=0
-               end_pos=len(_Hits)-1
+                   else:
+                          start_pos=_n_e
+               return start_pos, end_pos
+        else:
+            return 0, _n_hits-1
 
       def GenerateLinks(_input,_ClusterID):
           _Top=[]
