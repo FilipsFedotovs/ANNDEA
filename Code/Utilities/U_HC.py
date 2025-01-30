@@ -152,7 +152,7 @@ class HitCluster:
                           break
                    else:
                           start_pos=_n_e
-               return start_pos, end_pos
+               return _start_pos, _end_pos
         else:
             return 0, _n_hits-1
 
