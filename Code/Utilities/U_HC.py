@@ -148,10 +148,10 @@ class HitCluster:
                        _job_iter+=1
                        _acc_edg=0
                        if _job_iter==_l+1:
-                          end_pos=_n_e
+                          _end_pos=_n_e
                           break
                    else:
-                          start_pos=_n_e
+                          _start_pos=_n_e
                return _start_pos, _end_pos
         else:
             return 0, _n_hits-1
