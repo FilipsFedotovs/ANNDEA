@@ -46,11 +46,12 @@ class HitCluster:
                         FitSeed=HitCluster.FitTrackSeed(_Hits[l],_Hits[r],cut_dt,cut_dr,cut_dz)
                         _SeedFlowValuesAll = [a + b for a, b in zip(_SeedFlowValuesAll, FitSeed[1])]
                         _SeedFlowValuesTrue = [a + b for a, b in zip(_SeedFlowValuesTrue, FitSeed[2])]
-                        if FitSeed[0]:
+                        #if FitSeed[0]:
                                #_Seeds.append(_Hits[l]+_Hits[r])
-                               print(_SeedFlowValuesAll)
-                               print(_SeedFlowValuesTrue)
-                               x=input()
+               print(_SeedFlowValuesAll)
+               print(_SeedFlowValuesTrue)
+               x=input()
+
 
 
 
