@@ -38,7 +38,7 @@ class HitCluster:
            _SeedFlowLabels=['All','Excluding self-permutations', 'Excluding duplicates','Excluding seeds on the same plate', 'Cut on dz', 'Cut on dtx', 'Cut on dty' , 'Cut on dr', 'MLP filter', 'GNN filter', 'Tracking process' ]
            _SeedFlowValuesAll=[len(_Hits)**2,(len(_Hits)**2)-len(_Hits), int(((len(_Hits)**2)-len(_Hits))/2), 0, 0, 0, 0, 0, 0, 0, 0]
            #_sp,_ep=HitCluster.SplitJob(l,MaxEdges,self.ClusterSize)
-           print(self.self.ClusterSize)
+           print(self.ClusterSize)
            print(HitCluster.SplitJob(2,10,self.ClusterSize))
            x=input()
            # for l in range(start_pos,min(end_pos,len(_Hits)-1)):
