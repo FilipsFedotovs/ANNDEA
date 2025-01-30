@@ -31,7 +31,7 @@ class HitCluster:
            self.RawClusterNodes=__ClusterHitsTemp #Avoiding importing torch without a good reason (reduce load on the HTCOndor initiative)
            del __ClusterHitsTemp
 
-      def GenerateSeeds(self, cut_dt, cut_dr, cut_dz, l=-1, MaxEdges=-1, SeedFlowLog): #Decorate hit information
+      def GenerateSeeds(self, cut_dt, cut_dr, cut_dz, l, MaxEdges, SeedFlowLog): #Decorate hit information
            #New workaround: instead of a painful Pandas outer join a loop over list is performed
            _Hits=self.ClusterHits
            _Hits= sorted(_Hits, key=lambda x: x[3], reverse=True) #Sorting by z
