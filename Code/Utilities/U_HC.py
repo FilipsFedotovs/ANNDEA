@@ -30,23 +30,24 @@ class HitCluster:
            self.ClusterSize=len(__ClusterHitsTemp)
            self.RawClusterNodes=__ClusterHitsTemp #Avoiding importing torch without a good reason (reduce load on the HTCOndor initiative)
            del __ClusterHitsTemp
-      def GenerateSeeds(self, cut_dt, cut_dr, cut_dz, l=-1, MaxEdges=-1): #Decorate hit information
+
+      def GenerateSeeds(self, cut_dt, cut_dr, cut_dz, l=-1, MaxEdges=-1, SeedFlowLog): #Decorate hit information
            #New workaround: instead of a painful Pandas outer join a loop over list is performed
            _Hits=self.ClusterHits
            _Hits= sorted(_Hits, key=lambda x: x[3], reverse=True) #Sorting by z
            _Seeds=[]
-           _SeedFlowLabels=['All','Excluding self-permutations', 'Excluding duplicates','Excluding seeds on the same plate', 'Cut on dz', 'Cut on dtx', 'Cut on dty' , 'Cut on dr', 'MLP filter', 'GNN filter', 'Tracking process' ]
-           _SeedFlowValuesAll=[len(_Hits)**2,(len(_Hits)**2)-len(_Hits), int(((len(_Hits)**2)-len(_Hits))/2), 0, 0, 0, 0, 0, 0, 0, 0]
-           #_sp,_ep=HitCluster.SplitJob(l,MaxEdges,self.ClusterSize)
-           print(self.ClusterSize)
-           print(len(self.RawClusterNodes))
-           print(HitCluster.SplitJob(2,10,self.ClusterSize))
-           x=input()
-           # for l in range(start_pos,min(end_pos,len(_Hits)-1)):
-           #     for r in range(l+1,len(_Hits)):
-           #         if HitCluster.JoinHits(_Hits[l],_Hits[r],cut_dt,cut_dr,cut_dz):
-           #                _Tot_Hits.append(_Hits[l]+_Hits[r])
-           #
+           _sp,_ep=HitCluster.SplitJob(l,MaxEdges,self.ClusterSize)
+           if SeedFlowLog:
+               _SeedFlowLabels=['All','Excluding self-permutations', 'Excluding duplicates','Excluding seeds on the same plate', 'Cut on dz', 'Cut on dtx', 'Cut on dty' , 'Cut on dr', 'MLP filter', 'GNN filter', 'Tracking process' ]
+               _SeedFlowValuesAll=[len(_Hits)**2,(len(_Hits)**2)-len(_Hits), int(((len(_Hits)**2)-len(_Hits))/2), 0, 0, 0, 0, 0, 0, 0, 0]
+               _SeedFlowValuesTrue=[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+               for l in range(_sp,min(_ep,self.ClusterSize-1)):
+                    for r in range(l+1,len(_Hits)):
+                        print(HitCluster.FitTrackSeed(_Hits[l],_Hits[r],cut_dt,cut_dr,cut_dz))
+                        x=input()
+                        #if HitCluster.FitTrackSeed(_Hits[l],_Hits[r],cut_dt,cut_dr,cut_dz)[0]:
+                               #_Seeds.append(_Hits[l]+_Hits[r])
+
            # print('Number of all  hit combinations passing fiducial cuts:',len(_Tot_Hits))
            # self.HitPairs=[]
            # for TH in _Tot_Hits:
@@ -138,13 +139,12 @@ class HitCluster:
 
       def SplitJob(_l,_MaxEdges, _n_hits):
         if _l>-1 and _MaxEdges>-1:
-               _n_edg=_n_hits
                _job_iter=0
                _acc_edg=0
                _start_pos=0
-               _end_pos=_n_edg
-               for _n_e in range(1,_n_edg+1):
-                   _acc_edg+=_n_edg-_n_e
+               _end_pos=_n_hits
+               for _n_e in range(1,_n_hits+1):
+                   _acc_edg+=_n_hits-_n_e
                    if _acc_edg>=_MaxEdges:
                        _job_iter+=1
                        _acc_edg=0
@@ -174,7 +174,7 @@ class HitCluster:
                         else:
                             return 0
           return 0
-      def JoinHits(_H1, _H2, _cdt, _cdr, _cdz):
+      def FitSeed(_H1, _H2, _cdt, _cdr, _cdz):
           if _H1[3]==_H2[3]: #Ensuring hit combinations are on different plates
               return False
           elif abs(_H1[3]-_H2[3])>=_cdz:
@@ -192,6 +192,30 @@ class HitCluster:
                           if abs(_H2[2]-(_H1[2]+(_H1[5]*(_H2[3]-_H1[3]))))>=_cdr:
                              return False
           return True
+
+      def FitTrackSeed(_H1, _H2, _cdt, _cdr, _cdz): #A more involved option that involves producing the seed cutflow and the truth distribution if the MC data available.
+          print(_H1[6],_H2[6])
+          exit()
+          if _H1[3]==_H2[3]: #Ensuring hit combinations are on different plates
+
+              return False
+          elif abs(_H1[3]-_H2[3])>=_cdz:
+              return False
+          else:
+              if abs(_H1[4]-_H2[4])>=_cdt:
+                  return False
+              else:
+                  if abs(_H1[5]-_H2[5])>=_cdt:
+                      return False
+                  else:
+                      if abs(_H2[1]-(_H1[1]+(_H1[4]*(_H2[3]-_H1[3]))))>=_cdr:
+                         return False
+                      else:
+                          if abs(_H2[2]-(_H1[2]+(_H1[5]*(_H2[3]-_H1[3]))))>=_cdr:
+                             return False
+
+          return True
+
       def GenerateEdgeAttributes(_input):
           _EdgeAttr=[]
           for ip in _input:

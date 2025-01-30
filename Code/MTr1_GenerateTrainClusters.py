@@ -70,6 +70,7 @@ parser.add_argument('--X_overlap',help="Enter the level of overlap in integer nu
 parser.add_argument('--ReqMemory',help="How much memory to request?", default='2 GB')
 parser.add_argument('--RequestExtCPU',help="Would you like to request extra CPUs?", default=1)
 parser.add_argument('--JobFlavour',help="Specifying the length of the HTCondor job walltime. Currently at 'workday' which is 8 hours.", default='workday')
+
 ######################################## Set variables  #############################################################
 args = parser.parse_args()
 Mode=args.Mode.upper()
@@ -79,6 +80,7 @@ Patience=int(args.Patience)
 ReqMemory=args.ReqMemory
 RequestExtCPU=int(args.RequestExtCPU)
 JobFlavour=args.JobFlavour
+
 input_file_location=args.f
 Xmin,Xmax,Ymin,Ymax=float(args.Xmin),float(args.Xmax),float(args.Ymin),float(args.Ymax)
 Z_overlap,Y_overlap,X_overlap=int(args.Z_overlap),int(args.Y_overlap),int(args.X_overlap)
