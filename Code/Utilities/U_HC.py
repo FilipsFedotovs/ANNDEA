@@ -51,11 +51,18 @@ class HitCluster:
                         _SeedFlowValuesAll = [a + b for a, b in zip(_SeedFlowValuesAll, FitSeed[1])]
                         _SeedFlowValuesTrue = [a + b for a, b in zip(_SeedFlowValuesTrue, FitSeed[2])]
                         if FitSeed[0]:
-                           _seed = _Hits[l]+_Hits[r]
-                           print(_seed)
-
-                           for i in range(1,4):_seed[i]=_seed[i]/self.Step[2]
-                           print(_seed)
+                           TH = _Hits[l][:-1]+_Hits[r][:-1]
+                           for i in range(1,4):TH[i]=TH[i]/self.Step[2]
+                           for i in range(7,10):TH[i]=TH[i]/self.Step[2]
+                           TH.append('N/A')
+                           TH.append((math.sqrt(((TH[8]-TH[2])**2) + ((TH[7]-TH[1])**2) + ((TH[9]-TH[3])**2))))
+                           TH.append(math.sqrt(((TH[8]-TH[2])**2) + ((TH[7]-TH[1])**2)))
+                           TH.append(abs(TH[9]-TH[3]))
+                           TH.append(abs(TH[4]-TH[10]))
+                           TH.append(abs(TH[5]-TH[11]))
+                           del TH[1:6]
+                           del TH[2:7]
+                           print(TH)
                            x=input()
                                #_Seeds.append(_Hits[l]+_Hits[r])
 
