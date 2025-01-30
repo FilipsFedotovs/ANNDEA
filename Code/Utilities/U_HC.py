@@ -51,18 +51,25 @@ class HitCluster:
                         _SeedFlowValuesAll = [a + b for a, b in zip(_SeedFlowValuesAll, FitSeed[1])]
                         _SeedFlowValuesTrue = [a + b for a, b in zip(_SeedFlowValuesTrue, FitSeed[2])]
                         if FitSeed[0]:
-                           TH = _Hits[l][:-1]+_Hits[r][:-1]
-                           for i in range(1,4):TH[i]=TH[i]/self.Step[2]
-                           for i in range(7,10):TH[i]=TH[i]/self.Step[2]
-                           TH.append('N/A')
-                           TH.append((math.sqrt(((TH[8]-TH[2])**2) + ((TH[7]-TH[1])**2) + ((TH[9]-TH[3])**2))))
-                           TH.append(math.sqrt(((TH[8]-TH[2])**2) + ((TH[7]-TH[1])**2)))
-                           TH.append(abs(TH[9]-TH[3]))
-                           TH.append(abs(TH[4]-TH[10]))
-                           TH.append(abs(TH[5]-TH[11]))
-                           del TH[1:6]
-                           del TH[2:7]
-                           print(TH)
+                           # [HitID, x , y , z, tx, ty, HitID, x , y , z, tx, ty]
+                           #TH = _Hits[l][:-1]+_Hits[r][:-1]
+                           h1,h2,x1,x2,y1,y2,z1,z2, tx1, tx2, ty1, ty2, l1, l2=_Hits[r][0],_Hits[l][0],_Hits[r][1],_Hits[l][1],_Hits[r][2],_Hits[l][2],_Hits[r][3],_Hits[l][3],_Hits[r][4],_Hits[l][4],_Hits[r][5],_Hits[l][5],_Hits[r][6],_Hits[l][6]
+                           print(h1,h2)
+                           print(x1,x2,y1,y2,z1,z2)
+                           print(tx1, tx2, ty1, ty2)
+                           print(l1, l2)
+                           # _dl= (math.sqrt(((TH[8]-TH[2])**2) + ((TH[7]-TH[1])**2) + ((TH[9]-TH[3])**2)))
+                           # for i in range(1,4):TH[i]=TH[i]/self.Step[2]
+                           # for i in range(7,10):TH[i]=TH[i]/self.Step[2]
+                           # TH.append('N/A')
+                           # TH.append((math.sqrt(((TH[8]-TH[2])**2) + ((TH[7]-TH[1])**2) + ((TH[9]-TH[3])**2))))
+                           # TH.append(math.sqrt(((TH[8]-TH[2])**2) + ((TH[7]-TH[1])**2)))
+                           # TH.append(abs(TH[9]-TH[3]))
+                           # TH.append(abs(TH[4]-TH[10]))
+                           # TH.append(abs(TH[5]-TH[11]))
+                           # del TH[1:6]
+                           # del TH[2:7]
+                           # print(TH)
                            x=input()
                                #_Seeds.append(_Hits[l]+_Hits[r])
 
