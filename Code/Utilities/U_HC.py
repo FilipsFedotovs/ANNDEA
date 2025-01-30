@@ -35,24 +35,33 @@ class HitCluster:
            #New workaround: instead of a painful Pandas outer join a loop over list is performed
            _Hits=self.ClusterHits
            _Hits= sorted(_Hits, key=lambda x: x[3], reverse=True) #Sorting by z
-           _Seeds=[]
+           _Seeds=[] #Initiate the empty container for seeds
            _sp,_ep=HitCluster.SplitJob(l,MaxEdges,self.ClusterSize)
+
+
+           _SeedFlowLabels=['All','Excluding self-permutations', 'Excluding duplicates','Excluding seeds on the same plate', 'Cut on dz', 'Cut on dtx', 'Cut on dty' , 'Cut on drx', 'Cut on dry', 'MLP filter', 'GNN filter', 'Tracking process' ]
+           _SeedFlowValuesAll=[len(_Hits)**2,(len(_Hits)**2)-len(_Hits), int(((len(_Hits)**2)-len(_Hits))/2), 0, 0, 0, 0, 0, 0, 0, 0, 0]
+           _SeedFlowValuesTrue=[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
            if SeedFlowLog:
-               _SeedFlowLabels=['All','Excluding self-permutations', 'Excluding duplicates','Excluding seeds on the same plate', 'Cut on dz', 'Cut on dtx', 'Cut on dty' , 'Cut on drx', 'Cut on dry', 'MLP filter', 'GNN filter', 'Tracking process' ]
-               _SeedFlowValuesAll=[len(_Hits)**2,(len(_Hits)**2)-len(_Hits), int(((len(_Hits)**2)-len(_Hits))/2), 0, 0, 0, 0, 0, 0, 0, 0, 0]
-               _SeedFlowValuesTrue=[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
                for l in range(_sp,min(_ep,self.ClusterSize-1)):
                     for r in range(l+1,len(_Hits)):
                         FitSeed=HitCluster.FitTrackSeed(_Hits[l],_Hits[r],cut_dt,cut_dr,cut_dz)
                         _SeedFlowValuesAll = [a + b for a, b in zip(_SeedFlowValuesAll, FitSeed[1])]
                         _SeedFlowValuesTrue = [a + b for a, b in zip(_SeedFlowValuesTrue, FitSeed[2])]
-                        #if FitSeed[0]:
+                        if FitSeed[0]:
+                           _seed = _Hits[l]+_Hits[r]
+                           print(_seed)
+
+                           for i in range(1,4):_seed[i]=_seed[i]/self.Step[2]
+                           print(_seed)
+                           x=input()
                                #_Seeds.append(_Hits[l]+_Hits[r])
-               _SeedFlowValuesTrue[1]=_SeedFlowValuesTrue[2]*2
-               _SeedFlowValuesTrue[0]=_SeedFlowValuesTrue[1]+math.sqrt(_SeedFlowValuesTrue[1])
+
                print(_SeedFlowValuesAll)
                print(_SeedFlowValuesTrue)
-               x=input()
+
 
 
 
@@ -205,22 +214,22 @@ class HitCluster:
       def FitTrackSeed(_H1, _H2, _cdt, _cdr, _cdz): #A more involved option that involves producing the seed cutflow and the truth distribution if the MC data available.
           _ts=int(((_H1[6]==_H2[6]) and ('--' not in _H1[6])))
           if _H1[3]==_H2[3]: #Ensuring hit combinations are on different plates
-                return False, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, _ts, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+                return False, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [_ts, _ts, _ts, 0, 0, 0, 0, 0, 0, 0, 0, 0]
           elif abs(_H1[3]-_H2[3])>=_cdz:
-              return False, [0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, _ts, _ts, 0, 0, 0, 0, 0, 0, 0, 0]
+              return False, [0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0], [_ts, _ts, _ts, _ts, 0, 0, 0, 0, 0, 0, 0, 0]
           else:
               if abs(_H1[4]-_H2[4])>=_cdt:
-                  return False, [0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0], [0, 0, _ts, _ts, _ts, 0, 0, 0, 0, 0, 0, 0]
+                  return False, [0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0], [_ts, _ts, _ts, _ts, _ts, 0, 0, 0, 0, 0, 0, 0]
               else:
                   if abs(_H1[5]-_H2[5])>=_cdt:
-                      return False, [0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0], [0, 0, _ts, _ts, _ts, _ts, 0, 0, 0, 0, 0, 0]
+                      return False, [0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0], [_ts, _ts, _ts, _ts, _ts, _ts, 0, 0, 0, 0, 0, 0]
                   else:
                       if abs(_H2[1]-(_H1[1]+(_H1[4]*(_H2[3]-_H1[3]))))>=_cdr:
-                         return False, [0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0], [0, 0, _ts, _ts, _ts, _ts, _ts, 0, 0, 0, 0, 0]
+                         return False, [0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0], [_ts, _ts, _ts, _ts, _ts, _ts, _ts, 0, 0, 0, 0, 0]
                       else:
                           if abs(_H2[2]-(_H1[2]+(_H1[5]*(_H2[3]-_H1[3]))))>=_cdr:
-                             return False, [0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0], [0, 0, _ts, _ts, _ts, _ts, _ts, _ts, 0, 0, 0, 0]
-          return True, [0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0], [0, 0, _ts, _ts, _ts, _ts, _ts, _ts, _ts, 0, 0, 0]
+                             return False, [0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0], [_ts, _ts, _ts, _ts, _ts, _ts, _ts, _ts, 0, 0, 0, 0]
+          return True, [0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0], [_ts, _ts, _ts, _ts, _ts, _ts, _ts, _ts, _ts, 0, 0, 0]
 
       def GenerateEdgeAttributes(_input):
           _EdgeAttr=[]
