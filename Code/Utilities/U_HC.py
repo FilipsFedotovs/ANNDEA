@@ -150,7 +150,7 @@ class HitCluster:
                        if _job_iter==_l+1:
                           _end_pos=_n_e
                           break
-                   else:
+                       else:
                           _start_pos=_n_e
                return _start_pos, _end_pos
         else:
