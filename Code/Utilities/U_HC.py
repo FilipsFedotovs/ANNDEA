@@ -38,15 +38,23 @@ class HitCluster:
            _Seeds=[]
            _sp,_ep=HitCluster.SplitJob(l,MaxEdges,self.ClusterSize)
            if SeedFlowLog:
-               _SeedFlowLabels=['All','Excluding self-permutations', 'Excluding duplicates','Excluding seeds on the same plate', 'Cut on dz', 'Cut on dtx', 'Cut on dty' , 'Cut on dr', 'MLP filter', 'GNN filter', 'Tracking process' ]
-               _SeedFlowValuesAll=[len(_Hits)**2,(len(_Hits)**2)-len(_Hits), int(((len(_Hits)**2)-len(_Hits))/2), 0, 0, 0, 0, 0, 0, 0, 0]
-               _SeedFlowValuesTrue=[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+               _SeedFlowLabels=['All','Excluding self-permutations', 'Excluding duplicates','Excluding seeds on the same plate', 'Cut on dz', 'Cut on dtx', 'Cut on dty' , 'Cut on drx', 'Cut on dry', 'MLP filter', 'GNN filter', 'Tracking process' ]
+               _SeedFlowValuesAll=[len(_Hits)**2,(len(_Hits)**2)-len(_Hits), int(((len(_Hits)**2)-len(_Hits))/2), 0, 0, 0, 0, 0, 0, 0, 0, 0]
+               _SeedFlowValuesTrue=[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
                for l in range(_sp,min(_ep,self.ClusterSize-1)):
                     for r in range(l+1,len(_Hits)):
                         print(HitCluster.FitTrackSeed(_Hits[l],_Hits[r],cut_dt,cut_dr,cut_dz))
-                        x=input()
-                        #if HitCluster.FitTrackSeed(_Hits[l],_Hits[r],cut_dt,cut_dr,cut_dz)[0]:
+                        FitSeed=HitCluster.FitTrackSeed(_Hits[l],_Hits[r],cut_dt,cut_dr,cut_dz)
+                        print(FitSeed)
+                        if FitSeed[0]:
                                #_Seeds.append(_Hits[l]+_Hits[r])
+                               _SeedFlowValuesAll = [a + b for a, b in zip(_SeedFlowValuesAll, FitSeed[1])]
+                               _SeedFlowValuesTrue = [a + b for a, b in zip(_SeedFlowValuesTrue, FitSeed[2])]
+                               print(_SeedFlowValuesAll)
+                               print(_SeedFlowValuesTrue)
+                        x=input()
+
+
 
            # print('Number of all  hit combinations passing fiducial cuts:',len(_Tot_Hits))
            # self.HitPairs=[]
@@ -194,27 +202,24 @@ class HitCluster:
           return True
 
       def FitTrackSeed(_H1, _H2, _cdt, _cdr, _cdz): #A more involved option that involves producing the seed cutflow and the truth distribution if the MC data available.
-          print(_H1[6],_H2[6])
-          exit()
+          _ts=int(((_H1==_H2) and ('--' not in _H1)))
           if _H1[3]==_H2[3]: #Ensuring hit combinations are on different plates
-
-              return False
+                return False, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
           elif abs(_H1[3]-_H2[3])>=_cdz:
-              return False
+              return False, [0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, _ts, 0, 0, 0, 0, 0, 0, 0, 0]
           else:
               if abs(_H1[4]-_H2[4])>=_cdt:
-                  return False
+                  return False, [0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, _ts, _ts, 0, 0, 0, 0, 0, 0, 0]
               else:
                   if abs(_H1[5]-_H2[5])>=_cdt:
-                      return False
+                      return False, [0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0], [0, 0, 0, _ts, _ts, _ts, 0, 0, 0, 0, 0, 0]
                   else:
                       if abs(_H2[1]-(_H1[1]+(_H1[4]*(_H2[3]-_H1[3]))))>=_cdr:
-                         return False
+                         return False, [0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0], [0, 0, 0, _ts, _ts, _ts, _ts, 0, 0, 0, 0, 0]
                       else:
                           if abs(_H2[2]-(_H1[2]+(_H1[5]*(_H2[3]-_H1[3]))))>=_cdr:
-                             return False
-
-          return True
+                             return False, [0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0], [0, 0, 0, _ts, _ts, _ts, _ts, _ts, 0, 0, 0, 0]
+          return True, [0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0], [0, 0, 0, _ts, _ts, _ts, _ts, _ts, _ts, 0, 0, 0]
 
       def GenerateEdgeAttributes(_input):
           _EdgeAttr=[]
