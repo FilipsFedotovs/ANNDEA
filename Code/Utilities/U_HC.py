@@ -39,6 +39,7 @@ class HitCluster:
            _SeedFlowValuesAll=[len(_Hits)**2,(len(_Hits)**2)-len(_Hits), int(((len(_Hits)**2)-len(_Hits))/2), 0, 0, 0, 0, 0, 0, 0, 0]
            #_sp,_ep=HitCluster.SplitJob(l,MaxEdges,self.ClusterSize)
            print(self.ClusterSize)
+           print(len(self.RawClusterGraph))
            print(HitCluster.SplitJob(2,10,self.ClusterSize))
            x=input()
            # for l in range(start_pos,min(end_pos,len(_Hits)-1)):
