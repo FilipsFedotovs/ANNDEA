@@ -203,22 +203,22 @@ class HitCluster:
       def FitTrackSeed(_H1, _H2, _cdt, _cdr, _cdz): #A more involved option that involves producing the seed cutflow and the truth distribution if the MC data available.
           _ts=int(((_H1[6]==_H2[6]) and ('--' not in _H1[6])))
           if _H1[3]==_H2[3]: #Ensuring hit combinations are on different plates
-                return False, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+                return False, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, _ts, 0, 0, 0, 0, 0, 0, 0, 0, 0]
           elif abs(_H1[3]-_H2[3])>=_cdz:
-              return False, [0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, _ts, 0, 0, 0, 0, 0, 0, 0, 0]
+              return False, [0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, _ts, _ts, 0, 0, 0, 0, 0, 0, 0, 0]
           else:
               if abs(_H1[4]-_H2[4])>=_cdt:
-                  return False, [0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, _ts, _ts, 0, 0, 0, 0, 0, 0, 0]
+                  return False, [0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0], [0, 0, _ts, _ts, _ts, 0, 0, 0, 0, 0, 0, 0]
               else:
                   if abs(_H1[5]-_H2[5])>=_cdt:
-                      return False, [0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0], [0, 0, 0, _ts, _ts, _ts, 0, 0, 0, 0, 0, 0]
+                      return False, [0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0], [0, 0, _ts, _ts, _ts, _ts, 0, 0, 0, 0, 0, 0]
                   else:
                       if abs(_H2[1]-(_H1[1]+(_H1[4]*(_H2[3]-_H1[3]))))>=_cdr:
-                         return False, [0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0], [0, 0, 0, _ts, _ts, _ts, _ts, 0, 0, 0, 0, 0]
+                         return False, [0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0], [0, 0, _ts, _ts, _ts, _ts, _ts, 0, 0, 0, 0, 0]
                       else:
                           if abs(_H2[2]-(_H1[2]+(_H1[5]*(_H2[3]-_H1[3]))))>=_cdr:
-                             return False, [0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0], [0, 0, 0, _ts, _ts, _ts, _ts, _ts, 0, 0, 0, 0]
-          return True, [0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0], [0, 0, 0, _ts, _ts, _ts, _ts, _ts, _ts, 0, 0, 0]
+                             return False, [0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0], [0, 0, _ts, _ts, _ts, _ts, _ts, _ts, 0, 0, 0, 0]
+          return True, [0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0], [0, 0, _ts, _ts, _ts, _ts, _ts, _ts, _ts, 0, 0, 0]
 
       def GenerateEdgeAttributes(_input):
           _EdgeAttr=[]
