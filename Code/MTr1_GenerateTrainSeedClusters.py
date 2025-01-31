@@ -310,7 +310,7 @@ while Status<len(Program):
                         Sample=UI.PickleOperations(source_output_file_location,'r', 'N/A')[0]
                         # if hasattr(TrainingSample,'ClusterGraph'):
                         #     if Sampling>=random.random():
-                        Samples+=(Sample.RawEdgeGraph)
+                        Samples+=(Sample.RawClusterEdges)
                         bar()
             print(Samples)
             exit()
