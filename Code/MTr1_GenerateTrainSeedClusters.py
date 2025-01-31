@@ -306,7 +306,7 @@ while Status<len(Program):
             Samples=[]
             with alive_bar(n_jobs,force_tty=True, title='Consolidating the output...') as bar:
                 for i in range(n_jobs):
-                        source_output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/Temp_MTr1_'+TrainSampleID+'_0/MTr1_'+TrainSampleID+'_SelectedTrainClusters_'+str(i)+'.pkl'
+                        source_output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/Temp_MTr1_'+TrainSampleID+'_0/MTr1_'+TrainSampleID+'_SelectedTrainSeedClusters_'+str(i)+'.pkl'
                         Sample=UI.PickleOperations(source_output_file_location,'r', 'N/A')[0]
                         # if hasattr(TrainingSample,'ClusterGraph'):
                         #     if Sampling>=random.random():
