@@ -310,8 +310,8 @@ while Status<len(Program):
                     for j in range(Ysteps):
                             source_output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/Temp_MTr1_'+TrainSampleID+'_'+str(i)+'/MTr1_'+TrainSampleID+'_SelectedTrainClusters_'+str(i)+'_'+str(j)+'.pkl'
                             TrainingSample=UI.PickleOperations(source_output_file_location,'r', 'N/A')[0]
-                            if hasattr(TrainingSample,'ClusterGraph'):
-                                if Sampling>=random.random():
+                            # if hasattr(TrainingSample,'ClusterGraph'):
+                            #     if Sampling>=random.random():
                                     Samples.append(TrainingSample.ClusterGraph)
                             bar()
             random.shuffle(Samples)
@@ -330,11 +330,11 @@ while Status<len(Program):
                          ValSamples.append(Samples[s])
             for smpl in range(TrainFraction+ValFraction,len(Samples)):
                          TestSamples.append(Samples[s])
-            output_train_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_SAMPLES'+'.pkl'
+            output_train_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_SEEDS'+'.pkl'
             print(UI.PickleOperations(output_train_file_location,'w', TrainSamples)[1])
-            output_val_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_SAMPLES'+'.pkl'
+            output_val_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_SEEDS'+'.pkl'
             print(UI.PickleOperations(output_val_file_location,'w', ValSamples)[1])
-            output_test_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TEST_SAMPLES'+'.pkl'
+            output_test_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TEST_SEEDS'+'.pkl'
             print(UI.PickleOperations(output_test_file_location,'w', TestSamples)[1])
             print(UI.TimeStamp(), bcolors.OKGREEN+"Train data has been re-generated successfully..."+bcolors.ENDC)
             print(UI.TimeStamp(),bcolors.OKGREEN+'Please run MTr2_TrainModel.py after this to create/train a model'+bcolors.ENDC)
