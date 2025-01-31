@@ -39,9 +39,9 @@ class HitCluster:
            _sp,_ep=HitCluster.SplitJob(l,MaxEdges,self.ClusterSize)
 
 
-           _SeedFlowLabels=['All','Excluding self-permutations', 'Excluding duplicates','Excluding seeds on the same plate', 'Cut on dz', 'Cut on dtx', 'Cut on dty' , 'Cut on drx', 'Cut on dry', 'MLP filter', 'GNN filter', 'Tracking process' ]
-           _SeedFlowValuesAll=[len(_Hits)**2,(len(_Hits)**2)-len(_Hits), int(((len(_Hits)**2)-len(_Hits))/2), 0, 0, 0, 0, 0, 0, 0, 0, 0]
-           _SeedFlowValuesTrue=[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+           self.SeedFlowLabels=['All','Excluding self-permutations', 'Excluding duplicates','Excluding seeds on the same plate', 'Cut on dz', 'Cut on dtx', 'Cut on dty' , 'Cut on drx', 'Cut on dry', 'MLP filter', 'GNN filter', 'Tracking process' ]
+           self.SeedFlowValuesAll=[len(_Hits)**2,(len(_Hits)**2)-len(_Hits), int(((len(_Hits)**2)-len(_Hits))/2), 0, 0, 0, 0, 0, 0, 0, 0, 0]
+           self.SeedFlowValuesTrue=[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 
            # _dl_max= math.sqrt((self.Step[0]**2) + (self.Step[1]**2) + (self.Step[2]**2))
            # _dr_max= math.sqrt((self.Step[0]**2) + (self.Step[1]**2))
@@ -50,8 +50,8 @@ class HitCluster:
                for l in range(_sp,min(_ep,self.ClusterSize-1)):
                     for r in range(l+1,len(_Hits)):
                         FitSeed=HitCluster.FitTrackSeed(_Hits[l],_Hits[r],cut_dt,cut_dr,cut_dz)
-                        _SeedFlowValuesAll = [a + b for a, b in zip(_SeedFlowValuesAll, FitSeed[1])]
-                        _SeedFlowValuesTrue = [a + b for a, b in zip(_SeedFlowValuesTrue, FitSeed[2])]
+                        self.SeedFlowValuesAll = [a + b for a, b in zip(self.SeedFlowValuesAll, FitSeed[1])]
+                        self.SeedFlowValuesTrue = [a + b for a, b in zip(self.SeedFlowValuesTrue, FitSeed[2])]
                         if FitSeed[0]:
                                self.RawClusterEdges.append(HitCluster.NormaliseSeed1(self,_Hits[r], _Hits[l], cut_dt))
            else:
@@ -60,8 +60,6 @@ class HitCluster:
                         FitSeed=HitCluster.FitSeed(_Hits[l],_Hits[r],cut_dt,cut_dr,cut_dz)
                         if FitSeed:
                             self.RawClusterEdges.append(HitCluster.NormaliseSeed1(self,_Hits[r], _Hits[l], cut_dt))
-           print(self.RawClusterEdges)
-           x=input()
            return True
            #  def GenerateSeeds(self, cut_dt, cut_dr, cut_dz, SeedClassifier='N/A', l=-1, MaxEdges=-1): #Decorate hit information
            # #New workaround: instead of a painful Pandas outer join a loop over list is performed
@@ -164,7 +162,7 @@ class HitCluster:
           h1,h2,x1,x2,y1,y2,z1,z2, tx1, tx2, ty1, ty2, l1, l2=_Hit2[0],_Hit1[0],_Hit2[1],_Hit1[1],_Hit2[2],_Hit1[2],_Hit2[3],_Hit1[3],_Hit2[4],_Hit1[4],_Hit2[5],_Hit1[5],_Hit2[6],_Hit1[6]
           _dx= abs(x2-x1)/self.Step[2]
           _dy= abs(y2-y1)/self.Step[2]
-          _dz=abs(z2-z1)/self.Step[2]
+          _dz= abs(z2-z1)/self.Step[2]
           _dtx=abs(tx2-tx1)/_cut_dt
           _dty=abs(ty2-ty1)/_cut_dt
           _ts=int(((l1==l2) and ('--' not in l1)))
