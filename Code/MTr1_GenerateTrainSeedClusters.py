@@ -299,52 +299,52 @@ while Status<len(Program):
 
     elif Status==1:
         exit()
-        try:
-            #Non standard processes (that don't follow the general pattern) have been coded here
-            print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
-            print(UI.TimeStamp(),bcolors.BOLD+'Stage 2:'+bcolors.ENDC+' Accumulating results from the previous step')
-            SampleCount=0
-            Samples=[]
-            with alive_bar(Xsteps*Ysteps,force_tty=True, title='Consolidating the output...') as bar:
-                for i in range(Xsteps):
-                    for j in range(Ysteps):
-                            source_output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/Temp_MTr1_'+TrainSampleID+'_'+str(i)+'/MTr1_'+TrainSampleID+'_SelectedTrainClusters_'+str(i)+'_'+str(j)+'.pkl'
-                            TrainingSample=UI.PickleOperations(source_output_file_location,'r', 'N/A')[0]
-                            # if hasattr(TrainingSample,'ClusterGraph'):
-                            #     if Sampling>=random.random():
-                                    Samples.append(TrainingSample.ClusterGraph)
-                            bar()
-            random.shuffle(Samples)
-            Meta.num_node_features=Samples[0].num_node_features
-            Meta.num_edge_features=Samples[0].num_edge_features
-            print(UI.PickleOperations(TrainSampleOutputMeta,'w', Meta)[1])
-            TrainSamples=[]
-            ValSamples=[]
-            TestSamples=[]
-
-            TrainFraction=int(math.floor(len(Samples)*(1.0-(Meta.testRatio+Meta.valRatio))))
-            ValFraction=int(math.ceil(len(Samples)*Meta.valRatio))
-            for s in range(0,TrainFraction):
-                        TrainSamples.append(Samples[s])
-            for s in range(TrainFraction,TrainFraction+ValFraction):
-                         ValSamples.append(Samples[s])
-            for smpl in range(TrainFraction+ValFraction,len(Samples)):
-                         TestSamples.append(Samples[s])
-            output_train_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_SEEDS'+'.pkl'
-            print(UI.PickleOperations(output_train_file_location,'w', TrainSamples)[1])
-            output_val_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_SEEDS'+'.pkl'
-            print(UI.PickleOperations(output_val_file_location,'w', ValSamples)[1])
-            output_test_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TEST_SEEDS'+'.pkl'
-            print(UI.PickleOperations(output_test_file_location,'w', TestSamples)[1])
-            print(UI.TimeStamp(), bcolors.OKGREEN+"Train data has been re-generated successfully..."+bcolors.ENDC)
-            print(UI.TimeStamp(),bcolors.OKGREEN+'Please run MTr2_TrainModel.py after this to create/train a model'+bcolors.ENDC)
-            UI.UpdateStatus(Status+1,Meta,TrainSampleOutputMeta)
-            print(bcolors.HEADER+"############################################# End of the program ################################################"+bcolors.ENDC)
-
-        except Exception as e:
-          print(UI.TimeStamp(),bcolors.FAIL+'Stage 2 is uncompleted due to: '+str(e)+bcolors.ENDC)
-          Status=21
-          break
+        # try:
+        #     #Non standard processes (that don't follow the general pattern) have been coded here
+        #     print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
+        #     print(UI.TimeStamp(),bcolors.BOLD+'Stage 2:'+bcolors.ENDC+' Accumulating results from the previous step')
+        #     SampleCount=0
+        #     Samples=[]
+        #     with alive_bar(Xsteps*Ysteps,force_tty=True, title='Consolidating the output...') as bar:
+        #         for i in range(Xsteps):
+        #             for j in range(Ysteps):
+        #                     source_output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/Temp_MTr1_'+TrainSampleID+'_'+str(i)+'/MTr1_'+TrainSampleID+'_SelectedTrainClusters_'+str(i)+'_'+str(j)+'.pkl'
+        #                     TrainingSample=UI.PickleOperations(source_output_file_location,'r', 'N/A')[0]
+        #                     # if hasattr(TrainingSample,'ClusterGraph'):
+        #                     #     if Sampling>=random.random():
+        #                             Samples.append(TrainingSample.ClusterGraph)
+        #                     bar()
+        #     random.shuffle(Samples)
+        #     Meta.num_node_features=Samples[0].num_node_features
+        #     Meta.num_edge_features=Samples[0].num_edge_features
+        #     print(UI.PickleOperations(TrainSampleOutputMeta,'w', Meta)[1])
+        #     TrainSamples=[]
+        #     ValSamples=[]
+        #     TestSamples=[]
+        #
+        #     TrainFraction=int(math.floor(len(Samples)*(1.0-(Meta.testRatio+Meta.valRatio))))
+        #     ValFraction=int(math.ceil(len(Samples)*Meta.valRatio))
+        #     for s in range(0,TrainFraction):
+        #                 TrainSamples.append(Samples[s])
+        #     for s in range(TrainFraction,TrainFraction+ValFraction):
+        #                  ValSamples.append(Samples[s])
+        #     for smpl in range(TrainFraction+ValFraction,len(Samples)):
+        #                  TestSamples.append(Samples[s])
+        #     output_train_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_SEEDS'+'.pkl'
+        #     print(UI.PickleOperations(output_train_file_location,'w', TrainSamples)[1])
+        #     output_val_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_SEEDS'+'.pkl'
+        #     print(UI.PickleOperations(output_val_file_location,'w', ValSamples)[1])
+        #     output_test_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TEST_SEEDS'+'.pkl'
+        #     print(UI.PickleOperations(output_test_file_location,'w', TestSamples)[1])
+        #     print(UI.TimeStamp(), bcolors.OKGREEN+"Train data has been re-generated successfully..."+bcolors.ENDC)
+        #     print(UI.TimeStamp(),bcolors.OKGREEN+'Please run MTr2_TrainModel.py after this to create/train a model'+bcolors.ENDC)
+        #     UI.UpdateStatus(Status+1,Meta,TrainSampleOutputMeta)
+        #     print(bcolors.HEADER+"############################################# End of the program ################################################"+bcolors.ENDC)
+        #
+        # except Exception as e:
+        #   print(UI.TimeStamp(),bcolors.FAIL+'Stage 2 is uncompleted due to: '+str(e)+bcolors.ENDC)
+        #   Status=21
+        #   break
     MetaInput=UI.PickleOperations(TrainSampleOutputMeta,'r', 'N/A')
     Meta=MetaInput[0]
     Status=Meta.Status[-1]
