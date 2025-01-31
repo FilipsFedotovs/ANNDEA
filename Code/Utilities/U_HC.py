@@ -53,13 +53,13 @@ class HitCluster:
                         _SeedFlowValuesAll = [a + b for a, b in zip(_SeedFlowValuesAll, FitSeed[1])]
                         _SeedFlowValuesTrue = [a + b for a, b in zip(_SeedFlowValuesTrue, FitSeed[2])]
                         if FitSeed[0]:
-                               self.RawClusterEdges.append(HitCluster.NormaliseSeed1(_Hits[r], _Hits[l], cut_dt))
+                               self.RawClusterEdges.append(HitCluster.NormaliseSeed1(self,_Hits[r], _Hits[l], cut_dt))
            else:
                for l in range(_sp,min(_ep,self.ClusterSize-1)):
                     for r in range(l+1,len(_Hits)):
                         FitSeed=HitCluster.FitSeed(_Hits[l],_Hits[r],cut_dt,cut_dr,cut_dz)
                         if FitSeed:
-                            self.RawClusterEdges.append(HitCluster.NormaliseSeed1(_Hits[r], _Hits[l], cut_dt))
+                            self.RawClusterEdges.append(HitCluster.NormaliseSeed1(self,_Hits[r], _Hits[l], cut_dt))
            print(self.RawClusterEdges)
            x=input()
            return True
