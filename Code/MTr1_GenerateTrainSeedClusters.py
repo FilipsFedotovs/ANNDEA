@@ -304,15 +304,24 @@ while Status<len(Program):
             print(UI.TimeStamp(),bcolors.BOLD+'Stage 2:'+bcolors.ENDC+' Accumulating results from the previous step')
             SampleCount=0
             Samples=[]
+            SeedFlowLabels=['All','Excluding self-permutations', 'Excluding duplicates','Excluding seeds on the same plate', 'Cut on dz', 'Cut on dtx', 'Cut on dty' , 'Cut on drx', 'Cut on dry', 'MLP filter', 'GNN filter', 'Tracking process' ]
+            SeedFlowValuesAll=[0,0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+            SeedFlowValuesTrue=[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
             with alive_bar(n_jobs,force_tty=True, title='Consolidating the output...') as bar:
                 for i in range(n_jobs):
                         source_output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/Temp_MTr1_'+TrainSampleID+'_0/MTr1_'+TrainSampleID+'_SelectedTrainSeedClusters_'+str(i)+'.pkl'
                         Sample=UI.PickleOperations(source_output_file_location,'r', 'N/A')[0]
                         # if hasattr(TrainingSample,'ClusterGraph'):
                         #     if Sampling>=random.random():
+                        SeedFlowValuesAll = [a + b for a, b in zip(SeedFlowValuesAll, Sample.SeedFlowValuesAll)]
+                        SeedFlowValuesTrue = [a + b for a, b in zip(SeedFlowValuesTrue, Sample.SeedFlowValuesTrue)]
                         Samples+=(Sample.RawClusterEdges)
                         bar()
+            print(SeedFlowLabels)
+
             print(Samples)
+            print(SeedFlowValuesAll)
+            print(SeedFlowValuesTrue)
             exit()
         #     random.shuffle(Samples)
         #     Meta.num_node_features=Samples[0].num_node_features
