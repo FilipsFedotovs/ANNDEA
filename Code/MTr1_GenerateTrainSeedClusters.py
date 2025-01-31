@@ -298,22 +298,22 @@ while Status<len(Program):
              break
 
     elif Status==1:
-        exit()
         # try:
-        #     #Non standard processes (that don't follow the general pattern) have been coded here
-        #     print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
-        #     print(UI.TimeStamp(),bcolors.BOLD+'Stage 2:'+bcolors.ENDC+' Accumulating results from the previous step')
-        #     SampleCount=0
-        #     Samples=[]
-        #     with alive_bar(Xsteps*Ysteps,force_tty=True, title='Consolidating the output...') as bar:
-        #         for i in range(Xsteps):
-        #             for j in range(Ysteps):
-        #                     source_output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/Temp_MTr1_'+TrainSampleID+'_'+str(i)+'/MTr1_'+TrainSampleID+'_SelectedTrainClusters_'+str(i)+'_'+str(j)+'.pkl'
-        #                     TrainingSample=UI.PickleOperations(source_output_file_location,'r', 'N/A')[0]
-        #                     # if hasattr(TrainingSample,'ClusterGraph'):
-        #                     #     if Sampling>=random.random():
-        #                             Samples.append(TrainingSample.ClusterGraph)
-        #                     bar()
+            #Non standard processes (that don't follow the general pattern) have been coded here
+            print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
+            print(UI.TimeStamp(),bcolors.BOLD+'Stage 2:'+bcolors.ENDC+' Accumulating results from the previous step')
+            SampleCount=0
+            Samples=[]
+            with alive_bar(n_jobs,force_tty=True, title='Consolidating the output...') as bar:
+                for i in range(n_jobs):
+                        source_output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/Temp_MTr1_'+TrainSampleID+'_0/MTr1_'+TrainSampleID+'_SelectedTrainClusters_'+str(i)+'.pkl'
+                        Sample=UI.PickleOperations(source_output_file_location,'r', 'N/A')[0]
+                        # if hasattr(TrainingSample,'ClusterGraph'):
+                        #     if Sampling>=random.random():
+                        Samples+=(Sample.RawEdgeGraph)
+                        bar()
+            print(Samples)
+            exit()
         #     random.shuffle(Samples)
         #     Meta.num_node_features=Samples[0].num_node_features
         #     Meta.num_edge_features=Samples[0].num_edge_features
