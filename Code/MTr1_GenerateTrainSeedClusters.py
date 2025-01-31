@@ -318,7 +318,9 @@ while Status<len(Program):
                         Samples+=(Sample.RawClusterEdges)
                         bar()
 
-                        # Define your lists
+
+
+            UI.Msg('vanilla','Printing the seed cutflow...')
             headers = SeedFlowLabels
             first_row = SeedFlowValuesAll
             second_row = SeedFlowValuesTrue
@@ -329,24 +331,22 @@ while Status<len(Program):
 
             # Print the table with borders
             print(df.to_string(index=False))
-
+            Meta.UpdateJobMeta(['SeedFlowLabels', 'SeedFlowValuesAll', 'SeedFlowValuesTrue'],[SeedFlowLabels, SeedFlowValuesAll, SeedFlowValuesTrue])
+            random.shuffle(Samples)
+            print(UI.PickleOperations(TrainSampleOutputMeta,'w', Meta)[1])
+            TrainSamples=[]
+            ValSamples=[]
+            TestSamples=[]
+            TrainFraction=int(math.floor(len(Samples)*(1.0-(Meta.testRatio+Meta.valRatio))))
+            ValFraction=int(math.ceil(len(Samples)*Meta.valRatio))
+            for s in range(0,TrainFraction):
+                        TrainSamples.append(Samples[s])
+            for s in range(TrainFraction,TrainFraction+ValFraction):
+                         ValSamples.append(Samples[s])
+            for smpl in range(TrainFraction+ValFraction,len(Samples)):
+                         TestSamples.append(Samples[s])
+            print(len(Samples),len(TrainSamples),len(ValSamples),len(TestSamples))
             exit()
-        #     random.shuffle(Samples)
-        #     Meta.num_node_features=Samples[0].num_node_features
-        #     Meta.num_edge_features=Samples[0].num_edge_features
-        #     print(UI.PickleOperations(TrainSampleOutputMeta,'w', Meta)[1])
-        #     TrainSamples=[]
-        #     ValSamples=[]
-        #     TestSamples=[]
-        #
-        #     TrainFraction=int(math.floor(len(Samples)*(1.0-(Meta.testRatio+Meta.valRatio))))
-        #     ValFraction=int(math.ceil(len(Samples)*Meta.valRatio))
-        #     for s in range(0,TrainFraction):
-        #                 TrainSamples.append(Samples[s])
-        #     for s in range(TrainFraction,TrainFraction+ValFraction):
-        #                  ValSamples.append(Samples[s])
-        #     for smpl in range(TrainFraction+ValFraction,len(Samples)):
-        #                  TestSamples.append(Samples[s])
         #     output_train_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_SEEDS'+'.pkl'
         #     print(UI.PickleOperations(output_train_file_location,'w', TrainSamples)[1])
         #     output_val_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_SEEDS'+'.pkl'
