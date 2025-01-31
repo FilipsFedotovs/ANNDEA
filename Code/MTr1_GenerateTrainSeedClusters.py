@@ -317,11 +317,27 @@ while Status<len(Program):
                         SeedFlowValuesTrue = [a + b for a, b in zip(SeedFlowValuesTrue, Sample.SeedFlowValuesTrue)]
                         Samples+=(Sample.RawClusterEdges)
                         bar()
-            print(SeedFlowLabels)
 
-            print(Samples)
-            print(SeedFlowValuesAll)
-            print(SeedFlowValuesTrue)
+                        # Define your lists
+            headers = SeedFlowLabels
+            first_row = SeedFlowValuesAll
+            second_row = SeedFlowValuesTrue
+            
+            # Print headers
+            for header in headers:
+                print(f"{header: <15}", end="")  # Adjust <15 for spacing
+            print()  # New line for separation
+
+            # Print first row values
+            for value in first_row:
+                print(f"{value: <15}", end="")  # Adjust <15 for spacing
+            print()  # New line for separation
+
+            # Print second row values
+            for value in second_row:
+                print(f"{value: <15}", end="")  # Adjust <15 for spacing
+            print()  # New line for separation
+
             exit()
         #     random.shuffle(Samples)
         #     Meta.num_node_features=Samples[0].num_node_features
