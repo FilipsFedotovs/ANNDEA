@@ -322,21 +322,13 @@ while Status<len(Program):
             headers = SeedFlowLabels
             first_row = SeedFlowValuesAll
             second_row = SeedFlowValuesTrue
-            
-            # Print headers
-            for header in headers:
-                print(f"{header: <15}", end="")  # Adjust <15 for spacing
-            print()  # New line for separation
 
-            # Print first row values
-            for value in first_row:
-                print(f"{value: <15}", end="")  # Adjust <15 for spacing
-            print()  # New line for separation
+            # Create a DataFrame
+            data = [first_row, second_row]
+            df = pd.DataFrame(data, columns=headers)
 
-            # Print second row values
-            for value in second_row:
-                print(f"{value: <15}", end="")  # Adjust <15 for spacing
-            print()  # New line for separation
+            # Print the table with borders
+            print(df.to_string(index=False))
 
             exit()
         #     random.shuffle(Samples)
