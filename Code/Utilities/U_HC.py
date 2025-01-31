@@ -35,7 +35,7 @@ class HitCluster:
            #New workaround: instead of a painful Pandas outer join a loop over list is performed
            _Hits=self.ClusterHits
            _Hits= sorted(_Hits, key=lambda x: x[3], reverse=True) #Sorting by z
-           self.RawClusterNodes=[] #Initiate the empty container for seeds
+           self.RawClusterEdges=[] #Initiate the empty container for seeds
            _sp,_ep=HitCluster.SplitJob(l,MaxEdges,self.ClusterSize)
 
 
@@ -53,14 +53,14 @@ class HitCluster:
                         _SeedFlowValuesAll = [a + b for a, b in zip(_SeedFlowValuesAll, FitSeed[1])]
                         _SeedFlowValuesTrue = [a + b for a, b in zip(_SeedFlowValuesTrue, FitSeed[2])]
                         if FitSeed[0]:
-                               self.RawClusterNodes.append(HitCluster.NormaliseSeed1(_Hits[r], _Hits[l], cut_dt))
+                               self.RawClusterEdges.append(HitCluster.NormaliseSeed1(_Hits[r], _Hits[l], cut_dt))
            else:
                for l in range(_sp,min(_ep,self.ClusterSize-1)):
                     for r in range(l+1,len(_Hits)):
                         FitSeed=HitCluster.FitSeed(_Hits[l],_Hits[r],cut_dt,cut_dr,cut_dz)
                         if FitSeed:
-                            self.RawClusterNodes.append(HitCluster.NormaliseSeed1(_Hits[r], _Hits[l], cut_dt))
-           print(self.RawClusterNodes)
+                            self.RawClusterEdges.append(HitCluster.NormaliseSeed1(_Hits[r], _Hits[l], cut_dt))
+           print(self.RawClusterEdges)
            x=input()
            return True
            #  def GenerateSeeds(self, cut_dt, cut_dr, cut_dz, SeedClassifier='N/A', l=-1, MaxEdges=-1): #Decorate hit information
