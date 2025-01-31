@@ -35,7 +35,7 @@ class HitCluster:
            #New workaround: instead of a painful Pandas outer join a loop over list is performed
            _Hits=self.ClusterHits
            _Hits= sorted(_Hits, key=lambda x: x[3], reverse=True) #Sorting by z
-           _Seeds=[] #Initiate the empty container for seeds
+           self.RawClusterNodes=[] #Initiate the empty container for seeds
            _sp,_ep=HitCluster.SplitJob(l,MaxEdges,self.ClusterSize)
 
 
@@ -43,62 +43,25 @@ class HitCluster:
            _SeedFlowValuesAll=[len(_Hits)**2,(len(_Hits)**2)-len(_Hits), int(((len(_Hits)**2)-len(_Hits))/2), 0, 0, 0, 0, 0, 0, 0, 0, 0]
            _SeedFlowValuesTrue=[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 
-           if SeedFlowLog:
+           # _dl_max= math.sqrt((self.Step[0]**2) + (self.Step[1]**2) + (self.Step[2]**2))
+           # _dr_max= math.sqrt((self.Step[0]**2) + (self.Step[1]**2))
 
+           if SeedFlowLog:
                for l in range(_sp,min(_ep,self.ClusterSize-1)):
                     for r in range(l+1,len(_Hits)):
                         FitSeed=HitCluster.FitTrackSeed(_Hits[l],_Hits[r],cut_dt,cut_dr,cut_dz)
                         _SeedFlowValuesAll = [a + b for a, b in zip(_SeedFlowValuesAll, FitSeed[1])]
                         _SeedFlowValuesTrue = [a + b for a, b in zip(_SeedFlowValuesTrue, FitSeed[2])]
                         if FitSeed[0]:
-                           # [HitID, x , y , z, tx, ty, HitID, x , y , z, tx, ty]
-                           #TH = _Hits[l][:-1]+_Hits[r][:-1]
-                           h1,h2,x1,x2,y1,y2,z1,z2, tx1, tx2, ty1, ty2, l1, l2=_Hits[r][0],_Hits[l][0],_Hits[r][1],_Hits[l][1],_Hits[r][2],_Hits[l][2],_Hits[r][3],_Hits[l][3],_Hits[r][4],_Hits[l][4],_Hits[r][5],_Hits[l][5],_Hits[r][6],_Hits[l][6]
-                           print(h1,h2)
-                           print(x1,x2,y1,y2,z1,z2)
-                           print(tx1, tx2, ty1, ty2)
-                           print(l1, l2)
-                           # _dl= (math.sqrt(((TH[8]-TH[2])**2) + ((TH[7]-TH[1])**2) + ((TH[9]-TH[3])**2)))
-                           # for i in range(1,4):TH[i]=TH[i]/self.Step[2]
-                           # for i in range(7,10):TH[i]=TH[i]/self.Step[2]
-                           # TH.append('N/A')
-                           # TH.append((math.sqrt(((TH[8]-TH[2])**2) + ((TH[7]-TH[1])**2) + ((TH[9]-TH[3])**2))))
-                           # TH.append(math.sqrt(((TH[8]-TH[2])**2) + ((TH[7]-TH[1])**2)))
-                           # TH.append(abs(TH[9]-TH[3]))
-                           # TH.append(abs(TH[4]-TH[10]))
-                           # TH.append(abs(TH[5]-TH[11]))
-                           # del TH[1:6]
-                           # del TH[2:7]
-                           # print(TH)
-                           x=input()
-                               #_Seeds.append(_Hits[l]+_Hits[r])
-
-               print(_SeedFlowValuesAll)
-               print(_SeedFlowValuesTrue)
-
-
-
-
-
-           # print('Number of all  hit combinations passing fiducial cuts:',len(_Tot_Hits))
-           # self.HitPairs=[]
-           # for TH in _Tot_Hits:
-           #     self.HitPairs.append([TH[0],TH[3], TH[6],TH[9]])
-           # for TH in _Tot_Hits:
-           #     for i in range(1,4):TH[i]=TH[i]/self.Step[2]
-           #     for i in range(7,10):TH[i]=TH[i]/self.Step[2]
-           #     if len(MCHits)>0:
-           #          TH.append(HitCluster.LabelLinks(TH,MCHits))
-           #     else:
-           #          TH.append('N/A')
-           #     TH.append((math.sqrt(((TH[8]-TH[2])**2) + ((TH[7]-TH[1])**2) + ((TH[9]-TH[3])**2))))
-           #     TH.append(math.sqrt(((TH[8]-TH[2])**2) + ((TH[7]-TH[1])**2)))
-           #     TH.append(abs(TH[9]-TH[3]))
-           #     TH.append(abs(TH[4]-TH[10]))
-           #     TH.append(abs(TH[5]-TH[11]))
-           #     del TH[1:6]
-           #     del TH[2:7]
-           # self.RawEdgeGraph=_Tot_Hits
+                               self.RawClusterNodes.append(HitCluster.NormaliseSeed1(_Hits[r], _Hits[l], cut_dt))
+           else:
+               for l in range(_sp,min(_ep,self.ClusterSize-1)):
+                    for r in range(l+1,len(_Hits)):
+                        FitSeed=HitCluster.FitSeed(_Hits[l],_Hits[r],cut_dt,cut_dr,cut_dz)
+                        if FitSeed:
+                            self.RawClusterNodes.append(HitCluster.NormaliseSeed1(_Hits[r], _Hits[l], cut_dt))
+           print(self.RawClusterNodes)
+           x=input()
            return True
            #  def GenerateSeeds(self, cut_dt, cut_dr, cut_dz, SeedClassifier='N/A', l=-1, MaxEdges=-1): #Decorate hit information
            # #New workaround: instead of a painful Pandas outer join a loop over list is performed
@@ -196,16 +159,33 @@ class HitCluster:
               _Top.append(_ClusterID.index(ip[0]))
               _Bottom.append(_ClusterID.index(ip[1]))
           return [_Top,_Bottom]
-      def LabelLinks(_hit,_MCHits):
-          for h1 in _MCHits:
-              if _hit[0]==h1[0]:
-                 for h2 in _MCHits:
-                     if _hit[6]==h2[0]:
-                        if h1[1]==h2[1]:
-                            return int(h1[1].__contains__('--')==False)
-                        else:
-                            return 0
-          return 0
+
+      def NormaliseSeed1(self,_Hit2, _Hit1, _cut_dt): #The simplests seed representation with minimum of manipulations
+          h1,h2,x1,x2,y1,y2,z1,z2, tx1, tx2, ty1, ty2, l1, l2=_Hit2[0],_Hit1[0],_Hit2[1],_Hit1[1],_Hit2[2],_Hit1[2],_Hit2[3],_Hit1[3],_Hit2[4],_Hit1[4],_Hit2[5],_Hit1[5],_Hit2[6],_Hit1[6]
+          _dx= abs(x2-x1)/self.Step[2]
+          _dy= abs(y2-y1)/self.Step[2]
+          _dz=abs(z2-z1)/self.Step[2]
+          _dtx=abs(tx2-tx1)/_cut_dt
+          _dty=abs(ty2-ty1)/_cut_dt
+          _ts=int(((l1==l2) and ('--' not in l1)))
+          return [h1, h2,_dx,_dy,_dz,_dtx,_dty,_ts]
+      def NormaliseSeed2(self,_Hit2, _Hit1, _dl_max, _dr_max):
+          h1,h2,x1,x2,y1,y2,z1,z2, tx1, tx2, ty1, ty2, l1, l2=_Hit2[0],_Hit1[0],_Hit2[1],_Hit1[1],_Hit2[2],_Hit1[2],_Hit2[3],_Hit1[3],_Hit2[4],_Hit1[4],_Hit2[5],_Hit1[5],_Hit2[6],_Hit1[6]
+          _dl= math.sqrt(((x2-x1)**2) + ((y2-y1)**2) + ((z2-z1)**2))
+          _dr= math.sqrt(((x2-x1)**2) + ((y2-y1)**2))
+          _dz=abs(z2-z1)
+          _dtx=abs(tx2-tx1)
+          _dtx=abs(ty2-ty1)
+          _ts=int(((l1==l2) and ('--' not in l1)))
+      def NormaliseSeed3(self,_Hit2, _Hit1, _dl_max, _dr_max):
+          h1,h2,x1,x2,y1,y2,z1,z2, tx1, tx2, ty1, ty2, l1, l2=_Hit2[0],_Hit1[0],_Hit2[1],_Hit1[1],_Hit2[2],_Hit1[2],_Hit2[3],_Hit1[3],_Hit2[4],_Hit1[4],_Hit2[5],_Hit1[5],_Hit2[6],_Hit1[6]
+          _dl= math.sqrt(((x2-x1)**2) + ((y2-y1)**2) + ((z2-z1)**2))
+          _dr= math.sqrt(((x2-x1)**2) + ((y2-y1)**2))
+          _dz=abs(z2-z1)
+          _dtx=abs(tx2-tx1)
+          _dtx=abs(ty2-ty1)
+          _ts=int(((l1==l2) and ('--' not in l1)))
+
       def FitSeed(_H1, _H2, _cdt, _cdr, _cdz):
           if _H1[3]==_H2[3]: #Ensuring hit combinations are on different plates
               return False
