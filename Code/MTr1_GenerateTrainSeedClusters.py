@@ -314,8 +314,27 @@ while Status<len(Program):
                 for i in range(n_jobs):
                         source_output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/Temp_MTr1_'+TrainSampleID+'_0/MTr1_'+TrainSampleID+'_SelectedTrainSeedClusters_'+str(i)+'.pkl'
                         Sample=UI.PickleOperations(source_output_file_location,'r', 'N/A')[0]
-                        # if hasattr(TrainingSample,'ClusterGraph'):
-                        #     if Sampling>=random.random():
+
+                        ########### Fake - Truth label resampling to enable their equal distribution ################################
+                        # Lists to store results
+                        TrueSeeds = []
+                        FakeSeeds = []
+                        # Sorting elements into respective lists
+                        for sample in Samples:
+                            if sample[3] == 1:
+                                TrueSeeds.append(sample)
+                            elif sample[3] == 0:
+                                FakeSeeds.append(sample)
+
+                        print(len(Samples),len(TrueSeeds),len(FakeSeeds))
+                        min_samples=min(len(TrueSeeds),len(FakeSeeds))
+                        # Random sampling (make sure the lists are not smaller than the sample size)
+                        TrueSeeds = random.sample(TrueSeeds, min_samples)
+                        FakeSeeds = random.sample(FakeSeeds, min_samples)
+                        print(len(Samples),len(TrueSeeds),len(FakeSeeds))
+                        Samples=TrueSeeds+FakeSeeds
+                        Samples=random.sample(Samples)
+
                         SeedFlowValuesAll = [a + b for a, b in zip(SeedFlowValuesAll, Sample.SeedFlowValuesAll)]
                         SeedFlowValuesTrue = [a + b for a, b in zip(SeedFlowValuesTrue, Sample.SeedFlowValuesTrue)]
                         Samples+=(Sample.RawClusterEdges)
