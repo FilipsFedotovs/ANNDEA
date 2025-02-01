@@ -300,6 +300,7 @@ while Status<len(Program):
              break
 
     elif Status==1:
+        exit()
         try:
             #Non standard processes (that don't follow the general pattern) have been coded here
             print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
