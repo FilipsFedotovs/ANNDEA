@@ -300,7 +300,7 @@ while Status<len(Program):
              break
 
     elif Status==1:
-        try:
+        # try:
             #Non standard processes (that don't follow the general pattern) have been coded here
             print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
             print(UI.TimeStamp(),bcolors.BOLD+'Stage 2:'+bcolors.ENDC+' Accumulating results from the previous step')
@@ -384,10 +384,10 @@ while Status<len(Program):
             UI.UpdateStatus(Status+1,Meta,TrainSampleOutputMeta)
             print(bcolors.HEADER+"############################################# End of the program ################################################"+bcolors.ENDC)
 
-        except Exception as e:
-          print(UI.TimeStamp(),bcolors.FAIL+'Stage 2 is uncompleted due to: '+str(e)+bcolors.ENDC)
-          Status=21
-          break
+        # except Exception as e:
+        #   print(UI.TimeStamp(),bcolors.FAIL+'Stage 2 is uncompleted due to: '+str(e)+bcolors.ENDC)
+        #   Status=21
+        #   break
     MetaInput=UI.PickleOperations(TrainSampleOutputMeta,'r', 'N/A')
     Meta=MetaInput[0]
     Status=Meta.Status[-1]
