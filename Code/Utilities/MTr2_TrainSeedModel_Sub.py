@@ -177,6 +177,7 @@ output_val_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_S
 ValSamples=UI.PickleOperations(output_val_file_location,'r', 'N/A')[0]
 output_test_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TEST_SEEDS'+'.pkl'
 TestSamples=UI.PickleOperations(output_test_file_location,'r', 'N/A')[0]
+print(TestSamples[0])
 exit()
 
 def main(self):
