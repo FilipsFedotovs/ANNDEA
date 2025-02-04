@@ -312,20 +312,22 @@ while Status<len(Program):
             with alive_bar(n_jobs,force_tty=True, title='Consolidating the output...') as bar:
                 for i in range(n_jobs):
                         source_output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/Temp_MTr1_'+TrainSampleID+'_0/MTr1_'+TrainSampleID+'_SelectedTrainSeedClusters_'+str(i)+'.pkl'
-                        Sample=UI.PickleOperations(source_output_file_location,'r', 'N/A')[0]
-
+                        SampleCluster=UI.PickleOperations(source_output_file_location,'r', 'N/A')[0]
+                        Sample=SampleCluster.RawClusterEdges
+                        print(SampleCluster,Sample)
+                        x=input()
                         ########### Fake - Truth label resampling to enable their equal distribution ################################
                         # Lists to store results
                         TrueSeeds = []
                         FakeSeeds = []
                         # Sorting elements into respective lists
-                        for sample in Samples:
+                        for sample in SampleCluster:
                             if sample[2] == 1:
                                 TrueSeeds.append(sample)
                             elif sample[2] == 0:
                                 FakeSeeds.append(sample)
 
-                        print(len(Samples),len(TrueSeeds),len(FakeSeeds))
+                        print(len(SampleCluster),len(TrueSeeds),len(FakeSeeds))
 
                         min_samples=min(len(TrueSeeds),len(FakeSeeds))
                         print(min_samples)
@@ -333,10 +335,10 @@ while Status<len(Program):
                         # Random sampling (make sure the lists are not smaller than the sample size)
                         TrueSeeds = random.sample(TrueSeeds, min_samples)
                         FakeSeeds = random.sample(FakeSeeds, min_samples)
-                        print(len(Samples),len(TrueSeeds),len(FakeSeeds))
-                        Samples=TrueSeeds+FakeSeeds
-                        Samples=random.sample(Samples,len(Samples))
 
+                        Sample=TrueSeeds+FakeSeeds
+                        Sample=random.sample(Sample,len(Sample))
+                        print(len(Sample),len(TrueSeeds),len(FakeSeeds))
                         SeedFlowValuesAll = [a + b for a, b in zip(SeedFlowValuesAll, Sample.SeedFlowValuesAll)]
                         SeedFlowValuesTrue = [a + b for a, b in zip(SeedFlowValuesTrue, Sample.SeedFlowValuesTrue)]
                         Samples+=(Sample.RawClusterEdges)
