@@ -89,7 +89,7 @@ def binary_classification_stats(output, y, thld):
     TNR = zero_divide(TN, TN+FP)
     return acc, TPR, TNR
 
-exit()
+
 
 def train(model, device, sample, optimizer):
     """ train routine, loss and accumulated gradients used to update
@@ -171,13 +171,13 @@ def test(model, device, sample, thld):
     return np.nanmean(losses), np.nanmean(accs)
 
 
-output_train_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_SAMPLES'+'.pkl'
+output_train_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_SEEDS'+'.pkl'
 TrainSamples=UI.PickleOperations(output_train_file_location,'r', 'N/A')[0]
-output_val_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_SAMPLES'+'.pkl'
+output_val_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_SEEDS'+'.pkl'
 ValSamples=UI.PickleOperations(output_val_file_location,'r', 'N/A')[0]
-output_test_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TEST_SAMPLES'+'.pkl'
+output_test_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TEST_SEEDS'+'.pkl'
 TestSamples=UI.PickleOperations(output_test_file_location,'r', 'N/A')[0]
-
+exit()
 
 def main(self):
     print(UI.TimeStamp(),'Starting the training process... ')
