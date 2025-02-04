@@ -319,10 +319,7 @@ while Status<len(Program):
                         TrueSeeds = []
                         FakeSeeds = []
                         # Sorting elements into respective lists
-                        print(Samples)
                         for sample in Samples:
-                            print(sample)
-                            x=input()
                             if sample[2] == 1:
                                 TrueSeeds.append(sample)
                             elif sample[2] == 0:
