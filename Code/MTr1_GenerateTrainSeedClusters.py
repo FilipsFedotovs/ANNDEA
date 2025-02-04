@@ -319,12 +319,12 @@ while Status<len(Program):
                         TrueSeeds = []
                         FakeSeeds = []
                         # Sorting elements into respective lists
-                        for sample in SampleCluster:
+                        for sample in Sample:
                             if sample[2] == 1:
                                 TrueSeeds.append(sample)
                             elif sample[2] == 0:
                                 FakeSeeds.append(sample)
-                        print(len(SampleCluster),len(TrueSeeds),len(FakeSeeds))
+                        print(len(Sample),len(TrueSeeds),len(FakeSeeds))
                         min_samples=min(len(TrueSeeds),len(FakeSeeds))
                         print(min_samples)
                         x=input()
