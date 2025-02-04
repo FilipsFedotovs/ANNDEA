@@ -451,6 +451,28 @@ def GenerateModel(ModelMeta,TrainParams=None):
                      return edge_weights
             model = TCN(ModelMeta.num_node_features, ModelMeta.num_edge_features, ModelMeta.ModelParameters[3])
             return model
+         elif ModelMeta.ModelArchitecture=='MLP':
+
+         #Example [Input Sizes, Dropout, Output Size]
+
+             class MLP(nn.Module):
+                def __init__(self, input_size, hidden_sizes, dropout_rate=0.5):
+                    super(MLP, self).__init__()
+                    layers = []
+                    prev_size = input_size  # Start with input size
+                    for hidden_size in hidden_sizes:
+                        layers.append(nn.Linear(prev_size, hidden_size))  # Add Linear layer
+                        layers.append(nn.ReLU())  # Activation function
+                        layers.append(nn.Dropout(dropout_rate))  # Dropout
+                        prev_size = hidden_size  # Update previous layer size
+                    layers.append(nn.Linear(prev_size, 1))  # Output layer (1 neuron for binary classification)
+                    self.model = nn.Sequential(*layers)  # Convert list to nn.Sequential
+                def forward(self, x):
+                    return self.model(x)  # Return raw logits for BCEWithLogitsLoss
+
+             model = MLP(ModelMeta.ModelParameters[0], ModelMeta.ModelParameters[1], ModelMeta.ModelParameters[2])
+             return model
+
          elif ModelMeta.ModelArchitecture=='GCN-4N-IC':
             from torch_geometric.nn import GCNConv
             HiddenLayer=[]

@@ -106,6 +106,8 @@ if ModelType=='CNN':
                     Job=UI.CreateCondorJobs(AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/','N/A','M2','N/A',ModelName,1,OptionHeader,OptionLine,'M2_TrainModel_Sub.py',False,"['','']", True, True)[0]
 elif ModelType=='GNN' and ModelArchitecture=='TCN':
                     Job=UI.CreateCondorJobs(AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/','N/A','M2','N/A',ModelName,1,OptionHeader,OptionLine,'MTr2_TrainModel_Sub.py',False,"['','']", True, False)[0]
+elif ModelType=='MLP':
+                    Job=UI.CreateCondorJobs(AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/','N/A','M2','N/A',ModelName,1,OptionHeader,OptionLine,'MTr2_TrainSeedModel_Sub.py',False,"['','']", True, False)[0]
 else:
                     Job=UI.CreateCondorJobs(AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/','N/A','M2','N/A',ModelName,1,OptionHeader,OptionLine,'M2_TrainModel_Sub.py',False,"['','']", True, False)[0]
 
@@ -188,6 +190,8 @@ if Mode=='RESET':
  if ModelType=='CNN':
     ModelMeta.IniModelMeta(ModelParams, 'Tensorflow', Meta, ModelArchitecture, 'CNN')
  elif ModelType=='GNN':
+    ModelMeta.IniModelMeta(ModelParams, 'PyTorch', Meta, ModelArchitecture, 'GNN')
+ elif ModelType=='MLP':
     ModelMeta.IniModelMeta(ModelParams, 'PyTorch', Meta, ModelArchitecture, 'GNN')
  ModelMeta.IniTrainingSession(TrainSampleID, datetime.datetime.now(), TrainParams)
  print(UI.PickleOperations(Model_Meta_Path, 'w', ModelMeta)[1])
