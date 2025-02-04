@@ -300,7 +300,7 @@ while Status<len(Program):
              break
 
     elif Status==1:
-        # try:
+        try:
             #Non standard processes (that don't follow the general pattern) have been coded here
             print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
             print(UI.TimeStamp(),bcolors.BOLD+'Stage 2:'+bcolors.ENDC+' Accumulating results from the previous step')
@@ -324,23 +324,17 @@ while Status<len(Program):
                                 TrueSeeds.append(sample)
                             elif sample[2] == 0:
                                 FakeSeeds.append(sample)
-                        print(len(Sample),len(TrueSeeds),len(FakeSeeds))
                         min_samples=min(len(TrueSeeds),len(FakeSeeds))
-                        print(min_samples)
-
                         # Random sampling (make sure the lists are not smaller than the sample size)
                         TrueSeeds = random.sample(TrueSeeds, min_samples)
                         FakeSeeds = random.sample(FakeSeeds, min_samples)
 
                         Sample=TrueSeeds+FakeSeeds
                         Sample=random.sample(Sample,len(Sample))
-                        print(len(Sample),len(TrueSeeds),len(FakeSeeds))
 
                         SeedFlowValuesAll = [a + b for a, b in zip(SeedFlowValuesAll, SampleCluster.SeedFlowValuesAll)]
                         SeedFlowValuesTrue = [a + b for a, b in zip(SeedFlowValuesTrue, SampleCluster.SeedFlowValuesTrue)]
                         Samples+=(Sample)
-                        print(len(Samples))
-                        x=input()
                         bar()
 
 
@@ -383,10 +377,10 @@ while Status<len(Program):
             UI.UpdateStatus(Status+1,Meta,TrainSampleOutputMeta)
             print(bcolors.HEADER+"############################################# End of the program ################################################"+bcolors.ENDC)
 
-        # except Exception as e:
-        #   print(UI.TimeStamp(),bcolors.FAIL+'Stage 2 is uncompleted due to: '+str(e)+bcolors.ENDC)
-        #   Status=21
-        #   break
+        except Exception as e:
+          print(UI.TimeStamp(),bcolors.FAIL+'Stage 2 is uncompleted due to: '+str(e)+bcolors.ENDC)
+          Status=21
+          break
     MetaInput=UI.PickleOperations(TrainSampleOutputMeta,'r', 'N/A')
     Meta=MetaInput[0]
     Status=Meta.Status[-1]
