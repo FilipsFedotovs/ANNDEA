@@ -319,6 +319,7 @@ while Status<len(Program):
                         TrueSeeds = []
                         FakeSeeds = []
                         # Sorting elements into respective lists
+                        print(Samples)
                         for sample in Samples:
                             print(sample)
                             x=input()
@@ -337,7 +338,7 @@ while Status<len(Program):
                         FakeSeeds = random.sample(FakeSeeds, min_samples)
                         print(len(Samples),len(TrueSeeds),len(FakeSeeds))
                         Samples=TrueSeeds+FakeSeeds
-                        Samples=random.sample(Samples)
+                        Samples=random.sample(Samples,len(Samples))
 
                         SeedFlowValuesAll = [a + b for a, b in zip(SeedFlowValuesAll, Sample.SeedFlowValuesAll)]
                         SeedFlowValuesTrue = [a + b for a, b in zip(SeedFlowValuesTrue, Sample.SeedFlowValuesTrue)]
