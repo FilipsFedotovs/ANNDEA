@@ -177,8 +177,7 @@ output_val_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_S
 ValSamples=UI.PickleOperations(output_val_file_location,'r', 'N/A')[0]
 output_test_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TEST_SEEDS'+'.pkl'
 TestSamples=UI.PickleOperations(output_test_file_location,'r', 'N/A')[0]
-print(TestSamples[0])
-exit()
+
 
 def main(self):
     print(UI.TimeStamp(),'Starting the training process... ')
@@ -188,6 +187,8 @@ def main(self):
     ModelMeta=UI.PickleOperations(Model_Meta_Path, 'r', 'N/A')[0]
     device = torch.device('cpu')
     model = ML.GenerateModel(ModelMeta).to(device)
+    print(model)
+    exit()
     optimizer = optim.Adam(model.parameters(), lr=TrainParams[0])
     scheduler = StepLR(optimizer, step_size=0.1,gamma=0.1)
     print(UI.TimeStamp(),'Try to load the previously saved model/optimiser state files ')
