@@ -314,8 +314,6 @@ while Status<len(Program):
                         source_output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/Temp_MTr1_'+TrainSampleID+'_0/MTr1_'+TrainSampleID+'_SelectedTrainSeedClusters_'+str(i)+'.pkl'
                         SampleCluster=UI.PickleOperations(source_output_file_location,'r', 'N/A')[0]
                         Sample=SampleCluster.RawClusterEdges
-                        print(SampleCluster,Sample)
-                        x=input()
                         ########### Fake - Truth label resampling to enable their equal distribution ################################
                         # Lists to store results
                         TrueSeeds = []
@@ -326,9 +324,7 @@ while Status<len(Program):
                                 TrueSeeds.append(sample)
                             elif sample[2] == 0:
                                 FakeSeeds.append(sample)
-
                         print(len(SampleCluster),len(TrueSeeds),len(FakeSeeds))
-
                         min_samples=min(len(TrueSeeds),len(FakeSeeds))
                         print(min_samples)
                         x=input()
