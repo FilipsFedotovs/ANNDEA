@@ -327,7 +327,7 @@ while Status<len(Program):
                         print(len(Sample),len(TrueSeeds),len(FakeSeeds))
                         min_samples=min(len(TrueSeeds),len(FakeSeeds))
                         print(min_samples)
-                        x=input()
+
                         # Random sampling (make sure the lists are not smaller than the sample size)
                         TrueSeeds = random.sample(TrueSeeds, min_samples)
                         FakeSeeds = random.sample(FakeSeeds, min_samples)
@@ -335,9 +335,12 @@ while Status<len(Program):
                         Sample=TrueSeeds+FakeSeeds
                         Sample=random.sample(Sample,len(Sample))
                         print(len(Sample),len(TrueSeeds),len(FakeSeeds))
-                        SeedFlowValuesAll = [a + b for a, b in zip(SeedFlowValuesAll, Sample.SeedFlowValuesAll)]
-                        SeedFlowValuesTrue = [a + b for a, b in zip(SeedFlowValuesTrue, Sample.SeedFlowValuesTrue)]
-                        Samples+=(Sample.RawClusterEdges)
+
+                        SeedFlowValuesAll = [a + b for a, b in zip(SeedFlowValuesAll, SampleCluster.SeedFlowValuesAll)]
+                        SeedFlowValuesTrue = [a + b for a, b in zip(SeedFlowValuesTrue, SampleCluster.SeedFlowValuesTrue)]
+                        Samples+=(Sample)
+                        print(len(Samples))
+                        x=input()
                         bar()
 
 
