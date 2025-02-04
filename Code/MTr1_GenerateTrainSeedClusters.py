@@ -320,9 +320,9 @@ while Status<len(Program):
                         FakeSeeds = []
                         # Sorting elements into respective lists
                         for sample in Samples:
-                            if sample[3] == 1:
+                            if sample[2] == 1:
                                 TrueSeeds.append(sample)
-                            elif sample[3] == 0:
+                            elif sample[2] == 0:
                                 FakeSeeds.append(sample)
 
                         print(len(Samples),len(TrueSeeds),len(FakeSeeds))
