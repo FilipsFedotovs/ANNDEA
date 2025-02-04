@@ -129,11 +129,11 @@ class HitCluster:
            else:
                return False
 
-      def GenerateSeedVector(self, Samples):
+      def GenerateSeedVector(self):
             #Split samples into X and Y sets
             X_list = []
             y_list = []
-            for s in Samples:
+            for s in self.RawClusterEdges:
                 X_list.append(s[3:])
                 y_list.append(s[2])
             print(X_list)
