@@ -324,9 +324,12 @@ while Status<len(Program):
                                 TrueSeeds.append(sample)
                             elif sample[3] == 0:
                                 FakeSeeds.append(sample)
-                        x=input()
+
                         print(len(Samples),len(TrueSeeds),len(FakeSeeds))
+
                         min_samples=min(len(TrueSeeds),len(FakeSeeds))
+                        print(min_samples)
+                        x=input()
                         # Random sampling (make sure the lists are not smaller than the sample size)
                         TrueSeeds = random.sample(TrueSeeds, min_samples)
                         FakeSeeds = random.sample(FakeSeeds, min_samples)
