@@ -205,10 +205,6 @@ if os.path.isfile(TrainSampleOutputMeta)==False: #A case of generating samples f
        Zsteps=math.ceil((z_max)/stepZ)
     else:
        Zsteps=(math.ceil((z_max)/stepZ)*(Zoverlap))-1
-
-    print(UI.TimeStamp(),'Distributing hit files...')
-    print(UI.TimeStamp(),'Loading preselected data from ',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
-    data=pd.read_csv(input_file_location,header=0)
     n_jobs=0
     jobs=[]
     with alive_bar(Xsteps*Ysteps*Zsteps,force_tty=True, title='Sampling hit files...') as bar:
