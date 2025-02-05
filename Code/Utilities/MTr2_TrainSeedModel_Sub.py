@@ -101,8 +101,11 @@ def train(model,  sampleX, sampleY, optimizer, criterion):
     for x, y in zip(sampleX, sampleY):
         if len(x)==0: continue
         x, y = x.unsqueeze(0), y.unsqueeze(0)
+        print(x)
+        print(y)
         iterator+=1
         o = model(x)
+        print(o)
         #edge weight loss
         loss = criterion(o, y)
         # optimize total loss
@@ -112,8 +115,7 @@ def train(model,  sampleX, sampleY, optimizer, criterion):
            optimizer.step()
         # store losses
         losses.append(loss.item())
-    loss_ = np.nanmean(losses)
-    return loss,iterator
+    return np.nanmean(losses),iterator
 
 #Deriving validation metrics. Please note that in this function the optimal acceptance is calculated. This is unique to the tracker module
 def validate(model, device, sample):
