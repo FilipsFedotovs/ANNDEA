@@ -129,14 +129,7 @@ class HitCluster:
            else:
                return False
 
-      def GenerateSeedVectors(self):
-            #Split samples into X and Y sets
-            self.SeedsX = []
-            self.SeedsY = []
-            for s in self.Seeds:
-                self.SeedsX.append(s[3:])
-                self.SeedsY.append(s[2])
-            return True
+
 
       @staticmethod
 
