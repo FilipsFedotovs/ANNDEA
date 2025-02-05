@@ -316,8 +316,12 @@ while Status<len(Program):
                 for i in range(n_jobs):
                         source_output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/Temp_MTr1_'+TrainSampleID+'_0/MTr1_'+TrainSampleID+'_SelectedTrainSeedClusters_'+str(i)+'.pkl'
                         SampleCluster=UI.PickleOperations(source_output_file_location,'r', 'N/A')[0]
+
+                        SampleX=SampleCluster.ClusterSeedX
+                        SampleY=SampleCluster.ClusterSeedY
+                        print(SampleX)
+                        print(SampleX[2])
                         x=input()
-                        Sample=SampleCluster.RawClusterEdges
                         ########### Fake - Truth label resampling to enable their equal distribution ################################
                         # Lists to store results
                         TrueSeeds = []
