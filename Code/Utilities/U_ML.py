@@ -465,6 +465,7 @@ def GenerateModel(ModelMeta,TrainParams=None):
                         layers.append(nn.Dropout(dropout_rate))  # Dropout
                         prev_size = hidden_size  # Update previous layer size
                     layers.append(nn.Linear(prev_size, 1))  # Output layer (1 neuron for binary classification)
+                    layers.append(nn.Sigmoid())
                     self.model = nn.Sequential(*layers)  # Convert list to nn.Sequential
                 def forward(self, x):
                     return self.model(x)  # Return raw logits for BCEWithLogitsLoss
