@@ -26,8 +26,7 @@ parser.add_argument('--AFS',help="Please enter the user afs directory", default=
 parser.add_argument('--EOS',help="Please enter the user eos directory", default='.')
 parser.add_argument('--TrainSampleID',help="Give name of the training ", default='SHIP_TrainSample_v1')
 parser.add_argument('--BatchID',help="Name of the model", default='1T_MC_1_model')
-parser.add_argument('--no-cuda', action='store_true', default=False,
-                        help='disables CUDA training')
+parser.add_argument('--no-cuda', action='store_true', default=False, help='disables CUDA training')
 parser.add_argument('--i',help="Set number", default='1')
 parser.add_argument('--p',help="Path to the output file", default='')
 parser.add_argument('--o',help="Path to the output file name", default='')
@@ -100,18 +99,19 @@ def train(model, device, sample, optimizer):
     iterator=0
     for HC in sample:
         data = HC.to(device)
-        if (len(data.x)==0 or len(data.edge_index)==0): continue
+        if len(data.x)==0: continue
         iterator+=1
-        w = model(data.x, data.edge_index, data.edge_attr)
-        y, w = data.y.float(), w.squeeze(1)
+        w = model(data.ClusterX)
+        y, w = data.ClusterY.float(), w.squeeze(1)
         #edge weight loss
         loss_w = F.binary_cross_entropy(w, y, reduction='mean')
+        print(loss_w)
+        exit()
         # optimize total loss
         if iterator%TrainParams[1]==0: #Update gradients by batch
            optimizer.zero_grad()
            loss_w.backward()
            optimizer.step()
-
         # store losses
         losses_w.append(loss_w.item())
     loss_w = np.nanmean(losses_w)
@@ -186,8 +186,6 @@ def main(self):
     ModelMeta=UI.PickleOperations(Model_Meta_Path, 'r', 'N/A')[0]
     device = torch.device('cpu')
     model = ML.GenerateModel(ModelMeta).to(device)
-    print(model)
-    exit()
     optimizer = optim.Adam(model.parameters(), lr=TrainParams[0])
     scheduler = StepLR(optimizer, step_size=0.1,gamma=0.1)
     print(UI.TimeStamp(),'Try to load the previously saved model/optimiser state files ')
@@ -206,6 +204,7 @@ def main(self):
          sp=fraction*fraction_size
          ep=min((fraction+1)*fraction_size,TrainSampleSize)
          train_loss, itr= train(model, device,TrainSamples[sp:ep], optimizer)
+         exit()
          thld, val_loss,val_acc = validate(model, device, ValSamples)
          test_loss, test_acc = test(model, device,TestSamples, thld)
          scheduler.step()

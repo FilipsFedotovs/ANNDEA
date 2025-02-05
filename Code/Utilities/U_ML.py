@@ -82,7 +82,6 @@ class ModelMeta:
                     return 2
             else:
                 return 0
-
 def GenerateModel(ModelMeta,TrainParams=None):
       if ModelMeta.ModelFramework=='PyTorch':
          import torch
@@ -969,7 +968,6 @@ def GenerateModel(ModelMeta,TrainParams=None):
                 model.compile(loss='categorical_crossentropy',optimizer=opt,metrics=['accuracy'])
      # Compile the model
             return model
-
 def LoadRenderImages(Seeds,StartSeed,EndSeed,num_classes=2):
     import tensorflow as tf
     NewSeeds=Seeds[StartSeed-1:min(EndSeed,len(Seeds))]
@@ -1004,7 +1002,6 @@ def LoadRenderImages(Seeds,StartSeed,EndSeed,num_classes=2):
 def zero_divide(a, b):
     if (b==0): return 0
     return a/b
-
 def CNNtrain(model, Sample, Batches,num_classes, BatchSize):
     loss_accumulative = 0
     acc_accumulative = 0
@@ -1021,7 +1018,6 @@ def CNNtrain(model, Sample, Batches,num_classes, BatchSize):
     loss=loss_accumulative/Batches
     acc=acc_accumulative/Batches
     return loss,acc
-
 def GNNtrain(model, Sample, optimizer,criterion):
     model.train()
     for data in Sample:
@@ -1031,7 +1027,6 @@ def GNNtrain(model, Sample, optimizer,criterion):
         optimizer.step()  # Update parameters based on gradients.
         optimizer.zero_grad()
     return loss
-
 def GNNvalidate(model, Sample,criterion):
     model.eval()
     correct = 0
@@ -1047,7 +1042,6 @@ def GNNvalidate(model, Sample,criterion):
          loss = criterion(out, data.y)
          loss_accumulative += float(loss)
     return (correct / len(Sample.dataset), (loss_accumulative*batch_size)/len(Sample.dataset))
-
 def CNNvalidate(model, Sample, Batches,num_classes, BatchSize):
     loss_accumulative = 0
     acc_accumulative = 0

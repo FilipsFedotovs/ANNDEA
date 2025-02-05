@@ -364,8 +364,6 @@ while Status<len(Program):
                          ValSamples.append(Samples[s])
             for smpl in range(TrainFraction+ValFraction,len(Samples)):
                          TestSamples.append(Samples[s])
-            print(len(Samples),len(TrainSamples),len(ValSamples),len(TestSamples))
-
             output_train_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_SEEDS'+'.pkl'
             print(UI.PickleOperations(output_train_file_location,'w', TrainSamples)[1])
             output_val_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_SEEDS'+'.pkl'
