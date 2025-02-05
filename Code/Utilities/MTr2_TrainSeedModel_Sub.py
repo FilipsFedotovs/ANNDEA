@@ -100,13 +100,11 @@ def train(model,  sampleX, sampleY, optimizer):
     iterator=0
     for x, y in zip(sampleX, sampleY):
         if len(x)==0: continue
+        x, y = x.unsqueeze(0), y.unsqueeze(0)
         iterator+=1
-        w = model(x)
-        print(w)
-        y, w = y.float(), w
+        o = model(x)
         #edge weight loss
-        loss_w = F.binary_cross_entropy(w, y, reduction='mean')
-        print(loss_w)
+        loss_w = F.binary_cross_entropy(o, y, reduction='mean')
         # optimize total loss
         if iterator%TrainParams[1]==0: #Update gradients by batch
            optimizer.zero_grad()
@@ -173,17 +171,17 @@ def test(model, device, sample, thld):
 #Training sample
 output_train_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_SEEDS'+'.pkl' #Path
 TrainSamplesX=torch.tensor(HC.HitCluster.GenerateSeedVectors(UI.PickleOperations(output_train_file_location,'r', 'N/A')[0])[0], dtype=torch.float32) #Loading features
-TrainSamplesY=torch.tensor(HC.HitCluster.GenerateSeedVectors(UI.PickleOperations(output_train_file_location,'r', 'N/A')[0])[1], dtype=torch.float32).unsqueeze(1) #Loading labels
+TrainSamplesY=torch.tensor(HC.HitCluster.GenerateSeedVectors(UI.PickleOperations(output_train_file_location,'r', 'N/A')[0])[1], dtype=torch.float32).view(-1, 1) #Loading labels
 
 #Validation sample
 output_val_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_SEEDS'+'.pkl' #Path
 ValSamplesX=torch.tensor(HC.HitCluster.GenerateSeedVectors(UI.PickleOperations(output_val_file_location,'r', 'N/A')[0])[0], dtype=torch.float32) #Loading features
-ValSamplesY=torch.tensor(HC.HitCluster.GenerateSeedVectors(UI.PickleOperations(output_val_file_location,'r', 'N/A')[0])[1], dtype=torch.float32).unsqueeze(1) #Loading labels
+ValSamplesY=torch.tensor(HC.HitCluster.GenerateSeedVectors(UI.PickleOperations(output_val_file_location,'r', 'N/A')[0])[1], dtype=torch.float32).view(-1, 1) #Loading labels
 
 #Test sample
 output_test_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TEST_SEEDS'+'.pkl' #Path
 TestSamplesX=torch.tensor(HC.HitCluster.GenerateSeedVectors(UI.PickleOperations(output_test_file_location,'r', 'N/A')[0])[0], dtype=torch.float32) #Loading features
-TestSamplesY=torch.tensor(HC.HitCluster.GenerateSeedVectors(UI.PickleOperations(output_test_file_location,'r', 'N/A')[0])[1], dtype=torch.float32).unsqueeze(1) #Loading labels
+TestSamplesY=torch.tensor(HC.HitCluster.GenerateSeedVectors(UI.PickleOperations(output_test_file_location,'r', 'N/A')[0])[1], dtype=torch.float32).view(-1, 1) #Loading labels
 
 def main(self):
     print(UI.TimeStamp(),'Starting the training process... ')
@@ -212,7 +210,6 @@ def main(self):
          ep=min((fraction+1)*fraction_size,TrainSampleSize)
          train_loss, itr= train(model, TrainSamplesX[sp:ep], TrainSamplesY[sp:ep], optimizer)
          print(train_loss, itr)
-         exit()
          # thld, val_loss,val_acc = validate(model, device, ValSamples)
          # test_loss, test_acc = test(model, device,TestSamples, thld)
          # scheduler.step()
