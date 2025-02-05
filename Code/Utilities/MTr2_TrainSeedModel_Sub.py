@@ -62,6 +62,7 @@ device = "cpu"
 
 import U_UI as UI
 import U_ML as ML
+import U_HC as HC
 #Load data configuration
 EOSsubDIR=EOS_DIR+'/'+'ANNDEA'
 EOSsubModelDIR=EOSsubDIR+'/'+'Models'
@@ -169,9 +170,15 @@ def test(model, device, sample, thld):
             losses.append(loss.item())
     return np.nanmean(losses), np.nanmean(accs)
 
+########## importing and preparing data samples
+#Training sample
+output_train_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_SEEDS'+'.pkl' #Path
+TrainSamplesX=HC.GenerateSeedVectors(UI.PickleOperations(output_train_file_location,'r', 'N/A')[0])[0] #Loading features
+TrainSamplesY=HC.GenerateSeedVectors(UI.PickleOperations(output_train_file_location,'r', 'N/A')[0])[1] #Loading labels
 
-output_train_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_SEEDS'+'.pkl'
-TrainSamples=UI.PickleOperations(output_train_file_location,'r', 'N/A')[0]
+print(TrainSamplesX,TrainSamplesY)
+exit()
+
 output_val_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_SEEDS'+'.pkl'
 ValSamples=UI.PickleOperations(output_val_file_location,'r', 'N/A')[0]
 output_test_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TEST_SEEDS'+'.pkl'

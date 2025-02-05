@@ -205,7 +205,14 @@ class HitCluster:
                           if abs(_H2[2]-(_H1[2]+(_H1[5]*(_H2[3]-_H1[3]))))>=_cdr:
                              return False
           return True
-
+      def GenerateSeedVectors(Seeds):
+            #Split samples into X and Y sets
+            SeedsX = []
+            SeedsY = []
+            for s in Seeds:
+                SeedsX.append(s[3:])
+                SeedsY.append(s[2])
+            return SeedsX,SeedsY
       def FitTrackSeed(_H1, _H2, _cdt, _cdr, _cdz): #A more involved option that involves producing the seed cutflow and the truth distribution if the MC data available.
           _ts=int(((_H1[6]==_H2[6]) and ('--' not in _H1[6])))
           if _H1[3]==_H2[3]: #Ensuring hit combinations are on different plates
