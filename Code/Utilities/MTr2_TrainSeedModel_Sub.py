@@ -102,6 +102,7 @@ def train(model,  sampleX, sampleY, optimizer):
         if len(x)==0: continue
         iterator+=1
         w = model(x)
+        print(w)
         y, w = y.float(), w.squeeze(1)
         #edge weight loss
         loss_w = F.binary_cross_entropy(w, y, reduction='mean')
