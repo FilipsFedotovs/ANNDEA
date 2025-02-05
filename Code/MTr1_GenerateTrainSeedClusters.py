@@ -205,6 +205,13 @@ if os.path.isfile(TrainSampleOutputMeta)==False: #A case of generating samples f
        Zsteps=math.ceil((z_max)/stepZ)
     else:
        Zsteps=(math.ceil((z_max)/stepZ)*(Zoverlap))-1
+
+    print(UI.TimeStamp(),'Distributing hit files...')
+    print(UI.TimeStamp(),'Loading preselected data from ',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
+    data=pd.read_csv(input_file_location,header=0)
+    data['x']=data['x']-x_offset #Reseting the coordinate origin to zero for this data set
+    data['y']=data['y']-y_offset #Reseting the coordinate origin to zero for this data set
+    data['z']=data['z']-z_offset #Reseting the coordinate origin to zero for this data set
     n_jobs=0
     jobs=[]
     with alive_bar(Xsteps*Ysteps*Zsteps,force_tty=True, title='Sampling hit files...') as bar:
@@ -222,6 +229,7 @@ if os.path.isfile(TrainSampleOutputMeta)==False: #A case of generating samples f
                              tdata.drop(tdata.index[tdata['y'] < (Y_ID*stepY)], inplace = True)  #Keeping the relevant z slice
                              tdata.drop(tdata.index[tdata['z'] >= ((Z_ID+1)*stepZ)], inplace = True)  #Keeping the relevant z slice
                              tdata.drop(tdata.index[tdata['z'] < (Z_ID*stepZ)], inplace = True)  #Keeping the relevant z slice
+                             print(tdata)
                              if len(tdata)>1:
                                  if Sampling>=random.random():
                                      tdata.to_csv(required_tfile_location,index=False)
