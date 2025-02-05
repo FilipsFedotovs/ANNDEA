@@ -136,16 +136,10 @@ class HitCluster:
             for s in self.RawClusterEdges:
                 X_list.append(s[3:])
                 y_list.append(s[2])
-            print(X_list)
-            print(y_list)
             import torch
-            from torch.utils.data import Dataset, DataLoader
             # Convert lists to PyTorch tensors
             self.ClusterSeedX = torch.tensor(X_list, dtype=torch.float32)  # Features
             self.ClusterSeedY = torch.tensor(y_list, dtype=torch.float32).unsqueeze(1)  # Labels (reshape to match output shape)
-            print(self.ClusterSeedX)
-            print(self.ClusterSeedY)
-            x=input()
             return True
 
       @staticmethod

@@ -101,7 +101,6 @@ def train(model, device, sample, optimizer):
     for HC in sample:
         data = HC.to(device)
         if (len(data.x)==0 or len(data.edge_index)==0): continue
-
         iterator+=1
         w = model(data.x, data.edge_index, data.edge_attr)
         y, w = data.y.float(), w.squeeze(1)
