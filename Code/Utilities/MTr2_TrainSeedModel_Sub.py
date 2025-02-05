@@ -204,7 +204,6 @@ def main(self):
     torch.save(model.state_dict(), Model_Path)
     Header=[['Epoch','# Samples','Train Loss','Optimal Threshold','Validation Loss','Validation Accuracy','Test Loss','Test Accuracy']]
     Header+=records
-    print(Header)
     ModelMeta.CompleteTrainingSession(Header)
     print(UI.PickleOperations(Model_Meta_Path, 'w', ModelMeta)[1])
     exit()
