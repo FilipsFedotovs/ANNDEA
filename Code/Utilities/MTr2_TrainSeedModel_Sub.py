@@ -135,24 +135,16 @@ def validate(model,  sampleX, sampleY, criterion):
     return np.nanmean(opt_thlds),np.nanmean(losses),np.nanmean(accs)
 
 #Deriving testing metrics
-def test(model, device, sample, thld):
+def test(model,  sampleX, sampleY, criterion, thld):
     model.eval()
     losses, accs = [], []
     with torch.no_grad():
-        for HC in sample:
-            data = HC.to(device)
-            if (len(data.x)==0 or len(data.edge_index)==0): continue
-            try:
-               output = model(data.x, data.edge_index, data.edge_attr)
-            except:
-               continue
-            y, output = data.y.float(), output.squeeze(1)
-            acc, TPR, TNR = binary_classification_stats(output, y, thld)
-            try:
-                loss = F.binary_cross_entropy(output, y,reduction='mean')
-            except:
-                print('Erroneous data set: ',data.x, data.edge_index, data.edge_attr, 'skipping these samples...')
-                continue
+        for x, y in zip(sampleX, sampleY):
+            if len(x)==0: continue
+            x, y = x.unsqueeze(0), y.unsqueeze(0)
+            o = model(x)
+            loss = criterion(o, y).item()
+            acc, TPR, TNR = binary_classification_stats(o, y, thld)
             accs.append(acc.item())
             losses.append(loss.item())
     return np.nanmean(losses), np.nanmean(accs)
@@ -200,21 +192,19 @@ def main(self):
          sp=fraction*fraction_size
          ep=min((fraction+1)*fraction_size,TrainSampleSize)
          train_loss, itr= train(model, TrainSamplesX[sp:ep], TrainSamplesY[sp:ep], optimizer,criterion)
-         print(train_loss, itr)
          thld, val_loss,val_acc = validate(model, ValSamplesX, ValSamplesY, criterion)
-         print(thld, val_loss,val_acc)
-         exit()
-         # test_loss, test_acc = test(model, device,TestSamples, thld)
-         # scheduler.step()
-         # print(UI.TimeStamp(),'Epoch ',epoch, ' is completed')
-         # records.append([epoch,itr,train_loss,thld,val_loss,val_acc,test_loss,test_acc])
-         # torch.save({    'epoch': epoch,
-         #              'optimizer_state_dict': optimizer.state_dict(),
-         #              'scheduler': scheduler.state_dict(),    # HERE IS THE CHANGE
-         #              }, State_Save_Path)
+         test_loss, test_acc = test(model, ValSamplesX, ValSamplesY, criterion, thld)
+         scheduler.step()
+         print(UI.TimeStamp(),'Epoch ',epoch, ' is completed')
+         records.append([epoch,itr,train_loss,thld,val_loss,val_acc,test_loss,test_acc])
+         torch.save({    'epoch': epoch,
+                      'optimizer_state_dict': optimizer.state_dict(),
+                      'scheduler': scheduler.state_dict(),    # HERE IS THE CHANGE
+                      }, State_Save_Path)
     torch.save(model.state_dict(), Model_Path)
     Header=[['Epoch','# Samples','Train Loss','Optimal Threshold','Validation Loss','Validation Accuracy','Test Loss','Test Accuracy']]
     Header+=records
+    print(Header)
     ModelMeta.CompleteTrainingSession(Header)
     print(UI.PickleOperations(Model_Meta_Path, 'w', ModelMeta)[1])
     exit()
