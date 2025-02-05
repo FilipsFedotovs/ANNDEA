@@ -91,23 +91,21 @@ def binary_classification_stats(output, y, thld):
 
 
 
-def train(model, device, sample, optimizer):
+def train(model,  sampleX, sampleY, optimizer):
     """ train routine, loss and accumulated gradients used to update
         the model via the ADAM optimizer externally
     """
     model.train()
     losses_w = [] # edge weight loss
     iterator=0
-    for HC in sample:
-        data = HC.to(device)
-        if len(data.x)==0: continue
+    for x, y in zip(sampleX, sampleY):
+        if len(x)==0: continue
         iterator+=1
-        w = model(data.ClusterX)
-        y, w = data.ClusterY.float(), w.squeeze(1)
+        w = model(x)
+        y, w = y.float(), w.squeeze(1)
         #edge weight loss
         loss_w = F.binary_cross_entropy(w, y, reduction='mean')
         print(loss_w)
-        exit()
         # optimize total loss
         if iterator%TrainParams[1]==0: #Update gradients by batch
            optimizer.zero_grad()
@@ -176,14 +174,15 @@ output_train_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRA
 TrainSamplesX=torch.tensor(HC.HitCluster.GenerateSeedVectors(UI.PickleOperations(output_train_file_location,'r', 'N/A')[0])[0], dtype=torch.float32) #Loading features
 TrainSamplesY=torch.tensor(HC.HitCluster.GenerateSeedVectors(UI.PickleOperations(output_train_file_location,'r', 'N/A')[0])[1], dtype=torch.float32).unsqueeze(1) #Loading labels
 
-print(TrainSamplesX,TrainSamplesY)
-exit()
+#Validation sample
+output_val_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_SEEDS'+'.pkl' #Path
+ValSamplesX=torch.tensor(HC.HitCluster.GenerateSeedVectors(UI.PickleOperations(output_val_file_location,'r', 'N/A')[0])[0], dtype=torch.float32) #Loading features
+ValSamplesY=torch.tensor(HC.HitCluster.GenerateSeedVectors(UI.PickleOperations(output_val_file_location,'r', 'N/A')[0])[1], dtype=torch.float32).unsqueeze(1) #Loading labels
 
-output_val_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_SEEDS'+'.pkl'
-ValSamples=UI.PickleOperations(output_val_file_location,'r', 'N/A')[0]
-output_test_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TEST_SEEDS'+'.pkl'
-TestSamples=UI.PickleOperations(output_test_file_location,'r', 'N/A')[0]
-
+#Test sample
+output_test_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TEST_SEEDS'+'.pkl' #Path
+TestSamplesX=torch.tensor(HC.HitCluster.GenerateSeedVectors(UI.PickleOperations(output_test_file_location,'r', 'N/A')[0])[0], dtype=torch.float32) #Loading features
+TestSamplesY=torch.tensor(HC.HitCluster.GenerateSeedVectors(UI.PickleOperations(output_test_file_location,'r', 'N/A')[0])[1], dtype=torch.float32).unsqueeze(1) #Loading labels
 
 def main(self):
     print(UI.TimeStamp(),'Starting the training process... ')
@@ -191,7 +190,7 @@ def main(self):
     Model_Meta_Path=EOSsubModelDIR+'/'+args.BatchID+'_Meta'
     Model_Path=EOSsubModelDIR+'/'+args.BatchID
     ModelMeta=UI.PickleOperations(Model_Meta_Path, 'r', 'N/A')[0]
-    device = torch.device('cpu')
+
     model = ML.GenerateModel(ModelMeta).to(device)
     optimizer = optim.Adam(model.parameters(), lr=TrainParams[0])
     scheduler = StepLR(optimizer, step_size=0.1,gamma=0.1)
@@ -204,23 +203,24 @@ def main(self):
     except:
            print(UI.TimeStamp(), bcolors.WARNING+"Model/state data files are missing, skipping this step..." +bcolors.ENDC)
     records=[]
-    TrainSampleSize=len(TrainSamples)
+    TrainSampleSize=len(TrainSamplesX)
     fraction_size=math.ceil(TrainSampleSize/TrainParams[3])
     for epoch in range(0, TrainParams[2]):
        for fraction in range(0, TrainParams[3]):
          sp=fraction*fraction_size
          ep=min((fraction+1)*fraction_size,TrainSampleSize)
-         train_loss, itr= train(model, device,TrainSamples[sp:ep], optimizer)
+         train_loss, itr= train(model, TrainSamplesX[sp:ep], TrainSamplesY[sp:ep], optimizer)
+         print(train_loss, itr)
          exit()
-         thld, val_loss,val_acc = validate(model, device, ValSamples)
-         test_loss, test_acc = test(model, device,TestSamples, thld)
-         scheduler.step()
-         print(UI.TimeStamp(),'Epoch ',epoch, ' is completed')
-         records.append([epoch,itr,train_loss,thld,val_loss,val_acc,test_loss,test_acc])
-         torch.save({    'epoch': epoch,
-                      'optimizer_state_dict': optimizer.state_dict(),
-                      'scheduler': scheduler.state_dict(),    # HERE IS THE CHANGE
-                      }, State_Save_Path)
+         # thld, val_loss,val_acc = validate(model, device, ValSamples)
+         # test_loss, test_acc = test(model, device,TestSamples, thld)
+         # scheduler.step()
+         # print(UI.TimeStamp(),'Epoch ',epoch, ' is completed')
+         # records.append([epoch,itr,train_loss,thld,val_loss,val_acc,test_loss,test_acc])
+         # torch.save({    'epoch': epoch,
+         #              'optimizer_state_dict': optimizer.state_dict(),
+         #              'scheduler': scheduler.state_dict(),    # HERE IS THE CHANGE
+         #              }, State_Save_Path)
     torch.save(model.state_dict(), Model_Path)
     Header=[['Epoch','# Samples','Train Loss','Optimal Threshold','Validation Loss','Validation Accuracy','Test Loss','Test Accuracy']]
     Header+=records
