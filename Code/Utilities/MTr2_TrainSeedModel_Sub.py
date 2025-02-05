@@ -56,7 +56,7 @@ import numpy as np
 import torch
 from torch import optim
 from torch.optim.lr_scheduler import StepLR
-import torch.nn.functional as F
+import torch.nn as nn
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 device = "cpu"
 
@@ -91,12 +91,12 @@ def binary_classification_stats(output, y, thld):
 
 
 
-def train(model,  sampleX, sampleY, optimizer):
+def train(model,  sampleX, sampleY, optimizer, criterion):
     """ train routine, loss and accumulated gradients used to update
         the model via the ADAM optimizer externally
     """
     model.train()
-    losses_w = [] # edge weight loss
+    losses = [] # edge weight loss
     iterator=0
     for x, y in zip(sampleX, sampleY):
         if len(x)==0: continue
@@ -104,16 +104,16 @@ def train(model,  sampleX, sampleY, optimizer):
         iterator+=1
         o = model(x)
         #edge weight loss
-        loss_w = F.binary_cross_entropy(o, y, reduction='mean')
+        loss = criterion(o, y)
         # optimize total loss
         if iterator%TrainParams[1]==0: #Update gradients by batch
            optimizer.zero_grad()
-           loss_w.backward()
+           loss.backward()
            optimizer.step()
         # store losses
-        losses_w.append(loss_w.item())
-    loss_w = np.nanmean(losses_w)
-    return loss_w,iterator
+        losses.append(loss.item())
+    loss_ = np.nanmean(losses)
+    return loss,iterator
 
 #Deriving validation metrics. Please note that in this function the optimal acceptance is calculated. This is unique to the tracker module
 def validate(model, device, sample):
@@ -193,6 +193,7 @@ def main(self):
     model = ML.GenerateModel(ModelMeta).to(device)
     optimizer = optim.Adam(model.parameters(), lr=TrainParams[0])
     scheduler = StepLR(optimizer, step_size=0.1,gamma=0.1)
+    criterion = nn.BCELoss()
     print(UI.TimeStamp(),'Try to load the previously saved model/optimiser state files ')
     try:
            model.load_state_dict(torch.load(Model_Path))
@@ -208,7 +209,7 @@ def main(self):
        for fraction in range(0, TrainParams[3]):
          sp=fraction*fraction_size
          ep=min((fraction+1)*fraction_size,TrainSampleSize)
-         train_loss, itr= train(model, TrainSamplesX[sp:ep], TrainSamplesY[sp:ep], optimizer)
+         train_loss, itr= train(model, TrainSamplesX[sp:ep], TrainSamplesY[sp:ep], optimizer,criterion)
          print(train_loss, itr)
          # thld, val_loss,val_acc = validate(model, device, ValSamples)
          # test_loss, test_acc = test(model, device,TestSamples, thld)
