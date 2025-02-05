@@ -104,7 +104,7 @@ def train(model,  sampleX, sampleY, optimizer, criterion):
         iterator+=1
         o = model(x)
         #edge weight loss
-        loss = criterion(o, y, reduction='mean')
+        loss = criterion(o, y)
         # optimize total loss
         if iterator%TrainParams[1]==0: #Update gradients by batch
            optimizer.zero_grad()
@@ -122,7 +122,7 @@ def validate(model,  sampleX, sampleY, criterion):
         if len(x)==0: continue
         x, y = x.unsqueeze(0), y.unsqueeze(0)
         o = model(x)
-        loss = criterion(o, y, reduction='mean').item()
+        loss = criterion(o, y).item()
         diff, opt_thld, opt_acc = 100, 0, 0
         for thld in np.arange(0.01, 0.6, 0.01):
             acc, TPR, TNR = binary_classification_stats(o, y, thld)
