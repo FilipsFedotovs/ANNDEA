@@ -173,8 +173,8 @@ def test(model, device, sample, thld):
 ########## importing and preparing data samples
 #Training sample
 output_train_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_SEEDS'+'.pkl' #Path
-TrainSamplesX=HC.HitCluster.GenerateSeedVectors(UI.PickleOperations(output_train_file_location,'r', 'N/A')[0])[0] #Loading features
-TrainSamplesY=HC.HitCluster.GenerateSeedVectors(UI.PickleOperations(output_train_file_location,'r', 'N/A')[0])[1] #Loading labels
+TrainSamplesX=torch.tensor(HC.HitCluster.GenerateSeedVectors(UI.PickleOperations(output_train_file_location,'r', 'N/A')[0])[0], dtype=torch.float32) #Loading features
+TrainSamplesY=torch.tensor(HC.HitCluster.GenerateSeedVectors(UI.PickleOperations(output_train_file_location,'r', 'N/A')[0])[1], dtype=torch.float32).unsqueeze(1) #Loading labels
 
 print(TrainSamplesX,TrainSamplesY)
 exit()
