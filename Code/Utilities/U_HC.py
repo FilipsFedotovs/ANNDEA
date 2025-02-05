@@ -18,24 +18,24 @@ class HitCluster:
       def __hash__(self):
         return hash(('-'.join(str(self.ClusterID))))
       def LoadClusterHits(self,RawHits): #Decorate hit information
-           self.ClusterHits=[]
-           self.ClusterHitIDs=[]
+           self.Hits=[]
+           self.HitIDs=[]
            __ClusterHitsTemp=[]
            for s in RawHits:
                if s[1]>=self.ClusterID[0]*self.Step[0] and s[1]<((self.ClusterID[0]+1)*self.Step[0]):
                    if s[2]>=self.ClusterID[1]*self.Step[1] and s[2]<((self.ClusterID[1]+1)*self.Step[1]):
                           __ClusterHitsTemp.append([(s[1]-(self.ClusterID[0]*self.Step[0]))/self.Step[2],(s[2]-(self.ClusterID[1]*self.Step[1]))/self.Step[2], (s[3]-(self.ClusterID[2]*self.Step[2]))/self.Step[2],((s[4])+1)/2, ((s[5])+1)/2])
-                          self.ClusterHitIDs.append(s[0])
-                          self.ClusterHits.append(s)
+                          self.HitIDs.append(s[0])
+                          self.Hits.append(s)
            self.ClusterSize=len(__ClusterHitsTemp)
-           self.RawClusterNodes=__ClusterHitsTemp #Avoiding importing torch without a good reason (reduce load on the HTCOndor initiative)
+           self.RawNodes=__ClusterHitsTemp #Avoiding importing torch without a good reason (reduce load on the HTCOndor initiative)
            del __ClusterHitsTemp
 
       def GenerateSeeds(self, cut_dt, cut_dr, cut_dz, l, MaxEdges, SeedFlowLog): #Decorate hit information
            #New workaround: instead of a painful Pandas outer join a loop over list is performed
-           _Hits=self.ClusterHits
+           _Hits=self.Hits
            _Hits= sorted(_Hits, key=lambda x: x[3], reverse=True) #Sorting by z
-           self.RawClusterEdges=[] #Initiate the empty container for seeds
+           self.Seeds=[] #Initiate the empty container for seeds
            _sp,_ep=HitCluster.SplitJob(l,MaxEdges,self.ClusterSize)
 
 
@@ -53,13 +53,13 @@ class HitCluster:
                         self.SeedFlowValuesAll = [a + b for a, b in zip(self.SeedFlowValuesAll, FitSeed[1])]
                         self.SeedFlowValuesTrue = [a + b for a, b in zip(self.SeedFlowValuesTrue, FitSeed[2])]
                         if FitSeed[0]:
-                               self.RawClusterEdges.append(HitCluster.NormaliseSeed1(self,_Hits[r], _Hits[l], cut_dt))
+                               self.Seeds.append(HitCluster.NormaliseSeed1(self,_Hits[r], _Hits[l], cut_dt))
            else:
                for l in range(_sp,min(_ep,self.ClusterSize-1)):
                     for r in range(l+1,len(_Hits)):
                         FitSeed=HitCluster.FitSeed(_Hits[l],_Hits[r],cut_dt,cut_dr,cut_dz)
                         if FitSeed:
-                            self.RawClusterEdges.append(HitCluster.NormaliseSeed1(self,_Hits[r], _Hits[l], cut_dt))
+                            self.Seeds.append(HitCluster.NormaliseSeed1(self,_Hits[r], _Hits[l], cut_dt))
            return True
            #  def GenerateSeeds(self, cut_dt, cut_dr, cut_dz, SeedClassifier='N/A', l=-1, MaxEdges=-1): #Decorate hit information
            # #New workaround: instead of a painful Pandas outer join a loop over list is performed
@@ -131,15 +131,11 @@ class HitCluster:
 
       def GenerateSeedVectors(self):
             #Split samples into X and Y sets
-            X_list = []
-            y_list = []
-            for s in self.RawClusterEdges:
-                X_list.append(s[3:])
-                y_list.append(s[2])
-            import torch
-            # Convert lists to PyTorch tensors
-            self.ClusterSeedX = torch.tensor(X_list, dtype=torch.float32)  # Features
-            self.ClusterSeedY = torch.tensor(y_list, dtype=torch.float32).unsqueeze(1)  # Labels (reshape to match output shape)
+            self.SeedsX = []
+            self.SeedsY = []
+            for s in self.Seeds:
+                self.SeedsX.append(s[3:])
+                self.SeedsY.append(s[2])
             return True
 
       @staticmethod
