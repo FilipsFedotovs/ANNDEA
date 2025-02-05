@@ -146,7 +146,7 @@ def test(model,  sampleX, sampleY, criterion, thld):
             loss = criterion(o, y).item()
             acc, TPR, TNR = binary_classification_stats(o, y, thld)
             accs.append(acc.item())
-            losses.append(loss.item())
+            losses.append(loss)
     return np.nanmean(losses), np.nanmean(accs)
 
 ########## importing and preparing data samples
