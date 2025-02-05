@@ -229,7 +229,6 @@ if os.path.isfile(TrainSampleOutputMeta)==False: #A case of generating samples f
                              tdata.drop(tdata.index[tdata['y'] < (Y_ID*stepY)], inplace = True)  #Keeping the relevant z slice
                              tdata.drop(tdata.index[tdata['z'] >= ((Z_ID+1)*stepZ)], inplace = True)  #Keeping the relevant z slice
                              tdata.drop(tdata.index[tdata['z'] < (Z_ID*stepZ)], inplace = True)  #Keeping the relevant z slice
-                             print(tdata)
                              if len(tdata)>1:
                                  if Sampling>=random.random():
                                      tdata.to_csv(required_tfile_location,index=False)
