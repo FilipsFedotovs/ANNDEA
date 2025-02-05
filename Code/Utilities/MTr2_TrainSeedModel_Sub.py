@@ -101,13 +101,10 @@ def train(model,  sampleX, sampleY, optimizer, criterion):
     for x, y in zip(sampleX, sampleY):
         if len(x)==0: continue
         x, y = x.unsqueeze(0), y.unsqueeze(0)
-        print(x)
-        print(y)
         iterator+=1
         o = model(x)
-        print(o)
         #edge weight loss
-        loss = criterion(o, y)
+        loss = criterion(o, y, reduction='mean')
         # optimize total loss
         if iterator%TrainParams[1]==0: #Update gradients by batch
            optimizer.zero_grad()
@@ -118,26 +115,17 @@ def train(model,  sampleX, sampleY, optimizer, criterion):
     return np.nanmean(losses),iterator
 
 #Deriving validation metrics. Please note that in this function the optimal acceptance is calculated. This is unique to the tracker module
-def validate(model, device, sample):
+def validate(model,  sampleX, sampleY, criterion):
     model.eval() #Specific feature of pytorch - it has 2 modes eval and train that need to be selected depending on the evaluation.
     opt_thlds, accs, losses = [], [], []
-    for HC in sample:
-        data = HC.to(device)
-        if (len(data.x)==0 or len(data.edge_index)==0): continue
-        try:
-            output = model(data.x, data.edge_index, data.edge_attr)
-        except:
-            continue
-
-        y, output = data.y.float(), output.squeeze(1)
-        try:
-          loss = F.binary_cross_entropy(output, y, reduction='mean').item()
-        except:
-            print('Erroneous data set: ',data.x, data.edge_index, data.edge_attr, 'skipping these samples...')
-            continue
+    for x, y in zip(sampleX, sampleY):
+        if len(x)==0: continue
+        x, y = x.unsqueeze(0), y.unsqueeze(0)
+        o = model(x)
+        loss = criterion(o, y, reduction='mean').item()
         diff, opt_thld, opt_acc = 100, 0, 0
         for thld in np.arange(0.01, 0.6, 0.01):
-            acc, TPR, TNR = binary_classification_stats(output, y, thld)
+            acc, TPR, TNR = binary_classification_stats(o, y, thld)
             delta = abs(TPR-TNR)
             if (delta.item() < diff):
                 diff, opt_thld, opt_acc = delta.item(), thld, acc.item()
@@ -213,7 +201,9 @@ def main(self):
          ep=min((fraction+1)*fraction_size,TrainSampleSize)
          train_loss, itr= train(model, TrainSamplesX[sp:ep], TrainSamplesY[sp:ep], optimizer,criterion)
          print(train_loss, itr)
-         # thld, val_loss,val_acc = validate(model, device, ValSamples)
+         thld, val_loss,val_acc = validate(model, ValSamplesX, ValSamplesY, criterion)
+         print(thld, val_loss,val_acc)
+         exit()
          # test_loss, test_acc = test(model, device,TestSamples, thld)
          # scheduler.step()
          # print(UI.TimeStamp(),'Epoch ',epoch, ' is completed')
