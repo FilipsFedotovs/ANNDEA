@@ -172,9 +172,9 @@ class HitCluster:
           return [h1, h2, _ts, _dx,_dy,_dz,_dtx,_dty]
       def NormaliseSeed2(self,_Hit2, _Hit1, _cut_dt):
           h1,h2,x1,x2,y1,y2,z1,z2, tx1, tx2, ty1, ty2, l1, l2=_Hit2[0],_Hit1[0],_Hit2[1],_Hit1[1],_Hit2[2],_Hit1[2],_Hit2[3],_Hit1[3],_Hit2[4],_Hit1[4],_Hit2[5],_Hit1[5],_Hit2[6],_Hit1[6]
-          _dl= math.sqrt(((x2-x1)**2) + ((y2-y1)**2) + ((z2-z1)**2))
-          _dr= math.sqrt(((x2-x1)**2) + ((y2-y1)**2))
-          _dz=abs(z2-z1)
+          _dl= math.sqrt(((x2-x1)**2) + ((y2-y1)**2) + ((z2-z1)**2))/self.Step[2]
+          _dr= math.sqrt(((x2-x1)**2) + ((y2-y1)**2))/self.Step[2]
+          _dz=abs(z2-z1)/self.Step[2]
           _dtx=abs(tx2-tx1)/_cut_dt
           _dty=abs(ty2-ty1)/_cut_dt
           _ts=int(((l1==l2) and ('--' not in l1)))
