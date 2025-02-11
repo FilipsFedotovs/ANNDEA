@@ -53,13 +53,13 @@ class HitCluster:
                         self.SeedFlowValuesAll = [a + b for a, b in zip(self.SeedFlowValuesAll, FitSeed[1])]
                         self.SeedFlowValuesTrue = [a + b for a, b in zip(self.SeedFlowValuesTrue, FitSeed[2])]
                         if FitSeed[0]:
-                               self.Seeds.append(HitCluster.NormaliseSeed2(self,_Hits[r], _Hits[l], cut_dt))
+                               self.Seeds.append(HitCluster.NormaliseSeed2b(self,_Hits[r], _Hits[l], cut_dt))
            else:
                for l in range(_sp,min(_ep,self.ClusterSize-1)):
                     for r in range(l+1,len(_Hits)):
                         FitSeed=HitCluster.FitSeed(_Hits[l],_Hits[r],cut_dt,cut_dr,cut_dz)
                         if FitSeed:
-                            self.Seeds.append(HitCluster.NormaliseSeed2(self,_Hits[r], _Hits[l], cut_dt))
+                            self.Seeds.append(HitCluster.NormaliseSeed2b(self,_Hits[r], _Hits[l], cut_dt))
            return True
            #  def GenerateSeeds(self, cut_dt, cut_dr, cut_dz, SeedClassifier='N/A', l=-1, MaxEdges=-1): #Decorate hit information
            # #New workaround: instead of a painful Pandas outer join a loop over list is performed
@@ -179,14 +179,17 @@ class HitCluster:
           _dty=abs(ty2-ty1)/_cut_dt
           _ts=int(((l1==l2) and ('--' not in l1)))
           return [h1, h2, _ts, _dl,_dr,_dz,_dtx,_dty]
-      def NormaliseSeed3(self,_Hit2, _Hit1, _dl_max, _dr_max):
+
+      def NormaliseSeed2b(self,_Hit2, _Hit1, _cut_dt):
           h1,h2,x1,x2,y1,y2,z1,z2, tx1, tx2, ty1, ty2, l1, l2=_Hit2[0],_Hit1[0],_Hit2[1],_Hit1[1],_Hit2[2],_Hit1[2],_Hit2[3],_Hit1[3],_Hit2[4],_Hit1[4],_Hit2[5],_Hit1[5],_Hit2[6],_Hit1[6]
-          _dl= math.sqrt(((x2-x1)**2) + ((y2-y1)**2) + ((z2-z1)**2))
-          _dr= math.sqrt(((x2-x1)**2) + ((y2-y1)**2))
-          _dz=abs(z2-z1)
-          _dtx=abs(tx2-tx1)
-          _dtx=abs(ty2-ty1)
+          _dl= math.sqrt(((x2-x1)**2) + ((y2-y1)**2) + ((z2-z1)**2))/self.Step[2]
+          _dr= math.sqrt(((x2-x1)**2) + ((y2-y1)**2))/self.Step[0]
+          _dz=abs(z2-z1)/self.Step[2]
+          _dtx=abs(tx2-tx1)/_cut_dt
+          _dty=abs(ty2-ty1)/_cut_dt
           _ts=int(((l1==l2) and ('--' not in l1)))
+          return [h1, h2, _ts, _dl,_dr,_dz,_dtx,_dty]
+
 
       def FitSeed(_H1, _H2, _cdt, _cdr, _cdz):
           if _H1[3]==_H2[3]: #Ensuring hit combinations are on different plates
