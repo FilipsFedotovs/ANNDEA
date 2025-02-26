@@ -127,7 +127,7 @@ def validate(model,  sampleX, sampleY, criterion):
         for thld in np.arange(0.01, 0.6, 0.01):
             acc, TPR, TNR = binary_classification_stats(o, y, thld)
             delta = abs(TPR-TNR)
-            if type(data) is int:
+            if type(delta) is int:
                 delta_int=delta
             else:
                 delta_int=delta.item
