@@ -127,8 +127,12 @@ def validate(model,  sampleX, sampleY, criterion):
         for thld in np.arange(0.01, 0.6, 0.01):
             acc, TPR, TNR = binary_classification_stats(o, y, thld)
             delta = abs(TPR-TNR)
-            if (delta.item() < diff):
-                diff, opt_thld, opt_acc = delta.item(), thld, acc.item()
+            if type(data) is int:
+                delta_int=delta
+            else:
+                delta_int=delta.item
+            if (delta_int < diff):
+                diff, opt_thld, opt_acc = delta_int, thld, acc.item()
         opt_thlds.append(opt_thld)
         accs.append(opt_acc)
         losses.append(loss)
