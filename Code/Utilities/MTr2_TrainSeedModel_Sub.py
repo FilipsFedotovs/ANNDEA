@@ -129,9 +129,11 @@ def validate(model,  sampleX, sampleY, criterion):
             if len(x)==0: continue
             x, y = x.unsqueeze(0), y.unsqueeze(0)
             o = model(x)
-            print(o)
-            h=input()
+
             loss = criterion(o, y).item()
+            print(o,y)
+            print(o[0])
+            h=input()
             acc, TPR, TNR = binary_classification_stats(o, y, 0.5)
             # #diff, opt_thld, opt_acc = 100, 0, 0
             # for thld in np.arange(0.01, 0.6, 0.01):
@@ -176,7 +178,6 @@ TrainSamplesY=torch.tensor(HC.HitCluster.GenerateSeedVectors(UI.PickleOperations
 output_val_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_SEEDS'+'.pkl' #Path
 ValSamplesX=torch.tensor(HC.HitCluster.GenerateSeedVectors(UI.PickleOperations(output_val_file_location,'r', 'N/A')[0])[0], dtype=torch.float32) #Loading features
 ValSamplesY=torch.tensor(HC.HitCluster.GenerateSeedVectors(UI.PickleOperations(output_val_file_location,'r', 'N/A')[0])[1], dtype=torch.float32).view(-1, 1) #Loading labels
-print(ValSamplesY)
 
 #Test sample
 output_test_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TEST_SEEDS'+'.pkl' #Path
