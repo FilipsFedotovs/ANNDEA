@@ -148,10 +148,13 @@ def validate(model,  sampleX, sampleY, criterion):
                 x, y = x.unsqueeze(0), y.unsqueeze(0)
                 o = model(x)
                 BC=BinaryClassifier(BC, o, y, thld/100)
-            print('1',BinaryClassifierStats(BC,2)[0],best_F2, best_thresh)
-            if BinaryClassifierStats(BC,2)[1]>best_F2:
+
+            result=BinaryClassifierStats(BC,2)
+            print('1',BC,result[0],best_F2, best_thresh)
+            if result[1]>best_F2:
+                best_F2=result[1]
                 best_thresh=thld/100
-                print('2',BinaryClassifierStats(BC,2)[0],best_F2, best_thresh)
+                print('2',result[0],best_F2, best_thresh)
 
         print('3',BinaryClassifierStats(BC,2)[0],best_F2, best_thresh)
             #acc, TPR, TNR = binary_classification_stats(o, y, 0.5)
