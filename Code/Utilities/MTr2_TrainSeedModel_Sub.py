@@ -80,10 +80,14 @@ def zero_divide(a, b):
 
 #The function bellow calculates binary classification stats
 def binary_classification_stats(output, y, thld):
+    print(y)
+    print(torch.sum(y==1))
+    x=input()
     TP = torch.sum((y==1) & (output>thld))
     TN = torch.sum((y==0) & (output<thld))
     FP = torch.sum((y==0) & (output>thld))
     FN = torch.sum((y==1) & (output<thld))
+
     acc = zero_divide(TP+TN, TP+TN+FP+FN)
     TPR = zero_divide(TP, TP+FN)
     TNR = zero_divide(TN, TN+FP)
