@@ -118,31 +118,34 @@ def train(model,  sampleX, sampleY, optimizer, criterion):
 #Deriving validation metrics. Please note that in this function the optimal acceptance is calculated. This is unique to the tracker module
 def validate(model,  sampleX, sampleY, criterion):
     model.eval() #Specific feature of pytorch - it has 2 modes eval and train that need to be selected depending on the evaluation.
-    opt_thlds, accs, losses = [], [], []
-    for x, y in zip(sampleX, sampleY):
-        print(x, y)
-        if len(x)==0: continue
-        x, y = x.unsqueeze(0), y.unsqueeze(0)
-        print(x, y)
-        o = model(x)
-        print(o, y)
-        loss = criterion(o, y).item()
-        print(loss)
-        x=input()
-        diff, opt_thld, opt_acc = 100, 0, 0
-        for thld in np.arange(0.01, 0.6, 0.01):
-            acc, TPR, TNR = binary_classification_stats(o, y, thld)
-            delta = abs(TPR-TNR)
-            if type(delta) is int:
-                delta_int=delta
-            else:
-                delta_int=delta.item
-            if (delta_int < diff):
-                diff, opt_thld, opt_acc = delta_int, thld, acc.item()
-        opt_thlds.append(opt_thld)
-        accs.append(opt_acc)
-        losses.append(loss)
-    return np.nanmean(opt_thlds),np.nanmean(losses),np.nanmean(accs)
+
+    #Doing the optimal threshold optimisation
+
+
+
+    accs, losses = [], []
+    with torch.no_grad():
+        for x, y in zip(sampleX, sampleY):
+            if len(x)==0: continue
+            x, y = x.unsqueeze(0), y.unsqueeze(0)
+            o = model(x)
+            loss = criterion(o, y).item()
+            acc, TPR, TNR = binary_classification_stats(o, y, 0.5)
+            # #diff, opt_thld, opt_acc = 100, 0, 0
+            # for thld in np.arange(0.01, 0.6, 0.01):
+            #     acc, TPR, TNR = binary_classification_stats(o, y, thld)
+            #     delta = abs(TPR-TNR)
+            #     if type(delta) is int:
+            #         delta_int=delta
+            #     else:
+            #         delta_int=delta.item
+            #     if (delta_int < diff):
+            #         diff, opt_thld, opt_acc = delta_int, thld, acc.item()
+            # opt_thlds.append(opt_thld)
+            accs.append(acc.item)
+            losses.append(loss)
+    #return np.nanmean(opt_thlds),np.nanmean(losses),np.nanmean(accs)
+    return 0.5,np.nanmean(losses),np.nanmean(accs)
 
 #Deriving testing metrics
 def test(model,  sampleX, sampleY, criterion, thld):
@@ -204,7 +207,10 @@ def main(self):
          ep=min((fraction+1)*fraction_size,TrainSampleSize)
          train_loss, itr= train(model, TrainSamplesX[sp:ep], TrainSamplesY[sp:ep], optimizer,criterion)
          thld, val_loss,val_acc = validate(model, ValSamplesX, ValSamplesY, criterion)
+         print(thld, val_loss,val_acc)
          test_loss, test_acc = test(model, ValSamplesX, ValSamplesY, criterion, thld)
+         print(test_loss, test_acc)
+         exit()
          scheduler.step()
          print(UI.TimeStamp(),'Epoch ',epoch, ' is completed')
          records.append([epoch,itr,train_loss,thld,val_loss,val_acc,test_loss,test_acc])
