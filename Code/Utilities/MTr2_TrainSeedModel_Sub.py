@@ -80,7 +80,7 @@ def zero_divide(a, b):
 
 #The function bellow calculates binary classification stats
 def BinaryClassifier(input, output, y, thld):
-    y==y.item()
+    y=y.item()
     output=output.item()
     print(output,y)
     TP = int((y==1) & (output>thld))
