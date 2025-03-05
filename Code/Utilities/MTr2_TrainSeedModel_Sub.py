@@ -82,7 +82,7 @@ def zero_divide(a, b):
 def BinaryClassifier(input, output, y, thld):
     y=y.item()
     output=output.item()
-    print(output,y)
+
     TP = int((y==1) & (output>thld))
     TN = int((y==0) & (output<thld))
     FP = int((y==0) & (output>thld))
@@ -143,8 +143,8 @@ def validate(model,  sampleX, sampleY, criterion):
             x, y = x.unsqueeze(0), y.unsqueeze(0)
             o = model(x)
             BC=BinaryClassifier(BC, o, y, 0.5)
-            print(BC)
-            h=input()
+        print(BC)
+
             #acc, TPR, TNR = binary_classification_stats(o, y, 0.5)
             #loss = criterion(o, y).item()
             # #diff, opt_thld, opt_acc = 100, 0, 0
