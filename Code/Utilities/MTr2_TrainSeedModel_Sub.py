@@ -104,10 +104,7 @@ def BinaryClassifierStats(input, b):
     R = zero_divide(TP, TP+FN)
     P = zero_divide(TP, TP+FP)
 
-    print(P,R)
     Fb=(1+b**2) * (P * R)/((b**2*P)+R)
-
-    print((1+b**2) * (0.5 * 0.8)/((b**2*0.5)+0.8))
 
     return acc, Fb
 
@@ -143,16 +140,20 @@ def validate(model,  sampleX, sampleY, criterion):
     #Doing the optimal threshold optimisation
     #accs, losses = [], []
     with torch.no_grad():
-        BC=[0,0,0,0]
+        best_F2=0.0
+        best_thresh=0.0
+        for thld in range(0, 101):
+            BC=[0,0,0,0]
+            for x, y in zip(sampleX, sampleY):
+                x, y = x.unsqueeze(0), y.unsqueeze(0)
+                o = model(x)
+                BC=BinaryClassifier(BC, o, y, thld/100)
+            print('1',BinaryClassifierStats(BC,2)[0],best_F2, best_thresh)
+            if BinaryClassifierStats(BC,2)[1]>best_F2:
+                best_thresh=thld/100
+                print('2',BinaryClassifierStats(BC,2)[0],best_F2, best_thresh)
 
-        for x, y in zip(sampleX, sampleY):
-            x, y = x.unsqueeze(0), y.unsqueeze(0)
-            o = model(x)
-            BC=BinaryClassifier(BC, o, y, 0.5)
-
-        print(BinaryClassifierStats(BC,2))
-        exit()
-
+        print('3',BinaryClassifierStats(BC,2)[0],best_F2, best_thresh)
             #acc, TPR, TNR = binary_classification_stats(o, y, 0.5)
             #loss = criterion(o, y).item()
             # #diff, opt_thld, opt_acc = 100, 0, 0
