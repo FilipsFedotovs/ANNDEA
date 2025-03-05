@@ -135,15 +135,17 @@ def validate(model,  sampleX, sampleY, criterion):
     model.eval() #Specific feature of pytorch - it has 2 modes eval and train that need to be selected depending on the evaluation.
 
     #Doing the optimal threshold optimisation
-
     #accs, losses = [], []
     with torch.no_grad():
         BC=[0,0,0,0]
+
         for x, y in zip(sampleX, sampleY):
             x, y = x.unsqueeze(0), y.unsqueeze(0)
             o = model(x)
             BC=BinaryClassifier(BC, o, y, 0.5)
+        print(len(sampleY))
         print(BC)
+        print(BC[0]+BC[1]+BC[2]+BC[3])
 
             #acc, TPR, TNR = binary_classification_stats(o, y, 0.5)
             #loss = criterion(o, y).item()
