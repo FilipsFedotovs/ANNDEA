@@ -67,6 +67,7 @@ import U_HC as HC
 EOSsubDIR=EOS_DIR+'/'+'ANNDEA'
 EOSsubModelDIR=EOSsubDIR+'/'+'Models'
 
+b_parameter=2
 
 ##############################################################################################################################
 ######################################### Starting the program ################################################################
@@ -126,7 +127,7 @@ def train(model,  sampleX, sampleY, optimizer, criterion):
     return np.nanmean(losses),iterator
 
 #Deriving validation metrics. Please note that in this function the optimal acceptance is calculated. This is unique to the tracker module
-def validate(model,  sampleX, sampleY, criterion):
+def validate(model,  sampleX, sampleY, criterion, b):
     model.eval() #Specific feature of pytorch - it has 2 modes eval and train that need to be selected depending on the evaluation.
     losses = []
 
@@ -146,50 +147,30 @@ def validate(model,  sampleX, sampleY, criterion):
     #Optimise acceptance
     best_F2=0.0
     best_thresh=0.0
+    best_acc=0.0
     for thld in range(0, 101):
-        result=BinaryClassifierStats(O, Y, thld/100, 2)
-        print('1',thld/100,result[0],best_F2, best_thresh)
+        result=BinaryClassifierStats(O, Y, thld/100, b)
         if result[1]>best_F2:
             best_F2=result[1]
             best_thresh=thld/100
-            print('2',thld/100,result[0],best_F2, best_thresh)
+            best_acc=result[0]
 
-    print('3',best_F2, best_thresh)
-    exit()
-            #acc, TPR, TNR = binary_classification_stats(o, y, 0.5)
-            #loss = criterion(o, y).item()
-            # #diff, opt_thld, opt_acc = 100, 0, 0
-            # for thld in np.arange(0.01, 0.6, 0.01):
-            #     acc, TPR, TNR = binary_classification_stats(o, y, thld)
-            #     delta = abs(TPR-TNR)
-            #     if type(delta) is int:
-            #         delta_int=delta
-            #     else:
-            #         delta_int=delta.item
-            #     if (delta_int < diff):
-            #         diff, opt_thld, opt_acc = delta_int, thld, acc.item()
-            # opt_thlds.append(opt_thld)
-            # accs.append(acc.item)
-            # losses.append(loss)
-            # print(accs)
-            # print(loss)
-    #return np.nanmean(opt_thlds),np.nanmean(losses),np.nanmean(accs)
-    return 0.5,np.nanmean(losses),np.nanmean(accs)
+    return best_thresh,np.nanmean(losses),best_acc
 
 #Deriving testing metrics
-def test(model,  sampleX, sampleY, criterion, thld):
+def test(model,  sampleX, sampleY, criterion, thld, b):
     model.eval()
-    losses, accs = [], []
+    losses, Y, O = [], [], []
     with torch.no_grad():
         for x, y in zip(sampleX, sampleY):
-            if len(x)==0: continue
             x, y = x.unsqueeze(0), y.unsqueeze(0)
             o = model(x)
             loss = criterion(o, y).item()
-            acc, TPR, TNR = binary_classification_stats(o, y, thld)
-            accs.append(acc.item())
             losses.append(loss)
-    return np.nanmean(losses), np.nanmean(accs)
+            O.append(o.item())
+            Y.append(y.item())
+    result=BinaryClassifierStats(O, Y, thld, b)
+    return np.nanmean(losses), result[0]
 
 ########## importing and preparing data samples
 #Training sample
@@ -234,11 +215,8 @@ def main(self):
          sp=fraction*fraction_size
          ep=min((fraction+1)*fraction_size,TrainSampleSize)
          train_loss, itr= train(model, TrainSamplesX[sp:ep], TrainSamplesY[sp:ep], optimizer,criterion)
-         thld, val_loss,val_acc = validate(model, ValSamplesX, ValSamplesY, criterion)
-         print(thld, val_loss,val_acc)
-         test_loss, test_acc = test(model, ValSamplesX, ValSamplesY, criterion, thld)
-         print(test_loss, test_acc)
-         exit()
+         thld, val_loss,val_acc = validate(model, ValSamplesX, ValSamplesY, criterion, b_parameter)
+         test_loss, test_acc = test(model, ValSamplesX, ValSamplesY, criterion, thld, b_parameter)
          scheduler.step()
          print(UI.TimeStamp(),'Epoch ',epoch, ' is completed')
          records.append([epoch,itr,train_loss,thld,val_loss,val_acc,test_loss,test_acc])
@@ -246,6 +224,7 @@ def main(self):
                       'optimizer_state_dict': optimizer.state_dict(),
                       'scheduler': scheduler.state_dict(),    # HERE IS THE CHANGE
                       }, State_Save_Path)
+         print(records)
     torch.save(model.state_dict(), Model_Path)
     Header=[['Epoch','# Samples','Train Loss','Optimal Threshold','Validation Loss','Validation Accuracy','Test Loss','Test Accuracy']]
     Header+=records
