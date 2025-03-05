@@ -126,8 +126,9 @@ def validate(model,  sampleX, sampleY, criterion):
         print(x, y)
         o = model(x)
         print(o, y)
-        x=input()
         loss = criterion(o, y).item()
+        print(loss)
+        x=input()
         diff, opt_thld, opt_acc = 100, 0, 0
         for thld in np.arange(0.01, 0.6, 0.01):
             acc, TPR, TNR = binary_classification_stats(o, y, thld)
