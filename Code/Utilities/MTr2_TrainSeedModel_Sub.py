@@ -95,8 +95,7 @@ def BinaryClassifierStats(O, Y, thld, b):
     acc = zero_divide(TP+TN, TP+TN+FP+FN)
     R = zero_divide(TP, TP+FN)
     P = zero_divide(TP, TP+FP)
-
-    Fb=(1+b**2) * (P * R)/((b**2*P)+R) #F2 score
+    Fb=zero_divide((1+b**2) * (P * R), ((b**2*P)+R)) #F2 score
 
     return acc, Fb
 
@@ -129,8 +128,6 @@ def train(model,  sampleX, sampleY, optimizer, criterion):
 #Deriving validation metrics. Please note that in this function the optimal acceptance is calculated. This is unique to the tracker module
 def validate(model,  sampleX, sampleY, criterion):
     model.eval() #Specific feature of pytorch - it has 2 modes eval and train that need to be selected depending on the evaluation.
-
-
     losses = []
 
     #Generate predictions
