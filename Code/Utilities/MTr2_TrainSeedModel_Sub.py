@@ -79,6 +79,22 @@ def zero_divide(a, b):
     return a/b
 
 #The function bellow calculates binary classification stats
+def BinaryClassifier(input, output, y, thld):
+
+    TP = torch.sum((y==1) & (output>thld))
+    TN = torch.sum((y==0) & (output<thld))
+    FP = torch.sum((y==0) & (output>thld))
+    FN = torch.sum((y==1) & (output<thld))
+
+    current_result=[TP,TN,FP,FN]
+    print(current_result)
+    final_result=[x + y for x, y in zip(input, current_result)]
+    print(final_result)
+    x=input()
+    return final_result
+
+
+#The function bellow calculates binary classification stats
 def binary_classification_stats(output, y, thld):
     TP = torch.sum((y==1) & (output>thld))
     TN = torch.sum((y==0) & (output<thld))
@@ -125,16 +141,17 @@ def validate(model,  sampleX, sampleY, criterion):
 
     accs, losses = [], []
     with torch.no_grad():
+        BC=[0,0,0,0]
         for x, y in zip(sampleX, sampleY):
             if len(x)==0: continue
             x, y = x.unsqueeze(0), y.unsqueeze(0)
             o = model(x)
-
             loss = criterion(o, y).item()
             print(o,y)
-            print(o[0])
+            print(o[0][0])
+            BinaryClassifier(BC, o, y, 0.5)
             h=input()
-            acc, TPR, TNR = binary_classification_stats(o, y, 0.5)
+            #acc, TPR, TNR = binary_classification_stats(o, y, 0.5)
             # #diff, opt_thld, opt_acc = 100, 0, 0
             # for thld in np.arange(0.01, 0.6, 0.01):
             #     acc, TPR, TNR = binary_classification_stats(o, y, thld)
@@ -146,10 +163,10 @@ def validate(model,  sampleX, sampleY, criterion):
             #     if (delta_int < diff):
             #         diff, opt_thld, opt_acc = delta_int, thld, acc.item()
             # opt_thlds.append(opt_thld)
-            accs.append(acc.item)
-            losses.append(loss)
-            print(accs)
-            print(loss)
+            # accs.append(acc.item)
+            # losses.append(loss)
+            # print(accs)
+            # print(loss)
     #return np.nanmean(opt_thlds),np.nanmean(losses),np.nanmean(accs)
     return 0.5,np.nanmean(losses),np.nanmean(accs)
 
