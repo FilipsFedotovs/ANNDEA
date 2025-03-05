@@ -82,17 +82,14 @@ def zero_divide(a, b):
 def BinaryClassifier(input, output, y, thld):
     y==y.item()
     output=output.item()
-
+    print(output,y)
     TP = int((y==1) & (output>thld))
     TN = int((y==0) & (output<thld))
     FP = int((y==0) & (output>thld))
     FN = int((y==1) & (output<thld))
 
     current_result=[TP,TN,FP,FN]
-    print(current_result)
     final_result=[x + y for x, y in zip(input, current_result)]
-    print(final_result)
-    x=input()
     return final_result
 
 
@@ -139,21 +136,17 @@ def validate(model,  sampleX, sampleY, criterion):
 
     #Doing the optimal threshold optimisation
 
-
-
-    accs, losses = [], []
+    #accs, losses = [], []
     with torch.no_grad():
         BC=[0,0,0,0]
         for x, y in zip(sampleX, sampleY):
-            if len(x)==0: continue
             x, y = x.unsqueeze(0), y.unsqueeze(0)
             o = model(x)
-            loss = criterion(o, y).item()
-            print(o.item(),y.item())
-            print(o.item())
-            BinaryClassifier(BC, o, y, 0.5)
+            BC=BinaryClassifier(BC, o, y, 0.5)
+            print(BC)
             h=input()
             #acc, TPR, TNR = binary_classification_stats(o, y, 0.5)
+            #loss = criterion(o, y).item()
             # #diff, opt_thld, opt_acc = 100, 0, 0
             # for thld in np.arange(0.01, 0.6, 0.01):
             #     acc, TPR, TNR = binary_classification_stats(o, y, thld)
