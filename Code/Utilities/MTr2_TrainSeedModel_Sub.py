@@ -144,6 +144,8 @@ def validate(model,  sampleX, sampleY, criterion):
             # opt_thlds.append(opt_thld)
             accs.append(acc.item)
             losses.append(loss)
+            print(accs)
+            print(loss)
     #return np.nanmean(opt_thlds),np.nanmean(losses),np.nanmean(accs)
     return 0.5,np.nanmean(losses),np.nanmean(accs)
 
