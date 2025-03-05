@@ -80,9 +80,6 @@ def zero_divide(a, b):
 
 #The function bellow calculates binary classification stats
 def binary_classification_stats(output, y, thld):
-    print(y)
-    print(torch.sum(y==1))
-    x=input()
     TP = torch.sum((y==1) & (output>thld))
     TN = torch.sum((y==0) & (output<thld))
     FP = torch.sum((y==0) & (output>thld))
@@ -123,9 +120,13 @@ def validate(model,  sampleX, sampleY, criterion):
     model.eval() #Specific feature of pytorch - it has 2 modes eval and train that need to be selected depending on the evaluation.
     opt_thlds, accs, losses = [], [], []
     for x, y in zip(sampleX, sampleY):
+        print(x, y)
         if len(x)==0: continue
         x, y = x.unsqueeze(0), y.unsqueeze(0)
+        print(x, y)
         o = model(x)
+        print(o, y)
+        x=input()
         loss = criterion(o, y).item()
         diff, opt_thld, opt_acc = 100, 0, 0
         for thld in np.arange(0.01, 0.6, 0.01):
