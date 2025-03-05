@@ -129,6 +129,8 @@ def validate(model,  sampleX, sampleY, criterion):
             if len(x)==0: continue
             x, y = x.unsqueeze(0), y.unsqueeze(0)
             o = model(x)
+            print(o)
+            h=input()
             loss = criterion(o, y).item()
             acc, TPR, TNR = binary_classification_stats(o, y, 0.5)
             # #diff, opt_thld, opt_acc = 100, 0, 0
