@@ -94,16 +94,22 @@ def BinaryClassifier(input, output, y, thld):
 
 
 #The function bellow calculates binary classification stats
-def binary_classification_stats(output, y, thld):
-    TP = torch.sum((y==1) & (output>thld))
-    TN = torch.sum((y==0) & (output<thld))
-    FP = torch.sum((y==0) & (output>thld))
-    FN = torch.sum((y==1) & (output<thld))
+def BinaryClassifierStats(input, b):
+    TP = input[0]
+    TN = input[1]
+    FP = input[2]
+    FN = input[3]
 
     acc = zero_divide(TP+TN, TP+TN+FP+FN)
-    TPR = zero_divide(TP, TP+FN)
-    TNR = zero_divide(TN, TN+FP)
-    return acc, TPR, TNR
+    R = zero_divide(TP, TP+FN)
+    P = zero_divide(TP, TP+FP)
+
+    print(P,R)
+    Fb=(1+b**2) * (P * R)/((b**2*P)+R)
+
+    print((1+b**2) * (0.5 * 0.8)/((b**2*0.5)+0.8))
+
+    return acc, Fb
 
 
 
@@ -143,9 +149,9 @@ def validate(model,  sampleX, sampleY, criterion):
             x, y = x.unsqueeze(0), y.unsqueeze(0)
             o = model(x)
             BC=BinaryClassifier(BC, o, y, 0.5)
-        print(len(sampleY))
-        print(BC)
-        print(BC[0]+BC[1]+BC[2]+BC[3])
+
+        print(BinaryClassifierStats(BC,2))
+        exit()
 
             #acc, TPR, TNR = binary_classification_stats(o, y, 0.5)
             #loss = criterion(o, y).item()
