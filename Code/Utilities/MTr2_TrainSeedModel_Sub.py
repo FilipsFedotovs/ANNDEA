@@ -79,34 +79,27 @@ def zero_divide(a, b):
     return a/b
 
 #The function bellow calculates binary classification stats
-def BinaryClassifier(input, output, y, thld):
-    y=y.item()
-    output=output.item()
+def BinaryClassifierStats(O, Y, thld, b):
 
-    TP = int((y==1) & (output>thld))
-    TN = int((y==0) & (output<thld))
-    FP = int((y==0) & (output>thld))
-    FN = int((y==1) & (output<thld))
+    TP = 0
+    TN = 0
+    FP = 0
+    FN = 0
 
-    current_result=[TP,TN,FP,FN]
-    final_result=[x + y for x, y in zip(input, current_result)]
-    return final_result
-
-
-#The function bellow calculates binary classification stats
-def BinaryClassifierStats(input, b):
-    TP = input[0]
-    TN = input[1]
-    FP = input[2]
-    FN = input[3]
+    for o, y in zip(O, Y):
+        TP += int((y==1) & (o>thld))
+        TN += int((y==0) & (o<thld))
+        FP += int((y==0) & (o>thld))
+        FN += int((y==1) & (o<thld))
 
     acc = zero_divide(TP+TN, TP+TN+FP+FN)
     R = zero_divide(TP, TP+FN)
     P = zero_divide(TP, TP+FP)
 
-    Fb=(1+b**2) * (P * R)/((b**2*P)+R)
+    Fb=(1+b**2) * (P * R)/((b**2*P)+R) #F2 score
 
     return acc, Fb
+
 
 
 
@@ -137,26 +130,35 @@ def train(model,  sampleX, sampleY, optimizer, criterion):
 def validate(model,  sampleX, sampleY, criterion):
     model.eval() #Specific feature of pytorch - it has 2 modes eval and train that need to be selected depending on the evaluation.
 
-    #Doing the optimal threshold optimisation
-    #accs, losses = [], []
+
+    losses = []
+
+    #Generate predictions
+    Y=[]
+    O=[]
+
     with torch.no_grad():
-        best_F2=0.0
-        best_thresh=0.0
-        for thld in range(0, 101):
-            BC=[0,0,0,0]
-            for x, y in zip(sampleX, sampleY):
+        for x, y in zip(sampleX, sampleY):
                 x, y = x.unsqueeze(0), y.unsqueeze(0)
                 o = model(x)
-                BC=BinaryClassifier(BC, o, y, thld/100)
+                loss = criterion(o, y).item()
+                losses.append(loss)
+                O.append(o.item())
+                Y.append(y.item())
 
-            result=BinaryClassifierStats(BC,2)
-            print('1',thld/100,BC,result[0],best_F2, best_thresh)
-            if result[1]>best_F2:
-                best_F2=result[1]
-                best_thresh=thld/100
-                print('2',thld/100,result[0],best_F2, best_thresh)
+    #Optimise acceptance
+    best_F2=0.0
+    best_thresh=0.0
+    for thld in range(0, 101):
+        result=BinaryClassifierStats(O, Y, thld/100, 2)
+        print('1',thld/100,result[0],best_F2, best_thresh)
+        if result[1]>best_F2:
+            best_F2=result[1]
+            best_thresh=thld/100
+            print('2',thld/100,result[0],best_F2, best_thresh)
 
-        print('3',BinaryClassifierStats(BC,2)[0],best_F2, best_thresh)
+    print('3',best_F2, best_thresh)
+    exit()
             #acc, TPR, TNR = binary_classification_stats(o, y, 0.5)
             #loss = criterion(o, y).item()
             # #diff, opt_thld, opt_acc = 100, 0, 0
