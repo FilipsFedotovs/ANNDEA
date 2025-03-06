@@ -368,7 +368,7 @@ while Status<len(Program):
                         TrainSamples.append(Samples[s])
             for s in range(TrainFraction,TrainFraction+ValFraction):
                          ValSamples.append(Samples[s])
-            for smpl in range(TrainFraction+ValFraction,len(Samples)):
+            for s in range(TrainFraction+ValFraction,len(Samples)):
                          TestSamples.append(Samples[s])
             output_train_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_SEEDS'+'.pkl'
             print(UI.PickleOperations(output_train_file_location,'w', TrainSamples)[1])
