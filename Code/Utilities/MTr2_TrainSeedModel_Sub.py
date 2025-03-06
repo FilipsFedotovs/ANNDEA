@@ -200,6 +200,9 @@ TestSamplesY=torch.tensor(HC.HitCluster.GenerateSeedVectors(UI.PickleOperations(
 print(TestSamplesX)
 print(TestSamplesY)
 
+print(TestSamplesX[14567])
+print(TestSamplesY[14567])
+
 print(len(TestSamplesX))
 print(len(TestSamplesY))
 
