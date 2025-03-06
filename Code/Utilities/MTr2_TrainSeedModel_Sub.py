@@ -178,8 +178,8 @@ output_train_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRA
 TrainSamplesX=torch.tensor(HC.HitCluster.GenerateSeedVectors(UI.PickleOperations(output_train_file_location,'r', 'N/A')[0])[0], dtype=torch.float32) #Loading features
 TrainSamplesY=torch.tensor(HC.HitCluster.GenerateSeedVectors(UI.PickleOperations(output_train_file_location,'r', 'N/A')[0])[1], dtype=torch.float32).view(-1, 1) #Loading labels
 
-TrainSamplesX=TrainSamplesX[0:1000]
-TrainSamplesY=TrainSamplesY[0:1000]
+TrainSamplesX=TrainSamplesX[0:TrainParams[4]]
+TrainSamplesY=TrainSamplesY[0:TrainParams[4]]
 
 
 #Validation sample
