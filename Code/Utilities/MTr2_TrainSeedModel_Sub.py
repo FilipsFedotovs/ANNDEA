@@ -178,6 +178,10 @@ output_train_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRA
 TrainSamplesX=torch.tensor(HC.HitCluster.GenerateSeedVectors(UI.PickleOperations(output_train_file_location,'r', 'N/A')[0])[0], dtype=torch.float32) #Loading features
 TrainSamplesY=torch.tensor(HC.HitCluster.GenerateSeedVectors(UI.PickleOperations(output_train_file_location,'r', 'N/A')[0])[1], dtype=torch.float32).view(-1, 1) #Loading labels
 
+TrainSamplesX=TrainSamplesX[0:1000]
+TrainSamplesY=TrainSamplesY[0:1000]
+
+
 #Validation sample
 output_val_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_SEEDS'+'.pkl' #Path
 ValSamplesX=torch.tensor(HC.HitCluster.GenerateSeedVectors(UI.PickleOperations(output_val_file_location,'r', 'N/A')[0])[0], dtype=torch.float32) #Loading features
@@ -218,7 +222,7 @@ def main(self):
          thld, val_loss,val_acc = validate(model, ValSamplesX, ValSamplesY, criterion, b_parameter)
          test_loss, test_acc = test(model, ValSamplesX, ValSamplesY, criterion, thld, b_parameter)
          scheduler.step()
-         print(UI.TimeStamp(),'Epoch ',epoch, ' is completed')
+         print(UI.TimeStamp(),'Epoch ',epoch, ' and fraction ', fraction, ' is completed')
          records.append([epoch,itr,train_loss,thld,val_loss,val_acc,test_loss,test_acc])
          torch.save({    'epoch': epoch,
                       'optimizer_state_dict': optimizer.state_dict(),
