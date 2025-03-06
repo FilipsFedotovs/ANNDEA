@@ -220,7 +220,7 @@ def main(self):
          ep=min((fraction+1)*fraction_size,TrainSampleSize)
          train_loss, itr= train(model, TrainSamplesX[sp:ep], TrainSamplesY[sp:ep], optimizer,criterion)
          thld, val_loss,val_acc = validate(model, ValSamplesX, ValSamplesY, criterion, b_parameter)
-         test_loss, test_acc = test(model, ValSamplesX, ValSamplesY, criterion, thld, b_parameter)
+         test_loss, test_acc = test(model, TestSamplesX, TestSamplesY, criterion, thld, b_parameter)
          scheduler.step()
          print(UI.TimeStamp(),'Epoch ',epoch, ' and fraction ', fraction, ' is completed')
          records.append([epoch,itr,train_loss,thld,val_loss,val_acc,test_loss,test_acc])
