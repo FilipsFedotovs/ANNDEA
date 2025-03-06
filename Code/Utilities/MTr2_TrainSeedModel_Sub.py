@@ -192,6 +192,12 @@ output_test_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TEST
 TestSamplesX=torch.tensor(HC.HitCluster.GenerateSeedVectors(UI.PickleOperations(output_test_file_location,'r', 'N/A')[0])[0], dtype=torch.float32) #Loading features
 TestSamplesY=torch.tensor(HC.HitCluster.GenerateSeedVectors(UI.PickleOperations(output_test_file_location,'r', 'N/A')[0])[1], dtype=torch.float32).view(-1, 1) #Loading labels
 
+print(TestSamplesX)
+print(TestSamplesY)
+
+print(len(TestSamplesX))
+print(len(TestSamplesY))
+
 def main(self):
     print(UI.TimeStamp(),'Starting the training process... ')
     State_Save_Path=EOSsubModelDIR+'/'+args.BatchID+'_State'
