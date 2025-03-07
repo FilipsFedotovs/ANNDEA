@@ -43,9 +43,6 @@ class HitCluster:
            self.SeedFlowValuesAll=[len(_Hits)**2,(len(_Hits)**2)-len(_Hits), int(((len(_Hits)**2)-len(_Hits))/2), 0, 0, 0, 0, 0, 0, 0, 0, 0]
            self.SeedFlowValuesTrue=[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 
-           # _dl_max= math.sqrt((self.Step[0]**2) + (self.Step[1]**2) + (self.Step[2]**2))
-           # _dr_max= math.sqrt((self.Step[0]**2) + (self.Step[1]**2))
-
            if SeedFlowLog:
                for l in range(_sp,min(_ep,self.ClusterSize-1)):
                     for r in range(l+1,len(_Hits)):
@@ -53,66 +50,15 @@ class HitCluster:
                         self.SeedFlowValuesAll = [a + b for a, b in zip(self.SeedFlowValuesAll, FitSeed[1])]
                         self.SeedFlowValuesTrue = [a + b for a, b in zip(self.SeedFlowValuesTrue, FitSeed[2])]
                         if FitSeed[0]:
-                               self.Seeds.append(HitCluster.NormaliseSeed2(self,_Hits[r], _Hits[l], cut_dt))
+                               self.Seeds.append(HitCluster.NormaliseSeed2e(self,_Hits[r], _Hits[l], cut_dt))
            else:
                for l in range(_sp,min(_ep,self.ClusterSize-1)):
                     for r in range(l+1,len(_Hits)):
                         FitSeed=HitCluster.FitSeed(_Hits[l],_Hits[r],cut_dt,cut_dr,cut_dz)
                         if FitSeed:
-                            self.Seeds.append(HitCluster.NormaliseSeed2(self,_Hits[r], _Hits[l], cut_dt))
+                            self.Seeds.append(HitCluster.NormaliseSeed2e(self,_Hits[r], _Hits[l], cut_dt))
            return True
-           #  def GenerateSeeds(self, cut_dt, cut_dr, cut_dz, SeedClassifier='N/A', l=-1, MaxEdges=-1): #Decorate hit information
-           # #New workaround: instead of a painful Pandas outer join a loop over list is performed
-           # _Hits=self.ClusterHits
-           # _Hits= sorted(_Hits, key=lambda x: x[3], reverse=True) #Sorting by z
-           # _Tot_Hits=[]
-           # print('Initial number of all possible hit combinations is:',len(_Hits)**2)
-           # print('Number of all possible hit combinations without self-permutations:',(len(_Hits)**2)-len(_Hits))
-           # print('Number of all possible hit  combinations with enforced one-directionality:',int(((len(_Hits)**2)-len(_Hits))/2))
-           # if l>-1 and MaxEdges>-1:
-           #     n_edg=len(self.RawClusterGraph)
-           #     job_iter=0
-           #     acc_edg=0
-           #     start_pos=0
-           #     end_pos=n_edg
-           #     for n_e in range(1,n_edg+1):
-           #         acc_edg+=n_edg-n_e
-           #         if acc_edg>=MaxEdges:
-           #             job_iter+=1
-           #             acc_edg=0
-           #             if job_iter==l+1:
-           #                end_pos=n_e
-           #                break
-           #             else:
-           #                start_pos=n_e
-           # else:
-           #     start_pos=0
-           #     end_pos=len(_Hits)-1
-           # for l in range(start_pos,min(end_pos,len(_Hits)-1)):
-           #     for r in range(l+1,len(_Hits)):
-           #         if HitCluster.JoinHits(_Hits[l],_Hits[r],cut_dt,cut_dr,cut_dz):
-           #                _Tot_Hits.append(_Hits[l]+_Hits[r])
-           #
-           # print('Number of all  hit combinations passing fiducial cuts:',len(_Tot_Hits))
-           # self.HitPairs=[]
-           # for TH in _Tot_Hits:
-           #     self.HitPairs.append([TH[0],TH[3], TH[6],TH[9]])
-           # for TH in _Tot_Hits:
-           #     for i in range(1,4):TH[i]=TH[i]/self.Step[2]
-           #     for i in range(7,10):TH[i]=TH[i]/self.Step[2]
-           #     if len(MCHits)>0:
-           #          TH.append(HitCluster.LabelLinks(TH,MCHits))
-           #     else:
-           #          TH.append('N/A')
-           #     TH.append((math.sqrt(((TH[8]-TH[2])**2) + ((TH[7]-TH[1])**2) + ((TH[9]-TH[3])**2))))
-           #     TH.append(math.sqrt(((TH[8]-TH[2])**2) + ((TH[7]-TH[1])**2)))
-           #     TH.append(abs(TH[9]-TH[3]))
-           #     TH.append(abs(TH[4]-TH[10]))
-           #     TH.append(abs(TH[5]-TH[11]))
-           #     del TH[1:6]
-           #     del TH[2:7]
-           # self.RawEdgeGraph=_Tot_Hits
-           # return True
+          
       def GenerateEdgeGraph(self, MCHits): #Decorate hit information
            import torch
            from torch_geometric.data import Data
