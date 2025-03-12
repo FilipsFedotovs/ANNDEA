@@ -69,7 +69,7 @@ class HitCluster:
 
                                     _refined_seed_vector=self.GenerateSeedVectors([_refined_seed])
 
-                                    y=_refined_seed_vector[0]
+                                    y=_refined_seed_vector[1][0]
                                     print(y)
                                     exit()
 
