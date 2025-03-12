@@ -58,7 +58,7 @@ class HitCluster:
                         if FitSeed:
                             self.Seeds.append(HitCluster.NormaliseSeed2e(self,_Hits[r], _Hits[l], cut_dt))
            return True
-          
+
       def GenerateEdgeGraph(self, MCHits): #Decorate hit information
            import torch
            from torch_geometric.data import Data

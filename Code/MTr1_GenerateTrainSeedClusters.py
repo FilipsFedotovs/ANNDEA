@@ -24,13 +24,12 @@ if PY_DIR!='': #Temp solution - the decision was made to move all libraries to E
     sys.path.append('/usr/lib64/python3.9/site-packages')
     sys.path.append('/usr/lib/python3.9/site-packages')
 sys.path.append(AFS_DIR+'/Code/Utilities')
-import csv
+
 import argparse
 import pandas as pd #We use Panda for a routine data processing
 import math #We use it for data manipulation
 import os
 import random
-import time
 import ast
 import U_UI as UI #This is where we keep routine utility functions
 import Parameters as PM #This is where we keep framework global parameters
