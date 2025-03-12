@@ -68,7 +68,9 @@ class HitCluster:
                                     _refined_seed=HitCluster.NormaliseSeed2e(self,_Hits[r], _Hits[l], cut_dt)
 
                                     _refined_seed_vector=self.GenerateSeedVectors([_refined_seed])
-                                    print(_refined_seed_vector)
+
+                                    y=_refined_seed_vector[0][1]
+                                    print(y)
                                     exit()
 
            else:
