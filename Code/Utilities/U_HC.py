@@ -51,7 +51,7 @@ class HitCluster:
                model.load_state_dict(torch.load(Model_Path))
 
                #attributes = dir(ModelMeta)
-               print(ModelMeta.TrainSessionsData[-1])
+               print(ModelMeta.TrainSessionsData[-1][-1][3])
                exit()
 
            self.SeedFlowLabels=['All','Excluding self-permutations', 'Excluding duplicates','Excluding seeds on the same plate', 'Cut on dz', 'Cut on dtx', 'Cut on dty' , 'Cut on drx', 'Cut on dry', 'MLP filter', 'GNN filter', 'Tracking process' ]
