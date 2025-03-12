@@ -72,6 +72,13 @@ class HitCluster:
                                     print(_refined_seed_vector_tensor)
                                     #self.SeedFlowValuesTrue = [a + b for a, b in zip(self.SeedFlowValuesTrue, [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0])]
                                     print(y)
+                                    model.eval()
+
+                                    with torch.no_grad():
+                                        for x in _refined_seed_vector_tensor:
+                                            x = x.unsqueeze(0)
+                                            o = model(x)
+                                            print(o)
                                     exit()
 
            else:
