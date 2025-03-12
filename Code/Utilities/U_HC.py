@@ -3,7 +3,6 @@
 
 import math
 
-import numpy as np
 
 
 
@@ -31,7 +30,7 @@ class HitCluster:
            self.RawNodes=__ClusterHitsTemp #Avoiding importing torch without a good reason (reduce load on the HTCOndor initiative)
            del __ClusterHitsTemp
 
-      def GenerateSeeds(self, cut_dt, cut_dr, cut_dz, l, MaxEdges, SeedFlowLog, Model=None): #Decorate hit information
+      def GenerateSeeds(self, cut_dt, cut_dr, cut_dz, l, MaxEdges, SeedFlowLog, EOS_DIR, Model=None): #Decorate hit information
            #New workaround: instead of a painful Pandas outer join a loop over list is performed
            _Hits=self.Hits
            _Hits= sorted(_Hits, key=lambda x: x[3], reverse=True) #Sorting by z
@@ -40,6 +39,18 @@ class HitCluster:
 
            if Model!=None:
                print('here')
+               EOSsubDIR=EOS_DIR+'/'+'ANNDEA'
+               EOSsubModelDIR=EOSsubDIR+'/'+'Models'
+               Model_Meta_Path=EOSsubModelDIR+'/'+Model+'_Meta'
+               Model_Path=EOSsubModelDIR+'/'+Model
+               from U_UI import UI
+               from U_ML import ML
+               ModelMeta=UI.PickleOperations(Model_Meta_Path, 'r', 'N/A')[0]
+               import torch
+               device = torch.device('cpu')
+               model = ML.GenerateModel(ModelMeta).to(device)
+               model.load_state_dict(torch.load(Model_Path))
+               print(model)
                exit()
 
            self.SeedFlowLabels=['All','Excluding self-permutations', 'Excluding duplicates','Excluding seeds on the same plate', 'Cut on dz', 'Cut on dtx', 'Cut on dty' , 'Cut on drx', 'Cut on dry', 'MLP filter', 'GNN filter', 'Tracking process' ]
