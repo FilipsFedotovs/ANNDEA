@@ -31,9 +31,7 @@ class HitCluster:
            self.ClusterSize=len(__ClusterHitsTemp)
            self.RawNodes=__ClusterHitsTemp #Avoiding importing torch without a good reason (reduce load on the HTCOndor initiative)
            del __ClusterHitsTemp
-           #print(self.RawNodes)
-           print(self.HitIDs)
-           exit()
+
 
       def GenerateSeeds(self, cut_dt, cut_dr, cut_dz, l, MaxEdges, SeedFlowLog, EOS_DIR, ModelName=None): #Decorate hit information
            #New workaround: instead of a painful Pandas outer join a loop over list is performed
@@ -113,9 +111,9 @@ class HitCluster:
            import torch
            from torch_geometric.data import Data
            self.ClusterGraph=Data(x=torch.Tensor(self.RawNodes), edge_index=None, y=None)
-           print(self.ClusterGraph)
+           self.ClusterGraph.edge_index=torch.tensor((HitCluster.GenerateEdgeLinks(self.Seeds,self.HitIDs)))
+           print(self.ClusterGraph.edge_index)
            exit()
-           # self.ClusterGraph.edge_index=torch.tensor((HitCluster.GenerateLinks(self.RawEdgeGraph,self.ClusterHitIDs)))
            # self.ClusterGraph.edge_attr=torch.tensor((HitCluster.GenerateEdgeAttributes(self.RawEdgeGraph)))
            # if len(MCHits)>0:
            #  self.ClusterGraph.y=torch.tensor((HitCluster.GenerateEdgeLabels(self.RawEdgeGraph)))
@@ -152,12 +150,12 @@ class HitCluster:
             return 0, _n_hits-1
 
       @staticmethod
-      def GenerateLinks(_input,_ClusterID):
-          _Top=[]
-          _Bottom=[]
+      def GenerateEdgeLinks(_input,_ID):
+          _Top, _Bottom =[], []
           for ip in _input:
-              _Top.append(_ClusterID.index(ip[0]))
-              _Bottom.append(_ClusterID.index(ip[1]))
+              _Top.append(_ID.index(ip[0]))
+              _Bottom.append(_ID.index(ip[1]))
+          print([_Top,_Bottom])
           return [_Top,_Bottom]
 
       # def NormaliseSeed1(self,_Hit2, _Hit1, _cut_dt): #The simplests seed representation with minimum of manipulations
