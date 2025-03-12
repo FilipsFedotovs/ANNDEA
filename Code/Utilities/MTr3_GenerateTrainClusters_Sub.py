@@ -112,11 +112,13 @@ data["z"] = pd.to_numeric(data["z"],downcast='float')
 data["Hit_ID"] = data["Hit_ID"].astype(str)
 data_list=data.values.tolist()
 #Specifying the full path to input/output files
-print(UF.TimeStamp(),'Building the cluster graph... ')
+
 
 HC=HC.HitCluster([X_ID,Y_ID, Z_ID],[stepX,stepY, stepZ]) #Initialise HitCluster instance
 HC.LoadClusterHits(data_list) #Decorate hot cluster with hit detailed data
+print(UF.TimeStamp(),'Seeding hits... ')
 HC.GenerateSeeds(cut_dt, cut_dr, cut_dz, -1, -1,SeedFlowLog, EOS_DIR, ModelName) #Creating Hit Cluster graph (using PyTorch Graph calss). We add Labels too sicnce it is Train data
+print(UF.TimeStamp(),'Building the cluster graph... ')
 HC.GenerateSeedGraph()
 # #There are nodes + graph is generated. Add it to the container
 # output_file_location=EOS_DIR+p+'/Temp_'+pfx+'_'+TrainSampleID+'_0/'+pfx+'_'+TrainSampleID+'_'+o+'_'+str(l)+sfx
