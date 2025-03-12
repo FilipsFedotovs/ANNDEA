@@ -293,7 +293,7 @@ Program=[]
 ###### Stage 0
 prog_entry=[]
 prog_entry.append(' Sending hit cluster to the HTCondor, so the model assigns weights between hits')
-prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/','SelectedTrainSeedClusters','MTr3','.pkl',TrainSampleID,n_jobs,'MTr3_GenerateTrainSeedClusters_Sub.py'])
+prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/','SelectedTrainClusters','MTr3','.pkl',TrainSampleID,n_jobs,'MTr3_GenerateTrainClusters_Sub.py'])
 prog_entry.append([' --stepY ', ' --stepX ', ' --stepZ ', ' --cut_dt ', ' --cut_dr ', ' --cut_dz ',' --Yoverlap ',' --Xoverlap ',' --Zoverlap ', ' --jobs ', ' --SeedFlowLog ',  ' --ModelName '])
 prog_entry.append([stepY, stepX, stepZ, cut_dt,cut_dr,cut_dz, Yoverlap, Xoverlap, Zoverlap, '"'+str(jobs)+'"', SeedFlowLog, ModelName])
 prog_entry.append(n_jobs)
