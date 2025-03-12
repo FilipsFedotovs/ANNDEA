@@ -113,10 +113,10 @@ class HitCluster:
            self.ClusterGraph=Data(x=torch.Tensor(self.RawNodes), edge_index=None, y=None)
            self.ClusterGraph.edge_index=torch.tensor((HitCluster.GenerateEdgeLinks(self.Seeds,self.HitIDs)))
            self.ClusterGraph.edge_attr=torch.tensor((HitCluster.GenerateEdgeAttributes(self.Seeds)))
-           print(self.ClusterGraph.edge_attr)
+
+           self.ClusterGraph.y=torch.tensor((HitCluster.GenerateEdgeLabels(self.Seeds)))
+           print(self.ClusterGraph.y)
            exit()
-           # if len(MCHits)>0:
-           #  self.ClusterGraph.y=torch.tensor((HitCluster.GenerateEdgeLabels(self.RawEdgeGraph)))
            # self.edges=[]
            # for r in self.RawEdgeGraph:
            #     self.edges.append(r[:2])
@@ -222,6 +222,8 @@ class HitCluster:
           for ip in _input:
               _EdgeAttr.append(ip[3:])
           return _EdgeAttr
+
+      @staticmethod
       def GenerateEdgeLabels(_input):
           _EdgeLbl=[]
           for ip in _input:
