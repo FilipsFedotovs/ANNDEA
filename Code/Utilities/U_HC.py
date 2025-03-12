@@ -38,7 +38,6 @@ class HitCluster:
            _sp,_ep=HitCluster.SplitJob(l,MaxEdges,self.ClusterSize)
 
            if ModelName!=None:
-               print('here')
                EOSsubDIR=EOS_DIR+'/'+'ANNDEA'
                EOSsubModelDIR=EOSsubDIR+'/'+'Models'
                Model_Meta_Path=EOSsubModelDIR+'/'+ModelName+'_Meta'
@@ -67,7 +66,9 @@ class HitCluster:
                                     self.Seeds.append(HitCluster.NormaliseSeed2e(self,_Hits[r], _Hits[l], cut_dt))
                                else:
                                     _refined_seed=HitCluster.NormaliseSeed2e(self,_Hits[r], _Hits[l], cut_dt)
-                                    print(_refined_seed)
+
+                                    _refined_seed_vector=self.GenerateSeedVectors([_refined_seed])
+                                    print(_refined_seed_vector)
                                     exit()
 
            else:
@@ -205,6 +206,7 @@ class HitCluster:
                           if abs(_H2[2]-(_H1[2]+(_H1[5]*(_H2[3]-_H1[3]))))>=_cdr:
                              return False
           return True
+      @staticmethod
       def GenerateSeedVectors(Seeds):
             #Split samples into X and Y sets
             SeedsX = []
