@@ -66,10 +66,11 @@ class HitCluster:
                                     self.Seeds.append(HitCluster.NormaliseSeed2e(self,_Hits[r], _Hits[l], cut_dt))
                                else:
                                     _refined_seed=HitCluster.NormaliseSeed2e(self,_Hits[r], _Hits[l], cut_dt)
-
                                     _refined_seed_vector=self.GenerateSeedVectors([_refined_seed])
-
                                     y=_refined_seed_vector[1][0]
+                                    _refined_seed_vector_tensor=torch.tensor(_refined_seed_vector[0], dtype=torch.float32)
+                                    print(_refined_seed_vector_tensor)
+                                    #self.SeedFlowValuesTrue = [a + b for a, b in zip(self.SeedFlowValuesTrue, [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0])]
                                     print(y)
                                     exit()
 
