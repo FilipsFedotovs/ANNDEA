@@ -30,19 +30,19 @@ class HitCluster:
            self.RawNodes=__ClusterHitsTemp #Avoiding importing torch without a good reason (reduce load on the HTCOndor initiative)
            del __ClusterHitsTemp
 
-      def GenerateSeeds(self, cut_dt, cut_dr, cut_dz, l, MaxEdges, SeedFlowLog, EOS_DIR, Model=None): #Decorate hit information
+      def GenerateSeeds(self, cut_dt, cut_dr, cut_dz, l, MaxEdges, SeedFlowLog, EOS_DIR, ModelName=None): #Decorate hit information
            #New workaround: instead of a painful Pandas outer join a loop over list is performed
            _Hits=self.Hits
            _Hits= sorted(_Hits, key=lambda x: x[3], reverse=True) #Sorting by z
            self.Seeds=[] #Initiate the empty container for seeds
            _sp,_ep=HitCluster.SplitJob(l,MaxEdges,self.ClusterSize)
 
-           if Model!=None:
+           if ModelName!=None:
                print('here')
                EOSsubDIR=EOS_DIR+'/'+'ANNDEA'
                EOSsubModelDIR=EOSsubDIR+'/'+'Models'
-               Model_Meta_Path=EOSsubModelDIR+'/'+Model+'_Meta'
-               Model_Path=EOSsubModelDIR+'/'+Model
+               Model_Meta_Path=EOSsubModelDIR+'/'+ModelName+'_Meta'
+               Model_Path=EOSsubModelDIR+'/'+ModelName
                import U_UI as UI
                import U_ML as ML
                ModelMeta=UI.PickleOperations(Model_Meta_Path, 'r', 'N/A')[0]
@@ -50,8 +50,7 @@ class HitCluster:
                device = torch.device('cpu')
                model = ML.GenerateModel(ModelMeta).to(device)
                model.load_state_dict(torch.load(Model_Path))
-               print(model)
-               exit()
+
 
            self.SeedFlowLabels=['All','Excluding self-permutations', 'Excluding duplicates','Excluding seeds on the same plate', 'Cut on dz', 'Cut on dtx', 'Cut on dty' , 'Cut on drx', 'Cut on dry', 'MLP filter', 'GNN filter', 'Tracking process' ]
            self.SeedFlowValuesAll=[len(_Hits)**2,(len(_Hits)**2)-len(_Hits), int(((len(_Hits)**2)-len(_Hits))/2), 0, 0, 0, 0, 0, 0, 0, 0, 0]
@@ -64,7 +63,13 @@ class HitCluster:
                         self.SeedFlowValuesAll = [a + b for a, b in zip(self.SeedFlowValuesAll, FitSeed[1])]
                         self.SeedFlowValuesTrue = [a + b for a, b in zip(self.SeedFlowValuesTrue, FitSeed[2])]
                         if FitSeed[0]:
-                               self.Seeds.append(HitCluster.NormaliseSeed2e(self,_Hits[r], _Hits[l], cut_dt))
+                               if ModelName==None:
+                                    self.Seeds.append(HitCluster.NormaliseSeed2e(self,_Hits[r], _Hits[l], cut_dt))
+                               else:
+                                    _refined_seed=HitCluster.NormaliseSeed2e(self,_Hits[r], _Hits[l], cut_dt)
+                                    print(_refined_seed)
+                                    exit()
+
            else:
                for l in range(_sp,min(_ep,self.ClusterSize-1)):
                     for r in range(l+1,len(_Hits)):
