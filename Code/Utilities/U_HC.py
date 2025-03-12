@@ -43,8 +43,8 @@ class HitCluster:
                EOSsubModelDIR=EOSsubDIR+'/'+'Models'
                Model_Meta_Path=EOSsubModelDIR+'/'+Model+'_Meta'
                Model_Path=EOSsubModelDIR+'/'+Model
-               from U_UI import UI
-               from U_ML import ML
+               import U_UI as UI
+               import U_ML as ML
                ModelMeta=UI.PickleOperations(Model_Meta_Path, 'r', 'N/A')[0]
                import torch
                device = torch.device('cpu')
