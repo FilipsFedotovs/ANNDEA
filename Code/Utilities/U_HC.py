@@ -50,9 +50,9 @@ class HitCluster:
                model = ML.GenerateModel(ModelMeta).to(device)
                model.load_state_dict(torch.load(Model_Path))
 
-               attributes = dir(ModelMeta)
-               print(attributes)
-               exit() 
+               #attributes = dir(ModelMeta)
+               print(ModelMeta.TrainSessionsData)
+               exit()
 
            self.SeedFlowLabels=['All','Excluding self-permutations', 'Excluding duplicates','Excluding seeds on the same plate', 'Cut on dz', 'Cut on dtx', 'Cut on dty' , 'Cut on drx', 'Cut on dry', 'MLP filter', 'GNN filter', 'Tracking process' ]
            self.SeedFlowValuesAll=[len(_Hits)**2,(len(_Hits)**2)-len(_Hits), int(((len(_Hits)**2)-len(_Hits))/2), 0, 0, 0, 0, 0, 0, 0, 0, 0]
