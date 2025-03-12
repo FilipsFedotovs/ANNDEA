@@ -70,16 +70,24 @@ class HitCluster:
                                     _refined_seed_vector=self.GenerateSeedVectors([_refined_seed])
                                     y=_refined_seed_vector[1][0]
                                     _refined_seed_vector_tensor=torch.tensor(_refined_seed_vector[0], dtype=torch.float32)
-                                    print(_refined_seed_vector_tensor)
-                                    #self.SeedFlowValuesTrue = [a + b for a, b in zip(self.SeedFlowValuesTrue, [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0])]
-                                    print(y)
-                                    model.eval()
+                                    print(self.SeedFlowValuesAll)
+                                    print(self.SeedFlowValuesTrue)
 
+                                    model.eval()
                                     with torch.no_grad():
                                         x = _refined_seed_vector_tensor[0].unsqueeze(0)
                                         o = model(x)
-                                        print(o.item())
-                                    exit()
+                                    if o.item()>model_acceptance:
+                                        self.SeedFlowValuesTrue = [a + b for a, b in zip(self.SeedFlowValuesTrue, [0, 0, 0, 0, 0, 0, 0, 0, 0, y, 0, 0])]
+                                        self.SeedFlowValuesAll = [a + b for a, b in zip(self.SeedFlowValuesAll, [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0])]
+                                        self.Seeds.append(HitCluster.NormaliseSeed2e(self,_Hits[r], _Hits[l], cut_dt))
+                                        print(self.SeedFlowValuesAll)
+                                        print(self.SeedFlowValuesTrue)
+                                        c=input()
+                                    else:
+                                        continue
+
+
 
            else:
                for l in range(_sp,min(_ep,self.ClusterSize-1)):
