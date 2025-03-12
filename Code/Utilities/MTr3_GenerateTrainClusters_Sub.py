@@ -120,10 +120,11 @@ print(UF.TimeStamp(),'Seeding hits... ')
 HC.GenerateSeeds(cut_dt, cut_dr, cut_dz, -1, -1,SeedFlowLog, EOS_DIR, ModelName) #Creating Hit Cluster graph (using PyTorch Graph calss). We add Labels too sicnce it is Train data
 print(UF.TimeStamp(),'Building the cluster graph... ')
 HC.GenerateSeedGraph()
-# #There are nodes + graph is generated. Add it to the container
-# output_file_location=EOS_DIR+p+'/Temp_'+pfx+'_'+TrainSampleID+'_0/'+pfx+'_'+TrainSampleID+'_'+o+'_'+str(l)+sfx
-# UF.PickleOperations(output_file_location,'w', HC) #Write the output
-# #End of the script
+#There are nodes + graph is generated. Add it to the container
+output_file_location=EOS_DIR+p+'/Temp_'+pfx+'_'+TrainSampleID+'_0/'+pfx+'_'+TrainSampleID+'_'+o+'_'+str(l)+sfx
+print(UF.TimeStamp(),'Completed, writing the output to ',output_file_location)
+UF.PickleOperations(output_file_location,'w', HC) #Write the output
+#End of the script
 
 
 

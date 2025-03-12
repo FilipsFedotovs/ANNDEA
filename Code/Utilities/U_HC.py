@@ -113,17 +113,11 @@ class HitCluster:
            self.ClusterGraph=Data(x=torch.Tensor(self.RawNodes), edge_index=None, y=None)
            self.ClusterGraph.edge_index=torch.tensor((HitCluster.GenerateEdgeLinks(self.Seeds,self.HitIDs)))
            self.ClusterGraph.edge_attr=torch.tensor((HitCluster.GenerateEdgeAttributes(self.Seeds)))
-
            self.ClusterGraph.y=torch.tensor((HitCluster.GenerateEdgeLabels(self.Seeds)))
-           print(self.ClusterGraph.y)
-           exit()
-           # self.edges=[]
-           # for r in self.RawEdgeGraph:
-           #     self.edges.append(r[:2])
-           # if len(self.ClusterGraph.edge_attr)>0:
-           #     return True
-           # else:
-           #     return False
+           if len(self.ClusterGraph.edge_attr)>0:
+               return True
+           else:
+               return False
 
 
 
