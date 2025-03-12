@@ -112,9 +112,10 @@ class HitCluster:
            from torch_geometric.data import Data
            self.ClusterGraph=Data(x=torch.Tensor(self.RawNodes), edge_index=None, y=None)
            self.ClusterGraph.edge_index=torch.tensor((HitCluster.GenerateEdgeLinks(self.Seeds,self.HitIDs)))
-           print(self.ClusterGraph.edge_index)
+           self.ClusterGraph.edge_attr=torch.tensor((HitCluster.GenerateEdgeAttributes(self.Seeds)))
+
+           print(self.ClusterGraph.edge_attr)
            exit()
-           # self.ClusterGraph.edge_attr=torch.tensor((HitCluster.GenerateEdgeAttributes(self.RawEdgeGraph)))
            # if len(MCHits)>0:
            #  self.ClusterGraph.y=torch.tensor((HitCluster.GenerateEdgeLabels(self.RawEdgeGraph)))
            # self.edges=[]
@@ -155,58 +156,7 @@ class HitCluster:
           for ip in _input:
               _Top.append(_ID.index(ip[0]))
               _Bottom.append(_ID.index(ip[1]))
-          print([_Top,_Bottom])
           return [_Top,_Bottom]
-
-      # def NormaliseSeed1(self,_Hit2, _Hit1, _cut_dt): #The simplests seed representation with minimum of manipulations
-      #     h1,h2,x1,x2,y1,y2,z1,z2, tx1, tx2, ty1, ty2, l1, l2=_Hit2[0],_Hit1[0],_Hit2[1],_Hit1[1],_Hit2[2],_Hit1[2],_Hit2[3],_Hit1[3],_Hit2[4],_Hit1[4],_Hit2[5],_Hit1[5],_Hit2[6],_Hit1[6]
-      #     _dx= abs(x2-x1)/self.Step[2]
-      #     _dy= abs(y2-y1)/self.Step[2]
-      #     _dz= abs(z2-z1)/self.Step[2]
-      #     _dtx=abs(tx2-tx1)/_cut_dt
-      #     _dty=abs(ty2-ty1)/_cut_dt
-      #     _ts=int(((l1==l2) and ('--' not in l1)))
-      #     return [h1, h2, _ts, _dx,_dy,_dz,_dtx,_dty]
-      # def NormaliseSeed2(self,_Hit2, _Hit1, _cut_dt):
-      #     h1,h2,x1,x2,y1,y2,z1,z2, tx1, tx2, ty1, ty2, l1, l2=_Hit2[0],_Hit1[0],_Hit2[1],_Hit1[1],_Hit2[2],_Hit1[2],_Hit2[3],_Hit1[3],_Hit2[4],_Hit1[4],_Hit2[5],_Hit1[5],_Hit2[6],_Hit1[6]
-      #     _dl= math.sqrt(((x2-x1)**2) + ((y2-y1)**2) + ((z2-z1)**2))/self.Step[2]
-      #     _dr= math.sqrt(((x2-x1)**2) + ((y2-y1)**2))/self.Step[2]
-      #     _dz=abs(z2-z1)/self.Step[2]
-      #     _dtx=abs(tx2-tx1)/_cut_dt
-      #     _dty=abs(ty2-ty1)/_cut_dt
-      #     _ts=int(((l1==l2) and ('--' not in l1)))
-      #     return [h1, h2, _ts, _dl,_dr,_dz,_dtx,_dty]
-      #
-      # def NormaliseSeed2b(self,_Hit2, _Hit1, _cut_dt):
-      #     h1,h2,x1,x2,y1,y2,z1,z2, tx1, tx2, ty1, ty2, l1, l2=_Hit2[0],_Hit1[0],_Hit2[1],_Hit1[1],_Hit2[2],_Hit1[2],_Hit2[3],_Hit1[3],_Hit2[4],_Hit1[4],_Hit2[5],_Hit1[5],_Hit2[6],_Hit1[6]
-      #     _dl= math.sqrt(((x2-x1)**2) + ((y2-y1)**2) + ((z2-z1)**2))/self.Step[2]
-      #     _dr= math.sqrt(((x2-x1)**2) + ((y2-y1)**2))/self.Step[0]
-      #     _dz=abs(z2-z1)/self.Step[2]
-      #     _dtx=abs(tx2-tx1)/_cut_dt
-      #     _dty=abs(ty2-ty1)/_cut_dt
-      #     _ts=int(((l1==l2) and ('--' not in l1)))
-      #     return [h1, h2, _ts, _dl,_dr,_dz,_dtx,_dty]
-      # def NormaliseSeed2c(self,_Hit2, _Hit1, _cut_dt):
-      #     _scale_factor=2
-      #     h1,h2,x1,x2,y1,y2,z1,z2, tx1, tx2, ty1, ty2, l1, l2=_Hit2[0],_Hit1[0],_Hit2[1],_Hit1[1],_Hit2[2],_Hit1[2],_Hit2[3],_Hit1[3],_Hit2[4],_Hit1[4],_Hit2[5],_Hit1[5],_Hit2[6],_Hit1[6]
-      #     _dl= math.sqrt(((x2-x1)**2) + ((y2-y1)**2) + ((z2-z1)**2))/self.Step[2]
-      #     _dr= math.sqrt(((x2-x1)**2) + ((y2-y1)**2))/(self.Step[0]/_scale_factor)
-      #     _dz=abs(z2-z1)/self.Step[2]
-      #     _dtx=abs(tx2-tx1)/(_cut_dt/_scale_factor)
-      #     _dty=abs(ty2-ty1)/(_cut_dt/_scale_factor)
-      #     _ts=int(((l1==l2) and ('--' not in l1)))
-      #     return [h1, h2, _ts, _dl,_dr,_dz,_dtx,_dty]
-      #
-      # def NormaliseSeed2d(self,_Hit2, _Hit1, _cut_dt):
-      #     _scale_factor=4
-      #     h1,h2,x1,x2,y1,y2,z1,z2, tx1, tx2, ty1, ty2, l1, l2=_Hit2[0],_Hit1[0],_Hit2[1],_Hit1[1],_Hit2[2],_Hit1[2],_Hit2[3],_Hit1[3],_Hit2[4],_Hit1[4],_Hit2[5],_Hit1[5],_Hit2[6],_Hit1[6]
-      #     _dl= math.sqrt(((x2-x1)**2) + ((y2-y1)**2) + ((z2-z1)**2))/self.Step[2]
-      #     _dr= math.sqrt(((x2-x1)**2) + ((y2-y1)**2))/(self.Step[0]/_scale_factor)
-      #     _dz=abs(z2-z1)/self.Step[2]
-      #     _dtx=abs(tx2-tx1)/(_cut_dt/_scale_factor)
-      #     _dty=abs(ty2-ty1)/(_cut_dt/_scale_factor)
-      #     _ts=int(((l1==l2) and ('--' not in l1)))
-      #     return [h1, h2, _ts, _dl,_dr,_dz,_dtx,_dty]
 
       def NormaliseSeed(self,_Hit2, _Hit1, _cut_dt):
           _scale_factor=8
@@ -267,9 +217,13 @@ class HitCluster:
                              return False, [0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0], [_ts, _ts, _ts, _ts, _ts, _ts, _ts, _ts, 0, 0, 0, 0]
           return True, [0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0], [_ts, _ts, _ts, _ts, _ts, _ts, _ts, _ts, _ts, 0, 0, 0]
 
+      @staticmethod
       def GenerateEdgeAttributes(_input):
           _EdgeAttr=[]
           for ip in _input:
+              print(ip)
+              print(ip[3:])
+              exit()
               _EdgeAttr.append(ip[3:])
           return _EdgeAttr
       def GenerateEdgeLabels(_input):
