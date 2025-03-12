@@ -70,8 +70,6 @@ class HitCluster:
                                     _refined_seed_vector=self.GenerateSeedVectors([_refined_seed])
                                     y=_refined_seed_vector[1][0]
                                     _refined_seed_vector_tensor=torch.tensor(_refined_seed_vector[0], dtype=torch.float32)
-                                    print('All:',self.SeedFlowValuesAll)
-                                    print('True:',self.SeedFlowValuesTrue)
 
                                     model.eval()
                                     with torch.no_grad():
@@ -81,11 +79,12 @@ class HitCluster:
                                         self.SeedFlowValuesTrue = [a + b for a, b in zip(self.SeedFlowValuesTrue, [0, 0, 0, 0, 0, 0, 0, 0, 0, y, 0, 0])]
                                         self.SeedFlowValuesAll = [a + b for a, b in zip(self.SeedFlowValuesAll, [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0])]
                                         self.Seeds.append(HitCluster.NormaliseSeed2e(self,_Hits[r], _Hits[l], cut_dt))
-                                        print('All:',self.SeedFlowValuesAll)
-                                        print('True:',self.SeedFlowValuesTrue)
-                                        c=input()
+
+
                                     else:
                                         continue
+               print('All:',self.SeedFlowValuesAll)
+               print('True:',self.SeedFlowValuesTrue)
 
 
 
@@ -94,7 +93,20 @@ class HitCluster:
                     for r in range(l+1,len(_Hits)):
                         FitSeed=HitCluster.FitSeed(_Hits[l],_Hits[r],cut_dt,cut_dr,cut_dz)
                         if FitSeed:
-                            self.Seeds.append(HitCluster.NormaliseSeed2e(self,_Hits[r], _Hits[l], cut_dt))
+                            if ModelName==None:
+                                    self.Seeds.append(HitCluster.NormaliseSeed2e(self,_Hits[r], _Hits[l], cut_dt))
+                            else:
+                                    _refined_seed=HitCluster.NormaliseSeed2e(self,_Hits[r], _Hits[l], cut_dt)
+                                    _refined_seed_vector=self.GenerateSeedVectors([_refined_seed])
+                                    _refined_seed_vector_tensor=torch.tensor(_refined_seed_vector[0], dtype=torch.float32)
+                                    model.eval()
+                                    with torch.no_grad():
+                                        x = _refined_seed_vector_tensor[0].unsqueeze(0)
+                                        o = model(x)
+                                    if o.item()>model_acceptance:
+                                        self.Seeds.append(HitCluster.NormaliseSeed2e(self,_Hits[r], _Hits[l], cut_dt))
+                                    else:
+                                        continue
            return True
 
       def GenerateEdgeGraph(self, MCHits): #Decorate hit information
