@@ -99,6 +99,10 @@ Xmin,Xmax,Ymin,Ymax=float(args.Xmin),float(args.Xmax),float(args.Ymin),float(arg
 Zoverlap,Yoverlap,Xoverlap=int(args.Zoverlap),int(args.Yoverlap),int(args.Xoverlap)
 SliceData=max(Xmin,Xmax,Ymin,Ymax)>0
 
+if LocalSub:
+   time_int=0
+else:
+   time_int=10
 
 ExcludeClassNames=ast.literal_eval(args.ExcludeClassNames)
 ExcludeClassValues=ast.literal_eval(args.ExcludeClassValues)
@@ -284,136 +288,257 @@ if ForceStatus!='N':
     Status=int(ForceStatus)
 UI.Msg('vanilla','Current stage is '+str(Status)+'...')
 
-exit()
-def Success(Finished):
-        if Finished:
+################ Set the execution sequence for the script
+Program=[]
+###### Stage 0
+prog_entry=[]
+prog_entry.append(' Sending hit cluster to the HTCondor, so the model assigns weights between hits')
+prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/','SelectedTrainSeedClusters','MTr3','.pkl',TrainSampleID,n_jobs,'MTr3_GenerateTrainSeedClusters_Sub.py'])
+prog_entry.append([' --stepY ', ' --stepX ', ' --stepZ ', ' --cut_dt ', ' --cut_dr ', ' --cut_dz ',' --Yoverlap ',' --Xoverlap ',' --Zoverlap ', ' --jobs ', ' --SeedFlowLog ',  ' --ModelName '])
+prog_entry.append([stepY, stepX, stepZ, cut_dt,cut_dr,cut_dz, Yoverlap, Xoverlap, Zoverlap, '"'+str(jobs)+'"', SeedFlowLog, ModelName])
+prog_entry.append(n_jobs)
+prog_entry.append(LocalSub)
+prog_entry.append('N/A')
+prog_entry.append(HTCondorLog)
+prog_entry.append(False)
+Program.append(prog_entry)
+print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry))
+
+###### Stage 3
+Program.append('Custom')
+print(UI.TimeStamp(),'There are '+str(len(Program)+1)+' stages (0-'+str(len(Program)+1)+') of this script',bcolors.ENDC)
+print(UI.TimeStamp(),'Current stage has a code',Status,bcolors.ENDC)
+while Status<len(Program):
+    if Program[Status]!='Custom':
+        #Standard process here
+       Result=UI.StandardProcess(Program,Status,SubGap,SubPause,CPU,JobFlavour,Memory,time_int,Patience)
+       if Result[0]:
+            UI.UpdateStatus(Status+1,Meta,TrainSampleOutputMeta)
+       else:
+             Status=20
+             break
+
+    elif Status==1:
+        try:
+            #Non standard processes (that don't follow the general pattern) have been coded here
             print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
-            print(UF.TimeStamp(),bcolors.BOLD+'Stage 3:'+bcolors.ENDC+' All HTCondor jobs have completed.')
-            count=0
+            print(UI.TimeStamp(),bcolors.BOLD+'Stage 2:'+bcolors.ENDC+' Accumulating results from the previous step')
             SampleCount=0
-            NodeFeatures=PM.num_node_features
-            EdgeFeatures=PM.num_edge_features
-            for k in range(0,Zsteps):
-                progress=round((float(k)/float(Zsteps))*100,2)
-                print(UF.TimeStamp(),"Collating results, progress is ",progress,' %') #Progress display
-                for i in range(0,Xsteps):
-                        count+=1
-                        source_output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MTr1a_'+TrainSampleID+'_SelectedTrainClusters_'+str(k)+'_'+str(i)+'.pkl'
-                        destination_output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TTr_OUTPUT_'+str(count)+'.pkl'
-                        os.rename(source_output_file_location, destination_output_file_location)
-                        TrainingSample=UF.PickleOperations(destination_output_file_location,'r', 'N/A')[0]
-                        SampleCount+=len(TrainingSample)
-            print(UF.TimeStamp(),'Loading previously saved data from ',bcolors.OKBLUE+TrainSampleOutputMeta+bcolors.ENDC)
-            MetaInput=UF.PickleOperations(TrainSampleOutputMeta,'r', 'N/A')
-            MetaInput[0].UpdateHitClusterMetaData(SampleCount,NodeFeatures,EdgeFeatures,count)
-            print(UF.PickleOperations(TrainSampleOutputMeta,'w', MetaInput[0])[1])
-            HTCondorTag="SoftUsed == \"ANNDEA-MTr-"+TrainSampleID+"\""
-            UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MTr1_'+TrainSampleID, ['MTr1a_'+TrainSampleID,'ETr1_'+TrainSampleID,'MTr1_'+TrainSampleID], HTCondorTag) #If successful we delete all temp files created by the process
-            print(UF.TimeStamp(),bcolors.OKGREEN+'Training samples are ready for the model creation/training'+bcolors.ENDC)
-            TrainSampleInputMeta=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_info.pkl'
-            print(UF.TimeStamp(),'Loading the data file ',bcolors.OKBLUE+TrainSampleInputMeta+bcolors.ENDC)
-            MetaInput=UF.PickleOperations(TrainSampleInputMeta,'r', 'N/A')
-            print(MetaInput[1])
-            Meta=MetaInput[0]
-            TrainSamples=[]
-            ValSamples=[]
-            TestSamples=[]
-            for i in range(1,Meta.no_sets+1):
-                flocation=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TTr_OUTPUT_'+str(i)+'.pkl'
-                print(UF.TimeStamp(),'Loading data from ',bcolors.OKBLUE+flocation+bcolors.ENDC)
-                TrainClusters=UF.PickleOperations(flocation,'r', 'N/A')
-                TrainClusters=TrainClusters[0]
-                TrainFraction=int(math.floor(len(TrainClusters)*(1.0-(Meta.testRatio+Meta.valRatio))))
-                ValFraction=int(math.ceil(len(TrainClusters)*Meta.valRatio))
-                for smpl in range(0,TrainFraction):
-                           if TrainClusters[smpl].ClusterGraph.num_edges>0 and Sampling>=random.random(): #Only graph clusters with edges are kept + sampled
-                             TrainSamples.append(TrainClusters[smpl].ClusterGraph)
-                for smpl in range(TrainFraction,TrainFraction+ValFraction):
-                           if TrainClusters[smpl].ClusterGraph.num_edges>0 and Sampling>=random.random():
-                             ValSamples.append(TrainClusters[smpl].ClusterGraph)
-                for smpl in range(TrainFraction+ValFraction,len(TrainClusters)):
-                           if TrainClusters[smpl].ClusterGraph.num_edges>0 and Sampling>=random.random():
-                             TestSamples.append(TrainClusters[smpl].ClusterGraph)
-            output_train_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_SAMPLES'+'.pkl'
-            print(UF.PickleOperations(output_train_file_location,'w', TrainSamples)[1])
-            output_val_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_SAMPLES'+'.pkl'
-            print(UF.PickleOperations(output_val_file_location,'w', ValSamples)[1])
-            output_test_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TEST_SAMPLES'+'.pkl'
-            print(UF.PickleOperations(output_test_file_location,'w', TestSamples)[1])
-            print(UF.TimeStamp(), bcolors.OKGREEN+"Train data has been re-generated successfully..."+bcolors.ENDC)
-            print(UF.TimeStamp(),bcolors.OKGREEN+'Please run M2_TrainModel.py after this to create/train a model'+bcolors.ENDC)
-            print(bcolors.HEADER+"############################################# End of the program ################################################"+bcolors.ENDC)
-        else:
-            print(UF.TimeStamp(),bcolors.FAIL+'Unfortunately no results have been yield. Please rerun the script, and if the problem persists, check that the HTCondor jobs run adequately.'+bcolors.ENDC)
+            Samples=[]
+            SeedFlowLabels=['All','Excluding self-permutations', 'Excluding duplicates','Excluding seeds on the same plate', 'Cut on dz', 'Cut on dtx', 'Cut on dty' , 'Cut on drx', 'Cut on dry', 'MLP filter', 'GNN filter', 'Tracking process' ]
+            SeedFlowValuesAll=[0,0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+            SeedFlowValuesTrue=[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
             exit()
+            # count=0
+            # SampleCount=0
+            # NodeFeatures=PM.num_node_features
+            # EdgeFeatures=PM.num_edge_features
+            # for k in range(0,Zsteps):
+            #     progress=round((float(k)/float(Zsteps))*100,2)
+            #     print(UI.TimeStamp(),"Collating results, progress is ",progress,' %') #Progress display
+            #     for i in range(0,Xsteps):
+            #             count+=1
+            #             source_output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MTr1a_'+TrainSampleID+'_SelectedTrainClusters_'+str(k)+'_'+str(i)+'.pkl'
+            #             destination_output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TTr_OUTPUT_'+str(count)+'.pkl'
+            #             os.rename(source_output_file_location, destination_output_file_location)
+            #             TrainingSample=UI.PickleOperations(destination_output_file_location,'r', 'N/A')[0]
+            #             SampleCount+=len(TrainingSample)
+            #             SeedFlowValuesAll = [a + b for a, b in zip(SeedFlowValuesAll, SampleCluster.SeedFlowValuesAll)]
+            #             SeedFlowValuesTrue = [a + b for a, b in zip(SeedFlowValuesTrue, SampleCluster.SeedFlowValuesTrue)]
+            # print(UI.TimeStamp(),'Loading previously saved data from ',bcolors.OKBLUE+TrainSampleOutputMeta+bcolors.ENDC)
+            # MetaInput=UI.PickleOperations(TrainSampleOutputMeta,'r', 'N/A')
+            # MetaInput[0].UpdateHitClusterMetaData(SampleCount,NodeFeatures,EdgeFeatures,count)
+            # print(UI.PickleOperations(TrainSampleOutputMeta,'w', MetaInput[0])[1])
+            # HTCondorTag="SoftUsed == \"ANNDEA-MTr-"+TrainSampleID+"\""
+            # UI.TrainCleanUp(AFS_DIR, EOS_DIR, 'MTr1_'+TrainSampleID, ['MTr1a_'+TrainSampleID,'ETr1_'+TrainSampleID,'MTr1_'+TrainSampleID], HTCondorTag) #If successful we delete all temp files created by the process
+            # print(UI.TimeStamp(),bcolors.OKGREEN+'Training samples are ready for the model creation/training'+bcolors.ENDC)
+            # TrainSampleInputMeta=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_info.pkl'
+            # print(UI.TimeStamp(),'Loading the data file ',bcolors.OKBLUE+TrainSampleInputMeta+bcolors.ENDC)
+            # MetaInput=UI.PickleOperations(TrainSampleInputMeta,'r', 'N/A')
+            # print(MetaInput[1])
+            # Meta=MetaInput[0]
+            # TrainSamples=[]
+            # ValSamples=[]
+            # TestSamples=[]
+            # for i in range(1,Meta.no_sets+1):
+            #     flocation=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TTr_OUTPUT_'+str(i)+'.pkl'
+            #     print(UI.TimeStamp(),'Loading data from ',bcolors.OKBLUE+flocation+bcolors.ENDC)
+            #     TrainClusters=UI.PickleOperations(flocation,'r', 'N/A')
+            #     TrainClusters=TrainClusters[0]
+            #     TrainFraction=int(math.floor(len(TrainClusters)*(1.0-(Meta.testRatio+Meta.valRatio))))
+            #     ValFraction=int(math.ceil(len(TrainClusters)*Meta.valRatio))
+            #     for smpl in range(0,TrainFraction):
+            #                if TrainClusters[smpl].ClusterGraph.num_edges>0 and Sampling>=random.random(): #Only graph clusters with edges are kept + sampled
+            #                  TrainSamples.append(TrainClusters[smpl].ClusterGraph)
+            #     for smpl in range(TrainFraction,TrainFraction+ValFraction):
+            #                if TrainClusters[smpl].ClusterGraph.num_edges>0 and Sampling>=random.random():
+            #                  ValSamples.append(TrainClusters[smpl].ClusterGraph)
+            #     for smpl in range(TrainFraction+ValFraction,len(TrainClusters)):
+            #                if TrainClusters[smpl].ClusterGraph.num_edges>0 and Sampling>=random.random():
+            #                  TestSamples.append(TrainClusters[smpl].ClusterGraph)
+            # output_train_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_SAMPLES'+'.pkl'
+            # print(UI.PickleOperations(output_train_file_location,'w', TrainSamples)[1])
+            # output_val_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_SAMPLES'+'.pkl'
+            # print(UI.PickleOperations(output_val_file_location,'w', ValSamples)[1])
+            # output_test_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TEST_SAMPLES'+'.pkl'
+            # print(UI.PickleOperations(output_test_file_location,'w', TestSamples)[1])
+            # print(UI.TimeStamp(), bcolors.OKGREEN+"Train data has been re-generated successfully..."+bcolors.ENDC)
+            # print(UI.TimeStamp(),bcolors.OKGREEN+'Please run M2_TrainModel.py after this to create/train a model'+bcolors.ENDC)
+            # print(bcolors.HEADER+"############################################# End of the program ################################################"+bcolors.ENDC)
+            #
+            #
+            # with alive_bar(n_jobs,force_tty=True, title='Consolidating the output...') as bar:
+            #     for i in range(n_jobs):
+            #
+            #             source_output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/Temp_MTr1_'+TrainSampleID+'_0/MTr1_'+TrainSampleID+'_SelectedTrainSeedClusters_'+str(i)+'.pkl'
+            #             UI.Msg('location','Analysing file:',content2=source_output_file_location)
+            #             SampleCluster=UI.PickleOperations(source_output_file_location,'r', 'N/A')[0]
+            #             Sample=SampleCluster.Seeds
+            #             ########### Fake - Truth label resampling to enable their equal distribution ################################
+            #             # Lists to store results
+            #             TrueSeeds = []
+            #             FakeSeeds = []
+            #             # Sorting elements into respective lists
+            #             for sample in Sample:
+            #                 if sample[2] == 1:
+            #                     TrueSeeds.append(sample)
+            #                 elif sample[2] == 0:
+            #                     FakeSeeds.append(sample)
+            #             min_samples=min(len(TrueSeeds),len(FakeSeeds))
+            #             # Random sampling (make sure the lists are not smaller than the sample size)
+            #             TrueSeeds = random.sample(TrueSeeds, min_samples)
+            #             FakeSeeds = random.sample(FakeSeeds, min_samples)
+            #
+            #             Sample=TrueSeeds+FakeSeeds
+            #             Sample=random.sample(Sample,len(Sample))
+            #
+            #             SeedFlowValuesAll = [a + b for a, b in zip(SeedFlowValuesAll, SampleCluster.SeedFlowValuesAll)]
+            #             SeedFlowValuesTrue = [a + b for a, b in zip(SeedFlowValuesTrue, SampleCluster.SeedFlowValuesTrue)]
+            #             Samples+=(Sample)
+            #             bar()
+            #
+            #
+            #
+            # UI.Msg('vanilla','Printing the seed cutflow...')
+            # headers = SeedFlowLabels
+            # first_row = SeedFlowValuesAll
+            # second_row = SeedFlowValuesTrue
+            #
+            # # Create a DataFrame
+            # data = [first_row, second_row]
+            # df = pd.DataFrame(data, columns=headers)
+            #
+            # # Print the table with borders
+            # print(df.to_string(index=False))
+            # Meta.UpdateJobMeta(['SeedFlowLabels', 'SeedFlowValuesAll', 'SeedFlowValuesTrue'],[SeedFlowLabels, SeedFlowValuesAll, SeedFlowValuesTrue])
+            # random.shuffle(Samples)
+            # print(UI.PickleOperations(TrainSampleOutputMeta,'w', Meta)[1])
+            # TrainSamples=[]
+            # ValSamples=[]
+            # TestSamples=[]
+            # TrainFraction=int(math.floor(len(Samples)*(1.0-(Meta.testRatio+Meta.valRatio))))
+            # ValFraction=int(math.ceil(len(Samples)*Meta.valRatio))
+            #
+            # for s in range(0,TrainFraction):
+            #             TrainSamples.append(Samples[s])
+            # for s in range(TrainFraction,TrainFraction+ValFraction):
+            #              ValSamples.append(Samples[s])
+            # for s in range(TrainFraction+ValFraction,len(Samples)):
+            #              TestSamples.append(Samples[s])
+            # output_train_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_SEEDS'+'.pkl'
+            # print(UI.PickleOperations(output_train_file_location,'w', TrainSamples)[1])
+            # output_val_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_SEEDS'+'.pkl'
+            # print(UI.PickleOperations(output_val_file_location,'w', ValSamples)[1])
+            # output_test_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TEST_SEEDS'+'.pkl'
+            # print(UI.PickleOperations(output_test_file_location,'w', TestSamples)[1])
+            # print(UI.TimeStamp(), bcolors.OKGREEN+"Train data has been re-generated successfully..."+bcolors.ENDC)
+            # print(UI.TimeStamp(),bcolors.OKGREEN+'Please run MTr2_TrainModel.py after this to create/train a model'+bcolors.ENDC)
+            # UI.UpdateStatus(Status+1,Meta,TrainSampleOutputMeta)
+            # print(bcolors.HEADER+"############################################# End of the program ################################################"+bcolors.ENDC)
 
-if Mode=='RESET':
-   HTCondorTag="SoftUsed == \"ANNDEA-MTr1-"+TrainSampleID+"\""
-   UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MTr1_'+TrainSampleID, ['MTr1a_'+TrainSampleID,TrainSampleID+'_TTr_OUTPUT_'], HTCondorTag) #If we do total reset we want to delete all temp files left by a possible previous attempt
-   print(UF.TimeStamp(),'Performing the cleanup... ',bcolors.ENDC)
-bad_pop=[]
-Status=False
-print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
-print(UF.TimeStamp(),bcolors.BOLD+'Stage 2:'+bcolors.ENDC+' Checking HTCondor jobs and preparing the job submission')
+        except Exception as e:
+          print(UI.TimeStamp(),bcolors.FAIL+'Stage 2 is uncompleted due to: '+str(e)+bcolors.ENDC)
+          Status=21
+          break
+    MetaInput=UI.PickleOperations(TrainSampleOutputMeta,'r', 'N/A')
+    Meta=MetaInput[0]
+    Status=Meta.Status[-1]
+
+if Status<20:
+
+    #Removing the temp files that were generated by the process
+    print(UI.TimeStamp(),'Performing the cleanup... ')
+    print(UI.ManageFolders(AFS_DIR, EOS_DIR, TrainSampleID,'d',['MTr1']))
+    UI.Msg('success',"Segment merging has been completed")
+else:
+    UI.Msg('failed',"Segment merging has not been completed as one of the processes has timed out. Please run the script again (without Reset Mode).")
+    exit()
 
 
-for k in range(0,Zsteps):
-        progress=round((float(k)/float(Zsteps))*100,2)
-        print(UF.TimeStamp(),"progress is ",progress,' %') #Progress display
-        for i in range(0,Xsteps):
-             OptionHeader = [' --Z_ID ', ' --stepX ',' --stepY ',' --stepZ ', ' --EOS ', " --AFS ", " --zOffset ", " --xOffset ", " --yOffset ", ' --cut_dt ', ' --cut_dr ', ' --testRatio ', ' --valRatio ', ' --X_ID ',' --TrainSampleID ',' --Y_overlap ',' --X_overlap ',' --Z_overlap ', ' --PY ']
-             OptionLine = [k, stepX,stepY,stepZ, EOS_DIR, AFS_DIR, z_offset, x_offset, y_offset, cut_dt,cut_dr,testRatio,valRatio, i,TrainSampleID,Y_overlap,X_overlap,Z_overlap,PY_DIR]
-             required_output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MTr1a_'+TrainSampleID+'_SelectedTrainClusters_'+str(k)+'_'+str(i)+'.pkl'
-             SHName = AFS_DIR + '/HTCondor/SH/SH_MTr1_'+ TrainSampleID+'_' + str(k) + '_' + str(i) + '.sh'
-             SUBName = AFS_DIR + '/HTCondor/SUB/SUB_MTr1_'+ TrainSampleID+'_'+ str(k) + '_' + str(i) + '.sub'
-             MSGName = AFS_DIR + '/HTCondor/MSG/MSG_MTr1_' + TrainSampleID+'_' + str(k) + '_' + str(i)
-             ScriptName = AFS_DIR + '/Code/Utilities/MTr1_GenerateTrainClusters_Sub.py '
-             if os.path.isfile(required_output_file_location)!=True:
-                bad_pop.append([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, 1, 'ANNDEA-MTr1-'+TrainSampleID, False,False])
-if len(bad_pop)==0:
-    Success(True)
+
+# def Success(Finished):
+#         if Finished:
+#             print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
+#             print(UF.TimeStamp(),bcolors.BOLD+'Stage 3:'+bcolors.ENDC+' All HTCondor jobs have completed.')
+#             count=0
+#             SampleCount=0
+#             NodeFeatures=PM.num_node_features
+#             EdgeFeatures=PM.num_edge_features
+#             for k in range(0,Zsteps):
+#                 progress=round((float(k)/float(Zsteps))*100,2)
+#                 print(UF.TimeStamp(),"Collating results, progress is ",progress,' %') #Progress display
+#                 for i in range(0,Xsteps):
+#                         count+=1
+#                         source_output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MTr1a_'+TrainSampleID+'_SelectedTrainClusters_'+str(k)+'_'+str(i)+'.pkl'
+#                         destination_output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TTr_OUTPUT_'+str(count)+'.pkl'
+#                         os.rename(source_output_file_location, destination_output_file_location)
+#                         TrainingSample=UF.PickleOperations(destination_output_file_location,'r', 'N/A')[0]
+#                         SampleCount+=len(TrainingSample)
+#             print(UF.TimeStamp(),'Loading previously saved data from ',bcolors.OKBLUE+TrainSampleOutputMeta+bcolors.ENDC)
+#             MetaInput=UF.PickleOperations(TrainSampleOutputMeta,'r', 'N/A')
+#             MetaInput[0].UpdateHitClusterMetaData(SampleCount,NodeFeatures,EdgeFeatures,count)
+#             print(UF.PickleOperations(TrainSampleOutputMeta,'w', MetaInput[0])[1])
+#             HTCondorTag="SoftUsed == \"ANNDEA-MTr-"+TrainSampleID+"\""
+#             UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'MTr1_'+TrainSampleID, ['MTr1a_'+TrainSampleID,'ETr1_'+TrainSampleID,'MTr1_'+TrainSampleID], HTCondorTag) #If successful we delete all temp files created by the process
+#             print(UF.TimeStamp(),bcolors.OKGREEN+'Training samples are ready for the model creation/training'+bcolors.ENDC)
+#             TrainSampleInputMeta=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_info.pkl'
+#             print(UF.TimeStamp(),'Loading the data file ',bcolors.OKBLUE+TrainSampleInputMeta+bcolors.ENDC)
+#             MetaInput=UF.PickleOperations(TrainSampleInputMeta,'r', 'N/A')
+#             print(MetaInput[1])
+#             Meta=MetaInput[0]
+#             TrainSamples=[]
+#             ValSamples=[]
+#             TestSamples=[]
+#             for i in range(1,Meta.no_sets+1):
+#                 flocation=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TTr_OUTPUT_'+str(i)+'.pkl'
+#                 print(UF.TimeStamp(),'Loading data from ',bcolors.OKBLUE+flocation+bcolors.ENDC)
+#                 TrainClusters=UF.PickleOperations(flocation,'r', 'N/A')
+#                 TrainClusters=TrainClusters[0]
+#                 TrainFraction=int(math.floor(len(TrainClusters)*(1.0-(Meta.testRatio+Meta.valRatio))))
+#                 ValFraction=int(math.ceil(len(TrainClusters)*Meta.valRatio))
+#                 for smpl in range(0,TrainFraction):
+#                            if TrainClusters[smpl].ClusterGraph.num_edges>0 and Sampling>=random.random(): #Only graph clusters with edges are kept + sampled
+#                              TrainSamples.append(TrainClusters[smpl].ClusterGraph)
+#                 for smpl in range(TrainFraction,TrainFraction+ValFraction):
+#                            if TrainClusters[smpl].ClusterGraph.num_edges>0 and Sampling>=random.random():
+#                              ValSamples.append(TrainClusters[smpl].ClusterGraph)
+#                 for smpl in range(TrainFraction+ValFraction,len(TrainClusters)):
+#                            if TrainClusters[smpl].ClusterGraph.num_edges>0 and Sampling>=random.random():
+#                              TestSamples.append(TrainClusters[smpl].ClusterGraph)
+#             output_train_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_SAMPLES'+'.pkl'
+#             print(UF.PickleOperations(output_train_file_location,'w', TrainSamples)[1])
+#             output_val_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_SAMPLES'+'.pkl'
+#             print(UF.PickleOperations(output_val_file_location,'w', ValSamples)[1])
+#             output_test_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TEST_SAMPLES'+'.pkl'
+#             print(UF.PickleOperations(output_test_file_location,'w', TestSamples)[1])
+#             print(UF.TimeStamp(), bcolors.OKGREEN+"Train data has been re-generated successfully..."+bcolors.ENDC)
+#             print(UF.TimeStamp(),bcolors.OKGREEN+'Please run M2_TrainModel.py after this to create/train a model'+bcolors.ENDC)
+#             print(bcolors.HEADER+"############################################# End of the program ################################################"+bcolors.ENDC)
+#         else:
+#             print(UF.TimeStamp(),bcolors.FAIL+'Unfortunately no results have been yield. Please rerun the script, and if the problem persists, check that the HTCondor jobs run adequately.'+bcolors.ENDC)
+#             exit()
 
 
-if (Zsteps*Xsteps)==len(bad_pop): #Scenario where all jobs are missing - doing a batch submission to save time
-    print(UF.TimeStamp(),bcolors.WARNING+'Warning, there are still', len(bad_pop), 'HTCondor jobs remaining'+bcolors.ENDC)
-    print(bcolors.BOLD+'If you would like to wait and exit please enter E'+bcolors.ENDC)
-    print(bcolors.BOLD+'If you would like to wait please enter enter the maximum wait time in minutes'+bcolors.ENDC)
-    print(bcolors.BOLD+'If you would like to resubmit please enter R'+bcolors.ENDC)
-    UserAnswer=input(bcolors.BOLD+"Please, enter your option\n"+bcolors.ENDC)
-    if UserAnswer=='E':
-          print(UF.TimeStamp(),'OK, exiting now then')
-          exit()
-    if UserAnswer=='R':
-        print(UF.TimeStamp(),'Submitting jobs to HTCondor... ',bcolors.ENDC)
-        for k in range(0,Zsteps):
-                  OptionHeader = [' --Z_ID ', ' --stepX ',' --stepY ',' --stepZ ', ' --EOS ', " --AFS ", " --zOffset ", " --xOffset ", " --yOffset ", ' --cut_dt ', ' --cut_dr ', ' --testRatio ', ' --valRatio ', ' --X_ID ',' --TrainSampleID ',' --Y_overlap ',' --X_overlap ',' --Z_overlap ',' --PY ']
-                  OptionLine = [k, stepX,stepY,stepZ, EOS_DIR, AFS_DIR, z_offset, x_offset, y_offset, cut_dt,cut_dr,testRatio, valRatio,'$1',TrainSampleID,Y_overlap,X_overlap,Z_overlap,PY_DIR]
-                  SHName = AFS_DIR + '/HTCondor/SH/SH_MTr1_'+ TrainSampleID+'_' + str(k) + '.sh'
-                  SUBName = AFS_DIR + '/HTCondor/SUB/SUB_MTr1_'+ TrainSampleID+'_'+ str(k) + '.sub'
-                  MSGName = AFS_DIR + '/HTCondor/MSG/MSG_MTr1_' + TrainSampleID+'_' + str(k)
-                  ScriptName = AFS_DIR + '/Code/Utilities/MTr1_GenerateTrainClusters_Sub.py '
-                  UF.SubmitJobs2Condor([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, Xsteps, 'ANNDEA-MTr1-'+TrainSampleID, False,RequestExtCPU,JobFlavour,ReqMemory])
-                  print(UF.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
-        Success(AutoPilot(120,10,Patience))
-    else:
-        Success(AutoPilot(120,10,Patience))
-
-elif len(bad_pop)>0: #If some jobs have been complited, the missing jobs are submitted individually to avoidf overloading HTCondor for nothing
-      print(UF.TimeStamp(),bcolors.WARNING+'Warning, there are still', len(bad_pop), 'HTCondor jobs remaining'+bcolors.ENDC)
-      print(bcolors.BOLD+'If you would like to wait and exit please enter E'+bcolors.ENDC)
-      print(bcolors.BOLD+'If you would like to wait please enter enter the maximum wait time in minutes'+bcolors.ENDC)
-      print(bcolors.BOLD+'If you would like to resubmit please enter R'+bcolors.ENDC)
-      UserAnswer=input(bcolors.BOLD+"Please, enter your option\n"+bcolors.ENDC)
-      if UserAnswer=='E':
-          print(UF.TimeStamp(),'OK, exiting now then')
-          exit()
-      if UserAnswer=='R':
-         for bp in bad_pop:
-              UF.SubmitJobs2Condor(bp)
-         print(UF.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
-         Success(AutoPilot(120,10,Patience))
-      else:
-         Success(AutoPilot(int(UserAnswer),10,Patience))
 
 
 
