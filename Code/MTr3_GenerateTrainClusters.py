@@ -62,8 +62,8 @@ parser.add_argument('--Xmin',help="This option restricts data to only those even
 parser.add_argument('--Xmax',help="This option restricts data to only those events that have tracks with hits x-coordinates that are below this value", default='0')
 parser.add_argument('--Ymin',help="This option restricts data to only those events that have tracks with hits y-coordinates that are above this value", default='0')
 parser.add_argument('--Ymax',help="This option restricts data to only those events that have tracks with hits y-coordinates that are below this value", default='0')
-parser.add_argument('--ExcludeClassNames',help="What class headers to use?", default="['Flag','ProcID']")
-parser.add_argument('--ExcludeClassValues',help="What class values to use?", default="[['11','-11'],['8']]")
+parser.add_argument('--ExcludeClassNames',help="What class headers to use?", default="[]")
+parser.add_argument('--ExcludeClassValues',help="What class values to use?", default="[]")
 parser.add_argument('--SubPause',help="How long to wait in minutes after submitting 10000 jobs?", default='60')
 parser.add_argument('--SubGap',help="How long to wait in minutes after submitting 10000 jobs?", default='10000')
 #The bellow are not important for the training smaples but if you want to augment the training data set above 1
