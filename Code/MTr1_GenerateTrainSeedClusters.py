@@ -117,6 +117,7 @@ testRatio=PM.testRatio #Usually about 5%
 valRatio=PM.valRatio #Usually about 10%
 TrainSampleOutputMeta=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_info.pkl' #For each training sample batch we create an individual meta file.
 destination_output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/'+TrainSampleID+'_HSd_OUTPUT_1.pkl' #The desired output
+
 if Mode=='RESET':
     print(UI.ManageFolders(AFS_DIR, EOS_DIR, TrainSampleID,'d',['MTr1']))
     print(UI.ManageFolders(AFS_DIR, EOS_DIR, TrainSampleID,'c'))

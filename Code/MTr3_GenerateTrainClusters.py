@@ -43,7 +43,7 @@ class bcolors:   #We use it for the interface
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
 
-exit()
+
 print('                                                                                                                                    ')
 print('                                                                                                                                    ')
 print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
@@ -63,23 +63,37 @@ parser.add_argument('--Ymin',help="This option restricts data to only those even
 parser.add_argument('--Ymax',help="This option restricts data to only those events that have tracks with hits y-coordinates that are below this value", default='0')
 parser.add_argument('--ExcludeClassNames',help="What class headers to use?", default="['Flag','ProcID']")
 parser.add_argument('--ExcludeClassValues',help="What class values to use?", default="[['11','-11'],['8']]")
+parser.add_argument('--SubPause',help="How long to wait in minutes after submitting 10000 jobs?", default='60')
+parser.add_argument('--SubGap',help="How long to wait in minutes after submitting 10000 jobs?", default='10000')
 #The bellow are not important for the training smaples but if you want to augment the training data set above 1
 parser.add_argument('--Z_overlap',help="Enter the level of overlap in integer number between reconstruction blocks along z-axis.", default='1')
 parser.add_argument('--Y_overlap',help="Enter the level of overlap in integer number between reconstruction blocks along y-axis.", default='1')
 parser.add_argument('--X_overlap',help="Enter the level of overlap in integer number between reconstruction blocks along x-axis.", default='1')
-parser.add_argument('--ReqMemory',help="How uch memory to request?", default='2 GB')
-parser.add_argument('--RequestExtCPU',help="Would you like to request extra CPUs?", default=1)
+parser.add_argument('--Memory',help="How uch memory to request?", default='2 GB')
+parser.add_argument('--CPU',help="How many CPUs?", default=1)
 parser.add_argument('--JobFlavour',help="Specifying the length of the HTCondor job walltime. Currently at 'workday' which is 8 hours.", default='workday')
+parser.add_argument('--ForceStatus',help="Would you like the program run from specific status number? (Only for advance users)", default='0')
+parser.add_argument('--HTCondorLog',help="Local submission?", default=False,type=bool)
+parser.add_argument('--LocalSub',help="Local submission?", default='N')
+parser.add_argument('--SeedFlowLog',help="Enable tracking of the seed cutflow?", default='N')
+parser.add_argument('--ModelName',help="Model used to refine seeds", default='N')
 ######################################## Set variables  #############################################################
 args = parser.parse_args()
 Mode=args.Mode.upper()
 Sampling=float(args.Sampling)
 TrainSampleID=args.TrainSampleID
 Patience=int(args.Patience)
-ReqMemory=args.ReqMemory
-RequestExtCPU=int(args.RequestExtCPU)
+Memory=args.Memory
+ModelName=args.ModelName
+CPU=int(args.CPU)
+ForceStatus=args.ForceStatus
 JobFlavour=args.JobFlavour
+HTCondorLog=args.HTCondorLog
+SeedFlowLog=args.SeedFlowLog
+LocalSub=(args.LocalSub=='Y')
 input_file_location=args.f
+SubPause=int(args.SubPause)*60
+SubGap=int(args.SubGap)
 Xmin,Xmax,Ymin,Ymax=float(args.Xmin),float(args.Xmax),float(args.Ymin),float(args.Ymax)
 Z_overlap,Y_overlap,X_overlap=int(args.Z_overlap),int(args.Y_overlap),int(args.X_overlap)
 SliceData=max(Xmin,Xmax,Ymin,Ymax)>0
@@ -99,54 +113,33 @@ for i in range(len(ExcludeClassNames)):
         if (ExcludeClassNames[i] in ExtraColumns)==False:
                 ExtraColumns.append(ExcludeClassNames[i])
 
-
-
 stepX=PM.stepX #Size of the individual reconstruction volumes along the x-axis
 stepY=PM.stepY #Size of the individual reconstruction volumes along the y-axis
 stepZ=PM.stepZ #Size of the individual reconstruction volumes along the z-axis
 cut_dt=PM.cut_dt #This cust help to discard hit pairs that are likely do not have a common mother track
 cut_dr=PM.cut_dr
+cut_dz=PM.cut_dz
 testRatio=PM.testRatio #Usually about 5%
 valRatio=PM.valRatio #Usually about 10%
+
 TrainSampleOutputMeta=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_info.pkl' #For each training sample batch we create an individual meta file.
 destination_output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TTr_OUTPUT_1.pkl' #The desired output
-if os.path.isfile(destination_output_file_location) and Mode!='RESET': #If we have it, we don't have to start from the scratch.
-    TrainSampleInputMeta=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_info.pkl'
-    print(UF.TimeStamp(),'Loading the data file ',bcolors.OKBLUE+TrainSampleInputMeta+bcolors.ENDC)
-    MetaInput=UF.PickleOperations(TrainSampleInputMeta,'r', 'N/A') #Reading the meta file
-    print(MetaInput[1])
-    Meta=MetaInput[0]
-    TrainSamples=[]
-    ValSamples=[]
-    TestSamples=[]
-#            for i in range(1,Meta.no_sets+1):
-    for i in range(1,Meta.no_sets+1):
-        flocation=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TTr_OUTPUT_'+str(i)+'.pkl' #Looking for constituent input file
-        print(UF.TimeStamp(),'Loading data from ',bcolors.OKBLUE+flocation+bcolors.ENDC)
-        TrainClusters=UF.PickleOperations(flocation,'r', 'N/A') #Loading the file
-        TrainClusters=TrainClusters[0] #Reading the actual data bit
-        TrainFraction=int(math.floor(len(TrainClusters)*(1.0-(Meta.testRatio+Meta.valRatio)))) #Calculating the size of the training sample pool
-        ValFraction=int(math.ceil(len(TrainClusters)*Meta.valRatio)) #Calculating the size of the validation sample pool
-        for smpl in range(0,TrainFraction):
-                   if TrainClusters[smpl].ClusterGraph.num_edges>0 and Sampling>=random.random(): #Not all generated graphs will contain edges: we can discard them + we apply sampling
-                     TrainSamples.append(TrainClusters[smpl].ClusterGraph) #If Graph has edges and passes sampling then we add to the output
-        for smpl in range(TrainFraction,TrainFraction+ValFraction):
-                   if TrainClusters[smpl].ClusterGraph.num_edges>0 and Sampling>=random.random():
-                     ValSamples.append(TrainClusters[smpl].ClusterGraph)
-        for smpl in range(TrainFraction+ValFraction,len(TrainClusters)):
-                   if TrainClusters[smpl].ClusterGraph.num_edges>0 and Sampling>=random.random():
-                     TestSamples.append(TrainClusters[smpl].ClusterGraph)
-    #Write the final output
-    output_train_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_SAMPLES'+'.pkl'
-    print(UF.PickleOperations(output_train_file_location,'w', TrainSamples)[1])
-    output_val_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_SAMPLES'+'.pkl'
-    print(UF.PickleOperations(output_val_file_location,'w', ValSamples)[1])
-    output_test_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TEST_SAMPLES'+'.pkl'
-    print(UF.PickleOperations(output_test_file_location,'w', TestSamples)[1])
-    print(UF.TimeStamp(), bcolors.OKGREEN+"Train data has been re-generated successfully..."+bcolors.ENDC)
-    exit()
 
 
+if Mode=='RESET':
+    print(UI.ManageFolders(AFS_DIR, EOS_DIR, TrainSampleID,'d',['MTr3']))
+    print(UI.ManageFolders(AFS_DIR, EOS_DIR, TrainSampleID,'c'))
+    if os.path.isfile(TrainSampleOutputMeta):
+        os.remove(TrainSampleOutputMeta)
+elif Mode=='CLEANUP':
+     print(UI.ManageFolders(AFS_DIR, EOS_DIR, TrainSampleID,'d',['MTr3']))
+     if os.path.isfile(TrainSampleOutputMeta):
+        os.remove(TrainSampleOutputMeta)
+     exit()
+else:
+    print(UI.ManageFolders(AFS_DIR, EOS_DIR, TrainSampleID,'c'))
+
+exit()
 ########################################     Phase 1 - Create compact source file    #########################################
 print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
 print(UF.TimeStamp(),bcolors.BOLD+'Stage 0:'+bcolors.ENDC+' Taking the file that has been supplied and creating the compact copies for the training set generation...')
