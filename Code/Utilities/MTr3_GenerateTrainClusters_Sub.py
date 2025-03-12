@@ -117,6 +117,7 @@ print(UF.TimeStamp(),'Building the cluster graph... ')
 HC=HC.HitCluster([X_ID,Y_ID, Z_ID],[stepX,stepY, stepZ]) #Initialise HitCluster instance
 HC.LoadClusterHits(data_list) #Decorate hot cluster with hit detailed data
 HC.GenerateSeeds(cut_dt, cut_dr, cut_dz, -1, -1,SeedFlowLog, EOS_DIR, ModelName) #Creating Hit Cluster graph (using PyTorch Graph calss). We add Labels too sicnce it is Train data
+HC.GenerateSeedGraph()
 # #There are nodes + graph is generated. Add it to the container
 # output_file_location=EOS_DIR+p+'/Temp_'+pfx+'_'+TrainSampleID+'_0/'+pfx+'_'+TrainSampleID+'_'+o+'_'+str(l)+sfx
 # UF.PickleOperations(output_file_location,'w', HC) #Write the output
