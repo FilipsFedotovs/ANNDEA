@@ -328,134 +328,52 @@ while Status<len(Program):
             SeedFlowLabels=['All','Excluding self-permutations', 'Excluding duplicates','Excluding seeds on the same plate', 'Cut on dz', 'Cut on dtx', 'Cut on dty' , 'Cut on drx', 'Cut on dry', 'MLP filter', 'GNN filter', 'Tracking process' ]
             SeedFlowValuesAll=[0,0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
             SeedFlowValuesTrue=[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-            exit()
-            # count=0
-            # SampleCount=0
-            # NodeFeatures=PM.num_node_features
-            # EdgeFeatures=PM.num_edge_features
-            # for k in range(0,Zsteps):
-            #     progress=round((float(k)/float(Zsteps))*100,2)
-            #     print(UI.TimeStamp(),"Collating results, progress is ",progress,' %') #Progress display
-            #     for i in range(0,Xsteps):
-            #             count+=1
-            #             source_output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MTr1a_'+TrainSampleID+'_SelectedTrainClusters_'+str(k)+'_'+str(i)+'.pkl'
-            #             destination_output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TTr_OUTPUT_'+str(count)+'.pkl'
-            #             os.rename(source_output_file_location, destination_output_file_location)
-            #             TrainingSample=UI.PickleOperations(destination_output_file_location,'r', 'N/A')[0]
-            #             SampleCount+=len(TrainingSample)
-            #             SeedFlowValuesAll = [a + b for a, b in zip(SeedFlowValuesAll, SampleCluster.SeedFlowValuesAll)]
-            #             SeedFlowValuesTrue = [a + b for a, b in zip(SeedFlowValuesTrue, SampleCluster.SeedFlowValuesTrue)]
-            # print(UI.TimeStamp(),'Loading previously saved data from ',bcolors.OKBLUE+TrainSampleOutputMeta+bcolors.ENDC)
-            # MetaInput=UI.PickleOperations(TrainSampleOutputMeta,'r', 'N/A')
-            # MetaInput[0].UpdateHitClusterMetaData(SampleCount,NodeFeatures,EdgeFeatures,count)
-            # print(UI.PickleOperations(TrainSampleOutputMeta,'w', MetaInput[0])[1])
-            # HTCondorTag="SoftUsed == \"ANNDEA-MTr-"+TrainSampleID+"\""
-            # UI.TrainCleanUp(AFS_DIR, EOS_DIR, 'MTr1_'+TrainSampleID, ['MTr1a_'+TrainSampleID,'ETr1_'+TrainSampleID,'MTr1_'+TrainSampleID], HTCondorTag) #If successful we delete all temp files created by the process
-            # print(UI.TimeStamp(),bcolors.OKGREEN+'Training samples are ready for the model creation/training'+bcolors.ENDC)
-            # TrainSampleInputMeta=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_info.pkl'
-            # print(UI.TimeStamp(),'Loading the data file ',bcolors.OKBLUE+TrainSampleInputMeta+bcolors.ENDC)
-            # MetaInput=UI.PickleOperations(TrainSampleInputMeta,'r', 'N/A')
-            # print(MetaInput[1])
-            # Meta=MetaInput[0]
-            # TrainSamples=[]
-            # ValSamples=[]
-            # TestSamples=[]
-            # for i in range(1,Meta.no_sets+1):
-            #     flocation=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TTr_OUTPUT_'+str(i)+'.pkl'
-            #     print(UI.TimeStamp(),'Loading data from ',bcolors.OKBLUE+flocation+bcolors.ENDC)
-            #     TrainClusters=UI.PickleOperations(flocation,'r', 'N/A')
-            #     TrainClusters=TrainClusters[0]
-            #     TrainFraction=int(math.floor(len(TrainClusters)*(1.0-(Meta.testRatio+Meta.valRatio))))
-            #     ValFraction=int(math.ceil(len(TrainClusters)*Meta.valRatio))
-            #     for smpl in range(0,TrainFraction):
-            #                if TrainClusters[smpl].ClusterGraph.num_edges>0 and Sampling>=random.random(): #Only graph clusters with edges are kept + sampled
-            #                  TrainSamples.append(TrainClusters[smpl].ClusterGraph)
-            #     for smpl in range(TrainFraction,TrainFraction+ValFraction):
-            #                if TrainClusters[smpl].ClusterGraph.num_edges>0 and Sampling>=random.random():
-            #                  ValSamples.append(TrainClusters[smpl].ClusterGraph)
-            #     for smpl in range(TrainFraction+ValFraction,len(TrainClusters)):
-            #                if TrainClusters[smpl].ClusterGraph.num_edges>0 and Sampling>=random.random():
-            #                  TestSamples.append(TrainClusters[smpl].ClusterGraph)
-            # output_train_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_SAMPLES'+'.pkl'
-            # print(UI.PickleOperations(output_train_file_location,'w', TrainSamples)[1])
-            # output_val_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_SAMPLES'+'.pkl'
-            # print(UI.PickleOperations(output_val_file_location,'w', ValSamples)[1])
-            # output_test_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TEST_SAMPLES'+'.pkl'
-            # print(UI.PickleOperations(output_test_file_location,'w', TestSamples)[1])
-            # print(UI.TimeStamp(), bcolors.OKGREEN+"Train data has been re-generated successfully..."+bcolors.ENDC)
-            # print(UI.TimeStamp(),bcolors.OKGREEN+'Please run M2_TrainModel.py after this to create/train a model'+bcolors.ENDC)
-            # print(bcolors.HEADER+"############################################# End of the program ################################################"+bcolors.ENDC)
-            #
-            #
-            # with alive_bar(n_jobs,force_tty=True, title='Consolidating the output...') as bar:
-            #     for i in range(n_jobs):
-            #
-            #             source_output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/Temp_MTr1_'+TrainSampleID+'_0/MTr1_'+TrainSampleID+'_SelectedTrainSeedClusters_'+str(i)+'.pkl'
-            #             UI.Msg('location','Analysing file:',content2=source_output_file_location)
-            #             SampleCluster=UI.PickleOperations(source_output_file_location,'r', 'N/A')[0]
-            #             Sample=SampleCluster.Seeds
-            #             ########### Fake - Truth label resampling to enable their equal distribution ################################
-            #             # Lists to store results
-            #             TrueSeeds = []
-            #             FakeSeeds = []
-            #             # Sorting elements into respective lists
-            #             for sample in Sample:
-            #                 if sample[2] == 1:
-            #                     TrueSeeds.append(sample)
-            #                 elif sample[2] == 0:
-            #                     FakeSeeds.append(sample)
-            #             min_samples=min(len(TrueSeeds),len(FakeSeeds))
-            #             # Random sampling (make sure the lists are not smaller than the sample size)
-            #             TrueSeeds = random.sample(TrueSeeds, min_samples)
-            #             FakeSeeds = random.sample(FakeSeeds, min_samples)
-            #
-            #             Sample=TrueSeeds+FakeSeeds
-            #             Sample=random.sample(Sample,len(Sample))
-            #
-            #             SeedFlowValuesAll = [a + b for a, b in zip(SeedFlowValuesAll, SampleCluster.SeedFlowValuesAll)]
-            #             SeedFlowValuesTrue = [a + b for a, b in zip(SeedFlowValuesTrue, SampleCluster.SeedFlowValuesTrue)]
-            #             Samples+=(Sample)
-            #             bar()
-            #
-            #
-            #
-            # UI.Msg('vanilla','Printing the seed cutflow...')
-            # headers = SeedFlowLabels
-            # first_row = SeedFlowValuesAll
-            # second_row = SeedFlowValuesTrue
-            #
-            # # Create a DataFrame
-            # data = [first_row, second_row]
-            # df = pd.DataFrame(data, columns=headers)
-            #
-            # # Print the table with borders
-            # print(df.to_string(index=False))
-            # Meta.UpdateJobMeta(['SeedFlowLabels', 'SeedFlowValuesAll', 'SeedFlowValuesTrue'],[SeedFlowLabels, SeedFlowValuesAll, SeedFlowValuesTrue])
-            # random.shuffle(Samples)
-            # print(UI.PickleOperations(TrainSampleOutputMeta,'w', Meta)[1])
-            # TrainSamples=[]
-            # ValSamples=[]
-            # TestSamples=[]
-            # TrainFraction=int(math.floor(len(Samples)*(1.0-(Meta.testRatio+Meta.valRatio))))
-            # ValFraction=int(math.ceil(len(Samples)*Meta.valRatio))
-            #
-            # for s in range(0,TrainFraction):
-            #             TrainSamples.append(Samples[s])
-            # for s in range(TrainFraction,TrainFraction+ValFraction):
-            #              ValSamples.append(Samples[s])
-            # for s in range(TrainFraction+ValFraction,len(Samples)):
-            #              TestSamples.append(Samples[s])
-            # output_train_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_SEEDS'+'.pkl'
-            # print(UI.PickleOperations(output_train_file_location,'w', TrainSamples)[1])
-            # output_val_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_SEEDS'+'.pkl'
-            # print(UI.PickleOperations(output_val_file_location,'w', ValSamples)[1])
-            # output_test_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TEST_SEEDS'+'.pkl'
-            # print(UI.PickleOperations(output_test_file_location,'w', TestSamples)[1])
-            # print(UI.TimeStamp(), bcolors.OKGREEN+"Train data has been re-generated successfully..."+bcolors.ENDC)
-            # print(UI.TimeStamp(),bcolors.OKGREEN+'Please run MTr2_TrainModel.py after this to create/train a model'+bcolors.ENDC)
-            # UI.UpdateStatus(Status+1,Meta,TrainSampleOutputMeta)
-            # print(bcolors.HEADER+"############################################# End of the program ################################################"+bcolors.ENDC)
+            with alive_bar(n_jobs,force_tty=True, title='Consolidating the output...') as bar:
+                for i in range(n_jobs):
+                        source_output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/Temp_MTr3_'+TrainSampleID+'_0/MTr3_'+TrainSampleID+'_SelectedTrainSeedClusters_'+str(i)+'.pkl'
+                        UI.Msg('location','Analysing file:',content2=source_output_file_location)
+                        SampleCluster=UI.PickleOperations(source_output_file_location,'r', 'N/A')[0]
+                        SeedFlowValuesAll = [a + b for a, b in zip(SeedFlowValuesAll, SampleCluster.SeedFlowValuesAll)]
+                        SeedFlowValuesTrue = [a + b for a, b in zip(SeedFlowValuesTrue, SampleCluster.SeedFlowValuesTrue)]
+                        Samples+=(SampleCluster)
+                        bar()
 
+            UI.Msg('vanilla','Printing the seed cutflow...')
+            headers = SeedFlowLabels
+            first_row = SeedFlowValuesAll
+            second_row = SeedFlowValuesTrue
+
+            # Create a DataFrame
+            data = [first_row, second_row]
+            df = pd.DataFrame(data, columns=headers)
+
+            # Print the table with borders
+            print(df.to_string(index=False))
+            Meta.UpdateJobMeta(['SeedFlowLabels', 'SeedFlowValuesAll', 'SeedFlowValuesTrue'],[SeedFlowLabels, SeedFlowValuesAll, SeedFlowValuesTrue])
+            random.shuffle(Samples)
+            print(UI.PickleOperations(TrainSampleOutputMeta,'w', Meta)[1])
+            TrainSamples=[]
+            ValSamples=[]
+            TestSamples=[]
+            TrainFraction=int(math.floor(len(Samples)*(1.0-(Meta.testRatio+Meta.valRatio))))
+            ValFraction=int(math.ceil(len(Samples)*Meta.valRatio))
+
+            for s in range(0,TrainFraction):
+                        TrainSamples.append(Samples[s])
+            for s in range(TrainFraction,TrainFraction+ValFraction):
+                         ValSamples.append(Samples[s])
+            for s in range(TrainFraction+ValFraction,len(Samples)):
+                         TestSamples.append(Samples[s])
+            output_train_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_SEEDS'+'.pkl'
+            print(UI.PickleOperations(output_train_file_location,'w', TrainSamples)[1])
+            output_val_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_SEEDS'+'.pkl'
+            print(UI.PickleOperations(output_val_file_location,'w', ValSamples)[1])
+            output_test_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TEST_SEEDS'+'.pkl'
+            print(UI.PickleOperations(output_test_file_location,'w', TestSamples)[1])
+            print(UI.TimeStamp(), bcolors.OKGREEN+"Train data has been re-generated successfully..."+bcolors.ENDC)
+            print(UI.TimeStamp(),bcolors.OKGREEN+'Please run MTr4_TrainModel.py after this to create/train a model'+bcolors.ENDC)
+            UI.UpdateStatus(Status+1,Meta,TrainSampleOutputMeta)
+            print(bcolors.HEADER+"############################################# End of the program ################################################"+bcolors.ENDC)
         except Exception as e:
           print(UI.TimeStamp(),bcolors.FAIL+'Stage 2 is uncompleted due to: '+str(e)+bcolors.ENDC)
           Status=21
