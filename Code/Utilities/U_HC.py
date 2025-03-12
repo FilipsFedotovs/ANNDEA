@@ -75,10 +75,10 @@ class HitCluster:
                                     model.eval()
 
                                     with torch.no_grad():
-                                        for x in _refined_seed_vector_tensor:
-                                            x = x.unsqueeze(0)
-                                            o = model(x)
-                                            print(o)
+                                        #for x in _refined_seed_vector_tensor:
+                                        x = _refined_seed_vector_tensor[0].unsqueeze(0)
+                                        o = model(x)
+                                        print(o)
                                     exit()
 
            else:
