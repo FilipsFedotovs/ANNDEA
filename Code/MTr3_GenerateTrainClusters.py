@@ -33,6 +33,7 @@ import time
 import ast
 import U_UI as UI #This is where we keep routine utility functions
 import Parameters as PM #This is where we keep framework global parameters
+from alive_progress import alive_bar
 class bcolors:   #We use it for the interface
     HEADER = '\033[95m'
     OKBLUE = '\033[94m'
@@ -95,7 +96,7 @@ input_file_location=args.f
 SubPause=int(args.SubPause)*60
 SubGap=int(args.SubGap)
 Xmin,Xmax,Ymin,Ymax=float(args.Xmin),float(args.Xmax),float(args.Ymin),float(args.Ymax)
-Z_overlap,Y_overlap,X_overlap=int(args.Z_overlap),int(args.Y_overlap),int(args.X_overlap)
+Zoverlap,Yoverlap,Xoverlap=int(args.Zoverlap),int(args.Yoverlap),int(args.Xoverlap)
 SliceData=max(Xmin,Xmax,Ymin,Ymax)>0
 
 
@@ -139,181 +140,150 @@ elif Mode=='CLEANUP':
 else:
     print(UI.ManageFolders(AFS_DIR, EOS_DIR, TrainSampleID,'c'))
 
-exit()
+
 ########################################     Phase 1 - Create compact source file    #########################################
 print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
-print(UF.TimeStamp(),bcolors.BOLD+'Stage 0:'+bcolors.ENDC+' Taking the file that has been supplied and creating the compact copies for the training set generation...')
-output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MTr1_'+TrainSampleID+'_hits.csv' #This is the compact data file that contains only relevant columns and rows
-if os.path.isfile(output_file_location)==False or Mode=='RESET':
-        print(UF.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
+print(UI.TimeStamp(),bcolors.BOLD+'Stage 0:'+bcolors.ENDC+' Taking the file that has been supplied and creating the compact copies for the training set generation...')
+output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/MTr3_'+TrainSampleID+'_hits.csv' #This is the compact data file that contains only relevant columns and rows
+if os.path.isfile(output_file_location)==False:
+        print(UI.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
         data=pd.read_csv(input_file_location,
                     header=0,
-                    usecols=[PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty])[[PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty]]
+                    usecols=ColumnsToImport+ExtraColumns)[ColumnsToImport+ExtraColumns]
+        if len(ExtraColumns)>0:
+            for c in ExtraColumns:
+                data[c] = data[c].astype(str)
+            data=pd.merge(data,BanDF,how='left',on=ExtraColumns)
+            data=data.fillna('')
+        else:
+            data['Exclude']=''
         total_rows=len(data.axes[0])
         data[PM.Hit_ID] = data[PM.Hit_ID].astype(str) #We try to keep HIT ids as strings
-        print(UF.TimeStamp(),'The raw data has ',total_rows,' hits')
-        print(UF.TimeStamp(),'Removing unreconstructed hits...')
+        print(UI.TimeStamp(),'The raw data has ',total_rows,' hits')
+        print(UI.TimeStamp(),'Removing unreconstructed hits...')
         data=data.dropna() #Removing nulls (not really applicable for this module but I put it just in case)
         final_rows=len(data.axes[0])
-        print(UF.TimeStamp(),'The cleaned data has ',final_rows,' hits')
-        data[PM.Hit_ID] = data[PM.Hit_ID].astype(int)
-        data[PM.Hit_ID] = data[PM.Hit_ID].astype(str) #Why I am doing this twice? Need to investigate
+        print(UI.TimeStamp(),'The cleaned data has ',final_rows,' hits')
+        data[PM.MC_Event_ID] = data[PM.MC_Event_ID].astype(str)
+        data[PM.MC_Track_ID] = data[PM.MC_Track_ID].astype(str)
+        data['MC_Super_Track_ID'] = data[PM.MC_Event_ID] + '-'+ data['Exclude'] + data[PM.MC_Track_ID] #Track IDs are not unique and repeat for each event: crea
+        data=data.drop([PM.MC_Event_ID],axis=1)
+        data=data.drop([PM.MC_Track_ID],axis=1)
+        data=data.drop(['Exclude'],axis=1)
+        for c in ExtraColumns:
+            data=data.drop([c],axis=1)
         if SliceData: #Keeping only the relevant slice. Only works if we set at least one parameter (Xmin for instance) to non-zero
-             print(UF.TimeStamp(),'Slicing the data...')
+             print(UI.TimeStamp(),'Slicing the data...')
              data=data.drop(data.index[(data[PM.x] > Xmax) | (data[PM.x] < Xmin) | (data[PM.y] > Ymax) | (data[PM.y] < Ymin)])
              final_rows=len(data.axes[0])
-             print(UF.TimeStamp(),'The sliced data has ',final_rows,' hits')
+             print(UI.TimeStamp(),'The sliced data has ',final_rows,' hits')
         data=data.rename(columns={PM.x: "x"})
         data=data.rename(columns={PM.y: "y"})
         data=data.rename(columns={PM.z: "z"})
         data=data.rename(columns={PM.tx: "tx"})
         data=data.rename(columns={PM.ty: "ty"})
         data=data.rename(columns={PM.Hit_ID: "Hit_ID"})
+        data=data.rename(columns={"MC_Super_Track_ID": "MC_Track_ID"})
         data.to_csv(output_file_location,index=False)
-        print(UF.TimeStamp(), bcolors.OKGREEN+"The segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+output_file_location+bcolors.ENDC)
-
-
-###################### Phase 2 - Eval Data ######################################################
-output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/ETr1_'+TrainSampleID+'_hits.csv' #This is similar to one above but also contains MC data
-if os.path.isfile(output_file_location)==False or Mode=='RESET':
-    print(UF.TimeStamp(),'Creating Evaluation file...')
-    print(UF.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
-    data=pd.read_csv(input_file_location,
-                header=0,
-                usecols=ColumnsToImport+ExtraColumns)[ColumnsToImport+ExtraColumns]
-
-    if len(ExtraColumns)>0:
-            for c in ExtraColumns:
-                data[c] = data[c].astype(str)
-            data=pd.merge(data,BanDF,how='left',on=ExtraColumns)
-            data=data.fillna('')
-    else:
-            data['Exclude']=''
-    total_rows=len(data.axes[0])
-    print(UF.TimeStamp(),'The raw data has ',total_rows,' hits')
-    print(UF.TimeStamp(),'Removing unreconstructed hits...')
-    data=data.dropna() #Unlikely to have in the hit data but keeping here just in case to prevent potential problems downstream
-    final_rows=len(data.axes[0])
-    print(UF.TimeStamp(),'The cleaned data has ',final_rows,' hits')
-    data[PM.MC_Event_ID] = data[PM.MC_Event_ID].astype(str)
-    data[PM.MC_Track_ID] = data[PM.MC_Track_ID].astype(str)
-    data[PM.Hit_ID] = data[PM.Hit_ID].astype(str)
-    data['MC_Mother_Track_ID'] = data[PM.MC_Event_ID] + '-'+ data['Exclude'] + data[PM.MC_Track_ID] #Track IDs are not unique and repeat for each event: crea
-    data=data.drop([PM.MC_Event_ID],axis=1)
-    data=data.drop([PM.MC_Track_ID],axis=1)
-    data=data.drop(['Exclude'],axis=1)
-    for c in ExtraColumns:
-        data=data.drop([c],axis=1)
-    if SliceData:
-         print(UF.TimeStamp(),'Slicing the data...')
-         data=data.drop(data.index[(data[PM.x] > Xmax) | (data[PM.x] < Xmin) | (data[PM.y] > Ymax) | (data[PM.y] < Ymin)])
-         final_rows=len(data.axes[0])
-         print(UF.TimeStamp(),'The sliced data has ',final_rows,' hits')
-    #Even if particle leaves one hit it is still assigned MC Track ID - we cannot reconstruct these so we discard them so performance metrics are not skewed
-    print(UF.TimeStamp(),'Removing tracks which have less than',PM.MinHitsTrack,'hits...')
-    track_no_data=data.groupby(['MC_Mother_Track_ID'],as_index=False).count()
-    track_no_data=track_no_data.drop([PM.y,PM.z,PM.tx,PM.ty,PM.Hit_ID],axis=1)
-    track_no_data=track_no_data.rename(columns={PM.x: "MC_Track_No"})
-    new_combined_data=pd.merge(data, track_no_data, how="left", on=['MC_Mother_Track_ID'])
-    new_combined_data = new_combined_data[new_combined_data.MC_Track_No >= PM.MinHitsTrack]  #We are only interested in MC Tracks that have a certain number of hits
-    new_combined_data = new_combined_data.drop(["MC_Track_No"],axis=1)
-    new_combined_data=new_combined_data.sort_values(['MC_Mother_Track_ID',PM.z],ascending=[1,1])
-    grand_final_rows=len(new_combined_data.axes[0])
-    print(UF.TimeStamp(),'The cleaned data has ',grand_final_rows,' hits')
-    new_combined_data=new_combined_data.rename(columns={PM.x: "x"})
-    new_combined_data=new_combined_data.rename(columns={PM.y: "y"})
-    new_combined_data=new_combined_data.rename(columns={PM.z: "z"})
-    new_combined_data=new_combined_data.rename(columns={PM.tx: "tx"})
-    new_combined_data=new_combined_data.rename(columns={PM.ty: "ty"})
-    new_combined_data=new_combined_data.rename(columns={PM.Hit_ID: "Hit_ID"})
-    new_combined_data.to_csv(output_file_location,index=False)
-    print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
-    print(UF.TimeStamp(), bcolors.OKGREEN+"The track segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+output_file_location+bcolors.ENDC)
-print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 0 has successfully completed'+bcolors.ENDC)
-########################################     Preset framework parameters    #########################################
+        print(UI.TimeStamp(), bcolors.OKGREEN+"The segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+output_file_location+bcolors.ENDC)
 
 print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
-print(UF.TimeStamp(),bcolors.BOLD+'Stage 1:'+bcolors.ENDC+' Creating training sample meta data...')
-if os.path.isfile(TrainSampleOutputMeta)==False or Mode=='RESET': #A case of generating samples from scratch
-    input_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MTr1_'+TrainSampleID+'_hits.csv'
-    print(UF.TimeStamp(),'Loading preselected data from ',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
-    data=pd.read_csv(input_file_location,header=0,usecols=['z','x','y'])
-    print(UF.TimeStamp(),'Analysing data... ',bcolors.ENDC)
-    z_offset=data['z'].min()
-    data['z']=data['z']-z_offset #Reseting the coordinate origin to zero for this data set
-    z_max=data['z'].max()
+print(UI.TimeStamp(),bcolors.BOLD+'Stage 1:'+bcolors.ENDC+' Creating training sample meta data...')
+if os.path.isfile(TrainSampleOutputMeta)==False: #A case of generating samples from scratch
+    input_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/MTr3_'+TrainSampleID+'_hits.csv'
+    print(UI.TimeStamp(),'Loading preselected data from ',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
+    data=pd.read_csv(input_file_location,header=0,usecols=['x','y','z'])
+    print(UI.TimeStamp(),'Analysing data... ',bcolors.ENDC)
     y_offset=data['y'].min()
     x_offset=data['x'].min()
+    z_offset=data['z'].min()
     data['x']=data['x']-x_offset #Reseting the coordinate origin to zero for this data set
+    data['y']=data['y']-y_offset #Reseting the coordinate origin to zero for this data set
+    data['z']=data['z']-z_offset #Reseting the coordinate origin to zero for this data set
     x_max=data['x'].max() #We need it to calculate how many clusters to create
-    if X_overlap==1:
-       Xsteps=math.ceil((x_max)/stepX) #No of clusters in x-direction
+    y_max=data['y'].max()
+    z_max=data['z'].max()
+    if Xoverlap==1:
+            Xsteps=math.ceil((x_max)/stepX)
     else:
-       Xsteps=(math.ceil((x_max)/stepX)*(X_overlap))-1 #This is the scenario where
-
-    if Z_overlap==1:
+            Xsteps=(math.ceil((x_max)/stepX)*(Xoverlap))-1
+    if Yoverlap==1:
+            Ysteps=math.ceil((y_max)/stepY)
+    else:
+            Ysteps=(math.ceil((y_max)/stepY)*(Yoverlap))-1
+    if Zoverlap==1:
        Zsteps=math.ceil((z_max)/stepZ)
     else:
-       Zsteps=(math.ceil((z_max)/stepZ)*(Z_overlap))-1
-    TrainDataMeta=UF.TrainingSampleMeta(TrainSampleID)
-    TrainDataMeta.IniHitClusterMetaData(stepX,stepY,stepZ,cut_dt,cut_dr,testRatio,valRatio,z_offset,y_offset,x_offset, Xsteps, Zsteps,X_overlap, Y_overlap, Z_overlap)
-    print(UF.PickleOperations(TrainSampleOutputMeta,'w', TrainDataMeta)[1])
+       Zsteps=(math.ceil((z_max)/stepZ)*(Zoverlap))-1
 
+    print(UI.TimeStamp(),'Distributing hit files...')
+    print(UI.TimeStamp(),'Loading preselected data from ',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
+    data=pd.read_csv(input_file_location,header=0)
+    data['x']=data['x']-x_offset #Reseting the coordinate origin to zero for this data set
+    data['y']=data['y']-y_offset #Reseting the coordinate origin to zero for this data set
+    data['z']=data['z']-z_offset #Reseting the coordinate origin to zero for this data set
+    n_jobs=0
+    jobs=[]
+    with alive_bar(Xsteps*Ysteps*Zsteps,force_tty=True, title='Sampling hit files...') as bar:
+        for i in range(Xsteps):
+            for j in range(Ysteps):
+                     for k in range(Zsteps):
+                         required_tfile_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/MTr3_'+TrainSampleID+'_'+str(i)+'_'+str(j)+'_'+str(k)+'_hits.csv'
+                         if os.path.isfile(required_tfile_location)==False:
+                             X_ID=int(i)/Xoverlap
+                             Y_ID=int(j)/Yoverlap
+                             Z_ID=int(k)/Yoverlap
+                             tdata=data.drop(data.index[data['x'] >= ((X_ID+1)*stepX)])  #Keeping the relevant z slice
+                             tdata.drop(tdata.index[tdata['x'] < (X_ID*stepX)], inplace = True)  #Keeping the relevant z slice
+                             tdata.drop(tdata.index[tdata['y'] >= ((Y_ID+1)*stepY)], inplace = True)  #Keeping the relevant z slice
+                             tdata.drop(tdata.index[tdata['y'] < (Y_ID*stepY)], inplace = True)  #Keeping the relevant z slice
+                             tdata.drop(tdata.index[tdata['z'] >= ((Z_ID+1)*stepZ)], inplace = True)  #Keeping the relevant z slice
+                             tdata.drop(tdata.index[tdata['z'] < (Z_ID*stepZ)], inplace = True)  #Keeping the relevant z slice
+                             if len(tdata)>1:
+                                 if Sampling>=random.random():
+                                     tdata.to_csv(required_tfile_location,index=False)
+                                     job_comb=[i, j, k]
+                                     jobs.append(job_comb)
+                                     n_jobs+=1
+                                     print(UI.TimeStamp(), bcolors.OKGREEN+"The hit data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+required_tfile_location+bcolors.ENDC)
+                         bar()
+    TrainDataMeta=UI.JobMeta(TrainSampleID)
+    TrainDataMeta.UpdateJobMeta(['stepX', 'stepY', 'stepZ', 'cut_dt', 'cut_dr', 'cut_dz', 'testRatio', 'valRatio', 'y_offset', 'x_offset','Xoverlap', 'Yoverlap', 'Zoverlap'],[stepX, stepY, stepZ, cut_dt, cut_dr, cut_dz, testRatio, valRatio, y_offset, x_offset,Xoverlap, Yoverlap, Zoverlap])
+    TrainDataMeta.UpdateJobMeta(['jobs', 'n_jobs'],[jobs, n_jobs])
+    TrainDataMeta.UpdateStatus(1)
+    Meta=TrainDataMeta
+    print(UI.PickleOperations(TrainSampleOutputMeta,'w', TrainDataMeta)[1])
 elif os.path.isfile(TrainSampleOutputMeta)==True:
-    print(UF.TimeStamp(),'Loading previously saved data from ',bcolors.OKBLUE+TrainSampleOutputMeta+bcolors.ENDC)
+    print(UI.TimeStamp(),'Loading previously saved data from ',bcolors.OKBLUE+TrainSampleOutputMeta+bcolors.ENDC)
     #Loading parameters from the Meta file if exists.
-    MetaInput=UF.PickleOperations(TrainSampleOutputMeta,'r', 'N/A')
+    MetaInput=UI.PickleOperations(TrainSampleOutputMeta,'r', 'N/A')
     Meta=MetaInput[0]
     stepX=Meta.stepX
     stepY=Meta.stepY
     stepZ=Meta.stepZ
     cut_dt=Meta.cut_dt
     cut_dr=Meta.cut_dr
+    cut_dz=Meta.cut_dz
     testRatio=Meta.testRatio
     valRatio=Meta.valRatio
-    stepX=stepX
-    z_offset=Meta.z_offset
     y_offset=Meta.y_offset
     x_offset=Meta.x_offset
-    Xsteps=Meta.Xsteps
-    Zsteps=Meta.Zsteps
-    Y_overlap=Meta.Y_overlap
-    X_overlap=Meta.X_overlap
-    Z_overlap=Meta.Z_overlap
-print(UF.TimeStamp(),bcolors.OKGREEN+'Stage 1 has successfully completed'+bcolors.ENDC)
-#The function bellow manages HTCondor jobs - so we don't have to do manually
-def AutoPilot(wait_min, interval_min, max_interval_tolerance):
-    print(UF.TimeStamp(),'Going on an autopilot mode for ',wait_min, 'minutes while checking HTCondor every',interval_min,'min',bcolors.ENDC)
-    wait_sec=wait_min*60
-    interval_sec=interval_min*60 #Converting min to sec as this time.sleep takes as an argument
-    intervals=int(math.ceil(wait_sec/interval_sec))
-    for interval in range(1,intervals+1):
-        time.sleep(interval_sec)
-        bad_pop=[]
-        print(UF.TimeStamp(),"Scheduled job checkup...") #Progress display
-        for k in range(0,Zsteps):
-         for i in range(0,Xsteps):
-              #Preparing HTCondor submission
-              OptionHeader = [' --Z_ID ', ' --stepX ',' --stepY ',' --stepZ ', ' --EOS ', " --AFS ", " --zOffset ", " --xOffset ", " --yOffset ", ' --cut_dt ', ' --cut_dr ', ' --testRatio ', ' --valRatio ', ' --X_ID ',' --TrainSampleID ',' --Y_overlap ',' --X_overlap ',' --Z_overlap ', ' --PY ']
-              OptionLine = [k, stepX,stepY,stepZ, EOS_DIR, AFS_DIR, z_offset, x_offset, y_offset, cut_dt,cut_dr,testRatio,valRatio, i,TrainSampleID,Y_overlap,X_overlap,Z_overlap,PY_DIR]
-              required_output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/MTr1a_'+TrainSampleID+'_SelectedTrainClusters_'+str(k)+'_'+str(i)+'.pkl'
-              SHName = AFS_DIR + '/HTCondor/SH/SH_MTr1_'+ TrainSampleID+'_' + str(k) + '_' + str(i) + '.sh'
-              SUBName = AFS_DIR + '/HTCondor/SUB/SUB_MTr1_'+ TrainSampleID+'_'+ str(k) + '_' + str(i) + '.sub'
-              MSGName = AFS_DIR + '/HTCondor/MSG/MSG_MTr1_' + TrainSampleID+'_' + str(k) + '_' + str(i)
-              #The actual training sample generation is done by the script bellow
-              ScriptName = AFS_DIR + '/Code/Utilities/MTr1_GenerateTrainClusters_Sub.py '
-              if os.path.isfile(required_output_file_location)!=True: #Calculating the number of unfinished jobs
-                 bad_pop.append([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, 1, 'ANNDEA-MTr1-'+TrainSampleID, False,RequestExtCPU,JobFlavour,ReqMemory])
-        if len(bad_pop)>0:
-              print(UF.TimeStamp(),bcolors.WARNING+'Autopilot status update: There are still', len(bad_pop), 'HTCondor jobs remaining'+bcolors.ENDC)
-              if interval%max_interval_tolerance==0: #If jobs are not received after fixed number of check-ups we resubmit. Jobs sometimes fail on HTCondor for various reasons.
-                 for bp in bad_pop:
-                     UF.SubmitJobs2Condor(bp) #Sumbitting all missing jobs
-                 print(UF.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
-        else:
-             return True
-    return False
+    Yoverlap=Meta.Yoverlap
+    Xoverlap=Meta.Xoverlap
+    Zoverlap=Meta.Zoverlap
 
+    jobs=Meta.jobs
+    n_jobs=Meta.n_jobs
+
+# ########################################     Preset framework parameters    #########################################
+
+UI.Msg('vanilla','Analysing the current script status...')
+Status=Meta.Status[-1]
+if ForceStatus!='N':
+    Status=int(ForceStatus)
+UI.Msg('vanilla','Current stage is '+str(Status)+'...')
+
+exit()
 def Success(Finished):
         if Finished:
             print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
