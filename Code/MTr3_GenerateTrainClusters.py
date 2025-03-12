@@ -330,7 +330,7 @@ while Status<len(Program):
             SeedFlowValuesTrue=[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
             with alive_bar(n_jobs,force_tty=True, title='Consolidating the output...') as bar:
                 for i in range(n_jobs):
-                        source_output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/Temp_MTr3_'+TrainSampleID+'_0/MTr3_'+TrainSampleID+'_SelectedTrainSeedClusters_'+str(i)+'.pkl'
+                        source_output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/Temp_MTr3_'+TrainSampleID+'_0/MTr3_'+TrainSampleID+'_SelectedTrainClusters_'+str(i)+'.pkl'
                         UI.Msg('location','Analysing file:',content2=source_output_file_location)
                         SampleCluster=UI.PickleOperations(source_output_file_location,'r', 'N/A')[0]
                         SeedFlowValuesAll = [a + b for a, b in zip(SeedFlowValuesAll, SampleCluster.SeedFlowValuesAll)]
