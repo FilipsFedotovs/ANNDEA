@@ -67,9 +67,9 @@ parser.add_argument('--ExcludeClassValues',help="What class values to use?", def
 parser.add_argument('--SubPause',help="How long to wait in minutes after submitting 10000 jobs?", default='60')
 parser.add_argument('--SubGap',help="How long to wait in minutes after submitting 10000 jobs?", default='10000')
 #The bellow are not important for the training smaples but if you want to augment the training data set above 1
-parser.add_argument('--Z_overlap',help="Enter the level of overlap in integer number between reconstruction blocks along z-axis.", default='1')
-parser.add_argument('--Y_overlap',help="Enter the level of overlap in integer number between reconstruction blocks along y-axis.", default='1')
-parser.add_argument('--X_overlap',help="Enter the level of overlap in integer number between reconstruction blocks along x-axis.", default='1')
+parser.add_argument('--Zoverlap',help="Enter the level of overlap in integer number between reconstruction blocks along z-axis.", default='1')
+parser.add_argument('--Yoverlap',help="Enter the level of overlap in integer number between reconstruction blocks along y-axis.", default='1')
+parser.add_argument('--Xoverlap',help="Enter the level of overlap in integer number between reconstruction blocks along x-axis.", default='1')
 parser.add_argument('--Memory',help="How uch memory to request?", default='2 GB')
 parser.add_argument('--CPU',help="How many CPUs?", default=1)
 parser.add_argument('--JobFlavour',help="Specifying the length of the HTCondor job walltime. Currently at 'workday' which is 8 hours.", default='workday')
@@ -113,6 +113,7 @@ for i in range(len(ExcludeClassNames)):
 
         if (ExcludeClassNames[i] in ExtraColumns)==False:
                 ExtraColumns.append(ExcludeClassNames[i])
+
 
 stepX=PM.stepX #Size of the individual reconstruction volumes along the x-axis
 stepY=PM.stepY #Size of the individual reconstruction volumes along the y-axis
