@@ -173,10 +173,13 @@ def test(model, device, sample, thld):
 
 output_train_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_CLUSTERS'+'.pkl'
 TrainSamples=UI.PickleOperations(output_train_file_location,'r', 'N/A')[0]
+TrainSamples = [obj.Graph for obj in TrainSamples]
 output_val_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_CLUSTERS'+'.pkl'
 ValSamples=UI.PickleOperations(output_val_file_location,'r', 'N/A')[0]
+ValSamples = [obj.Graph for obj in ValSamples]
 output_test_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TEST_CLUSTERS'+'.pkl'
 TestSamples=UI.PickleOperations(output_test_file_location,'r', 'N/A')[0]
+TestSamples = [obj.Graph for obj in TestSamples]
 
 
 
