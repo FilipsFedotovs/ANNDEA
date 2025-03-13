@@ -328,14 +328,17 @@ while Status<len(Program):
             SeedFlowLabels=['All','Excluding self-permutations', 'Excluding duplicates','Excluding seeds on the same plate', 'Cut on dz', 'Cut on dtx', 'Cut on dty' , 'Cut on drx', 'Cut on dry', 'MLP filter', 'GNN filter', 'Tracking process' ]
             SeedFlowValuesAll=[0,0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
             SeedFlowValuesTrue=[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+            num_node_features=None
+            num_edge_features=None
             with alive_bar(n_jobs,force_tty=True, title='Consolidating the output...') as bar:
                 for i in range(n_jobs):
                         source_output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/Temp_MTr3_'+TrainSampleID+'_0/MTr3_'+TrainSampleID+'_SelectedTrainClusters_'+str(i)+'.pkl'
                         UI.Msg('location','Analysing file:',content2=source_output_file_location)
                         SampleCluster=UI.PickleOperations(source_output_file_location,'r', 'N/A')[0]
-                        print(SampleCluster.Graph.num_node_features)
-                        print(SampleCluster.Graph.num_edge_features)
-                        exit()
+                        if num_node_features==None:
+                            num_node_features=SampleCluster.Graph.num_node_features
+                        if num_edge_features==None:
+                            num_edge_features=SampleCluster.Graph.num_edge_features
                         SeedFlowValuesAll = [a + b for a, b in zip(SeedFlowValuesAll, SampleCluster.SeedFlowValuesAll)]
                         SeedFlowValuesTrue = [a + b for a, b in zip(SeedFlowValuesTrue, SampleCluster.SeedFlowValuesTrue)]
                         Samples.append(SampleCluster)
@@ -352,7 +355,7 @@ while Status<len(Program):
 
             # Print the table with borders
             print(df.to_string(index=False))
-            Meta.UpdateJobMeta(['SeedFlowLabels', 'SeedFlowValuesAll', 'SeedFlowValuesTrue'],[SeedFlowLabels, SeedFlowValuesAll, SeedFlowValuesTrue])
+            Meta.UpdateJobMeta(['SeedFlowLabels', 'SeedFlowValuesAll', 'SeedFlowValuesTrue','num_node_features','num_edge_features'],[SeedFlowLabels, SeedFlowValuesAll, SeedFlowValuesTrue,num_node_features,num_edge_features])
             random.shuffle(Samples)
             print(UI.PickleOperations(TrainSampleOutputMeta,'w', Meta)[1])
             TrainSamples=[]
