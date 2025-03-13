@@ -111,7 +111,7 @@ class HitCluster:
            self.Graph.edge_index=torch.tensor((HitCluster.GenerateEdgeLinks(self.Seeds,self.HitIDs)))
            self.Graph.edge_attr=torch.tensor((HitCluster.GenerateEdgeAttributes(self.Seeds)))
            self.Graph.y=torch.tensor((HitCluster.GenerateEdgeLabels(self.Seeds)))
-           if len(self.ClusterGraph.edge_attr)>0:
+           if len(self.Graph.edge_attr)>0:
                return True
            else:
                return False
@@ -214,8 +214,7 @@ class HitCluster:
               _EdgeLbl.append(ip[2])
           return _EdgeLbl
       def UnloadClusterGraph(self):
-          del self.ClusterGraph
-          del self.HitLinks
+          del self.Graph
 
 def ErrorOperations(a,b,a_e,b_e,mode):
     if mode=='+' or mode == '-':
