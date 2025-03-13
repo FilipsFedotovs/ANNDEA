@@ -171,11 +171,11 @@ def test(model, device, sample, thld):
     return np.nanmean(losses), np.nanmean(accs)
 
 
-output_train_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_SAMPLES'+'.pkl'
+output_train_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_CLUSTERS'+'.pkl'
 TrainSamples=UI.PickleOperations(output_train_file_location,'r', 'N/A')[0]
-output_val_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_SAMPLES'+'.pkl'
+output_val_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_CLUSTERS'+'.pkl'
 ValSamples=UI.PickleOperations(output_val_file_location,'r', 'N/A')[0]
-output_test_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TEST_SAMPLES'+'.pkl'
+output_test_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TEST_CLUSTERS'+'.pkl'
 TestSamples=UI.PickleOperations(output_test_file_location,'r', 'N/A')[0]
 
 exit()
