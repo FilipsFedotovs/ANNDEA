@@ -180,7 +180,7 @@ TestSamples=UI.PickleOperations(output_test_file_location,'r', 'N/A')[0]
 
 
 
-def main():
+def main(self):
     print(UI.TimeStamp(),'Starting the training process... ')
     exit()
     State_Save_Path=EOSsubModelDIR+'/'+args.BatchID+'_State'
