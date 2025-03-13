@@ -69,7 +69,6 @@ import U_HC as HC
 EOSsubDIR=EOS_DIR+'/'+'ANNDEA'
 EOSsubModelDIR=EOSsubDIR+'/'+'Models'
 
-exit()
 
 ##############################################################################################################################
 ######################################### Starting the program ################################################################
@@ -135,7 +134,7 @@ def validate(model, device, sample):
         try:
           loss = F.binary_cross_entropy(output, y, reduction='mean').item()
         except:
-            print('Erroneus data set: ',data.x, data.edge_index, data.edge_attr, 'skipping these samples...')
+            print('Erroneous data set: ',data.x, data.edge_index, data.edge_attr, 'skipping these samples...')
             continue
         diff, opt_thld, opt_acc = 100, 0, 0
         for thld in np.arange(0.01, 0.6, 0.01):
@@ -165,13 +164,13 @@ def test(model, device, sample, thld):
             try:
                 loss = F.binary_cross_entropy(output, y,reduction='mean')
             except:
-                print('Erroneus data set: ',data.x, data.edge_index, data.edge_attr, 'skipping these samples...')
+                print('Erroneous data set: ',data.x, data.edge_index, data.edge_attr, 'skipping these samples...')
                 continue
             accs.append(acc.item())
             losses.append(loss.item())
     return np.nanmean(losses), np.nanmean(accs)
 
-
+exit()
 output_train_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_SAMPLES'+'.pkl'
 TrainSamples=UF.PickleOperations(output_train_file_location,'r', 'N/A')[0]
 output_val_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_SAMPLES'+'.pkl'
