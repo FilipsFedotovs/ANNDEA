@@ -170,14 +170,15 @@ def test(model, device, sample, thld):
             losses.append(loss.item())
     return np.nanmean(losses), np.nanmean(accs)
 
-exit()
-output_train_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_SAMPLES'+'.pkl'
-TrainSamples=UF.PickleOperations(output_train_file_location,'r', 'N/A')[0]
-output_val_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_SAMPLES'+'.pkl'
-ValSamples=UF.PickleOperations(output_val_file_location,'r', 'N/A')[0]
-output_test_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TEST_SAMPLES'+'.pkl'
-TestSamples=UF.PickleOperations(output_test_file_location,'r', 'N/A')[0]
 
+output_train_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_SAMPLES'+'.pkl'
+TrainSamples=UI.PickleOperations(output_train_file_location,'r', 'N/A')[0]
+output_val_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_SAMPLES'+'.pkl'
+ValSamples=UI.PickleOperations(output_val_file_location,'r', 'N/A')[0]
+output_test_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TEST_SAMPLES'+'.pkl'
+TestSamples=UI.PickleOperations(output_test_file_location,'r', 'N/A')[0]
+
+exit()
 
 def main(self):
     print(UF.TimeStamp(),'Starting the training process... ')
