@@ -333,8 +333,9 @@ while Status<len(Program):
                         source_output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/Temp_MTr3_'+TrainSampleID+'_0/MTr3_'+TrainSampleID+'_SelectedTrainClusters_'+str(i)+'.pkl'
                         UI.Msg('location','Analysing file:',content2=source_output_file_location)
                         SampleCluster=UI.PickleOperations(source_output_file_location,'r', 'N/A')[0]
-                        print(SampleCluster.num_node_features)
-                        print(SampleCluster.num_edge_features)
+                        print(SampleCluster.Graph.num_node_features)
+                        print(SampleCluster.Graph.num_edge_features)
+                        exit()
                         SeedFlowValuesAll = [a + b for a, b in zip(SeedFlowValuesAll, SampleCluster.SeedFlowValuesAll)]
                         SeedFlowValuesTrue = [a + b for a, b in zip(SeedFlowValuesTrue, SampleCluster.SeedFlowValuesTrue)]
                         Samples.append(SampleCluster)

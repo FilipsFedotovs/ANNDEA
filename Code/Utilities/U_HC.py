@@ -31,8 +31,6 @@ class HitCluster:
            self.ClusterSize=len(__ClusterHitsTemp)
            self.RawNodes=__ClusterHitsTemp #Avoiding importing torch without a good reason (reduce load on the HTCOndor initiative)
            del __ClusterHitsTemp
-
-
       def GenerateSeeds(self, cut_dt, cut_dr, cut_dz, l, MaxEdges, SeedFlowLog, EOS_DIR, ModelName=None): #Decorate hit information
            #New workaround: instead of a painful Pandas outer join a loop over list is performed
            _Hits=self.Hits
@@ -106,23 +104,19 @@ class HitCluster:
                                     else:
                                         continue
            return True
-
       def GenerateSeedGraph(self): #Decorate hit information
            import torch
            from torch_geometric.data import Data
-           self.ClusterGraph=Data(x=torch.Tensor(self.RawNodes), edge_index=None, y=None)
-           self.ClusterGraph.edge_index=torch.tensor((HitCluster.GenerateEdgeLinks(self.Seeds,self.HitIDs)))
-           self.ClusterGraph.edge_attr=torch.tensor((HitCluster.GenerateEdgeAttributes(self.Seeds)))
-           self.ClusterGraph.y=torch.tensor((HitCluster.GenerateEdgeLabels(self.Seeds)))
+           self.Graph=Data(x=torch.Tensor(self.RawNodes), edge_index=None, y=None)
+           self.Graph.edge_index=torch.tensor((HitCluster.GenerateEdgeLinks(self.Seeds,self.HitIDs)))
+           self.Graph.edge_attr=torch.tensor((HitCluster.GenerateEdgeAttributes(self.Seeds)))
+           self.Graph.y=torch.tensor((HitCluster.GenerateEdgeLabels(self.Seeds)))
            if len(self.ClusterGraph.edge_attr)>0:
                return True
            else:
                return False
 
-
-
       @staticmethod
-
       def SplitJob(_l,_MaxEdges, _n_hits):
         if _l>-1 and _MaxEdges>-1:
                _job_iter=0
@@ -142,7 +136,6 @@ class HitCluster:
                return _start_pos, _end_pos
         else:
             return 0, _n_hits-1
-
       @staticmethod
       def GenerateEdgeLinks(_input,_ID):
           _Top, _Bottom =[], []
@@ -150,7 +143,6 @@ class HitCluster:
               _Top.append(_ID.index(ip[0]))
               _Bottom.append(_ID.index(ip[1]))
           return [_Top,_Bottom]
-
       def NormaliseSeed(self,_Hit2, _Hit1, _cut_dt):
           _scale_factor=8
           h1,h2,x1,x2,y1,y2,z1,z2, tx1, tx2, ty1, ty2, l1, l2=_Hit2[0],_Hit1[0],_Hit2[1],_Hit1[1],_Hit2[2],_Hit1[2],_Hit2[3],_Hit1[3],_Hit2[4],_Hit1[4],_Hit2[5],_Hit1[5],_Hit2[6],_Hit1[6]
@@ -161,7 +153,6 @@ class HitCluster:
           _dty=abs(ty2-ty1)/(_cut_dt/_scale_factor)
           _ts=int(((l1==l2) and ('--' not in l1)))
           return [h1, h2, _ts, _dl,_dr,_dz,_dtx,_dty]
-
 
       def FitSeed(_H1, _H2, _cdt, _cdr, _cdz):
           if _H1[3]==_H2[3]: #Ensuring hit combinations are on different plates
@@ -216,7 +207,6 @@ class HitCluster:
           for ip in _input:
               _EdgeAttr.append(ip[3:])
           return _EdgeAttr
-
       @staticmethod
       def GenerateEdgeLabels(_input):
           _EdgeLbl=[]
