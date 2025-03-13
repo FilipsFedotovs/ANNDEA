@@ -149,11 +149,13 @@ def validate(model, device, sample):
 
 #Deriving testing metrics
 def test(model, device, sample, thld):
+
     model.eval()
     losses, accs = [], []
     with torch.no_grad():
         for HC in sample:
             data = HC.to(device)
+            print(len(data.x))
             if (len(data.x)==0 or len(data.edge_index)==0): continue
             try:
                output = model(data.x, data.edge_index, data.edge_attr)
