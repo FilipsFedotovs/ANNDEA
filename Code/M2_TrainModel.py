@@ -52,6 +52,9 @@ parser.add_argument('--JobFlavour',help="Specifying the length of the HTCondor j
 parser.add_argument('--ReqMemory',help="How much memory to request?", default='4 GB')
 parser.add_argument('--Wait',help="How many minutes to wait for a job", default='30')
 parser.add_argument('--RequestExtCPU',help="Would you like to request extra CPUs? How Many?", default=2)
+parser.add_argument('--LocalSub',help="Local submission?", default='N')
+parser.add_argument('--Memory',help="How uch memory to request?", default='2 GB')
+parser.add_argument('--CPU',help="How many CPUs?", default=1)
 args = parser.parse_args()
 
 #setting main learning parameters
@@ -65,8 +68,9 @@ ModelParams=ast.literal_eval(args.ModelParams)
 TrainParams=ast.literal_eval(args.TrainParams)
 TrainSampleID=args.TrainSampleID
 JobFlavour=args.JobFlavour
-ReqMemory=args.ReqMemory
-RequestExtCPU=int(args.RequestExtCPU)
+Memory=args.Memory
+LocalSub=(args.LocalSub=='Y')
+CPU=int(args.CPU)
 Wait=int(args.Wait)
 
 
@@ -105,7 +109,7 @@ print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry))
 if ModelType=='CNN':
                     Job=UI.CreateCondorJobs(AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/','N/A','M2','N/A',ModelName,1,OptionHeader,OptionLine,'M2_TrainModel_Sub.py',False,"['','']", True, True)[0]
 elif ModelType=='GNN' and ModelArchitecture=='TCN':
-                    Job=UI.CreateCondorJobs(AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/','N/A','M2','N/A',ModelName,1,OptionHeader,OptionLine,'MTr2_TrainModel_Sub.py',False,"['','']", True, False)[0]
+                    Job=UI.CreateCondorJobs(AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/','N/A','M2','N/A',ModelName,1,OptionHeader,OptionLine,'MTr4_TrainModel_Sub.py',False,"['','']", True, False)[0]
 elif ModelType=='MLP':
                     Job=UI.CreateCondorJobs(AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/','N/A','M2','N/A',ModelName,1,OptionHeader,OptionLine,'MTr2_TrainSeedModel_Sub.py',False,"['','']", True, False)[0]
 else:
@@ -158,7 +162,7 @@ def AutoPilot(wait_min, interval_min):
                  print(UI.TimeStamp(),'Loading the data file ',bcolors.OKBLUE+TrainSampleInputMeta+bcolors.ENDC)
                  Model_Meta.IniTrainingSession(TrainSampleID, datetime.datetime.now(), TrainParams)
                  print(UI.PickleOperations(Model_Meta_Path, 'w', Model_Meta)[1])
-                 UI.SubmitJobs2Condor(Job,False,RequestExtCPU,JobFlavour,ReqMemory)
+                 UI.SubmitJobs2Condor(Job,LocalSub,CPU,JobFlavour,Memory)
                  print(UI.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
                  print(bcolors.OKGREEN+"......................................................................."+bcolors.ENDC)
        else:
@@ -167,7 +171,7 @@ def AutoPilot(wait_min, interval_min):
                     q=schedd.query(constraint=HTCondorTag,projection=['CLusterID','JobStatus'])
                     if len(q)==0:
                         print(UI.TimeStamp(),bcolors.FAIL+'The HTCondor job has failed, resubmitting...'+bcolors.ENDC)
-                        UI.SubmitJobs2Condor(Job,False,RequestExtCPU,JobFlavour,ReqMemory)
+                        UI.SubmitJobs2Condor(Job,LocalSub,CPU,JobFlavour,Memory)
                         print(bcolors.BOLD+"The job has been submitted..."+bcolors.ENDC)
                     else:
                         print(UI.TimeStamp(),bcolors.WARNING+'Warning, the training is still running on HTCondor, the job parameters are listed bellow:'+bcolors.ENDC)
@@ -195,7 +199,7 @@ if Mode=='RESET':
     ModelMeta.IniModelMeta(ModelParams, 'PyTorch', Meta, ModelArchitecture, 'GNN')
  ModelMeta.IniTrainingSession(TrainSampleID, datetime.datetime.now(), TrainParams)
  print(UI.PickleOperations(Model_Meta_Path, 'w', ModelMeta)[1])
- UI.SubmitJobs2Condor(Job,False,RequestExtCPU,JobFlavour,ReqMemory)
+ UI.SubmitJobs2Condor(Job,LocalSub,CPU,JobFlavour,Memory)
  print(bcolors.BOLD+'If you would like to stop training and exit please enter E'+bcolors.ENDC)
  print(bcolors.BOLD+'If you would like to continue training on autopilot please type waiting time in minutes'+bcolors.ENDC)
  UserAnswer=input(bcolors.BOLD+"Please, enter your option\n"+bcolors.ENDC)
@@ -244,14 +248,14 @@ else:
               if UserAnswer=='R':
                  Model_Meta.IniTrainingSession(TrainSampleID, datetime.datetime.now(), TrainParams)
                  print(UI.PickleOperations(Model_Meta_Path, 'w', Model_Meta)[1])
-                 UI.SubmitJobs2Condor(Job,False,RequestExtCPU,JobFlavour,ReqMemory)
+                 UI.SubmitJobs2Condor(Job,LocalSub,CPU,JobFlavour,Memory)
                  print(bcolors.BOLD+"The job has been submitted..."+bcolors.ENDC)
                  print(UI.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
                  exit()
               else:
                  Model_Meta.IniTrainingSession(TrainSampleID, datetime.datetime.now(), TrainParams)
                  print(UI.PickleOperations(Model_Meta_Path, 'w', Model_Meta)[1])
-                 UI.SubmitJobs2Condor(Job,False,RequestExtCPU,JobFlavour,ReqMemory)
+                 UI.SubmitJobs2Condor(Job,LocalSub,CPU,JobFlavour,Memory)
                  print(bcolors.BOLD+"The job has been submitted..."+bcolors.ENDC)
                  print(UI.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
                  AutoPilot(int(UserAnswer),Wait)
@@ -288,13 +292,13 @@ else:
                     HTCondorTag="SoftUsed == \"ANNDEA-M2-"+ModelName+"\""
                     Model_Meta.IniTrainingSession(TrainSampleID, datetime.datetime.now(), TrainParams)
                     print(UI.PickleOperations(Model_Meta_Path, 'w', Model_Meta)[1])
-                    UI.SubmitJobs2Condor(Job,False,RequestExtCPU,JobFlavour,ReqMemory)
+                    UI.SubmitJobs2Condor(Job,LocalSub,CPU,JobFlavour,Memory)
                     print(bcolors.BOLD+"The job has been submitted..."+bcolors.ENDC)
                  else:
                      HTCondorTag="SoftUsed == \"ANNDEA-M2-"+ModelName+"\""
                      Model_Meta.IniTrainingSession(TrainSampleID, datetime.datetime.now(), TrainParams)
                      print(UI.PickleOperations(Model_Meta_Path, 'w', Model_Meta)[1])
-                     UI.SubmitJobs2Condor(Job,False,RequestExtCPU,JobFlavour,ReqMemory)
+                     UI.SubmitJobs2Condor(Job,LocalSub,CPU,JobFlavour,Memory)
                      print(bcolors.BOLD+"The job has been submitted..."+bcolors.ENDC)
                      AutoPilot(int(UserAnswer),Wait)
 
@@ -314,7 +318,7 @@ else:
                   print(UI.TimeStamp(),'OK, exiting now then')
                   exit()
            elif UserAnswer=='R':
-                 UI.SubmitJobs2Condor(Job,False,RequestExtCPU,JobFlavour,ReqMemory)
+                 UI.SubmitJobs2Condor(Job,LocalSub,CPU,JobFlavour,Memory)
                  print(bcolors.BOLD+"The job has been submitted..."+bcolors.ENDC)
                  print(UI.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
                  exit()
@@ -336,7 +340,7 @@ else:
                     ModelMeta.IniModelMeta(ModelParams, 'PyTorch', Meta, ModelArchitecture, 'GNN')
                  ModelMeta.IniTrainingSession(TrainSampleID, datetime.datetime.now(), TrainParams)
                  print(UI.PickleOperations(Model_Meta_Path, 'w', ModelMeta)[1])
-                 UI.SubmitJobs2Condor(Job,False,RequestExtCPU,JobFlavour,ReqMemory)
+                 UI.SubmitJobs2Condor(Job,LocalSub,CPU,JobFlavour,Memory)
                  print(bcolors.BOLD+"The job has been submitted..."+bcolors.ENDC)
                  AutoPilot(600,Wait)
 print(UI.TimeStamp(),bcolors.OKGREEN+'Training is finished then, thank you and goodbye'+bcolors.ENDC)
