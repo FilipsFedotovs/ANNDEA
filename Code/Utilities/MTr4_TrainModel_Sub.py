@@ -182,15 +182,16 @@ TestSamples=UI.PickleOperations(output_test_file_location,'r', 'N/A')[0]
 
 def main(self):
     print(UI.TimeStamp(),'Starting the training process... ')
-    exit()
     State_Save_Path=EOSsubModelDIR+'/'+args.BatchID+'_State'
     Model_Meta_Path=EOSsubModelDIR+'/'+args.BatchID+'_Meta'
     Model_Path=EOSsubModelDIR+'/'+args.BatchID
-    ModelMeta=UF.PickleOperations(Model_Meta_Path, 'r', 'N/A')[0]
+    ModelMeta=UI.PickleOperations(Model_Meta_Path, 'r', 'N/A')[0]
     device = torch.device('cpu')
-    model = UF.GenerateModel(ModelMeta).to(device)
+    model = UI.GenerateModel(ModelMeta).to(device)
     optimizer = optim.Adam(model.parameters(), lr=TrainParams[0])
     scheduler = StepLR(optimizer, step_size=0.1,gamma=0.1)
+    print(model)
+    exit()
     print(UF.TimeStamp(),'Try to load the previously saved model/optimiser state files ')
     try:
            model.load_state_dict(torch.load(Model_Path))
