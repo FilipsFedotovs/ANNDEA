@@ -187,7 +187,7 @@ def main(self):
     Model_Path=EOSsubModelDIR+'/'+args.BatchID
     ModelMeta=UI.PickleOperations(Model_Meta_Path, 'r', 'N/A')[0]
     device = torch.device('cpu')
-    model = UI.GenerateModel(ModelMeta).to(device)
+    model = ML.GenerateModel(ModelMeta).to(device)
     optimizer = optim.Adam(model.parameters(), lr=TrainParams[0])
     scheduler = StepLR(optimizer, step_size=0.1,gamma=0.1)
     print(model)
