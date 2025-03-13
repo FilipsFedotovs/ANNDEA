@@ -190,16 +190,14 @@ def main(self):
     model = ML.GenerateModel(ModelMeta).to(device)
     optimizer = optim.Adam(model.parameters(), lr=TrainParams[0])
     scheduler = StepLR(optimizer, step_size=0.1,gamma=0.1)
-    print(model)
-    exit()
-    print(UF.TimeStamp(),'Try to load the previously saved model/optimiser state files ')
+    print(UI.TimeStamp(),'Try to load the previously saved model/optimiser state files ')
     try:
            model.load_state_dict(torch.load(Model_Path))
            checkpoint = torch.load(State_Save_Path)
            optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
            scheduler.load_state_dict(checkpoint['scheduler'])
     except:
-           print(UF.TimeStamp(), bcolors.WARNING+"Model/state data files are missing, skipping this step..." +bcolors.ENDC)
+           print(UI.TimeStamp(), bcolors.WARNING+"Model/state data files are missing, skipping this step..." +bcolors.ENDC)
     records=[]
     TrainSampleSize=len(TrainSamples)
     fraction_size=math.ceil(TrainSampleSize/TrainParams[3])
@@ -211,7 +209,7 @@ def main(self):
          thld, val_loss,val_acc = validate(model, device, ValSamples)
          test_loss, test_acc = test(model, device,TestSamples, thld)
          scheduler.step()
-         print(UF.TimeStamp(),'Epoch ',epoch, ' is completed')
+         print(UI.TimeStamp(),'Epoch ',epoch, ' is completed')
          records.append([epoch,itr,train_loss,thld,val_loss,val_acc,test_loss,test_acc])
          torch.save({    'epoch': epoch,
                       'optimizer_state_dict': optimizer.state_dict(),
@@ -221,7 +219,7 @@ def main(self):
     Header=[['Epoch','# Samples','Train Loss','Optimal Threshold','Validation Loss','Validation Accuracy','Test Loss','Test Accuracy']]
     Header+=records
     ModelMeta.CompleteTrainingSession(Header)
-    print(UF.PickleOperations(Model_Meta_Path, 'w', ModelMeta)[1])
+    print(UI.PickleOperations(Model_Meta_Path, 'w', ModelMeta)[1])
     exit()
 if __name__ == '__main__':
      main(sys.argv[1:])
