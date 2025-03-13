@@ -178,10 +178,11 @@ ValSamples=UI.PickleOperations(output_val_file_location,'r', 'N/A')[0]
 output_test_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TEST_CLUSTERS'+'.pkl'
 TestSamples=UI.PickleOperations(output_test_file_location,'r', 'N/A')[0]
 
-exit()
 
-def main(self):
-    print(UF.TimeStamp(),'Starting the training process... ')
+
+def main():
+    print(UI.TimeStamp(),'Starting the training process... ')
+    exit()
     State_Save_Path=EOSsubModelDIR+'/'+args.BatchID+'_State'
     Model_Meta_Path=EOSsubModelDIR+'/'+args.BatchID+'_Meta'
     Model_Path=EOSsubModelDIR+'/'+args.BatchID
