@@ -102,7 +102,7 @@ def train(model, device, sample, optimizer):
     for HC in sample:
         data = HC.to(device)
         print(data.edge_index)
-        print(data.edge_index.item())
+        print(data.edge_index.size())
         if (len(data.x)==0 or len(data.edge_index)==0): continue
 
         iterator+=1
