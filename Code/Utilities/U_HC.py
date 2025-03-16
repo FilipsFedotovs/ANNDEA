@@ -67,7 +67,7 @@ class HitCluster:
                                if ModelName==None:
                                     self.Seeds.append(HitCluster.NormaliseSeed(self,_Hits[r], _Hits[l], cut_dt))
                                else:
-                                    _refined_seed=HitCluster.NormaliseSeed(self,_Hits[r], _Hits[l], cut_dt)
+                                    _refined_seed=HitCluster.NormaliseSeed2d(self,_Hits[r], _Hits[l], cut_dt)
                                     _refined_seed_vector=self.GenerateSeedVectors([_refined_seed])
                                     y=_refined_seed_vector[1][0]
                                     _refined_seed_vector_tensor=torch.tensor(_refined_seed_vector[0], dtype=torch.float32)
@@ -79,7 +79,7 @@ class HitCluster:
                                     if o.item()>model_acceptance:
                                         self.SeedFlowValuesTrue = [a + b for a, b in zip(self.SeedFlowValuesTrue, [0, 0, 0, 0, 0, 0, 0, 0, 0, y, 0, 0])]
                                         self.SeedFlowValuesAll = [a + b for a, b in zip(self.SeedFlowValuesAll, [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0])]
-                                        self.Seeds.append(HitCluster.NormaliseSeed(self,_Hits[r], _Hits[l], cut_dt))
+                                        self.Seeds.append(HitCluster.NormaliseSeed2d(self,_Hits[r], _Hits[l], cut_dt))
                                     else:
                                         continue
 
@@ -92,7 +92,7 @@ class HitCluster:
                             if ModelName==None:
                                     self.Seeds.append(HitCluster.NormaliseSeed(self,_Hits[r], _Hits[l], cut_dt))
                             else:
-                                    _refined_seed=HitCluster.NormaliseSeed(self,_Hits[r], _Hits[l], cut_dt)
+                                    _refined_seed=HitCluster.NormaliseSeed2d(self,_Hits[r], _Hits[l], cut_dt)
                                     _refined_seed_vector=self.GenerateSeedVectors([_refined_seed])
                                     _refined_seed_vector_tensor=torch.tensor(_refined_seed_vector[0], dtype=torch.float32)
                                     model.eval()
@@ -100,7 +100,7 @@ class HitCluster:
                                         x = _refined_seed_vector_tensor[0].unsqueeze(0)
                                         o = model(x)
                                     if o.item()>model_acceptance:
-                                        self.Seeds.append(HitCluster.NormaliseSeed(self,_Hits[r], _Hits[l], cut_dt))
+                                        self.Seeds.append(HitCluster.NormaliseSeed2d(self,_Hits[r], _Hits[l], cut_dt))
                                     else:
                                         continue
            return True
@@ -153,6 +153,20 @@ class HitCluster:
           _dty=abs(ty2-ty1)/(_cut_dt/_scale_factor)
           _ts=int(((l1==l2) and ('--' not in l1)))
           return [h1, h2, _ts, _dl,_dr,_dz,_dtx,_dty]
+
+       def NormaliseSeed2d(self,_Hit2, _Hit1, _cut_dt):
+          _scale_factor=4
+          StepX=self.Step[0]/_scale_factor
+          StepY=self.Step[1]/_scale_factor
+          StepDT=_cut_dt/_scale_factor
+          h1,h2,x1,x2,y1,y2,z1,z2, tx1, tx2, ty1, ty2, l1, l2=_Hit2[0],_Hit1[0],_Hit2[1],_Hit1[1],_Hit2[2],_Hit1[2],_Hit2[3],_Hit1[3],_Hit2[4],_Hit1[4],_Hit2[5],_Hit1[5],_Hit2[6],_Hit1[6]
+          _dx= (x2-x1 + StepX)/(2*StepX)
+          _dy= (y2-y1 + StepY)/(2*StepY)
+          _dz=abs(z2-z1)/self.Step[2]
+          _dtx=(tx2 - tx1 + StepDT)/(2*StepDT)
+          _dty=(ty2 - ty1 + StepDT)/(2*StepDT)
+          _ts=int(((l1==l2) and ('--' not in l1)))
+          return [h1, h2, _ts, _dx,_dy,_dz,_dtx,_dty]
 
       def FitSeed(_H1, _H2, _cdt, _cdr, _cdz):
           if _H1[3]==_H2[3]: #Ensuring hit combinations are on different plates
