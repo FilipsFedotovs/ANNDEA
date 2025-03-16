@@ -104,8 +104,7 @@ def train(model, device, sample, optimizer):
         print(data.edge_index)
         print(data.edge_index.size()[0])
         print(data.edge_index.size()[1])
-        if (len(data.x)==0 or len(data.edge_index)==0): continue
-
+        if len(data.edge_index.size[1])==0: continue
         iterator+=1
         w = model(data.x, data.edge_index, data.edge_attr)
         y, w = data.y.float(), w.squeeze(1)
