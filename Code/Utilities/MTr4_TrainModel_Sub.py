@@ -101,17 +101,12 @@ def train(model, device, sample, optimizer):
 
     for HC in sample:
         data = HC.to(device)
-        print(data.edge_index)
-        print(data.edge_index.size()[0])
-        print(data.edge_index.size()[1])
         if data.edge_index.size()[1]==0: continue
         iterator+=1
         w = model(data.x, data.edge_index, data.edge_attr)
         y, w = data.y.float(), w.squeeze(1)
         #edge weight loss
         loss_w = F.binary_cross_entropy(w, y, reduction='mean')
-        print(loss_w)
-        p=input()
         # optimize total loss
         if iterator%TrainParams[1]==0: #Update gradients by batch
            optimizer.zero_grad()
@@ -129,7 +124,7 @@ def validate(model, device, sample):
     opt_thlds, accs, losses = [], [], []
     for HC in sample:
         data = HC.to(device)
-        if (len(data.x)==0 or len(data.edge_index)==0): continue
+        if data.edge_index.size()[1]==0: continue
         try:
             output = model(data.x, data.edge_index, data.edge_attr)
         except:
@@ -159,12 +154,8 @@ def test(model, device, sample, thld):
     with torch.no_grad():
         for HC in sample:
             data = HC.to(device)
-            print(len(data.x))
-            if (len(data.x)==0 or len(data.edge_index)==0): continue
-            try:
-               output = model(data.x, data.edge_index, data.edge_attr)
-            except:
-               continue
+            if data.edge_index.size()[1]==0: continue
+            output = model(data.x, data.edge_index, data.edge_attr)
             y, output = data.y.float(), output.squeeze(1)
             acc, TPR, TNR = binary_classification_stats(output, y, thld)
             try:
