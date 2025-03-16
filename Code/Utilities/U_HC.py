@@ -67,7 +67,7 @@ class HitCluster:
                                if ModelName==None:
                                     self.Seeds.append(HitCluster.NormaliseSeed(self,_Hits[r], _Hits[l], cut_dt))
                                else:
-                                    _refined_seed=HitCluster.NormaliseSeed2d(self,_Hits[r], _Hits[l], cut_dt)
+                                    _refined_seed=HitCluster.NormaliseSeed(self,_Hits[r], _Hits[l], cut_dt)
                                     _refined_seed_vector=self.GenerateSeedVectors([_refined_seed])
                                     y=_refined_seed_vector[1][0]
                                     _refined_seed_vector_tensor=torch.tensor(_refined_seed_vector[0], dtype=torch.float32)
@@ -92,7 +92,7 @@ class HitCluster:
                             if ModelName==None:
                                     self.Seeds.append(HitCluster.NormaliseSeed(self,_Hits[r], _Hits[l], cut_dt))
                             else:
-                                    _refined_seed=HitCluster.NormaliseSeed2d(self,_Hits[r], _Hits[l], cut_dt)
+                                    _refined_seed=HitCluster.NormaliseSeed(self,_Hits[r], _Hits[l], cut_dt)
                                     _refined_seed_vector=self.GenerateSeedVectors([_refined_seed])
                                     _refined_seed_vector_tensor=torch.tensor(_refined_seed_vector[0], dtype=torch.float32)
                                     model.eval()
