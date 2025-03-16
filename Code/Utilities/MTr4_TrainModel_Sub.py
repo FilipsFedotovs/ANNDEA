@@ -98,8 +98,10 @@ def train(model, device, sample, optimizer):
     model.train()
     losses_w = [] # edge weight loss
     iterator=0
+
     for HC in sample:
         data = HC.to(device)
+        print(data.edge_index)
         if (len(data.x)==0 or len(data.edge_index)==0): continue
 
         iterator+=1
@@ -149,7 +151,6 @@ def validate(model, device, sample):
 
 #Deriving testing metrics
 def test(model, device, sample, thld):
-
     model.eval()
     losses, accs = [], []
     with torch.no_grad():
