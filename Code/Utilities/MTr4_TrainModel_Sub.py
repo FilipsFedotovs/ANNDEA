@@ -110,6 +110,8 @@ def train(model, device, sample, optimizer):
         y, w = data.y.float(), w.squeeze(1)
         #edge weight loss
         loss_w = F.binary_cross_entropy(w, y, reduction='mean')
+        print(loss_w)
+        p=input()
         # optimize total loss
         if iterator%TrainParams[1]==0: #Update gradients by batch
            optimizer.zero_grad()
