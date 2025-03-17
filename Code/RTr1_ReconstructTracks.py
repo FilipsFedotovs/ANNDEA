@@ -61,7 +61,7 @@ UI.WelcomeMsg('Initialising ANNDEA Tracking module...','Filips Fedotovs (PhD stu
 #Setting the parser - this script is usually not run directly, but is used by a Master version Counterpart that passes the required arguments
 parser = argparse.ArgumentParser(description='This script prepares training data for training the tracking model')
 parser.add_argument('--Mode', help='Script will continue from the last checkpoint, unless you want to start from the scratch, then type "Reset"',default='')
-parser.add_argument('--SeedModel',help="WHat GNN model would you like to use?", default='MH_SND_Tracking_5_80_5_80')
+parser.add_argument('--SeedModel',help="WHat GNN model would you like to use?", default='N')
 parser.add_argument('--GraphModel',help="WHat GNN model would you like to use?", default='MH_SND_Tracking_5_80_5_80')
 parser.add_argument('--Patience',help="How many checks to do before resubmitting the job?", default='30')
 parser.add_argument('--SubPause',help="How long to wait in minutes after submitting 10000 jobs?", default='60')
@@ -107,7 +107,6 @@ input_file_location=args.f
 Zoverlap,Yoverlap,Xoverlap=int(args.Zoverlap),int(args.Yoverlap),int(args.Xoverlap)
 Xmin,Xmax,Ymin,Ymax=float(args.Xmin),float(args.Xmax),float(args.Ymin),float(args.Ymax)
 SliceData=max(Xmin,Xmax,Ymin,Ymax)>0 #We don't slice data if all values are set to zero simultaneousy (which is the default setting)
-cut_dz=PM.cut_dz
 
 if LocalSub: time_int=0
 else: time_int=10
@@ -136,15 +135,15 @@ if args.ModelName=='blank':
    UserAnswer=input(bcolors.BOLD+"Do you want to continue? (y/n)\n"+bcolors.ENDC)
    if UserAnswer.upper()=='N':
        exit()
-   stepX,stepY, stepZ =PM.stepX, PM.stepY, PM.stepZ
-   cut_dt, cut_dr =PM.cut_dt, PM.cut_dr
+   stepX,stepY, stepZ = PM.stepX, PM.stepY, PM.stepZ
+   cut_dz, cut_dt, cut_dr =PM.cut_dz, PM.cut_dt, PM.cut_dr
 
 elif os.path.isfile(Model_Meta_Path):
        Model_Meta_Raw=UI.PickleOperations(Model_Meta_Path, 'r', 'N/A')
        print(Model_Meta_Raw[1])
        Model_Meta=Model_Meta_Raw[0]
-       stepX, stepY, stepZ =Model_Meta.stepX, Model_Meta.stepY, Model_Meta.stepZ
-       cut_dt, cut_dr =Model_Meta.cut_dt, Model_Meta.cut_dr
+       stepX, stepY, stepZ = Model_Meta.stepX, Model_Meta.stepY, Model_Meta.stepZ
+       cut_dz, cut_dt, cut_dr = Model_Meta.cut_dz, Model_Meta.cut_dt, Model_Meta.cut_dr
 else:
        print(UI.TimeStamp(),bcolors.FAIL+'Fail! No existing model meta files have been found, exiting now'+bcolors.ENDC)
        exit()
