@@ -4,7 +4,7 @@
 
 ########################################    Import libraries    #############################################
 import csv
-import ast
+#import ast
 csv_reader=open('../config',"r")
 config = list(csv.reader(csv_reader))
 for c in config:
@@ -70,18 +70,18 @@ parser.add_argument('--LocalSub',help="Local submission?", default='N')
 parser.add_argument('--CheckPoint',help="Save cluster sets during individual cluster tracking.", default='N')
 parser.add_argument('--CalibrateEdgeGen',help="Optimise the maximum edge per job parameter", default='N')
 parser.add_argument('--ForceStatus',help="Would you like the program run from specific status number? (Only for advance users)", default='N')
-parser.add_argument('--RequestExtCPU',help="Would you like to request extra CPUs?", default=1)
+parser.add_argument('--CPU',help="Would you like to request extra CPUs?", default=1)
 parser.add_argument('--JobFlavour',help="Specifying the length of the HTCondor job walltime. Currently at 'workday' which is 8 hours.", default='workday')
 parser.add_argument('--f',help="Please enter the full path to the file with track reconstruction", default='/eos/experiment/ship/ANNDEA/Data/SND_Emulsion_FEDRA_Raw_B31.csv')
 parser.add_argument('--Xmin',help="This option restricts data to only those events that have tracks with hits x-coordinates that are above this value", default='0')
 parser.add_argument('--Xmax',help="This option restricts data to only those events that have tracks with hits x-coordinates that are below this value", default='0')
 parser.add_argument('--Ymin',help="This option restricts data to only those events that have tracks with hits y-coordinates that are above this value", default='0')
 parser.add_argument('--Ymax',help="This option restricts data to only those events that have tracks with hits y-coordinates that are below this value", default='0')
-parser.add_argument('--Z_overlap',help="Enter the level of overlap in integer number between reconstruction blocks along z-axis. (In order to avoid segmentation this value should be more than 1)", default='3')
-parser.add_argument('--Y_overlap',help="Enter the level of overlap in integer number between reconstruction blocks along y-axis. (In order to avoid segmentation this value should be more than 1)", default='2')
-parser.add_argument('--X_overlap',help="Enter the level of overlap in integer number between reconstruction blocks along x-axis. (In order to avoid segmentation this value should be more than 1)", default='2')
-parser.add_argument('--ReqMemory',help="How much memory?", default='2 GB')
-parser.add_argument('--FixedPosition',help="Use to temporary reconstruct only specific sections of the emulsion data at a time (based on x-coordinate donain)", default=-1,type=int)
+parser.add_argument('--Zoverlap',help="Enter the level of overlap in integer number between reconstruction blocks along z-axis. (In order to avoid segmentation this value should be more than 1)", default='3')
+parser.add_argument('--Yoverlap',help="Enter the level of overlap in integer number between reconstruction blocks along y-axis. (In order to avoid segmentation this value should be more than 1)", default='2')
+parser.add_argument('--Xoverlap',help="Enter the level of overlap in integer number between reconstruction blocks along x-axis. (In order to avoid segmentation this value should be more than 1)", default='2')
+parser.add_argument('--Memory',help="How much memory?", default='2 GB')
+# parser.add_argument('--FixedPosition',help="Use to temporary reconstruct only specific sections of the emulsion data at a time (based on x-coordinate domain)", default=-1,type=int)
 parser.add_argument('--HTCondorLog',help="Local submission?", default=False,type=bool)
 
 ######################################## Parsing argument values  #############################################################
@@ -96,20 +96,20 @@ SubGap=int(args.SubGap)
 HTCondorLog=args.HTCondorLog
 ForceStatus=args.ForceStatus
 LocalSub=(args.LocalSub=='Y')
-FixedPosition=args.FixedPosition
+# FixedPosition=args.FixedPosition
 CalibrateEdgeGen=(args.CalibrateEdgeGen=='Y')
-if LocalSub:
-   time_int=0
-else:
-    time_int=10
 JobFlavour=args.JobFlavour
-RequestExtCPU=int(args.RequestExtCPU)
-ReqMemory=args.ReqMemory
+CPU=int(args.CPU)
+emory=args.Memory
 input_file_location=args.f
+Zoverlap,Yoverlap,Xoverlap=int(args.Zoverlap),int(args.Yoverlap),int(args.Xoverlap)
 Xmin,Xmax,Ymin,Ymax=float(args.Xmin),float(args.Xmax),float(args.Ymin),float(args.Ymax)
-Z_overlap,Y_overlap,X_overlap=int(args.Z_overlap),int(args.Y_overlap),int(args.X_overlap)
 SliceData=max(Xmin,Xmax,Ymin,Ymax)>0 #We don't slice data if all values are set to zero simultaneousy (which is the default setting)
 cut_dz=PM.cut_dz
+
+if LocalSub: time_int=0
+else: time_int=10
+
 if Mode=='RESET':
     print(UI.ManageFolders(AFS_DIR, EOS_DIR, RecBatchID,'d',['RTr1a','RTr1b','RTr1c','RTr1d','RTr1e']))
     print(UI.ManageFolders(AFS_DIR, EOS_DIR, RecBatchID,'c'))
@@ -125,6 +125,7 @@ EOSsubDIR=EOS_DIR+'/'+'ANNDEA'
 EOSsubModelDIR=EOSsubDIR+'/'+'Models'
 Model_Meta_Path=EOSsubModelDIR+'/'+args.ModelName+'_Meta'
 print(UI.TimeStamp(),bcolors.BOLD+'Preparation 1/3:'+bcolors.ENDC+' Setting up metafiles...')
+
 #Loading the model meta file
 print(UI.TimeStamp(),'Loading the data file ',bcolors.OKBLUE+Model_Meta_Path+bcolors.ENDC)
 
@@ -133,57 +134,55 @@ if args.ModelName=='blank':
    UserAnswer=input(bcolors.BOLD+"Do you want to continue? (y/n)\n"+bcolors.ENDC)
    if UserAnswer.upper()=='N':
        exit()
-   stepX=PM.stepX
-   stepY=PM.stepY
-   stepZ=PM.stepZ
-   cut_dt=PM.cut_dt
-   cut_dr=PM.cut_dr
+   stepX,stepY, stepZ =PM.stepX, PM.stepY, PM.stepZ
+   cut_dt, cut_dr =PM.cut_dt, PM.cut_dr
+
 elif os.path.isfile(Model_Meta_Path):
        Model_Meta_Raw=UI.PickleOperations(Model_Meta_Path, 'r', 'N/A')
        print(Model_Meta_Raw[1])
        Model_Meta=Model_Meta_Raw[0]
-       stepX=Model_Meta.stepX
-       stepY=Model_Meta.stepY
-       stepZ=Model_Meta.stepZ
-       cut_dt=Model_Meta.cut_dt
-       cut_dr=Model_Meta.cut_dr
+       stepX, stepY, stepZ =Model_Meta.stepX, Model_Meta.stepY, Model_Meta.stepZ
+       cut_dt, cut_dr =Model_Meta.cut_dt, Model_Meta.cut_dr
 else:
        print(UI.TimeStamp(),bcolors.FAIL+'Fail! No existing model meta files have been found, exiting now'+bcolors.ENDC)
        exit()
-
-def CP_CleanUp(prog,status):
-    jobs=prog[status][1][8]
-    eos=prog[status][1][1]
-    p=prog[status][1][3]
-    o=prog[status][1][4]
-    pfx=prog[status][1][5]
-    sfx=prog[status][1][6]
-    rec_batch_id=prog[status][1][7]
-    tot_jobs=UI.CalculateNJobs(jobs)[1]
-    jobs_del=0
-    with alive_bar(int(tot_jobs),force_tty=True, title='Deleting the unnecessary temp files...') as bar:
-        for i in range(len(jobs)):
-            for j in range(len(jobs[i])):
-                for k in range(jobs[i][j]):
-                   bar()
-                   output_file_location=eos+p+'Temp_'+pfx+'_'+rec_batch_id+'_'+str(i)+'_'+str(j)+'/'+pfx+'_'+rec_batch_id+'_'+o+'_'+str(i)+'_'+str(j)+'_'+str(k)+sfx
-                   if os.path.isfile(output_file_location):
-                        CheckPointFile_Ini=eos+p+'/Temp_'+pfx+'_'+rec_batch_id+'_'+str(i)+'_'+str(j)+'/'+pfx+'_'+rec_batch_id+'_'+o+'_'+str(i)+'_'+str(j)+'_'+str(k) +'_CP_Ini.pkl'
-                        CheckPointFile_Edge=eos+p+'/Temp_'+pfx+'_'+rec_batch_id+'_'+str(i)+'_'+str(j)+'/'+pfx+'_'+rec_batch_id+'_'+o+'_'+str(i)+'_'+str(j) +'_'+str(k) +'_CP_Edge.pkl'
-                        CheckPointFile_ML=eos+p+'/Temp_'+pfx+'_'+rec_batch_id+'_'+str(i)+'_'+str(j)+'/'+pfx+'_'+rec_batch_id+'_'+o+'_'+str(i)+'_'+str(j)+'_'+str(k) + '_CP_ML.csv'
-                        CheckPointFile_Prep_1=eos+p+'/Temp_'+pfx+'_'+rec_batch_id+'_'+str(i)+'_'+str(j)+'/'+pfx+'_'+rec_batch_id+'_'+o+'_'+str(i)+'_'+str(j) +'_'+str(k) +'_CP_Prep_1.csv'
-                        CheckPointFile_Prep_2=eos+p+'/Temp_'+pfx+'_'+rec_batch_id+'_'+str(i)+'_'+str(j)+'/'+pfx+'_'+rec_batch_id+'_'+o+'_'+str(i)+'_'+str(j) +'_'+str(k) +'_CP_Prep_2.csv'
-                        CheckPointFile_Tracking_TH=eos+p+'/Temp_'+pfx+'_'+rec_batch_id+'_'+str(i)+'_'+str(j)+'/'+pfx+'_'+rec_batch_id+'_'+o+'_'+str(i)+'_'+str(j)+'_'+str(k) +'_CP_Tracking_TH.csv'
-                        CheckPointFile_Tracking_RP=eos+p+'/Temp_'+pfx+'_'+rec_batch_id+'_'+str(i)+'_'+str(j)+'/'+pfx+'_'+rec_batch_id+'_'+o+'_'+str(i)+'_'+str(j)+'_'+str(k) +'_CP_Tracking_RP.csv'
-                        files_to_delete=[CheckPointFile_Ini,CheckPointFile_Edge,CheckPointFile_ML,CheckPointFile_Prep_1,CheckPointFile_Prep_2,CheckPointFile_Tracking_TH,CheckPointFile_Tracking_RP]
-                        for f in files_to_delete:
-                            if os.path.isfile(f):
-                                UI.Msg('location','Deleting:',f)
-                                os.remove(f)
-                                jobs_del+=1
-    return jobs_del
+#
+# def CP_CleanUp(prog,status):
+#     jobs=prog[status][1][8]
+#     eos=prog[status][1][1]
+#     p=prog[status][1][3]
+#     o=prog[status][1][4]
+#     pfx=prog[status][1][5]
+#     sfx=prog[status][1][6]
+#     rec_batch_id=prog[status][1][7]
+#     tot_jobs=UI.CalculateNJobs(jobs)[1]
+#     jobs_del=0
+#     with alive_bar(int(tot_jobs),force_tty=True, title='Deleting the unnecessary temp files...') as bar:
+#         for i in range(len(jobs)):
+#             for j in range(len(jobs[i])):
+#                 for k in range(jobs[i][j]):
+#                    bar()
+#                    output_file_location=eos+p+'Temp_'+pfx+'_'+rec_batch_id+'_'+str(i)+'_'+str(j)+'/'+pfx+'_'+rec_batch_id+'_'+o+'_'+str(i)+'_'+str(j)+'_'+str(k)+sfx
+#                    if os.path.isfile(output_file_location):
+#                         CheckPointFile_Ini=eos+p+'/Temp_'+pfx+'_'+rec_batch_id+'_'+str(i)+'_'+str(j)+'/'+pfx+'_'+rec_batch_id+'_'+o+'_'+str(i)+'_'+str(j)+'_'+str(k) +'_CP_Ini.pkl'
+#                         CheckPointFile_Edge=eos+p+'/Temp_'+pfx+'_'+rec_batch_id+'_'+str(i)+'_'+str(j)+'/'+pfx+'_'+rec_batch_id+'_'+o+'_'+str(i)+'_'+str(j) +'_'+str(k) +'_CP_Edge.pkl'
+#                         CheckPointFile_ML=eos+p+'/Temp_'+pfx+'_'+rec_batch_id+'_'+str(i)+'_'+str(j)+'/'+pfx+'_'+rec_batch_id+'_'+o+'_'+str(i)+'_'+str(j)+'_'+str(k) + '_CP_ML.csv'
+#                         CheckPointFile_Prep_1=eos+p+'/Temp_'+pfx+'_'+rec_batch_id+'_'+str(i)+'_'+str(j)+'/'+pfx+'_'+rec_batch_id+'_'+o+'_'+str(i)+'_'+str(j) +'_'+str(k) +'_CP_Prep_1.csv'
+#                         CheckPointFile_Prep_2=eos+p+'/Temp_'+pfx+'_'+rec_batch_id+'_'+str(i)+'_'+str(j)+'/'+pfx+'_'+rec_batch_id+'_'+o+'_'+str(i)+'_'+str(j) +'_'+str(k) +'_CP_Prep_2.csv'
+#                         CheckPointFile_Tracking_TH=eos+p+'/Temp_'+pfx+'_'+rec_batch_id+'_'+str(i)+'_'+str(j)+'/'+pfx+'_'+rec_batch_id+'_'+o+'_'+str(i)+'_'+str(j)+'_'+str(k) +'_CP_Tracking_TH.csv'
+#                         CheckPointFile_Tracking_RP=eos+p+'/Temp_'+pfx+'_'+rec_batch_id+'_'+str(i)+'_'+str(j)+'/'+pfx+'_'+rec_batch_id+'_'+o+'_'+str(i)+'_'+str(j)+'_'+str(k) +'_CP_Tracking_RP.csv'
+#                         files_to_delete=[CheckPointFile_Ini,CheckPointFile_Edge,CheckPointFile_ML,CheckPointFile_Prep_1,CheckPointFile_Prep_2,CheckPointFile_Tracking_TH,CheckPointFile_Tracking_RP]
+#                         for f in files_to_delete:
+#                             if os.path.isfile(f):
+#                                 UI.Msg('location','Deleting:',f)
+#                                 os.remove(f)
+#                                 jobs_del+=1
+#     return jobs_del
 
 ########################################     Phase 1 - Create compact source file    #########################################
+
+exit()
+
 print(UI.TimeStamp(),bcolors.BOLD+'Preparation 2/3:'+bcolors.ENDC+' Preparing the source data...')
 required_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/RTr1_'+RecBatchID+'_hits.csv'
 RecOutputMeta=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/'+RecBatchID+'_info.pkl'
@@ -265,7 +264,7 @@ if os.path.isfile(required_file_location)==False:
                          bar()
          data.to_csv(required_file_location,index=False)
          Meta=UI.TrainingSampleMeta(RecBatchID)
-         Meta.IniHitClusterMetaData(stepX,stepY,stepZ,cut_dt,cut_dr,cut_dz,0.05,0.1,y_offset,x_offset,Xsteps,Ysteps,X_overlap,Y_overlap,Zsteps,Z_overlap)
+         Meta.IniHitClusterMetaData(stepX,stepY,stepZ,cut_dt,cut_dr,cut_dz,0.05,0.1,y_offset,x_offset,Xsteps,Ysteps,Xoverlap,Yoverlap,Zsteps,Zoverlap)
          Meta.UpdateStatus(0)
          print(UI.PickleOperations(RecOutputMeta,'w', Meta)[1])
          UI.Msg('completed','Stage 0 has successfully completed')
