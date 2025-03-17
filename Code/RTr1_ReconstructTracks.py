@@ -61,7 +61,8 @@ UI.WelcomeMsg('Initialising ANNDEA Tracking module...','Filips Fedotovs (PhD stu
 #Setting the parser - this script is usually not run directly, but is used by a Master version Counterpart that passes the required arguments
 parser = argparse.ArgumentParser(description='This script prepares training data for training the tracking model')
 parser.add_argument('--Mode', help='Script will continue from the last checkpoint, unless you want to start from the scratch, then type "Reset"',default='')
-parser.add_argument('--ModelName',help="WHat GNN model would you like to use?", default='MH_SND_Tracking_5_80_5_80')
+parser.add_argument('--SeedModel',help="WHat GNN model would you like to use?", default='MH_SND_Tracking_5_80_5_80')
+parser.add_argument('--GraphModel',help="WHat GNN model would you like to use?", default='MH_SND_Tracking_5_80_5_80')
 parser.add_argument('--Patience',help="How many checks to do before resubmitting the job?", default='30')
 parser.add_argument('--SubPause',help="How long to wait in minutes after submitting 10000 jobs?", default='60')
 parser.add_argument('--SubGap',help="How long to wait in minutes after submitting 10000 jobs?", default='10000')
@@ -87,7 +88,8 @@ parser.add_argument('--HTCondorLog',help="Local submission?", default=False,type
 ######################################## Parsing argument values  #############################################################
 args = parser.parse_args()
 Mode=args.Mode.upper()
-ModelName=args.ModelName
+SeedModel=args.SeedModel
+GraphModel=args.GraphModel
 RecBatchID=args.RecBatchID
 Patience=int(args.Patience)
 SubPause=int(args.SubPause)*60
@@ -123,7 +125,7 @@ else:
 #Establishing paths
 EOSsubDIR=EOS_DIR+'/'+'ANNDEA'
 EOSsubModelDIR=EOSsubDIR+'/'+'Models'
-Model_Meta_Path=EOSsubModelDIR+'/'+args.ModelName+'_Meta'
+Model_Meta_Path=EOSsubModelDIR+'/'+args.GraphModel+'_Meta'
 print(UI.TimeStamp(),bcolors.BOLD+'Preparation 1/3:'+bcolors.ENDC+' Setting up metafiles...')
 
 #Loading the model meta file
