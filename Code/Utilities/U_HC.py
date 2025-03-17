@@ -154,7 +154,7 @@ class HitCluster:
           _ts=int(((l1==l2) and ('--' not in l1)))
           return [h1, h2, _ts, _dl,_dr,_dz,_dtx,_dty]
 
-       def NormaliseSeed2d(self,_Hit2, _Hit1, _cut_dt):
+      def NormaliseSeed2d(self,_Hit2, _Hit1, _cut_dt):
           _scale_factor=4
           StepX=self.Step[0]/_scale_factor
           StepY=self.Step[1]/_scale_factor
