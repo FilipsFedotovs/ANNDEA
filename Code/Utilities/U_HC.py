@@ -113,7 +113,9 @@ class HitCluster:
            from torch_geometric.data import Data
            self.Graph=Data(x=torch.Tensor(self.RawNodes), edge_index=None, y=None)
            self.Graph.edge_index=torch.tensor((HitCluster.GenerateEdgeLinks(self.Seeds,self.HitIDs)))
+           print((HitCluster.GenerateEdgeAttributes(self.Seeds)))
            self.Graph.edge_attr=torch.tensor((HitCluster.GenerateEdgeAttributes(self.Seeds)))
+           print(self.Graph.edge_attr)
            self.Graph.y=torch.tensor((HitCluster.GenerateEdgeLabels(self.Seeds)))
            if len(self.Graph.edge_attr)>0:
                return True
