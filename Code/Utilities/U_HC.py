@@ -79,6 +79,7 @@ class HitCluster:
                                     if o.item()>model_acceptance:
                                         self.SeedFlowValuesTrue = [a + b for a, b in zip(self.SeedFlowValuesTrue, [0, 0, 0, 0, 0, 0, 0, 0, 0, y, 0, 0])]
                                         self.SeedFlowValuesAll = [a + b for a, b in zip(self.SeedFlowValuesAll, [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0])]
+                                        print(HitCluster.NormaliseSeed2d(self,_Hits[r], _Hits[l], cut_dt))
                                         self.Seeds.append(HitCluster.NormaliseSeed2d(self,_Hits[r], _Hits[l], cut_dt))
                                     else:
                                         continue
@@ -100,7 +101,7 @@ class HitCluster:
                                         x = _refined_seed_vector_tensor[0].unsqueeze(0)
                                         o = model(x)
                                     if o.item()>model_acceptance:
-                                        print(HitCluster.NormaliseSeed2d(self,_Hits[r], _Hits[l], cut_dt))
+
                                         self.Seeds.append(HitCluster.NormaliseSeed2d(self,_Hits[r], _Hits[l], cut_dt))
                                     else:
                                         continue
