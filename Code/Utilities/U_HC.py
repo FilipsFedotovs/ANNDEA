@@ -201,7 +201,6 @@ class HitCluster:
             return SeedsX,SeedsY
       def FitTrackSeed(_H1, _H2, _cdt, _cdr, _cdz): #A more involved option that involves producing the seed cutflow and the truth distribution if the MC data available.
           _ts=int(((_H1[6]==_H2[6]) and ('--' not in _H1[6])))
-          print(_H1[3],_H2[3], _H1[3]==_H2[3])
           if _H1[3]==_H2[3]: #Ensuring hit combinations are on different plates
                 return False, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [_ts, _ts, _ts, 0, 0, 0, 0, 0, 0, 0, 0, 0]
           elif abs(_H1[3]-_H2[3])>=_cdz:
@@ -225,6 +224,8 @@ class HitCluster:
           _EdgeAttr=[]
           for ip in _input:
               _EdgeAttr.append(ip[3:])
+              print(ip)
+              print(ip[3:])
           return _EdgeAttr
       @staticmethod
       def GenerateEdgeLabels(_input):
