@@ -103,8 +103,6 @@ def train(model, device, sample, optimizer):
         data = HC.to(device)
         if data.edge_index.size()[1]==0: continue
         iterator+=1
-        print(data.edge_attr)
-        x=input()
         w = model(data.x, data.edge_index, data.edge_attr)
         y, w = data.y.float(), w.squeeze(1)
         #edge weight loss
