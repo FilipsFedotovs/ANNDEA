@@ -224,8 +224,10 @@ class HitCluster:
           _EdgeAttr=[]
           for ip in _input:
               _EdgeAttr.append(ip[3:])
-              print(ip)
-              print(ip[3:])
+
+              if ip[5]==0:
+                  print(ip)
+                  print(ip[3:])
           return _EdgeAttr
       @staticmethod
       def GenerateEdgeLabels(_input):
