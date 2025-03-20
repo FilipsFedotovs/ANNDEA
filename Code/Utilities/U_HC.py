@@ -100,6 +100,7 @@ class HitCluster:
                                         x = _refined_seed_vector_tensor[0].unsqueeze(0)
                                         o = model(x)
                                     if o.item()>model_acceptance:
+                                        print(HitCluster.NormaliseSeed2d(self,_Hits[r], _Hits[l], cut_dt))
                                         self.Seeds.append(HitCluster.NormaliseSeed2d(self,_Hits[r], _Hits[l], cut_dt))
                                     else:
                                         continue
