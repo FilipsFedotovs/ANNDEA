@@ -154,7 +154,7 @@ input_file_location=EOS_DIR+p+'/Temp_RTr1b_'+RecBatchID+'_'+str(i)+'_'+str(j)+'/
 #if os.path.isfile(input_file_location) and Status=='Edge graph generation':
 if Status=='Edge graph generation':
     HC=UI.PickleOperations(input_file_location,'r',' ')[0]
-    if HC.CLusterSize<=1 or len(HC.Seeds)<1:
+    if HC.ClusterSize<=1 or len(HC.Seeds)<1:
         Status = 'Skip tracking'
 else:
     Status = 'Skip tracking'
