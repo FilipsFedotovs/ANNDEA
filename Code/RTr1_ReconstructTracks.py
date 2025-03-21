@@ -232,8 +232,6 @@ if os.path.isfile(required_file_location)==False:
          data=data.rename(columns={PM.tx: "tx"})
          data=data.rename(columns={PM.ty: "ty"})
          data=data.rename(columns={PM.Hit_ID: "Hit_ID"})
-         print(data)
-         exit()
          print(UI.TimeStamp(),'Analysing data... ',bcolors.ENDC)
          z_offset=data['z'].min()
          data['z']=data['z']-z_offset
@@ -282,8 +280,9 @@ if os.path.isfile(required_file_location)==False:
                              UI.PickleOperations(required_tfile_location,'w',HC)
                          bar()
          data.to_csv(required_file_location,index=False)
-         Meta=UI.TrainingSampleMeta(RecBatchID)
-         Meta.IniHitClusterMetaData(stepX,stepY,stepZ,cut_dt,cut_dr,cut_dz,0.05,0.1,y_offset,x_offset,Xsteps,Ysteps,Xoverlap,Yoverlap,Zsteps,Zoverlap)
+
+         Meta=UI.JobMeta(RecBatchID)
+         Meta.UpdateJobMeta(['stepX', 'stepY', 'stepZ', 'cut_dt', 'cut_dr', 'cut_dz', 'y_offset', 'x_offset', 'Xoverlap', 'Yoverlap', 'Zoverlap', 'Xsteps', 'Ysteps', 'Zsteps'],[stepX, stepY, stepZ, cut_dt, cut_dr, cut_dz, y_offset, x_offset, Xoverlap, Yoverlap, Zoverlap, Xsteps, Ysteps, Zsteps])
          Meta.UpdateStatus(0)
          print(UI.PickleOperations(RecOutputMeta,'w', Meta)[1])
          UI.Msg('completed','Stage 0 has successfully completed')
