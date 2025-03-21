@@ -187,14 +187,14 @@ if Status == 'ML analysis':
         model.load_state_dict(torch.load(Model_Path))
         model.eval() #In Pytorch this function sets the model into the evaluation mode.
         w = model(HC.Graph.x, HC.Graph.edge_index, HC.Graph.edge_attr) #Here we use the model to assign the weights between Hit edges
-        w=w.tolist()
+        weights=w.tolist()
         print(HC.Seeds)
         print(w)
-        exit()
         combined_weight_list=[]
-        for edge in range(len(HC.edges)):
-            combined_weight_list.append(HC.edges[edge]+w[edge]) #Join the Hit Pair classification back to the hit pairs
-
+        for sd,w in zip(HC.Seeds, weights):
+            combined_weight_list.append(sd[:3]+w) #Join the Hit Pair classification back to the hit pairs
+        print(combined_weight_list)
+        exit()
         combined_weight_list=pd.DataFrame(combined_weight_list, columns = ['l_HitID','r_HitID','link_strength'])
 
         _HitPairs=pd.DataFrame(HC.HitPairs, columns=['l_HitID','l_z','r_HitID','r_z'])
