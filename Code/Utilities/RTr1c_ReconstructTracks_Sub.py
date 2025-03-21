@@ -188,6 +188,7 @@ if Status == 'ML analysis':
         model.eval() #In Pytorch this function sets the model into the evaluation mode.
         w = model(HC.Graph.x, HC.Graph.edge_index, HC.Graph.edge_attr) #Here we use the model to assign the weights between Hit edges
         w=w.tolist()
+        print(HC.Seeds)
         print(w)
         exit()
         combined_weight_list=[]
