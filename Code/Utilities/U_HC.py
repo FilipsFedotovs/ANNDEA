@@ -20,7 +20,6 @@ class HitCluster:
            self.Hits=[]
            self.HitIDs=[]
            __ClusterHitsTemp=[]
-           _scale_factor=8
            for s in RawHits:
                if s[1]>=self.ClusterID[0]*self.Step[0] and s[1]<((self.ClusterID[0]+1)*self.Step[0]):
                    if s[2]>=self.ClusterID[1]*self.Step[1] and s[2]<((self.ClusterID[1]+1)*self.Step[1]):
