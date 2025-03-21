@@ -53,9 +53,6 @@ input_file_location=EOS_DIR+p+'/RTr1_'+RecBatchID+'_'+str(i)+'_'+str(j)+'_'+str(
 HC=UI.PickleOperations(input_file_location,'r','')[0]
 print(UI.TimeStamp(),'Generating the edges...')
 GraphStatus = HC.GenerateSeeds(cut_dt, cut_dr, cut_dz, int(l), MaxEdgesPerJob, SeedFlowLog, EOS_DIR, ModelName)
-print(HC.SeedFlowLabels)
-print(HC.SeedFlowValuesAll)
-print(HC.SeedFlowValuesTrue)
 print(UI.TimeStamp(),'Writing the output...')
 output_file_location=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(i)+'_'+str(j)+'_'+str(k)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(i)+'_'+str(j)+'_'+str(k)+'_'+str(l)+sfx
 UI.PickleOperations(output_file_location,'w',HC)

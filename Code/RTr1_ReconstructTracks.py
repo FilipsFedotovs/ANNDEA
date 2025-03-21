@@ -366,6 +366,8 @@ prog_entry.append(False)
 Program.append(prog_entry)
 print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry))
 
+Program.append('Custom')
+
 # prog_entry=[]
 # job_sets=[]
 # for i in range(0,Xsteps):
@@ -475,50 +477,53 @@ while Status<len(Program):
              Status=20
              break
 
-    # elif Status==1:
-    #     print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
-    #     print(UI.TimeStamp(),bcolors.BOLD+'Stage 1:'+bcolors.ENDC+' Consolidating the edge generation files from the previous step...')
-    #     with alive_bar(Program[0][4],force_tty=True, title='Consolidation progress...') as bar:
-    #         if FixedPosition<0:
-    #             for i in range(len(Program[0][1][8])):
-    #                 for j in range(len(Program[0][1][8][i])):
-    #                     for k in range(len(Program[0][1][8][i][j])):
-    #                         if Program[0][1][8][i][j][k]>0:
-    #                             master_file=EOS_DIR+Program[0][1][3]+'/Temp_'+Program[0][1][5]+'_'+RecBatchID+'_'+str(i)+'_'+str(j)+'_'+str(k)+'/'+Program[0][1][5]+'_'+RecBatchID+'_'+Program[0][1][4]+'_'+str(i)+'_'+str(j)+'_'+str(k)+'_0.pkl'
-    #                             master_data=UI.PickleOperations(master_file,'r','')[0]
-    #                             bar()
-    #                             for l in range(1,Program[0][1][8][i][j][k]):
-    #                                 slave_file=EOS_DIR+Program[0][1][3]+'/Temp_'+Program[0][1][5]+'_'+RecBatchID+'_'+str(i)+'_'+str(j)+'_'+str(k)+'/'+Program[0][1][5]+'_'+RecBatchID+'_'+Program[0][1][4]+'_'+str(i)+'_'+str(j)+'_'+str(k)+'_'+str(l)+'.pkl'
-    #                                 slave_data=UI.PickleOperations(slave_file,'r','')[0]
-    #                                 master_data.RawEdgeGraph+=slave_data.RawEdgeGraph
-    #                                 master_data.HitPairs+=slave_data.HitPairs
-    #                                 bar()
-    #                             output_file=EOS_DIR+Program[2][1][3]+'/Temp_'+Program[2][1][5]+'_'+RecBatchID+'_'+str(i)+'_'+str(j)+'/'+Program[0][1][5]+'_'+RecBatchID+'_'+Program[0][1][4]+'_'+str(i)+'_'+str(j)+'_'+str(k)+'.pkl'
-    #                             print(UI.PickleOperations(output_file,'w',master_data)[1])
-    #                         else:
-    #                             bar()
-    #                             continue
-    #         else:
-    #             i=FixedPosition
-    #             for j in range(len(Program[0][1][8][i])):
-    #                 for k in range(len(Program[0][1][8][i][j])):
-    #                     if Program[0][1][8][i][j][k]>0:
-    #                         master_file=EOS_DIR+Program[0][1][3]+'/Temp_'+Program[0][1][5]+'_'+RecBatchID+'_'+str(i)+'_'+str(j)+'_'+str(k)+'/'+Program[0][1][5]+'_'+RecBatchID+'_'+Program[0][1][4]+'_'+str(i)+'_'+str(j)+'_'+str(k)+'_0.pkl'
-    #                         master_data=UI.PickleOperations(master_file,'r','')[0]
-    #                         bar()
-    #                         for l in range(1,Program[0][1][8][i][j][k]):
-    #                             slave_file=EOS_DIR+Program[0][1][3]+'/Temp_'+Program[0][1][5]+'_'+RecBatchID+'_'+str(i)+'_'+str(j)+'_'+str(k)+'/'+Program[0][1][5]+'_'+RecBatchID+'_'+Program[0][1][4]+'_'+str(i)+'_'+str(j)+'_'+str(k)+'_'+str(l)+'.pkl'
-    #                             slave_data=UI.PickleOperations(slave_file,'r','')[0]
-    #                             master_data.RawEdgeGraph+=slave_data.RawEdgeGraph
-    #                             master_data.HitPairs+=slave_data.HitPairs
-    #                             bar()
-    #                         output_file=EOS_DIR+Program[2][1][3]+'/Temp_'+Program[2][1][5]+'_'+RecBatchID+'_'+str(i)+'_'+str(j)+'/'+Program[0][1][5]+'_'+RecBatchID+'_'+Program[0][1][4]+'_'+str(i)+'_'+str(j)+'_'+str(k)+'.pkl'
-    #                         print(UI.PickleOperations(output_file,'w',master_data)[1])
-    #                     else:
-    #                         bar()
-    #                         continue
-    #     UI.Msg('success',"The hit cluster files were successfully consolidated.")
-    #     UI.UpdateStatus(Status+1,Meta,RecOutputMeta)
+    elif Status==1:
+        print('Wip')
+        exit()
+        print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
+        print(UI.TimeStamp(),bcolors.BOLD+'Stage 1:'+bcolors.ENDC+' Consolidating the edge generation files from the previous step...')
+        with alive_bar(Program[0][4],force_tty=True, title='Consolidation progress...') as bar:
+            # if FixedPosition<0:
+
+                for i in range(len(Program[0][1][8])):
+                    for j in range(len(Program[0][1][8][i])):
+                        for k in range(len(Program[0][1][8][i][j])):
+                            if Program[0][1][8][i][j][k]>0:
+                                master_file=EOS_DIR+Program[0][1][3]+'/Temp_'+Program[0][1][5]+'_'+RecBatchID+'_'+str(i)+'_'+str(j)+'_'+str(k)+'/'+Program[0][1][5]+'_'+RecBatchID+'_'+Program[0][1][4]+'_'+str(i)+'_'+str(j)+'_'+str(k)+'_0.pkl'
+                                master_data=UI.PickleOperations(master_file,'r','')[0]
+                                bar()
+                                for l in range(1,Program[0][1][8][i][j][k]):
+                                    slave_file=EOS_DIR+Program[0][1][3]+'/Temp_'+Program[0][1][5]+'_'+RecBatchID+'_'+str(i)+'_'+str(j)+'_'+str(k)+'/'+Program[0][1][5]+'_'+RecBatchID+'_'+Program[0][1][4]+'_'+str(i)+'_'+str(j)+'_'+str(k)+'_'+str(l)+'.pkl'
+                                    slave_data=UI.PickleOperations(slave_file,'r','')[0]
+                                    master_data.RawEdgeGraph+=slave_data.RawEdgeGraph
+                                    master_data.HitPairs+=slave_data.HitPairs
+                                    bar()
+                                output_file=EOS_DIR+Program[2][1][3]+'/Temp_'+Program[2][1][5]+'_'+RecBatchID+'_'+str(i)+'_'+str(j)+'/'+Program[0][1][5]+'_'+RecBatchID+'_'+Program[0][1][4]+'_'+str(i)+'_'+str(j)+'_'+str(k)+'.pkl'
+                                print(UI.PickleOperations(output_file,'w',master_data)[1])
+                            else:
+                                bar()
+                                continue
+            # else:
+            #     i=FixedPosition
+            #     for j in range(len(Program[0][1][8][i])):
+            #         for k in range(len(Program[0][1][8][i][j])):
+            #             if Program[0][1][8][i][j][k]>0:
+            #                 master_file=EOS_DIR+Program[0][1][3]+'/Temp_'+Program[0][1][5]+'_'+RecBatchID+'_'+str(i)+'_'+str(j)+'_'+str(k)+'/'+Program[0][1][5]+'_'+RecBatchID+'_'+Program[0][1][4]+'_'+str(i)+'_'+str(j)+'_'+str(k)+'_0.pkl'
+            #                 master_data=UI.PickleOperations(master_file,'r','')[0]
+            #                 bar()
+            #                 for l in range(1,Program[0][1][8][i][j][k]):
+            #                     slave_file=EOS_DIR+Program[0][1][3]+'/Temp_'+Program[0][1][5]+'_'+RecBatchID+'_'+str(i)+'_'+str(j)+'_'+str(k)+'/'+Program[0][1][5]+'_'+RecBatchID+'_'+Program[0][1][4]+'_'+str(i)+'_'+str(j)+'_'+str(k)+'_'+str(l)+'.pkl'
+            #                     slave_data=UI.PickleOperations(slave_file,'r','')[0]
+            #                     master_data.RawEdgeGraph+=slave_data.RawEdgeGraph
+            #                     master_data.HitPairs+=slave_data.HitPairs
+            #                     bar()
+            #                 output_file=EOS_DIR+Program[2][1][3]+'/Temp_'+Program[2][1][5]+'_'+RecBatchID+'_'+str(i)+'_'+str(j)+'/'+Program[0][1][5]+'_'+RecBatchID+'_'+Program[0][1][4]+'_'+str(i)+'_'+str(j)+'_'+str(k)+'.pkl'
+            #                 print(UI.PickleOperations(output_file,'w',master_data)[1])
+            #             else:
+            #                 bar()
+            #                 continue
+        UI.Msg('success',"The hit cluster files were successfully consolidated.")
+        UI.UpdateStatus(Status+1,Meta,RecOutputMeta)
     # elif Status==3:
     #     print('We are here')
     #     exit()
