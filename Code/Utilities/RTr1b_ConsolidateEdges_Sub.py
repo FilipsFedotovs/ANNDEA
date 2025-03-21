@@ -47,13 +47,13 @@ if os.path.isfile(master_file):
     for l in range(1,Program[int(i)][int(j)][int(k)]):
         slave_file=EOS_DIR+p+'/Temp_RTr1a_'+RecBatchID+'_'+str(i)+'_'+str(j)+'_'+str(k)+'/RTr1a_'+RecBatchID+'_hit_cluster_edges_'+str(i)+'_'+str(j)+'_'+str(k)+'_'+str(l)+'.pkl'
         slave_data=UI.PickleOperations(slave_file,'r','')[0]
-        master_data.RawEdgeGraph+=slave_data.RawEdgeGraph
-        master_data.HitPairs+=slave_data.HitPairs
+        master_data.Seeds+=slave_data.Seeds
+        master_data.SeedFlowValuesAll = [a + b for a, b in zip(master_data.SeedFlowValuesAll, slave_data.SeedFlowValuesAll)]
+        master_data.SeedFlowValuesTrue = [a + b for a, b in zip(master_data.SeedFlowValuesTrue, slave_data.SeedFlowValuesTrue)]
 else:
     master_file=EOS_DIR+p+'/RTr1_'+RecBatchID+'_'+str(i)+'_'+str(j)+'_'+str(k)+'_clusters.pkl'
     master_data=UI.PickleOperations(master_file,'r','')[0]
-    master_data.HitPairs=[]
-    master_data.RawEdgeGraph=[]
+    master_data.Seeds=[]
 print(UI.TimeStamp(),'Writing the output...')
 output_file_location=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(i)+'_'+str(j)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(i)+'_'+str(j)+'_'+str(k)+'.pkl'
 print(UI.PickleOperations(output_file_location,'w',master_data)[1])
