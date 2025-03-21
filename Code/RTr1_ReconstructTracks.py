@@ -195,7 +195,7 @@ if os.path.isfile(required_file_location)==False:
                              header=0,
                              usecols=[PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty,PM.MC_Event_ID,PM.MC_Track_ID])[[PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty,PM.MC_Event_ID,PM.MC_Track_ID]]
              except Exception as e:
-                 UI.Msg('failed', e)
+                 UI.Msg('failed', str(e))
                  data=pd.read_csv(input_file_location,
                              header=0,
                              usecols=[PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty])[[PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty]]
