@@ -158,10 +158,10 @@ if Status=='Edge graph generation':
         Status = 'Skip tracking'
 else:
     Status = 'Skip tracking'
-exit()
+
 if Status=='Edge graph generation':
     print(UI.TimeStamp(),'Generating the edges...')
-    GraphStatus = HC.GenerateEdgeGraph([])
+    GraphStatus = HC.GenerateSeedGraph()
     if GraphStatus:
         Status = 'ML analysis'
     else:
