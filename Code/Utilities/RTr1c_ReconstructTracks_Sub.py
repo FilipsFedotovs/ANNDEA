@@ -199,8 +199,7 @@ if Status == 'ML analysis':
             HC.SeedFlowValuesAll[10]=len(combined_weight_list)
             _truth_only=combined_weight_list.drop(combined_weight_list.index[combined_weight_list['label'] == 0]) #Remove all hit pairs that fail GNN classification
             HC.SeedFlowValuesTrue[10]=len(_truth_only)
-        print(HC.SeedFlowValuesAll)
-        print(HC.SeedFlowValuesTrue)
+        print(HC.Hits)
         exit()
         _HitPairs=pd.DataFrame(HC.HitPairs, columns=['l_HitID','l_z','r_HitID','r_z'])
         _Tot_Hits=pd.merge(_HitPairs, combined_weight_list, how="inner", on=['l_HitID','r_HitID'])
