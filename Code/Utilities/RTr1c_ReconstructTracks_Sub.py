@@ -191,7 +191,21 @@ if Status == 'ML analysis':
         combined_weight_list=[]
         for sd,w in zip(HC.Seeds, weights):
             combined_weight_list.append(sd[:3]+w) #Join the Hit Pair classification back to the hit pairs
-        combined_weight_list=pd.DataFrame(combined_weight_list, columns = ['l_HitID','r_HitID','label','link_strength'])
+
+        for cwl in combined_weight_list:
+            for lh in HC.Hits:
+                if lh[0]==cwl[0]:
+                    cwl.append(lh[3])
+                    break
+
+        for cwl in combined_weight_list:
+            for rh in HC.Hits:
+                if rh[0]==cwl[1]:
+                    cwl.append(rh[3])
+                    break
+
+        combined_weight_list=pd.DataFrame(combined_weight_list, columns = ['l_HitID','r_HitID','label','link_strength', 'l_z', 'r_z'])
+        print(combined_weight_list)
 
         combined_weight_list.drop(combined_weight_list.index[combined_weight_list['link_strength'] <= Acceptance], inplace = True) #Remove all hit pairs that fail GNN classification
 
@@ -199,8 +213,8 @@ if Status == 'ML analysis':
             HC.SeedFlowValuesAll[10]=len(combined_weight_list)
             _truth_only=combined_weight_list.drop(combined_weight_list.index[combined_weight_list['label'] == 0]) #Remove all hit pairs that fail GNN classification
             HC.SeedFlowValuesTrue[10]=len(_truth_only)
-        print(HC.Hits)
-        exit()
+        _l_Hits=
+
         _HitPairs=pd.DataFrame(HC.HitPairs, columns=['l_HitID','l_z','r_HitID','r_z'])
         _Tot_Hits=pd.merge(_HitPairs, combined_weight_list, how="inner", on=['l_HitID','r_HitID'])
         _Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['link_strength'] <= Acceptance], inplace = True) #Remove all hit pairs that fail GNN classification
