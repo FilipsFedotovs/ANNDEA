@@ -101,9 +101,10 @@ ForceStatus=args.ForceStatus
 LocalSub=(args.LocalSub=='Y')
 # FixedPosition=args.FixedPosition
 CalibrateSeedBatch=(args.CalibrateSeedBatch=='Y')
+SeedFlowLog=args.SeedFlowLog
 JobFlavour=args.JobFlavour
 CPU=int(args.CPU)
-emory=args.Memory
+Memory=args.Memory
 input_file_location=args.f
 Zoverlap,Yoverlap,Xoverlap=int(args.Zoverlap),int(args.Yoverlap),int(args.Xoverlap)
 Xmin,Xmax,Ymin,Ymax=float(args.Xmin),float(args.Xmax),float(args.Ymin),float(args.Ymax)
@@ -183,16 +184,22 @@ else:
 
 ########################################     Phase 1 - Create compact source file    #########################################
 
-exit()
-
 print(UI.TimeStamp(),bcolors.BOLD+'Preparation 2/3:'+bcolors.ENDC+' Preparing the source data...')
 required_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/RTr1_'+RecBatchID+'_hits.csv'
 RecOutputMeta=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/'+RecBatchID+'_info.pkl'
 if os.path.isfile(required_file_location)==False:
          print(UI.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
-         data=pd.read_csv(input_file_location,
-                     header=0,
-                     usecols=[PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty])[[PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty]]
+         if SeedFlowLog:
+             try:
+                 data=pd.read_csv(input_file_location,
+                             header=0,
+                             usecols=[PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty,PM.MC_Event_ID,PM.MC_Track_ID])[[PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty,PM.MC_Event_ID,PM.MC_Track_ID]]
+             except Exception as e:
+                 UI.Msg('failed', "Cannot import MC labels due to "+e)
+                 data=pd.read_csv(input_file_location,
+                             header=0,
+                             usecols=[PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty])[[PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty]]
+         exit()
          total_rows=len(data.axes[0])
          data[PM.Hit_ID] = data[PM.Hit_ID].astype(str)
          print(UI.TimeStamp(),'The raw data has ',total_rows,' hits')
@@ -221,10 +228,10 @@ if os.path.isfile(required_file_location)==False:
          z_offset=data['z'].min()
          data['z']=data['z']-z_offset
          z_max=data['z'].max()
-         if Z_overlap==1:
+         if Zoverlap==1:
             Zsteps=math.ceil((z_max)/stepZ)
          else:
-            Zsteps=(math.ceil((z_max)/stepZ)*(Z_overlap))-1
+            Zsteps=(math.ceil((z_max)/stepZ)*(Zoverlap))-1
          y_offset=data['y'].min()
          x_offset=data['x'].min()
          data['x']=data['x']-x_offset
@@ -232,15 +239,15 @@ if os.path.isfile(required_file_location)==False:
          x_max=data['x'].max()
          y_max=data['y'].max()
         #Calculating the number of volumes that will be sent to HTCondor for reconstruction. Account for overlap if specified.
-         if X_overlap==1:
+         if Xoverlap==1:
             Xsteps=math.ceil((x_max)/stepX)
          else:
-            Xsteps=(math.ceil((x_max)/stepX)*(X_overlap))-1
+            Xsteps=(math.ceil((x_max)/stepX)*(Xoverlap))-1
         
-         if Y_overlap==1:
+         if Yoverlap==1:
             Ysteps=math.ceil((y_max)/stepY)
          else:
-            Ysteps=(math.ceil((y_max)/stepY)*(Y_overlap))-1
+            Ysteps=(math.ceil((y_max)/stepY)*(Yoverlap))-1
          print(UI.TimeStamp(),'Distributing input files...')
          with alive_bar(Xsteps*Ysteps*Zsteps,force_tty=True, title='Distributing input files...') as bar:
              for i in range(Xsteps):
@@ -248,9 +255,9 @@ if os.path.isfile(required_file_location)==False:
                      for k in range(Zsteps):
                          required_tfile_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/RTr1_'+RecBatchID+'_'+str(i)+'_'+str(j)+'_'+str(k)+'_clusters.pkl'
                          if os.path.isfile(required_tfile_location)==False:
-                             Y_ID=int(j)/Y_overlap
-                             X_ID=int(i)/X_overlap
-                             Z_ID=int(k)/Z_overlap
+                             Y_ID=int(j)/Yoverlap
+                             X_ID=int(i)/Xoverlap
+                             Z_ID=int(k)/Zoverlap
                              tdata=data.drop(data.index[data['x'] >= ((X_ID+1)*stepX)])  #Keeping the relevant z slice
                              tdata.drop(tdata.index[tdata['x'] < (X_ID*stepX)], inplace = True)  #Keeping the relevant z slice
                              tdata.drop(tdata.index[tdata['y'] >= ((Y_ID+1)*stepY)], inplace = True)  #Keeping the relevant z slice
@@ -288,6 +295,7 @@ if hasattr(Meta, 'job_sets') and hasattr(Meta, 'n_graph_hobs'):
     job_sets=Meta.job_sets
     n_graph_hobs=Meta.n_graph_hobs
 
+exit()
 
 # ########################################     Preset framework parameters    #########################################
 
