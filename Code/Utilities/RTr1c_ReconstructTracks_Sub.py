@@ -30,6 +30,7 @@ parser.add_argument('--o',help="Path to the output file name", default='')
 parser.add_argument('--pfx',help="Path to the output file name", default='')
 parser.add_argument('--sfx',help="Path to the output file name", default='')
 parser.add_argument('--CheckPoint',help="Save cluster sets during individual cluster tracking.", default='N')
+parser.add_argument('--SeedFlowLog',help="Track the seed cutflow?", default='N')
 
 #Working out where are the Py libraries
 args = parser.parse_args()
@@ -51,6 +52,7 @@ import pandas as pd #We use Panda for a routine data processing
 ModelName=args.ModelName
 CheckPoint=args.CheckPoint.upper()=='Y'
 RecBatchID=args.BatchID
+SeedFlowLog=args.SeedFlowLog=='Y'
 # TrackFitCutRes=args.TrackFitCutRes
 # TrackFitCutSTD=args.TrackFitCutSTD
 # TrackFitCutMRes=args.TrackFitCutMRes
@@ -152,11 +154,11 @@ input_file_location=EOS_DIR+p+'/Temp_RTr1b_'+RecBatchID+'_'+str(i)+'_'+str(j)+'/
 #if os.path.isfile(input_file_location) and Status=='Edge graph generation':
 if Status=='Edge graph generation':
     HC=UI.PickleOperations(input_file_location,'r',' ')[0]
-    if len(HC.RawClusterGraph)<=1 or len(HC.RawEdgeGraph)<1:
+    if HC.CLusterSize<=1 or len(HC.Seeds)<1:
         Status = 'Skip tracking'
 else:
     Status = 'Skip tracking'
-
+exit()
 if Status=='Edge graph generation':
     print(UI.TimeStamp(),'Generating the edges...')
     GraphStatus = HC.GenerateEdgeGraph([])
