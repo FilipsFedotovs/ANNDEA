@@ -327,7 +327,7 @@ if hasattr(Meta, 'job_sets')==hasattr(Meta, 'n_graph_jobs')==False:
                     bar()
                     tfile_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/RTr1_'+RecBatchID+'_'+str(i)+'_'+str(j)+'_'+str(k)+'_clusters.pkl'
                     HC=UI.PickleOperations(tfile_location,'r','N/A')[0]
-                    n_edg=len(HC.RawClusterGraph)
+                    n_edg=HC.ClusterSize
                     job_iter=0
                     acc_edg=0
                     for n_e in range(1,n_edg+1):
