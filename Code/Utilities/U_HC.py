@@ -145,7 +145,11 @@ class HitCluster:
           return [_Top,_Bottom]
       def NormaliseSeed(self,_Hit2, _Hit1, _cut_dt):
           _scale_factor=8
-          h1,h2,x1,x2,y1,y2,z1,z2, tx1, tx2, ty1, ty2, l1, l2=_Hit2[0],_Hit1[0],_Hit2[1],_Hit1[1],_Hit2[2],_Hit1[2],_Hit2[3],_Hit1[3],_Hit2[4],_Hit1[4],_Hit2[5],_Hit1[5],_Hit2[6],_Hit1[6]
+          if len(_Hit1)>=7:
+            h1,h2,x1,x2,y1,y2,z1,z2, tx1, tx2, ty1, ty2, l1, l2=_Hit2[0],_Hit1[0],_Hit2[1],_Hit1[1],_Hit2[2],_Hit1[2],_Hit2[3],_Hit1[3],_Hit2[4],_Hit1[4],_Hit2[5],_Hit1[5],_Hit2[6],_Hit1[6]
+          else:
+              h1,h2,x1,x2,y1,y2,z1,z2, tx1, tx2, ty1, ty2, l1, l2=_Hit2[0],_Hit1[0],_Hit2[1],_Hit1[1],_Hit2[2],_Hit1[2],_Hit2[3],_Hit1[3],_Hit2[4],_Hit1[4],_Hit2[5],_Hit1[5],'1','1'
+
           _dl= math.sqrt(((x2-x1)**2) + ((y2-y1)**2) + ((z2-z1)**2))/self.Step[2]
           _dr= math.sqrt(((x2-x1)**2) + ((y2-y1)**2))/(self.Step[0]/_scale_factor)
           _dz=abs(z2-z1)/self.Step[2]
@@ -159,7 +163,10 @@ class HitCluster:
           StepX=self.Step[0]/_scale_factor
           StepY=self.Step[1]/_scale_factor
           StepDT=_cut_dt/_scale_factor
-          h1,h2,x1,x2,y1,y2,z1,z2, tx1, tx2, ty1, ty2, l1, l2=_Hit2[0],_Hit1[0],_Hit2[1],_Hit1[1],_Hit2[2],_Hit1[2],_Hit2[3],_Hit1[3],_Hit2[4],_Hit1[4],_Hit2[5],_Hit1[5],_Hit2[6],_Hit1[6]
+          if len(_Hit1)>=7:
+                h1,h2,x1,x2,y1,y2,z1,z2, tx1, tx2, ty1, ty2, l1, l2=_Hit2[0],_Hit1[0],_Hit2[1],_Hit1[1],_Hit2[2],_Hit1[2],_Hit2[3],_Hit1[3],_Hit2[4],_Hit1[4],_Hit2[5],_Hit1[5],_Hit2[6],_Hit1[6]
+          else:
+                 h1,h2,x1,x2,y1,y2,z1,z2, tx1, tx2, ty1, ty2, l1, l2=_Hit2[0],_Hit1[0],_Hit2[1],_Hit1[1],_Hit2[2],_Hit1[2],_Hit2[3],_Hit1[3],_Hit2[4],_Hit1[4],_Hit2[5],_Hit1[5],'1','1'
           _dx= (x2-x1 + StepX)/(2*StepX)
           _dy= (y2-y1 + StepY)/(2*StepY)
           _dz=abs(z2-z1)/self.Step[2]
@@ -196,7 +203,10 @@ class HitCluster:
                 SeedsY.append(s[2])
             return SeedsX,SeedsY
       def FitTrackSeed(_H1, _H2, _cdt, _cdr, _cdz): #A more involved option that involves producing the seed cutflow and the truth distribution if the MC data available.
-          _ts=int(((_H1[6]==_H2[6]) and ('--' not in _H1[6])))
+          if len(_H1)>=7:
+            _ts=int(((_H1[6]==_H2[6]) and ('--' not in _H1[6])))
+          else:
+            _ts=1
           if _H1[3]==_H2[3]: #Ensuring hit combinations are on different plates
                 return False, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [_ts, _ts, _ts, 0, 0, 0, 0, 0, 0, 0, 0, 0]
           elif abs(_H1[3]-_H2[3])>=_cdz:
@@ -220,11 +230,6 @@ class HitCluster:
           _EdgeAttr=[]
           for ip in _input:
               _EdgeAttr.append(ip[3:])
-
-              if ip[5]==0:
-                  print(ip)
-                  print(ip[3:])
-                  x=input()
           return _EdgeAttr
       @staticmethod
       def GenerateEdgeLabels(_input):
