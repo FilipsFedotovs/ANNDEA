@@ -188,39 +188,54 @@ if Status == 'ML analysis':
         model.eval() #In Pytorch this function sets the model into the evaluation mode.
         w = model(HC.Graph.x, HC.Graph.edge_index, HC.Graph.edge_attr) #Here we use the model to assign the weights between Hit edges
         weights=w.tolist()
-        combined_weight_list=[]
+        _Tot_Hits=[]
         for sd,w in zip(HC.Seeds, weights):
-            combined_weight_list.append(sd[:3]+w) #Join the Hit Pair classification back to the hit pairs
+            _Tot_Hits.append(sd[:3]+w) #Join the Hit Pair classification back to the hit pairs
 
-        for cwl in combined_weight_list:
+        for cwl in _Tot_Hits:
             for lh in HC.Hits:
                 if lh[0]==cwl[0]:
                     cwl.append(lh[3])
                     break
 
-        for cwl in combined_weight_list:
+        for cwl in _Tot_Hits:
             for rh in HC.Hits:
                 if rh[0]==cwl[1]:
                     cwl.append(rh[3])
                     break
 
-        combined_weight_list=pd.DataFrame(combined_weight_list, columns = ['l_HitID','r_HitID','label','link_strength', 'l_z', 'r_z'])
-        print(combined_weight_list)
-        exit()
-        combined_weight_list.drop(combined_weight_list.index[combined_weight_list['link_strength'] <= Acceptance], inplace = True) #Remove all hit pairs that fail GNN classification
+        _Tot_Hits=pd.DataFrame(_Tot_Hits, columns = ['l_HitID','r_HitID','label','link_strength', 'l_z', 'r_z'])
+        _Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['link_strength'] <= Acceptance], inplace = True) #Remove all hit pairs that fail GNN classification
 
         if SeedFlowLog:
-            HC.SeedFlowValuesAll[10]=len(combined_weight_list)
-            _truth_only=combined_weight_list.drop(combined_weight_list.index[combined_weight_list['label'] == 0]) #Remove all hit pairs that fail GNN classification
+            HC.SeedFlowValuesAll[10]=len(_Tot_Hits)
+            _truth_only=_Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['label'] == 0]) #Remove all hit pairs that fail GNN classification
             HC.SeedFlowValuesTrue[10]=len(_truth_only)
 
-
-        _HitPairs=pd.DataFrame(HC.HitPairs, columns=['l_HitID','l_z','r_HitID','r_z'])
-        _Tot_Hits=pd.merge(_HitPairs, combined_weight_list, how="inner", on=['l_HitID','r_HitID'])
-        _Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['link_strength'] <= Acceptance], inplace = True) #Remove all hit pairs that fail GNN classification
     else:
-        _Tot_Hits=HC.HitPairs
-        _Tot_Hits['link_strength']=1.0
+        _Tot_Hits=[]
+        for sd in HC.Seeds:
+            _Tot_Hits.append(sd[:3]+1) #Join the Hit Pair classification back to the hit pairs
+
+        for cwl in _Tot_Hits:
+            for lh in HC.Hits:
+                if lh[0]==cwl[0]:
+                    cwl.append(lh[3])
+                    break
+
+        for cwl in _Tot_Hits:
+            for rh in HC.Hits:
+                if rh[0]==cwl[1]:
+                    cwl.append(rh[3])
+                    break
+
+        _Tot_Hits=pd.DataFrame(_Tot_Hits, columns = ['l_HitID','r_HitID','label','link_strength', 'l_z', 'r_z'])
+
+        if SeedFlowLog:
+            HC.SeedFlowValuesAll[10]=len(_Tot_Hits)
+            _truth_only=_Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['label'] == 0]) #Remove all hit pairs that fail GNN classification
+            HC.SeedFlowValuesTrue[10]=len(_truth_only)
+
     print(UI.TimeStamp(),'Number of all  hit combinations passing GNN selection:',len(_Tot_Hits))
     if CheckPoint:
              print(UI.TimeStamp(),'Saving the checkpoint...')
@@ -393,6 +408,8 @@ if Status=='Tracking' or Status=='Tracking continuation':
     _Rec_Hits_Pool=_Rec_Hits_Pool.rename(columns={"Segment_ID": "Master_Segment_ID" })
     print(UI.TimeStamp(),_no_tracks, 'track segments have been reconstructed in this cluster set ...')
 
+print(_Rec_Hits_Pool)
+exit()
 #If Cluster tracking yielded no segments we just create an empty array for consistency
 if Status=='Skip tracking':
     _Rec_Hits_Pool=pd.DataFrame([], columns = ['HitID','Master_z','Master_Segment_ID'])
