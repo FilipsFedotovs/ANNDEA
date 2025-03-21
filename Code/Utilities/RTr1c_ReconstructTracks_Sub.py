@@ -160,7 +160,7 @@ else:
     Status = 'Skip tracking'
 
 if Status=='Edge graph generation':
-    print(UI.TimeStamp(),'Generating the edges...')
+    print(UI.TimeStamp(),'Reconstructing graph...')
     GraphStatus = HC.GenerateSeedGraph()
     if GraphStatus:
         Status = 'ML analysis'
@@ -188,13 +188,14 @@ if Status == 'ML analysis':
         model.eval() #In Pytorch this function sets the model into the evaluation mode.
         w = model(HC.Graph.x, HC.Graph.edge_index, HC.Graph.edge_attr) #Here we use the model to assign the weights between Hit edges
         w=w.tolist()
+        print(w)
+        exit()
         combined_weight_list=[]
         for edge in range(len(HC.edges)):
             combined_weight_list.append(HC.edges[edge]+w[edge]) #Join the Hit Pair classification back to the hit pairs
 
         combined_weight_list=pd.DataFrame(combined_weight_list, columns = ['l_HitID','r_HitID','link_strength'])
-        print(combined_weight_list)
-        exit()
+
         _HitPairs=pd.DataFrame(HC.HitPairs, columns=['l_HitID','l_z','r_HitID','r_z'])
         _Tot_Hits=pd.merge(_HitPairs, combined_weight_list, how="inner", on=['l_HitID','r_HitID'])
         _Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['link_strength'] <= Acceptance], inplace = True) #Remove all hit pairs that fail GNN classification
