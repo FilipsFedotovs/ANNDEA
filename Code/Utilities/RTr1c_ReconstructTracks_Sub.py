@@ -409,6 +409,7 @@ if Status=='Tracking' or Status=='Tracking continuation':
     print(UI.TimeStamp(),_no_tracks, 'track segments have been reconstructed in this cluster set ...')
 
 print(_Rec_Hits_Pool)
+print(_truth_only)
 exit()
 #If Cluster tracking yielded no segments we just create an empty array for consistency
 if Status=='Skip tracking':
