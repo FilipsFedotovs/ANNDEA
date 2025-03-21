@@ -216,7 +216,6 @@ def main(self):
                       'scheduler': scheduler.state_dict(),    # HERE IS THE CHANGE
                       }, State_Save_Path)
     torch.save(model.state_dict(), Model_Path)
-    print(records)
     Header=[['Epoch','# Samples','Train Loss','Optimal Threshold','Validation Loss','Validation Accuracy','Test Loss','Test Accuracy']]
     Header+=records
     ModelMeta.CompleteTrainingSession(Header)

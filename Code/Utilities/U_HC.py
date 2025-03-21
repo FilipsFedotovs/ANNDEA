@@ -79,7 +79,7 @@ class HitCluster:
                                     if o.item()>model_acceptance:
                                         self.SeedFlowValuesTrue = [a + b for a, b in zip(self.SeedFlowValuesTrue, [0, 0, 0, 0, 0, 0, 0, 0, 0, y, 0, 0])]
                                         self.SeedFlowValuesAll = [a + b for a, b in zip(self.SeedFlowValuesAll, [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0])]
-                                        self.Seeds.append(HitCluster.NormaliseSeed2d(self,_Hits[r], _Hits[l], cut_dt))
+                                        self.Seeds.append(HitCluster.NormaliseGraphSeed(self,_Hits[r], _Hits[l], cut_dt))
                                     else:
                                         continue
 
@@ -101,7 +101,7 @@ class HitCluster:
                                         o = model(x)
                                     if o.item()>model_acceptance:
 
-                                        self.Seeds.append(HitCluster.NormaliseSeed2d(self,_Hits[r], _Hits[l], cut_dt))
+                                        self.Seeds.append(HitCluster.NormaliseGraphSeed(self,_Hits[r], _Hits[l], cut_dt))
                                     else:
                                         continue
            return True
@@ -155,7 +155,7 @@ class HitCluster:
           _ts=int(((l1==l2) and ('--' not in l1)))
           return [h1, h2, _ts, _dl,_dr,_dz,_dtx,_dty]
 
-      def NormaliseSeed2d(self,_Hit2, _Hit1, _cut_dt):
+      def NormaliseGraphSeed(self,_Hit2, _Hit1, _cut_dt):
           _scale_factor=4
           StepX=self.Step[0]/_scale_factor
           StepY=self.Step[1]/_scale_factor

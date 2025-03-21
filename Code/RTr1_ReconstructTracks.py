@@ -69,7 +69,7 @@ parser.add_argument('--SubGap',help="How long to wait in minutes after submittin
 parser.add_argument('--RecBatchID',help="Give this reconstruction batch an ID", default='Test_Batch')
 parser.add_argument('--LocalSub',help="Local submission?", default='N')
 parser.add_argument('--CheckPoint',help="Save cluster sets during individual cluster tracking.", default='N')
-parser.add_argument('--CalibrateEdgeGen',help="Optimise the maximum edge per job parameter", default='N')
+parser.add_argument('--CalibrateSeedBatch',help="Optimise the maximum edge per job parameter", default='N')
 parser.add_argument('--ForceStatus',help="Would you like the program run from specific status number? (Only for advance users)", default='N')
 parser.add_argument('--CPU',help="Would you like to request extra CPUs?", default=1)
 parser.add_argument('--JobFlavour',help="Specifying the length of the HTCondor job walltime. Currently at 'workday' which is 8 hours.", default='workday')
@@ -84,6 +84,7 @@ parser.add_argument('--Xoverlap',help="Enter the level of overlap in integer num
 parser.add_argument('--Memory',help="How much memory?", default='2 GB')
 # parser.add_argument('--FixedPosition',help="Use to temporary reconstruct only specific sections of the emulsion data at a time (based on x-coordinate domain)", default=-1,type=int)
 parser.add_argument('--HTCondorLog',help="Local submission?", default=False,type=bool)
+parser.add_argument('--SeedFlowLog',help="Enable tracking of the seed cutflow?", default='N')
 
 ######################################## Parsing argument values  #############################################################
 args = parser.parse_args()
@@ -99,7 +100,7 @@ HTCondorLog=args.HTCondorLog
 ForceStatus=args.ForceStatus
 LocalSub=(args.LocalSub=='Y')
 # FixedPosition=args.FixedPosition
-CalibrateEdgeGen=(args.CalibrateEdgeGen=='Y')
+CalibrateSeedBatch=(args.CalibrateSeedBatch=='Y')
 JobFlavour=args.JobFlavour
 CPU=int(args.CPU)
 emory=args.Memory
