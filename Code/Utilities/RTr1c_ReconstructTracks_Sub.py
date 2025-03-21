@@ -188,15 +188,12 @@ if Status == 'ML analysis':
         model.eval() #In Pytorch this function sets the model into the evaluation mode.
         w = model(HC.Graph.x, HC.Graph.edge_index, HC.Graph.edge_attr) #Here we use the model to assign the weights between Hit edges
         weights=w.tolist()
-        print(HC.Seeds)
-        print(w)
         combined_weight_list=[]
         for sd,w in zip(HC.Seeds, weights):
             combined_weight_list.append(sd[:3]+w) #Join the Hit Pair classification back to the hit pairs
+        combined_weight_list=pd.DataFrame(combined_weight_list, columns = ['l_HitID','r_HitID','label','link_strength'])
         print(combined_weight_list)
         exit()
-        combined_weight_list=pd.DataFrame(combined_weight_list, columns = ['l_HitID','r_HitID','link_strength'])
-
         _HitPairs=pd.DataFrame(HC.HitPairs, columns=['l_HitID','l_z','r_HitID','r_z'])
         _Tot_Hits=pd.merge(_HitPairs, combined_weight_list, how="inner", on=['l_HitID','r_HitID'])
         _Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['link_strength'] <= Acceptance], inplace = True) #Remove all hit pairs that fail GNN classification
