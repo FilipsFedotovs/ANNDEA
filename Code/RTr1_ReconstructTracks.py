@@ -304,8 +304,6 @@ if hasattr(Meta, 'job_sets') and hasattr(Meta, 'n_graph_hobs'):
     job_sets=Meta.job_sets
     n_graph_hobs=Meta.n_graph_hobs
 
-exit()
-
 # ########################################     Preset framework parameters    #########################################
 
 UI.Msg('vanilla','Analysing the current script status...')
@@ -349,7 +347,7 @@ else:
     n_graph_jobs=Meta.n_graph_jobs
 
 
-if CalibrateEdgeGen:
+if CalibrateSeedBatch:
     print(job_sets)
     x=input('Continue(y/n)?')
     if x!='y':
