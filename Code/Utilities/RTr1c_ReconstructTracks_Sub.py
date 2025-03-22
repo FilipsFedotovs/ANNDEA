@@ -372,7 +372,18 @@ _truth_result_r=pd.merge(_truth_r,_result, how='inner', on=['HitID'])
 
 _truth_result=pd.merge(_truth_result_l,_truth_result_r, how='inner', on=['Segment_ID'])
 
+# Step 1: Remove rows where HitID_x == HitID_y
+_truth_result = _truth_result[_truth_result["HitID_x"] != _truth_result["HitID_y"]]
 
+# Step 2: Create a new HitID column with concatenated HitID_x and HitID_y in a sorted order
+_truth_result["HitID"] = _truth_result.apply(
+    lambda row: f"{min(row['HitID_x'], row['HitID_y'])}_{max(row['HitID_x'], row['HitID_y'])}", axis=1
+)
+
+# Step 3: Remove duplicate entries based on HitID
+_truth_result = _truth_result.drop_duplicates(subset=["HitID"])
+
+# Display the cleaned DataFrame
 print(_truth_result)
 
 exit()
