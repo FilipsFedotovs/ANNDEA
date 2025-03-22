@@ -364,7 +364,7 @@ if Status=='Tracking' or Status=='Tracking continuation':
     print(UI.TimeStamp(),_no_tracks, 'track segments have been reconstructed in this cluster set ...')
 
 print(_Rec_Hits_Pool)
-_truth=[h[0,3] for h in HC.Hits]
+_truth=[[h[0],h[6]] for h in HC.Hits]
 print(_truth)
 exit()
 #If Cluster tracking yielded no segments we just create an empty array for consistency
