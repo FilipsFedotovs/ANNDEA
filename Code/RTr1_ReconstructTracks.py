@@ -439,10 +439,9 @@ while Status<len(Program):
       #Non standard processes (that don't follow the general pattern) have been coded here
       print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
       print(UI.TimeStamp(),bcolors.BOLD+'Stage 3:'+bcolors.ENDC+' Using the results from previous steps to map merged trackIDs to the original reconstruction file')
-      exit()
       try:
         #Read the output with hit- ANN Track map
-        FirstFile=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/Temp_RTr1e_'+RecBatchID+'_0'+'/RTr1e_'+RecBatchID+'_hit_cluster_rec_x_set_0.csv'
+        FirstFile=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/Temp_RTr1f_'+RecBatchID+'_0'+'/RTr1f_'+RecBatchID+'_hit_cluster_rec_x_set_0.csv'
         print(UI.TimeStamp(),'Loading the file ',bcolors.OKBLUE+FirstFile+bcolors.ENDC)
         TrackMap=pd.read_csv(FirstFile,header=0)
         input_file_location=args.f
