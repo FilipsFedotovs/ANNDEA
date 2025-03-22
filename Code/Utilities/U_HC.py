@@ -25,7 +25,7 @@ class HitCluster:
            self.ClusterSize=len(__ClusterHitsTemp)
            self.RawNodes=__ClusterHitsTemp #Avoiding importing torch without a good reason (reduce load on the HTCOndor initiative)
            del __ClusterHitsTemp
-      def GenerateSeeds(self, cut_dt, cut_dr, cut_dz, l, MaxEdges, SeedFlowLog, EOS_DIR, ModelName=None): #Decorate hit information
+      def GenerateSeeds(self, cut_dt, cut_dr, cut_dz, l, MaxEdges, EOS_DIR, ModelName=None): #Decorate hit information
            #New workaround: instead of a painful Pandas outer join a loop over list is performed
            _Hits=self.Hits
            _Hits= sorted(_Hits, key=lambda x: x[3], reverse=True) #Sorting by z
@@ -46,18 +46,15 @@ class HitCluster:
                model.load_state_dict(torch.load(Model_Path))
                model_acceptance=ModelMeta.TrainSessionsData[-1][-1][3]
 
-
            self.SeedFlowLabels=['All','Excluding self-permutations', 'Excluding duplicates','Excluding seeds on the same plate', 'Cut on dz', 'Cut on dtx', 'Cut on dty' , 'Cut on drx', 'Cut on dry', 'MLP filter', 'GNN filter', 'Tracking process' ]
            self.SeedFlowValuesAll=[len(_Hits)**2,(len(_Hits)**2)-len(_Hits), int(((len(_Hits)**2)-len(_Hits))/2), 0, 0, 0, 0, 0, 0, 0, 0, 0]
            self.SeedFlowValuesTrue=[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 
-
            for l in range(_sp,min(_ep,self.ClusterSize-1)):
                     for r in range(l+1,len(_Hits)):
                         FitSeed=HitCluster.FitSeed(_Hits[l],_Hits[r],cut_dt,cut_dr,cut_dz)
-                        if SeedFlowLog:
-                            self.SeedFlowValuesAll = [a + b for a, b in zip(self.SeedFlowValuesAll, FitSeed[1])]
-                            self.SeedFlowValuesTrue = [a + b for a, b in zip(self.SeedFlowValuesTrue, FitSeed[2])]
+                        self.SeedFlowValuesAll = [a + b for a, b in zip(self.SeedFlowValuesAll, FitSeed[1])]
+                        self.SeedFlowValuesTrue = [a + b for a, b in zip(self.SeedFlowValuesTrue, FitSeed[2])]
                         if FitSeed[0]:
                                if ModelName==None:
                                     self.Seeds.append(HitCluster.NormaliseSeed(self,_Hits[r], _Hits[l], cut_dt))
@@ -71,34 +68,11 @@ class HitCluster:
                                         x = _refined_seed_vector_tensor[0].unsqueeze(0)
                                         o = model(x)
                                     if o.item()>model_acceptance:
-                                        if SeedFlowLog:
-                                            self.SeedFlowValuesTrue = [a + b for a, b in zip(self.SeedFlowValuesTrue, [0, 0, 0, 0, 0, 0, 0, 0, 0, y, 0, 0])]
-                                            self.SeedFlowValuesAll = [a + b for a, b in zip(self.SeedFlowValuesAll, [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0])]
+                                        self.SeedFlowValuesTrue = [a + b for a, b in zip(self.SeedFlowValuesTrue, [0, 0, 0, 0, 0, 0, 0, 0, 0, y, 0, 0])]
+                                        self.SeedFlowValuesAll = [a + b for a, b in zip(self.SeedFlowValuesAll, [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0])]
                                         self.Seeds.append(HitCluster.NormaliseGraphSeed(self,_Hits[r], _Hits[l], cut_dt))
                                     else:
                                         continue
-
-
-           # else:
-           #     for l in range(_sp,min(_ep,self.ClusterSize-1)):
-           #          for r in range(l+1,len(_Hits)):
-           #              FitSeed=HitCluster.FitSeed(_Hits[l],_Hits[r],cut_dt,cut_dr,cut_dz)
-           #              if FitSeed:
-           #                  if ModelName==None:
-           #                          self.Seeds.append(HitCluster.NormaliseSeed(self,_Hits[r], _Hits[l], cut_dt))
-           #                  else:
-           #                          _refined_seed=HitCluster.NormaliseSeed(self,_Hits[r], _Hits[l], cut_dt)
-           #                          _refined_seed_vector=self.GenerateSeedVectors([_refined_seed])
-           #                          _refined_seed_vector_tensor=torch.tensor(_refined_seed_vector[0], dtype=torch.float32)
-           #                          model.eval()
-           #                          with torch.no_grad():
-           #                              x = _refined_seed_vector_tensor[0].unsqueeze(0)
-           #                              o = model(x)
-           #                          if o.item()>model_acceptance:
-           #
-           #                              self.Seeds.append(HitCluster.NormaliseGraphSeed(self,_Hits[r], _Hits[l], cut_dt))
-           #                          else:
-           #                              continue
            return True
       def GenerateSeedGraph(self): #Decorate hit information
            import torch
@@ -164,24 +138,6 @@ class HitCluster:
           _ts=int(((l1==l2) and ('--' not in l1)))
           return [h1, h2, _ts, _dx,_dy,_dz,_dtx,_dty]
 
-      # def FitSeed(_H1, _H2, _cdt, _cdr, _cdz):
-      #     if _H1[3]==_H2[3]: #Ensuring hit combinations are on different plates
-      #         return False
-      #     elif abs(_H1[3]-_H2[3])>=_cdz:
-      #         return False
-      #     else:
-      #         if abs(_H1[4]-_H2[4])>=_cdt:
-      #             return False
-      #         else:
-      #             if abs(_H1[5]-_H2[5])>=_cdt:
-      #                 return False
-      #             else:
-      #                 if abs(_H2[1]-(_H1[1]+(_H1[4]*(_H2[3]-_H1[3]))))>=_cdr:
-      #                    return False
-      #                 else:
-      #                     if abs(_H2[2]-(_H1[2]+(_H1[5]*(_H2[3]-_H1[3]))))>=_cdr:
-      #                        return False
-      #     return True
       @staticmethod
       def GenerateSeedVectors(Seeds):
             #Split samples into X and Y sets

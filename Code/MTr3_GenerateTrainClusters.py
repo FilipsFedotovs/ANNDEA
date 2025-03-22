@@ -69,7 +69,6 @@ parser.add_argument('--JobFlavour',help="Specifying the length of the HTCondor j
 parser.add_argument('--ForceStatus',help="Would you like the program run from specific status number? (Only for advance users)", default='0')
 parser.add_argument('--HTCondorLog',help="Local submission?", default=False,type=bool)
 parser.add_argument('--LocalSub',help="Local submission?", default='N')
-parser.add_argument('--SeedFlowLog',help="Enable tracking of the seed cutflow?", default='N')
 parser.add_argument('--ModelName',help="Model used to refine seeds", default='N')
 ######################################## Set variables  #############################################################
 args = parser.parse_args()
@@ -83,7 +82,6 @@ CPU=int(args.CPU)
 ForceStatus=args.ForceStatus
 JobFlavour=args.JobFlavour
 HTCondorLog=args.HTCondorLog
-SeedFlowLog=args.SeedFlowLog
 LocalSub=(args.LocalSub=='Y')
 input_file_location=args.f
 SubPause=int(args.SubPause)*60
@@ -287,8 +285,8 @@ Program=[]
 prog_entry=[]
 prog_entry.append(' Sending hit cluster to the HTCondor, so the model assigns weights between hits')
 prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/','SelectedTrainClusters','MTr3','.pkl',TrainSampleID,n_jobs,'MTr3_GenerateTrainClusters_Sub.py'])
-prog_entry.append([' --stepY ', ' --stepX ', ' --stepZ ', ' --cut_dt ', ' --cut_dr ', ' --cut_dz ',' --Yoverlap ',' --Xoverlap ',' --Zoverlap ', ' --jobs ', ' --SeedFlowLog ',  ' --ModelName '])
-prog_entry.append([stepY, stepX, stepZ, cut_dt,cut_dr,cut_dz, Yoverlap, Xoverlap, Zoverlap, '"'+str(jobs)+'"', SeedFlowLog, ModelName])
+prog_entry.append([' --stepY ', ' --stepX ', ' --stepZ ', ' --cut_dt ', ' --cut_dr ', ' --cut_dz ',' --Yoverlap ',' --Xoverlap ',' --Zoverlap ', ' --jobs ',  ' --ModelName '])
+prog_entry.append([stepY, stepX, stepZ, cut_dt,cut_dr,cut_dz, Yoverlap, Xoverlap, Zoverlap, '"'+str(jobs)+'"',  ModelName])
 prog_entry.append(n_jobs)
 prog_entry.append(LocalSub)
 prog_entry.append('N/A')

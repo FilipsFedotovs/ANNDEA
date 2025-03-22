@@ -84,7 +84,6 @@ parser.add_argument('--Xoverlap',help="Enter the level of overlap in integer num
 parser.add_argument('--Memory',help="How much memory?", default='2 GB')
 # parser.add_argument('--FixedPosition',help="Use to temporary reconstruct only specific sections of the emulsion data at a time (based on x-coordinate domain)", default=-1,type=int)
 parser.add_argument('--HTCondorLog',help="Local submission?", default=False,type=bool)
-parser.add_argument('--SeedFlowLog',help="Enable tracking of the seed cutflow?", default='N')
 
 ######################################## Parsing argument values  #############################################################
 args = parser.parse_args()
@@ -99,9 +98,7 @@ SubGap=int(args.SubGap)
 HTCondorLog=args.HTCondorLog
 ForceStatus=args.ForceStatus
 LocalSub=(args.LocalSub=='Y')
-# FixedPosition=args.FixedPosition
 CalibrateSeedBatch=(args.CalibrateSeedBatch=='Y')
-SeedFlowLog=args.SeedFlowLog
 JobFlavour=args.JobFlavour
 CPU=int(args.CPU)
 Memory=args.Memory
@@ -149,38 +146,6 @@ elif os.path.isfile(Model_Meta_Path):
 else:
        print(UI.TimeStamp(),bcolors.FAIL+'Fail! No existing model meta files have been found, exiting now'+bcolors.ENDC)
        exit()
-#
-# def CP_CleanUp(prog,status):
-#     jobs=prog[status][1][8]
-#     eos=prog[status][1][1]
-#     p=prog[status][1][3]
-#     o=prog[status][1][4]
-#     pfx=prog[status][1][5]
-#     sfx=prog[status][1][6]
-#     rec_batch_id=prog[status][1][7]
-#     tot_jobs=UI.CalculateNJobs(jobs)[1]
-#     jobs_del=0
-#     with alive_bar(int(tot_jobs),force_tty=True, title='Deleting the unnecessary temp files...') as bar:
-#         for i in range(len(jobs)):
-#             for j in range(len(jobs[i])):
-#                 for k in range(jobs[i][j]):
-#                    bar()
-#                    output_file_location=eos+p+'Temp_'+pfx+'_'+rec_batch_id+'_'+str(i)+'_'+str(j)+'/'+pfx+'_'+rec_batch_id+'_'+o+'_'+str(i)+'_'+str(j)+'_'+str(k)+sfx
-#                    if os.path.isfile(output_file_location):
-#                         CheckPointFile_Ini=eos+p+'/Temp_'+pfx+'_'+rec_batch_id+'_'+str(i)+'_'+str(j)+'/'+pfx+'_'+rec_batch_id+'_'+o+'_'+str(i)+'_'+str(j)+'_'+str(k) +'_CP_Ini.pkl'
-#                         CheckPointFile_Edge=eos+p+'/Temp_'+pfx+'_'+rec_batch_id+'_'+str(i)+'_'+str(j)+'/'+pfx+'_'+rec_batch_id+'_'+o+'_'+str(i)+'_'+str(j) +'_'+str(k) +'_CP_Edge.pkl'
-#                         CheckPointFile_ML=eos+p+'/Temp_'+pfx+'_'+rec_batch_id+'_'+str(i)+'_'+str(j)+'/'+pfx+'_'+rec_batch_id+'_'+o+'_'+str(i)+'_'+str(j)+'_'+str(k) + '_CP_ML.csv'
-#                         CheckPointFile_Prep_1=eos+p+'/Temp_'+pfx+'_'+rec_batch_id+'_'+str(i)+'_'+str(j)+'/'+pfx+'_'+rec_batch_id+'_'+o+'_'+str(i)+'_'+str(j) +'_'+str(k) +'_CP_Prep_1.csv'
-#                         CheckPointFile_Prep_2=eos+p+'/Temp_'+pfx+'_'+rec_batch_id+'_'+str(i)+'_'+str(j)+'/'+pfx+'_'+rec_batch_id+'_'+o+'_'+str(i)+'_'+str(j) +'_'+str(k) +'_CP_Prep_2.csv'
-#                         CheckPointFile_Tracking_TH=eos+p+'/Temp_'+pfx+'_'+rec_batch_id+'_'+str(i)+'_'+str(j)+'/'+pfx+'_'+rec_batch_id+'_'+o+'_'+str(i)+'_'+str(j)+'_'+str(k) +'_CP_Tracking_TH.csv'
-#                         CheckPointFile_Tracking_RP=eos+p+'/Temp_'+pfx+'_'+rec_batch_id+'_'+str(i)+'_'+str(j)+'/'+pfx+'_'+rec_batch_id+'_'+o+'_'+str(i)+'_'+str(j)+'_'+str(k) +'_CP_Tracking_RP.csv'
-#                         files_to_delete=[CheckPointFile_Ini,CheckPointFile_Edge,CheckPointFile_ML,CheckPointFile_Prep_1,CheckPointFile_Prep_2,CheckPointFile_Tracking_TH,CheckPointFile_Tracking_RP]
-#                         for f in files_to_delete:
-#                             if os.path.isfile(f):
-#                                 UI.Msg('location','Deleting:',f)
-#                                 os.remove(f)
-#                                 jobs_del+=1
-#     return jobs_del
 
 ########################################     Phase 1 - Create compact source file    #########################################
 
@@ -189,29 +154,25 @@ required_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/RTr1_'+RecBa
 RecOutputMeta=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/'+RecBatchID+'_info.pkl'
 if os.path.isfile(required_file_location)==False:
          print(UI.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
-         if SeedFlowLog:
-             try:
-                 data=pd.read_csv(input_file_location,
-                             header=0,
-                             usecols=[PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty,PM.MC_Event_ID,PM.MC_Track_ID])[[PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty,PM.MC_Event_ID,PM.MC_Track_ID]]
-             except Exception as e:
-                 UI.Msg('failed', str(e))
-                 data=pd.read_csv(input_file_location,
-                             header=0,
-                             usecols=[PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty])[[PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty]]
-                 data[PM.MC_Event_ID]='Dummy_MC_Event'
-                 data[PM.MC_Track_ID]='Dummy_MC_Track' #If we don't have
 
-             data[PM.MC_Event_ID] = data[PM.MC_Event_ID].astype(str)
-             data[PM.MC_Track_ID] = data[PM.MC_Track_ID].astype(str)
-             data['MC_Super_Track_ID'] = data[PM.MC_Event_ID] + '-' + data[PM.MC_Track_ID] #Track IDs are not unique and repeat for each event
-             data=data.drop([PM.MC_Event_ID],axis=1)
-             data=data.drop([PM.MC_Track_ID],axis=1)
-
-         else:
+         try:
              data=pd.read_csv(input_file_location,
-                             header=0,
-                             usecols=[PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty])[[PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty]]
+                         header=0,
+                         usecols=[PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty,PM.MC_Event_ID,PM.MC_Track_ID])[[PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty,PM.MC_Event_ID,PM.MC_Track_ID]]
+         except Exception as e:
+             UI.Msg('warning', str(e)+' ,creating dummy label columns to track the seed flow')
+             data=pd.read_csv(input_file_location,
+                         header=0,
+                         usecols=[PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty])[[PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty]]
+             data[PM.MC_Event_ID]='Dummy_MC_Event'
+             data[PM.MC_Track_ID]='Dummy_MC_Track' #If we don't have
+
+         data[PM.MC_Event_ID] = data[PM.MC_Event_ID].astype(str)
+         data[PM.MC_Track_ID] = data[PM.MC_Track_ID].astype(str)
+         data['MC_Super_Track_ID'] = data[PM.MC_Event_ID] + '-' + data[PM.MC_Track_ID] #Track IDs are not unique and repeat for each event
+         data=data.drop([PM.MC_Event_ID],axis=1)
+         data=data.drop([PM.MC_Track_ID],axis=1)
+
          total_rows=len(data.axes[0])
          data[PM.Hit_ID] = data[PM.Hit_ID].astype(str)
          print(UI.TimeStamp(),'The raw data has ',total_rows,' hits')
@@ -361,8 +322,8 @@ if CalibrateSeedBatch:
 prog_entry=[]
 prog_entry.append(' Sending hit cluster to the HTCondor, so the graph seed can be generated')
 prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/'+RecBatchID+'/','hit_cluster_edges','RTr1a','.pkl',RecBatchID,graph_job_set,'RTr1a_GenerateEdges_Sub.py'])
-prog_entry.append([' --cut_dt ', ' --cut_dr ',' --cut_dz ',' --MaxEdgesPerJob ', ' --SeedFlowLog ', ' --ModelName '])
-prog_entry.append([cut_dt,cut_dr,cut_dz,str(PM.MaxEdgesPerJob), SeedFlowLog, SeedModel])
+prog_entry.append([' --cut_dt ', ' --cut_dr ',' --cut_dz ',' --MaxEdgesPerJob ', ' --ModelName '])
+prog_entry.append([cut_dt,cut_dr,cut_dz,str(PM.MaxEdgesPerJob), SeedModel])
 prog_entry.append(n_graph_jobs)
 prog_entry.append(LocalSub)
 prog_entry.append('N/A')
@@ -401,9 +362,9 @@ for i in range(0,Xsteps):
 prog_entry.append(' Sending hit cluster to the HTCondor, so the model assigns weights between hits')
 prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/REC_SET/'+RecBatchID+'/','hit_cluster_rec_set','RTr1c','.csv',RecBatchID,job_sets,'RTr1c_ReconstructTracks_Sub.py'])
 #prog_entry.append([' --stepZ ', ' --stepY ', ' --stepX ', ' --ModelName ', ' --CheckPoint ', ' --TrackFitCutRes ',' --TrackFitCutSTD ',' --TrackFitCutMRes '])
-prog_entry.append([' --ModelName ', ' --CheckPoint ', ' --SeedFlowLog '])
+prog_entry.append([' --ModelName ', ' --CheckPoint '])
 #prog_entry.append([stepZ,stepY,stepX,ModelName,args.CheckPoint]+TrackFitCut)
-prog_entry.append([GraphModel,args.CheckPoint, SeedFlowLog])
+prog_entry.append([GraphModel,args.CheckPoint])
 prog_entry.append(Xsteps*Ysteps*Zsteps)
 prog_entry.append(LocalSub)
 prog_entry.append('N/A')

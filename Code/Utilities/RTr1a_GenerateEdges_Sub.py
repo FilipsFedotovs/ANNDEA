@@ -21,7 +21,6 @@ parser.add_argument('--p',help="Path to the output file", default='')
 parser.add_argument('--o',help="Path to the output file name", default='')
 parser.add_argument('--pfx',help="Path to the output file name", default='')
 parser.add_argument('--sfx',help="Path to the output file name", default='')
-parser.add_argument('--SeedFlowLog',help="Track the seed cutflow?", default='N')
 parser.add_argument('--ModelName',help="Model used to refine seeds", default='N')
 #Working out where are the Py libraries
 args = parser.parse_args()
@@ -42,7 +41,6 @@ cut_dt,cut_dr,cut_dz=float(args.cut_dt),float(args.cut_dr),float(args.cut_dz)
 p,o,sfx,pfx=args.p,args.o,args.sfx,args.pfx
 RecBatchID=args.BatchID
 MaxEdgesPerJob=int(args.MaxEdgesPerJob)
-SeedFlowLog=args.SeedFlowLog=='Y'
 if args.ModelName=='N':
     ModelName=None
 else:
@@ -52,7 +50,7 @@ import U_UI as UI #This is where we keep routine utility functions
 input_file_location=EOS_DIR+p+'/RTr1_'+RecBatchID+'_'+str(i)+'_'+str(j)+'_'+str(k)+'_clusters.pkl'
 HC=UI.PickleOperations(input_file_location,'r','')[0]
 print(UI.TimeStamp(),'Generating the edges...')
-GraphStatus = HC.GenerateSeeds(cut_dt, cut_dr, cut_dz, int(l), MaxEdgesPerJob, SeedFlowLog, EOS_DIR, ModelName)
+GraphStatus = HC.GenerateSeeds(cut_dt, cut_dr, cut_dz, int(l), MaxEdgesPerJob, EOS_DIR, ModelName)
 print(UI.TimeStamp(),'Writing the output...')
 output_file_location=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(i)+'_'+str(j)+'_'+str(k)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(i)+'_'+str(j)+'_'+str(k)+'_'+str(l)+sfx
 UI.PickleOperations(output_file_location,'w',HC)

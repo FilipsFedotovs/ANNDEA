@@ -31,7 +31,6 @@ parser.add_argument('--p',help="Path to the output file", default='')
 parser.add_argument('--o',help="Path to the output file name", default='')
 parser.add_argument('--pfx',help="Path to the output file name", default='')
 parser.add_argument('--sfx',help="Path to the output file name", default='')
-parser.add_argument('--SeedFlowLog',help="Track the seed cutflow?", default='N')
 parser.add_argument('--ModelName',help="Model used to refine seeds", default='N')
 ######################################## Set variables  #############################################################
 args = parser.parse_args()
@@ -62,7 +61,6 @@ import ast
 
 
 jobs=ast.literal_eval(args.jobs)
-SeedFlowLog=args.SeedFlowLog=='Y'
 if args.ModelName=='N':
     ModelName=None
 else:
@@ -117,7 +115,7 @@ data_list=data.values.tolist()
 HC=HC.HitCluster([X_ID,Y_ID, Z_ID],[stepX,stepY, stepZ]) #Initialise HitCluster instance
 HC.LoadClusterHits(data_list) #Decorate hot cluster with hit detailed data
 print(UF.TimeStamp(),'Seeding hits... ')
-HC.GenerateSeeds(cut_dt, cut_dr, cut_dz, -1, -1,SeedFlowLog, EOS_DIR, ModelName) #Creating Hit Cluster graph (using PyTorch Graph calss). We add Labels too sicnce it is Train data
+HC.GenerateSeeds(cut_dt, cut_dr, cut_dz, -1, -1, EOS_DIR, ModelName) #Creating Hit Cluster graph (using PyTorch Graph calss). We add Labels too sicnce it is Train data
 print(UF.TimeStamp(),'Building the cluster graph... ')
 HC.GenerateSeedGraph()
 #There are nodes + graph is generated. Add it to the container

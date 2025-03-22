@@ -30,7 +30,7 @@ parser.add_argument('--o',help="Path to the output file name", default='')
 parser.add_argument('--pfx',help="Path to the output file name", default='')
 parser.add_argument('--sfx',help="Path to the output file name", default='')
 parser.add_argument('--CheckPoint',help="Save cluster sets during individual cluster tracking.", default='N')
-parser.add_argument('--SeedFlowLog',help="Track the seed cutflow?", default='N')
+
 
 #Working out where are the Py libraries
 args = parser.parse_args()
@@ -52,7 +52,7 @@ import pandas as pd #We use Panda for a routine data processing
 ModelName=args.ModelName
 CheckPoint=args.CheckPoint.upper()=='Y'
 RecBatchID=args.BatchID
-SeedFlowLog=args.SeedFlowLog=='Y'
+
 # TrackFitCutRes=args.TrackFitCutRes
 # TrackFitCutSTD=args.TrackFitCutSTD
 # TrackFitCutMRes=args.TrackFitCutMRes
@@ -107,41 +107,7 @@ def InjectHit(Predator,Prey, Soft):
 
 Status='Edge graph generation'
 CheckPointFile_ML=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(i)+'_'+str(j)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(i)+'_'+str(j)+'_'+str(k) + '_CP_ML.csv'
-# CheckPointFile_Prep_1=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(i)+'_'+str(j)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(i)+'_'+str(j) +'_'+str(k) +'_CP_Prep_1.csv'
-# CheckPointFile_Prep_2=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(i)+'_'+str(j)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(i)+'_'+str(j) +'_'+str(k) +'_CP_Prep_2.csv'
-# CheckPointFile_Tracking_TH=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(i)+'_'+str(j)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(i)+'_'+str(j)+'_'+str(k) +'_CP_Tracking_TH.csv'
-# CheckPointFile_Tracking_RP=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(i)+'_'+str(j)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(i)+'_'+str(j)+'_'+str(k) +'_CP_Tracking_RP.csv'
 
-# if os.path.isfile(CheckPointFile_Tracking_TH) and os.path.isfile(CheckPointFile_Tracking_RP):
-#         UI.Msg('location','Loading checkpoint file ',CheckPointFile_Tracking_TH)
-#         _Tot_Hits = UI.LogOperations(CheckPointFile_Tracking_TH,'r','N/A')
-#         UI.Msg('location','Loading checkpoint file ',CheckPointFile_Tracking_RP)
-#         _Rec_Hits_Pool = UI.LogOperations(CheckPointFile_Tracking_RP,'r','N/A')
-#         UI.Msg('location','Loading checkpoint file ',CheckPointFile_Prep_2)
-#         _z_map=pd.read_csv(CheckPointFile_Prep_2)
-#         for i in range(len(_Tot_Hits)):
-#             for j in range(len(_Tot_Hits[i])):
-#                 _Tot_Hits[i][j]=ast.literal_eval(_Tot_Hits[i][j])
-#             for k in range(len(_Tot_Hits[i][0])):
-#                 if type(_Tot_Hits[i][0][k]) is float:
-#                     _Tot_Hits[i][0][k]=str(int(_Tot_Hits[i][0][k]))
-#                 if type(_Tot_Hits[i][0][k]) is int:
-#                     _Tot_Hits[i][0][k]=str(_Tot_Hits[i][0][k])
-#         Status = 'Tracking continuation'
-# elif os.path.isfile(CheckPointFile_Prep_1) and os.path.isfile(CheckPointFile_Prep_2):
-#         UI.Msg('location','Loading checkpoint file ',CheckPointFile_Prep_1)
-#         _Tot_Hits = UI.LogOperations(CheckPointFile_Prep_1,'r','N/A')
-#         for i in range(len(_Tot_Hits)):
-#             for j in range(len(_Tot_Hits[i])):
-#                 _Tot_Hits[i][j]=ast.literal_eval(_Tot_Hits[i][j])
-#             for k in range(len(_Tot_Hits[i][0])):
-#                 if type(_Tot_Hits[i][0][k]) is float:
-#                     _Tot_Hits[i][0][k]=str(int(_Tot_Hits[i][0][k]))
-#                 if type(_Tot_Hits[i][0][k]) is int:
-#                     _Tot_Hits[i][0][k]=str(_Tot_Hits[i][0][k])
-#         UI.Msg('location','Loading checkpoint file ',CheckPointFile_Prep_2)
-#         _z_map=pd.read_csv(CheckPointFile_Prep_2)
-#         Status = 'Tracking'
 if os.path.isfile(CheckPointFile_ML):
         UI.Msg('location','Loading checkpoint file ',CheckPointFile_ML)
         _Tot_Hits = pd.read_csv(CheckPointFile_ML)
@@ -207,10 +173,10 @@ if Status == 'ML analysis':
         _Tot_Hits=pd.DataFrame(_Tot_Hits, columns = ['l_HitID','r_HitID','label','link_strength', 'l_z', 'r_z'])
         _Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['link_strength'] <= Acceptance], inplace = True) #Remove all hit pairs that fail GNN classification
 
-        if SeedFlowLog:
-            HC.SeedFlowValuesAll[10]=len(_Tot_Hits)
-            _truth_only=_Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['label'] == 0]) #Remove all hit pairs that fail GNN classification
-            HC.SeedFlowValuesTrue[10]=len(_truth_only)
+
+        HC.SeedFlowValuesAll[10]=len(_Tot_Hits)
+        _truth_only=_Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['label'] == 0]) #Remove all hit pairs that fail GNN classification
+        HC.SeedFlowValuesTrue[10]=len(_truth_only)
 
     else:
         _Tot_Hits=[]
@@ -231,10 +197,10 @@ if Status == 'ML analysis':
 
         _Tot_Hits=pd.DataFrame(_Tot_Hits, columns = ['l_HitID','r_HitID','label','link_strength', 'l_z', 'r_z'])
 
-        if SeedFlowLog:
-            HC.SeedFlowValuesAll[10]=len(_Tot_Hits)
-            _truth_only=_Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['label'] == 0]) #Remove all hit pairs that fail GNN classification
-            HC.SeedFlowValuesTrue[10]=len(_truth_only)
+
+        HC.SeedFlowValuesAll[10]=len(_Tot_Hits)
+        _truth_only=_Tot_Hits.drop(_Tot_Hits.index[_Tot_Hits['label'] == 0]) #Remove all hit pairs that fail GNN classification
+        HC.SeedFlowValuesTrue[10]=len(_truth_only)
 
     print(UI.TimeStamp(),'Number of all  hit combinations passing GNN selection:',len(_Tot_Hits))
     if CheckPoint:
@@ -289,10 +255,6 @@ if Status=='Track preparation':
                                 _Temp_Tot_Hit_El[1].append(0.0)
                         _Temp_Tot_Hits.append(_Temp_Tot_Hit_El)
         _Tot_Hits=_Temp_Tot_Hits
-        # if CheckPoint:
-        #     print(UI.TimeStamp(),'Saving checkpoint 4...')
-        #     UI.LogOperations(CheckPointFile_Prep_1,'w',_Tot_Hits)
-        #     _z_map.to_csv(CheckPointFile_Prep_2,index=False)
         Status='Tracking'
 
 if Status=='Tracking' or Status=='Tracking continuation':
@@ -389,10 +351,6 @@ if Status=='Tracking' or Status=='Tracking continuation':
                                 del _Tot_Hits[_itr]
                             else:
                                 _itr+=1
-                    # if CheckPoint:
-                    #     print(UI.TimeStamp(),'(Re-)Saving checkpoint 5...')
-                    #     UI.LogOperations(CheckPointFile_Tracking_TH,'w',_Tot_Hits)
-                    #     UI.LogOperations(CheckPointFile_Tracking_RP,'w',_Rec_Hits_Pool)
                     Status='Tracking continuation'
     #Transpose the rows
     _track_list=[]
