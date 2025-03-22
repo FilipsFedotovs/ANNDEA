@@ -660,8 +660,8 @@ while Status<len(Program):
                     log_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/Temp_RTr1c_'+RecBatchID+'_'+str(i)+'_'+str(j)+'/RTr1c_'+RecBatchID+'_hit_cluster_rec_set_Log_'+str(i)+'_'+str(j)+'_'+str(k)+'.csv'
                     if os.path.isfile(log_file_location):
                         data=UI.LogOperations(log_file_location,'r','N/A')
-                        _SeedFlowValuesAll = [a + b for a, b in zip(_SeedFlowValuesAll, data[1])]
-                        _SeedFlowValuesTrue = [a + b for a, b in zip(_SeedFlowValuesTrue, data[2])]
+                        _SeedFlowValuesAll = [a + int(b) for a, b in zip(_SeedFlowValuesAll, data[1])]
+                        _SeedFlowValuesTrue = [a + int(b) for a, b in zip(_SeedFlowValuesTrue, data[2])]
         headers = _label
         first_row = _SeedFlowValuesAll
         second_row = _SeedFlowValuesTrue
