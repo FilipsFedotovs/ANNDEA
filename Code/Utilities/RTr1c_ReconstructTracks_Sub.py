@@ -383,9 +383,10 @@ _truth_result["HitID"] = _truth_result.apply(
 # Step 3: Remove duplicate entries based on HitID
 _truth_result = _truth_result.drop_duplicates(subset=["HitID"])
 
-# Display the cleaned DataFrame
-print(_truth_result)
-
+HC.SeedFlowValuesAll[11]=len(_truth_result)
+HC.SeedFlowValuesTrue[11]=len(_truth_result[_truth_result["L_Label"] == _truth_result["R_label"]])
+print(HC.SeedFlowValuesAll)
+print(HC.SeedFlowValuesTrue)
 exit()
 #If Cluster tracking yielded no segments we just create an empty array for consistency
 if Status=='Skip tracking':
