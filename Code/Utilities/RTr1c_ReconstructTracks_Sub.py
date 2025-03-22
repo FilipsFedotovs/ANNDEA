@@ -367,6 +367,9 @@ if Status=='Tracking' or Status=='Tracking continuation':
 print(_Rec_Hits_Pool)
 _truth_l=pd.DataFrame([[h[0],h[6]] for h in HC.Hits], columns = ['L_HitID','L_Label'])
 _result_l=_result.rename(columns={"Hit_ID": "L_HitID"})
+print(_truth_l)
+print(_result_l)
+
 _truth_result_l=pd.merge(_truth_l,_result_l, how='inner', on=['L_HitID'])
 print(_truth_result_l)
 
