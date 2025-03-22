@@ -651,9 +651,9 @@ while Status<len(Program):
         print(UI.TimeStamp(), bcolors.OKGREEN+"The tracked data has been written to"+bcolors.ENDC, bcolors.OKBLUE+output_file_location+bcolors.ENDC)
 
         ###Logs###
-        for z in range(Zsteps):
-            for y in range(Ysteps):
-                for x in range(Xsteps):
+        for k in range(Zsteps):
+            for j in range(Ysteps):
+                for i in range(Xsteps):
                     log_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/Temp_RTr1c_'+RecBatchID+'_'+str(i)+'_'+str(j)+'/RTr1c_'+RecBatchID+'_hit_cluster_rec_set_Log_'+str(i)+'_'+str(j)+'_'+str(k)+'.csv'
                     data=UI.LogOperations(log_file_location,'r','N/A')
                     print(data)
