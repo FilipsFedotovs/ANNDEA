@@ -364,6 +364,11 @@ if Status=='Tracking' or Status=='Tracking continuation':
     _Rec_Hits_Pool=_Rec_Hits_Pool.rename(columns={"Segment_ID": "Master_Segment_ID" })
     print(UI.TimeStamp(),_no_tracks, 'track segments have been reconstructed in this cluster set ...')
 
+
+#If Cluster tracking yielded no segments we just create an empty array for consistency
+if Status=='Skip tracking':
+    _Rec_Hits_Pool=pd.DataFrame([], columns = ['HitID','Master_z','Master_Segment_ID'])
+
 _truth_l=pd.DataFrame([[h[0],h[6]] for h in HC.Hits], columns = ['HitID','L_Label'])
 _truth_result_l=pd.merge(_truth_l,_result, how='inner', on=['HitID'])
 
@@ -390,9 +395,6 @@ HC.SeedFlowValuesTrue[11]=len(_truth_result[_truth_result["L_Label"] == _truth_r
 output_log_location=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(i)+'_'+str(j)+'/'+pfx+'_'+RecBatchID+'_'+o+'_Log_'+str(i)+'_'+str(j)+'_'+str(k)+sfx
 UI.LogOperations(output_log_location,'w', [HC.SeedFlowLabels, HC.SeedFlowValuesAll, HC.SeedFlowValuesTrue])
 UI.Msg('location','Log output is written to ',output_log_location)
-#If Cluster tracking yielded no segments we just create an empty array for consistency
-if Status=='Skip tracking':
-    _Rec_Hits_Pool=pd.DataFrame([], columns = ['HitID','Master_z','Master_Segment_ID'])
 
 output_file_location=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(i)+'_'+str(j)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(i)+'_'+str(j)+'_'+str(k)+sfx
 print(UI.TimeStamp(),'Writing the output...')
