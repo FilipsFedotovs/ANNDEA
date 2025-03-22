@@ -1,4 +1,4 @@
-#Current version 1.1 - add change sys path capability
+#Current version 2.0 - add change sys path capability
 
 ########################################    Import essential libriries    #############################################
 import argparse
@@ -6,7 +6,7 @@ import sys
 import copy
 from statistics import mean
 import os
-import ast
+
 
 
 #Setting the parser - this script is usually not run directly, but is used by a Master version Counterpart that passes the required arguments
@@ -17,9 +17,6 @@ parser.add_argument('--k',help="SubSubset number", default='1')
 # parser.add_argument('--TrackFitCutRes',help="Track Fit cut Residual", default=1000,type=int)
 # parser.add_argument('--TrackFitCutSTD',help="Track Fit cut", default=10,type=int)
 # parser.add_argument('--TrackFitCutMRes',help="Track Fit cut", default=200,type=int)
-# parser.add_argument('--stepX',help="Enter X step size", default='0')
-# parser.add_argument('--stepY',help="Enter Y step size", default='0')
-# parser.add_argument('--stepZ',help="Enter Z step size", default='0')
 parser.add_argument('--EOS',help="EOS directory location", default='.')
 parser.add_argument('--AFS',help="AFS directory location", default='.')
 parser.add_argument('--PY',help="Python libraries directory location", default='.')
@@ -367,7 +364,8 @@ if Status=='Tracking' or Status=='Tracking continuation':
     print(UI.TimeStamp(),_no_tracks, 'track segments have been reconstructed in this cluster set ...')
 
 print(_Rec_Hits_Pool)
-print(HC.Hits)
+_truth=[h[0,3] for h in HC.Hits]
+print(_truth)
 exit()
 #If Cluster tracking yielded no segments we just create an empty array for consistency
 if Status=='Skip tracking':
