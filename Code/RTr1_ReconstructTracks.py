@@ -436,10 +436,10 @@ while Status<len(Program):
              Status=20
              break
     elif Status==6:
-        #Non standard processes (that don't follow the general pattern) have been coded here
-        print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
-        print(UI.TimeStamp(),bcolors.BOLD+'Stage 3:'+bcolors.ENDC+' Using the results from previous steps to map merged trackIDs to the original reconstruction file')
-      #try:
+      #Non standard processes (that don't follow the general pattern) have been coded here
+      print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
+      print(UI.TimeStamp(),bcolors.BOLD+'Stage 3:'+bcolors.ENDC+' Using the results from previous steps to map merged trackIDs to the original reconstruction file')
+      try:
         #Read the output with hit- ANN Track map
         FirstFile=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/Temp_RTr1f_'+RecBatchID+'_0'+'/RTr1f_'+RecBatchID+'_hit_cluster_rec_x_set_0.csv'
         print(UI.TimeStamp(),'Loading the file ',bcolors.OKBLUE+FirstFile+bcolors.ENDC)
@@ -648,8 +648,7 @@ while Status<len(Program):
         Data=pd.merge(Data,Good_Tracks,how='left', on=[PM.Hit_ID]) #Re-map corrected ANNDEA Tracks back to the main data
         output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'.csv' #Final output. We can use this file for further operations
         Data.to_csv(output_file_location,index=False)
-        print(UI.TimeStamp(), bcolors.OKGREEN+"The tracked data has been written to"+bcolors.ENDC, bcolors.OKBLUE+output_file_location+bcolors.ENDC)
-
+        UI.Msg('location',"The tracked data has been written to",output_file_location)
         ###Logs###
         _label=['All', 'Excluding self-permutations', 'Excluding duplicates', 'Excluding seeds on the same plate', 'Cut on dz', 'Cut on dtx', 'Cut on dty', 'Cut on drx', 'Cut on dry', 'MLP filter', 'GNN filter', 'Tracking process']
         _SeedFlowValuesAll=[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
@@ -672,13 +671,15 @@ while Status<len(Program):
 
         # Print the table with borders
         print(df.to_string(index=False))
-        exit()
+        output_log_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_LOG.csv'
+        df.to_csv(output_log_location, index=False)
+        UI.Msg('location',"The seedflow log has been written to",output_log_location)
         print(UI.TimeStamp(),bcolors.OKGREEN+'Stage 4 has successfully completed'+bcolors.ENDC)
         UI.UpdateStatus(Status+1,Meta,RecOutputMeta)
-      # except Exception as e:
-      #     print(UI.TimeStamp(),bcolors.FAIL+'Stage 4 is uncompleted due to: '+str(e)+bcolors.ENDC)
-      #     Status=21
-      #     break
+      except Exception as e:
+          print(UI.TimeStamp(),bcolors.FAIL+'Stage 4 is uncompleted due to: '+str(e)+bcolors.ENDC)
+          Status=21
+          break
     MetaInput=UI.PickleOperations(RecOutputMeta,'r', 'N/A')
     Meta=MetaInput[0]
     Status=Meta.Status[-1]
