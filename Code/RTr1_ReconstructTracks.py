@@ -189,16 +189,27 @@ required_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/RTr1_'+RecBa
 RecOutputMeta=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/'+RecBatchID+'_info.pkl'
 if os.path.isfile(required_file_location)==False:
          print(UI.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
-         have_mc=False
          if SeedFlowLog:
              try:
                  data=pd.read_csv(input_file_location,
                              header=0,
                              usecols=[PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty,PM.MC_Event_ID,PM.MC_Track_ID])[[PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty,PM.MC_Event_ID,PM.MC_Track_ID]]
-                 have_mc=True
              except Exception as e:
                  UI.Msg('failed', str(e))
                  data=pd.read_csv(input_file_location,
+                             header=0,
+                             usecols=[PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty])[[PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty]]
+                 data[PM.MC_Event_ID]='Dummy_MC_Event'
+                 data[PM.MC_Track_ID]='Dummy_MC_Track' #If we don't have
+
+             data[PM.MC_Event_ID] = data[PM.MC_Event_ID].astype(str)
+             data[PM.MC_Track_ID] = data[PM.MC_Track_ID].astype(str)
+             data['MC_Super_Track_ID'] = data[PM.MC_Event_ID] + '-' + data[PM.MC_Track_ID] #Track IDs are not unique and repeat for each event
+             data=data.drop([PM.MC_Event_ID],axis=1)
+             data=data.drop([PM.MC_Track_ID],axis=1)
+
+         else:
+             data=pd.read_csv(input_file_location,
                              header=0,
                              usecols=[PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty])[[PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty]]
          total_rows=len(data.axes[0])
@@ -214,13 +225,7 @@ if os.path.isfile(required_file_location)==False:
              print(UI.TimeStamp(), bcolors.WARNING+"Hit ID is already in the string format, skipping the reformatting step..."+bcolors.ENDC)
          data[PM.Hit_ID] = data[PM.Hit_ID].astype(str)
 
-         if have_mc:
-             data[PM.MC_Event_ID] = data[PM.MC_Event_ID].astype(str)
-             data[PM.MC_Track_ID] = data[PM.MC_Track_ID].astype(str)
-             data['MC_Super_Track_ID'] = data[PM.MC_Event_ID] + '-' + data[PM.MC_Track_ID] #Track IDs are not unique and repeat for each event: crea
-             data=data.drop([PM.MC_Event_ID],axis=1)
-             data=data.drop([PM.MC_Track_ID],axis=1)
-             data=data.rename(columns={"MC_Super_Track_ID": "MC_Track_ID"})
+         data=data.rename(columns={"MC_Super_Track_ID": "MC_Track_ID"})
          if SliceData:
               print(UI.TimeStamp(),'Slicing the data...')
               data=data.drop(data.index[(data[PM.x] > Xmax) | (data[PM.x] < Xmin) | (data[PM.y] > Ymax) | (data[PM.y] < Ymin)])

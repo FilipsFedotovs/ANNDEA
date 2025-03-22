@@ -3,11 +3,6 @@
 
 import math
 
-
-
-
-
-
 class HitCluster:
       def __init__(self,ClusterID, Step):
           self.ClusterID=ClusterID
@@ -56,12 +51,13 @@ class HitCluster:
            self.SeedFlowValuesAll=[len(_Hits)**2,(len(_Hits)**2)-len(_Hits), int(((len(_Hits)**2)-len(_Hits))/2), 0, 0, 0, 0, 0, 0, 0, 0, 0]
            self.SeedFlowValuesTrue=[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 
-           if SeedFlowLog:
-               for l in range(_sp,min(_ep,self.ClusterSize-1)):
+
+           for l in range(_sp,min(_ep,self.ClusterSize-1)):
                     for r in range(l+1,len(_Hits)):
-                        FitSeed=HitCluster.FitTrackSeed(_Hits[l],_Hits[r],cut_dt,cut_dr,cut_dz)
-                        self.SeedFlowValuesAll = [a + b for a, b in zip(self.SeedFlowValuesAll, FitSeed[1])]
-                        self.SeedFlowValuesTrue = [a + b for a, b in zip(self.SeedFlowValuesTrue, FitSeed[2])]
+                        FitSeed=HitCluster.FitSeed(_Hits[l],_Hits[r],cut_dt,cut_dr,cut_dz)
+                        if SeedFlowLog:
+                            self.SeedFlowValuesAll = [a + b for a, b in zip(self.SeedFlowValuesAll, FitSeed[1])]
+                            self.SeedFlowValuesTrue = [a + b for a, b in zip(self.SeedFlowValuesTrue, FitSeed[2])]
                         if FitSeed[0]:
                                if ModelName==None:
                                     self.Seeds.append(HitCluster.NormaliseSeed(self,_Hits[r], _Hits[l], cut_dt))
@@ -70,39 +66,39 @@ class HitCluster:
                                     _refined_seed_vector=self.GenerateSeedVectors([_refined_seed])
                                     y=_refined_seed_vector[1][0]
                                     _refined_seed_vector_tensor=torch.tensor(_refined_seed_vector[0], dtype=torch.float32)
-
                                     model.eval()
                                     with torch.no_grad():
                                         x = _refined_seed_vector_tensor[0].unsqueeze(0)
                                         o = model(x)
                                     if o.item()>model_acceptance:
-                                        self.SeedFlowValuesTrue = [a + b for a, b in zip(self.SeedFlowValuesTrue, [0, 0, 0, 0, 0, 0, 0, 0, 0, y, 0, 0])]
-                                        self.SeedFlowValuesAll = [a + b for a, b in zip(self.SeedFlowValuesAll, [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0])]
+                                        if SeedFlowLog:
+                                            self.SeedFlowValuesTrue = [a + b for a, b in zip(self.SeedFlowValuesTrue, [0, 0, 0, 0, 0, 0, 0, 0, 0, y, 0, 0])]
+                                            self.SeedFlowValuesAll = [a + b for a, b in zip(self.SeedFlowValuesAll, [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0])]
                                         self.Seeds.append(HitCluster.NormaliseGraphSeed(self,_Hits[r], _Hits[l], cut_dt))
                                     else:
                                         continue
 
 
-           else:
-               for l in range(_sp,min(_ep,self.ClusterSize-1)):
-                    for r in range(l+1,len(_Hits)):
-                        FitSeed=HitCluster.FitSeed(_Hits[l],_Hits[r],cut_dt,cut_dr,cut_dz)
-                        if FitSeed:
-                            if ModelName==None:
-                                    self.Seeds.append(HitCluster.NormaliseSeed(self,_Hits[r], _Hits[l], cut_dt))
-                            else:
-                                    _refined_seed=HitCluster.NormaliseSeed(self,_Hits[r], _Hits[l], cut_dt)
-                                    _refined_seed_vector=self.GenerateSeedVectors([_refined_seed])
-                                    _refined_seed_vector_tensor=torch.tensor(_refined_seed_vector[0], dtype=torch.float32)
-                                    model.eval()
-                                    with torch.no_grad():
-                                        x = _refined_seed_vector_tensor[0].unsqueeze(0)
-                                        o = model(x)
-                                    if o.item()>model_acceptance:
-
-                                        self.Seeds.append(HitCluster.NormaliseGraphSeed(self,_Hits[r], _Hits[l], cut_dt))
-                                    else:
-                                        continue
+           # else:
+           #     for l in range(_sp,min(_ep,self.ClusterSize-1)):
+           #          for r in range(l+1,len(_Hits)):
+           #              FitSeed=HitCluster.FitSeed(_Hits[l],_Hits[r],cut_dt,cut_dr,cut_dz)
+           #              if FitSeed:
+           #                  if ModelName==None:
+           #                          self.Seeds.append(HitCluster.NormaliseSeed(self,_Hits[r], _Hits[l], cut_dt))
+           #                  else:
+           #                          _refined_seed=HitCluster.NormaliseSeed(self,_Hits[r], _Hits[l], cut_dt)
+           #                          _refined_seed_vector=self.GenerateSeedVectors([_refined_seed])
+           #                          _refined_seed_vector_tensor=torch.tensor(_refined_seed_vector[0], dtype=torch.float32)
+           #                          model.eval()
+           #                          with torch.no_grad():
+           #                              x = _refined_seed_vector_tensor[0].unsqueeze(0)
+           #                              o = model(x)
+           #                          if o.item()>model_acceptance:
+           #
+           #                              self.Seeds.append(HitCluster.NormaliseGraphSeed(self,_Hits[r], _Hits[l], cut_dt))
+           #                          else:
+           #                              continue
            return True
       def GenerateSeedGraph(self): #Decorate hit information
            import torch
@@ -145,11 +141,7 @@ class HitCluster:
           return [_Top,_Bottom]
       def NormaliseSeed(self,_Hit2, _Hit1, _cut_dt):
           _scale_factor=8
-          if len(_Hit1)>=7:
-            h1,h2,x1,x2,y1,y2,z1,z2, tx1, tx2, ty1, ty2, l1, l2=_Hit2[0],_Hit1[0],_Hit2[1],_Hit1[1],_Hit2[2],_Hit1[2],_Hit2[3],_Hit1[3],_Hit2[4],_Hit1[4],_Hit2[5],_Hit1[5],_Hit2[6],_Hit1[6]
-          else:
-              h1,h2,x1,x2,y1,y2,z1,z2, tx1, tx2, ty1, ty2, l1, l2=_Hit2[0],_Hit1[0],_Hit2[1],_Hit1[1],_Hit2[2],_Hit1[2],_Hit2[3],_Hit1[3],_Hit2[4],_Hit1[4],_Hit2[5],_Hit1[5],'1','1'
-
+          h1,h2,x1,x2,y1,y2,z1,z2, tx1, tx2, ty1, ty2, l1, l2=_Hit2[0],_Hit1[0],_Hit2[1],_Hit1[1],_Hit2[2],_Hit1[2],_Hit2[3],_Hit1[3],_Hit2[4],_Hit1[4],_Hit2[5],_Hit1[5],_Hit2[6],_Hit1[6]
           _dl= math.sqrt(((x2-x1)**2) + ((y2-y1)**2) + ((z2-z1)**2))/self.Step[2]
           _dr= math.sqrt(((x2-x1)**2) + ((y2-y1)**2))/(self.Step[0]/_scale_factor)
           _dz=abs(z2-z1)/self.Step[2]
@@ -163,10 +155,7 @@ class HitCluster:
           StepX=self.Step[0]/_scale_factor
           StepY=self.Step[1]/_scale_factor
           StepDT=_cut_dt/_scale_factor
-          if len(_Hit1)>=7:
-                h1,h2,x1,x2,y1,y2,z1,z2, tx1, tx2, ty1, ty2, l1, l2=_Hit2[0],_Hit1[0],_Hit2[1],_Hit1[1],_Hit2[2],_Hit1[2],_Hit2[3],_Hit1[3],_Hit2[4],_Hit1[4],_Hit2[5],_Hit1[5],_Hit2[6],_Hit1[6]
-          else:
-                 h1,h2,x1,x2,y1,y2,z1,z2, tx1, tx2, ty1, ty2, l1, l2=_Hit2[0],_Hit1[0],_Hit2[1],_Hit1[1],_Hit2[2],_Hit1[2],_Hit2[3],_Hit1[3],_Hit2[4],_Hit1[4],_Hit2[5],_Hit1[5],'1','1'
+          h1,h2,x1,x2,y1,y2,z1,z2, tx1, tx2, ty1, ty2, l1, l2=_Hit2[0],_Hit1[0],_Hit2[1],_Hit1[1],_Hit2[2],_Hit1[2],_Hit2[3],_Hit1[3],_Hit2[4],_Hit1[4],_Hit2[5],_Hit1[5],_Hit2[6],_Hit1[6]
           _dx= (x2-x1 + StepX)/(2*StepX)
           _dy= (y2-y1 + StepY)/(2*StepY)
           _dz=abs(z2-z1)/self.Step[2]
@@ -175,24 +164,24 @@ class HitCluster:
           _ts=int(((l1==l2) and ('--' not in l1)))
           return [h1, h2, _ts, _dx,_dy,_dz,_dtx,_dty]
 
-      def FitSeed(_H1, _H2, _cdt, _cdr, _cdz):
-          if _H1[3]==_H2[3]: #Ensuring hit combinations are on different plates
-              return False
-          elif abs(_H1[3]-_H2[3])>=_cdz:
-              return False
-          else:
-              if abs(_H1[4]-_H2[4])>=_cdt:
-                  return False
-              else:
-                  if abs(_H1[5]-_H2[5])>=_cdt:
-                      return False
-                  else:
-                      if abs(_H2[1]-(_H1[1]+(_H1[4]*(_H2[3]-_H1[3]))))>=_cdr:
-                         return False
-                      else:
-                          if abs(_H2[2]-(_H1[2]+(_H1[5]*(_H2[3]-_H1[3]))))>=_cdr:
-                             return False
-          return True
+      # def FitSeed(_H1, _H2, _cdt, _cdr, _cdz):
+      #     if _H1[3]==_H2[3]: #Ensuring hit combinations are on different plates
+      #         return False
+      #     elif abs(_H1[3]-_H2[3])>=_cdz:
+      #         return False
+      #     else:
+      #         if abs(_H1[4]-_H2[4])>=_cdt:
+      #             return False
+      #         else:
+      #             if abs(_H1[5]-_H2[5])>=_cdt:
+      #                 return False
+      #             else:
+      #                 if abs(_H2[1]-(_H1[1]+(_H1[4]*(_H2[3]-_H1[3]))))>=_cdr:
+      #                    return False
+      #                 else:
+      #                     if abs(_H2[2]-(_H1[2]+(_H1[5]*(_H2[3]-_H1[3]))))>=_cdr:
+      #                        return False
+      #     return True
       @staticmethod
       def GenerateSeedVectors(Seeds):
             #Split samples into X and Y sets
@@ -202,11 +191,8 @@ class HitCluster:
                 SeedsX.append(s[3:])
                 SeedsY.append(s[2])
             return SeedsX,SeedsY
-      def FitTrackSeed(_H1, _H2, _cdt, _cdr, _cdz): #A more involved option that involves producing the seed cutflow and the truth distribution if the MC data available.
-          if len(_H1)>=7:
-            _ts=int(((_H1[6]==_H2[6]) and ('--' not in _H1[6])))
-          else:
-            _ts=1
+      def FitSeed(_H1, _H2, _cdt, _cdr, _cdz): #A more involved option that involves producing the seed cutflow and the truth distribution if the MC data available.
+          _ts=int(((_H1[6]==_H2[6]) and ('--' not in _H1[6])))
           if _H1[3]==_H2[3]: #Ensuring hit combinations are on different plates
                 return False, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [_ts, _ts, _ts, 0, 0, 0, 0, 0, 0, 0, 0, 0]
           elif abs(_H1[3]-_H2[3])>=_cdz:
