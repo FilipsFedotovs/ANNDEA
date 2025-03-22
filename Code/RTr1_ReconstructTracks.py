@@ -651,13 +651,28 @@ while Status<len(Program):
         print(UI.TimeStamp(), bcolors.OKGREEN+"The tracked data has been written to"+bcolors.ENDC, bcolors.OKBLUE+output_file_location+bcolors.ENDC)
 
         ###Logs###
+        _label=['All', 'Excluding self-permutations', 'Excluding duplicates', 'Excluding seeds on the same plate', 'Cut on dz', 'Cut on dtx', 'Cut on dty', 'Cut on drx', 'Cut on dry', 'MLP filter', 'GNN filter', 'Tracking process']
+        _SeedFlowValuesAll=[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        _SeedFlowValuesTrue=[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         for k in range(Zsteps):
             for j in range(Ysteps):
                 for i in range(Xsteps):
                     log_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/Temp_RTr1c_'+RecBatchID+'_'+str(i)+'_'+str(j)+'/RTr1c_'+RecBatchID+'_hit_cluster_rec_set_Log_'+str(i)+'_'+str(j)+'_'+str(k)+'.csv'
-                    data=UI.LogOperations(log_file_location,'r','N/A')
-                    print(data)
-                    exit()
+                    if os.path.isfile(log_file_location):
+                        data=UI.LogOperations(log_file_location,'r','N/A')
+                        _SeedFlowValuesAll = [a + b for a, b in zip(_SeedFlowValuesAll, data[1])]
+                        _SeedFlowValuesTrue = [a + b for a, b in zip(_SeedFlowValuesTrue, data[2])]
+        headers = _label
+        first_row = _SeedFlowValuesAll
+        second_row = _SeedFlowValuesTrue
+
+        # Create a DataFrame
+        data = [first_row, second_row]
+        df = pd.DataFrame(data, columns=headers)
+
+        # Print the table with borders
+        print(df.to_string(index=False))
+        exit()
         print(UI.TimeStamp(),bcolors.OKGREEN+'Stage 4 has successfully completed'+bcolors.ENDC)
         UI.UpdateStatus(Status+1,Meta,RecOutputMeta)
       except Exception as e:
