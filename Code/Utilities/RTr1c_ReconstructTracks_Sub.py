@@ -357,6 +357,7 @@ if Status=='Tracking' or Status=='Tracking continuation':
                   for h in _Rec_Hits_Pool[t]:
                          _track_list.append([_segment_id+'-'+str(t+1),h])
     _Rec_Hits_Pool=pd.DataFrame(_track_list, columns = ['Segment_ID','HitID'])
+    _result=_Rec_Hits_Pool
     _z_map['HitID']=_z_map['HitID'].astype(str)
     _Rec_Hits_Pool=pd.merge(_z_map, _Rec_Hits_Pool, how="right", on=['HitID'])
     _Rec_Hits_Pool=_Rec_Hits_Pool.rename(columns={"z": "Master_z" })
@@ -364,8 +365,15 @@ if Status=='Tracking' or Status=='Tracking continuation':
     print(UI.TimeStamp(),_no_tracks, 'track segments have been reconstructed in this cluster set ...')
 
 print(_Rec_Hits_Pool)
-_truth=pd.DataFrame([[h[0],h[6]] for h in HC.Hits], columns = ['HitID','Label'])
-print(_truth)
+_truth_l=pd.DataFrame([[h[0],h[6]] for h in HC.Hits], columns = ['L_HitID','L_Label'])
+_result_l=_result.rename(columns={"Hit_ID": "L_HitID"})
+_truth_result_l=pd.merge(_truth_l,_result_l, how='inner', on='L_HitID')
+print(_truth_result_l)
+
+_result_r=_result.rename(columns={"Hit_ID": "R_HitID"})
+_result_lr=_result_l.merge(_result_r)
+
+
 exit()
 #If Cluster tracking yielded no segments we just create an empty array for consistency
 if Status=='Skip tracking':
