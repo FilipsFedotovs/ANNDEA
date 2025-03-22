@@ -385,9 +385,11 @@ _truth_result = _truth_result.drop_duplicates(subset=["HitID"])
 
 HC.SeedFlowValuesAll[11]=len(_truth_result)
 HC.SeedFlowValuesTrue[11]=len(_truth_result[_truth_result["L_Label"] == _truth_result["R_Label"]])
-print(HC.SeedFlowValuesAll)
-print(HC.SeedFlowValuesTrue)
-exit()
+
+
+output_log_location=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(i)+'_'+str(j)+'/'+pfx+'_'+RecBatchID+'_'+o+'_Log_'+str(i)+'_'+str(j)+'_'+str(k)+sfx
+UI.LogOperations(output_log_location,'w', [HC.SeedFlowLabels, HC.SeedFlowValuesAll, HC.SeedFlowValuesTrue])
+UI.Msg('location','Log output is written to ',output_log_location)
 #If Cluster tracking yielded no segments we just create an empty array for consistency
 if Status=='Skip tracking':
     _Rec_Hits_Pool=pd.DataFrame([], columns = ['HitID','Master_z','Master_Segment_ID'])
@@ -395,7 +397,7 @@ if Status=='Skip tracking':
 output_file_location=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(i)+'_'+str(j)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(i)+'_'+str(j)+'_'+str(k)+sfx
 print(UI.TimeStamp(),'Writing the output...')
 _Rec_Hits_Pool.to_csv(output_file_location,index=False) #Write the final result
-print(UI.TimeStamp(),'Output is written to ',output_file_location)
+UI.Msg('location','Tracking output is written to ',output_file_location)
 exit()
 
 
