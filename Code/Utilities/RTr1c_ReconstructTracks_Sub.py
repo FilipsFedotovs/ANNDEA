@@ -364,42 +364,40 @@ if Status=='Tracking' or Status=='Tracking continuation':
     _Rec_Hits_Pool=_Rec_Hits_Pool.rename(columns={"Segment_ID": "Master_Segment_ID" })
     print(UI.TimeStamp(),_no_tracks, 'track segments have been reconstructed in this cluster set ...')
 
+    _truth_l=pd.DataFrame([[h[0],h[6]] for h in HC.Hits], columns = ['HitID','L_Label'])
+    _truth_result_l=pd.merge(_truth_l,_result, how='inner', on=['HitID'])
+
+    _truth_r=pd.DataFrame([[h[0],h[6]] for h in HC.Hits], columns = ['HitID','R_Label'])
+    _truth_result_r=pd.merge(_truth_r,_result, how='inner', on=['HitID'])
+
+    _truth_result=pd.merge(_truth_result_l,_truth_result_r, how='inner', on=['Segment_ID'])
+
+    # Step 1: Remove rows where HitID_x == HitID_y
+    _truth_result = _truth_result[_truth_result["HitID_x"] != _truth_result["HitID_y"]]
+
+    # Step 2: Create a new HitID column with concatenated HitID_x and HitID_y in a sorted order
+    _truth_result["HitID"] = _truth_result.apply(
+        lambda row: f"{min(row['HitID_x'], row['HitID_y'])}_{max(row['HitID_x'], row['HitID_y'])}", axis=1
+    )
+
+    # Step 3: Remove duplicate entries based on HitID
+    _truth_result = _truth_result.drop_duplicates(subset=["HitID"])
+
+    HC.SeedFlowValuesAll[11]=len(_truth_result)
+    HC.SeedFlowValuesTrue[11]=len(_truth_result[_truth_result["L_Label"] == _truth_result["R_Label"]])
+
 
 #If Cluster tracking yielded no segments we just create an empty array for consistency
 if Status=='Skip tracking':
     _Rec_Hits_Pool=pd.DataFrame([], columns = ['HitID','Master_z','Master_Segment_ID'])
 
-_truth_l=pd.DataFrame([[h[0],h[6]] for h in HC.Hits], columns = ['HitID','L_Label'])
-_truth_result_l=pd.merge(_truth_l,_result, how='inner', on=['HitID'])
-
-_truth_r=pd.DataFrame([[h[0],h[6]] for h in HC.Hits], columns = ['HitID','R_Label'])
-_truth_result_r=pd.merge(_truth_r,_result, how='inner', on=['HitID'])
-
-_truth_result=pd.merge(_truth_result_l,_truth_result_r, how='inner', on=['Segment_ID'])
-
-# Step 1: Remove rows where HitID_x == HitID_y
-_truth_result = _truth_result[_truth_result["HitID_x"] != _truth_result["HitID_y"]]
-
-# Step 2: Create a new HitID column with concatenated HitID_x and HitID_y in a sorted order
-_truth_result["HitID"] = _truth_result.apply(
-    lambda row: f"{min(row['HitID_x'], row['HitID_y'])}_{max(row['HitID_x'], row['HitID_y'])}", axis=1
-)
-
-# Step 3: Remove duplicate entries based on HitID
-_truth_result = _truth_result.drop_duplicates(subset=["HitID"])
-
-HC.SeedFlowValuesAll[11]=len(_truth_result)
-HC.SeedFlowValuesTrue[11]=len(_truth_result[_truth_result["L_Label"] == _truth_result["R_Label"]])
-
-
-output_log_location=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(i)+'_'+str(j)+'/'+pfx+'_'+RecBatchID+'_'+o+'_Log_'+str(i)+'_'+str(j)+'_'+str(k)+sfx
-UI.LogOperations(output_log_location,'w', [HC.SeedFlowLabels, HC.SeedFlowValuesAll, HC.SeedFlowValuesTrue])
-UI.Msg('location','Log output is written to ',output_log_location)
-
 output_file_location=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(i)+'_'+str(j)+'/'+pfx+'_'+RecBatchID+'_'+o+'_'+str(i)+'_'+str(j)+'_'+str(k)+sfx
 print(UI.TimeStamp(),'Writing the output...')
 _Rec_Hits_Pool.to_csv(output_file_location,index=False) #Write the final result
 UI.Msg('location','Tracking output is written to ',output_file_location)
+output_log_location=EOS_DIR+p+'/Temp_'+pfx+'_'+RecBatchID+'_'+str(i)+'_'+str(j)+'/'+pfx+'_'+RecBatchID+'_'+o+'_Log_'+str(i)+'_'+str(j)+'_'+str(k)+sfx
+UI.LogOperations(output_log_location,'w', [HC.SeedFlowLabels, HC.SeedFlowValuesAll, HC.SeedFlowValuesTrue])
+UI.Msg('location','Log output is written to ',output_log_location)
 exit()
 
 
