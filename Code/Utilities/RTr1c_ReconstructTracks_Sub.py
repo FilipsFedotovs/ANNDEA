@@ -364,18 +364,16 @@ if Status=='Tracking' or Status=='Tracking continuation':
     _Rec_Hits_Pool=_Rec_Hits_Pool.rename(columns={"Segment_ID": "Master_Segment_ID" })
     print(UI.TimeStamp(),_no_tracks, 'track segments have been reconstructed in this cluster set ...')
 
-print(_Rec_Hits_Pool)
-_truth_l=pd.DataFrame([[h[0],h[6]] for h in HC.Hits], columns = ['L_HitID','L_Label'])
-_result_l=_result.rename(columns={"HitID": "L_HitID"})
-print(_truth_l)
-print(_result_l)
+_truth_l=pd.DataFrame([[h[0],h[6]] for h in HC.Hits], columns = ['HitID','L_Label'])
+_truth_result_l=pd.merge(_truth_l,_result, how='inner', on=['HitID'])
 
-_truth_result_l=pd.merge(_truth_l,_result_l, how='inner', on=['L_HitID'])
-print(_truth_result_l)
+_truth_r=pd.DataFrame([[h[0],h[6]] for h in HC.Hits], columns = ['HitID','R_Label'])
+_truth_result_r=pd.merge(_truth_r,_result, how='inner', on=['HitID'])
 
-_result_r=_result.rename(columns={"Hit_ID": "R_HitID"})
-_result_lr=_result_l.merge(_result_r)
+_truth_result=pd.merge(_truth_result_l,_truth_result_r, how='inner', on=['Segment_ID'])
 
+
+print(_truth_result)
 
 exit()
 #If Cluster tracking yielded no segments we just create an empty array for consistency
