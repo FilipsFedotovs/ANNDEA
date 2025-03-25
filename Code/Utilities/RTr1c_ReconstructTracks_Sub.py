@@ -203,7 +203,10 @@ if Status == 'ML analysis':
     if CheckPoint:
              print(UI.TimeStamp(),'Saving the checkpoint...')
              _Tot_Hits.to_csv(CheckPointFile_ML,index=False)
-    Status='Track preparation'
+    if len(_Tot_Hits)>0:
+        Status='Track preparation'
+    else:
+        Status='Skip tracking'
 
 if Status=='Track preparation':
         _Tot_Hits=_Tot_Hits[['r_HitID','l_HitID','r_z','l_z','link_strength']]
