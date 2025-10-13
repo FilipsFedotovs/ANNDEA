@@ -259,7 +259,7 @@ if os.path.isfile(required_file_location)==False:
         no_submissions=math.ceil(len(data)/PM.MaxSegments)
         print(UI.TimeStamp(), bcolors.OKGREEN+"The track segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+output_file_location+bcolors.ENDC)
         Meta=UI.JobMeta(TrainSampleID)
-        Meta.UpdateJobMeta(['ClassHeaders','ClassNames','ClassValues','PM.MaxSegments','no_submissions','MinHitsTrack'], [ClassHeaders,ClassNames,ClassValues,MaxSegments,JobSets,MinHitsTrack])
+        Meta.UpdateJobMeta(['ClassHeaders','ClassNames','ClassValues','MaxSegments','no_submissions','MinHitsTrack'], [ClassHeaders,ClassNames,ClassValues,PM.MaxSegments,JobSets,MinHitsTrack])
         Meta.UpdateStatus(0)
         print(UI.PickleOperations(TrainSampleOutputMeta,'w', Meta)[1])
         print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
