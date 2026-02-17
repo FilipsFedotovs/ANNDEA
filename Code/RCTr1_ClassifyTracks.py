@@ -304,11 +304,8 @@ while Status<len(Program):
                             ExtractedData.append(i.Header+i.Class)
             ExtractedData = pd.DataFrame (ExtractedData, columns = ExtractedHeader)
             if ClassValues[0][0]=='Reg':
-                print(ExtractedData[RecBatchID+'_P_Rec'])
                 ExtractedData[RecBatchID+'_P_Rec']=ExtractedData[RecBatchID+'_P_Rec']*(float(ClassValues[0][2])/2)
                 ExtractedData[RecBatchID+'_P_Rec']=ExtractedData[RecBatchID+'_P_Rec']+(float(ClassValues[0][2])/2)
-                print(ExtractedData[RecBatchID+'_P_Rec'])
-                exit()
             data=pd.read_csv(args.f,header=0)
             data.drop(base_data[0].ClassHeaders,axis=1,errors='ignore',inplace=True)
             data['Rec_Seg_ID'] = data[TrackID].astype(str) + '-' + data[BrickID].astype(str)
@@ -320,6 +317,8 @@ while Status<len(Program):
                         break
             raw_name=raw_name[l+1:]
             final_output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+raw_name+'_'+RecBatchID+'_CLASSIFIED_TRACKS.csv'
+            print(data)
+            exit()
             data.to_csv(final_output_file_location,index=False)
             print(UI.TimeStamp(), bcolors.OKGREEN+"The classified track data has been written to"+bcolors.ENDC, bcolors.OKBLUE+final_output_file_location+bcolors.ENDC)
             print(UI.TimeStamp(),bcolors.OKGREEN+'Stage 1 has successfully completed'+bcolors.ENDC)
