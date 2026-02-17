@@ -317,8 +317,6 @@ while Status<len(Program):
                         break
             raw_name=raw_name[l+1:]
             final_output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+raw_name+'_'+RecBatchID+'_CLASSIFIED_TRACKS.csv'
-            print(data)
-            exit()
             data.to_csv(final_output_file_location,index=False)
             print(UI.TimeStamp(), bcolors.OKGREEN+"The classified track data has been written to"+bcolors.ENDC, bcolors.OKBLUE+final_output_file_location+bcolors.ENDC)
             print(UI.TimeStamp(),bcolors.OKGREEN+'Stage 1 has successfully completed'+bcolors.ENDC)
