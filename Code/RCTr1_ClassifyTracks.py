@@ -304,8 +304,11 @@ while Status<len(Program):
                             ExtractedData.append(i.Header+i.Class)
             ExtractedData = pd.DataFrame (ExtractedData, columns = ExtractedHeader)
             if ClassValues[0][0]=='Reg':
-                ExtractedData[ClassHeaders[0]]=ExtractedData[ClassHeaders[0]]*(float(ClassValues[0][2])/2)
-                ExtractedData[ClassHeaders[0]]=ExtractedData[ClassHeaders[0]]+(float(ClassValues[0][2])/2)
+                print(ExtractedData[RecBatchID+'_P_Rec'])
+                ExtractedData[RecBatchID+'_P_Rec']=ExtractedData[RecBatchID+'_P_Rec']*(float(ClassValues[0][2])/2)
+                ExtractedData[RecBatchID+'_P_Rec']=ExtractedData[RecBatchID+'_P_Rec']+(float(ClassValues[0][2])/2)
+                print(ExtractedData[RecBatchID+'_P_Rec'])
+                exit()
             data=pd.read_csv(args.f,header=0)
             data.drop(base_data[0].ClassHeaders,axis=1,errors='ignore',inplace=True)
             data['Rec_Seg_ID'] = data[TrackID].astype(str) + '-' + data[BrickID].astype(str)
