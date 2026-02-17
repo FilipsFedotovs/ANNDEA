@@ -84,7 +84,7 @@ RequestExtCPU=int(args.RequestExtCPU)
 SubPause=int(args.SubPause)*60
 SubGap=int(args.SubGap)
 ReqMemory=args.ReqMemory
-JobFlavour=args.JobFlavour
+JobFlavour=args.JobFlfavour
 MinHitsTrack=int(args.MinHitsTrack)
 LocalSub=(args.LocalSub=='Y')
 HTCondorLog=args.HTCondorLog

@@ -284,7 +284,10 @@ while Status<len(Program):
             print(UI.TimeStamp(),bcolors.BOLD+'Stage 2:'+bcolors.ENDC+' Collecting and de-duplicating the results from stage 1')
             req_file=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/Temp_RCTr1a_'+RecBatchID+'_0/RCTr1a_'+RecBatchID+'_ClassifiedTrackSamples_0.pkl'
             base_data=UI.PickleOperations(req_file,'r', 'N/A')[0]
-            ExtractedHeader=['Rec_Seg_ID']+base_data[0].ClassHeaders
+            if ClassValues[0][0]!='Reg':
+                ExtractedHeader=['Rec_Seg_ID']+base_data[0].ClassHeaders
+            else:
+                ExtractedHeader=['Rec_Seg_ID', RecBatchID+'_P_Rec']
             ExtractedData=[]
             for i in base_data:
                 if ClassValues[0][0]=='Reg':
