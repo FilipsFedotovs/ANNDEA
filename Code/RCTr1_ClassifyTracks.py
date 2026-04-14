@@ -133,7 +133,7 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
              df = pd.DataFrame(rdf.AsNumpy(columns = ["s.eID","s.eX","s.eY","s.eZ","s.eTX","s.eTY",TrackID]))
 
              df.columns = [PM.Hit_ID, PM.x,PM.y,PM.z,PM.tx,PM.ty,TrackID]
-             
+             print(df)
              df_exploded = df.explode([PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty]) 
              print(df_exploded)
              exit()
