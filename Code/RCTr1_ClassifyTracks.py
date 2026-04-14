@@ -123,15 +123,18 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
            MaxSegments=PM.MaxSegments
            MinHitsTrack=Meta.MinHitsTrack
         print(UI.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+initial_input_file_location+bcolors.ENDC)
-        data=pd.read_csv(initial_input_file_location,
-                    header=0,
-                    usecols=ColumnsToImport)
+        
         
         print(initial_input_file_location[-5:])
         if initial_input_file_location[-5:]=='.root':
              print('Root')
-        exit()
-
+        elif initial_input_file_location[-4:]=='.csv':
+            data=pd.read_csv(initial_input_file_location,
+                        header=0,
+                        usecols=ColumnsToImport)
+        else:
+            UI.Msg('failed',f'The file "{initial_input_file_location}" is incorrect: it should be either ROOT or CSV text file with the appropirate suffix')
+        
         total_rows=len(data.axes[0])
         print(UI.TimeStamp(),'The raw data has ',total_rows,' hits')
         print(UI.TimeStamp(),'Removing unreconstructed hits...')
