@@ -127,8 +127,8 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
                     header=0,
                     usecols=ColumnsToImport)
         
-        print(initial_input_file_location[:-5])
-        if initial_input_file_location[:-5]=='.root':
+        print(initial_input_file_location[-5])
+        if initial_input_file_location[-5:]=='.root':
              print('Root')
         exit()
 
