@@ -154,7 +154,10 @@ required_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/RTr1_'+RecBa
 RecOutputMeta=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/'+RecBatchID+'_info.pkl'
 if os.path.isfile(required_file_location)==False:
          print(UI.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
-
+         print(input_file_location[:-5])
+         if input_file_location[:-5]=='.root':
+             print('Root')
+         exit()
          try:
              data=pd.read_csv(input_file_location,
                          header=0,

@@ -126,6 +126,12 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         data=pd.read_csv(initial_input_file_location,
                     header=0,
                     usecols=ColumnsToImport)
+        
+        print(initial_input_file_location[:-5])
+        if initial_input_file_location[:-5]=='.root':
+             print('Root')
+        exit()
+
         total_rows=len(data.axes[0])
         print(UI.TimeStamp(),'The raw data has ',total_rows,' hits')
         print(UI.TimeStamp(),'Removing unreconstructed hits...')
