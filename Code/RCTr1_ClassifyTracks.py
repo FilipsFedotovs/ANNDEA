@@ -124,18 +124,17 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
            MinHitsTrack=Meta.MinHitsTrack
         print(UI.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+initial_input_file_location+bcolors.ENDC)
         
-        
-        print(initial_input_file_location[-5:])
         if initial_input_file_location[-5:]=='.root':
              
-             print('Root')
              import ROOT as r
+             print(UI.TimeStamp(),'Loading the ROOT file content',bcolors.OKBLUE+initial_input_file_location+bcolors.ENDC)
              rdf = r.RDataFrame("tracks",initial_input_file_location)
-             df = pd.DataFrame(rdf.AsNumpy(columns = ["s.eID","s.ePID","s.eX","s.eY","s.eZ","s.eTX","s.eTY","s.eMCTrack","s.eP","s.eFlag","trid"]))
+             print(UI.TimeStamp(),'Importing data into the Pandas data frame...')
+             df = pd.DataFrame(rdf.AsNumpy(columns = ["s.eID","s.eX","s.eY","s.eZ","s.eTX","s.eTY",TrackID]))
 
-             df.columns = [PM.Hit_ID,"PID",PM.x,PM.y,PM.z,PM.tx,PM.ty,"MC_Track_Id","P","Particle_ID",TrackID]
+             df.columns = [PM.Hit_ID, PM.x,PM.y,PM.z,PM.tx,PM.ty,TrackID]
              
-             df_exploded = df.explode([PM.Hit_ID,"PID",PM.x,PM.y,PM.z,PM.tx,PM.ty,"MC_Track_Id","P","Particle_ID"]) 
+             df_exploded = df.explode([PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty]) 
              print(df_exploded)
              exit()
         elif initial_input_file_location[-4:]=='.csv':
