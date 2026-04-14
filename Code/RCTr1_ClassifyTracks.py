@@ -131,7 +131,8 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
              print('Root')
              import ROOT as r
              rdf = r.RDataFrame("tracks",initial_input_file_location)
-             print(rdf)
+             df = pd.DataFrame(rdf.AsNumpy(columns = ["s.eID","s.ePID","s.eX","s.eY","s.eZ","s.eTX","s.eTY","s.eMCTrack","s.eP","s.eFlag","trid"]))
+             print(df)
              exit()
         elif initial_input_file_location[-4:]=='.csv':
             data=pd.read_csv(initial_input_file_location,
