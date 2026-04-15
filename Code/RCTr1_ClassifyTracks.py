@@ -146,7 +146,7 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
             else:   
                df = pd.DataFrame(rdf.AsNumpy(columns = ["s.eID","s.eX","s.eY","s.eZ","s.eTX","s.eTY", BrickID,TrackID, "trid"]))
                print(df)
-               df.columns = [PM.Hit_ID, PM.x,PM.y,PM.z,PM.tx,PM.ty, BrickID, TrackID]
+               df.columns = [PM.Hit_ID, PM.x,PM.y,PM.z,PM.tx,PM.ty, BrickID, TrackID, "trid"]
                data = df.explode([PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty, BrickID, TrackID])
                
             print(data)
