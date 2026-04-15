@@ -96,7 +96,10 @@ EOSsubModelDIR=EOSsubDIR+'/'+'Models'
 EOSsubModelMetaDIR=EOSsubDIR+'/'+'Models/'+ModelName+'_Meta'
 RecOutputMeta=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'_info.pkl'
 required_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+RecBatchID+'/RCTr1_'+RecBatchID+'_TRACKS.csv'
-ColumnsToImport=[TrackID,BrickID,PM.x,PM.y,PM.z,PM.tx,PM.ty]
+if BrickID=='':
+    ColumnsToImport=[TrackID,PM.x,PM.y,PM.z,PM.tx,PM.ty]
+else:
+    ColumnsToImport=[TrackID,BrickID,PM.x,PM.y,PM.z,PM.tx,PM.ty]
 ########################################     Phase 1 - Create compact source file    #########################################
 
 if Mode=='RESET':
@@ -108,6 +111,9 @@ elif Mode=='CLEANUP':
 else:
     print(UI.ManageFolders(AFS_DIR, EOS_DIR, RecBatchID,'c'))
 print(UI.TimeStamp(),bcolors.BOLD+'Stage 0:'+bcolors.ENDC+' Preparing the source data...')
+
+if BrickID=='':
+    BrickID='Brick_ID'
 
 if os.path.isfile(required_file_location)==False or Mode=='RESET':
         if os.path.isfile(EOSsubModelMetaDIR)==False:
@@ -124,19 +130,25 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
            MinHitsTrack=Meta.MinHitsTrack
         print(UI.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+initial_input_file_location+bcolors.ENDC)
         
+            
         if initial_input_file_location[-5:]=='.root':
              
-             import ROOT as r
-             print(UI.TimeStamp(),'Loading the ROOT file content',bcolors.OKBLUE+initial_input_file_location+bcolors.ENDC)
-             rdf = r.RDataFrame("tracks",initial_input_file_location)
-             print(UI.TimeStamp(),'Importing data into the Pandas data frame...')
-             df = pd.DataFrame(rdf.AsNumpy(columns = ["s.eID","s.eX","s.eY","s.eZ","s.eTX","s.eTY",TrackID]))
+            import ROOT as r
+            print(UI.TimeStamp(),'Loading the ROOT file content',bcolors.OKBLUE+initial_input_file_location+bcolors.ENDC)
+            rdf = r.RDataFrame("tracks",initial_input_file_location)
+            print(UI.TimeStamp(),'Importing data into the Pandas data frame...')
+            print(rdf.AsNumpy(columns = ["s.eID","s.eX","s.eY","s.eZ","s.eTX","s.eTY",TrackID]))
+            exit()
+            if BrickID=='Brick_ID':
+               
+               df = pd.DataFrame(rdf.AsNumpy(columns = ["s.eID","s.eX","s.eY","s.eZ","s.eTX","s.eTY",TrackID]))
 
-             df.columns = [PM.Hit_ID, PM.x,PM.y,PM.z,PM.tx,PM.ty,TrackID]
-             print(df)
-             df_exploded = df.explode([PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty]) 
-             print(df_exploded)
-             exit()
+               df.columns = [PM.Hit_ID, PM.x,PM.y,PM.z,PM.tx,PM.ty,TrackID]
+               print(df)
+               data = df.explode([PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty])
+               data['Brick_Id']=RecBatchID
+
+            
         elif initial_input_file_location[-4:]=='.csv':
             data=pd.read_csv(initial_input_file_location,
                         header=0,
