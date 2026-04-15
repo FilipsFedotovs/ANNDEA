@@ -137,7 +137,7 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
             print(UI.TimeStamp(),'Loading the ROOT file content',bcolors.OKBLUE+initial_input_file_location+bcolors.ENDC)
             rdf = r.RDataFrame("tracks",initial_input_file_location)
             print(UI.TimeStamp(),'Importing data into the Pandas data frame...')
-            print(rdf.AsNumpy())
+            print(rdf)
             exit()
             if BrickID=='Brick_ID':
                
