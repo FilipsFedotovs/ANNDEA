@@ -113,7 +113,7 @@ else:
 print(UI.TimeStamp(),bcolors.BOLD+'Stage 0:'+bcolors.ENDC+' Preparing the source data...')
 
 if BrickID=='':
-    BrickID='Brick_ID'
+    BrickID='N/A'
 
 if os.path.isfile(required_file_location)==False or Mode=='RESET':
         if os.path.isfile(EOSsubModelMetaDIR)==False:
@@ -134,33 +134,22 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         if initial_input_file_location[-5:]=='.root':
              
             import ROOT as r
-
-            
-            f = r.TFile.Open(initial_input_file_location)
-            f.ls()
-
-            
-            tree = f.Get("tracks")
-            tree.Print()
-
-            exit()
-
-
-
             print(UI.TimeStamp(),'Loading the ROOT file content',bcolors.OKBLUE+initial_input_file_location+bcolors.ENDC)
             rdf = r.RDataFrame("tracks",initial_input_file_location)
             print(UI.TimeStamp(),'Importing data into the Pandas data frame...')
-            print(rdf)
-            exit()
-            if BrickID=='Brick_ID':
-               
+
+            if BrickID=='N/A':
                df = pd.DataFrame(rdf.AsNumpy(columns = ["s.eID","s.eX","s.eY","s.eZ","s.eTX","s.eTY",TrackID]))
-
                df.columns = [PM.Hit_ID, PM.x,PM.y,PM.z,PM.tx,PM.ty,TrackID]
-               print(df)
                data = df.explode([PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty])
-               data['Brick_Id']=RecBatchID
-
+            
+            else:   
+               df = pd.DataFrame(rdf.AsNumpy(columns = ["s.eID","s.eX","s.eY","s.eZ","s.eTX","s.eTY", BrickID,TrackID]))
+               df.columns = [PM.Hit_ID, PM.x,PM.y,PM.z,PM.tx,PM.ty, BrickID, TrackID]
+               data = df.explode([PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty])
+               
+            print(data)
+            exit()
             
         elif initial_input_file_location[-4:]=='.csv':
             data=pd.read_csv(initial_input_file_location,
