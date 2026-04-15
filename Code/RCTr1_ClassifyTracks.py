@@ -134,30 +134,23 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         if initial_input_file_location[-5:]=='.root':
              
             import ROOT as r
-            # print(UI.TimeStamp(),'Loading the ROOT file content',bcolors.OKBLUE+initial_input_file_location+bcolors.ENDC)
+            print(UI.TimeStamp(),'Loading the ROOT file content',bcolors.OKBLUE+initial_input_file_location+bcolors.ENDC)
             rdf = r.RDataFrame("tracks",initial_input_file_location)
-            # print(UI.TimeStamp(),'Importing data into the Pandas data frame...')
+            print(UI.TimeStamp(),'Importing data into the Pandas data frame...')
 
-            # if BrickID=='N/A':
-            #    df = pd.DataFrame(rdf.AsNumpy(columns = ["s.eID","s.eX","s.eY","s.eZ","s.eTX","s.eTY",TrackID]))
-            #    df.columns = [PM.Hit_ID, PM.x,PM.y,PM.z,PM.tx,PM.ty,TrackID]
-            #    data = df.explode([PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty])
-
-            df = pd.DataFrame(rdf.AsNumpy(columns = ["s.eID","s.ePID","s.eX","s.eY","s.eZ","s.eTX","s.eTY","s.eMCTrack","s.eP","s.eFlag","trid"]))
-            #renameing them to remove the s.e prefix
-            df.columns = ["ID","PID","X","Y","Z","TX","TY","MCTrack","P","Flag","trid"]
-            #explode into 1D (i.e. each row is a segment, not a track)
-            #everything except trid, which is already one entry per track
-            df_exploded = df.explode(["ID","PID","X","Y","Z","TX","TY","MCTrack","P","Flag"]) 
+            if BrickID=='N/A':
+               df = pd.DataFrame(rdf.AsNumpy(columns = ["s.eID","s.eX","s.eY","s.eZ","s.eTX","s.eTY",TrackID]))
+               df.columns = [PM.Hit_ID, PM.x,PM.y,PM.z,PM.tx,PM.ty,TrackID]
+               data = df.explode([PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty])
 
             
-            # else:   
-            #    df = pd.DataFrame(rdf.AsNumpy(columns = ["s.eID","s.eX","s.eY","s.eZ","s.eTX","s.eTY", BrickID,TrackID, "trid"]))
-            #    print(df)
-            #    df.columns = [PM.Hit_ID, PM.x,PM.y,PM.z,PM.tx,PM.ty, BrickID, TrackID, "trid"]
-            #    data = df.explode([PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty, BrickID, TrackID])
+            else:   
+               df = pd.DataFrame(rdf.AsNumpy(columns = ["s.eID","s.eX","s.eY","s.eZ","s.eTX","s.eTY", BrickID,TrackID]))
+
+               df.columns = [PM.Hit_ID, PM.x,PM.y,PM.z,PM.tx,PM.ty, BrickID, TrackID]
+               data = df.explode([PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty])
                
-            print(df_exploded)
+            print(data)
             exit()
             
         elif initial_input_file_location[-4:]=='.csv':
