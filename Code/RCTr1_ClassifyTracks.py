@@ -176,7 +176,7 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
             data['Rec_Seg_ID'] = data[TrackID]
 
         data=data.drop([TrackID],axis=1)
-        print(TrackID)
+        print(data)
         exit()
         RZChoice = input('Would you like to remove tracks based on the starting plate? If no, press "Enter", otherwise type "y", followed by "Enter" : ')
         if RZChoice.upper()=='Y':
