@@ -132,7 +132,6 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         
             
         if initial_input_file_location[-5:]=='.root':
-             
             import ROOT as r
             print(UI.TimeStamp(),'Loading the ROOT file content',bcolors.OKBLUE+initial_input_file_location+bcolors.ENDC)
             rdf = r.RDataFrame("tracks",initial_input_file_location)
@@ -143,7 +142,6 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
                df.columns = [PM.Hit_ID, PM.x,PM.y,PM.z,PM.tx,PM.ty,TrackID]
                data = df.explode([PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty])
 
-            
             else:   
                df = pd.DataFrame(rdf.AsNumpy(columns = ["s.eID","s.eX","s.eY","s.eZ","s.eTX","s.eTY", BrickID, TrackID]))
 
@@ -152,8 +150,6 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
                data[BrickID]=data[BrickID].str[0]
                data[TrackID]=data[TrackID].str[0]
                
-            print(data)
-            exit()
             
         elif initial_input_file_location[-4:]=='.csv':
             data=pd.read_csv(initial_input_file_location,
@@ -169,11 +165,19 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         data=data.dropna()
         final_rows=len(data.axes[0])
         print(UI.TimeStamp(),'The cleaned data has ',final_rows,' hits')
-        data[BrickID] = data[BrickID].astype(str)
+        
         data[TrackID] = data[TrackID].astype(str)
-        data['Rec_Seg_ID'] = data[TrackID] + '-' + data[BrickID]
+        
+        if BrickID!='N/A':
+            data[BrickID] = data[BrickID].astype(str)
+            data['Rec_Seg_ID'] = data[TrackID] + '-' + data[BrickID]
+            data=data.drop([BrickID],axis=1)
+        else:
+            data['Rec_Seg_ID'] = data[TrackID]
+
         data=data.drop([TrackID],axis=1)
-        data=data.drop([BrickID],axis=1)
+        print(TrackID)
+        exit()
         RZChoice = input('Would you like to remove tracks based on the starting plate? If no, press "Enter", otherwise type "y", followed by "Enter" : ')
         if RZChoice.upper()=='Y':
             print(UI.TimeStamp(),'Removing tracks based on start point')
