@@ -176,8 +176,7 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
             data['Rec_Seg_ID'] = data[TrackID]
 
         data=data.drop([TrackID],axis=1)
-        print(data)
-        exit()
+
         RZChoice = input('Would you like to remove tracks based on the starting plate? If no, press "Enter", otherwise type "y", followed by "Enter" : ')
         if RZChoice.upper()=='Y':
             print(UI.TimeStamp(),'Removing tracks based on start point')
@@ -347,6 +346,9 @@ while Status<len(Program):
             if ClassValues[0][0]=='Reg':
                 ExtractedData[RecBatchID+'_P_Rec']=ExtractedData[RecBatchID+'_P_Rec']*(float(ClassValues[0][2])/2)
                 ExtractedData[RecBatchID+'_P_Rec']=ExtractedData[RecBatchID+'_P_Rec']+(float(ClassValues[0][2])/2)
+            print(ExtractedData)
+            print(base_data)
+            exit()
             data=pd.read_csv(args.f,header=0)
             data.drop(base_data[0].ClassHeaders,axis=1,errors='ignore',inplace=True)
             data['Rec_Seg_ID'] = data[TrackID].astype(str) + '-' + data[BrickID].astype(str)
