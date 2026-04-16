@@ -191,8 +191,7 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
                 RPChoice=ast.literal_eval(RPChoice)
             else:
                 RPChoice=[int(RPChoice)]
-            print(RPChoice)
-            exit()
+
             TracksZdf = pd.DataFrame(RPChoice, columns = ['PID'], dtype=int)
             data_aggregated_show=pd.merge(data_aggregated_show,TracksZdf,how='inner',on='PID')
 
@@ -225,7 +224,7 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
             print('Track length distribution:')
             print(data_aggregated_show.to_string())
             RTLChoice = input('Enter the list of track lengths to exclude" : ')
-            if len(RTLChoice)>1:
+            if ',' in RPChoice:
                 RTLChoice=ast.literal_eval(RTLChoice)
             else:
                 RTLChoice=[int(RTLChoice)]
