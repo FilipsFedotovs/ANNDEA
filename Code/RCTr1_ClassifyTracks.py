@@ -187,7 +187,6 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
             print('A list of plates and the number of tracks starting on them is listed bellow:')
             print(data_aggregated_show.to_string())
             RPChoice = input('Enter the list of plates separated by comma that you want to remove followed by "Enter" : ')
-            RPChoice=ast.literal_eval(RPChoice)
             if ',' in RPChoice:
                 RPChoice=ast.literal_eval(RPChoice)
             else:
