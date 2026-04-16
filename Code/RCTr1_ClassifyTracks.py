@@ -224,7 +224,7 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
             print('Track length distribution:')
             print(data_aggregated_show.to_string())
             RTLChoice = input('Enter the list of track lengths to exclude" : ')
-            if ',' in RPChoice:
+            if ',' in RTLChoice:
                 RTLChoice=ast.literal_eval(RTLChoice)
             else:
                 RTLChoice=[int(RTLChoice)]
