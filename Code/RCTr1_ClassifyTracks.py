@@ -15,13 +15,13 @@ for c in config:
         PY_DIR=c[1]
 csv_reader.close()
 import sys
-if PY_DIR!='': #Temp solution - the decision was made to move all libraries to EOS drive as AFS get locked during heavy HTCondor submission loads
-    sys.path=['',PY_DIR]
-    sys.path.append('/usr/lib64/python39.zip')
-    sys.path.append('/usr/lib64/python3.9')
-    sys.path.append('/usr/lib64/python3.9/lib-dynload')
-    sys.path.append('/usr/lib64/python3.9/site-packages')
-    sys.path.append('/usr/lib/python3.9/site-packages')
+# if PY_DIR!='': #Temp solution - the decision was made to move all libraries to EOS drive as AFS get locked during heavy HTCondor submission loads
+#     sys.path=['',PY_DIR]
+#     sys.path.append('/usr/lib64/python39.zip')
+#     sys.path.append('/usr/lib64/python3.9')
+#     sys.path.append('/usr/lib64/python3.9/lib-dynload')
+#     sys.path.append('/usr/lib64/python3.9/site-packages')
+#     sys.path.append('/usr/lib/python3.9/site-packages')
 sys.path.append(AFS_DIR+'/Code/Utilities')
 import U_UI as UI
 import Parameters as PM #This is where we keep framework global parameters
@@ -29,7 +29,6 @@ import pandas as pd #We use Panda for a routine data processing
 pd.options.mode.chained_assignment = None #Silence annoying warnings
 import math #We use it for data manipulation
 import os
-import time
 import argparse
 import ast
 class bcolors:   #We use it for the interface
