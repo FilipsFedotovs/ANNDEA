@@ -18,10 +18,10 @@ import sys
 if PY_DIR!='': #Temp solution - the decision was made to move all libraries to EOS drive as AFS get locked during heavy HTCondor submission loads
     sys.path=['',PY_DIR]
     sys.path.append('/usr/lib64/python39.zip')
-    sys.path.append('/usr/lib64/python3.11')
-    sys.path.append('/usr/lib64/python3.11/lib-dynload')
-    sys.path.append('/usr/lib64/python3.11/site-packages')
-    sys.path.append('/usr/lib/python3.11/site-packages')
+    sys.path.append('/usr/lib64/python3.9')
+    sys.path.append('/usr/lib64/python3.9/lib-dynload')
+    sys.path.append('/usr/lib64/python3.9/site-packages')
+    sys.path.append('/usr/lib/python3.9/site-packages')
 sys.path.append(AFS_DIR+'/Code/Utilities')
 import U_UI as UI
 import Parameters as PM #This is where we keep framework global parameters
