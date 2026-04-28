@@ -162,6 +162,8 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         print(UI.TimeStamp(),'The raw data has ',total_rows,' hits')
         print(UI.TimeStamp(),'Removing unreconstructed hits...')
         data=data.dropna()
+        print(data)
+        exit()
         final_rows=len(data.axes[0])
         print(UI.TimeStamp(),'The cleaned data has ',final_rows,' hits')
         
