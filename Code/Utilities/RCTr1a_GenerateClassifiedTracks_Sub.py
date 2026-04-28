@@ -45,12 +45,11 @@ EOS_DIR=args.EOS
 AFS_DIR=args.AFS
 PY_DIR=args.PY
 if PY_DIR!='': #Temp solution
-    sys.path=['',PY_DIR]
-    sys.path.append('/usr/lib64/python39.zip')
-    sys.path.append('/usr/lib64/python3.9')
-    sys.path.append('/usr/lib64/python3.9/lib-dynload')
-#     sys.path.append('/usr/lib64/python3.9/site-packages')
-#     sys.path.append('/usr/lib/python3.9/site-packages')
+    if PY_DIR not in sys.path:
+        sys.path.insert(0, PY_DIR)
+    # Properly register it as a site dir
+    site.addsitedir(PY_DIR)
+
 sys.path.append(AFS_DIR+'/Code/Utilities')
 import U_UI as UI #This is where we keep routine utility functions
 import U_ML as ML #This is where we keep routine utility functions
