@@ -162,8 +162,7 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         print(UI.TimeStamp(),'The raw data has ',total_rows,' hits')
         print(UI.TimeStamp(),'Removing unreconstructed hits...')
         data=data.dropna()
-        print(data)
-        exit()
+    
         final_rows=len(data.axes[0])
         print(UI.TimeStamp(),'The cleaned data has ',final_rows,' hits')
         
@@ -177,7 +176,7 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
             data['Rec_Seg_ID'] = data[TrackID]
 
         data=data.drop([TrackID],axis=1)
-
+        print(data)
         RZChoice = input('Would you like to remove tracks based on the starting plate? If no, press "Enter", otherwise type "y", followed by "Enter" : ')
         if RZChoice.upper()=='Y':
             print(UI.TimeStamp(),'Removing tracks based on start point')
@@ -246,6 +245,7 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
              print(UI.TimeStamp(),'The sliced data has ',final_rows,' hits')
         print(UI.TimeStamp(),'Removing tracks which have less than',MinHitsTrack,'hits...')
         final_rows=len(data.axes[0])
+
         print(UI.TimeStamp(),'After removing tracks with number of hits we have',final_rows,' hits left')
         track_no_data=data.groupby(['Rec_Seg_ID'],as_index=False).count()
         track_no_data=track_no_data.drop([PM.y,PM.z,PM.tx,PM.ty],axis=1)
@@ -263,6 +263,8 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         new_combined_data=new_combined_data.rename(columns={PM.ty: "ty"})
         new_combined_data.to_csv(required_file_location,index=False)
         data=new_combined_data[['Rec_Seg_ID']]
+        print(data)
+        exit()
         print(UI.TimeStamp(),'Analysing the data sample in order to understand how many jobs to submit to HTCondor... ',bcolors.ENDC)
         data.drop_duplicates(subset='Rec_Seg_ID',keep='first',inplace=True)
         data = data.values.tolist()
