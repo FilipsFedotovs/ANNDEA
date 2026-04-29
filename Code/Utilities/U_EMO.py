@@ -525,7 +525,6 @@ class EMO:
                           __graphData_x =__TempTrack[0]
                         
                       __graphData_x = pd.DataFrame (__graphData_x, columns = ['x', 'y', 'z', 'tx' , 'ty' , 'TrackID', 'NodeIndex'])
-                      print(__graphData_x)
                       __graphData_x['dummy'] = 'dummy'
                       __graphData_x_r = __graphData_x
 
@@ -536,8 +535,15 @@ class EMO:
                       on="dummy",
                       suffixes=('_l','_r'),
                       )
+                      
+                      same_track = __graphData_join['TrackID_l'] == __graphData_join['TrackID_r']
+                      same_node  = __graphData_join['NodeIndex_l'] == __graphData_join['NodeIndex_r']
+
+                      self_perm = same_track & same_node
+
+                      __graphData_join = __graphData_join[~self_perm]
                       print(__graphData_join)
-                      __graphData_join = __graphData_join.drop(__graphData_join.index[__graphData_join['TrackID_l']==__graphData_join['TrackID_r']] & __graphData_join.index[__graphData_join['NodeIndex_l']==__graphData_join['NodeIndex_r']])
+                      #__graphData_join = __graphData_join.drop(__graphData_join.index[__graphData_join['TrackID_l']==__graphData_join['TrackID_r']] & __graphData_join.index[__graphData_join['NodeIndex_l']==__graphData_join['NodeIndex_r']])
 
                       __graphData_join['d_z'] = np.sqrt((__graphData_join['z_l'] - __graphData_join['z_r'])**2)
                       __graphData_join['d_xy'] = np.sqrt((__graphData_join['x_l'] - __graphData_join['x_r'])**2 + (__graphData_join['y_l'] - __graphData_join['y_r'])**2)
