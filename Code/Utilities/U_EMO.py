@@ -523,7 +523,9 @@ class EMO:
                           __graphData_x =__TempTrack[0]+__TempTrack[1]
                       except:
                           __graphData_x =__TempTrack[0]
+                        
                       __graphData_x = pd.DataFrame (__graphData_x, columns = ['x', 'y', 'z', 'tx' , 'ty' , 'TrackID', 'NodeIndex'])
+                      print(__graphData_x)
                       __graphData_x['dummy'] = 'dummy'
                       __graphData_x_r = __graphData_x
 
