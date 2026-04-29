@@ -351,6 +351,9 @@ while Status<len(Program):
             data=pd.read_csv(args.f,header=0)
             data.drop(base_data[0].ClassHeaders,axis=1,errors='ignore',inplace=True)
             data['Rec_Seg_ID'] = data[TrackID].astype(str) + '-' + data[BrickID].astype(str)
+            print(data)
+            print(ExtractedData)
+            exit()
             data=pd.merge(data,ExtractedData,how='left',on=['Rec_Seg_ID'])
             data=data.drop(['Rec_Seg_ID'],axis=1)
             raw_name=initial_input_file_location[:-4]
