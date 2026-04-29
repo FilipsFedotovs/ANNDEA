@@ -84,6 +84,8 @@ print(UI.TimeStamp(), "Modules Have been imported successfully...")
 print(UI.TimeStamp(),'Loading pre-selected data from ',input_file_location)
 data=pd.read_csv(input_file_location,header=0,
                     usecols=['x','y','z','tx','ty','Rec_Seg_ID'])
+
+data['Rec_Seg_ID'] = data['Rec_Seg_ID'].astype(str)
 track_headers = data[['Rec_Seg_ID']]
 track_headers = track_headers.drop_duplicates(subset=['Rec_Seg_ID'],keep='first')
 track_column_headers=track_headers.columns.values.tolist()
