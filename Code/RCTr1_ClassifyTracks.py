@@ -247,10 +247,7 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         final_rows=len(data.axes[0])
 
         print(UI.TimeStamp(),'After removing tracks with number of hits we have',final_rows,' hits left')
-        track_no_data=data.groupby(['Rec_Seg_ID'],as_index=False).count()
-        print(track_no_data)
-        exit()
-        track_no_data=track_no_data.drop([PM.y,PM.z,PM.tx,PM.ty],axis=1)
+        track_no_data=data.groupby(['Rec_Seg_ID']).agg({PM.x:'count'}).reset_index()
         track_no_data=track_no_data.rename(columns={PM.x: "Track_No"})
         new_combined_data=pd.merge(data, track_no_data, how="left", on=["Rec_Seg_ID"])
         new_combined_data = new_combined_data[new_combined_data.Track_No >= MinHitsTrack]
