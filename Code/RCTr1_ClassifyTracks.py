@@ -352,12 +352,14 @@ while Status<len(Program):
                 ExtractedData[RecBatchID+'_P_Rec']=ExtractedData[RecBatchID+'_P_Rec']+(float(ClassValues[0][2])/2)
             print(ExtractedData)
             print(base_data)
-            exit()
+
             data=pd.read_csv(args.f,header=0)
             data.drop(base_data[0].ClassHeaders,axis=1,errors='ignore',inplace=True)
             data['Rec_Seg_ID'] = data[TrackID].astype(str) + '-' + data[BrickID].astype(str)
             data=pd.merge(data,ExtractedData,how='left',on=['Rec_Seg_ID'])
             data=data.drop(['Rec_Seg_ID'],axis=1)
+            print(data)
+            exit()
             raw_name=initial_input_file_location[:-4]
             for l in range(len(raw_name)-1,0,-1):
                     if raw_name[l]=='/':
