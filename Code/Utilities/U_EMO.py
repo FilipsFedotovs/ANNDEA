@@ -542,7 +542,6 @@ class EMO:
                       self_perm = same_track & same_node
 
                       __graphData_join = __graphData_join[~self_perm]
-                      print(__graphData_join)
                       #__graphData_join = __graphData_join.drop(__graphData_join.index[__graphData_join['TrackID_l']==__graphData_join['TrackID_r']] & __graphData_join.index[__graphData_join['NodeIndex_l']==__graphData_join['NodeIndex_r']])
 
                       __graphData_join['d_z'] = np.sqrt((__graphData_join['z_l'] - __graphData_join['z_r'])**2)
@@ -557,6 +556,9 @@ class EMO:
 
                       __graphData_join['LeftKey'] = __graphData_join['TrackID_l'] +'-'+ __graphData_join['NodeIndex_l']
                       __graphData_join['RightKey'] = __graphData_join['TrackID_r'] +'-'+ __graphData_join['NodeIndex_r']
+
+                      print(__graphData_join)
+                      exit()
 
                       __graphData_join.drop(['NodeIndex_l', 'TrackID_l', 'NodeIndex_r', 'TrackID_r'], axis = 1, inplace = True)
                       __graphData_list = __graphData_join.values.tolist()
