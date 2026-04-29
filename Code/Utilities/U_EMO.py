@@ -557,9 +557,6 @@ class EMO:
                       __graphData_join['LeftKey'] = __graphData_join['TrackID_l'] +'-'+ __graphData_join['NodeIndex_l']
                       __graphData_join['RightKey'] = __graphData_join['TrackID_r'] +'-'+ __graphData_join['NodeIndex_r']
 
-                      print(__graphData_join)
-                      exit()
-
                       __graphData_join.drop(['NodeIndex_l', 'TrackID_l', 'NodeIndex_r', 'TrackID_r'], axis = 1, inplace = True)
                       __graphData_list = __graphData_join.values.tolist()
 
