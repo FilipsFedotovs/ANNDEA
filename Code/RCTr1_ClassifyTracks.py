@@ -248,6 +248,8 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
 
         print(UI.TimeStamp(),'After removing tracks with number of hits we have',final_rows,' hits left')
         track_no_data=data.groupby(['Rec_Seg_ID'],as_index=False).count()
+        print(track_no_data)
+        exit()
         track_no_data=track_no_data.drop([PM.y,PM.z,PM.tx,PM.ty],axis=1)
         track_no_data=track_no_data.rename(columns={PM.x: "Track_No"})
         new_combined_data=pd.merge(data, track_no_data, how="left", on=["Rec_Seg_ID"])
@@ -351,9 +353,6 @@ while Status<len(Program):
             data=pd.read_csv(args.f,header=0)
             data.drop(base_data[0].ClassHeaders,axis=1,errors='ignore',inplace=True)
             data['Rec_Seg_ID'] = data[TrackID].astype(str) + '-' + data[BrickID].astype(str)
-            print(data)
-            print(ExtractedData)
-            exit()
             data=pd.merge(data,ExtractedData,how='left',on=['Rec_Seg_ID'])
             data=data.drop(['Rec_Seg_ID'],axis=1)
             raw_name=initial_input_file_location[:-4]
