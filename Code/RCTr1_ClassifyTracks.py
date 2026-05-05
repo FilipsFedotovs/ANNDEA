@@ -346,7 +346,7 @@ while Status<len(Program):
             if ClassValues[0][0]=='Reg':
                 ExtractedData[RecBatchID+'_P_Rec']=ExtractedData[RecBatchID+'_P_Rec']*(float(ClassValues[0][2])/2)
                 ExtractedData[RecBatchID+'_P_Rec']=ExtractedData[RecBatchID+'_P_Rec']+(float(ClassValues[0][2])/2)
-            data=pd.read_csv(args.f,header=0)
+            data=pd.read_csv(args.f,header=0, encoding="latin1")
             data.drop(base_data[0].ClassHeaders,axis=1,errors='ignore',inplace=True)
             data['Rec_Seg_ID'] = data[TrackID].astype(str) + '-' + data[BrickID].astype(str)
             data=pd.merge(data,ExtractedData,how='left',on=['Rec_Seg_ID'])
