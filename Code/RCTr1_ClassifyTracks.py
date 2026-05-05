@@ -185,7 +185,6 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
             data_aggregated_show=data_aggregated_show.rename(columns={'Rec_Seg_ID': "No_Tracks"})
             data_aggregated_show['PID']=data_aggregated_show[PM.z].rank(ascending=True).astype(int)
             print('A list of plates and the number of tracks starting on them is listed bellow:')
-            print(data_aggregated_show.to_string())
             RPChoice = input('Enter the list of plates separated by comma that you want to remove followed by "Enter" : ')
             if ',' in RPChoice:
                 RPChoice=ast.literal_eval(RPChoice)

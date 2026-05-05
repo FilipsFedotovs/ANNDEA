@@ -1,7 +1,29 @@
 ###This file contains the standard UI utility functions that are commonly used in ANNDEA packages
 
-#Libraries used
+########################################    Import libraries    #############################################
 import csv
+#import ast
+csv_reader=open('../config',"r")
+config = list(csv.reader(csv_reader))
+for c in config:
+    if c[0]=='AFS_DIR':
+        AFS_DIR=c[1]
+    if c[0]=='EOS_DIR':
+        EOS_DIR=c[1]
+    if c[0]=='PY_DIR':
+        PY_DIR=c[1]
+csv_reader.close()
+
+#Loading Directory locations
+if PY_DIR!='': #Temp solution
+    if PY_DIR not in sys.path:
+        sys.path.insert(0, PY_DIR)
+    # Properly register it as a site dir
+    site.addsitedir(PY_DIR)
+
+sys.path.append(AFS_DIR+'/Code/Utilities')
+
+#Libraries used
 import os
 import subprocess
 import datetime
@@ -62,58 +84,7 @@ class JobMeta:
       def UpdateJobMeta(self,n,p):
           for i in range(len(n)):
               setattr(self, n[i], p[i])
-      #
-      # def UpdateHitClusterMetaData(self,job_set,job_counter):
-      #     self.job_set=job_set
-      #     self.job_counter=job_counter
-      #
-      # def IniTrackMetaData(self,ClassHeaders,ClassNames,ClassValues,MaxSegments,JobSets,MinHitsTrack):
-      #     self.ClassHeaders=ClassHeaders
-      #     self.ClassNames=ClassNames
-      #     self.ClassValues=ClassValues
-      #     self.MaxSegments=MaxSegments
-      #     self.JobSets=JobSets
-      #     self.MinHitsTrack=MinHitsTrack
-      # def IniTrackSeedMetaData(self,MaxSLG,MaxSTG,MaxDOCA,MaxAngle,JobSets,MaxSegments,VetoMotherTrack,MaxSeeds,MinHitsTrack
-      #                          ):
-      #     self.MaxSLG=MaxSLG
-      #     self.MaxSTG=MaxSTG
-      #     self.MaxDOCA=MaxDOCA
-      #     self.MaxAngle=MaxAngle
-      #     self.JobSets=JobSets
-      #     self.MaxSegments=MaxSegments
-      #     self.MaxSeeds=MaxSeeds
-      #     self.VetoMotherTrack=VetoMotherTrack
-      #     self.MinHitsTrack=MinHitsTrack
-      # def IniBrickAlignMetaData(self,Size,ValMinHits,MinHits,SpatialOptBound,AngularOptBound,JobSets,Cycles,plates,FiducialVolume
-      #                          ):
-      #     self.Size=Size
-      #     self.MinHits=MinHits
-      #     self.ValMinHits=ValMinHits
-      #     self.SpatialOptBound=SpatialOptBound
-      #     self.AngularOptBound=AngularOptBound
-      #     self.Cycles=Cycles
-      #     self.JobSets=JobSets
-      #     self.plates=plates
-      #     self.FiducialVolume=FiducialVolume
-      # def IniVertexSeedMetaData(self,MaxDST,MaxVXT,MaxDOCA,MaxAngle,JobSets,MaxSegments,MaxSeeds,MinHitsTrack,FiducialVolumeCut,ExcludeClassNames,ExcludeClassValues
-      #                          ):
-      #     self.MaxDST=MaxDST
-      #     self.MaxVXT=MaxVXT
-      #     self.MaxDOCA=MaxDOCA
-      #     self.MaxAngle=MaxAngle
-      #     self.JobSets=JobSets
-      #     self.MaxSegments=MaxSegments
-      #     self.MaxSeeds=MaxSeeds
-      #     self.ClassNames=ExcludeClassNames
-      #     self.ClassValues=ExcludeClassValues
-      #     self.MinHitsTrack=MinHitsTrack
-      #     self.FiducialVolumeCut = FiducialVolumeCut
-      # def UpdateHitClusterMetaData(self,NoS,NoNF,NoEF,NoSets):
-      #     self.num_node_features=NoNF
-      #     self.num_edge_features=NoEF
-      #     self.tot_sample_size=NoS
-      #     self.no_sets=NoSets
+     
       def UpdateStatus(self, status):
           if hasattr(self,'Status'):
             self.Status.append(status)
