@@ -13,7 +13,7 @@ for c in config:
     if c[0]=='PY_DIR':
         PY_DIR=c[1]
 csv_reader.close()
-
+import sys
 #Loading Directory locations
 if PY_DIR!='': #Temp solution
     if PY_DIR not in sys.path:
