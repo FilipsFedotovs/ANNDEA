@@ -346,7 +346,34 @@ while Status<len(Program):
             if ClassValues[0][0]=='Reg':
                 ExtractedData[RecBatchID+'_P_Rec']=ExtractedData[RecBatchID+'_P_Rec']*(float(ClassValues[0][2])/2)
                 ExtractedData[RecBatchID+'_P_Rec']=ExtractedData[RecBatchID+'_P_Rec']+(float(ClassValues[0][2])/2)
-            data=pd.read_csv(args.f,header=0, encoding="latin1")
+            data=pd.read_csv(args.f,header=0)
+            
+            if initial_input_file_location[-5:]=='.root':
+                print(UI.TimeStamp(),'Loading the ROOT file content',bcolors.OKBLUE+initial_input_file_location+bcolors.ENDC)
+                rdf = r.RDataFrame("tracks",initial_input_file_location)
+                print(UI.TimeStamp(),'Importing data into the Pandas data frame...')
+                df = pd.DataFrame(rdf.AsNumpy())
+                print(df)
+                exit()
+                # if BrickID=='N/A':
+                #     df = pd.DataFrame(rdf.AsNumpy(columns = ["s.eID","s.eX","s.eY","s.eZ","s.eTX","s.eTY",TrackID]))
+                #     df.columns = [PM.Hit_ID, PM.x,PM.y,PM.z,PM.tx,PM.ty,TrackID]
+                #     data = df.explode([PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty])
+
+                # else:   
+                #     df = pd.DataFrame(rdf.AsNumpy(columns = ["s.eID","s.eX","s.eY","s.eZ","s.eTX","s.eTY", BrickID, TrackID]))
+
+                #     df.columns = [PM.Hit_ID, PM.x,PM.y,PM.z,PM.tx,PM.ty, BrickID, TrackID]
+                #     data = df.explode([PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty])
+                #     data[BrickID]=data[BrickID].str[0]
+                #     data[TrackID]=data[TrackID].str[0]
+                
+            elif initial_input_file_location[-4:]=='.csv':
+                data=pd.read_csv(args.f,header=0)
+            else:
+                UI.Msg('failed',f'The file "{initial_input_file_location}" is incorrect: it should be either ROOT or CSV text file with the appropirate suffix...')
+                exit()
+
             data.drop(base_data[0].ClassHeaders,axis=1,errors='ignore',inplace=True)
             data['Rec_Seg_ID'] = data[TrackID].astype(str) + '-' + data[BrickID].astype(str)
             data=pd.merge(data,ExtractedData,how='left',on=['Rec_Seg_ID'])
