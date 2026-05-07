@@ -346,7 +346,6 @@ while Status<len(Program):
             if ClassValues[0][0]=='Reg':
                 ExtractedData[RecBatchID+'_P_Rec']=ExtractedData[RecBatchID+'_P_Rec']*(float(ClassValues[0][2])/2)
                 ExtractedData[RecBatchID+'_P_Rec']=ExtractedData[RecBatchID+'_P_Rec']+(float(ClassValues[0][2])/2)
-            data=pd.read_csv(args.f,header=0)
             
             if initial_input_file_location[-5:]=='.root':
                 print(UI.TimeStamp(),'Loading the ROOT file content',bcolors.OKBLUE+initial_input_file_location+bcolors.ENDC)
