@@ -348,6 +348,7 @@ while Status<len(Program):
                 ExtractedData[RecBatchID+'_P_Rec']=ExtractedData[RecBatchID+'_P_Rec']+(float(ClassValues[0][2])/2)
             
             if initial_input_file_location[-5:]=='.root':
+                import ROOT as r
                 print(UI.TimeStamp(),'Loading the ROOT file content',bcolors.OKBLUE+initial_input_file_location+bcolors.ENDC)
                 rdf = r.RDataFrame("tracks",initial_input_file_location)
                 print(UI.TimeStamp(),'Importing data into the Pandas data frame...')
