@@ -372,7 +372,12 @@ while Status<len(Program):
                 exit()
             print(data)
             data.drop(base_data[0].ClassHeaders,axis=1,errors='ignore',inplace=True)
-            data['Rec_Seg_ID'] = data[TrackID].astype(str) + '-' + data[BrickID].astype(str)
+            data[TrackID] = data[TrackID].astype(str)
+            if BrickID!='N/A':
+                data[BrickID] = data[BrickID].astype(str)
+                data['Rec_Seg_ID'] = data[TrackID] + '-' + data[BrickID]
+            else:
+                data['Rec_Seg_ID'] = data[TrackID]
             data=pd.merge(data,ExtractedData,how='left',on=['Rec_Seg_ID'])
             print(data)
             exit()
