@@ -348,10 +348,48 @@ while Status<len(Program):
                 print(rdf.GetColumnNames())
                 exit()
                 print(UI.TimeStamp(),'Importing data into the Pandas data frame...')
+                
+
+                mc_cols = [
+                    "s.eFlag",
+                    "s.eMCEvt",
+                    "s.eMCTrack",
+                    "s.eP"
+                ]
+
+                mc_cols_hd = [
+                    'PDG_ID',
+                    PM.MC_Event_ID,
+                    PM.MC_Track_ID,
+                    'P'
+                ]
+                is_mc = rdf.HasColumn("s.eMCEvt")
+
                 if BrickID=='N/A':
-                    df = pd.DataFrame(rdf.AsNumpy(columns = ["s.eID","s.eX","s.eY","s.eZ","s.eTX","s.eTY",TrackID]))
-                    df.columns = [PM.Hit_ID, PM.x,PM.y,PM.z,PM.tx,PM.ty,TrackID]
+                    base_cols = [
+                    "s.eID",
+                    "s.eX",
+                    "s.eY",
+                    "s.eZ",
+                    "s.eTX",
+                    "s.eTY",
+                    TrackID
+                    ]
+
+                    
+                    raw_columns = base_cols.copy()
+                    head_columns=[PM.Hit_ID, PM.x,PM.y,PM.z,PM.tx,PM.ty,TrackID]
+                    
+                    if is_mc:
+                        raw_columns.extend(mc_cols)
+                        head_columns.extend(mc_cols_hd)
+
+                    df = pd.DataFrame(rdf.AsNumpy(columns = raw_columns))
+                    df.columns = head_columns
+                    print(df.columns)
                     data = df.explode([PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty])
+                    print(data)
+                    exit()
 
                 else:   
                     df = pd.DataFrame(rdf.AsNumpy(columns = ["s.eID","s.eX","s.eY","s.eZ","s.eTX","s.eTY", BrickID, TrackID]))
