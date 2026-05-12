@@ -350,7 +350,7 @@ while Status<len(Program):
                 
 
                 mc_cols = [
-                    "s.eFlag",
+                    "s.eVid[2]",
                     "s.eMCEvt",
                     "s.eMCTrack",
                     "s.eP"
