@@ -14,14 +14,8 @@ for c in config:
     if c[0]=='PY_DIR':
         PY_DIR=c[1]
 csv_reader.close()
+
 import sys
-# if PY_DIR!='': #Temp solution - the decision was made to move all libraries to EOS drive as AFS get locked during heavy HTCondor submission loads
-#     sys.path=['',PY_DIR]
-#     sys.path.append('/usr/lib64/python39.zip')
-#     sys.path.append('/usr/lib64/python3.9')
-#     sys.path.append('/usr/lib64/python3.9/lib-dynload')
-#     sys.path.append('/usr/lib64/python3.9/site-packages')
-#     sys.path.append('/usr/lib/python3.9/site-packages')
 sys.path.append(AFS_DIR+'/Code/Utilities')
 import U_UI as UI
 import Parameters as PM #This is where we keep framework global parameters
@@ -351,6 +345,8 @@ while Status<len(Program):
                 import ROOT as r
                 print(UI.TimeStamp(),'Loading the ROOT file content',bcolors.OKBLUE+initial_input_file_location+bcolors.ENDC)
                 rdf = r.RDataFrame("tracks",initial_input_file_location)
+                print(rdf.GetColumnNames())
+                exit()
                 print(UI.TimeStamp(),'Importing data into the Pandas data frame...')
                 if BrickID=='N/A':
                     df = pd.DataFrame(rdf.AsNumpy(columns = ["s.eID","s.eX","s.eY","s.eZ","s.eTX","s.eTY",TrackID]))
@@ -359,7 +355,6 @@ while Status<len(Program):
 
                 else:   
                     df = pd.DataFrame(rdf.AsNumpy(columns = ["s.eID","s.eX","s.eY","s.eZ","s.eTX","s.eTY", BrickID, TrackID]))
-
                     df.columns = [PM.Hit_ID, PM.x,PM.y,PM.z,PM.tx,PM.ty, BrickID, TrackID]
                     data = df.explode([PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty])
                     data[BrickID]=data[BrickID].str[0]
@@ -378,8 +373,7 @@ while Status<len(Program):
                 data['Rec_Seg_ID'] = data[TrackID] + '-' + data[BrickID]
             else:
                 data['Rec_Seg_ID'] = data[TrackID]
-            #data=pd.merge(data,ExtractedData,how='left',on=['Rec_Seg_ID'])
-            data=pd.merge(data,ExtractedData,how='inner',on=['Rec_Seg_ID'])
+            data=pd.merge(data,ExtractedData,how='left',on=['Rec_Seg_ID'])
             print(data)
             exit()
             data=data.drop(['Rec_Seg_ID'],axis=1)
