@@ -371,10 +371,11 @@ while Status<len(Program):
                 UI.Msg('failed',f'The file "{initial_input_file_location}" is incorrect: it should be either ROOT or CSV text file with the appropirate suffix...')
                 exit()
             print(data)
-            exit()
             data.drop(base_data[0].ClassHeaders,axis=1,errors='ignore',inplace=True)
             data['Rec_Seg_ID'] = data[TrackID].astype(str) + '-' + data[BrickID].astype(str)
             data=pd.merge(data,ExtractedData,how='left',on=['Rec_Seg_ID'])
+            print(data)
+            exit()
             data=data.drop(['Rec_Seg_ID'],axis=1)
             raw_name=initial_input_file_location[:-4]
             for l in range(len(raw_name)-1,0,-1):
