@@ -386,7 +386,7 @@ while Status<len(Program):
                     df = pd.DataFrame(rdf.AsNumpy(columns = raw_columns))
                     df.columns = head_columns
                     print(df.columns)
-                    data = df.explode([PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty])
+                    data = df.explode([PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty]+mc_cols_hd)
                     print(data)
                     exit()
 
