@@ -378,7 +378,8 @@ while Status<len(Program):
                 data['Rec_Seg_ID'] = data[TrackID] + '-' + data[BrickID]
             else:
                 data['Rec_Seg_ID'] = data[TrackID]
-            data=pd.merge(data,ExtractedData,how='left',on=['Rec_Seg_ID'])
+            #data=pd.merge(data,ExtractedData,how='left',on=['Rec_Seg_ID'])
+            data=pd.merge(data,ExtractedData,how='inner',on=['Rec_Seg_ID'])
             print(data)
             exit()
             data=data.drop(['Rec_Seg_ID'],axis=1)
