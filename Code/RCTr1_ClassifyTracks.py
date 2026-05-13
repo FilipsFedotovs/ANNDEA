@@ -346,7 +346,10 @@ while Status<len(Program):
                 print(UI.TimeStamp(),'Loading the ROOT file content',bcolors.OKBLUE+initial_input_file_location+bcolors.ENDC)
                 rdf = r.RDataFrame("tracks",initial_input_file_location)
                 print(rdf.GetColumnNames())
-                rdf.Define("Vid0", "s.eVid[0]").Display(["Vid0"], 20).Print()
+                
+                rdf2 = rdf.Define("Vid0", "s[0].eVid[0]")
+                rdf2.Display(["Vid0"], 20).Print()
+
                 print(UI.TimeStamp(),'Importing data into the Pandas data frame...')
                 
 
