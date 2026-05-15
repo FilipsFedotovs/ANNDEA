@@ -344,11 +344,43 @@ while Status<len(Program):
             if initial_input_file_location[-5:]=='.root':
                 import ROOT as r
                 print(UI.TimeStamp(),'Loading the ROOT file content',bcolors.OKBLUE+initial_input_file_location+bcolors.ENDC)
+                # Define helper function in C++ to extract the updated RDataFrame with the new columns
+                r.gInterpreter.Declare("""
+                ROOT::RDF::RNode PreprocessTracks(ROOT::RDataFrame df) {
+                    auto getFirst = [](const ROOT::RVec<int>& vec, const ROOT::RVec<int>& mcTrack) {
+                        ROOT::RVec<int> res;
+                        //start loop over the vec to copy values
+                        for (size_t i = 0; i < vec.size(); i += 2) {
+                            res.push_back(vec[i]);
+
+                            if (i < vec.size() -1) {
+                            //the second variable is always 0, we need to know if the MCTrack is the same or it changed
+                            if (mcTrack[i+1] == mcTrack[i]) res.push_back(vec[i]);
+                            else {
+                            //the particle changed, we need to check if the next one is the same as the current one
+                            if (i < vec.size() - 2){
+
+                            if (mcTrack[i+1] == mcTrack[i+2]) res.push_back(vec[i+2]);
+                            else res.push_back(vec[i]);
+
+                            } //end if we have arrived to the second to last element
+                            else res.push_back(vec[i]);
+                            }
+
+                            } //end if we have arrived to the last element
+                        } //end for loop over vector
+                        return res;
+                    };
+                    // Here in C++ s.eVid and s.eAid can be recognized
+                    return df.Define("s_PdgCode", getFirst, {"s.eVid[2]","s.eMCTrack"}).Define("s_MotherId", getFirst, {"s.eAid[2]","s.eMCTrack"});
+                }
+                """)
+
                 rdf = r.RDataFrame("tracks",initial_input_file_location)
-                print(rdf.GetColumnNames())
-                
-                rdf2 = rdf.Define("Vid0", "s[0].eVid[0]")
-                rdf2.Display(["Vid0"], 20).Print()
+
+                rdf_processed = r.PreprocessTracks(rdf)
+                print(rdf_processed.GetColumnNames())
+                exit()
 
                 print(UI.TimeStamp(),'Importing data into the Pandas data frame...')
                 
