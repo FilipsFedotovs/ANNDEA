@@ -396,7 +396,7 @@ while Status<len(Program):
                     PM.MC_Track_ID,
                     'P'
                 ]
-                is_mc = rdf.HasColumn("s.eMCEvt")
+                is_mc = rdf_processed.HasColumn("s.eMCEvt")
 
                 if BrickID=='N/A':
                     base_cols = [
@@ -417,7 +417,7 @@ while Status<len(Program):
                         raw_columns.extend(mc_cols)
                         head_columns.extend(mc_cols_hd)
 
-                    df = pd.DataFrame(rdf.AsNumpy(columns = raw_columns))
+                    df = pd.DataFrame(rdf_processed.AsNumpy(columns = raw_columns))
                     df.columns = head_columns
                     print(df.columns)
                     data = df.explode([PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty]+mc_cols_hd)
