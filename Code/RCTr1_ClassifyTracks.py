@@ -379,14 +379,12 @@ while Status<len(Program):
                 rdf = r.RDataFrame("tracks",initial_input_file_location)
 
                 rdf_processed = r.PreprocessTracks(rdf)
-                print(rdf_processed.GetColumnNames())
-                exit()
 
                 print(UI.TimeStamp(),'Importing data into the Pandas data frame...')
                 
 
                 mc_cols = [
-                    "s.eVid[2]",
+                    "s_PdgCode",
                     "s.eMCEvt",
                     "s.eMCTrack",
                     "s.eP"
