@@ -408,22 +408,14 @@ while Status<len(Program):
                     "s.eTY",
                     TrackID
                     ]
-
-                    
                     raw_columns = base_cols.copy()
                     head_columns=[PM.Hit_ID, PM.x,PM.y,PM.z,PM.tx,PM.ty,TrackID]
-                    
                     if is_mc:
                         raw_columns.extend(mc_cols)
                         head_columns.extend(mc_cols_hd)
-
                     df = pd.DataFrame(rdf_processed.AsNumpy(columns = raw_columns))
                     df.columns = head_columns
-                    print(df.columns)
                     data = df.explode([PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty]+mc_cols_hd)
-                    print(data)
-                    exit()
-
                 else:   
                     df = pd.DataFrame(rdf.AsNumpy(columns = ["s.eID","s.eX","s.eY","s.eZ","s.eTX","s.eTY", BrickID, TrackID]))
                     df.columns = [PM.Hit_ID, PM.x,PM.y,PM.z,PM.tx,PM.ty, BrickID, TrackID]
@@ -436,7 +428,6 @@ while Status<len(Program):
             else:
                 UI.Msg('failed',f'The file "{initial_input_file_location}" is incorrect: it should be either ROOT or CSV text file with the appropirate suffix...')
                 exit()
-            print(data)
             data.drop(base_data[0].ClassHeaders,axis=1,errors='ignore',inplace=True)
             data[TrackID] = data[TrackID].astype(str)
             if BrickID!='N/A':
@@ -446,9 +437,12 @@ while Status<len(Program):
                 data['Rec_Seg_ID'] = data[TrackID]
             data=pd.merge(data,ExtractedData,how='left',on=['Rec_Seg_ID'])
             print(data)
-            exit()
+            
             data=data.drop(['Rec_Seg_ID'],axis=1)
+            print(data)
             raw_name=initial_input_file_location[:-4]
+            print(raw_name)
+            exit()
             for l in range(len(raw_name)-1,0,-1):
                     if raw_name[l]=='/':
                         break
