@@ -423,8 +423,21 @@ while Status<len(Program):
                     data[BrickID]=data[BrickID].str[0]
                     data[TrackID]=data[TrackID].str[0]
                 
+                raw_name=initial_input_file_location[:-5]
+                for l in range(len(raw_name)-1,0,-1):
+                        if raw_name[l]=='/':
+                            break
+                raw_name=raw_name[l+1:]
+                print(raw_name)
+                exit()
+                
             elif initial_input_file_location[-4:]=='.csv':
                 data=pd.read_csv(args.f,header=0)
+                raw_name=initial_input_file_location[:-4]
+                for l in range(len(raw_name)-1,0,-1):
+                        if raw_name[l]=='/':
+                            break
+                raw_name=raw_name[l+1:]
             else:
                 UI.Msg('failed',f'The file "{initial_input_file_location}" is incorrect: it should be either ROOT or CSV text file with the appropirate suffix...')
                 exit()
@@ -440,13 +453,8 @@ while Status<len(Program):
             
             data=data.drop(['Rec_Seg_ID'],axis=1)
             print(data)
-            raw_name=initial_input_file_location[:-4]
-            print(raw_name)
-            exit()
-            for l in range(len(raw_name)-1,0,-1):
-                    if raw_name[l]=='/':
-                        break
-            raw_name=raw_name[l+1:]
+            
+            
             final_output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+raw_name+'_'+RecBatchID+'_CLASSIFIED_TRACKS.csv'
             data.to_csv(final_output_file_location,index=False)
             print(UI.TimeStamp(), bcolors.OKGREEN+"The classified track data has been written to"+bcolors.ENDC, bcolors.OKBLUE+final_output_file_location+bcolors.ENDC)
