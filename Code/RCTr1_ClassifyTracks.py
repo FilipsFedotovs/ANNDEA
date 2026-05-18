@@ -428,9 +428,7 @@ while Status<len(Program):
                         if raw_name[l]=='/':
                             break
                 raw_name=raw_name[l+1:]
-                print(raw_name)
-                exit()
-                
+
             elif initial_input_file_location[-4:]=='.csv':
                 data=pd.read_csv(args.f,header=0)
                 raw_name=initial_input_file_location[:-4]
@@ -453,8 +451,6 @@ while Status<len(Program):
             
             data=data.drop(['Rec_Seg_ID'],axis=1)
             print(data)
-            
-            
             final_output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+raw_name+'_'+RecBatchID+'_CLASSIFIED_TRACKS.csv'
             data.to_csv(final_output_file_location,index=False)
             print(UI.TimeStamp(), bcolors.OKGREEN+"The classified track data has been written to"+bcolors.ENDC, bcolors.OKBLUE+final_output_file_location+bcolors.ENDC)
