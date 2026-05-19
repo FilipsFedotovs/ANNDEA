@@ -4,6 +4,10 @@
 import csv
 import site
 import os
+
+import os
+AFS_DIR = os.environ.get('AFS_DIR', '.')
+print(AFS_DIR)
 #import ast
 csv_reader=open('../config',"r")
 config = list(csv.reader(csv_reader))
@@ -318,7 +322,7 @@ def SubmitJobs2Condor(job,local=False,ExtCPU=1,JobFlavour='workday', ExtMemory='
             f.write("\n")
         f.write('requirements = (CERNEnvironment =!= "qa")')
         f.write("\n")
-        f.write('environment = "AFS_DIR="'+AFS_DIR+'"')
+        f.write('environment = "AFS_DIR='+AFS_DIR+'"')
         f.write("\n")
         if job[9]:
             f.write('request_gpus = 1')
