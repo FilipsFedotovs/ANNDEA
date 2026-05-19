@@ -5,9 +5,23 @@ import csv
 import site
 import os
 #import ast
+
+BASE_DIR = '.'
+
+def set_base_dir(path):
+    global AFS_DIR
+    AFS_DIR = path
+open(os.path.join(BASE_DIR, 'config'), 'r')
 print(os.getcwd())
-csv_reader=open('../config',"r")
-config = list(csv.reader(csv_reader))
+# csv_reader=open('../config',"r")
+# config = list(csv.reader(csv_reader))
+
+
+config_path = os.path.join(AFS_DIR, 'config')
+print('here',config_path)
+with open(config_path, "r") as csv_reader:
+    config = list(csv.reader(csv_reader))
+
 for c in config:
     if c[0]=='AFS_DIR':
         AFS_DIR=c[1]
