@@ -3,7 +3,9 @@
 ########################################    Import libraries    #############################################
 import csv
 import site
+import os
 #import ast
+print(os.getcwd())
 csv_reader=open('../config',"r")
 config = list(csv.reader(csv_reader))
 for c in config:
