@@ -5,23 +5,8 @@ import csv
 import site
 import os
 #import ast
-
-AFS_DIR = '.'
-
-def set_base_dir(path):
-    global AFS_DIR
-    AFS_DIR = path
-    print('afs',AFS_DIR)
-print(os.getcwd())
-# csv_reader=open('../config',"r")
-# config = list(csv.reader(csv_reader))
-
-
-config_path = os.path.join(AFS_DIR, 'config')
-print('here',config_path)
-with open(config_path, "r") as csv_reader:
-    config = list(csv.reader(csv_reader))
-
+csv_reader=open('../config',"r")
+config = list(csv.reader(csv_reader))
 for c in config:
     if c[0]=='AFS_DIR':
         AFS_DIR=c[1]
@@ -332,6 +317,8 @@ def SubmitJobs2Condor(job,local=False,ExtCPU=1,JobFlavour='workday', ExtMemory='
             f.write("log ="+MSGName+".log")
             f.write("\n")
         f.write('requirements = (CERNEnvironment =!= "qa")')
+        f.write("\n")
+        f.write('environment = "AFS_DIR="'+AFS_DIR+'"')
         f.write("\n")
         if job[9]:
             f.write('request_gpus = 1')
