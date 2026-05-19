@@ -11,7 +11,6 @@ BASE_DIR = '.'
 def set_base_dir(path):
     global AFS_DIR
     AFS_DIR = path
-open(os.path.join(BASE_DIR, 'config'), 'r')
 print(os.getcwd())
 # csv_reader=open('../config',"r")
 # config = list(csv.reader(csv_reader))
