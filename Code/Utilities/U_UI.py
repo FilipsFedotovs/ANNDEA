@@ -6,11 +6,12 @@ import site
 import os
 #import ast
 
-BASE_DIR = '.'
+AFS_DIR = '.'
 
 def set_base_dir(path):
     global AFS_DIR
     AFS_DIR = path
+    print('afs',AFS_DIR)
 print(os.getcwd())
 # csv_reader=open('../config',"r")
 # config = list(csv.reader(csv_reader))
