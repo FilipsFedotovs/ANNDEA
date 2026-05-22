@@ -325,7 +325,7 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
             data_agg=data.groupby(['Rec_Seg_ID','MC_Mother_Track_ID']).agg(subject_reg_val=pd.NamedAgg(column=ClassNames[0][0], aggfunc=ClassValues[0][1])).reset_index()
             data_agg=data_agg.rename(columns={'subject_reg_val': ClassNames[0][0]})
             print(data_agg)
-            data_agg[ClassNames[0][0]] = data_agg[ClassNames[0][0]].clip(upper=float(ClassValues[0][2])) #Clip values
+            data_agg[ClassNames[0][0]] = data_agg[ClassNames[0][0]].astype(float).clip(upper=float(ClassValues[0][2])) #Clip values
             print(data_agg)
             exit()
             data_agg[ClassNames[0][0]]=data_agg[ClassNames[0][0]].astype(float)-(float(ClassValues[0][2])/2)
