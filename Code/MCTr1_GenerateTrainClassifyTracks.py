@@ -9,7 +9,6 @@ import argparse
 import pandas as pd #We use Panda for a routine data processing
 import math #We use it for data manipulation
 import os
-import time
 import ast
 import random
 class bcolors:   #We use it for the interface
@@ -112,7 +111,7 @@ for i in ClassNames:
         if (j in ExtraColumns)==False:
                 ExtraColumns.append(j)
 print(ColumnsToImport)
-exit()
+
 Regression=ClassValues[0][0]=='Reg'
 
 ########################################     Phase 1 - Create compact source file    #########################################
@@ -126,260 +125,368 @@ elif Mode=='CLEANUP':
 else:
     print(UI.ManageFolders(AFS_DIR, EOS_DIR, TrainSampleID,'c'))
 
+if BrickID=='':
+    BrickID='N/A'
 
+# if os.path.isfile(required_file_location)==False:
+#         print(UI.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
+#         data=pd.read_csv(input_file_location,
+#                     header=0,
+#                     usecols=ColumnsToImport)
+        
 
-if os.path.isfile(required_file_location)==False:
+if os.path.isfile(required_file_location)==False or Mode=='RESET':
+
         print(UI.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
-        data=pd.read_csv(input_file_location,
-                    header=0,
-                    usecols=ColumnsToImport)
-        total_rows=len(data.axes[0])
+        if input_file_location[-5:]=='.root':
+            try:
+                import ROOT as r
+                r.gInterpreter.Declare("""
+                ROOT::RDF::RNode PreprocessTracks(ROOT::RDataFrame df) {
+                    auto getFirst = [](const ROOT::RVec<int>& vec, const ROOT::RVec<int>& mcTrack) {
+                        ROOT::RVec<int> res;
+                        //start loop over the vec to copy values
+                        for (size_t i = 0; i < vec.size(); i += 2) {
+                            res.push_back(vec[i]);
 
-        print(UI.TimeStamp(),'The raw data has ',total_rows,' hits')
-        print(UI.TimeStamp(),'Removing unreconstructed hits...')
-        data=data.dropna()
-        final_rows=len(data.axes[0])
-        print(UI.TimeStamp(),'The cleaned data has ',final_rows,' hits')
+                            if (i < vec.size() -1) {
+                            //the second variable is always 0, we need to know if the MCTrack is the same or it changed
+                            if (mcTrack[i+1] == mcTrack[i]) res.push_back(vec[i]);
+                            else {
+                            //the particle changed, we need to check if the next one is the same as the current one
+                            if (i < vec.size() - 2){
 
-        data[PM.MC_Event_ID] = data[PM.MC_Event_ID].astype(str)
-        for i in ExtraColumns:
-            data[i]=data[i].astype(str)
-        data[PM.MC_Track_ID] = data[PM.MC_Track_ID].astype(str)
-        data[TrackID] = data[TrackID].astype(str)
-        data[BrickID] = data[BrickID].astype(str)
-        data[PM.MC_Event_ID] = data[PM.MC_Event_ID].astype(str)
-        data['Rec_Seg_ID'] = data[BrickID] + '-' + data[TrackID]
-        data['MC_Mother_Track_ID'] = data[PM.MC_Event_ID] + '-' + data[PM.MC_Track_ID]
-        data=data.drop([TrackID],axis=1)
-        data=data.drop([BrickID],axis=1)
-        data=data.drop([PM.MC_Event_ID],axis=1)
-        data=data.drop([PM.MC_Track_ID],axis=1)
+                            if (mcTrack[i+1] == mcTrack[i+2]) res.push_back(vec[i+2]);
+                            else res.push_back(vec[i]);
 
+                            } //end if we have arrived to the second to last element
+                            else res.push_back(vec[i]);
+                            }
 
-        RZChoice = input('Would you like to remove tracks based on the starting plate? If no, press "Enter", otherwise type "y", followed by "Enter" : ')
-        if RZChoice.upper()=='Y':
-            print(UI.TimeStamp(),'Removing tracks based on start point')
-            data_aggregated=data.groupby(['Rec_Seg_ID'])[PM.z].min().reset_index()
-            data_aggregated_show=data_aggregated.groupby([PM.z]).count().reset_index()
-            data_aggregated_show=data_aggregated_show.rename(columns={'Rec_Seg_ID': "No_Tracks"})
-            data_aggregated_show['PID']=data_aggregated_show[PM.z].rank(ascending=True).astype(int)
-            print('A list of plates and the number of tracks starting on them is listed bellow:')
-            print(data_aggregated_show.to_string())
-            RPChoice = input('Enter the list of plates separated by comma that you want to remove followed by "Enter" : ')
-            if len(RPChoice)>1:
-                RPChoice=ast.literal_eval(RPChoice)
-            else:
-                RPChoice=[int(RPChoice)]
-            TracksZdf = pd.DataFrame(RPChoice, columns = ['PID'], dtype=int)
-            data_aggregated_show=pd.merge(data_aggregated_show,TracksZdf,how='inner',on='PID')
+                            } //end if we have arrived to the last element
+                        } //end for loop over vector
+                        return res;
+                    };
+                    // Here in C++ s.eVid and s.eAid can be recognized
+                    return df.Define("s_PdgCode", getFirst, {"s.eVid[2]","s.eMCTrack"}).Define("s_MotherId", getFirst, {"s.eAid[2]","s.eMCTrack"});
+                }
+                """)
+                print(UI.TimeStamp(),'Loading the ROOT file content',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
+                rdf = r.RDataFrame("tracks",input_file_location)
+                print(UI.TimeStamp(),'Importing data into the Pandas data frame...')
+                # Define helper function in C++ to extract the updated RDataFrame with the new columns
+                rdf_processed = r.PreprocessTracks(rdf)
+                print(UI.TimeStamp(),'Importing data into the Pandas data frame...')
+                
+                mc_cols = [
+                    "s_PdgCode",
+                    "s.eMCEvt",
+                    "s.eMCTrack",
+                    "s.eP"
+                ]
 
-            data_aggregated_show.drop(['No_Tracks','PID'],axis=1,inplace=True)
-            data_aggregated=pd.merge(data_aggregated,data_aggregated_show,how='inner',on=PM.z)
-            data_aggregated=data_aggregated.rename(columns={PM.z: 'Tracks_Remove'})
+                mc_cols_hd = [
+                    'PDG_ID',
+                    PM.MC_Event_ID,
+                    PM.MC_Track_ID,
+                    'P'
+                ]
 
-            data=pd.merge(data, data_aggregated, how="left", on=['Rec_Seg_ID'])
+                if BrickID=='N/A':
+                    base_cols = [
+                    "s.eID",
+                    "s.eX",
+                    "s.eY",
+                    "s.eZ",
+                    "s.eTX",
+                    "s.eTY",
+                    TrackID
+                    ]
+                    raw_columns = base_cols.copy()
+                    head_columns=[PM.Hit_ID, PM.x,PM.y,PM.z,PM.tx,PM.ty,TrackID]
+                    df = pd.DataFrame(rdf_processed.AsNumpy(columns = raw_columns))
+                    df.columns = head_columns
+                    data = df.explode([PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty]+mc_cols_hd)
+                    print(data)
+                    exit()
+            except Exception as e:
+                UI.Msg('failed',f"MC track data preparation has not been completed due to the following exception: {e}.")
+exit()
+            #     else:   
+            #         df = pd.DataFrame(rdf.AsNumpy(columns = ["s.eID","s.eX","s.eY","s.eZ","s.eTX","s.eTY", BrickID, TrackID]))
+            #         df.columns = [PM.Hit_ID, PM.x,PM.y,PM.z,PM.tx,PM.ty, BrickID, TrackID]
+            #         data = df.explode([PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty])
+            #         data[BrickID]=data[BrickID].str[0]
+            #         data[TrackID]=data[TrackID].str[0]
+            # if BrickID=='N/A':
+            #    df = pd.DataFrame(rdf.AsNumpy(columns = ["s.eID","s.eX","s.eY","s.eZ","s.eTX","s.eTY",TrackID]))
+            #    df.columns = [PM.Hit_ID, PM.x,PM.y,PM.z,PM.tx,PM.ty,TrackID]
+            #    data = df.explode([PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty])
 
-            data=data[data['Tracks_Remove'].isnull()]
-            data=data.drop(['Tracks_Remove'],axis=1)
-        final_rows=len(data.axes[0])
-        print(UI.TimeStamp(),'After removing tracks that start at the specific plates we have',final_rows,' hits left')
+            # else:   
+            #    df = pd.DataFrame(rdf.AsNumpy(columns = ["s.eID","s.eX","s.eY","s.eZ","s.eTX","s.eTY", BrickID, TrackID]))
 
-        RLChoice = input('Would you like to remove tracks based on their length in traverse plates? If no, press "Enter", otherwise type "y", followed by "Enter" : ')
-        if RLChoice.upper()=='Y':
-            print(UI.TimeStamp(),'Removing tracks based on length')
-            data_aggregated=data[['Rec_Seg_ID',PM.z]]
-            data_aggregated_l=data_aggregated.groupby(['Rec_Seg_ID'])[PM.z].min().reset_index().rename(columns={PM.z: "min_z"})
-            data_aggregated_r=data_aggregated.groupby(['Rec_Seg_ID'])[PM.z].max().reset_index().rename(columns={PM.z: "max_z"})
-            data_aggregated=pd.merge(data_aggregated_l,data_aggregated_r,how='inner', on='Rec_Seg_ID')
-            data_aggregated_list_z=data[[PM.z]].groupby([PM.z]).count().reset_index()
-            data_aggregated_list_z['PID_l']=data_aggregated_list_z[PM.z].rank(ascending=True).astype(int)
-            data_aggregated_list_z['PID_r']=data_aggregated_list_z['PID_l']
-            data_aggregated=pd.merge(data_aggregated,data_aggregated_list_z[[PM.z,'PID_l']], how='inner', left_on='min_z', right_on=PM.z)
-            data_aggregated=pd.merge(data_aggregated,data_aggregated_list_z[[PM.z,'PID_r']], how='inner', left_on='max_z', right_on=PM.z)[['Rec_Seg_ID','PID_l','PID_r']]
-            data_aggregated['track_len']=data_aggregated['PID_r']-data_aggregated['PID_l']+1
+            #    df.columns = [PM.Hit_ID, PM.x,PM.y,PM.z,PM.tx,PM.ty, BrickID, TrackID]
+            #    data = df.explode([PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty])
+            #    data[BrickID]=data[BrickID].str[0]
+            #    data[TrackID]=data[TrackID].str[0]
+               
+            
+#         elif input_file_location[-4:]=='.csv':
+#             data=pd.read_csv(input_file_location,
+#                         header=0,
+#                         usecols=ColumnsToImport)
+#         else:
+#             UI.Msg('failed',f'The file "{input_file_location}" is incorrect: it should be either ROOT or CSV text file with the appropirate suffix...')
+#             exit()
+#         exit()
+#         total_rows=len(data.axes[0])
 
-            data_aggregated=data_aggregated[['Rec_Seg_ID','track_len']]
-            data_aggregated_show=data_aggregated.groupby(['track_len']).count().reset_index()
-            data_aggregated_show=data_aggregated_show.rename(columns={'Rec_Seg_ID': "No_Tracks"})
-            print('Track length distribution:')
-            print(data_aggregated_show.to_string())
-            RTLChoice = input('Enter the list of track lengths to exclude" : ')
-            if len(RTLChoice)>1:
-                RTLChoice=ast.literal_eval(RTLChoice)
-            else:
-                RTLChoice=[int(RTLChoice)]
-            TracksLdf = pd.DataFrame(RTLChoice, columns = ['track_len'], dtype=int)
-            data_aggregated=pd.merge(data_aggregated,TracksLdf,how='inner',on='track_len')
-            data=pd.merge(data, data_aggregated, how="left", on=['Rec_Seg_ID'])
-            data=data[data['track_len'].isnull()]
-            data=data.drop(['track_len'],axis=1)
-        final_rows=len(data.axes[0])
-        print(UI.TimeStamp(),'After removing tracks with specific lengths we have',final_rows,' hits left')
-        compress_data=data.drop([PM.x,PM.y,PM.z,PM.tx,PM.ty],axis=1)
-        compress_data['MC_Mother_Track_No']= compress_data['MC_Mother_Track_ID']
-        compress_data=compress_data.groupby(by=['Rec_Seg_ID','MC_Mother_Track_ID'])['MC_Mother_Track_No'].count().reset_index()
-        compress_data=compress_data.sort_values(['Rec_Seg_ID','MC_Mother_Track_No'],ascending=[1,0])
-        compress_data.drop_duplicates(subset='Rec_Seg_ID',keep='first',inplace=True)
-        data=data.drop(['MC_Mother_Track_ID'],axis=1)
-        compress_data=compress_data.drop(['MC_Mother_Track_No'],axis=1)
-        data=pd.merge(data, compress_data, how="left", on=['Rec_Seg_ID'])
-        if SliceData:
-             print(UI.TimeStamp(),'Slicing the data...')
-             ValidEvents=data.drop(data.index[(data[PM.x] > Xmax) | (data[PM.x] < Xmin) | (data[PM.y] > Ymax) | (data[PM.y] < Ymin)])
-             ValidEvents.drop([PM.x,PM.y,PM.z,PM.tx,PM.ty,'MC_Mother_Track_ID']+ExtraColumns,axis=1,inplace=True)
-             ValidEvents.drop_duplicates(subset='Rec_Seg_ID',keep='first',inplace=True)
-             data=pd.merge(data, ValidEvents, how="inner", on=['Rec_Seg_ID'])
-             final_rows=len(data.axes[0])
-             print(UI.TimeStamp(),'The sliced data has ',final_rows,' hits')
+#         print(UI.TimeStamp(),'The raw data has ',total_rows,' hits')
+#         print(UI.TimeStamp(),'Removing unreconstructed hits...')
+#         data=data.dropna()
+#         final_rows=len(data.axes[0])
+#         print(UI.TimeStamp(),'The cleaned data has ',final_rows,' hits')
 
-
-        output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/MCTr1_'+TrainSampleID+'_TRACKS.csv'
-        if Regression:
-            print(UI.TimeStamp(),'Normalising regression value',ExtraColumns[0])
-            data_agg=data.groupby(['Rec_Seg_ID','MC_Mother_Track_ID']).agg(subject_reg_val=pd.NamedAgg(column=ClassNames[0][0], aggfunc=ClassValues[0][1])).reset_index()
-            data_agg=data_agg.rename(columns={'subject_reg_val': ClassNames[0][0]})
-            data_agg[ClassNames[0][0]]=data_agg[ClassNames[0][0]].astype(float)-(float(ClassValues[0][2])/2)
-            data_agg[ClassNames[0][0]]=data_agg[ClassNames[0][0]].astype(float).div(float(ClassValues[0][2])/2)
-            data.drop([ClassNames[0][0]],axis=1,inplace=True)
-            data=pd.merge(data,data_agg, how="inner", on=['Rec_Seg_ID','MC_Mother_Track_ID'])
-        print(UI.TimeStamp(),'Removing tracks which have less than',MinHitsTrack,'hits...')
-        track_no_data=data.groupby(['MC_Mother_Track_ID','Rec_Seg_ID']+ExtraColumns,as_index=False).count()
-        track_no_data=track_no_data.drop([PM.y,PM.z,PM.tx,PM.ty],axis=1)
-        track_no_data=track_no_data.rename(columns={PM.x: "Rec_Seg_No"})
-        new_combined_data=pd.merge(data, track_no_data, how="left", on=['Rec_Seg_ID','MC_Mother_Track_ID']+ExtraColumns)
-        new_combined_data = new_combined_data[new_combined_data.Rec_Seg_No >= MinHitsTrack]
-        new_combined_data = new_combined_data.drop(["Rec_Seg_No"],axis=1)
-        new_combined_data=new_combined_data.sort_values(['Rec_Seg_ID',PM.x],ascending=[1,1])
-        grand_final_rows=len(new_combined_data.axes[0])
-        print(UI.TimeStamp(),'The cleaned data has ',grand_final_rows,' hits')
-        new_combined_data=new_combined_data.rename(columns={PM.x: "x"})
-        new_combined_data=new_combined_data.rename(columns={PM.y: "y"})
-        new_combined_data=new_combined_data.rename(columns={PM.z: "z"})
-        new_combined_data=new_combined_data.rename(columns={PM.tx: "tx"})
-        new_combined_data=new_combined_data.rename(columns={PM.ty: "ty"})
-        new_combined_data.drop(['MC_Mother_Track_ID'],axis=1,inplace=True)
-        new_combined_data.to_csv(output_file_location,index=False)
-        data=new_combined_data[['Rec_Seg_ID']]
-        print(UI.TimeStamp(),'Analysing the data sample in order to understand how many jobs to submit to HTCondor... ',bcolors.ENDC)
-        data.drop_duplicates(subset='Rec_Seg_ID',keep='first',inplace=True)
-        data = data.values.tolist()
-        no_submissions=math.ceil(len(data)/PM.MaxSegments)
-        print(UI.TimeStamp(), bcolors.OKGREEN+"The track segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+output_file_location+bcolors.ENDC)
-        Meta=UI.JobMeta(TrainSampleID)
-        Meta.UpdateJobMeta(['ClassHeaders','ClassNames','ClassValues','MaxSegments','JobSets','MinHitsTrack'], [ClassHeaders,ClassNames,ClassValues,PM.MaxSegments,no_submissions,MinHitsTrack])
-        Meta.UpdateStatus(0)
-        print(UI.PickleOperations(TrainSampleOutputMeta,'w', Meta)[1])
-        print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
-        print(UI.TimeStamp(),bcolors.OKGREEN+'Stage 0 has successfully completed'+bcolors.ENDC)
-elif os.path.isfile(TrainSampleOutputMeta)==True:
-    print(UI.TimeStamp(),'Loading previously saved data from ',bcolors.OKBLUE+TrainSampleOutputMeta+bcolors.ENDC)
-    MetaInput=UI.PickleOperations(TrainSampleOutputMeta,'r', 'N/A')
-    Meta=MetaInput[0]
-
-ClassHeaders=Meta.ClassHeaders
-ClassNames=Meta.ClassNames
-ClassValues=Meta.ClassValues
-JobSets=Meta.JobSets
-MaxSegments=Meta.MaxSegments
-TotJobs=JobSets
-
-########################################     Preset framework parameters    #########################################
-Program=[]
+#         data[PM.MC_Event_ID] = data[PM.MC_Event_ID].astype(str)
+#         for i in ExtraColumns:
+#             data[i]=data[i].astype(str)
+#         data[PM.MC_Track_ID] = data[PM.MC_Track_ID].astype(str)
+#         data[TrackID] = data[TrackID].astype(str)
+#         data[BrickID] = data[BrickID].astype(str)
+#         data[PM.MC_Event_ID] = data[PM.MC_Event_ID].astype(str)
+#         data['Rec_Seg_ID'] = data[BrickID] + '-' + data[TrackID]
+#         data['MC_Mother_Track_ID'] = data[PM.MC_Event_ID] + '-' + data[PM.MC_Track_ID]
+#         data=data.drop([TrackID],axis=1)
+#         data=data.drop([BrickID],axis=1)
+#         data=data.drop([PM.MC_Event_ID],axis=1)
+#         data=data.drop([PM.MC_Track_ID],axis=1)
 
 
-#The function bellow helps to automate the submission process
-UI.Msg('vanilla','Analysing the current script status...')
-Status=Meta.Status[-1]
-if ForceStatus!='N':
-    Status=int(ForceStatus)
-UI.Msg('vanilla','Current stage is '+str(Status)+'...')
-###### Stage 0
-prog_entry=[]
-prog_entry.append('Sending tracks to HTCondor for conversion int training/validation samples...')
-prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/','IDseeds','MCTr1a','.pkl',TrainSampleID,JobSets,'MCTr1a_GenerateRawTrackSamples_Sub.py'])
-prog_entry.append([ " --MaxSegments ", " --ClassNames "," --ClassValues "])
-prog_entry.append([MaxSegments,'"'+str(ClassNames)+'"','"'+str(ClassValues)+'"'])
-prog_entry.append(JobSets)
-prog_entry.append(LocalSub)
-prog_entry.append('N/A')
-prog_entry.append(HTCondorLog)
-prog_entry.append(False)
-Program.append(prog_entry)
-print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry))
-###### Stage 1
-Program.append('Custom')
-###### Stage 2
-Program.append('Custom')
+#         RZChoice = input('Would you like to remove tracks based on the starting plate? If no, press "Enter", otherwise type "y", followed by "Enter" : ')
+#         if RZChoice.upper()=='Y':
+#             print(UI.TimeStamp(),'Removing tracks based on start point')
+#             data_aggregated=data.groupby(['Rec_Seg_ID'])[PM.z].min().reset_index()
+#             data_aggregated_show=data_aggregated.groupby([PM.z]).count().reset_index()
+#             data_aggregated_show=data_aggregated_show.rename(columns={'Rec_Seg_ID': "No_Tracks"})
+#             data_aggregated_show['PID']=data_aggregated_show[PM.z].rank(ascending=True).astype(int)
+#             print('A list of plates and the number of tracks starting on them is listed bellow:')
+#             print(data_aggregated_show.to_string())
+#             RPChoice = input('Enter the list of plates separated by comma that you want to remove followed by "Enter" : ')
+#             if len(RPChoice)>1:
+#                 RPChoice=ast.literal_eval(RPChoice)
+#             else:
+#                 RPChoice=[int(RPChoice)]
+#             TracksZdf = pd.DataFrame(RPChoice, columns = ['PID'], dtype=int)
+#             data_aggregated_show=pd.merge(data_aggregated_show,TracksZdf,how='inner',on='PID')
 
-print(UI.TimeStamp(),'There are ',len(Program),' stages of this script', bcolors.ENDC)
-print(UI.TimeStamp(),'Current status has a stage',Status+1,bcolors.ENDC)
+#             data_aggregated_show.drop(['No_Tracks','PID'],axis=1,inplace=True)
+#             data_aggregated=pd.merge(data_aggregated,data_aggregated_show,how='inner',on=PM.z)
+#             data_aggregated=data_aggregated.rename(columns={PM.z: 'Tracks_Remove'})
 
-while Status<len(Program):
-      if Program[Status]!='Custom':
-        #Standard process here
-        Result=UI.StandardProcess(Program,Status,SubGap,SubPause,RequestExtCPU,JobFlavour,ReqMemory,time_int,Patience)
-        if Result[0]:
-            UI.UpdateStatus(Status+1,Meta,TrainSampleOutputMeta)
-        else:
-            Status=20
-            break
-      if Program[Status]=='Custom':
-          if Status==1:
-            print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
-            print(UI.TimeStamp(),bcolors.BOLD+'Stage 2:'+bcolors.ENDC+' Collecting and de-duplicating the results from stage 1')
-            for i in range(JobSets):
-                    req_file=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/Temp_MCTr1a_'+TrainSampleID+'_0/MCTr1a_'+TrainSampleID+'_IDseeds_'+str(i)+'.pkl'
-                    output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/Temp_MCTr1a_'+TrainSampleID+'_0/MCTr1b_'+TrainSampleID+'_SelectedTrackSamples_'+str(i)+'.pkl'
-                    base_data=UI.PickleOperations(req_file,'r', 'N/A')[0]
-                    ExtractedData=[]
-                    if Regression==False:
-                        min_len=len([j for j in base_data if j.Label==0])
-                        for j in range(len(ClassHeaders)+1):
-                            if len([k for k in base_data if k.Label==j])!=0:
-                               ExtractedData.append([k for k in base_data if k.Label==j])
-                               min_len=min(len([k for k in base_data if k.Label==j]),min_len)
-                        TotalData=[]
-                        for s in range(len(ExtractedData)):
-                            TotalData+=random.sample(ExtractedData[s],min_len)
-                        print(UI.PickleOperations(output_file_location,'w', TotalData)[1])
-                    else: print(UI.PickleOperations(output_file_location,'w', base_data)[1])
-            print(UI.TimeStamp(),bcolors.OKGREEN+'Stage 2 has successfully completed'+bcolors.ENDC)
-            UI.UpdateStatus(Status+1,Meta,TrainSampleOutputMeta)
-            Status+=1
-            continue
+#             data=pd.merge(data, data_aggregated, how="left", on=['Rec_Seg_ID'])
 
-          if Status==2:
-              print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
-              print(UI.TimeStamp(),bcolors.BOLD+'Stage 3:'+bcolors.ENDC+' Taking the list of seeds previously generated by Stage 2, converting them into Emulsion Objects and doing more rigorous selection')
-              TotalData=[]
-              for i in range(JobSets):
-                    req_file=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/Temp_MCTr1a_'+TrainSampleID+'_0/MCTr1b_'+TrainSampleID+'_SelectedTrackSamples_'+str(i)+'.pkl'
-                    base_data=UI.PickleOperations(req_file,'r', 'N/A')[0]
-                    TotalData+=base_data
-              ValidationSampleSize=int(round(min((len(TotalData)*float(PM.valRatio)),PM.MaxValSampleSize),0))
-              random.shuffle(TotalData)
-              output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_OUTPUT.pkl'
-              print(UI.PickleOperations(output_file_location,'w', TotalData[:ValidationSampleSize])[1])
-              TotalData=TotalData[ValidationSampleSize:]
-              No_Train_Files=int(math.ceil(len(TotalData)/TrainSampleSize))
-              for i in range(0,No_Train_Files):
-                  output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_OUTPUT_'+str(i+1)+'.pkl'
-                  print(UI.PickleOperations(output_file_location,'w', TotalData[(i*TrainSampleSize):min(len(TotalData),((i+1)*TrainSampleSize))])[1])
-              print(UI.TimeStamp(),bcolors.OKGREEN+'Stage 2 has successfully completed'+bcolors.ENDC)
-              UI.UpdateStatus(Status+1,Meta,TrainSampleOutputMeta)
-              Status+=1
-              continue
-      MetaInput=UI.PickleOperations(TrainSampleOutputMeta,'r', 'N/A')
-      Meta=MetaInput[0]
-      Status=Meta.Status[-1]
-if Status==3:
-    #Removing the temp files that were generated by the process
-    print(UI.TimeStamp(),'Performing the cleanup... ')
-    print(UI.ManageFolders(AFS_DIR, EOS_DIR, TrainSampleID,'d',['MCTr1a']))
-    UI.Msg('success',"Train sample generation has been completed")
-else:
-      UI.Msg('failed',"Reconstruction has not been completed as one of the processes has timed out. Please run the script again (without Reset Mode).")
-      exit()
+#             data=data[data['Tracks_Remove'].isnull()]
+#             data=data.drop(['Tracks_Remove'],axis=1)
+#         final_rows=len(data.axes[0])
+#         print(UI.TimeStamp(),'After removing tracks that start at the specific plates we have',final_rows,' hits left')
+
+#         RLChoice = input('Would you like to remove tracks based on their length in traverse plates? If no, press "Enter", otherwise type "y", followed by "Enter" : ')
+#         if RLChoice.upper()=='Y':
+#             print(UI.TimeStamp(),'Removing tracks based on length')
+#             data_aggregated=data[['Rec_Seg_ID',PM.z]]
+#             data_aggregated_l=data_aggregated.groupby(['Rec_Seg_ID'])[PM.z].min().reset_index().rename(columns={PM.z: "min_z"})
+#             data_aggregated_r=data_aggregated.groupby(['Rec_Seg_ID'])[PM.z].max().reset_index().rename(columns={PM.z: "max_z"})
+#             data_aggregated=pd.merge(data_aggregated_l,data_aggregated_r,how='inner', on='Rec_Seg_ID')
+#             data_aggregated_list_z=data[[PM.z]].groupby([PM.z]).count().reset_index()
+#             data_aggregated_list_z['PID_l']=data_aggregated_list_z[PM.z].rank(ascending=True).astype(int)
+#             data_aggregated_list_z['PID_r']=data_aggregated_list_z['PID_l']
+#             data_aggregated=pd.merge(data_aggregated,data_aggregated_list_z[[PM.z,'PID_l']], how='inner', left_on='min_z', right_on=PM.z)
+#             data_aggregated=pd.merge(data_aggregated,data_aggregated_list_z[[PM.z,'PID_r']], how='inner', left_on='max_z', right_on=PM.z)[['Rec_Seg_ID','PID_l','PID_r']]
+#             data_aggregated['track_len']=data_aggregated['PID_r']-data_aggregated['PID_l']+1
+
+#             data_aggregated=data_aggregated[['Rec_Seg_ID','track_len']]
+#             data_aggregated_show=data_aggregated.groupby(['track_len']).count().reset_index()
+#             data_aggregated_show=data_aggregated_show.rename(columns={'Rec_Seg_ID': "No_Tracks"})
+#             print('Track length distribution:')
+#             print(data_aggregated_show.to_string())
+#             RTLChoice = input('Enter the list of track lengths to exclude" : ')
+#             if len(RTLChoice)>1:
+#                 RTLChoice=ast.literal_eval(RTLChoice)
+#             else:
+#                 RTLChoice=[int(RTLChoice)]
+#             TracksLdf = pd.DataFrame(RTLChoice, columns = ['track_len'], dtype=int)
+#             data_aggregated=pd.merge(data_aggregated,TracksLdf,how='inner',on='track_len')
+#             data=pd.merge(data, data_aggregated, how="left", on=['Rec_Seg_ID'])
+#             data=data[data['track_len'].isnull()]
+#             data=data.drop(['track_len'],axis=1)
+#         final_rows=len(data.axes[0])
+#         print(UI.TimeStamp(),'After removing tracks with specific lengths we have',final_rows,' hits left')
+#         compress_data=data.drop([PM.x,PM.y,PM.z,PM.tx,PM.ty],axis=1)
+#         compress_data['MC_Mother_Track_No']= compress_data['MC_Mother_Track_ID']
+#         compress_data=compress_data.groupby(by=['Rec_Seg_ID','MC_Mother_Track_ID'])['MC_Mother_Track_No'].count().reset_index()
+#         compress_data=compress_data.sort_values(['Rec_Seg_ID','MC_Mother_Track_No'],ascending=[1,0])
+#         compress_data.drop_duplicates(subset='Rec_Seg_ID',keep='first',inplace=True)
+#         data=data.drop(['MC_Mother_Track_ID'],axis=1)
+#         compress_data=compress_data.drop(['MC_Mother_Track_No'],axis=1)
+#         data=pd.merge(data, compress_data, how="left", on=['Rec_Seg_ID'])
+#         if SliceData:
+#              print(UI.TimeStamp(),'Slicing the data...')
+#              ValidEvents=data.drop(data.index[(data[PM.x] > Xmax) | (data[PM.x] < Xmin) | (data[PM.y] > Ymax) | (data[PM.y] < Ymin)])
+#              ValidEvents.drop([PM.x,PM.y,PM.z,PM.tx,PM.ty,'MC_Mother_Track_ID']+ExtraColumns,axis=1,inplace=True)
+#              ValidEvents.drop_duplicates(subset='Rec_Seg_ID',keep='first',inplace=True)
+#              data=pd.merge(data, ValidEvents, how="inner", on=['Rec_Seg_ID'])
+#              final_rows=len(data.axes[0])
+#              print(UI.TimeStamp(),'The sliced data has ',final_rows,' hits')
+
+
+#         output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/MCTr1_'+TrainSampleID+'_TRACKS.csv'
+#         if Regression:
+#             print(UI.TimeStamp(),'Normalising regression value',ExtraColumns[0])
+#             data_agg=data.groupby(['Rec_Seg_ID','MC_Mother_Track_ID']).agg(subject_reg_val=pd.NamedAgg(column=ClassNames[0][0], aggfunc=ClassValues[0][1])).reset_index()
+#             data_agg=data_agg.rename(columns={'subject_reg_val': ClassNames[0][0]})
+#             data_agg[ClassNames[0][0]]=data_agg[ClassNames[0][0]].astype(float)-(float(ClassValues[0][2])/2)
+#             data_agg[ClassNames[0][0]]=data_agg[ClassNames[0][0]].astype(float).div(float(ClassValues[0][2])/2)
+#             data.drop([ClassNames[0][0]],axis=1,inplace=True)
+#             data=pd.merge(data,data_agg, how="inner", on=['Rec_Seg_ID','MC_Mother_Track_ID'])
+#         print(UI.TimeStamp(),'Removing tracks which have less than',MinHitsTrack,'hits...')
+#         track_no_data=data.groupby(['MC_Mother_Track_ID','Rec_Seg_ID']+ExtraColumns,as_index=False).count()
+#         track_no_data=track_no_data.drop([PM.y,PM.z,PM.tx,PM.ty],axis=1)
+#         track_no_data=track_no_data.rename(columns={PM.x: "Rec_Seg_No"})
+#         new_combined_data=pd.merge(data, track_no_data, how="left", on=['Rec_Seg_ID','MC_Mother_Track_ID']+ExtraColumns)
+#         new_combined_data = new_combined_data[new_combined_data.Rec_Seg_No >= MinHitsTrack]
+#         new_combined_data = new_combined_data.drop(["Rec_Seg_No"],axis=1)
+#         new_combined_data=new_combined_data.sort_values(['Rec_Seg_ID',PM.x],ascending=[1,1])
+#         grand_final_rows=len(new_combined_data.axes[0])
+#         print(UI.TimeStamp(),'The cleaned data has ',grand_final_rows,' hits')
+#         new_combined_data=new_combined_data.rename(columns={PM.x: "x"})
+#         new_combined_data=new_combined_data.rename(columns={PM.y: "y"})
+#         new_combined_data=new_combined_data.rename(columns={PM.z: "z"})
+#         new_combined_data=new_combined_data.rename(columns={PM.tx: "tx"})
+#         new_combined_data=new_combined_data.rename(columns={PM.ty: "ty"})
+#         new_combined_data.drop(['MC_Mother_Track_ID'],axis=1,inplace=True)
+#         new_combined_data.to_csv(output_file_location,index=False)
+#         data=new_combined_data[['Rec_Seg_ID']]
+#         print(UI.TimeStamp(),'Analysing the data sample in order to understand how many jobs to submit to HTCondor... ',bcolors.ENDC)
+#         data.drop_duplicates(subset='Rec_Seg_ID',keep='first',inplace=True)
+#         data = data.values.tolist()
+#         no_submissions=math.ceil(len(data)/PM.MaxSegments)
+#         print(UI.TimeStamp(), bcolors.OKGREEN+"The track segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+output_file_location+bcolors.ENDC)
+#         Meta=UI.JobMeta(TrainSampleID)
+#         Meta.UpdateJobMeta(['ClassHeaders','ClassNames','ClassValues','MaxSegments','JobSets','MinHitsTrack'], [ClassHeaders,ClassNames,ClassValues,PM.MaxSegments,no_submissions,MinHitsTrack])
+#         Meta.UpdateStatus(0)
+#         print(UI.PickleOperations(TrainSampleOutputMeta,'w', Meta)[1])
+#         print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
+#         print(UI.TimeStamp(),bcolors.OKGREEN+'Stage 0 has successfully completed'+bcolors.ENDC)
+# elif os.path.isfile(TrainSampleOutputMeta)==True:
+#     print(UI.TimeStamp(),'Loading previously saved data from ',bcolors.OKBLUE+TrainSampleOutputMeta+bcolors.ENDC)
+#     MetaInput=UI.PickleOperations(TrainSampleOutputMeta,'r', 'N/A')
+#     Meta=MetaInput[0]
+
+# ClassHeaders=Meta.ClassHeaders
+# ClassNames=Meta.ClassNames
+# ClassValues=Meta.ClassValues
+# JobSets=Meta.JobSets
+# MaxSegments=Meta.MaxSegments
+# TotJobs=JobSets
+
+# ########################################     Preset framework parameters    #########################################
+# Program=[]
+
+
+# #The function bellow helps to automate the submission process
+# UI.Msg('vanilla','Analysing the current script status...')
+# Status=Meta.Status[-1]
+# if ForceStatus!='N':
+#     Status=int(ForceStatus)
+# UI.Msg('vanilla','Current stage is '+str(Status)+'...')
+# ###### Stage 0
+# prog_entry=[]
+# prog_entry.append('Sending tracks to HTCondor for conversion int training/validation samples...')
+# prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/','IDseeds','MCTr1a','.pkl',TrainSampleID,JobSets,'MCTr1a_GenerateRawTrackSamples_Sub.py'])
+# prog_entry.append([ " --MaxSegments ", " --ClassNames "," --ClassValues "])
+# prog_entry.append([MaxSegments,'"'+str(ClassNames)+'"','"'+str(ClassValues)+'"'])
+# prog_entry.append(JobSets)
+# prog_entry.append(LocalSub)
+# prog_entry.append('N/A')
+# prog_entry.append(HTCondorLog)
+# prog_entry.append(False)
+# Program.append(prog_entry)
+# print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry))
+# ###### Stage 1
+# Program.append('Custom')
+# ###### Stage 2
+# Program.append('Custom')
+
+# print(UI.TimeStamp(),'There are ',len(Program),' stages of this script', bcolors.ENDC)
+# print(UI.TimeStamp(),'Current status has a stage',Status+1,bcolors.ENDC)
+
+# while Status<len(Program):
+#       if Program[Status]!='Custom':
+#         #Standard process here
+#         Result=UI.StandardProcess(Program,Status,SubGap,SubPause,RequestExtCPU,JobFlavour,ReqMemory,time_int,Patience)
+#         if Result[0]:
+#             UI.UpdateStatus(Status+1,Meta,TrainSampleOutputMeta)
+#         else:
+#             Status=20
+#             break
+#       if Program[Status]=='Custom':
+#           if Status==1:
+#             print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
+#             print(UI.TimeStamp(),bcolors.BOLD+'Stage 2:'+bcolors.ENDC+' Collecting and de-duplicating the results from stage 1')
+#             for i in range(JobSets):
+#                     req_file=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/Temp_MCTr1a_'+TrainSampleID+'_0/MCTr1a_'+TrainSampleID+'_IDseeds_'+str(i)+'.pkl'
+#                     output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/Temp_MCTr1a_'+TrainSampleID+'_0/MCTr1b_'+TrainSampleID+'_SelectedTrackSamples_'+str(i)+'.pkl'
+#                     base_data=UI.PickleOperations(req_file,'r', 'N/A')[0]
+#                     ExtractedData=[]
+#                     if Regression==False:
+#                         min_len=len([j for j in base_data if j.Label==0])
+#                         for j in range(len(ClassHeaders)+1):
+#                             if len([k for k in base_data if k.Label==j])!=0:
+#                                ExtractedData.append([k for k in base_data if k.Label==j])
+#                                min_len=min(len([k for k in base_data if k.Label==j]),min_len)
+#                         TotalData=[]
+#                         for s in range(len(ExtractedData)):
+#                             TotalData+=random.sample(ExtractedData[s],min_len)
+#                         print(UI.PickleOperations(output_file_location,'w', TotalData)[1])
+#                     else: print(UI.PickleOperations(output_file_location,'w', base_data)[1])
+#             print(UI.TimeStamp(),bcolors.OKGREEN+'Stage 2 has successfully completed'+bcolors.ENDC)
+#             UI.UpdateStatus(Status+1,Meta,TrainSampleOutputMeta)
+#             Status+=1
+#             continue
+
+#           if Status==2:
+#               print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
+#               print(UI.TimeStamp(),bcolors.BOLD+'Stage 3:'+bcolors.ENDC+' Taking the list of seeds previously generated by Stage 2, converting them into Emulsion Objects and doing more rigorous selection')
+#               TotalData=[]
+#               for i in range(JobSets):
+#                     req_file=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/Temp_MCTr1a_'+TrainSampleID+'_0/MCTr1b_'+TrainSampleID+'_SelectedTrackSamples_'+str(i)+'.pkl'
+#                     base_data=UI.PickleOperations(req_file,'r', 'N/A')[0]
+#                     TotalData+=base_data
+#               ValidationSampleSize=int(round(min((len(TotalData)*float(PM.valRatio)),PM.MaxValSampleSize),0))
+#               random.shuffle(TotalData)
+#               output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_OUTPUT.pkl'
+#               print(UI.PickleOperations(output_file_location,'w', TotalData[:ValidationSampleSize])[1])
+#               TotalData=TotalData[ValidationSampleSize:]
+#               No_Train_Files=int(math.ceil(len(TotalData)/TrainSampleSize))
+#               for i in range(0,No_Train_Files):
+#                   output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_OUTPUT_'+str(i+1)+'.pkl'
+#                   print(UI.PickleOperations(output_file_location,'w', TotalData[(i*TrainSampleSize):min(len(TotalData),((i+1)*TrainSampleSize))])[1])
+#               print(UI.TimeStamp(),bcolors.OKGREEN+'Stage 2 has successfully completed'+bcolors.ENDC)
+#               UI.UpdateStatus(Status+1,Meta,TrainSampleOutputMeta)
+#               Status+=1
+#               continue
+#       MetaInput=UI.PickleOperations(TrainSampleOutputMeta,'r', 'N/A')
+#       Meta=MetaInput[0]
+#       Status=Meta.Status[-1]
+# if Status==3:
+#     #Removing the temp files that were generated by the process
+#     print(UI.TimeStamp(),'Performing the cleanup... ')
+#     print(UI.ManageFolders(AFS_DIR, EOS_DIR, TrainSampleID,'d',['MCTr1a']))
+#     UI.Msg('success',"Train sample generation has been completed")
+# else:
+#       UI.Msg('failed',"Reconstruction has not been completed as one of the processes has timed out. Please run the script again (without Reset Mode).")
+#       exit()
 
 
 
