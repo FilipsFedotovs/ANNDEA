@@ -225,12 +225,15 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
             data[i]=data[i].astype(str)
         data[PM.MC_Track_ID] = data[PM.MC_Track_ID].astype(str)
         data[TrackID] = data[TrackID].astype(str)
-        data[BrickID] = data[BrickID].astype(str)
+        if BrickID!='N/A':
+            data[BrickID] = data[BrickID].astype(str)
+            data['Rec_Seg_ID'] = data[BrickID] + '-' + data[TrackID]
+            data=data.drop([BrickID],axis=1)
+        else:
+            data['Rec_Seg_ID'] = data[TrackID]
         data[PM.MC_Event_ID] = data[PM.MC_Event_ID].astype(str)
-        data['Rec_Seg_ID'] = data[BrickID] + '-' + data[TrackID]
         data['MC_Mother_Track_ID'] = data[PM.MC_Event_ID] + '-' + data[PM.MC_Track_ID]
         data=data.drop([TrackID],axis=1)
-        data=data.drop([BrickID],axis=1)
         data=data.drop([PM.MC_Event_ID],axis=1)
         data=data.drop([PM.MC_Track_ID],axis=1)
         print(data)
