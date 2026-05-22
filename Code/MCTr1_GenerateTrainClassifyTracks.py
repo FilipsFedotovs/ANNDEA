@@ -97,7 +97,13 @@ EOSsubDIR=EOS_DIR+'/'+'ANNDEA'
 EOSsubModelDIR=EOSsubDIR+'/'+'Models'
 TrainSampleOutputMeta=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_info.pkl'
 required_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/MCTr1_'+TrainSampleID+'_TRACKS.csv'
-ColumnsToImport=[TrackID,BrickID,PM.x,PM.y,PM.z,PM.tx,PM.ty,PM.MC_Track_ID,PM.MC_Event_ID]
+
+if BrickID=='':
+    ColumnsToImport=[TrackID,PM.x,PM.y,PM.z,PM.tx,PM.ty,PM.MC_Track_ID,PM.MC_Event_ID]
+else:
+    ColumnsToImport=[TrackID,BrickID,PM.x,PM.y,PM.z,PM.tx,PM.ty,PM.MC_Track_ID,PM.MC_Event_ID]
+
+
 ExtraColumns=[]
 for i in ClassNames:
     for j in i:
@@ -105,7 +111,8 @@ for i in ClassNames:
             ColumnsToImport.append(j)
         if (j in ExtraColumns)==False:
                 ExtraColumns.append(j)
-
+print(ColumnsToImport)
+exit()
 Regression=ClassValues[0][0]=='Reg'
 
 ########################################     Phase 1 - Create compact source file    #########################################
