@@ -204,6 +204,8 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
                     df.columns = head_columns
                     data = df.explode([PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty]+mc_cols_hd)
                     print(data)
+                    data=data[ColumnsToImport]
+                    print(data)
                     exit()
             # except Exception as e:
             #     UI.Msg('failed',f"MC track data preparation has not been completed due to the following exception: {e}.")
