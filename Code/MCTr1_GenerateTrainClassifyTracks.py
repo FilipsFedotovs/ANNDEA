@@ -199,6 +199,8 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
                     raw_columns = base_cols.copy()
                     head_columns=[PM.Hit_ID, PM.x,PM.y,PM.z,PM.tx,PM.ty,TrackID]
                     df = pd.DataFrame(rdf_processed.AsNumpy(columns = raw_columns))
+                    print(df)
+                    exit()
                     df.columns = head_columns
                     data = df.explode([PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty]+mc_cols_hd)
                     print(data)
