@@ -128,18 +128,12 @@ else:
 if BrickID=='':
     BrickID='N/A'
 
-# if os.path.isfile(required_file_location)==False:
-#         print(UI.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
-#         data=pd.read_csv(input_file_location,
-#                     header=0,
-#                     usecols=ColumnsToImport)
-        
 
 if os.path.isfile(required_file_location)==False or Mode=='RESET':
 
         print(UI.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
         if input_file_location[-5:]=='.root':
-            try:
+            # try:
                 import ROOT as r
                 r.gInterpreter.Declare("""
                 ROOT::RDF::RNode PreprocessTracks(ROOT::RDataFrame df) {
@@ -209,8 +203,8 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
                     data = df.explode([PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty]+mc_cols_hd)
                     print(data)
                     exit()
-            except Exception as e:
-                UI.Msg('failed',f"MC track data preparation has not been completed due to the following exception: {e}.")
+            # except Exception as e:
+            #     UI.Msg('failed',f"MC track data preparation has not been completed due to the following exception: {e}.")
 exit()
             #     else:   
             #         df = pd.DataFrame(rdf.AsNumpy(columns = ["s.eID","s.eX","s.eY","s.eZ","s.eTX","s.eTY", BrickID, TrackID]))
