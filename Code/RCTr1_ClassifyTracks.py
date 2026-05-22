@@ -179,6 +179,7 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
             data_aggregated_show=data_aggregated_show.rename(columns={'Rec_Seg_ID': "No_Tracks"})
             data_aggregated_show['PID']=data_aggregated_show[PM.z].rank(ascending=True).astype(int)
             print('A list of plates and the number of tracks starting on them is listed bellow:')
+            print(data_aggregated_show.to_string())
             RPChoice = input('Enter the list of plates separated by comma that you want to remove followed by "Enter" : ')
             if ',' in RPChoice:
                 RPChoice=ast.literal_eval(RPChoice)
@@ -447,10 +448,7 @@ while Status<len(Program):
             else:
                 data['Rec_Seg_ID'] = data[TrackID]
             data=pd.merge(data,ExtractedData,how='left',on=['Rec_Seg_ID'])
-            print(data)
-            
             data=data.drop(['Rec_Seg_ID'],axis=1)
-            print(data)
             final_output_file_location=EOS_DIR+'/ANNDEA/Data/REC_SET/'+raw_name+'_'+RecBatchID+'_CLASSIFIED_TRACKS.csv'
             data.to_csv(final_output_file_location,index=False)
             print(UI.TimeStamp(), bcolors.OKGREEN+"The classified track data has been written to"+bcolors.ENDC, bcolors.OKBLUE+final_output_file_location+bcolors.ENDC)

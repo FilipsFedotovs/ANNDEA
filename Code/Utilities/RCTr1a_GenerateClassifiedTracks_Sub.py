@@ -1,17 +1,12 @@
 #This simple script prepares 2-segment track seeds for the initial CNN/GNN union
 # Part of ANNDEA package
 #Made by Filips Fedotovs
-#Current version 1.0
+#Current version 2.0
 
 ########################################    Import libraries    #############################################
 import argparse
 import sys
-########################################    Import libraries    #############################################
-import argparse
 import site
-
-
-
 
 ######################################## Set variables  #############################################################
 #Setting the parser - this script is usually not run directly, but is used by a Master version Counterpart that passes the required arguments
@@ -56,16 +51,24 @@ import U_ML as ML #This is where we keep routine utility functions
 import pandas as pd #We use Panda for a routine data processing
 import gc  #Helps to clear memory
 from U_EMO import EMO
+
 EOSsubDIR=EOS_DIR+'/'+'ANNDEA'
 EOSsubModelDIR=EOSsubDIR+'/'+'Models'
 Model_Meta_Path=EOSsubModelDIR+'/'+ModelName+'_Meta'
 Model_Path=EOSsubModelDIR+'/'+ModelName
 ModelMeta=UI.PickleOperations(Model_Meta_Path, 'r', 'N/A')[0]
-if ModelMeta.ModelFramework=='Tensorflow':
-        import tensorflow as tf
-        from tensorflow import keras
-        Model_Path=EOSsubModelDIR+'/'+ModelName+'.keras'
-        model=tf.keras.models.load_model(Model_Path)
+
+# We barely use Tesnorflow, only for CNNs which are excessive for emulsion data.
+# PyTorch seemed to better fit the job as it has better GNN ecosystem
+# Will comment it for now just in case, but planning to decommision it from ANNDEA.
+
+# if ModelMeta.ModelFramework=='Tensorflow':
+#         import tensorflow as tf
+#         from tensorflow import keras
+#         Model_Path=EOSsubModelDIR+'/'+ModelName+'.keras'
+#         model=tf.keras.models.load_model(Model_Path)
+
+
 if ModelMeta.ModelFramework=='PyTorch':
         import torch
         from torch import optim
@@ -88,21 +91,18 @@ data=pd.read_csv(input_file_location,header=0,
 data['Rec_Seg_ID'] = data['Rec_Seg_ID'].astype(str)
 track_headers = data[['Rec_Seg_ID']]
 track_headers = track_headers.drop_duplicates(subset=['Rec_Seg_ID'],keep='first')
-track_column_headers=track_headers.columns.values.tolist()
 track_headers=track_headers.values.tolist()
 track_data = data[['x','y','z','tx','ty','Rec_Seg_ID']].values.tolist() #Convirting the result to List data type
 track_headers = track_headers[int(i)*MaxSegments : min((int(i)+1)*MaxSegments, len(track_headers))]
 
 gc.collect()
-track_counter=0
-print('Data has been successfully loaded and prepared..')
+print(UI.TimeStamp(),'Data has been successfully loaded and prepared..')
 #create seeds
 GoodTracks=[]
 print(UI.TimeStamp(),'Beginning the image generation part...')
 limit = len(track_headers)
 
 for s in range(0,limit):
-
      track=track_headers.pop(0)
      track=EMO([track[0]])
      track.Decorate(track_data)
@@ -111,7 +111,7 @@ for s in range(0,limit):
 
 print(UI.TimeStamp(),'The track classification has been completed..')
 print(UI.TimeStamp(),'Saving the results..')
-print(UI.PickleOperations(output_file_location,'w', GoodTracks)[1])
+print(UI.PickleOperations(output_file_location,'w', GoodTracks)[1]) #Logging
 #End of the script
 
 

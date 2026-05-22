@@ -6,7 +6,6 @@ import site
 import os
 
 AFS_DIR = os.environ.get('AFS_DIR', '..')
-print(AFS_DIR)
 #import ast
 csv_reader=open(AFS_DIR+'/config',"r")
 config = list(csv.reader(csv_reader))
