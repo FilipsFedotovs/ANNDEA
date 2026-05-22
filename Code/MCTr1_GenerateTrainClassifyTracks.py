@@ -249,10 +249,11 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
             print('A list of plates and the number of tracks starting on them is listed bellow:')
             print(data_aggregated_show.to_string())
             RPChoice = input('Enter the list of plates separated by comma that you want to remove followed by "Enter" : ')
-            if len(RPChoice)>1:
+            if ',' in RPChoice:
                 RPChoice=ast.literal_eval(RPChoice)
             else:
                 RPChoice=[int(RPChoice)]
+                
             TracksZdf = pd.DataFrame(RPChoice, columns = ['PID'], dtype=int)
             data_aggregated_show=pd.merge(data_aggregated_show,TracksZdf,how='inner',on='PID')
 
@@ -287,7 +288,7 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
             print('Track length distribution:')
             print(data_aggregated_show.to_string())
             RTLChoice = input('Enter the list of track lengths to exclude" : ')
-            if len(RTLChoice)>1:
+            if ',' in RTLChoice:
                 RTLChoice=ast.literal_eval(RTLChoice)
             else:
                 RTLChoice=[int(RTLChoice)]
