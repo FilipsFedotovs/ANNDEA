@@ -55,7 +55,7 @@ parser.add_argument('--ClassHeaders',help="What class headers to use?", default=
 parser.add_argument('--ClassNames',help="What class headers to use?", default="[['Flag','ProcID']]")
 parser.add_argument('--ClassValues',help="What class values to use?", default="[['11','-11'],['8']]")
 parser.add_argument('--TrackID',help="What track name is used?", default='ANN_Track_ID')
-parser.add_argument('--BrickID',help="What brick ID name is used?", default='ANN_Brick_ID')
+parser.add_argument('--BrickID',help="What brick ID name is used?", default='')
 parser.add_argument('--ReqMemory',help="How uch memory to request?", default='2 GB')
 parser.add_argument('--RequestExtCPU',help="Would you like to request extra CPUs?", default=1)
 parser.add_argument('--ForceStatus',help="Would you like the program run from specific status number? (Only for advance users)", default='N')
