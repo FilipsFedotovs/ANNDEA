@@ -133,7 +133,7 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
 
         print(UI.TimeStamp(),'Loading raw data from',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
         if input_file_location[-5:]=='.root':
-            # try:
+            try:
                 import ROOT as r
                 r.gInterpreter.Declare("""
                 ROOT::RDF::RNode PreprocessTracks(ROOT::RDataFrame df) {
@@ -170,8 +170,6 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
                 print(UI.TimeStamp(),'Importing data into the Pandas data frame...')
                 # Define helper function in C++ to extract the updated RDataFrame with the new columns
                 rdf_processed = r.PreprocessTracks(rdf)
-                print(UI.TimeStamp(),'Importing data into the Pandas data frame...')
-                
                 mc_cols = [
                     "s_PdgCode",
                     "s.eMCEvt",
@@ -186,79 +184,56 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
                     'P'
                 ]
 
-                if BrickID=='N/A':
-                    base_cols = [
-                    "s.eID",
-                    "s.eX",
-                    "s.eY",
-                    "s.eZ",
-                    "s.eTX",
-                    "s.eTY",
-                    TrackID
-                    ]
-                    raw_columns = base_cols.copy()
-                    head_columns=[PM.Hit_ID, PM.x,PM.y,PM.z,PM.tx,PM.ty,TrackID]
-                    raw_columns.extend(mc_cols)
-                    head_columns.extend(mc_cols_hd)
-                    df = pd.DataFrame(rdf_processed.AsNumpy(columns = raw_columns))
-                    df.columns = head_columns
-                    data = df.explode([PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty]+mc_cols_hd)
-                    print(data)
-                    data=data[ColumnsToImport]
-                    print(data)
-                    exit()
-            # except Exception as e:
-            #     UI.Msg('failed',f"MC track data preparation has not been completed due to the following exception: {e}.")
-exit()
-            #     else:   
-            #         df = pd.DataFrame(rdf.AsNumpy(columns = ["s.eID","s.eX","s.eY","s.eZ","s.eTX","s.eTY", BrickID, TrackID]))
-            #         df.columns = [PM.Hit_ID, PM.x,PM.y,PM.z,PM.tx,PM.ty, BrickID, TrackID]
-            #         data = df.explode([PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty])
-            #         data[BrickID]=data[BrickID].str[0]
-            #         data[TrackID]=data[TrackID].str[0]
-            # if BrickID=='N/A':
-            #    df = pd.DataFrame(rdf.AsNumpy(columns = ["s.eID","s.eX","s.eY","s.eZ","s.eTX","s.eTY",TrackID]))
-            #    df.columns = [PM.Hit_ID, PM.x,PM.y,PM.z,PM.tx,PM.ty,TrackID]
-            #    data = df.explode([PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty])
 
-            # else:   
-            #    df = pd.DataFrame(rdf.AsNumpy(columns = ["s.eID","s.eX","s.eY","s.eZ","s.eTX","s.eTY", BrickID, TrackID]))
+                base_cols = [
+                "s.eID",
+                "s.eX",
+                "s.eY",
+                "s.eZ",
+                "s.eTX",
+                "s.eTY",
+                TrackID
+                ]
+                raw_columns = base_cols.copy()
+                head_columns=[PM.Hit_ID, PM.x,PM.y,PM.z,PM.tx,PM.ty,TrackID]
+                raw_columns.extend(mc_cols)
+                head_columns.extend(mc_cols_hd)
+                df = pd.DataFrame(rdf_processed.AsNumpy(columns = raw_columns))
+                df.columns = head_columns
+                data = df.explode([PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty]+mc_cols_hd)
+                data=data[ColumnsToImport] #Import only necesary columns (we don't need PDG Id for regression anyway)
 
-            #    df.columns = [PM.Hit_ID, PM.x,PM.y,PM.z,PM.tx,PM.ty, BrickID, TrackID]
-            #    data = df.explode([PM.Hit_ID,PM.x,PM.y,PM.z,PM.tx,PM.ty])
-            #    data[BrickID]=data[BrickID].str[0]
-            #    data[TrackID]=data[TrackID].str[0]
-               
-            
-#         elif input_file_location[-4:]=='.csv':
-#             data=pd.read_csv(input_file_location,
-#                         header=0,
-#                         usecols=ColumnsToImport)
-#         else:
-#             UI.Msg('failed',f'The file "{input_file_location}" is incorrect: it should be either ROOT or CSV text file with the appropirate suffix...')
-#             exit()
-#         exit()
-#         total_rows=len(data.axes[0])
+            except Exception as e:
+                UI.Msg('failed',f"MC track data preparation has not been completed due to the following exception: {e}.")
+        elif input_file_location[-4:]=='.csv':
+            data=pd.read_csv(input_file_location,
+                        header=0,
+                        usecols=ColumnsToImport)
+        else:
+            UI.Msg('failed',f'The file "{input_file_location}" is incorrect: it should be either ROOT or CSV text file with the appropirate suffix...')
+            exit()
 
-#         print(UI.TimeStamp(),'The raw data has ',total_rows,' hits')
-#         print(UI.TimeStamp(),'Removing unreconstructed hits...')
-#         data=data.dropna()
-#         final_rows=len(data.axes[0])
-#         print(UI.TimeStamp(),'The cleaned data has ',final_rows,' hits')
+        total_rows=len(data.axes[0])
+        print(UI.TimeStamp(),'The raw data has ',total_rows,' hits')
+        print(UI.TimeStamp(),'Removing unreconstructed hits...')
+        data=data.dropna()
+        final_rows=len(data.axes[0])
+        print(UI.TimeStamp(),'The cleaned data has ',final_rows,' hits')
 
-#         data[PM.MC_Event_ID] = data[PM.MC_Event_ID].astype(str)
-#         for i in ExtraColumns:
-#             data[i]=data[i].astype(str)
-#         data[PM.MC_Track_ID] = data[PM.MC_Track_ID].astype(str)
-#         data[TrackID] = data[TrackID].astype(str)
-#         data[BrickID] = data[BrickID].astype(str)
-#         data[PM.MC_Event_ID] = data[PM.MC_Event_ID].astype(str)
-#         data['Rec_Seg_ID'] = data[BrickID] + '-' + data[TrackID]
-#         data['MC_Mother_Track_ID'] = data[PM.MC_Event_ID] + '-' + data[PM.MC_Track_ID]
-#         data=data.drop([TrackID],axis=1)
-#         data=data.drop([BrickID],axis=1)
-#         data=data.drop([PM.MC_Event_ID],axis=1)
-#         data=data.drop([PM.MC_Track_ID],axis=1)
+        data[PM.MC_Event_ID] = data[PM.MC_Event_ID].astype(str)
+        for i in ExtraColumns:
+            data[i]=data[i].astype(str)
+        data[PM.MC_Track_ID] = data[PM.MC_Track_ID].astype(str)
+        data[TrackID] = data[TrackID].astype(str)
+        data[BrickID] = data[BrickID].astype(str)
+        data[PM.MC_Event_ID] = data[PM.MC_Event_ID].astype(str)
+        data['Rec_Seg_ID'] = data[BrickID] + '-' + data[TrackID]
+        data['MC_Mother_Track_ID'] = data[PM.MC_Event_ID] + '-' + data[PM.MC_Track_ID]
+        data=data.drop([TrackID],axis=1)
+        data=data.drop([BrickID],axis=1)
+        data=data.drop([PM.MC_Event_ID],axis=1)
+        data=data.drop([PM.MC_Track_ID],axis=1)
+        print(data)
 
 
 #         RZChoice = input('Would you like to remove tracks based on the starting plate? If no, press "Enter", otherwise type "y", followed by "Enter" : ')
