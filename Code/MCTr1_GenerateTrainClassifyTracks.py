@@ -357,120 +357,120 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         no_submissions=math.ceil(len(data)/PM.MaxSegments)
         print(UI.TimeStamp(), bcolors.OKGREEN+"The track segment data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+output_file_location+bcolors.ENDC)
         Meta=UI.JobMeta(TrainSampleID)
-#         Meta.UpdateJobMeta(['ClassHeaders','ClassNames','ClassValues','MaxSegments','JobSets','MinHitsTrack'], [ClassHeaders,ClassNames,ClassValues,PM.MaxSegments,no_submissions,MinHitsTrack])
-#         Meta.UpdateStatus(0)
-#         print(UI.PickleOperations(TrainSampleOutputMeta,'w', Meta)[1])
-#         print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
-#         print(UI.TimeStamp(),bcolors.OKGREEN+'Stage 0 has successfully completed'+bcolors.ENDC)
-# elif os.path.isfile(TrainSampleOutputMeta)==True:
-#     print(UI.TimeStamp(),'Loading previously saved data from ',bcolors.OKBLUE+TrainSampleOutputMeta+bcolors.ENDC)
-#     MetaInput=UI.PickleOperations(TrainSampleOutputMeta,'r', 'N/A')
-#     Meta=MetaInput[0]
+        Meta.UpdateJobMeta(['ClassHeaders','ClassNames','ClassValues','MaxSegments','JobSets','MinHitsTrack'], [ClassHeaders,ClassNames,ClassValues,PM.MaxSegments,no_submissions,MinHitsTrack])
+        Meta.UpdateStatus(0)
+        print(UI.PickleOperations(TrainSampleOutputMeta,'w', Meta)[1])
+        print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
+        print(UI.TimeStamp(),bcolors.OKGREEN+'Stage 0 has successfully completed'+bcolors.ENDC)
+elif os.path.isfile(TrainSampleOutputMeta)==True:
+    print(UI.TimeStamp(),'Loading previously saved data from ',bcolors.OKBLUE+TrainSampleOutputMeta+bcolors.ENDC)
+    MetaInput=UI.PickleOperations(TrainSampleOutputMeta,'r', 'N/A')
+    Meta=MetaInput[0]
 
-# ClassHeaders=Meta.ClassHeaders
-# ClassNames=Meta.ClassNames
-# ClassValues=Meta.ClassValues
-# JobSets=Meta.JobSets
-# MaxSegments=Meta.MaxSegments
-# TotJobs=JobSets
+ClassHeaders=Meta.ClassHeaders
+ClassNames=Meta.ClassNames
+ClassValues=Meta.ClassValues
+JobSets=Meta.JobSets
+MaxSegments=Meta.MaxSegments
+TotJobs=JobSets
 
-# ########################################     Preset framework parameters    #########################################
-# Program=[]
+########################################     Preset framework parameters    #########################################
+Program=[]
 
 
-# #The function bellow helps to automate the submission process
-# UI.Msg('vanilla','Analysing the current script status...')
-# Status=Meta.Status[-1]
-# if ForceStatus!='N':
-#     Status=int(ForceStatus)
-# UI.Msg('vanilla','Current stage is '+str(Status)+'...')
-# ###### Stage 0
-# prog_entry=[]
-# prog_entry.append('Sending tracks to HTCondor for conversion int training/validation samples...')
-# prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/','IDseeds','MCTr1a','.pkl',TrainSampleID,JobSets,'MCTr1a_GenerateRawTrackSamples_Sub.py'])
-# prog_entry.append([ " --MaxSegments ", " --ClassNames "," --ClassValues "])
-# prog_entry.append([MaxSegments,'"'+str(ClassNames)+'"','"'+str(ClassValues)+'"'])
-# prog_entry.append(JobSets)
-# prog_entry.append(LocalSub)
-# prog_entry.append('N/A')
-# prog_entry.append(HTCondorLog)
-# prog_entry.append(False)
-# Program.append(prog_entry)
-# print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry))
-# ###### Stage 1
-# Program.append('Custom')
-# ###### Stage 2
-# Program.append('Custom')
+#The function bellow helps to automate the submission process
+UI.Msg('vanilla','Analysing the current script status...')
+Status=Meta.Status[-1]
+if ForceStatus!='N':
+    Status=int(ForceStatus)
+UI.Msg('vanilla','Current stage is '+str(Status)+'...')
+###### Stage 0
+prog_entry=[]
+prog_entry.append('Sending tracks to HTCondor for conversion int training/validation samples...')
+prog_entry.append([AFS_DIR,EOS_DIR,PY_DIR,'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/','IDseeds','MCTr1a','.pkl',TrainSampleID,JobSets,'MCTr1a_GenerateRawTrackSamples_Sub.py'])
+prog_entry.append([ " --MaxSegments ", " --ClassNames "," --ClassValues "])
+prog_entry.append([MaxSegments,'"'+str(ClassNames)+'"','"'+str(ClassValues)+'"'])
+prog_entry.append(JobSets)
+prog_entry.append(LocalSub)
+prog_entry.append('N/A')
+prog_entry.append(HTCondorLog)
+prog_entry.append(False)
+Program.append(prog_entry)
+print(UI.TimeStamp(),UI.ManageTempFolders(prog_entry))
+###### Stage 1
+Program.append('Custom')
+###### Stage 2
+Program.append('Custom')
 
-# print(UI.TimeStamp(),'There are ',len(Program),' stages of this script', bcolors.ENDC)
-# print(UI.TimeStamp(),'Current status has a stage',Status+1,bcolors.ENDC)
+print(UI.TimeStamp(),'There are ',len(Program),' stages of this script', bcolors.ENDC)
+print(UI.TimeStamp(),'Current status has a stage',Status+1,bcolors.ENDC)
 
-# while Status<len(Program):
-#       if Program[Status]!='Custom':
-#         #Standard process here
-#         Result=UI.StandardProcess(Program,Status,SubGap,SubPause,RequestExtCPU,JobFlavour,ReqMemory,time_int,Patience)
-#         if Result[0]:
-#             UI.UpdateStatus(Status+1,Meta,TrainSampleOutputMeta)
-#         else:
-#             Status=20
-#             break
-#       if Program[Status]=='Custom':
-#           if Status==1:
-#             print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
-#             print(UI.TimeStamp(),bcolors.BOLD+'Stage 2:'+bcolors.ENDC+' Collecting and de-duplicating the results from stage 1')
-#             for i in range(JobSets):
-#                     req_file=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/Temp_MCTr1a_'+TrainSampleID+'_0/MCTr1a_'+TrainSampleID+'_IDseeds_'+str(i)+'.pkl'
-#                     output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/Temp_MCTr1a_'+TrainSampleID+'_0/MCTr1b_'+TrainSampleID+'_SelectedTrackSamples_'+str(i)+'.pkl'
-#                     base_data=UI.PickleOperations(req_file,'r', 'N/A')[0]
-#                     ExtractedData=[]
-#                     if Regression==False:
-#                         min_len=len([j for j in base_data if j.Label==0])
-#                         for j in range(len(ClassHeaders)+1):
-#                             if len([k for k in base_data if k.Label==j])!=0:
-#                                ExtractedData.append([k for k in base_data if k.Label==j])
-#                                min_len=min(len([k for k in base_data if k.Label==j]),min_len)
-#                         TotalData=[]
-#                         for s in range(len(ExtractedData)):
-#                             TotalData+=random.sample(ExtractedData[s],min_len)
-#                         print(UI.PickleOperations(output_file_location,'w', TotalData)[1])
-#                     else: print(UI.PickleOperations(output_file_location,'w', base_data)[1])
-#             print(UI.TimeStamp(),bcolors.OKGREEN+'Stage 2 has successfully completed'+bcolors.ENDC)
-#             UI.UpdateStatus(Status+1,Meta,TrainSampleOutputMeta)
-#             Status+=1
-#             continue
+while Status<len(Program):
+      if Program[Status]!='Custom':
+        #Standard process here
+        Result=UI.StandardProcess(Program,Status,SubGap,SubPause,RequestExtCPU,JobFlavour,ReqMemory,time_int,Patience)
+        if Result[0]:
+            UI.UpdateStatus(Status+1,Meta,TrainSampleOutputMeta)
+        else:
+            Status=20
+            break
+      if Program[Status]=='Custom':
+          if Status==1:
+            print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
+            print(UI.TimeStamp(),bcolors.BOLD+'Stage 2:'+bcolors.ENDC+' Collecting and de-duplicating the results from stage 1')
+            for i in range(JobSets):
+                    req_file=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/Temp_MCTr1a_'+TrainSampleID+'_0/MCTr1a_'+TrainSampleID+'_IDseeds_'+str(i)+'.pkl'
+                    output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/Temp_MCTr1a_'+TrainSampleID+'_0/MCTr1b_'+TrainSampleID+'_SelectedTrackSamples_'+str(i)+'.pkl'
+                    base_data=UI.PickleOperations(req_file,'r', 'N/A')[0]
+                    ExtractedData=[]
+                    if Regression==False:
+                        min_len=len([j for j in base_data if j.Label==0])
+                        for j in range(len(ClassHeaders)+1):
+                            if len([k for k in base_data if k.Label==j])!=0:
+                               ExtractedData.append([k for k in base_data if k.Label==j])
+                               min_len=min(len([k for k in base_data if k.Label==j]),min_len)
+                        TotalData=[]
+                        for s in range(len(ExtractedData)):
+                            TotalData+=random.sample(ExtractedData[s],min_len)
+                        print(UI.PickleOperations(output_file_location,'w', TotalData)[1])
+                    else: print(UI.PickleOperations(output_file_location,'w', base_data)[1])
+            print(UI.TimeStamp(),bcolors.OKGREEN+'Stage 2 has successfully completed'+bcolors.ENDC)
+            UI.UpdateStatus(Status+1,Meta,TrainSampleOutputMeta)
+            Status+=1
+            continue
 
-#           if Status==2:
-#               print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
-#               print(UI.TimeStamp(),bcolors.BOLD+'Stage 3:'+bcolors.ENDC+' Taking the list of seeds previously generated by Stage 2, converting them into Emulsion Objects and doing more rigorous selection')
-#               TotalData=[]
-#               for i in range(JobSets):
-#                     req_file=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/Temp_MCTr1a_'+TrainSampleID+'_0/MCTr1b_'+TrainSampleID+'_SelectedTrackSamples_'+str(i)+'.pkl'
-#                     base_data=UI.PickleOperations(req_file,'r', 'N/A')[0]
-#                     TotalData+=base_data
-#               ValidationSampleSize=int(round(min((len(TotalData)*float(PM.valRatio)),PM.MaxValSampleSize),0))
-#               random.shuffle(TotalData)
-#               output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_OUTPUT.pkl'
-#               print(UI.PickleOperations(output_file_location,'w', TotalData[:ValidationSampleSize])[1])
-#               TotalData=TotalData[ValidationSampleSize:]
-#               No_Train_Files=int(math.ceil(len(TotalData)/TrainSampleSize))
-#               for i in range(0,No_Train_Files):
-#                   output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_OUTPUT_'+str(i+1)+'.pkl'
-#                   print(UI.PickleOperations(output_file_location,'w', TotalData[(i*TrainSampleSize):min(len(TotalData),((i+1)*TrainSampleSize))])[1])
-#               print(UI.TimeStamp(),bcolors.OKGREEN+'Stage 2 has successfully completed'+bcolors.ENDC)
-#               UI.UpdateStatus(Status+1,Meta,TrainSampleOutputMeta)
-#               Status+=1
-#               continue
-#       MetaInput=UI.PickleOperations(TrainSampleOutputMeta,'r', 'N/A')
-#       Meta=MetaInput[0]
-#       Status=Meta.Status[-1]
-# if Status==3:
-#     #Removing the temp files that were generated by the process
-#     print(UI.TimeStamp(),'Performing the cleanup... ')
-#     print(UI.ManageFolders(AFS_DIR, EOS_DIR, TrainSampleID,'d',['MCTr1a']))
-#     UI.Msg('success',"Train sample generation has been completed")
-# else:
-#       UI.Msg('failed',"Reconstruction has not been completed as one of the processes has timed out. Please run the script again (without Reset Mode).")
-#       exit()
+          if Status==2:
+              print(bcolors.HEADER+"#############################################################################################"+bcolors.ENDC)
+              print(UI.TimeStamp(),bcolors.BOLD+'Stage 3:'+bcolors.ENDC+' Taking the list of seeds previously generated by Stage 2, converting them into Emulsion Objects and doing more rigorous selection')
+              TotalData=[]
+              for i in range(JobSets):
+                    req_file=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/Temp_MCTr1a_'+TrainSampleID+'_0/MCTr1b_'+TrainSampleID+'_SelectedTrackSamples_'+str(i)+'.pkl'
+                    base_data=UI.PickleOperations(req_file,'r', 'N/A')[0]
+                    TotalData+=base_data
+              ValidationSampleSize=int(round(min((len(TotalData)*float(PM.valRatio)),PM.MaxValSampleSize),0))
+              random.shuffle(TotalData)
+              output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_VAL_OUTPUT.pkl'
+              print(UI.PickleOperations(output_file_location,'w', TotalData[:ValidationSampleSize])[1])
+              TotalData=TotalData[ValidationSampleSize:]
+              No_Train_Files=int(math.ceil(len(TotalData)/TrainSampleSize))
+              for i in range(0,No_Train_Files):
+                  output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'_TRAIN_OUTPUT_'+str(i+1)+'.pkl'
+                  print(UI.PickleOperations(output_file_location,'w', TotalData[(i*TrainSampleSize):min(len(TotalData),((i+1)*TrainSampleSize))])[1])
+              print(UI.TimeStamp(),bcolors.OKGREEN+'Stage 2 has successfully completed'+bcolors.ENDC)
+              UI.UpdateStatus(Status+1,Meta,TrainSampleOutputMeta)
+              Status+=1
+              continue
+      MetaInput=UI.PickleOperations(TrainSampleOutputMeta,'r', 'N/A')
+      Meta=MetaInput[0]
+      Status=Meta.Status[-1]
+if Status==3:
+    #Removing the temp files that were generated by the process
+    print(UI.TimeStamp(),'Performing the cleanup... ')
+    print(UI.ManageFolders(AFS_DIR, EOS_DIR, TrainSampleID,'d',['MCTr1a']))
+    UI.Msg('success',"Train sample generation has been completed")
+else:
+      UI.Msg('failed',"Reconstruction has not been completed as one of the processes has timed out. Please run the script again (without Reset Mode).")
+      exit()
 
 
 
