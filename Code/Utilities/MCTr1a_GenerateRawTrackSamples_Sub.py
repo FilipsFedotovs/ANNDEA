@@ -6,6 +6,7 @@
 ########################################    Import libraries    #############################################
 import argparse
 import sys
+import site
 ######################################## Set variables  #############################################################
 #Setting the parser - this script is usually not run directly, but is used by a Master version Counterpart that passes the required arguments
 parser = argparse.ArgumentParser(description='select cut parameters')
@@ -34,16 +35,15 @@ BatchID=args.BatchID
 ########################################     Preset framework parameters    #########################################
 MaxSegments=int(args.MaxSegments)
 #Loading Directory locations
+#Loading Directory locations
 EOS_DIR=args.EOS
 AFS_DIR=args.AFS
 PY_DIR=args.PY
 if PY_DIR!='': #Temp solution
-    sys.path=['',PY_DIR]
-    sys.path.append('/usr/lib64/python39.zip')
-    sys.path.append('/usr/lib64/python3.9')
-    sys.path.append('/usr/lib64/python3.9/lib-dynload')
-    sys.path.append('/usr/lib64/python3.9/site-packages')
-    sys.path.append('/usr/lib/python3.9/site-packages')
+    if PY_DIR not in sys.path:
+        sys.path.insert(0, PY_DIR)
+    # Properly register it as a site dir
+    site.addsitedir(PY_DIR)
 sys.path.append(AFS_DIR+'/Code/Utilities')
 import U_UI as UI #This is where we keep routine utility functions
 import pandas as pd #We use Panda for a routine data processing
@@ -68,6 +68,8 @@ print(UI.TimeStamp(), "Modules Have been imported successfully...")
 print(UI.TimeStamp(),'Loading pre-selected data from ',input_file_location)
 data=pd.read_csv(input_file_location,header=0,
                     usecols=['x','y','z','tx','ty','Rec_Seg_ID']+ExtraColumns)
+
+data['Rec_Seg_ID']=data['Rec_Seg_ID'].astype(str)
 for j in ExtraColumns:
             data[j]=data[j].astype(str)
 track_headers = data[['Rec_Seg_ID']+ExtraColumns]

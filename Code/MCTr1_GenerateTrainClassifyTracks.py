@@ -110,7 +110,6 @@ for i in ClassNames:
             ColumnsToImport.append(j)
         if (j in ExtraColumns)==False:
                 ExtraColumns.append(j)
-print(ColumnsToImport)
 
 Regression=ClassValues[0][0]=='Reg'
 
