@@ -253,7 +253,7 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
                 RPChoice=ast.literal_eval(RPChoice)
             else:
                 RPChoice=[int(RPChoice)]
-                
+
             TracksZdf = pd.DataFrame(RPChoice, columns = ['PID'], dtype=int)
             data_aggregated_show=pd.merge(data_aggregated_show,TracksZdf,how='inner',on='PID')
 
@@ -300,32 +300,35 @@ if os.path.isfile(required_file_location)==False or Mode=='RESET':
         print(data)
         final_rows=len(data.axes[0])
         print(UI.TimeStamp(),'After removing tracks with specific lengths we have',final_rows,' hits left')
-#         compress_data=data.drop([PM.x,PM.y,PM.z,PM.tx,PM.ty],axis=1)
-#         compress_data['MC_Mother_Track_No']= compress_data['MC_Mother_Track_ID']
-#         compress_data=compress_data.groupby(by=['Rec_Seg_ID','MC_Mother_Track_ID'])['MC_Mother_Track_No'].count().reset_index()
-#         compress_data=compress_data.sort_values(['Rec_Seg_ID','MC_Mother_Track_No'],ascending=[1,0])
-#         compress_data.drop_duplicates(subset='Rec_Seg_ID',keep='first',inplace=True)
-#         data=data.drop(['MC_Mother_Track_ID'],axis=1)
-#         compress_data=compress_data.drop(['MC_Mother_Track_No'],axis=1)
-#         data=pd.merge(data, compress_data, how="left", on=['Rec_Seg_ID'])
-#         if SliceData:
-#              print(UI.TimeStamp(),'Slicing the data...')
-#              ValidEvents=data.drop(data.index[(data[PM.x] > Xmax) | (data[PM.x] < Xmin) | (data[PM.y] > Ymax) | (data[PM.y] < Ymin)])
-#              ValidEvents.drop([PM.x,PM.y,PM.z,PM.tx,PM.ty,'MC_Mother_Track_ID']+ExtraColumns,axis=1,inplace=True)
-#              ValidEvents.drop_duplicates(subset='Rec_Seg_ID',keep='first',inplace=True)
-#              data=pd.merge(data, ValidEvents, how="inner", on=['Rec_Seg_ID'])
-#              final_rows=len(data.axes[0])
-#              print(UI.TimeStamp(),'The sliced data has ',final_rows,' hits')
+        
+        compress_data=data.drop([PM.x,PM.y,PM.z,PM.tx,PM.ty],axis=1)
+        compress_data['MC_Mother_Track_No']= compress_data['MC_Mother_Track_ID']
+        compress_data=compress_data.groupby(by=['Rec_Seg_ID','MC_Mother_Track_ID'])['MC_Mother_Track_No'].count().reset_index()
+        compress_data=compress_data.sort_values(['Rec_Seg_ID','MC_Mother_Track_No'],ascending=[1,0])
+        compress_data.drop_duplicates(subset='Rec_Seg_ID',keep='first',inplace=True)
+        data=data.drop(['MC_Mother_Track_ID'],axis=1)
+        compress_data=compress_data.drop(['MC_Mother_Track_No'],axis=1)
+        data=pd.merge(data, compress_data, how="left", on=['Rec_Seg_ID'])
+        if SliceData:
+             print(UI.TimeStamp(),'Slicing the data...')
+             ValidEvents=data.drop(data.index[(data[PM.x] > Xmax) | (data[PM.x] < Xmin) | (data[PM.y] > Ymax) | (data[PM.y] < Ymin)])
+             ValidEvents.drop([PM.x,PM.y,PM.z,PM.tx,PM.ty,'MC_Mother_Track_ID']+ExtraColumns,axis=1,inplace=True)
+             ValidEvents.drop_duplicates(subset='Rec_Seg_ID',keep='first',inplace=True)
+             data=pd.merge(data, ValidEvents, how="inner", on=['Rec_Seg_ID'])
+             final_rows=len(data.axes[0])
+             print(UI.TimeStamp(),'The sliced data has ',final_rows,' hits')
 
 
-#         output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/MCTr1_'+TrainSampleID+'_TRACKS.csv'
-#         if Regression:
-#             print(UI.TimeStamp(),'Normalising regression value',ExtraColumns[0])
-#             data_agg=data.groupby(['Rec_Seg_ID','MC_Mother_Track_ID']).agg(subject_reg_val=pd.NamedAgg(column=ClassNames[0][0], aggfunc=ClassValues[0][1])).reset_index()
-#             data_agg=data_agg.rename(columns={'subject_reg_val': ClassNames[0][0]})
-#             data_agg[ClassNames[0][0]]=data_agg[ClassNames[0][0]].astype(float)-(float(ClassValues[0][2])/2)
-#             data_agg[ClassNames[0][0]]=data_agg[ClassNames[0][0]].astype(float).div(float(ClassValues[0][2])/2)
-#             data.drop([ClassNames[0][0]],axis=1,inplace=True)
+        output_file_location=EOS_DIR+'/ANNDEA/Data/TRAIN_SET/'+TrainSampleID+'/MCTr1_'+TrainSampleID+'_TRACKS.csv'
+        if Regression:
+            print(UI.TimeStamp(),'Normalising regression value',ExtraColumns[0])
+            data_agg=data.groupby(['Rec_Seg_ID','MC_Mother_Track_ID']).agg(subject_reg_val=pd.NamedAgg(column=ClassNames[0][0], aggfunc=ClassValues[0][1])).reset_index()
+            data_agg=data_agg.rename(columns={'subject_reg_val': ClassNames[0][0]})
+            print(data_agg)
+            exit()
+            data_agg[ClassNames[0][0]]=data_agg[ClassNames[0][0]].astype(float)-(float(ClassValues[0][2])/2)
+            data_agg[ClassNames[0][0]]=data_agg[ClassNames[0][0]].astype(float).div(float(ClassValues[0][2])/2)
+            data.drop([ClassNames[0][0]],axis=1,inplace=True)
 #             data=pd.merge(data,data_agg, how="inner", on=['Rec_Seg_ID','MC_Mother_Track_ID'])
 #         print(UI.TimeStamp(),'Removing tracks which have less than',MinHitsTrack,'hits...')
 #         track_no_data=data.groupby(['MC_Mother_Track_ID','Rec_Seg_ID']+ExtraColumns,as_index=False).count()
